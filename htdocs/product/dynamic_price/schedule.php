@@ -312,10 +312,6 @@ llxHeader('',$pagetitle,'');
 $form = new Form($db);
 $formother = new FormOther($db);
 
-//Month/Day selector
-$selector = $langs->trans('Date').'&nbsp;'.select_monthday($formother, $year, $sel_month, $sel_day, 'sel_');
-$selector.= '&nbsp;<input type="submit" class="button" value="'.$langs->trans('Refresh').'" />';
-
 if ($action == 'create' && ($user->rights->dynamicprices->schedule_write))
 {
     print load_fiche_titre($pagetitle, '');
@@ -386,7 +382,7 @@ if ($action == 'create' && ($user->rights->dynamicprices->schedule_write))
     //Section viewer
     if ($data_correct) {
         print "<br>";
-        print showSectionViewer($object, "sectionviewer", $sel_month, $sel_day, $product->duration_unit, $product->duration_value, false, false, false, $selector, '');
+        print showSectionViewer($object, "sectionviewer", $sel_month, $sel_day, $product->duration_unit, $product->duration_value, false, false, false, '');
     }
 
     print '</form>';
@@ -467,14 +463,14 @@ else if ( $object->id > 0)
 
         //Date start
         print '<td style="width: 40%;" class="range_date">';
-        print select_monthday($formother, $year, $range_start_month, $range_start_day, 'range_start_');
+        print $formother->select_monthday($year, $range_start_month, $range_start_day, 'range_start_');
         print '&nbsp;';
         print $form->select_date('0000-00-00 '.$range_start_hour.':'.$range_start_min, 'range_start_', 1, 0, 0, '', 0, 0, 1).'<br>';
         print '</td>';
 
         //Date end
         print '<td style="width: 40%;" class="range_date">';
-        print select_monthday($formother, $year, $range_end_month, $range_end_day, 'range_end_');
+        print $formother->select_monthday($year, $range_end_month, $range_end_day, 'range_end_');
         print '&nbsp;';
         print $form->select_date('0000-00-00 '.$range_end_hour.':'.$range_end_min, 'range_end_', 1, 0, 0, '', 0, 0, 1).'<br>';
         print '</td>';
@@ -527,7 +523,7 @@ else if ( $object->id > 0)
     //Section viewer
     $interactive = $action == 'edit' || $action == 'placement';
     $selectable = $action == 'edit';
-    print showSectionViewer($object, "sectionviewer", $sel_month, $sel_day, $product->duration_unit, $product->duration_value, $interactive, $selectable, true, $selector, $params);
+    print showSectionViewer($object, "sectionviewer", $sel_month, $sel_day, $product->duration_unit, $product->duration_value, $interactive, $selectable, true, $params);
 
     print '</form>';
 }
@@ -539,29 +535,3 @@ else
 // End of page
 llxFooter();
 $db->close();
-
-/**
-  *  Return HTML combo list of month and day selector
-  *  TODO using the select_date calendar limited by $year would be nice
-  *
-  *  @param  FormOther   $formother         FormOther
-  *  @param  int         $year              Year
-  *  @param  int         $month             Preselected month
-  *  @param  int         $day               Preselected day
-  *  @param  string      $htmlname          Name of HTML select object
-  *  @return string
-  */
-function select_monthday($formother, $year, $month, $day, $htmlname='') {
-    if (empty($day)) $day = 1;
-    $last_date = dol_getdate(dol_get_last_day($year, $month), true);
-    $day = min($day, $last_date['mday']);
-
-    $out = $formother->select_month($month, $htmlname.'month', 0, 1);
-    $out.= '<select class="flat" id="'.$htmlname.'day" name="'.$htmlname.'day">';
-    for ($d = 1 ; $d <= 31; $d++)
-    {
-        $out.= '<option value="'.$d.'"'.($d == $day ? ' selected':'').'>'.$d.'</option>';
-    }
-    $out.= '</select>';
-    return $out;
-}

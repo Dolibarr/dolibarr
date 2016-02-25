@@ -459,14 +459,13 @@ class PriceSchedule extends CommonObject
         dol_syslog("first=".$first." last=".$last." duration=".$duration." start=".$start, LOG_DEBUG);
 
         $end = $start + $duration - 1;
-        $i = 0;
         $templates = array();
         //Add starting template if there is hole
         if ($first < $start && empty($conf->global->PRICE_SCHEDULE_IGNORE_LIMITS))
         {
             $templates[] = array(
                 'start' => $first,
-                'end' => $start
+                'end' => $start - 1
             );
         }
         //Generate the templates
@@ -478,7 +477,6 @@ class PriceSchedule extends CommonObject
             );
             $start += $duration;
             $end += $duration;
-            $i++;
         }
         //Add ending template if there is hole
         if ($start < $last && empty($conf->global->PRICE_SCHEDULE_IGNORE_LIMITS))
@@ -489,6 +487,7 @@ class PriceSchedule extends CommonObject
             );
         }
         //Convert template to sections
+        $last_end = null;
         foreach ($templates as $template)
         {
             $section = new PriceScheduleSection($this->db);
@@ -497,6 +496,14 @@ class PriceSchedule extends CommonObject
             $section->date_end = $template['end'];
             $section->price = 0;
             $this->sections[] = $section;
+            //Check consistency
+            if ($last_end !== null && $last_end + 1 != $template['start'])
+            {
+                dol_syslog(__METHOD__." Section at ".count($this->sections)." is not continuous:", LOG_ERR);
+                dol_syslog("last=".$last_end." start=".$template['start']." end=".$template['end'], LOG_ERR);
+                return -3;
+            }
+            $last_end = $template['end'];
         }
         dol_syslog(__METHOD__." Created sections: ".count($this->sections), LOG_DEBUG);
         //Write to DB if is not preview mode
