@@ -143,6 +143,7 @@ class HookManager
 				'formattachOptions',
 				'formBuilddocLineOptions',
 				'moveUploadedFile',
+			    'pdf_build_address',
 				'pdf_writelinedesc',
 			    'pdf_getlinenum',
 			    'pdf_getlineref',
