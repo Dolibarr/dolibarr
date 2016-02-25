@@ -149,7 +149,7 @@ if ($result > 0 && count($other->lines))
 }
 if (!empty($product->duration_value))
 {
-    if ($product->duration_unit == 'h' || ($product->duration_unit == 'm' && $product->duration_value >= 12))
+    if (($product->duration_unit == 'h' && $product->duration_value == 1) || ($product->duration_unit == 'm' && $product->duration_value >= 12))
     {
         $hide_starting_hour = true;
     }
