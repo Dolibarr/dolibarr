@@ -70,6 +70,7 @@ ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse. 
+WeightVolShort=Weight/Vol.
 
 # Sending methods
 SendingMethodCATCH=Catch by customer

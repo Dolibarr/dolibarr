@@ -1003,7 +1003,7 @@ class Expedition extends CommonObject
 		if (isset($this->trueWeight)) $this->weight=trim($this->trueWeight);
 		if (isset($this->note_private)) $this->note=trim($this->note_private);
 		if (isset($this->note_public)) $this->note=trim($this->note_public);
-		if (isset($this->model_pdf)) $this->model_pdf=trim($this->model_pdf);
+		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
 
 
 
@@ -1035,7 +1035,7 @@ class Expedition extends CommonObject
 		$sql.= " weight=".(($this->trueWeight != '')?$this->trueWeight:"null").",";
 		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
 		$sql.= " entity=".$conf->entity;
 
         $sql.= " WHERE rowid=".$this->id;
@@ -1742,6 +1742,52 @@ class Expedition extends CommonObject
 
     }
 
+    /**
+     * Return into unit=0, the calculated total of weight and volume of all lines * qty
+	 * Calculate by adding weight and volume of each product line.
+     * 
+     * @return  array           array('weight'=>...,'volume'=>...)
+     */
+    function getTotalWeightVolume()
+    {
+        $weightUnit=0;
+        $volumeUnit=0;
+        $totalWeight = '';
+        $totalVolume = '';
+        foreach ($this->lines as $line)
+        {
+            $weightUnit=0;
+            $volumeUnit=0;
+            if (! empty($line->weight_units)) $weightUnit = $line->weight_units;
+            if (! empty($line->volume_units)) $volumeUnit = $line->volume_units;
+        
+            //var_dump($line->volume_units);
+            if ($line->weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                $trueWeightUnit=pow(10,$weightUnit);
+                $totalWeight += $line->weight*$line->qty_shipped*$trueWeightUnit;
+            }
+            else
+            {
+                $totalWeight += $line->weight*$line->qty_shipped;   // This may be wrong if we mix different units
+            }
+            if ($line->volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
+                $trueVolumeUnit=pow(10,$volumeUnit);
+                //print $line->volume;
+                $totalVolume += $line->volume*$line->qty_shipped*$trueVolumeUnit;
+            }
+            else
+            {
+                $totalVolume += $line->volume*$line->qty_shipped;   // This may be wrong if we mix different units
+            }
+        }
+        
+        return array('weight'=>$totalWeight, 'volume'=>$totalVolume);
+    }
+
+    
 	/**
 	 * Forge an set tracking url
 	 *

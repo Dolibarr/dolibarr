@@ -1251,44 +1251,13 @@ else if ($id || $ref)
 
 		}
 
-		// Calculate true totalWeight and totalVolume for all products
+		
+		// Calculate totalWeight and totalVolume for all products
 		// by adding weight and volume of each product line.
-		$totalWeight = '';
-		$totalVolume = '';
-		$weightUnit=0;
-		$volumeUnit=0;
-		for ($i = 0 ; $i < $num_prod ; $i++)
-		{
-			$weightUnit=0;
-			$volumeUnit=0;
-			if (! empty($lines[$i]->weight_units)) $weightUnit = $lines[$i]->weight_units;
-			if (! empty($lines[$i]->volume_units)) $volumeUnit = $lines[$i]->volume_units;
-
-			// TODO Use a function addvalueunits(val1,unit1,val2,unit2)=>(val,unit)
-			if ($lines[$i]->weight_units < 50)
-			{
-				$trueWeightUnit=pow(10,$weightUnit);
-				$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped*$trueWeightUnit;
-			}
-			else
-			{
-				$trueWeightUnit=$weightUnit;
-				$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped;
-			}
-			if ($lines[$i]->volume_units < 50)
-			{
-				//print $lines[$i]->volume."x".$lines[$i]->volume_units."x".($lines[$i]->volume_units < 50)."x".$volumeUnit;
-				$trueVolumeUnit=pow(10,$volumeUnit);
-				//print $lines[$i]->volume;
-				$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped*$trueVolumeUnit;
-			}
-			else
-			{
-				$trueVolumeUnit=$volumeUnit;
-				$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped;
-			}
-		}
-
+		$tmparray=$object->getTotalWeightVolume();
+		$totalWeight=$tmparray['weight'];
+		$totalVolume=$tmparray['volume'];
+		
 		print '<table class="border" width="100%">';
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
@@ -1391,7 +1360,8 @@ else if ($id || $ref)
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
-			print $totalWeight.' '.measuring_units_string(0,"weight");
+			//print $totalWeight.' '.measuring_units_string(0,"weight");
+			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs);
 			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')'; 
 			if (!empty($object->trueWeight)) print ')';
 		}
@@ -1438,18 +1408,27 @@ else if ($id || $ref)
 		print '</td>';
 		print '<td colspan="3">';
 		$calculatedVolume=0;
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) $calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$volumeUnit=0;
+		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) 
+		{
+		    $calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		    $volumeUnit=$object->size_units * 3;
+		}
 		// If sending volume not defined we use sum of products
 		if ($calculatedVolume > 0)
 		{
-			print $calculatedVolume.' ';
-			if ($volumeUnit < 50) print measuring_units_string(0,"volume");
-			else print measuring_units_string($volumeUnit,"volume");
+			if ($volumeUnit < 50) 
+			{
+			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
+			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs);
+			}
+			else print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
 		}
 		if ($totalVolume > 0)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-			print $totalVolume.' '.measuring_units_string(0,"volume");
+			//print $totalVolume.' '.measuring_units_string(0,"volume");
+			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs);
 			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
 		}

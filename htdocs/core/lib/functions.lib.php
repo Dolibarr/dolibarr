@@ -3408,6 +3408,42 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	return $amount;
 }
 
+
+/**
+ * Output a dimension with best unit 
+ * @param float     $dimension      Dimension
+ * @param int       $unit           Unit of dimension (0, -3, ...)
+ * @param string    $type           'weight', 'volume', ...
+ */
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs)
+{
+    if ($dimension < 1/10000) 
+    {
+        $dimension = $dimension * 1000000;
+        $unit = $unit - 6; 
+    }
+    elseif ($dimension < 1/10) 
+    {
+        $dimension = $dimension * 1000;
+        $unit = $unit - 3; 
+    }
+    elseif ($dimension > 100000000)
+    {
+        $dimension = $dimension / 1000000;
+        $unit = $unit + 6;
+    }
+    elseif ($dimension > 100000)
+    {
+        $dimension = $dimension / 1000;
+        $unit = $unit + 3;
+    }
+    
+    $ret=price($dimension, 0, $outputlangs, 0, 0).' '.measuring_units_string($unit, $type);
+    
+    return $ret;
+}
+
+
 /**
  *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
  *  Note: This function applies same rules than get_default_tva

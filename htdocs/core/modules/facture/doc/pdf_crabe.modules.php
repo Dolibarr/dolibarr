@@ -86,7 +86,6 @@ class pdf_crabe extends ModelePDFFactures
 		$this->name = "crabe";
 		$this->description = $langs->trans('PDFCrabeDescription');
 
-		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -673,20 +672,20 @@ class pdf_crabe extends ModelePDFFactures
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-				return 1;   // Pas d'erreur
+				return 1;   // No error
 			}
 			else
 			{
-				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined","FAC_OUTPUTDIR");
 			return 0;
 		}
-		$this->error=$langs->trans("ErrorUnknown");
+		$this->error=$langs->transnoentities("ErrorUnknown");
 		return 0;   // Erreur par defaut
 	}
 
