@@ -701,7 +701,13 @@ if ($id > 0 || ! empty($ref))
 
 
         // Bouton expedier avec gestion des stocks
-        if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
+
+        if (! empty($conf->stock->enabled) && $commande->statut == Commande::STATUS_DRAFT)
+        {
+            print $langs->trans("ValidateOrderFirstBeforeShipment");
+        }
+        
+		if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
 		{
 			if ($user->rights->expedition->creer)
 			{
