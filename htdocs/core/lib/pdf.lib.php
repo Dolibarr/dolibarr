@@ -364,6 +364,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	return $outputlangs->convToOutputCharset($socname);
 }
 
+
 /**
  *   	Return a string with full address formated
  *
@@ -1889,7 +1890,8 @@ function pdf_getLinkedObjects($object,$outputlangs)
 			foreach($objects as $elementobject)
 			{
 				$elementobject->fetchObjectLinked();
-				$order = $elementobject->linkedObjects['commande'][0];
+
+				$order = reset($elementobject->linkedObjects['commande']);
 
 				if (! empty($object->linkedObjects['commande']))	// There is already a link to order so we show only info of shipment
 				{
@@ -1903,9 +1905,9 @@ function pdf_getLinkedObjects($object,$outputlangs)
 					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
 					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
 					$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($elementobject->ref);
-					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
+					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateSending") : '');
 					$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-					$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
+					$linkedobjects[$objecttype]['date_value'].= ($elementobject->date_delivery ? ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs) : '');
 				}
 			}
 		}
