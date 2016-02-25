@@ -42,6 +42,7 @@ $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
 $langs->load('compta');
+$langs->load('bills');
 
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
@@ -337,7 +338,7 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Billed'),$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
+	if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) print_liste_field_titre($langs->trans('Billed'),$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>';
 
@@ -377,9 +378,12 @@ if ($resql)
 	);
 	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
 	print '</td>';
-	print '<td align="center">';
-	print $form->selectyesno('billed', $billed, 1, 0, 1);
-	print '</td>';
+	if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
+	{
+    	print '<td align="center">';
+    	print $form->selectyesno('billed', $billed, 1, 0, 1);
+    	print '</td>';
+	}
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
@@ -588,7 +592,7 @@ if ($resql)
 		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut, $objp->billed, 5, 1).'</td>';
 
 		// Billed
-		print '<td align="center">'.yn($objp->billed).'</td>';
+		if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) print '<td align="center">'.yn($objp->billed).'</td>';
 		
 		print '<td></td>';
 
