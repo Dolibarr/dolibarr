@@ -1754,8 +1754,13 @@ class Expedition extends CommonObject
         $volumeUnit=0;
         $totalWeight = '';
         $totalVolume = '';
+        $totalOrdered = '';
+        $totalToShip = '';
         foreach ($this->lines as $line)
         {
+            $totalOrdered+=$line->qty_asked;
+            $totalToShip+=$line->qty_shipped;
+            
             $weightUnit=0;
             $volumeUnit=0;
             if (! empty($line->weight_units)) $weightUnit = $line->weight_units;
@@ -1784,7 +1789,7 @@ class Expedition extends CommonObject
             }
         }
         
-        return array('weight'=>$totalWeight, 'volume'=>$totalVolume);
+        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
     }
 
     
