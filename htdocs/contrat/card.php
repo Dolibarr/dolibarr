@@ -58,6 +58,8 @@ $confirm=GETPOST('confirm','alpha');
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
+$origin=GETPOST('origin','alpha');
+$originid=GETPOST('originid','int');
 
 $datecontrat='';
 
@@ -239,13 +241,13 @@ if (empty($reshook))
 	    	$object->ref						= GETPOST('ref','alpha');
 	    	$object->ref_customer				= GETPOST('ref_customer','alpha');
 	    	$object->ref_supplier				= GETPOST('ref_supplier','alpha');
-	
+
 		    // If creation from another object of another module (Example: origin=propal, originid=1)
-		    if ($_POST['origin'] && $_POST['originid'])
+		    if (! empty($origin) && ! empty($originid))
 		    {
 		        // Parse element/subelement (ex: project_task)
-		        $element = $subelement = $_POST['origin'];
-		        if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
+		        $element = $subelement = $origin;
+		        if (preg_match('/^([^_]+)_([^_]+)/i',$origin,$regs))
 		        {
 		            $element = $regs[1];
 		            $subelement = $regs[2];
@@ -255,8 +257,8 @@ if (empty($reshook))
 		        if ($element == 'order')    { $element = $subelement = 'commande'; }
 		        if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
 	
-		        $object->origin    = $_POST['origin'];
-		        $object->origin_id = $_POST['originid'];
+		        $object->origin    = $origin;
+		        $object->origin_id = $originid;
 	
 		        // Possibility to add external linked objects with hooks
 		        $object->linked_objects[$object->origin] = $object->origin_id;
@@ -367,6 +369,38 @@ if (empty($reshook))
 		                setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 		                $error++;
 		            }
+		            
+		            // Now we create same links to contact than the ones found on origin object
+		            if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
+		            {
+		                $originforcontact = $object->origin;
+		                $originidforcontact = $object->origin_id;
+		                if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+		                {
+		                    $originforcontact=$srcobject->origin;
+		                    $originidforcontact=$srcobject->origin_id;
+		                }
+		                $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+		                $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+	                	
+		                $resqlcontact = $db->query($sqlcontact);
+		                if ($resqlcontact)
+		                {
+		                    while($objcontact = $db->fetch_object($resqlcontact))
+		                    {
+		                        //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
+		                        $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
+		                    }
+		                }
+		                else dol_print_error($resqlcontact);
+		            }
+
+		            // Hooks
+		            $parameters = array('objFrom' => $srcobject);
+		            $reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
+		            // modified by hook
+		            if ($reshook < 0)
+		                $error++;		            
 		        }
 		        else
 		        {

@@ -916,7 +916,7 @@ if (empty($reshook))
 				$object->fetch_thirdparty();
 
 				// If creation from another object of another module (Example: origin=propal, originid=1)
-				if ($origin && $originid)
+				if (! empty($origin) && ! empty($originid))
 				{
 					// Parse element/subelement (ex: project_task)
 					$element = $subelement = $origin;
@@ -1134,13 +1134,6 @@ if (empty($reshook))
 										}
 									}
 								}
-
-								// Hooks
-								$parameters = array('objFrom' => $srcobject);
-								$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
-								                                                                               // modified by hook
-								if ($reshook < 0)
-									$error ++;
 							} else {
 								setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 								$error ++;
@@ -1148,7 +1141,7 @@ if (empty($reshook))
 						}
 						
 						// Now we create same links to contact than the ones found on origin object
-						if (empty($conf->global->INVOICE_NO_PROPAGATE_CONTACTS_FROM_ORIGIN))
+						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
     						$originforcontact = $object->origin;
     						$originidforcontact = $object->origin_id;
@@ -1170,10 +1163,18 @@ if (empty($reshook))
                                 }
     						}
     						else dol_print_error($resqlcontact);					
-						}						
+						}
+						
+						// Hooks
+						$parameters = array('objFrom' => $srcobject);
+						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
+						// modified by hook
+						if ($reshook < 0)
+						    $error++;
+						
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
-						$error ++;
+						$error++;
 					}
 				} 			
 				else 
