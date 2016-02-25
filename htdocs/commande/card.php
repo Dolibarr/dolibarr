@@ -1465,8 +1465,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$form->select_date('', 're', '', '', '', "crea_commande", 1, 1);			// Always autofill date with current date
 	print '</td></tr>';
 
-	// Date de livraison
-	print "<tr><td>".$langs->trans("DeliveryDate").'</td><td colspan="2">';
+	// Delivery date planed
+	print "<tr><td>".$langs->trans("DateDeliveryPlanned").'</td><td colspan="2">';
 	if (empty($datedelivery))
 	{
 		if (! empty($conf->global->DATE_LIVRAISON_WEEK_DELAY)) $datedelivery = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
@@ -1494,7 +1494,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 
 	// Delivery delay
-	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
+	print '<tr class="fielddeliverydelay"><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay($availability_id, 'availability_id', '', 1);
 	print '</td></tr>';
 
@@ -2147,8 +2147,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</td></tr>';
 		}
 
-		// Availability
-		print '<tr><td height="10">';
+		// Delivery delay
+		print '<tr class="fielddeliverydelay"><td height="10">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('AvailabilityPeriod');
 		print '</td>';
