@@ -78,10 +78,6 @@ $sqls=array(
         'DELETE FROM '.MAIN_DB_PREFIX.'propaldet',
         'DELETE FROM '.MAIN_DB_PREFIX.'propal',
     ),
-    'order'=>array(
-        'DELETE FROM '.MAIN_DB_PREFIX.'commandedet',
-        'DELETE FROM '.MAIN_DB_PREFIX.'commande',
-    ),
     'supplier_order'=>array(
         'DELETE FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet',
         'DELETE FROM '.MAIN_DB_PREFIX.'commande_fournisseur',
@@ -92,16 +88,22 @@ $sqls=array(
         'DELETE FROM '.MAIN_DB_PREFIX.'supplier_proposaldet',
         'DELETE FROM '.MAIN_DB_PREFIX.'supplier_proposal',
     ),
+    'delivery'=>array(
+        'DELETE FROM '.MAIN_DB_PREFIX.'livraisondet',
+        'DELETE FROM '.MAIN_DB_PREFIX.'livraison',
+    ),
     'shipment'=>array(
+        '@delivery',
         'DELETE FROM '.MAIN_DB_PREFIX.'expeditiondet_batch',
         'DELETE FROM '.MAIN_DB_PREFIX.'expeditiondet_extrafields',
         'DELETE FROM '.MAIN_DB_PREFIX.'expeditiondet',
         'DELETE FROM '.MAIN_DB_PREFIX.'expedition_extrafields',
         'DELETE FROM '.MAIN_DB_PREFIX.'expedition',
     ),
-    'delivery'=>array(
-        'DELETE FROM '.MAIN_DB_PREFIX.'livraisondet',
-        'DELETE FROM '.MAIN_DB_PREFIX.'livraison',
+    'order'=>array(
+        '@shipment',
+        'DELETE FROM '.MAIN_DB_PREFIX.'commandedet',
+        'DELETE FROM '.MAIN_DB_PREFIX.'commande',
     ),
     'intervention'=>array(
         'DELETE FROM '.MAIN_DB_PREFIX.'fichinterdet',
