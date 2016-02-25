@@ -2086,13 +2086,12 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
  *  @param   bool   $interactive    Makes sections interactive
  *  @param   bool   $selectable     Makes sections selectable
  *  @param   bool   $navigator      Shows week/month navigator
- *  @param   string $title          Title to show
  *  @param   string $params         Extra URL parameters
  *  @return  string                 HTML code
  */
-function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $duration_value, $interactive, $selectable, $navigator, $title, $params)
+function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $duration_value, $interactive, $selectable, $navigator, $params)
 {
-    global $langs, $conf, $hookmanager;
+    global $db, $langs, $conf, $hookmanager;
 
     //The JS magic for interactivity and click/selection handling
     $interactive_js = "";
@@ -2234,11 +2233,10 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
         'selectable'=>$selectable,
         'selectable_js'=>$selectable_js,
         'navigator'=>$navigator,
-        'title'=>$title,
         'params'=>$params,
     );
     $action='';
-    $reshook=$hookmanager->executeHooks('showSectionViewer',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('showSectionViewer', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
     if ($reshook < 0)
     {
         setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -2256,6 +2254,19 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
     $first_time = dol_mktime(0,0,0,$date['first_month'],$date['first_day'],$date['first_year'], $gm);
     $less_than_day = dol_time_plus_duree(0, $duration_value, $duration_unit) < 3600 * 24;
     $date_format = $less_than_day ? 'hour' : 'dayhourtext';
+
+    //Pass viewer mode to url params and form
+    $mode = GETPOST('viewer_mode', 'alpha');
+    if ($mode)
+    {
+        $params.= '&amp;viewer_mode='.$mode;
+        print '<input type="hidden" name="viewer_mode" value="'.$mode.'">';
+    }
+
+    //Month/Day selector
+    $formother = new FormOther($db);
+    $selector = $langs->trans('Date').'&nbsp;'.$formother->select_monthday($year, $month, $day, 'sel_');
+    $selector.= '&nbsp;<input type="submit" class="button" value="'.$langs->trans('Refresh').'" />';
 
     //Navigator
     $nav = '';
@@ -2281,8 +2292,8 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
     }
 
     //Generate html calendar
-    print load_fiche_titre($title, $nav, '');
-    $out = '<table id="'.$html_id.'" width="100%" class="noborder nocellnopadd cal_month">';
+    print load_fiche_titre($selector, $nav, '');
+    $out = '<table id="'.$html_id.'" style="width: 100%;" class="noborder nocellnopadd cal_month">';
     $out.= '<tr class="liste_titre">';
     for ($iter_day = 0; $iter_day < 7; $iter_day++)
     {
@@ -2299,17 +2310,19 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
     for ($iter_day = 0; $iter_day < 7; $iter_day++)
     {
         //Get current day sections
-        $day_time = dol_time_plus_duree($first_time, $iter_day, 'd');
-        $sections = getDaySections($object, $day_time, $date_format, $tz_output, $gm);
+        $date_start = dol_time_plus_duree($first_time, $iter_day, 'd');
+        $date_end = dol_time_plus_duree($date_start, 1, 'd') - 1;
+        $sections = getScheduleSections($object, $date_start, $date_end, $date_format, $tz_output);
 
         //Calendar styling
         $style = 'cal_current_month';
         if ($iter_day == 6) $style.=' cal_current_month_right';
+        $extra_content = array('<b>', '</b>');
 
         //Show the day sections
         $out.= '<td class="'.$style.'" valign="top">';
-        $out.= showDaySections($html_id, $sections);
-        $out.= "  </td>\n";
+        $out.= showScheduleSections($html_id, $sections, '', false, $extra_content);
+        $out.= '</td>';
     }
     $out.= '</tr>';
     $out.= '</table>';
@@ -2325,20 +2338,15 @@ function showSectionViewer($object, $html_id, $month, $day, $duration_unit, $dur
  *  Generate each day data for section viewer
  *
  *  @param   object $object         Object containing sections
- *  @param   int    $day_time       Day timestamp to show
+ *  @param   int    $date_start     Date start timestamp to show
+ *  @param   int    $date_end       Date end timestamp to show
  *  @param   int    $date_format    Date printing format
  *  @param   string $tz_output      TZ for print date
- *  @param   string $gm             TZ for day boundary
  *  @return  string                 HTML code
  */
-function getDaySections($object, $day_time, $date_format, $tz_output, $gm)
+function getScheduleSections($object, $date_start, $date_end, $date_format, $tz_output)
 {
     global $user, $langs;
-    $curyear = dol_print_date($day_time, '%Y', $tz_output);
-    $curmonth = dol_print_date($day_time, '%m', $tz_output);
-    $curday = dol_print_date($day_time, '%d', $tz_output);
-    $day_start = dol_mktime(0, 0, 0, $curmonth, $curday, $curyear, $gm);
-    $day_end = dol_mktime(23, 59, 59, $curmonth, $curday, $curyear, $gm);
 
     if ($object->element == "resourceschedule") {
         $status_text = ResourceStatus::translated();
@@ -2348,11 +2356,12 @@ function getDaySections($object, $day_time, $date_format, $tz_output, $gm)
 
     $sections = array();
     foreach ($object->sections as $i => $section) {
-        if ($section->date_start <= $day_end && $section->date_end >= $day_start) {
+        if ($section->date_start <= $date_end && $section->date_end >= $date_start) {
+
             $section_data = array();
             $section_data['data'] = array();
-            $section_data['ymd'] = $curyear . $curmonth . $curday;
-            if ($object->element == "resourceschedule") {
+            if ($object->element == "resourceschedule")
+            {
                 // Check if booker is valid
                 $booker = null;
                 if ($section->booker_id && $section->booker_type) {
@@ -2381,7 +2390,7 @@ function getDaySections($object, $day_time, $date_format, $tz_output, $gm)
                             break;
                     }
                 }
-                $section_data['content'] = '<b>' . $content . '</b>';
+                $section_data['content'] = $content;
                 $section_data['data'] = array(
                     'color' => $status_colors_normal[$section->status],
                     'color_hover' => $status_colors_bright[$section->status],
@@ -2389,19 +2398,26 @@ function getDaySections($object, $day_time, $date_format, $tz_output, $gm)
                     'interactive' => in_array($section->status, ResourceStatus::$MANUAL) ? 1 : 0,
                     'status' => $section->status,
                 );
-            } else if ($object->element == "priceschedule") {
+            }
+            else if ($object->element == "priceschedule")
+            {
                 $section_data['data'] = array(
                     'color' => '8C8CDC',
-                    'color_selected' => '9C9CEC',
-                    'color_hover' => '9C9CEC',
+                    'color_selected' => 'ACACFC',
+                    'color_hover' => 'ACACFC',
                     'interactive' => 1,
                     'price' => price($section->price),
                 );
 
                 //Price
-                $content = '<b>' . price($section->price) . '</b>';
+                $content = price($section->price);
                 $section_data['content'] = $content;
             }
+
+            //Unique ID
+            $section_data['uid'] = "_".dol_print_date($date_start, '%Y_%j', $tz_output);
+            $section_data['uid'].= "_".dol_print_date($date_end, '%Y_%j', $tz_output);
+            $section_data['uid'].= $section->id;
 
             //Date start/end
             $section_data['date_start'] = dol_print_date($section->date_start, $date_format, $tz_output);
@@ -2428,9 +2444,12 @@ function getDaySections($object, $day_time, $date_format, $tz_output, $gm)
  *
  *  @param   int    $html_id        ID of html
  *  @param   array  $sections       Sections to show
+ *  @param   string $section_style  Section html style
+ *  @param   bool   $hide_dates     Hide dates
+ *  @param   array  $extra_content  Print extra content at start and end, must be 2 strings array
  *  @return  string HTML code
  */
-function showDaySections($html_id, $sections)
+function showScheduleSections($html_id, $sections, $section_style = '', $hide_dates = false, $extra_content = null)
 {
     //Header
     $out = '<div id="'.$html_id.'_day" class="dayevent">';
@@ -2441,7 +2460,7 @@ function showDaySections($html_id, $sections)
     foreach ($sections as $i => $section)
     {
         // Show rect of section
-        $section_id = $html_id."_".$section['ymd'].'_'.$i;
+        $section_id = $html_id.'_'.$section['uid'];
         $out.= '<div class="nowrap">';
         $out.= '<ul class="cal_event" style="height: 100%">';	// always 1 li per ul, 1 ul per section
         $out.= '<li class="cal_event" style="height: 100%">';
@@ -2455,12 +2474,14 @@ function showDaySections($html_id, $sections)
             }
         }
         $out.= '>';
-        $out.= '<tr><td class="cal_event">';
+        $out.= '<tr><td class="cal_event" '.$section_style.'>';
 
         // Show content
-        $out.= $section['date_start'].'<br>';
-        $out.= $section['content'].'<br>';
-        $out.= $section['date_end'];
+        if (!$hide_dates) $out.= $section['date_start'].'<br>';
+        if ($extra_content) $out.= $extra_content[0];
+        $out.= $section['content'];
+        if ($extra_content) $out.= $extra_content[1];
+        if (!$hide_dates) $out.= '<br>'.$section['date_end'];
 
         // Close rect
         $out.= '</td>';

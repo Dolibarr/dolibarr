@@ -224,4 +224,4 @@ ErrorScheduleSameYearExist=Another schedule with same year exists
 SectionDuration=Section duration
 ModifySections=Modify sections
 StartingHour=Starting hour
-ScheduleUniversalTime=All dates are displayed in Universal Time
+SelectionMode=Selection Mode

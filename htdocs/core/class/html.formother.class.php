@@ -1257,5 +1257,29 @@ class FormOther
         }
     }
 
+    /**
+      *  Return HTML combo list of month and day selector
+      *  TODO using the select_date with fixed year would be nice
+      *
+      *  @param  int         $year              Year
+      *  @param  int         $month             Preselected month
+      *  @param  int         $day               Preselected day
+      *  @param  string      $htmlname          Name of HTML select object
+      *  @return string
+      */
+    function select_monthday($year, $month, $day, $htmlname='') {
+        if (empty($day)) $day = 1;
+        $last_date = dol_print_date(dol_get_last_day($year, $month, true), '%e', true);
+        $day = min($day, $last_date);
+
+        $out = $this->select_month($month, $htmlname.'month', 0, 1);
+        $out.= '<select class="flat" id="'.$htmlname.'day" name="'.$htmlname.'day">';
+        for ($d = 1 ; $d <= 31; $d++)
+        {
+            $out.= '<option value="'.$d.'"'.($d == $day ? ' selected':'').'>'.$d.'</option>';
+        }
+        $out.= '</select>';
+        return $out;
+    }
 }
 
