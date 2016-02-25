@@ -971,7 +971,15 @@ if (empty($reshook))
 
 					if ($id > 0)
 					{
-						// If deposit invoice
+						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+
+						$classname = ucfirst($subelement);
+						$srcobject = new $classname($db);
+
+						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines or deposit lines");
+						$result = $srcobject->fetch($object->origin_id);
+						
+					    // If deposit invoice
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 						{
 							$typeamount = GETPOST('typedeposit', 'alpha');
@@ -985,13 +993,6 @@ if (empty($reshook))
 							{
 								$amountdeposit = 0;
 
-								dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-
-								$classname = ucfirst($subelement);
-								$srcobject = new $classname($db);
-
-								dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add deposit lines");
-								$result = $srcobject->fetch($object->origin_id);
 								if ($result > 0)
 								{
 									$totalamount = 0;
@@ -1041,14 +1042,6 @@ if (empty($reshook))
 						}
 						else
 						{
-
-							dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-
-							$classname = ucfirst($subelement);
-							$srcobject = new $classname($db);
-
-							dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
-							$result = $srcobject->fetch($object->origin_id);
 							if ($result > 0)
 							{
 								$lines = $srcobject->lines;
@@ -1153,12 +1146,38 @@ if (empty($reshook))
 								$error ++;
 							}
 						}
+						
+						// Now we create same links to contact than the ones found on origin object
+						if (empty($conf->global->INVOICE_NO_PROPAGATE_CONTACTS_FROM_ORIGIN))
+						{
+    						$originforcontact = $object->origin;
+    						$originidforcontact = $object->origin_id;
+    						if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+    						{
+    						    $originforcontact=$srcobject->origin;
+    						    $originidforcontact=$srcobject->origin_id;
+    						}
+    						$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+    						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+    
+    						$resqlcontact = $db->query($sqlcontact);
+    						if ($resqlcontact)
+    						{
+                                while($objcontact = $db->fetch_object($resqlcontact))
+                                {
+                                    //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";                                
+                                    $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
+                                }
+    						}
+    						else dol_print_error($resqlcontact);					
+						}						
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
-				} 			// If some invoice's lines already known
-				else {
+				} 			
+				else 
+				{   // If some invoice's lines coming from page
 					$id = $object->create($user);
 
 					for($i = 1; $i <= $NBLINES; $i ++) {
