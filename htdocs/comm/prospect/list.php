@@ -438,10 +438,10 @@ if ($resql)
     // Prospect status
     print '<td class="liste_titre" align="center">';
     $arraystcomm=array();
-	foreach($prospectstatic->cacheprospectstatus as $key => $val)
-	{
-		$arraystcomm[$val['id']]=$val['label'];
-	}
+    foreach($prospectstatic->cacheprospectstatus as $key => $val)
+    {
+        $arraystcomm[$val['id']]=($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
+    }    
     print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
     print '</td>';
 
