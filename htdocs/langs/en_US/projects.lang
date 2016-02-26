@@ -192,3 +192,4 @@ OppStatusNEGO=Negociation
 OppStatusPENDING=Pending
 OppStatusWIN=Won
 OppStatusLOST=Lost
+Budget=Budget
