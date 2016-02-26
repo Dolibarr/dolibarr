@@ -813,7 +813,7 @@ a.tmenudisabled:link, a.tmenudisabled:visited, a.tmenudisabled:hover, a.tmenudis
 
 a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
     font-weight: normal;
-	padding: 0px 5px 0px 5px;
+	padding: 0px 5px 0px 3px;
 	white-space: nowrap;
 	/*	text-shadow: 1px 1px 1px #000000; */
 	color: #<?php echo $colortextbackhmenu; ?>;
@@ -4043,7 +4043,7 @@ border-top-right-radius: 6px;
 
 }
 
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 10; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 10; ?>px)
 {
 	.mainmenuaspan {
     	display: none;
