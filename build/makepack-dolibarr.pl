@@ -148,9 +148,9 @@ $FILENAMEEXEDOLIWAMP = "DoliWamp-$MAJOR.$MINOR.$BUILD";
 $ARCH='noarch';
 $newbuild = $BUILD;
 $newbuild =~ s/(dev|alpha)/0.1.a/gi;			# dev (fedora)
-$newbuild =~ s/beta/0.2.beta1/gi;				# beta (fedora)
-$newbuild =~ s/rc./0.3.rc1/gi;					# rc (fedora)
-if ($newbuild !~ /-/) { $newbuild.='-0.3'; }	# finale (fedora)
+$newbuild =~ s/beta(.?)/0.2.beta/gi;			# beta (fedora)    (we want beta1, beta2, betax to be same package name)
+$newbuild =~ s/rc(.?)/0.3.rc/gi;				# rc (fedora)      (we want rc1, rc2, rcx to be same package name)
+if ($newbuild !~ /-/) { $newbuild.='-0.4'; }	# finale (fedora)
 #$newbuild =~ s/(dev|alpha)/0/gi;				# dev
 #$newbuild =~ s/beta/1/gi;						# beta
 #$newbuild =~ s/rc./2/gi;						# rc
@@ -162,10 +162,10 @@ $FILENAMERPM=$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm";
 # For Deb
 $newbuild = $BUILD;
 $newbuild =~ s/(dev|alpha)/1/gi;                # dev
-$newbuild =~ s/beta/2/gi;                       # beta
-$newbuild =~ s/rc./3/gi;                        # rc
-if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale is same than rc. 
-# now newbuild is 0-1 or 0-3 for example. Note that for native package (see debian/source/format), we should not use a dash part but to get a better version management
+$newbuild =~ s/beta(.?)/2/gi;                   # beta    			(we want beta1, beta2, betax to be same package name)
+$newbuild =~ s/rc(.?)/3/gi;                     # rc				(we want rc1, rc2, rcx to be same package name)
+if ($newbuild !~ /-/) { $newbuild.='-4'; }      # finale is same than rc. 
+# now newbuild is 0-1 or 0-4 for example. Note that for native package (see debian/source/format), we should not use a dash part but to get a better version management
 $build = $newbuild;
 $build =~ s/-.*$//g;
 # now build is 0 for example
