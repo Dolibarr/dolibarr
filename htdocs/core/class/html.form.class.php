@@ -1835,14 +1835,15 @@ class Form
     /**
      * constructProductListOption
      *
-     * @param 	resultset	$objp			Resultset of fetch
-     * @param 	string		$opt			Option
-     * @param 	string		$optJson		Option
-     * @param 	int			$price_level	Price level
-     * @param 	string		$selected		Preselected value
+     * @param 	resultset	$objp			    Resultset of fetch
+     * @param 	string		$opt			    Option (var used for returned value in string option format)
+     * @param 	string		$optJson		    Option (var used for returned value in json format)
+     * @param 	int			$price_level	    Price level
+     * @param 	string		$selected		    Preselected value
+     * @param   int         $hidepriceinlabel   Hide price in label
      * @return	void
      */
-	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected)
+	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel=0)
 	{
 		global $langs,$conf,$user,$db;
 
@@ -1891,7 +1892,7 @@ class Form
         $found=0;
 
         // Multiprice
-        if ($price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
+        if (empty($hidepriceinlabel) && $price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
         {
             $sql = "SELECT price, price_ttc, price_base_type, tva_tx";
             $sql.= " FROM ".MAIN_DB_PREFIX."product_price";
@@ -1932,7 +1933,7 @@ class Form
         }
 
 		// Price by quantity
-		if (!empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
@@ -1957,20 +1958,22 @@ class Form
             $outpricebasetype=$objp->price_base_type;
             $outtva_tx=$objp->tva_tx;
 		}
-		if (!empty($objp->quantity) && $objp->quantity >= 1)
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1)
 		{
 			$opt.=" (".price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
 			$outval.=" (".price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
 		}
-		if (!empty($objp->remise_percent) && $objp->remise_percent >= 1)
+		if (empty($hidepriceinlabel) && !empty($objp->remise_percent) && $objp->remise_percent >= 1)
 		{
 			$opt.=" - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
 			$outval.=" - ".$langs->transnoentities("Discount")." : ".vatrate($objp->remise_percent).' %';
 		}
 
-		//Price by customer
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-			if (!empty($objp->idprodcustprice)) {
+		// Price by customer
+		if (empty($hidepriceinlabel) && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) 
+		{
+			if (!empty($objp->idprodcustprice)) 
+			{
 				$found = 1;
 
 				if ($objp->custprice_base_type == 'HT')
@@ -1992,7 +1995,7 @@ class Form
 		}
 
         // If level no defined or multiprice not found, we used the default price
-        if (! $found)
+        if (empty($hidepriceinlabel) && ! $found)
         {
             if ($objp->price_base_type == 'HT')
             {
