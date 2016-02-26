@@ -696,11 +696,11 @@ class FormCompany
      *  @param  string		$selected       Default selected value
      *  @param  string		$htmlname		HTML select name
      *  @param  string		$source			Source ('internal' or 'external')
-     *  @param  string		$sortorder		Sort criteria
+     *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
      *  @param  int			$showempty      1=Add en empty line
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='code', $showempty=0)
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='position', $showempty=0)
 	{
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{

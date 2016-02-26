@@ -874,18 +874,19 @@ abstract class CommonObject
      *      Return array with list of possible values for type of contacts
      *
      *      @param	string	$source     'internal', 'external' or 'all'
-     *      @param	string	$order		Sort order by : 'code' or 'rowid'
+     *      @param	string	$order		Sort order by : 'position', 'code', 'rowid'...
      *      @param  int		$option     0=Return array id->label, 1=Return array code->label
      *      @param  int		$activeonly 0=all status of contact, 1=only the active
      *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
-    function liste_type_contact($source='internal', $order='', $option=0, $activeonly=0, $code='')
+    function liste_type_contact($source='internal', $order='position', $option=0, $activeonly=0, $code='')
     {
         global $langs;
 
-        if (empty($order)) $order='code';
-
+        if (empty($order)) $order='position';
+        if ($order == 'position') $order.=',code';
+        
         $tab = array();
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -893,7 +894,7 @@ abstract class CommonObject
         if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active types
         if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
         if (! empty($code)) $sql.= " AND tc.code='".$code."'";
-        $sql.= " ORDER by tc.".$order;
+        $sql.= $this->db->order($order,'ASC');
 
         //print "sql=".$sql;
         $resql=$this->db->query($sql);
