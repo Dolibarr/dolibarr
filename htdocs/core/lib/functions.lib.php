@@ -3410,10 +3410,13 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 
 
 /**
- * Output a dimension with best unit 
- * @param float     $dimension      Dimension
- * @param int       $unit           Unit of dimension (0, -3, ...)
- * @param string    $type           'weight', 'volume', ...
+ * Output a dimension with best unit
+ *  
+ * @param   float       $dimension      Dimension
+ * @param   int         $unit           Unit of dimension (0, -3, ...)
+ * @param   string      $type           'weight', 'volume', ...
+ * @param   Translate   $outputlangs    Translate language object
+ * @return  string                      String to show dimensions
  */
 function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs)
 {
