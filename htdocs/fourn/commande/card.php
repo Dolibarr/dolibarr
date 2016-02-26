@@ -1012,33 +1012,34 @@ if (empty($reshook))
 									$array_option = $lines[$i]->array_options;
 								}
 
-								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								$res = $productsupplier->fetch($idprod);
-                                $soc=new societe($db);
-                                $soc->fetch($socid);
-                                $tva_tx=($origin=="commande")?get_default_tva($soc,$mysoc,$lines[$i]->fk_product,$idprod):$lines[$i]->tva_tx;
-								$result = $object->addline(
-									$desc,
-									$lines[$i]->subprice,
-									$lines[$i]->qty,
-									$tva_tx,
-									$lines[$i]->localtax1_tx,
-									$lines[$i]->localtax2_tx,
-									$lines[$i]->fk_product,
-									$productsupplier->product_fourn_price_id,
-									$productsupplier->ref_fourn,
-									$lines[$i]->remise_percent,
-									'HT',
-									0,
-									$lines[$i]->product_type,
-									'',
-									'',
-									null,
-									null,
-									array(),
-									$lines[$i]->fk_unit
-								);
-
+								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								if ($result>0) {
+									$productsupplier->fetch($productsupplier->id);
+					                                $soc=new societe($db);
+					                                $soc->fetch($socid);
+					                                $tva_tx=($origin=="commande")?get_default_tva($soc,$mysoc,$lines[$i]->fk_product,$idprod):$lines[$i]->tva_tx;
+									$result = $object->addline(
+										$desc,
+										$lines[$i]->subprice,
+										$lines[$i]->qty,
+										$tva_tx,
+										$lines[$i]->localtax1_tx,
+										$lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product,
+										$productsupplier->product_fourn_price_id,
+										$productsupplier->ref_fourn,
+										$lines[$i]->remise_percent,
+										'HT',
+										0,
+										$lines[$i]->product_type,
+										'',
+										'',
+										null,
+										null,
+										array(),
+										$lines[$i]->fk_unit
+									);
+								}
 								if ($result < 0) {
 									$error++;
 									break;
