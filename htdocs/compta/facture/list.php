@@ -941,7 +941,7 @@ if ($resql)
             $facturestatic->type=$objp->type;
             $facturestatic->statut=$objp->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($objp->datelimite);
-            $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
+            $notetoshow=dol_string_nohtmltag($objp->note_private,1);
             $paiement = $facturestatic->getSommePaiement();
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
