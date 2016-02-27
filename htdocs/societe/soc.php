@@ -1479,7 +1479,7 @@ else
 			}
 			
             // Name
-            print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td width="25%">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)

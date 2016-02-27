@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/bookkeeping/list.php
- * \ingroup Accounting Expert
- * \brief List operation of book keeping
+ * \file 		htdocs/accountancy/bookkeeping/list.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		List operation of book keeping
  */
 require '../../main.inc.php';
 
@@ -260,8 +260,8 @@ if ($action == 'delbookkeeping') {
 			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
 			print $date . $sep;
 			print $line->doc_ref . $sep;
-			print length_accounta($line->numero_compte) . $sep;
-			print length_accountg($line->code_tiers) . $sep;
+			print length_accountg($line->numero_compte) . $sep;
+			print length_accounta($line->code_tiers) . $sep;
 			print price($line->debit) . $sep;
 			print price($line->credit) . $sep;
 			
@@ -277,7 +277,7 @@ if ($action == 'delbookkeeping') {
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $sep;
 			print $line->code_journal . $sep;
-			print length_accounta($line->numero_compte) . $sep;
+			print length_accountg($line->numero_compte) . $sep;
 			print $line->piece_num . $sep;
 			print $line->doc_ref . $sep;
 			print price($line->debit) . $sep;
@@ -289,6 +289,9 @@ if ($action == 'delbookkeeping') {
 	}
 } 
 
+/*
+ * View
+ */
 else {
 	
 	$title_page = $langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
@@ -352,8 +355,8 @@ else {
 	
 	print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<div class="tabsAction">' . "\n";
-	print '<div class="inline-block divButAction"><input type="submit"  name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
-	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
+	print '<div class="inline-block divButAction"><input type="submit" name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
+	print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 	// print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=export_csv">' . $langs->trans("Export") . '</a>';
 	print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';
 	
@@ -396,12 +399,12 @@ else {
 	
 	print '<tr class="liste_titre">';
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="GET">';
-	print '<td><input type="text" name="search_mvt_num" size="8" value="' . $search_mvt_num . '"></td>';
+	print '<td><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
 	print '<td class="liste_titre">';
 	print $langs->trans('From') . ': ';
 	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 	print '<br>';
-	print $langs->trans('To') . ': ';
+	print $langs->trans('to') . ': ';
 	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 	// print $form->select_date($search_doc_date, 'doc_date', 0, 0, 1);
 	print '</td>';
@@ -412,7 +415,7 @@ else {
 	print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
 	// print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
 	print '<br>';
-	print $langs->trans('To');
+	print $langs->trans('to');
 	print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
 	print '</td>';
 	// print '<td><input type="text" name="search_accountancy_code" size="8" value="' . $search_accountancy_code . '"></td>';
@@ -422,7 +425,7 @@ else {
 	print $formventilation->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 	// print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 	print '<br>';
-	print $langs->trans('To');
+	print $langs->trans('to');
 	print $formventilation->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 	print '</td>';
 	// print '<td><input type="text" name="search_accountancy_aux_code" size="8" value="' . $search_accountancy_aux_code . '"></td>';
@@ -468,7 +471,7 @@ else {
 		// print '<td align="center">' . $line->sens . '</td>';
 		print '<td align="right">' . $line->code_journal . '</td>';
 		print '<td align="center">';
-		print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>';
+		print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $options . '&page=' . $page . '">' . img_delete() . '</a>';
 		print '</td>';
 		print "</tr>\n";
