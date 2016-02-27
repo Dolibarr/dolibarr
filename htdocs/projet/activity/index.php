@@ -375,7 +375,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS))
+if (empty($conf->global->PROJECT_HIDE_TASKS) && empty($conf->global->PROJECT_HIDE_LIST_HOME_AREA))
 {
     // Get id of types of contacts for projects (This list never contains a lot of elements)
     $listofprojectcontacttype=array();
