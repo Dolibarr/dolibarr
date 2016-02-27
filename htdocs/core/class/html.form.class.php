@@ -4201,6 +4201,7 @@ class Form
         	{
         		$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
         		$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
+        		if (empty($defaulttx)) $defaultnpr=0;
         	}
 
         	// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.

@@ -307,3 +307,4 @@ ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_tva double(2
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
 ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
+

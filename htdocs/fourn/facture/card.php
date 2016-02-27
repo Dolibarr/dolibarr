@@ -726,17 +726,17 @@ if (empty($reshook))
 	            $desc = $productsupplier->description;
 	            if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
-	            $tvatx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
-	            $npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
-
-	            $localtax1_tx= get_localtax($tvatx, 1, $mysoc,$object->thirdparty);
-	            $localtax2_tx= get_localtax($tvatx, 2, $mysoc,$object->thirdparty);
+	            $tva_tx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
+	            $tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
+				if (empty($tva_tx)) $tva_npr=0;
+	            $localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
+	            $localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
 	            $type = $productsupplier->type;
 	            $price_base_type = 'HT';
 
 	            // TODO Save the product supplier ref into database into field ref_supplier (must rename field ref into ref_supplier first)
-	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tvatx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
+	            $result=$object->addline($desc, $productsupplier->fourn_pu, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, $idprod, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $productsupplier->fk_unit);
 	        }
 	    	if ($idprod == -2 || $idprod == 0)
 	        {
@@ -783,7 +783,7 @@ if (empty($reshook))
 	            $price_base_type = 'HT';
 	        }
 
-			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
+			$result=$object->addline($product_desc, $ht, $tva_tx, $localtax1_tx, $localtax2_tx, $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit);
 	    }
 
 	    //print "xx".$tva_tx; exit;
