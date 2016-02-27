@@ -887,7 +887,7 @@ if (! $action || $action == 'delete' || $action == 'showlog_customer_price' || $
 {
 	print "\n" . '<div class="tabsAction">' . "\n";
 
-	if (empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+	if (empty($conf->global->PRODUIT_MULTIPRICES))
 	{
     	if ($user->rights->produit->creer || $user->rights->service->creer) {
     		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=edit_price&amp;id=' . $object->id . '">' . $langs->trans("UpdateDefaultPrice") . '</a></div>';
@@ -1606,7 +1606,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			print $langs->trans('None');
 		}
 	}
-	else if ($action != 'showlog_default_price')
+	else if ($action != 'showlog_default_price' && $action != 'edit_price')
 	{
 		// List of all prices by customers
 
@@ -1738,14 +1738,14 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				print "</tr>\n";
 			}
 		}
-		else
+		/*else
 		{
 			$colspan=9;
 			if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan+=1;
 			print "<tr ".$bc[false].">";
 			print '<td colspan="'.$colspan.'">'.$langs->trans('None').'</td>';
 			print "</tr>";
-		}
+		}*/
 
 		print "</table>";
 
