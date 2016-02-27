@@ -190,7 +190,6 @@ class ProductFournisseur extends Product
         if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
 		{
-			//$ttx = get_default_tva($fourn,$mysoc,$this->id);	// We must use the VAT rate defined by user and not calculate it
 			$ttx = $tva_tx;
 			$buyprice = $buyprice/(1+($ttx/100));
 		}

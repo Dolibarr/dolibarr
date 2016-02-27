@@ -1382,8 +1382,11 @@ class Commande extends CommonOrder
             $prod->fetch($idproduct);
 
             $tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
-            $localtax1_tx=get_localtax($tva_tx,1,$this->client);
-            $localtax2_tx=get_localtax($tva_tx,2,$this->client);
+            $tva_npr = get_default_npr($mysoc,$this->client,$prod->id);
+            if (empty($tva_tx)) $tva_npr=0;
+            $localtax1_tx=get_localtax($tva_tx,1,$this->client,$mysoc,$tva_npr);
+            $localtax2_tx=get_localtax($tva_tx,2,$this->client,$mysoc,$tva_npr);
+            
             // multiprix
             if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
             $price = $prod->multiprices[$this->client->price_level];

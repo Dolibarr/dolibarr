@@ -458,6 +458,8 @@ if (empty($reshook))
 	
 	            $tva_tx = get_default_tva($mysoc,$object->thirdparty,$prod->id);
 	            $tva_npr = get_default_npr($mysoc,$object->thirdparty,$prod->id);
+	            if (empty($tva_tx)) $tva_npr=0;
+	            
 	            $pu_ht = $prod->price;
 	            $pu_ttc = $prod->price_ttc;
 	            $price_min = $prod->price_min;
@@ -518,8 +520,8 @@ if (empty($reshook))
 				$fk_unit= GETPOST('units', 'alpha');
 	        }
 	
-	        $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty);
-	        $localtax2_tx=get_localtax($tva_tx,2,$object->thirdparty);
+	        $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty,$mysoc,$tva_npr);
+	        $localtax2_tx=get_localtax($tva_tx,2,$object->thirdparty,$mysoc,$tva_npr);
 	
 			// ajout prix achat
 			$fk_fournprice = $_POST['fournprice'];

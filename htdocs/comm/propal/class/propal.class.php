@@ -239,9 +239,10 @@ class Propal extends CommonObject
             $productdesc = $prod->description;
 
             $tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
-            // local taxes
-            $localtax1_tx = get_default_localtax($mysoc,$this->client,1,$prod->tva_tx);
-            $localtax2_tx = get_default_localtax($mysoc,$this->client,2,$prod->tva_tx);
+            $tva_npr = get_default_npr($mysoc,$this->client,$prod->id);
+            if (empty($tva_tx)) $tva_npr=0;
+            $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->client,$tva_npr);
+            $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->client,$tva_npr);
 
             // multiprix
             if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
@@ -262,7 +263,8 @@ class Propal extends CommonObject
             $line->remise_percent=$remise_percent;
             $line->tva_tx=$tva_tx;
 	        $line->fk_unit=$prod->fk_unit;
-
+			if ($tva_npr) $line->info_bits = 1;
+			
             $this->lines[]=$line;
         }
     }

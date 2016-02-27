@@ -340,12 +340,13 @@ if (empty($reshook))
 	    		$desc = $productsupplier->description;
 	    		if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
-	    		$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 	    		$type = $productsupplier->type;
-
-	    		// Local Taxes
-	    		$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
-	    		$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
+	    		
+	    		$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+	    		$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+				if (empty($tva_tx)) $tva_npr=0;
+	    		$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
+	    		$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
 	    		$result=$object->addline(
 	    			$desc,
@@ -361,7 +362,7 @@ if (empty($reshook))
 	    			'HT',
 	    			$pu_ttc,
 	    			$type,
-	    			'',
+	    			$tva_npr,
 	    			'',
 	    			$date_start,
 	    			$date_end,

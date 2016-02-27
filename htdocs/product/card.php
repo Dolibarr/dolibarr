@@ -568,8 +568,10 @@ if (empty($reshook))
             $desc = $object->description;
 
             $tva_tx = get_default_tva($mysoc, $soc, $object->id);
-            $localtax1_tx = get_localtax($tva_tx, 1, $soc);
-            $localtax2_tx = get_localtax($tva_tx, 2, $soc);
+            $tva_npr = get_default_npr($mysoc, $soc, $object->id);
+            if (empty($tva_tx)) $tva_npr=0;
+            $localtax1_tx = get_localtax($tva_tx, 1, $soc, $mysoc, $tva_npr);
+            $localtax2_tx = get_localtax($tva_tx, 2, $soc, $mysoc, $tva_npr);
 
             $pu_ht = $object->price;
             $pu_ttc = $object->price_ttc;

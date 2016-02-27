@@ -484,8 +484,10 @@ class Facture extends CommonInvoice
 						$res=$prod->fetch($_facrec->lines[$i]->fk_product);
 					}
 					$tva_tx = get_default_tva($mysoc,$soc,$prod->id);
-					$localtax1_tx=get_localtax($tva_tx,1,$soc);
-					$localtax2_tx=get_localtax($tva_tx,2,$soc);
+					$tva_npr = get_default_npr($mysoc,$soc,$prod->id);
+					if (empty($tva_tx)) $tva_npr=0;
+					$localtax1_tx=get_localtax($tva_tx,1,$soc,$mysoc,$tva_npr);
+					$localtax2_tx=get_localtax($tva_tx,2,$soc,$mysoc,$tva_npr);
 
 					$result_insert = $this->addline(
 						$_facrec->lines[$i]->desc,
@@ -496,7 +498,7 @@ class Facture extends CommonInvoice
 						$localtax2_tx,
 						$_facrec->lines[$i]->fk_product,
 						$_facrec->lines[$i]->remise_percent,
-						'','',0,0,'','HT',0,
+						'','',0,$tva_npr,'','HT',0,
 						$_facrec->lines[$i]->product_type,
 						$_facrec->lines[$i]->rang,
 						$_facrec->lines[$i]->special_code,
