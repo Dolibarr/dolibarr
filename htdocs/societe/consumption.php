@@ -124,7 +124,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
 
 // Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td class="titlefield"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<tr id="name_alias"><td class="titlefield" width="25%"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 print '<td colspan="3">'.$object->name_alias.'</td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field

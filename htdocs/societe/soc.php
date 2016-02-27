@@ -1479,7 +1479,7 @@ else
 			}
 			
             // Name
-            print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td width="25%">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
@@ -1905,7 +1905,7 @@ else
         print '<table class="border tableforfield" width="100%">';
 
 	    // Alias names (commercial, trademark or alias names)
-	    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
+	    print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNames').'</td><td>';
 	    print $object->name_alias;
 	    print "</td></tr>";
 
@@ -2148,7 +2148,7 @@ else
         print '<table class="border tableforfield" width="100%">';
         
         // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
