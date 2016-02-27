@@ -168,7 +168,9 @@ if (empty($user->societe_id))
 	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
 		! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
 		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
-		! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire);
+	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
+	    ! empty($conf->projet->enabled) && $user->rights->projet->lire
+	    );
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(
 	        DOL_DOCUMENT_ROOT."/user/class/user.class.php",
@@ -184,7 +186,9 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
-    		DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php");
+	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
+            DOL_DOCUMENT_ROOT."/projet/class/project.class.php" 
+	    );
 	    // Name class containing the method load_state_board for each line
 	    $classes=array('User',
 	                   'Client',
@@ -199,7 +203,9 @@ if (empty($user->societe_id))
 	                   'Contrat',
 	                   'CommandeFournisseur',
 	                   'FactureFournisseur',
-					   'ExpenseReport');
+					   'ExpenseReport',
+	                   'Project'
+	    );
 	    // Cle array returned by the method load_state_board for each line
 	    $keys=array('users',
 	                'customers',
@@ -214,7 +220,9 @@ if (empty($user->societe_id))
 	                'Contracts',
 	                'supplier_orders',
 	                'supplier_invoices',
-					'expensereports');
+					'expensereports',
+	                'projects'
+	    );
 	    // Dashboard Icon lines
 	    $icons=array('user',
 	                 'company',
@@ -229,7 +237,9 @@ if (empty($user->societe_id))
 	                 'order',
 	                 'order',
 	                 'bill',
-					 'trip');
+					 'trip',
+	                 'project'
+	    );
 	    // Translation keyword
 	    $titres=array("Users",
 	                  "ThirdPartyCustomersStats",
@@ -244,7 +254,9 @@ if (empty($user->societe_id))
 	                  "Contracts",
 	                  "SuppliersOrders",
 	                  "SuppliersInvoices",
-					  "ExpenseReports");
+					  "ExpenseReports",
+	                  "Projects"
+	    );
 	    // Dashboard Link lines
 	    $links=array(
 	        DOL_URL_ROOT.'/user/index.php',
@@ -260,7 +272,9 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/contrat/list.php',
     	    DOL_URL_ROOT.'/fourn/commande/list.php',
     	    DOL_URL_ROOT.'/fourn/facture/list.php',
-    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm');
+    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm',
+	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project'
+	    );
 	    // Translation lang files
 	    $langfile=array("users",
 	                    "companies",
@@ -273,7 +287,9 @@ if (empty($user->societe_id))
 	                    "orders",
 	                    "bills",
 						"contracts",
-						"trips");
+						"trips",
+	                    "projects"
+	    );
 
 
 	    // Loop and displays each line of table

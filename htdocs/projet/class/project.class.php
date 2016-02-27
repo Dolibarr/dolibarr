@@ -1664,6 +1664,44 @@ class Project extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 	
+	
+	/**
+	 *      Charge indicateurs this->nb pour le tableau de bord
+	 *
+	 *      @return     int         <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+	    global $conf;
+	
+	    $this->nb=array();
+	
+	    $sql = "SELECT count(u.rowid) as nb";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as u";
+	    $sql.= " WHERE";
+	    //$sql.= " WHERE u.fk_statut > 0";
+	    //$sql.= " AND employee != 0";
+	    $sql.= " u.entity IN (".getEntity('projet', 1).")";
+	
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        while ($obj=$this->db->fetch_object($resql))
+	        {
+	            $this->nb["projects"]=$obj->nb;
+	        }
+	        $this->db->free($resql);
+	        return 1;
+	    }
+	    else
+	    {
+	        dol_print_error($this->db);
+	        $this->error=$this->db->error();
+	        return -1;
+	    }
+	}
+	
+	
 	/**
 	 * Is the action delayed?
 	 *
