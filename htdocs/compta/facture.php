@@ -1356,6 +1356,8 @@ if (empty($reshook))
 				// Update if prices fields are defined
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+					if (empty($tva_tx)) $tva_npr=0;
+					
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -1372,6 +1374,7 @@ if (empty($reshook))
 						{
                             if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
                             if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
@@ -1455,6 +1458,7 @@ if (empty($reshook))
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
+				if (empty($tva_tx)) $tva_npr=0;
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 				$desc = $product_desc;
 				$type = GETPOST('type');
@@ -1466,8 +1470,8 @@ if (empty($reshook))
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc);
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 			
 			$info_bits = 0;
 			if ($tva_npr)
