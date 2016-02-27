@@ -1905,7 +1905,7 @@ else
         print '<table class="border tableforfield" width="100%">';
 
 	    // Alias names (commercial, trademark or alias names)
-	    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
+	    print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNames').'</td><td>';
 	    print $object->name_alias;
 	    print "</td></tr>";
 
@@ -2148,7 +2148,7 @@ else
         print '<table class="border tableforfield" width="100%">';
         
         // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
