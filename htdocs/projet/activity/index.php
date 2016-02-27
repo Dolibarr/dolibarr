@@ -201,64 +201,67 @@ if ($db->type != 'pgsql')
 }
 
 
-// TODO Do not use week function to be compatible with all database
+/*
 if ($db->type != 'pgsql')
 {
+    print '<br>';
+    
+    // Affichage de la liste des projets de la semaine
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
+    print '<td align="right">'.$langs->trans("Time").'</td>';
+    print "</tr>\n";
+    
+    $sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
+    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+    $sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
+    $sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
+    $sql.= " WHERE t.fk_projet = p.rowid";
+    $sql.= " AND p.entity = ".$conf->entity;
+    $sql.= " AND tt.fk_task = t.rowid";
+    $sql.= " AND tt.fk_user = ".$user->id;
+    $sql.= " AND task_date >= '".dol_get_first_day($year, $month).'" AND ...";
+    $sql.= " AND p.rowid in (".$projectsListId.")";
+    $sql.= " GROUP BY p.rowid, p.ref, p.title";
+    
+    $resql = $db->query($sql);
+    if ( $resql )
+    {
+    	$total = 0;
+    	$var=true;
+    
+    	while ($row = $db->fetch_object($resql))
+    	{
+    		$var=!$var;
+    		print "<tr ".$bc[$var].">";
+    		print '<td>';
+    		$projectstatic->id=$row->rowid;
+    		$projectstatic->ref=$row->ref;
+    		$projectstatic->title=$row->title;
+    		print $projectstatic->getNomUrl(1, '', 1);
+    		print '</td>';
+    		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
+    		print "</tr>\n";
+    		$total += $row->nb;
+    	}
+    
+    	$db->free($resql);
+    }
+    else
+    {
+    	dol_print_error($db);
+    }
+    print '<tr class="liste_total">';
+    print '<td>'.$langs->trans('Total').'</td>';
+    print '<td align="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
+    print "</tr>\n";
+    print "</table><br>";
+
+}
+*/
+
 print '<br>';
-
-/* Affichage de la liste des projets de la semaine */
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("ActivityOnProjectThisWeek").'</td>';
-print '<td align="right">'.$langs->trans("Time").'</td>';
-print "</tr>\n";
-
-$sql = "SELECT p.rowid, p.ref, p.title, SUM(tt.task_duration) as nb";
-$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-$sql.= " , ".MAIN_DB_PREFIX."projet_task as t";
-$sql.= " , ".MAIN_DB_PREFIX."projet_task_time as tt";
-$sql.= " WHERE t.fk_projet = p.rowid";
-$sql.= " AND p.entity = ".$conf->entity;
-$sql.= " AND tt.fk_task = t.rowid";
-$sql.= " AND tt.fk_user = ".$user->id;
-$sql.= " AND week(task_date) = '".strftime("%W",time())."'";
-$sql.= " AND p.rowid in (".$projectsListId.")";
-$sql.= " GROUP BY p.rowid, p.ref, p.title";
-
-$resql = $db->query($sql);
-if ( $resql )
-{
-	$total = 0;
-	$var=true;
-
-	while ($row = $db->fetch_object($resql))
-	{
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
-		print '<td>';
-		$projectstatic->id=$row->rowid;
-		$projectstatic->ref=$row->ref;
-		$projectstatic->title=$row->title;
-		print $projectstatic->getNomUrl(1, '', 1);
-		print '</td>';
-		print '<td align="right">'.convertSecondToTime($row->nb, 'allhourmin').'</td>';
-		print "</tr>\n";
-		$total += $row->nb;
-	}
-
-	$db->free($resql);
-}
-else
-{
-	dol_print_error($db);
-}
-print '<tr class="liste_total">';
-print '<td>'.$langs->trans('Total').'</td>';
-print '<td align="right">'.convertSecondToTime($total, 'allhourmin').'</td>';
-print "</tr>\n";
-print "</table><br>";
-
-}
 
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
@@ -275,7 +278,7 @@ $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity = ".$conf->entity;
 $sql.= " AND tt.fk_task = t.rowid";
 $sql.= " AND tt.fk_user = ".$user->id;
-$sql.= " AND date_format(task_date,'%y-%m') = '".strftime("%y-%m",$now)."'";
+$sql.= " AND task_date BETWEEN '".dol_get_first_day($year, $month).'" AND "'.dol_get_last_day($year, $month)."'";
 $sql.= " AND p.rowid in (".$projectsListId.")";
 $sql.= " GROUP BY p.rowid, p.ref, p.title";
 
