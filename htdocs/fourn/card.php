@@ -139,7 +139,7 @@ if ($object->id > 0)
 	print '<table width="100%" class="border">';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield">'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
+	print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 

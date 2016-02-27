@@ -4,9 +4,9 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,9 +24,9 @@
  */
 
 /**
- * \file htdocs/accountancy/journal/sellsjournal.php
- * \ingroup Accounting Expert
- * \brief Page with sells journal
+ * \file 		htdocs/accountancy/journal/sellsjournal.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Page with sells journal
  */
 require '../../main.inc.php';
 
@@ -40,10 +40,10 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 // Langs
+$langs->load("commercial");
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
-$langs->load("main");
 $langs->load("accountancy");
 
 $date_startmonth = GETPOST('date_startmonth');
