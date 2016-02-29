@@ -131,6 +131,22 @@ class modFicheinter extends DolibarrModules
         $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
         $this->rights[$r][5] = 'send';
 
+        $r++;
+        $this->rights[$r][0] = 69;
+        $this->rights[$r][1] = 'Valider les fiches d\'intervention ';
+        $this->rights[$r][2] = 'a';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][5] = 'validate';
+
+        $r++;
+        $this->rights[$r][0] = 70;
+        $this->rights[$r][1] = 'Dévalider les fiches d\'intervention';
+        $this->rights[$r][2] = 'a';
+        $this->rights[$r][3] = 0;
+        $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+        $this->rights[$r][5] = 'unvalidate';
+
         //Exports
         //--------
         $r=1;
