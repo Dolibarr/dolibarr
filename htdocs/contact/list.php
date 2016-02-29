@@ -610,23 +610,23 @@ if ($result)
         if (! empty($arrayfields['p.lastname']['checked']))
         {
             print '<td valign="middle">';
-		  print $contactstatic->getNomUrl(1,'',20);
+		  print $contactstatic->getNomUrl(1,'',0);
 		  print '</td>';
         }
 		// Firstname
         if (! empty($arrayfields['p.firstname']['checked']))
         {
-            print '<td>'.dol_trunc($obj->firstname,20).'</td>';
+            print '<td>'.$obj->firstname.'</td>';
         }
     	// Zip
         if (! empty($arrayfields['p.zip']['checked']))
         {
-            print '<td>'.dol_trunc($obj->zip,20).'</td>';
+            print '<td>'.$obj->zip.'</td>';
         }
     	// Town
         if (! empty($arrayfields['p.town']['checked']))
         {
-            print '<td>'.dol_trunc($obj->town,20).'</td>';
+            print '<td>'.$obj->town.'</td>';
         }
         // Function
         if (! empty($arrayfields['p.poste']['checked']))
