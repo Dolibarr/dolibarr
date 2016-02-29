@@ -76,6 +76,7 @@ $fieldstosearchall = array(
  * View
  */
 
+$form=new Form($db);
 $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 

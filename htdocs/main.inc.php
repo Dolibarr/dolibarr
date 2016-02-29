@@ -1445,7 +1445,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Show menu entries
     	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
-	    $menumanager->showmenu('top');      // This contains a \n
+	    $menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks));      // This contains a \n
 	    print "</div>\n";
 
 	    //$form=new Form($db);
@@ -1609,7 +1609,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 	    print "\n";
 
-	    if ($conf->use_javascript_ajax && $conf->browser->layout != 'phone')
+	    if ($conf->use_javascript_ajax && $conf->browser->layout != 'phone' && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 	    {
     	    if (! is_object($form)) $form=new Form($db);
     	    $selected=-1;
@@ -1655,7 +1655,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
     	    }
 	    }
-        
+  
 	    // Execute hook printSearchForm
 	    $parameters=array('searchform'=>$searchform);
 	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
