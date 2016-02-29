@@ -702,6 +702,8 @@ class FormCompany
      */
 	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='position', $showempty=0)
 	{
+	    global $user, $langs;
+	    
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
@@ -713,7 +715,9 @@ class FormCompany
 				if ($key == $selected) print ' selected';
 				print '>'.$value.'</option>';
 			}
-			print "</select>\n";
+			print "</select>";
+			if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
+			print "\n";
 		}
 	}
 
