@@ -980,6 +980,10 @@ else
             print '<td colspan=2>&nbsp;</td></tr>';
         }
 
+        // Alias names (commercial, trademark or alias names)
+        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+	    print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
+
         // Prospect/Customer
         print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
 	    print '<td width="25%" class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
@@ -1033,10 +1037,6 @@ else
 	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
-
-        // Alias names (commercial, trademark or alias names)
-        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	    print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
@@ -1484,7 +1484,7 @@ else
 
 	        // Alias names (commercial, trademark or alias names)
 	        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	        print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" size="32"></td></tr>';
+	        print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1903,11 +1903,6 @@ else
         
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-
-	    // Alias names (commercial, trademark or alias names)
-	    print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNames').'</td><td>';
-	    print $object->name_alias;
-	    print "</td></tr>";
 
     	// Prospect/Customer
     	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
