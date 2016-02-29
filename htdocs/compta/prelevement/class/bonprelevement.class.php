@@ -1261,6 +1261,7 @@ class BonPrelevement extends CommonObject
 			$dateTime_ECMA = dol_print_date($date_actu, '%Y-%m-%dT%H:%M:%S');
 			$fileDebiteurSection = '';
 			$fileEmetteurSection = '';
+			$ListOfFactures = '';
 			$i = 0;
 			$j = 0;
 			$this->total = 0;
@@ -1277,7 +1278,7 @@ class BonPrelevement extends CommonObject
 				while ($j < $num)
 				{
 					$objfac = $this->db->fetch_object($resql);
-					$ListOfFactures = $ListOfFactures . $objfac->fac . ",";
+					$ListOfFactures .= ($j>0?',':'') . $objfac->fac;
 					$j++;
 				}
 			}
