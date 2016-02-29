@@ -56,7 +56,7 @@ $userstatic=new User($db);
 
 <?php if ($permission) { ?>
 	<form class="tagtr liste_titre">
-		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
+		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("Contacts"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
@@ -136,7 +136,7 @@ $userstatic=new User($db);
 	} ?>
 
 	<form class="tagtr liste_titre">
-		<div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
+		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("Contacts"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
