@@ -763,7 +763,7 @@ else
          *  Creation
          */
 		$private=GETPOST("private","int");
-		if (! empty($conf->global->MAIN_THIRPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+		if (! empty($conf->global->MAIN_THIRDPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
     	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
