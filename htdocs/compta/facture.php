@@ -1846,14 +1846,7 @@ $now = dol_now();
 llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
-
-/**
- * *******************************************************************
- *
- * Mode creation
- *
- * ********************************************************************
- */
+// Mode creation
 
 if ($action == 'create')
 {
@@ -1999,7 +1992,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 1);
+		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty');
 		// Option to reload page to retrieve customer informations. Note, this clear other input
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
