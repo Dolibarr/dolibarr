@@ -77,7 +77,7 @@ class box_user_workboard extends ModeleBoxes
 
 
         $this->info_box_head = array(
-            'text' => $langs->trans("BoxTitleWorkingBoard"),
+            'text' => $langs->trans("BoxTitleDolibarrWorkingBoard"),
         );
         $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 
