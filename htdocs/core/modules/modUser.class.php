@@ -75,6 +75,9 @@ class modUser extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array();
+		$r=0;
+		$this->boxes[$r][1] = "box_user_info.php";
+		$r++;
 
 		// Permissions
 		$this->rights = array();

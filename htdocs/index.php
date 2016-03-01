@@ -105,26 +105,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 /*
- * Informations area
- */
-$boxinfo='';
-$boxinfo.= '<div class="box">';
-$boxinfo.= '<table summary="'.dol_escape_htmltag($langs->trans("LoginInformation")).'" class="noborder boxtable" width="100%">';
-$boxinfo.= '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
-$boxinfo.= '<tr '.$bc[false].'>';
-$boxinfo.= '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
-$boxinfo.= '<tr '.$bc[true].'>';
-$boxinfo.= '<td class="nowrap">'.$langs->trans("PreviousConnexion").'</td><td>';
-if ($user->datepreviouslogin) $boxinfo.= dol_print_date($user->datepreviouslogin,"dayhour",'tzuser');
-else $boxinfo.= $langs->trans("Unknown");
-$boxinfo.= '</td>';
-$boxinfo.= "</tr>\n";
-$boxinfo.= "</table>\n";
-$boxinfo.= '</div>';
-//print $boxinfo;
-
-
-/*
  * Dashboard Dolibarr states (statistics)
  * Hidden for external users
  */
@@ -550,7 +530,6 @@ $boxlist.='<tr><td class="notopnoleftnoright">'."\n";
 
 $boxlist.='<div class="fichehalfleft">';
 
-$boxlist.=$boxinfo;
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlista'];
 
