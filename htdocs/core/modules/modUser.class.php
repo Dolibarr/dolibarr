@@ -50,7 +50,7 @@ class modUser extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des utilisateurs (requis)";
-		$this->always_enabled = true;	// Can't be disabled
+		$this->always_enabled = ($conf->global->MAIN_FEATURES_LEVEL>=2)?false:true; // Can be disabled if MAIN_FEATURES_LEVEL>=2 to be able to reset module
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -77,6 +77,10 @@ class modUser extends DolibarrModules
 		$this->boxes = array();
 		$r=0;
 		$this->boxes[$r][1] = "box_user_info.php";
+		$r++;
+		$this->boxes[$r][1] = "box_user_stats.php";
+		$r++;
+		$this->boxes[$r][1] = "box_user_workboard.php";
 		$r++;
 
 		// Permissions
