@@ -397,7 +397,7 @@ if ($id > 0 || ! empty($ref))
             }
         }
 
-		if ($object->type != 2 && $object->rappro) 
+		if ($object->canBeConciliated())
 		{ 
 			// If not cash account and can be reconciliate
 			if ($user->rights->banque->consolidate) 
@@ -529,7 +529,7 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '<td align="center" width="60">';
-	if ($object->type != 2 && $object->rappro) print $langs->trans("AccountStatementShort");
+	if ($object->canBeConciliated()) print $langs->trans("AccountStatementShort");
 	else print '&nbsp;';
 	print '</td></tr>';
 

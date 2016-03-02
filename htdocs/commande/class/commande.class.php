@@ -140,10 +140,6 @@ class Commande extends CommonOrder
 	 */
 	var $lines = array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
 	// Multicurrency
 	var $fk_multicurrency;
 	var $multicurrency_code;
