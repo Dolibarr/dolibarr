@@ -628,7 +628,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 /*
  * Customers orders to be billed
  */
-if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $user->rights->commande->lire)
+if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $user->rights->commande->lire && empty($conf->global->WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER))
 {
 	$commandestatic=new Commande($db);
 	$langs->load("orders");

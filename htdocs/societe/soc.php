@@ -757,7 +757,7 @@ else
          *  Creation
          */
 		$private=GETPOST("private","int");
-		if (! empty($conf->global->MAIN_THIRPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+		if (! empty($conf->global->MAIN_THIRDPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
     	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
@@ -987,6 +987,10 @@ else
             print '<td colspan=2>&nbsp;</td></tr>';
         }
 
+        // Alias names (commercial, trademark or alias names)
+        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+	    print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
+
         // Prospect/Customer
         print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
 	    print '<td width="25%" class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
@@ -1040,10 +1044,6 @@ else
 	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
-
-        // Alias names (commercial, trademark or alias names)
-        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	    print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
@@ -1497,12 +1497,12 @@ else
 			}
 			
             // Name
-            print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td width="25%">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
 	        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	        print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" size="32"></td></tr>';
+	        print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1933,11 +1933,6 @@ else
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-	    // Alias names (commercial, trademark or alias names)
-	    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
-	    print $object->name_alias;
-	    print "</td></tr>";
-
     	// Prospect/Customer
     	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
@@ -2177,7 +2172,7 @@ else
         print '<table class="border tableforfield" width="100%">';
         
         // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';

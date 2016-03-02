@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
+ * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/bookkeeping/listbyyear.php
- * \ingroup Accounting Expert
- * \brief Book keeping by year
+ * \file 		htdocs/accountancy/bookkeeping/listbyyear.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Book keeping by year
  */
 require '../../main.inc.php';
 
@@ -184,13 +184,13 @@ print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
 print $formventilation->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
-print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
+print $langs->trans('to') . ' ' . $langs->trans('AccountAccounting') . ': ';
 print $formventilation->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 print $formventilation->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
-print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
+print $langs->trans('to') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 print $formventilation->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
@@ -204,16 +204,14 @@ print_liste_field_titre($langs->trans("AccountAccounting"), $_SERVER['PHP_SELF']
 print_liste_field_titre($langs->trans("ThirdPartyAccount"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Label"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "t.sens", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, "", $sortfield, $sortorder);
-print '<th class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '"></td>';
+print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Amount"), $_SERVER['PHP_SELF'], "t.montant", "", $options, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Sens"), $_SERVER['PHP_SELF'], "t.sens", "", $options, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-
 print '<td class="liste_titre">';
 print '<input type="text" size=4 class="flat" name="search_piece_num" value="' . $search_piece_num . '"/>';
 print '</td>';
@@ -251,11 +249,11 @@ print '</td>';
 print '<td class="liste_titre">';
 print '</td>';
 
-print '<td class="liste_titre">';
+print '<td class="liste_titre" align="center">';
 print '<input type="text" size=2 class="flat" name="search_sens" value="' . $search_sens . '"/>';
 print '</td>';
 
-print '<td class="liste_titre">';
+print '<td class="liste_titre" align="center">';
 print '<input type="text" size=3 class="flat" name="search_code_journal" value="' . $search_code_journal . '"/>';
 print '</td>';
 
@@ -272,7 +270,6 @@ foreach ( $object->lines as $line ) {
 	$var = ! $var;
 	
 	print "<tr $bc[$var]>";
-	
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
 	print '<td>' . dol_print_date($line->doc_date) . '</td>';
@@ -283,9 +280,9 @@ foreach ( $object->lines as $line ) {
 	print '<td align="right">' . price($line->debit) . '</td>';
 	print '<td align="right">' . price($line->credit) . '</td>';
 	print '<td align="right">' . price($line->montant) . '</td>';
-	print '<td>' . $line->sens . '</td>';
-	print '<td>' . $line->code_journal . '</td>';
-	print '<td><a href="./card.php?action=update&amp;piece_num=' . $line->piece_num . '">' . img_edit() . '</a></td>';
+	print '<td align="center">' . $line->sens . '</td>';
+	print '<td align="right">' . $line->code_journal . '</td>';
+	print '<td align="center"><a href="./card.php?action=update&amp;piece_num=' . $line->piece_num . '">' . img_edit() . '</a></td>';
 	print "</tr>\n";
 }
 print "</table>";

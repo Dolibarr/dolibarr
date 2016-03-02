@@ -1337,18 +1337,19 @@ if ($id)
                     }
 
                     // Can an entry be erased or disabled ?
-                    $iserasable=1;$isdisable=1;	// true by default
-
+                    $iserasable=1;$canbedisabled=1;$canbemodified=1;	// true by default
                     if (isset($obj->code) && $id != 10)
                     {
-                    	if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) { $iserasable = 0; $isdisable = 0; }
-                    	else if ($obj->code == 'RECEP') { $iserasable = 0; $isdisable = 0; }
-                    	else if ($obj->code == 'EF0')   { $iserasable = 0; $isdisable = 0; }
+                    	if (($obj->code == '0' || $obj->code == '' || preg_match('/unknown/i',$obj->code))) { $iserasable = 0; $canbedisabled = 0; }
+                    	else if ($obj->code == 'RECEP') { $iserasable = 0; $canbedisabled = 0; }
+                    	else if ($obj->code == 'EF0')   { $iserasable = 0; $canbedisabled = 0; }
                     }
 
                     if (isset($obj->type) && in_array($obj->type, array('system', 'systemauto'))) { $iserasable=0; }
-                    if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $isdisable=0; $isdisable = 0; }
-
+                    if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
+                    $canbemodified=$iserasable;
+                    if ($obj->code == 'RECEP') $canbemodified=1;
+                        
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;id='.$id.'&amp;';
 
 					// Favorite
@@ -1363,7 +1364,7 @@ if ($id)
 
                     // Active
                     print '<td align="center" class="nowrap">';
-                    if ($isdisable) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                    if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                     else
                  	{
                  		if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
@@ -1374,7 +1375,7 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($iserasable) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link

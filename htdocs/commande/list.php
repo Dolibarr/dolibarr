@@ -9,6 +9,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry    <jfefe@aternatik.fr>
+ * Copyright (C) 2016	   Ferran Marcet		  <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +47,10 @@ $langs->load('bills');
 
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
+$orderday=GETPOST("orderday","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
+$deliveryday=GETPOST("deliveryday","int");
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('search_ref','alpha')!=''?GETPOST('search_ref','alpha'):GETPOST('sref','alpha');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
@@ -122,7 +125,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_total_ht='';
     $orderyear='';
     $ordermonth='';
-    $deliverymonth='';
+	$orderday='';
+	$deliveryday='';
+	$deliverymonth='';
     $deliveryyear='';
     $viewstatut='';
     $billed='';
@@ -195,10 +200,10 @@ if ($viewstatut <> '')
 }
 if ($ordermonth > 0)
 {
-    if ($orderyear > 0 && empty($day))
+    if ($orderyear > 0 && empty($orderday))
     $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,$ordermonth,false))."' AND '".$db->idate(dol_get_last_day($orderyear,$ordermonth,false))."'";
-    else if ($orderyear > 0 && ! empty($day))
-    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $day, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $day, $orderyear))."'";
+    else if ($orderyear > 0 && ! empty($orderday))
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $orderday, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $orderday, $orderyear))."'";
     else
     $sql.= " AND date_format(c.date_commande, '%m') = '".$ordermonth."'";
 }
@@ -208,10 +213,10 @@ else if ($orderyear > 0)
 }
 if ($deliverymonth > 0)
 {
-    if ($deliveryyear > 0 && empty($day))
+    if ($deliveryyear > 0 && empty($deliveryday))
     $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,$deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,$deliverymonth,false))."'";
-    else if ($deliveryyear > 0 && ! empty($day))
-    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $deliverymonth, $day, $deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $deliverymonth, $day, $deliveryyear))."'";
+    else if ($deliveryyear > 0 && ! empty($deliveryday))
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $deliverymonth, $deliveryday, $deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $deliverymonth, $deliveryday, $deliveryyear))."'";
     else
     $sql.= " AND date_format(c.date_livraison, '%m') = '".$deliverymonth."'";
 }
@@ -270,8 +275,10 @@ if ($resql)
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
+	if ($orderday)      		$param.='&orderday='.$orderday;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
 	if ($orderyear)       		$param.='&orderyear='.$orderyear;
+	if ($deliveryday)   		$param.='&deliveryday='.$deliveryday;
 	if ($deliverymonth)   		$param.='&deliverymonth='.$deliverymonth;
 	if ($deliveryyear)    		$param.='&deliveryyear='.$deliveryyear;
 	if ($search_ref)      		$param.='&search_ref='.$search_ref;

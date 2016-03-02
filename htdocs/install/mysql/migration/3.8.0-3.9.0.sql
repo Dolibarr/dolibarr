@@ -597,3 +597,9 @@ ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 -- Fix Argentina provences
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2326', 2305, '', 0, 'MISIONES', 'Misiones', 1);
 UPDATE llx_c_departements SET ncc = "FORMOSA", nom = "Formosa" WHERE nom = "Formosa Misiones";
+
+-- MALTA VATS (id country=148)
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1481,  148, '18','0','VAT standard rate',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1482,  148, '7','0','VAT reduced rate',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1483,  148, '5','0','VAT super-reduced rate', 1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1484,  148, '0','0','VAT Rate 0', 1);

@@ -88,6 +88,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  * View
  */
 
+$form=new Form($db);
 $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 

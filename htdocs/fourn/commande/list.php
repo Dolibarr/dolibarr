@@ -93,6 +93,7 @@ if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
  *	View
  */
 
+$form=new Form($db);
 $thirdpartytmp = new Fournisseur($db);
 $commandestatic=new CommandeFournisseur($db);
 $formfile = new FormFile($db);
