@@ -217,7 +217,8 @@ if ($action == 'create' && $user->rights->dynamicprices->schedule_write)
 
             //Generate sections, preview mode if error occurred or is not confirmed
             $preview = $error || empty($confirm);
-            $result = $object->generateSections($preview, "server");
+            $timezone = @date_default_timezone_get();
+            $result = $object->generateSections($preview, $timezone);
             if ($result == 0)
             {
                 setEventMessages($langs->trans('ErrorScheduleNoSectionGenerated'), null, $preview?'warnings':'errors');

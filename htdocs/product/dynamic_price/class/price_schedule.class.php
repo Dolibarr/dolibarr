@@ -432,10 +432,10 @@ class PriceSchedule extends CommonObject
      *  Generate sections to $this->sections
      *
      *  @param   bool   $preview    Preview mode, doesn't write sections to db
-     *  @param   mixed  $gm         TZ for first/last day boundary
+     *  @param   mixed  $timezone   Timezone for offset data
      *  @return  int                <0 if KO, 0 if no section generated, >0 if OK
      */
-    function generateSections($preview, $gm)
+    function generateSections($preview, $timezone)
     {
         global $conf;
         require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -450,11 +450,13 @@ class PriceSchedule extends CommonObject
             return -2;
         }
 
-        //Initial values
-        $first = dol_get_first_day($this->schedule_year, 1, $gm);
-        $last = dol_get_last_day($this->schedule_year, 12, $gm);
+        //Initial values, we use UTC to then apply the offset manually
+        $first = dol_get_first_day($this->schedule_year, 1, true);
+        $last = dol_get_last_day($this->schedule_year, 12, true);
         $duration = dol_time_plus_duree(0, $product->duration_value, $product->duration_unit);
         $start = dol_time_plus_duree($first, $this->starting_hour, 'h');
+        $tz = new DateTimeZone($timezone);
+        $transitions = $tz->getTransitions($first, $last);
         dol_syslog(__METHOD__." Parameters: schedule_year=".$this->schedule_year." preview=".$preview, LOG_DEBUG);
         dol_syslog("first=".$first." last=".$last." duration=".$duration." start=".$start, LOG_DEBUG);
 
@@ -490,12 +492,6 @@ class PriceSchedule extends CommonObject
         $last_end = null;
         foreach ($templates as $template)
         {
-            $section = new PriceScheduleSection($this->db);
-            $section->fk_schedule = $this->id;
-            $section->date_start = $template['start'];
-            $section->date_end = $template['end'];
-            $section->price = 0;
-            $this->sections[] = $section;
             //Check consistency
             if ($last_end !== null && $last_end + 1 != $template['start'])
             {
@@ -504,6 +500,33 @@ class PriceSchedule extends CommonObject
                 return -3;
             }
             $last_end = $template['end'];
+
+            //Use timezone data for offset correction
+            $date_start = $template['start'];
+            $date_end = $template['end'];
+            $start_offset = 0;
+            $end_offset = 0;
+            foreach ($transitions as $transition) {
+                $offset = $transition['offset'];
+                if ($transition['ts'] <= $date_start)
+                {
+                    $start_offset = $offset;
+                }
+                if ($transition['ts'] <= $date_end)
+                {
+                    $end_offset = $offset;
+                }
+            }
+            $date_start -= $start_offset;
+            $date_end -= $end_offset;
+
+            //Create section
+            $section = new PriceScheduleSection($this->db);
+            $section->fk_schedule = $this->id;
+            $section->date_start = $date_start;
+            $section->date_end = $date_end;
+            $section->price = 0;
+            $this->sections[] = $section;
         }
         dol_syslog(__METHOD__." Created sections: ".count($this->sections), LOG_DEBUG);
         //Write to DB if is not preview mode
