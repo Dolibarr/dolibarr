@@ -385,7 +385,7 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-if (empty($conf->global->PROJECT_HIDE_TASKS))
+if (empty($conf->global->PROJECT_HIDE_TASKS) && empty($conf->global->PROJECT_HIDE_LIST_HOME_AREA))
 {
     // Get id of types of contacts for projects (This list never contains a lot of elements)
     $listofprojectcontacttype=array();
@@ -513,13 +513,13 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 			print '<td align="center">'.dol_print_date($db->jdate($obj->dateo),'day').'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($obj->datee),'day').'</td>';
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
-			print convertSecondToTime($obj->planned_workload, 'all');
+			print convertSecondToTime($obj->planned_workload, 'allhourmin');
 			print '</a></td>';
 			print '<td align="right">';
 			print ($obj->taskid>0)?$obj->progress.'%':'';
 			print '</td>';
 			print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$obj->taskid.'&withproject=1">';
-			print convertSecondToTime($obj->timespent, 'all');
+			print convertSecondToTime($obj->timespent, 'allhourmin');
 			print '</a></td>';
 			print '<td align="right">';
 			if (! empty($obj->taskid))
