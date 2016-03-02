@@ -263,11 +263,12 @@ ConfirmDeleteProductBuyPrice=Are you sure you want to delete this buying price?
 SubProduct=Sub product
 PriceSchedule=Price schedule
 PriceScheduleNone=There is no schedule for this service
-SupplierPriceSchedulee=Supplier price schedule
+SupplierPriceSchedule=Supplier price schedule
 SupplierPriceScheduleNone=There is no schedule for this service and supplier price
 PriceScheduleMode=Price schedule mode
 PriceScheduleModeHelp=Mode for converting multiple section prices in a date range to a single price
 ErrorPriceSchedulePresent=Can't change service duration if a price schedule is present.
+CopyToSellSchedule=Convert to sell schedule
 
 #Attributes
 VariantAttributes=Variant attributes

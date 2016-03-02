@@ -455,7 +455,7 @@ class PriceSchedule extends CommonObject
         $last = dol_get_last_day($this->schedule_year, 12, $gm);
         $duration = dol_time_plus_duree(0, $product->duration_value, $product->duration_unit);
         $start = dol_time_plus_duree($first, $this->starting_hour, 'h');
-        dol_syslog(__METHOD__." Parameters: schedule_year".$this->schedule_year." preview=".$preview, LOG_DEBUG);
+        dol_syslog(__METHOD__." Parameters: schedule_year=".$this->schedule_year." preview=".$preview, LOG_DEBUG);
         dol_syslog("first=".$first." last=".$last." duration=".$duration." start=".$start, LOG_DEBUG);
 
         $end = $start + $duration - 1;
@@ -544,6 +544,66 @@ class PriceSchedule extends CommonObject
             {
                 $this->db->commit();
             }
+        }
+        return count($this->sections);
+    }
+
+    /**
+     *  Copy sections from provided object to $this->sections
+     *
+     *  @param   PriceSchedule  $object     Object to copy sections from
+     *  @return  int                        <0 if KO, 0 if no section generated, >0 if OK
+     */
+    public function copySections($object)
+    {
+        dol_syslog(__METHOD__." Object id=".$object->id." sections=".count($object->sections), LOG_DEBUG);
+
+        //Convert template to sections
+        $object->fetchSections();
+        foreach ($object->sections as $other_section)
+        {
+            $section = new PriceScheduleSection($this->db);
+            $section->fk_schedule = $this->id;
+            $section->date_start = $other_section->date_start;
+            $section->date_end = $other_section->date_end;
+            $section->price = $other_section->price;
+            $this->sections[] = $section;
+        }
+
+        $error = 0;
+        $this->db->begin();
+        foreach ($this->sections as $section)
+        {
+            // Insert request
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX.$section->table_element."(";
+            $sql.= " fk_schedule, date_start, date_end, price";
+            $sql.= ") VALUES (";
+            $sql.= " ".$section->fk_schedule.",";
+            $sql.= " ".$section->date_start.",";
+            $sql.= " ".$section->date_end.",";
+            $sql.= " ".$section->price;
+            $sql.= ")";
+            $resql = $this->db->query($sql);
+            if (!$resql)
+            {
+                $error++;
+                $this->errors[] = "Error " . $this->db->lasterror();
+                break;
+            }
+        }
+        // Commit or rollback
+        if ($error)
+        {
+            foreach ($this->errors as $errmsg) {
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
+                $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+            }
+            $this->db->rollback();
+            return -1 * $error;
+        }
+        else
+        {
+            $this->db->commit();
         }
         return count($this->sections);
     }

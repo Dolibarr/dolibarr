@@ -220,14 +220,13 @@ if ($action == 'create' && $user->rights->dynamicprices->schedule_write)
             $result = $object->generateSections($preview, "server");
             if ($result == 0)
             {
-                setEventMessages($langs->trans('ErrorScheduleNoSectionGenerated'), null, 'warnings');
+                setEventMessages($langs->trans('ErrorScheduleNoSectionGenerated'), null, $preview?'warnings':'errors');
                 $data_correct = false;
                 $error++;
             }
             else if ($result < 0)
             {
                 setEventMessages($object->error, $object->errors, 'errors');
-                dol_print_error($db);
                 $error++;
             }
 
@@ -280,6 +279,65 @@ else if ($action == 'edit' && !empty($confirm) && $user->rights->dynamicprices->
         else
         {
             setEventMessages($section->error, $section->errors, 'errors');
+        }
+    }
+}
+else if ($action == 'copy_to_sell' && $user->rights->dynamicprices->schedule_delete)
+{
+    $action='';
+    $error = 0;
+    //Check if same year exist for schedule
+    $other = new PriceSchedule($db);
+    $result = $other->fetch(0, $product_id, PriceSchedule::TYPE_SERVICE, null, $object->schedule_year);
+
+    if ($result > 0)
+    {
+        setEventMessages($langs->trans("ErrorScheduleSameYearExist"), null, 'errors');
+        $error++;
+    }
+    else
+    {
+        //Create price schedule from current supplier price schedule
+        $other->fk_product = $object->fk_product;
+        $other->fk_product_supplier = 0;
+        $other->schedule_type = PriceSchedule::TYPE_SERVICE;
+        $other->schedule_year = $object->schedule_year;
+        $other->starting_hour = $object->starting_hour;
+
+        //Create object
+        $result = $other->create($user);
+        if ($result <= 0)
+        {
+            setEventMessages($other->error, $other->errors, 'errors');
+            $error++;
+        }
+
+        if (!$error)
+        {
+            //Generate sections
+            $result = $other->copySections($object);
+            if ($result == 0)
+            {
+                setEventMessages($langs->trans('ErrorScheduleNoSectionGenerated'), null, 'errors');
+                $error++;
+            }
+            if ($result < 0)
+            {
+                setEventMessages($other->error, $other->errors, 'errors');
+                $error++;
+            }
+        }
+
+        //Load newly created schedule
+        if (!$error)
+        {
+            Header("Location: schedule.php?id=".$other->id);
+            exit;
+        }
+        else if ($other->id)
+        {
+            //Object was created but error occurred, delete it
+            $other->delete($user);
         }
     }
 }
@@ -492,6 +550,14 @@ else if ( $object->id > 0)
     print '<div class="tabsAction">';
     if ($action != "edit")
     {
+        // Copy to sell price schedule
+        if ($product_supplier && $user->rights->dynamicprices->schedule_write)
+        {
+            print '<div class="inline-block divButAction">';
+            print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=copy_to_sell" class="butAction">'.$langs->trans('CopyToSellSchedule').'</a>';
+            print '</div>';
+        }
+
         // Edit
         if ($user->rights->dynamicprices->schedule_write)
         {
