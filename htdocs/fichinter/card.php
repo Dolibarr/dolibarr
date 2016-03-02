@@ -1660,17 +1660,17 @@ else if ($id > 0 || ! empty($ref))
 	{
 		if ($user->societe_id == 0)
 		{
-			if ($action != 'editdescription' && ($action != 'presend'))
-			{
-				// Validate
-				if ($object->statut == 0 && $user->rights->ficheinter->creer && (count($object->lines) > 0 || ! empty($conf->global->FICHINTER_DISABLE_DETAILS)))
-				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate"';
-					print '>'.$langs->trans("Validate").'</a></div>';
-				}
+            if ($action != 'editdescription' && ($action != 'presend')) {
+                // Validate
+                if ($object->statut == 0 && (count($object->lines) > 0 || !empty($conf->global->FICHINTER_DISABLE_DETAILS))) {
+                    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->validate)) {
+                        print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id=' . $object->id . '&action=validate"';
+                        print '>' . $langs->trans("Validate") . '</a></div>';
+                    }
+                }
 
-				// Modify
-				if ($object->statut == 1 && $user->rights->ficheinter->creer)
+                // Modify
+                if ($object->statut == 1 && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->creer) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $user->rights->ficheinter->ficheinter_advance->unvalidate)))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify">';
 					if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) print $langs->trans("Modify");
