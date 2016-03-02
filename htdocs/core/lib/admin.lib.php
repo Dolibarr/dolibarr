@@ -73,11 +73,11 @@ function versioncompare($versionarray1,$versionarray2)
         if (preg_match('/rc([0-9])*/i',$operande1)) $operande1=-1;
         if (preg_match('/rc([0-9])*/i',$operande2)) $operande2=-1;
         $level++;
-        print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
+        //print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
         if ($operande1 < $operande2) { $ret = -$level; break; }
         if ($operande1 > $operande2) { $ret = $level; break; }
     }
-    print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
+    //print join('.',$versionarray1).'('.count($versionarray1).') / '.join('.',$versionarray2).'('.count($versionarray2).') => '.$ret.'<br>'."\n";
     return $ret;
 }
 
