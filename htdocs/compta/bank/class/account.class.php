@@ -242,7 +242,7 @@ class Account extends CommonObject
         global $conf;
 
         if (empty($this->rappro)) return -1;
-        if ($this->courant == 2 && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) return -2;
+        if ($this->courant == Account::TYPE_CASH && empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) return -2;
         if ($this->clos) return -3;
         return 1;
     }
@@ -399,7 +399,7 @@ class Account extends CommonObject
             $this->error="this->rowid not defined";
             return -2;
         }
-        if ($this->courant == 2 && $oper != 'LIQ')
+        if ($this->courant == Account::TYPE_CASH && $oper != 'LIQ')
         {
             $this->error="ErrorCashAccountAcceptsOnlyCashMoney";
             return -3;
@@ -1240,7 +1240,7 @@ class Account extends CommonObject
         $this->ref             = 'MBA';
         $this->label           = 'My Bank account';
         $this->bank            = 'MyBank';
-        $this->courant         = 1;
+        $this->courant         = Account::TYPE_CURRENT;
         $this->clos            = Account::STATUS_OPEN;
         $this->code_banque     = '123';
         $this->code_guichet    = '456';
