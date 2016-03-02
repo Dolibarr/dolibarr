@@ -139,7 +139,19 @@ class Account extends CommonObject
     public $state_code;
     public $state;
 
-    public $type_lib=array();
+	/**
+	 * Variable containing all account types with their respective translated label.
+	 * Defined in __construct
+	 * @var array
+	 */
+    public $type_lib = array();
+
+	/**
+	 * Variable containing all account statuses with their respective translated label.
+	 * Defined in __construct
+	 * @var array
+	 */
+	public $status = array();
 
     /**
      * Accountancy code
@@ -205,7 +217,6 @@ class Account extends CommonObject
 
         $this->db = $db;
 
-        $this->clos = 0;
         $this->solde = 0;
 
         $this->type_lib = array(
@@ -1230,7 +1241,7 @@ class Account extends CommonObject
         $this->label           = 'My Bank account';
         $this->bank            = 'MyBank';
         $this->courant         = 1;
-        $this->clos            = 0;
+        $this->clos            = Account::STATUS_OPEN;
         $this->code_banque     = '123';
         $this->code_guichet    = '456';
         $this->number          = 'ABC12345';
