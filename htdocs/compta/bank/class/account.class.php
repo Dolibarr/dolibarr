@@ -155,6 +155,13 @@ class Account extends CommonObject
     public $currency_code;
 
     /**
+     * Currency code
+     * @var string
+     * @deprecated Use currency_code instead
+     */
+    public $account_currency_code;
+
+    /**
      * Authorized minimum balance
      * @var float
      */
