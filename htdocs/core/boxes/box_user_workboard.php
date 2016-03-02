@@ -70,7 +70,7 @@ class box_user_workboard extends ModeleBoxes
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db, $conf, $form;
+        global $user, $langs, $db, $conf, $form, $bc;
         $langs->load("boxes");
 
         $this->max = $max;
@@ -85,15 +85,15 @@ class box_user_workboard extends ModeleBoxes
         $dashboardlines=array();
 
         $boxwork='';
-        $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
-        $boxwork.='<tr class="liste_titre">';
-        $boxwork.='<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
-        $boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-        $boxwork.='<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
-        $boxwork.='<th class="liste_titre">&nbsp;</th>';
-        //print '<th class="liste_titre" width="20">&nbsp;</th>';
-        if ($showweather) $boxwork.='<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
-        $boxwork.='</tr>'."\n";
+        $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder noshadow" width="100%">'."\n";
+        //$boxwork.='<tr class="liste_titre">';
+        //$boxwork.='<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
+        //$boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
+        //$boxwork.='<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
+        //$boxwork.='<th class="liste_titre">&nbsp;</th>';
+        ////print '<th class="liste_titre" width="20">&nbsp;</th>';
+        //if ($showweather) $boxwork.='<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
+        //$boxwork.='</tr>'."\n";
 
         // Do not include sections without management permission
         require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
