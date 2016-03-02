@@ -306,5 +306,19 @@ ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_ht double(24
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_expensereport ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
 ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
