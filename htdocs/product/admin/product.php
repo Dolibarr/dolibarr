@@ -56,7 +56,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 }
 
 // Clean param
-if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) $conf->global->PRODUIT_MULTIPRICES_LIMIT = 5;
+if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_MULTIPRICES_LIMIT)) {
+	dolibarr_set_const($db, 'PRODUIT_MULTIPRICES_LIMIT', 5, 'chaine', 0, '', $conf->entity);
+}
 
 
 
