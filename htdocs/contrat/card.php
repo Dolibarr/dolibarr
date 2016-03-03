@@ -1803,7 +1803,7 @@ else
                 print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
+                print '<table class="noborder tableforservicepart2" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut;
@@ -1823,15 +1823,15 @@ else
                 }
 
                 print '<tr '.$bc[$var].'>';
-                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center nohover" rowspan="2" valign="middle">';
+                print '<td align="center nohover" rowspan="2" valign="middle" class="nohover">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
