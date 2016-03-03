@@ -5103,10 +5103,16 @@ class Form
         			$subelement = $regs[2];
         			$tplpath = $element.'/'.$subelement;
         		}
-        		   		
+        		$tplname='linkedobjectblock';
+        		
         		// To work with non standard path
         		if ($objecttype == 'facture')          {
         			$tplpath = 'compta/'.$element;
+        			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
+        		}
+        	    else if ($objecttype == 'facturerec')          {
+        			$tplpath = 'compta/facture';
+        			$tplname = 'linkedobjectblockForRec';
         			if (empty($conf->facture->enabled)) continue;	// Do not show if module disabled
         		}
         		else if ($objecttype == 'propal')           {
@@ -5138,7 +5144,7 @@ class Form
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
         		{
-        			$res=@include dol_buildpath($reldir.'/linkedobjectblock.tpl.php');
+                    $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
         			if ($res) break;
         		}
         	}

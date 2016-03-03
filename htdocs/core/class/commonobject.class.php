@@ -2524,6 +2524,9 @@ abstract class CommonObject
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
                     }
+                    else if ($objecttype == 'facturerec')			{
+                        $classpath = 'compta/facture/class'; $module = 'facture';
+                    }
                     else if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
                     }
@@ -2548,7 +2551,9 @@ abstract class CommonObject
                         $classpath = 'contrat/class'; $subelement = 'contrat'; $module = 'contratabonnement';
                     }
 
+                    // Set classfile
                     $classfile = strtolower($subelement); $classname = ucfirst($subelement);
+                    
                     if ($objecttype == 'invoice_supplier') {
                         $classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
                     }
@@ -2557,6 +2562,9 @@ abstract class CommonObject
                     }
                     else if ($objecttype == 'supplier_proposal')   {
                         $classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
+                    }
+                    else if ($objecttype == 'facturerec')   {
+                        $classfile = 'facture-rec'; $classname = 'FactureRec';
                     }
                     
                     // Here $module, $classfile and $classname are set
