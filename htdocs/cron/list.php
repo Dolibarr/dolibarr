@@ -182,8 +182,18 @@ print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $stringcurrentdate, $num, 0, 'title_setup', 0, '', '', $limit);
 
-print $langs->trans('CronInfo');
-print "<br><br>";
+
+// Line with explanation and button new job
+if (! $user->rights->cron->create)
+{
+    $buttontoshow.='<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
+}
+else
+{
+    $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
+}
+print '<table class="centpercent"><tr><td>'.$langs->trans('CronInfo').'</td><td class="right">'.$buttontoshow.'</td></tr></table>';
+print '<br>';
 
 
 print '<table width="100%" class="noborder">';
@@ -359,21 +369,7 @@ print '</table>';
 print '</from>';
 
 
-
-print "\n<div class=\"tabsAction\">\n";
-
-if (! $user->rights->cron->create)
-{
-	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
-}
-else
-{
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
-}
-
-print '</div>';
-
-print '<br>';
+print '<br><br>';
 
 
 dol_print_cron_urls();
