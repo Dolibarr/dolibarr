@@ -2648,14 +2648,15 @@ function img_searchclear($titlealt = 'default', $other = '')
 }
 
 /**
- *	Show information for admin users
+ *	Show information for admin users or standard users
  *
  *	@param	string	$text			Text info
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
+ *  @param  int     $admin          1=Info for admin users. 0=Info for standard users (change only the look)
  *	@return	string					String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv=0)
+function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin=1)
 {
 	global $conf, $langs;
 
@@ -2664,7 +2665,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 		return img_picto($text, 'info', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="'.($admin?'info':'').' hideonsmartphone">').img_picto($admin?$langs->trans('InfoAdmin'):$langs->trans('Note'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
 }
 
 

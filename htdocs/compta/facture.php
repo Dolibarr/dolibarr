@@ -1999,6 +1999,18 @@ if ($action == 'create')
 
 	}
 
+	if ($origin == 'contrat')
+	{
+	    $langs->load("admin");
+	    $text=$langs->trans("ToCreateARecurringInvoice");
+	    $text.=' '.$langs->trans("ToCreateARecurringInvoiceGene", $langs->transnoentitiesnoconv("MenuFinancial"), $langs->transnoentitiesnoconv("BillsCustomers"), $langs->transnoentitiesnoconv("ListOfTemplates"));
+	    if (empty($conf->global->INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE))
+	    {
+	       $text.=' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
+	    }
+	    print info_admin($text, 0, 0, 0).'<br>';
+	}
+	
 	print '<form name="add" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 	print '<input type="hidden" name="action" value="add">';

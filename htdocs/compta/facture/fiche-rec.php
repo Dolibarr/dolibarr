@@ -309,7 +309,7 @@ if ($action == 'create')
 		
 		// Number max of generation
 		print "<tr><td>".$langs->trans("MaxPeriodNumber")."</td><td>";
-		print "<input type='text' name='nb_gen_max' value='' size='5' />";
+		print '<input type="text" name="nb_gen_max" value="'.GETPOST('nb_gen_max').'" size="5" />';
 		print "</td></tr>";
 
 		// Auto validate the invoice
