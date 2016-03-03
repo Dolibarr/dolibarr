@@ -905,8 +905,8 @@ else
 		 */
 		print '<div class="tabsAction">';
 
-		if ($object->statut == Facture::STATUS_DRAFT)
-		{
+		//if ($object->statut == Facture::STATUS_DRAFT)   // there is no draft status on templates.
+		//{
 		    if ($user->rights->facture->creer)
 		    {
     		    if (empty($object->frequency) || $object->date_when <= $today)
@@ -922,9 +922,10 @@ else
     	    {
     		    print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateBill").'</a></div>';
     		}
-		}
+		//}
 
-		if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
+		//if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
+		if ($user->rights->facture->supprimer)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 		}
@@ -1014,7 +1015,7 @@ else
 					print '<td align="center">';
 					if ($user->rights->facture->creer)
 					{
-				        if (empty($objp->frequency) || $objp->date_when <= $today)
+				        if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				        {
                             print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
                             print $langs->trans("CreateBill").'</a>';
