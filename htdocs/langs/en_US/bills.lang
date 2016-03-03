@@ -319,7 +319,6 @@ toolTipFrequency=Examples:<br /><b>Set 7 / day</b>: give a new invoice every 7 d
 NextDateToExecution=Date for next invoice generation
 DateLastGeneration=Date of last generation
 MaxPeriodNumber=Max nb of invoice generation
-RestPeriodNumber=Rest period number
 NbOfGenerationDone=Nb of invoice generation already done
 InvoiceAutoValidate=Automatically validate invoice
 GeneratedFromRecurringInvoice=Generated from template recurring invoice %s

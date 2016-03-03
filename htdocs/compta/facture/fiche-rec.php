@@ -121,12 +121,31 @@ if ($action == 'add')
 		
 		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
+
+		// Get first contract linked to invoice used to generate template
+		if (GETPOST('facid','int') > 0)
+		{
+            $srcObject = new Facture($db);
+            $srcObject->fetch(GETPOST('facid','int'));
+            
+            $srcObject->fetchObjectLinked();
+            
+            if (! empty($srcObject->linkedObjectsIds['contrat']))
+            {
+                $contractidid = reset($srcObject->linkedObjectsIds['contrat']);
+            }
+
+            $object->origin = 'contrat';
+            $object->origin_id = $contractidid;
+            $object->linked_objects[$object->origin] = $object->origin_id;
+		}
 		
 		if ($object->create($user, $id) > 0)
 		{
 			$id = $object->id;
-			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $id);
-			exit;
+
+   			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $id);
+   			exit;
 		}
 		else
 		{
@@ -932,6 +951,16 @@ else
 
 		print '</div>';
 		
+		
+
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+		
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
+		
+        print '</div></div>';
+
 	}
 	else
 	{
@@ -970,7 +999,7 @@ else
         	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
         	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
             
-	       print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
+	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
 
 			print $langs->trans("ToCreateAPredefinedInvoice").'<br><br>';
 

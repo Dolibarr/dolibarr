@@ -163,9 +163,7 @@ class FactureRec extends Facture
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
 
-				/*
-				 * Lines
-				 */
+				// Add lines
 				$num=count($facsrc->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -192,6 +190,20 @@ class FactureRec extends Facture
 						$error++;
 					}
 				}
+				
+			    // Add object linked
+			    if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+			    {
+			        foreach($this->linked_objects as $origin => $origin_id)
+			        {
+			            $ret = $this->add_object_linked($origin, $origin_id);
+			            if (! $ret)
+			            {
+			                $this->error=$this->db->lasterror();
+			                $error++;
+			            }
+			        }
+			    }				    
 
 				if ($error)
 				{
@@ -205,7 +217,7 @@ class FactureRec extends Facture
 			}
 			else
 			{
-				$this->error=$this->db->error().' sql='.$sql;
+			    $this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return -2;
 			}
