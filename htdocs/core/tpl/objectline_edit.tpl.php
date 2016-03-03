@@ -231,18 +231,18 @@ $coldisplay=-1; // We remove first td
 	echo $form->select_date($line->date_end,'date_end',$hourmin,$hourmin,$line->date_end?0:1,"updateligne",1,0,1);
 	print '<script type="text/javascript">';
 	if (!$line->date_start) {
-		if (!empty($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
 			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
 		}
-		if (!empty($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
 			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
 		}
 	}
 	if (!$line->date_end) {
-		if (!empty($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
 			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
 		}
-		if (!empty($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
 			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
 		}
 	}
