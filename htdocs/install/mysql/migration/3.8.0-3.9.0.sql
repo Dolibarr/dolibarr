@@ -593,6 +593,7 @@ ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NU
 
 ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
 ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_entity (entity);
 
 -- Fix Argentina provences
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2326', 2305, '', 0, 'MISIONES', 'Misiones', 1);
