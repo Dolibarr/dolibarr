@@ -778,11 +778,12 @@ if ($resql)
 	   {
 			if (! empty($arrayfields["ef.".$key]['checked'])) 
 			{
-				print '<td class="liste_titre">';
-				$typeofextrafield=$extrafields->attribute_type[$key];
-				if (in_array($typeofextrafield, array('varchar', 'int')))
+			    $typeofextrafield=$extrafields->attribute_type[$key];
+			    if (in_array($typeofextrafield, array('int'))) print '<td class="liste_titre right">'; 
+			    else print '<td class="liste_titre">';
+			    if (in_array($typeofextrafield, array('varchar', 'int', 'select')))
 				{
-    				$crit=$val;
+				    $crit=$val;
     				$tmpkey=preg_replace('/search_options_/','',$key);
     				print '<input class="flat" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
 				}
