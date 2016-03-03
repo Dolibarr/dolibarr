@@ -635,6 +635,7 @@ Permission162=Create/modify contracts/subscriptions
 Permission163=Activate a service/subscription of a contract
 Permission164=Disable a service/subscription of a contract
 Permission165=Delete contracts/subscriptions
+Permission167=Export contracts
 Permission171=Read trips and expenses (yours and your subordinates) 
 Permission172=Create/modify trips and expenses
 Permission173=Delete trips and expenses
