@@ -141,7 +141,7 @@ if ($socid)
 	print '<tr><td>'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
-	$sql = "SELECT u.rowid, u.lastname, u.firstname";
+	$sql = "SELECT u.rowid, u.login, u.fk_soc, u.lastname, u.firstname, u.statut, u.entity";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE sc.fk_soc =".$object->id;
@@ -154,6 +154,8 @@ if ($socid)
 		$num = $db->num_rows($resql);
 		$i = 0;
 
+		$tmpuser = new User($db);
+		
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
@@ -165,10 +167,20 @@ if ($socid)
 				null; // actions in normal case
       		}
 
-			print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
+      		$tmpuser->id = $obj->rowid;
+      		$tmpuser->firstname = $obj->firstname;
+      		$tmpuser->lastname = $obj->lastname;
+      		$tmpuser->statut = $obj->statut;
+      		$tmpuser->login = $obj->login;
+      		$tmpuser->entity = $obj->entity;
+      		$tmpuser->societe_id = $obj->fk_soc;
+      		print $tmpuser->getNomUrl(1);
+      		
+			/*print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
 			print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
-			print '</a>&nbsp;';
+			print '</a>';*/
+			print '&nbsp;';
 			if ($user->rights->societe->creer)
 			{
 			    print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
@@ -205,7 +217,7 @@ if ($socid)
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
 
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.login";
+		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.login, u.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
@@ -224,6 +236,7 @@ if ($socid)
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Name").'</td>';
 			print '<td>'.$langs->trans("Login").'</td>';
+			print '<td>'.$langs->trans("Status").'</td>';
 			print '<td>&nbsp;</td>';
 			print "</tr>\n";
 
@@ -238,7 +251,9 @@ if ($socid)
 				print img_object($langs->trans("ShowUser"),"user").' ';
 				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 				print '</a>';
-				print '</td><td>'.$obj->login.'</td>';
+				print '</td>';
+				print '<td>'.$obj->login.'</td>';
+				print '<td>'.User::LibStatut($obj->statut,0).'</td>';
 				print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
 
 				print '</tr>'."\n";

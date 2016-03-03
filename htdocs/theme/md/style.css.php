@@ -514,6 +514,10 @@ div.myavailability {
 .selectlimit {
 	margin-right: 10px !important;
 }
+.strikefordisabled {
+	text-decoration: line-through;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */

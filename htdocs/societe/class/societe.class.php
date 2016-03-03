@@ -1662,7 +1662,7 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
+        $sql = "SELECT u.rowid, u.lastname, u.firstname, u.email, u.statut, u.entity";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
         $sql.= " AND entity in (0, ".$conf->entity.")";
@@ -1679,6 +1679,8 @@ class Societe extends CommonObject
                 $reparray[$i]['lastname']=$obj->lastname;
                 $reparray[$i]['firstname']=$obj->firstname;
                 $reparray[$i]['email']=$obj->email;
+                $reparray[$i]['statut']=$obj->statut;
+                $reparray[$i]['entity']=$obj->entity;
                 $i++;
             }
             return $reparray;
