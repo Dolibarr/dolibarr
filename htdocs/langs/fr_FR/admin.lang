@@ -583,6 +583,7 @@ Permission38=Exporter les produits
 Permission41=Lire les projets et les tâches (projets publiques et projets dont je suis contact). Peut également entrer le temps consommé sur les tâches assignées (feuille de temps)
 Permission42=Créer/modifier les projets et tâches (partagés ou dont je suis contact)
 Permission44=Supprimer les projets et tâches (partagés ou dont je suis contact)
+Permission45=Exporter les projets
 Permission61=Consulter les interventions
 Permission62=Créer/modifier les interventions
 Permission64=Supprimer les interventions
