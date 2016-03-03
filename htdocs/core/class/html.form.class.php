@@ -4326,8 +4326,8 @@ class Form
             $syear = '';
             $smonth = '';
             $sday = '';
-            $shour = '';
-            $smin = '';
+            $shour = empty($conf->global->MAIN_DEFAULT_DATE_HOUR) ? '' : $conf->global->MAIN_DEFAULT_DATE_HOUR;
+            $smin = empty($conf->global->MAIN_DEFAULT_DATE_MIN) ? '' : $conf->global->MAIN_DEFAULT_DATE_MIN;
         }
 
         $usecalendar='combo';
