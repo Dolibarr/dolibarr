@@ -123,7 +123,7 @@ if ($action == 'add')
 		$object->date_when = $date_next_execution;
 
 		// Get first contract linked to invoice used to generate template
-		if (GETPOST('facid','int') > 0)
+		if ($id > 0)
 		{
             $srcObject = new Facture($db);
             $srcObject->fetch(GETPOST('facid','int'));
@@ -133,22 +133,48 @@ if ($action == 'add')
             if (! empty($srcObject->linkedObjectsIds['contrat']))
             {
                 $contractidid = reset($srcObject->linkedObjectsIds['contrat']);
-            }
 
-            $object->origin = 'contrat';
-            $object->origin_id = $contractidid;
-            $object->linked_objects[$object->origin] = $object->origin_id;
+                $object->origin = 'contrat';
+                $object->origin_id = $contractidid;
+                $object->linked_objects[$object->origin] = $object->origin_id;
+            }
 		}
 		
-		if ($object->create($user, $id) > 0)
-		{
-			$id = $object->id;
+		$db->begin();
 
-   			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $id);
+		$oldinvoice = new Facture($db);
+		$oldinvoice->fetch($id);
+		
+		$result = $object->create($user, $oldinvoice->id);
+		if ($result > 0)
+		{
+			$result=$oldinvoice->delete(0, 1);
+			if ($result < 0)
+			{
+			    $error++;
+    		    setEventMessages($oldinvoice->error, $oldinvoice->errors, 'errors');
+    		    $action = "create";
+			}
+		}
+		else
+		{
+		    $error++;
+		    setEventMessages($object->error, $object->errors, 'errors');
+		    $action = "create";
+		}
+			
+		if (! $error)
+		{
+			$db->commit();
+			
+			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $object->id);
    			exit;
 		}
 		else
 		{
+		    $db->rollback();
+		    
+		    $error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
 		}

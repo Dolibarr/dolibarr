@@ -77,7 +77,7 @@ class FactureRec extends Facture
 	 *
 	 * 	@param		User	$user		User object
 	 * 	@param		int		$facid		Id of source invoice
-	 *	@return		int					<0 if KO, id of invoice if OK
+	 *	@return		int					<0 if KO, id of invoice created if OK
 	 */
 	function create($user, $facid)
 	{
