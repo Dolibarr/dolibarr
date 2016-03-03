@@ -355,7 +355,7 @@ if ($nboftargetok) {
 		
 		# Test that the ChangeLog is ok
 		$TMPBUILDTOCHECKCHANGELOG=$BUILD;
-		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc//;
+		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc\d*//;
 		print "Check if ChangeLog is ok for version $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret=`grep "ChangeLog for $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG" "$SOURCE/ChangeLog" 2>&1`;
 		if (! $ret)
