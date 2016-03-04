@@ -12,6 +12,22 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+***** ChangeLog for 4.0 compared to 3.9.* *****
+For users:
+
+For developers:
+
+
+WARNING: 
+
+Dolibarr 4.0 should be compatible with PHP 7 but more feedbacks are still expected to confirm that.
+
+Following changes may create regression for some external modules, but were necessary to make
+Dolibarr better:
+- Method select_type_comptes_financiers() has been renamed into selectTypeOfBankAccount() 
+
+
+
 ***** ChangeLog for 3.9.0 compared to 3.8.* *****
 For users:
 NEW: A new and more modern look for "eldy" theme.

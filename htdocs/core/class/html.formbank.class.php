@@ -49,7 +49,7 @@ class FormBank
      *  @param  string	$htmlname        Nom champ formulaire
      *  @return	void
      */
-    public function select_type_comptes_financiers($selected = Account::TYPE_CURRENT, $htmlname = 'type')
+    public function selectTypeOfBankAccount($selected = Account::TYPE_CURRENT, $htmlname = 'type')
     {
         $account = new Account($this->db);
 
