@@ -182,7 +182,7 @@ class Propal extends CommonObject
 	 */
 	const STATUS_NOTSIGNED = 3;
 	/**
-	 * Billed quote
+	 * Billed or processed quote
 	 */
 	const STATUS_BILLED = 4;
 

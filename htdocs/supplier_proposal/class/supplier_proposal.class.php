@@ -62,7 +62,7 @@ class SupplierProposal extends CommonObject
 	 */
     var $author;
 	var $ref_fourn;  //Reference saisie lors de l'ajout d'une ligne à la demande
-    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
+    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
     var $date;						// Date of proposal
     var $date_livraison;
 
@@ -156,7 +156,7 @@ class SupplierProposal extends CommonObject
 	 */
 	const STATUS_NOTSIGNED = 3;
 	/**
-	 * Billed quote
+	 * Billed or processed quote
 	 */
 	const STATUS_BILLED = 4;	
 	
