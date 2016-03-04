@@ -103,8 +103,9 @@ class CMailFile
 	 *	@param 	string	$errors_to      	 Email for errors-to
 	 *	@param	string	$css                 Css option
 	 *	@param	string	$trackid             Tracking string
+	 *  @param  string  $moreinheader        More in header (for phpmail only for the moment)
 	 */
-	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='')
+	function __construct($subject,$to,$from,$msg,$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),$addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0,$errors_to='',$css='',$trackid='',$moreinheader='')
 	{
 		global $conf;
 
@@ -199,7 +200,8 @@ class CMailFile
 			$this->deliveryreceipt = $deliveryreceipt;
 			$this->trackid = $trackid;
 			$smtp_headers = $this->write_smtpheaders();
-
+            if (! empty($moreinheader)) $smtp_headers.=$moreinheader;
+            
 			// Define mime_headers
 			$mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
 
@@ -259,7 +261,7 @@ class CMailFile
 			$smtps->setFrom($this->getValidAddress($from,0,1));
 			$smtps->setTrackId($trackid);
 			$smtps->setReplyTo($this->getValidAddress($from,0,1));   // Set property with this->smtps->setReplyTo after constructor if you want to use another value than the From
-			
+					
 			if (! empty($this->html))
 			{
 				if (!empty($css))
