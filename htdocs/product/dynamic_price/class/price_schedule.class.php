@@ -90,7 +90,7 @@ class PriceSchedule extends CommonObject
         $sql.= " ".$this->schedule_type.",";
         $sql.= " ".$this->schedule_year.",";
         $sql.= " ".$this->starting_hour.",";
-        $sql.= " ".getEntity($this->element, 1);
+        $sql.= " ".getEntity('product', 1);
         $sql.= ")";
 
         $this->db->begin();
@@ -160,7 +160,7 @@ class PriceSchedule extends CommonObject
         if ($id) $sql.= " WHERE rowid = ".$this->db->escape($id);
         else
         {
-            $sql.= " WHERE entity IN (".getEntity($this->element, 1).")";
+            $sql.= " WHERE entity IN (".getEntity('product', 1).")";
             if ($product_id && $type && $year) {
                 $sql.= " AND fk_product = ".$this->db->escape($product_id);
                 $sql.= " AND schedule_type = ".$this->db->escape($type);
@@ -260,7 +260,7 @@ class PriceSchedule extends CommonObject
         $sql.= " WHERE fk_product = ".$product_id;
         if ($type) $sql.= " AND schedule_type = ".$type;
         if ($product_supplier) $sql.= " AND fk_product_supplier = ".$product_supplier;
-        $sql.= " AND entity IN (".getEntity($this->element,1).")";
+        $sql.= " AND entity IN (".getEntity('product',1).")";
         $sql.= " GROUP BY rowid";
         $sql.= $this->db->order($sortfield,$sortorder);
         if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
