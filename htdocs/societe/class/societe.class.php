@@ -1665,9 +1665,9 @@ class Societe extends CommonObject
         if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
         {
         	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-        	$sql.= " WHERE (ug.fk_user = u.rowid";
+        	$sql.= " WHERE ((ug.fk_user = sc.fk_user";
         	$sql.= " AND ug.entity = ".$conf->entity.")";
-        	$sql.= " OR u.admin = 1";
+        	$sql.= " OR u.admin = 1)";
         }
         else
         	$sql.= " WHERE entity in (0, ".$conf->entity.")";
