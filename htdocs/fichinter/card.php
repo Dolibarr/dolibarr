@@ -116,17 +116,20 @@ if (empty($reshook))
 
 		if ($result >= 0)
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-			if (! empty($newlang))
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
+				// Define output language
+				$outputlangs = $langs;
+				$newlang='';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$result=fichinter_create($db, $object, (!GETPOST('model','alpha'))?$object->modelpdf:GETPOST('model','alpha'), $outputlangs);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=fichinter_create($db, $object, GETPOST('model','alpha'), $outputlangs);
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
@@ -142,17 +145,20 @@ if (empty($reshook))
 		$result = $object->setDraft($user);
 		if ($result >= 0)
 		{
-			// Define output language
-			$outputlangs = $langs;
-			$newlang='';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
-			if (! empty($newlang))
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 			{
-				$outputlangs = new Translate("",$conf);
-				$outputlangs->setDefaultLang($newlang);
+				// Define output language
+				$outputlangs = $langs;
+				$newlang='';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+				if (! empty($newlang))
+				{
+					$outputlangs = new Translate("",$conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$result=fichinter_create($db, $object, (!GETPOST('model','alpha'))?$object->modelpdf:GETPOST('model','alpha'), $outputlangs);
 			}
-			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) $result=fichinter_create($db, $object, (!GETPOST('model','alpha'))?$object->model:GETPOST('model','apha'), $outputlangs);
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
