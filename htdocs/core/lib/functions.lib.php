@@ -3422,6 +3422,8 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  */
 function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs)
 {
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+    
     if ($dimension < 1/10000) 
     {
         $dimension = $dimension * 1000000;
