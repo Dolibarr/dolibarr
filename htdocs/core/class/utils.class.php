@@ -50,6 +50,8 @@ class Utils
 	{
 		global $conf, $langs, $dolibarr_main_data_root;
 		
+		$langs->load("admin");
+		
 		dol_syslog("Utils::purgeFiles choice=".$choice, LOG_DEBUG);
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		
