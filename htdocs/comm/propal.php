@@ -1044,6 +1044,19 @@ if (empty($reshook))
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
+
+				unset($_POST['date_starthour']);
+				unset($_POST['date_startmin']);
+				unset($_POST['date_startsec']);
+				unset($_POST['date_startday']);
+				unset($_POST['date_startmonth']);
+				unset($_POST['date_startyear']);
+				unset($_POST['date_endhour']);
+				unset($_POST['date_endmin']);
+				unset($_POST['date_endsec']);
+				unset($_POST['date_endday']);
+				unset($_POST['date_endmonth']);
+				unset($_POST['date_endyear']);
 			} else {
 				$db->rollback();
 
