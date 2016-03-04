@@ -1,16 +1,18 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
- * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
- * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
- * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
+/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
+ * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
+ * Copyright (C) 2015       Charlie Benke           <charlie@patas-monkey.com>
+ * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +45,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->multicompany->enabled)) dol_include_once('/multicompany/class/actions_multicompany.class.php');
+if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
@@ -244,7 +248,11 @@ if (empty($reshook)) {
 				if (isset($_POST['password']) && trim($_POST['password'])) {
 					$object->setPassword($user, trim($_POST['password']));
 				}
-
+            			if (! empty($conf->categorie->enabled)) {
+					// Categories association
+					$usercats = GETPOST( 'usercats', 'array' );
+					$object->setCategories($usercats);
+				}
 				$db->commit();
 
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
@@ -317,7 +325,7 @@ if (empty($reshook)) {
             if (!$error) {
                 $db->begin();
 
-                $object->oldcopy = dol_clone($object);
+                $object->oldcopy = clone $object;
 
                 $object->lastname = GETPOST("lastname", 'alpha');
                 $object->firstname = GETPOST("firstname", 'alpha');
@@ -472,7 +480,13 @@ if (empty($reshook)) {
                         }
                     }
                 }
-
+            	if (! $error && ! count($object->errors))
+            	{
+			// Then we add the associated categories
+			$categories = GETPOST( 'usercats', 'array' );
+			$object->setCategories($categories);
+		}
+			
                 if (!$error && !count($object->errors)) {
                     setEventMessages($langs->trans("UserModified"), null, 'mesgs');
                     $db->commit();
@@ -493,7 +507,7 @@ if (empty($reshook)) {
             {
                 $object->fetch($id);
 
-                $object->oldcopy = dol_clone($object);
+                $object->oldcopy = clone $object;
 
                 $ret = $object->setPassword($user, $_POST["password"]);
                 if ($ret < 0) 
@@ -1065,7 +1079,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print "</tr>\n";
 
 	// Accountancy code
-	if ($conf->salaries->enabled)
+	if ($conf->accounting->enabled)
 	{
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
@@ -1081,7 +1095,17 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
-
+	
+	// Categories
+	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
+	{
+		print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td><td colspan="3">';
+		$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, 'parent', null, null, 1 );
+		print $form->multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
+			null, '90%' );
+		print "</td></tr>";
+	}
+	
     // Note
     print '<tr><td class="tdtop">';
     print $langs->trans("Note");
@@ -1402,7 +1426,7 @@ else
 		    print "</tr>\n";
 
 			// Accountancy code
-			if ($conf->salaries->enabled)
+			if ($conf->accounting->enabled)
 			{
 				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>'.$object->accountancy_code.'</td>';
@@ -1425,7 +1449,16 @@ else
                 print '</td>';
                 print "</tr>\n";
             }
-            
+
+            // Categories
+		    if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
+	    	{
+				print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+				print '<td colspan="3">';
+				print $form->showCategories( $object->id, 'user', 1 );
+				print '</td></tr>';
+		    }
+
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -2124,7 +2157,7 @@ else
             	print $form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
             }
             else
-          {
+            {
           		print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
             	$huser=new User($db);
             	$huser->fetch($object->fk_user);
@@ -2173,32 +2206,47 @@ else
 		    print "</tr>\n";
 
 		    // Accountancy code
-			if ($conf->salaries->enabled)
+			if ($conf->accounting->enabled)
+    		{
+			print "<tr>";
+			print '<td>'.$langs->trans("AccountancyCode").'</td>';
+			print '<td>';
+			if ($caneditfield)
 			{
-				print "<tr>";
-				print '<td>'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>';
-				if ($caneditfield)
-				{
-					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
-				}
-				else
-				{
-					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-					print $object->accountancy_code;
-				}
-				print '</td>';
-				print "</tr>";
+				print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
 			}
+			else
+			{
+				print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+				print $object->accountancy_code;
+			}
+			print '</td>';
+			print "</tr>";
+		}
 
-			// User color
-			if (! empty($conf->agenda->enabled))
-            {
-				print '<tr><td>'.$langs->trans("ColorUser").'</td>';
-				print '<td>';
-				print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
-				print '</td></tr>';
+		// User color
+		if (! empty($conf->agenda->enabled))
+	    {
+			print '<tr><td>'.$langs->trans("ColorUser").'</td>';
+			print '<td>';
+			print $formother->selectColor(GETPOST('color')?GETPOST('color'):$object->color, 'color', null, 1, '', 'hideifnotset');
+			print '</td></tr>';
+		}
+
+		// Categories
+		if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) 
+		{
+			print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
+			print '<td>';
+			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+			$c = new Categorie( $db );
+			$cats = $c->containing( $object->id, 'user' );
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
 			}
+			print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+			print "</td></tr>";
+		}
 
             // Status
             print '<tr><td>'.$langs->trans("Status").'</td>';

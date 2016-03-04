@@ -51,6 +51,7 @@ class ProductFournisseur extends Product
     var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
     var $vatrate_supplier;		  // default vat rate for this supplier/qty/product (can be set by get_buyprice)
 
+    var $fourn_id;                //supplier id
     var $fourn_qty;               // quantity for price (can be set by get_buyprice)
     var $fourn_pu;			       // unit price for quantity (can be set by get_buyprice)
 
@@ -190,7 +191,6 @@ class ProductFournisseur extends Product
         if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
 		{
-			//$ttx = get_default_tva($fourn,$mysoc,$this->id);	// We must use the VAT rate defined by user and not calculate it
 			$ttx = $tva_tx;
 			$buyprice = $buyprice/(1+($ttx/100));
 		}
@@ -354,6 +354,7 @@ class ProductFournisseur extends Product
      */
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
+        global $conf;
         $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability,";
         $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -367,6 +368,7 @@ class ProductFournisseur extends Product
             if ($obj)
             {
             	$this->product_fourn_price_id	= $rowid;
+                $this->fourn_id					= $obj->fk_soc;
             	$this->fourn_ref				= $obj->ref_fourn; // deprecated
 	            $this->ref_supplier             = $obj->ref_fourn;
             	$this->fourn_price				= $obj->price;
@@ -379,6 +381,7 @@ class ProductFournisseur extends Product
             	$this->fourn_tva_tx					= $obj->tva_tx;
             	$this->product_id				= $obj->fk_product;	// deprecated
             	$this->fk_product				= $obj->fk_product;
+            	$this->id						= $obj->fk_product;
             	$this->fk_availability			= $obj->fk_availability;
 				$this->delivery_time_days		= $obj->delivery_time_days;
             	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
@@ -470,9 +473,9 @@ class ProductFournisseur extends Product
                 $prodfourn->fourn_tva_npr					= $record["info_bits"];
                 $prodfourn->fk_supplier_price_expression    = $record["fk_supplier_price_expression"];
 
-                if (!empty($prodfourn->fk_supplier_price_expression)) {
+                if (!empty($conf->dynamicprices->enabled) && !empty($prodfourn->fk_supplier_price_expression)) {
                     $priceparser = new PriceParser($this->db);
-                    $price_result = $priceparser->parseProductSupplier($prodid, $prodfourn->fk_supplier_price_expression, $prodfourn->fourn_qty, $prodfourn->fourn_tva_tx);
+                    $price_result = $priceparser->parseProductSupplier($prodfourn);
                     if ($price_result >= 0) {
                     	$prodfourn->fourn_price = $price_result;
                     	$prodfourn->fourn_unitprice = null; //force recalculation of unitprice, as probably the price changed...
@@ -569,9 +572,15 @@ class ProductFournisseur extends Product
                 {
                     $fourn_price = $record["price"];
                     $fourn_unitprice = $record["unitprice"];
-                    if (!empty($record["fk_supplier_price_expression"])) {
+                    if (!empty($conf->dynamicprices->enabled) && !empty($record["fk_supplier_price_expression"])) {
+                        $prod_supplier = new ProductFournisseur($this->db);
+                        $prod_supplier->product_fourn_price_id = $record["product_fourn_price_id"];
+                        $prod_supplier->id = $prodid;
+                        $prod_supplier->fourn_qty = $record["quantity"];
+                        $prod_supplier->fourn_tva_tx = $record["tva_tx"];
+                        $prod_supplier->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
                         $priceparser = new PriceParser($this->db);
-                        $price_result = $priceparser->parseProductSupplier($prodid, $record["fk_supplier_price_expression"], $record["quantity"], $record["tva_tx"]);
+                        $price_result = $priceparser->parseProductSupplier($prod_supplier);
                         if ($price_result >= 0) {
                             $fourn_price = price2num($price_result,'MU');
                             if ($record["quantity"] != 0)

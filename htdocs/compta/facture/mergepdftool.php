@@ -385,7 +385,6 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 
 		// liste les fichiers
 		$files = array();
-		$factures_bak = $factures ;
 		foreach($_POST['toGenerate'] as $basename)
 		{
 			foreach($factures as $facture)
@@ -458,7 +457,7 @@ if ($action == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_s
 		}
 		else
 		{
-			setEventMessages($langs->trans('NoPDFAvailableForChecked'), null, 'errors');
+			setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
 		}
 	}
 	else
@@ -814,17 +813,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Rest"),$_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye,am","",$param,'align="right"',$sortfield,$sortorder);
-
-	$searchpitco='<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	$searchpitco.='<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Reset"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	if (empty($mode))
-	{
-		print_liste_field_titre($searchpitco,$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
-	}
-	else
-	{
-		print_liste_field_titre($searchpitco,$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
-	}
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -858,14 +847,8 @@ if ($resql)
 	print $form->selectarray('filtre', $liststatus, $filter, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	if (empty($mode))
-	{
-		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
-	}
-	else
-	{
-		if ($conf->use_javascript_ajax) print '<a href="#" id="checkallsend">'.$langs->trans("All").'</a> / <a href="#" id="checknonesend">'.$langs->trans("None").'</a>';
-	}
+	$searchpitco=$form->showFilterAndCheckAddButtons(1, empty($mode)?'checkformerge':'checkforsend');
+	print $searchpitco;
 	print '</td>';
 	print "</tr>\n";
 

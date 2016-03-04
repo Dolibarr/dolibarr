@@ -121,4 +121,5 @@ OpenIDURL=OpenID UR
 LoginUsingOpenID=Uloguj se sa OpenID-em
 WeeklyHours=Nedeljni broj sati
 ColorUser=Boja korisnika
-DisabledInMonoUserMode=Disabled in maintenance mode
+DisabledInMonoUserMode=Onemogućeno u modu održavanja
+UserAccountancyCode=User accountancy code

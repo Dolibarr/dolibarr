@@ -701,7 +701,13 @@ if ($id > 0 || ! empty($ref))
 
 
         // Bouton expedier avec gestion des stocks
-        if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
+
+        if (! empty($conf->stock->enabled) && $commande->statut == Commande::STATUS_DRAFT)
+        {
+            print $langs->trans("ValidateOrderFirstBeforeShipment");
+        }
+        
+		if (! empty($conf->stock->enabled) && ($commande->statut > Commande::STATUS_DRAFT && $commande->statut < Commande::STATUS_CLOSED))
 		{
 			if ($user->rights->expedition->creer)
 			{
@@ -723,7 +729,7 @@ if ($id > 0 || ! empty($ref))
 				{
 					print '<td>'.$langs->trans("WarehouseSource").'</td>';
 					print '<td>';
-					print $formproduct->selectWarehouses(! empty($commande->warehouse_id)?$commande->warehouse_id:-1,'entrepot_id','',1);
+					print $formproduct->selectWarehouses(! empty($commande->warehouse_id)?$commande->warehouse_id:-1, 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0)
 					{
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';

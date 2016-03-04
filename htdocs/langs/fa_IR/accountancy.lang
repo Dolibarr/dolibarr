@@ -34,6 +34,7 @@ AccountAccounting=حساب حسابداری
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=ورشکستگی
 
+MenuAccountancy=Accountancy
 CustomersVentilation=مشتریان ورشکسته
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=حاشیه سود معامله
@@ -46,7 +47,7 @@ UpdateAccount=اصلاح حساب حسابداری
 UpdateMvts=اصلاح نقل و انتقال
 WriteBookKeeping=ثبت حساب ها در دفتر کل
 Bookkeeping=دفتر کل
-AccountBalanceByMonth=تراز حساب های ماه
+AccountBalance=Account balance
 
 AccountingVentilation=حسابداری تفکیک
 AccountingVentilationSupplier=Breakdown accounting supplier
@@ -103,6 +104,7 @@ Code_tiers=Thirdparty
 Labelcompte=برچسب حساب
 Sens=SENS
 Codejournal=روزنامه
+NumPiece=Piece number
 
 DelBookKeeping=حذف پرونده از دفتر کل
 
@@ -151,6 +153,8 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
 ##Export Journal Feature
 ExportFormat=Format of Export
 Prefixname=Prefix of export File
@@ -163,7 +167,8 @@ Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
 EnabledTiers=In third party
-EnabledVat=In Vat
+EnabledVat=In VAT
+
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.

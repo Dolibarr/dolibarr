@@ -121,4 +121,5 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Verwende OpenID für Anmeldung
 WeeklyHours=Wochenstunden
 ColorUser=Benutzerfarbe
-DisabledInMonoUserMode=Disabled in maintenance mode
+DisabledInMonoUserMode=Deaktiviert im Wartungsmodus
+UserAccountancyCode=User accountancy code

@@ -1447,7 +1447,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Show menu entries
     	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
-	    $menumanager->showmenu('top');      // This contains a \n
+	    $menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks));      // This contains a \n
 	    print "</div>\n";
 
 	    //$form=new Form($db);
@@ -1580,7 +1580,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 /**
  *  Show left menu bar
  *
- *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler
+ *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									         		       For other external page: http://server/url
@@ -1599,6 +1599,8 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     $searchform='';
     $bookmarks='';
 
+    if (! empty($menu_array_before)) dol_syslog("Deprecated parameter menu_array_before was used when calling main::left_menu function. Menu entries of module should now be defined into module descriptor and not provided when calling left_menu.", LOG_WARNING); 
+        
     if (empty($conf->dol_hide_leftmenu))
     {
 	    // Instantiate hooks of thirdparty module
@@ -1609,7 +1611,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 
 	    print "\n";
 
-	    if ($conf->use_javascript_ajax && $conf->browser->layout != 'phone')
+	    if ($conf->use_javascript_ajax && $conf->browser->layout != 'phone' && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 	    {
     	    if (! is_object($form)) $form=new Form($db);
     	    $selected=-1;
@@ -1655,7 +1657,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
     	    }
 	    }
-        
+  
 	    // Execute hook printSearchForm
 	    $parameters=array('searchform'=>$searchform);
 	    $reshook=$hookmanager->executeHooks('printSearchForm',$parameters);    // Note that $action and $object may have been modified by some hooks
@@ -1737,7 +1739,10 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= '?title=';
 			$bugbaseurl.= urlencode("Bug: ");
 			$bugbaseurl.= '&body=';
-			$bugbaseurl.= urlencode("# Environment\n");
+			// FIXME: use .github/ISSUE_TEMPLATE.md to generate?
+			$bugbaseurl .= urlencode("# Bug\n");
+			$bugbaseurl .= urlencode("\n");
+			$bugbaseurl.= urlencode("## Environment\n");
 			$bugbaseurl.= urlencode("- **Version**: " . DOL_VERSION . "\n");
 			$bugbaseurl.= urlencode("- **OS**: " . php_uname('s') . "\n");
 			$bugbaseurl.= urlencode("- **Web server**: " . $_SERVER["SERVER_SOFTWARE"] . "\n");
@@ -1745,7 +1750,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 			$bugbaseurl.= urlencode("- **Database**: " . $db::LABEL . ' ' . $db->getVersion() . "\n");
 			$bugbaseurl.= urlencode("- **URL**: " . $_SERVER["REQUEST_URI"] . "\n");
 			$bugbaseurl.= urlencode("\n");
-			$bugbaseurl.= urlencode("# Report\n");
+			$bugbaseurl.= urlencode("## Report\n");
 			print '<div id="blockvmenuhelpbugreport" class="blockvmenuhelp">';
 			print '<a class="help" target="_blank" href="'.$bugbaseurl.'">'.$langs->trans("FindBug").'</a>';
 			print '</div>';

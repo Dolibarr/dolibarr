@@ -9,6 +9,7 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Francis Appels			<francis.appels@yahoo.com>
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,40 +102,6 @@ $permissiondellink=$user->rights->expedition->livraison->creer;	// Used by the i
  * Actions
  */
 
-
-// Set incoterm
-if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
-{
-	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
-}
-
-if ($action == 'update_extras')
-{
-	// Fill array 'array_options' with data from update form
-	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
-	if ($ret < 0) $error++;
-
-	if (! $error)
-	{
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('expeditiondao'));
-		$parameters = array('id' => $object->id);
-		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook)) {
-			$result = $object->insertExtraFields();
-			if ($result < 0) {
-				$error++;
-			}
-		} else if ($reshook < 0)
-			$error++;
-	}
-
-	if ($error)
-		$action = 'edit_extras';
-}
-
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -143,6 +110,46 @@ if (empty($reshook))
 {
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
+	// Set incoterm
+	if ($action == 'reopen' && $user->rights->expedition->creer)
+	{
+	    $object->fetch($id);
+	    $result = $object->reOpen();
+	}
+	
+	// Set incoterm
+	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	{
+	    $result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+	
+	if ($action == 'update_extras')
+	{
+	    // Fill array 'array_options' with data from update form
+	    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	    if ($ret < 0) $error++;
+	
+	    if (! $error)
+	    {
+	        // Actions on extra fields (by external module or standard code)
+	        // TODO le hook fait double emploi avec le trigger !!
+	        $hookmanager->initHooks(array('expeditiondao'));
+	        $parameters = array('id' => $object->id);
+	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	        if (empty($reshook)) {
+	            $result = $object->insertExtraFields();
+	            if ($result < 0) {
+	                $error++;
+	            }
+	        } else if ($reshook < 0)
+	            $error++;
+	    }
+	
+	    if ($error)
+	        $action = 'edit_extras';
+	}
+	
 	if ($action == 'add' && $user->rights->expedition->creer)
 	{
 	    $error=0;
@@ -199,7 +206,7 @@ if (empty($reshook))
 			$batch="batchl".$i."_0";
 			$stockLocation="ent1".$i."_0";
 	    	$qty = "qtyl".$i;
-
+ 
 			if (isset($_POST[$batch]))
 			{
 				//shipment line with batch-enable product
@@ -234,6 +241,8 @@ if (empty($reshook))
 			        $stockLine[$i][$j]['qty']=GETPOST($qty,'int');
 			        $stockLine[$i][$j]['warehouse_id']=GETPOST($stockLocation,'int');
 			        $stockLine[$i][$j]['ix_l']=GETPOST($idl,'int');
+
+			        $totalqty+=GETPOST($qty,'int');
 			        
 			        $j++;
 			        $stockLocation="ent1".$i."_".$j;
@@ -242,10 +251,11 @@ if (empty($reshook))
 			}
 			else
 			{
-				//shipment line for product with no batch management
+			    //var_dump($_POST); var_dump($batch);
+				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
-			
+				
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
             $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
@@ -277,7 +287,7 @@ if (empty($reshook))
     					{
     					    if ($stockLine[$i][$j]['qty']>0)
     					    {
-    					        $ret=$object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty']);
+    					        $ret=$object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
     					        if ($ret < 0)
     					        {
     					            setEventMessages($object->error, $object->errors, 'errors');
@@ -286,19 +296,22 @@ if (empty($reshook))
     					    }
     					}
 					}
-					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
+					else
 					{
-						$ent = "entl".$i;
-						$idl = "idl".$i;
-						$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
-						if ($entrepot_id < 0) $entrepot_id='';
-						if (! ($objectsrc->lines[$i]->fk_product > 0)) $entrepot_id = 0;
-						
-						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'),$array_options[$i]);
-						if ($ret < 0)
+						if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 						{
-							setEventMessages($object->error, $object->errors, 'errors');
-							$error++;
+							$ent = "entl".$i;
+							$idl = "idl".$i;
+							$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
+							if ($entrepot_id < 0) $entrepot_id='';
+							if (! ($objectsrc->lines[$i]->fk_product > 0)) $entrepot_id = 0;
+						
+							$ret=$object->addline($entrepot_id, GETPOST($idl,'int'), GETPOST($qty,'int'), $array_options[$i]);
+							if ($ret < 0)
+							{
+								setEventMessages($object->error, $object->errors, 'errors');
+								$error++;
+							}
 						}
 					}
 				}
@@ -332,7 +345,7 @@ if (empty($reshook))
 	    }
 	    else
 	    {
-	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("QtyToShip")), null, 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("QtyToShip").'/'.$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 	        $error++;
 	    }
 
@@ -549,7 +562,7 @@ if ($action == 'create2')
     $action=''; $id=''; $ref='';
 }
 
-// Mode creation. TODO This part seems to not be used at all. Receipt record is created by the action "create_delivery" not from a form. 
+// Mode creation. 
 if ($action == 'create')
 {
     $expe = new Expedition($db);
@@ -577,9 +590,6 @@ if ($action == 'create')
 
             if (! empty($conf->stock->enabled)) $entrepot = new Entrepot($db);
 
-            /*
-             *   Document source
-            */
             print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add">';
@@ -711,9 +721,7 @@ if ($action == 'create')
 
             dol_fiche_end();
 
-            /*
-             * Expedition Lines
-             */
+            // Shipment lines
 
             $numAsked = count($object->lines);
 
@@ -745,9 +753,9 @@ if ($action == 'create')
             print '<table class="noborder" width="100%">';
 
 
-            /* Lecture des expeditions deja effectuees */
+            // Lecture des expeditions deja effectuees
             $object->loadExpeditions();
-
+            
             if ($numAsked)
             {
                 print '<tr class="liste_titre">';
@@ -792,9 +800,9 @@ if ($action == 'create')
                 if (! empty($line->date_end)) $type=1;
 
                 print "<tr ".$bc[$var].">\n";
-
+                
                 // Product label
-                if ($line->fk_product > 0)
+                if ($line->fk_product > 0)  // If predefined product
                 {
                     $product->fetch($line->fk_product);
                     $product->load_stock();
@@ -819,12 +827,12 @@ if ($action == 'create')
                     {
                         print ($line->desc && $line->desc!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->desc):'';
                     }
-
+                    
                     print '</td>';
                 }
                 else
 				{
-                    print "<td>";
+				    print "<td>";
                     if ($type==1) $text = img_object($langs->trans('Service'),'service');
                     else $text = img_object($langs->trans('Product'),'product');
 
@@ -846,7 +854,7 @@ if ($action == 'create')
                 print '</td>';
                 $qtyProdCom=$line->qty;
 
-                // Qty already sent
+                // Qty already shipped
                 print '<td align="center">';
                 $quantityDelivered = $object->expeditions[$line->id];
                 print $quantityDelivered;
@@ -863,9 +871,9 @@ if ($action == 'create')
 					$quantityToBeDelivered = $quantityAsked - $quantityDelivered;
 				}
                 $warehouse_id = GETPOST('entrepot_id','int');
-				
+			
 				$warehouseObject = null;
-				if ($warehouse_id > 0)
+				if ($warehouse_id > 0 || ! ($line->fk_product > 0))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 				{
 					//ship from preselected location
 					$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
@@ -876,7 +884,8 @@ if ($action == 'create')
 						print '<td align="center">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-							print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
+                            if (GETPOST('qtyl'.$indiceAsked)) $defaultqty=GETPOST('qtyl'.$indiceAsked);
+                            print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 						}
 						else print $langs->trans("NA");
@@ -942,7 +951,7 @@ if ($action == 'create')
 						print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
 
 						$staticwarehouse=new Entrepot($db);
-						$staticwarehouse->fetch($warehouse_id);
+						if ($warehouse_id > 0) $staticwarehouse->fetch($warehouse_id);
 						
 						$subj=0;
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
@@ -970,16 +979,18 @@ if ($action == 'create')
 									$quantityToBeDelivered = 0;
 								}
 								$subj++;
+								print '</td></tr>';
 							}
 						}
 						else
 						{
-							print '<tr><td colspan="3" ></td><td align="center">';
+							print '<tr><td colspan="3"></td><td align="center">';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							print '</td>';
 							
 							print '<td align="left">';
 							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
+							print '</td></tr>';
 						}
 					}
 				}
@@ -988,17 +999,21 @@ if ($action == 'create')
 					// ship from multiple locations
 					if (empty($conf->productbatch->enabled) || ! $product->hasbatch())
 					{
-						print '<td></td><td></td></tr>';	// end line and start a new one for each warehouse
+					    print '<td></td><td></td></tr>';	// end line and start a new one for each warehouse
+						
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						$subj=0;
-						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) {
+						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) 
+						{
 							$warehouseObject=new Entrepot($db);
 							$warehouseObject->fetch($warehouse_id);
-							if ($stock_warehouse->real > 0) {
+							if ($stock_warehouse->real > 0) 
+							{
 								$stock = + $stock_warehouse->real; // Convert it to number
 								$deliverableQty = min($quantityToBeDelivered,$stock);
+								$deliverableQty = max(0, $deliverableQty);
 								// Quantity to send
-								print '<tr><td colspan="3" ></td><td align="center">';
+								print '<tr><td colspan="3" ></td><td align="center"><!-- qty to ship (no lot management for product line indiceAsked='.$indiceAsked.') -->';
 								if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 								{
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
@@ -1013,10 +1028,10 @@ if ($action == 'create')
 									print '<td align="left">';
 									if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 									{
-										print $warehouseObject->getNomUrl(0).' / ';
+										print $warehouseObject->getNomUrl(0).' ';
 										 
 										print '<!-- Show details of stock -->';
-										print $stock;
+										print '('.$stock.')';
 									   
 									}
 									else
@@ -1039,7 +1054,7 @@ if ($action == 'create')
 						{
 							$product->get_sousproduits_arbo();
 							$prods_arbo = $product->get_arbo_each_prod($qtyProdCom);
-							if(count($prods_arbo) > 0)
+							if (count($prods_arbo) > 0)
 							{
 								foreach($prods_arbo as $key => $value)
 								{
@@ -1049,10 +1064,12 @@ if ($action == 'create')
 									{
 										$img=img_warning($langs->trans("StockTooLow"));
 									}
-									print "<tr ".$bc[$var]."><td>&nbsp; &nbsp; &nbsp; ->
+									print "<tr ".$bc[$var]."><td>";
+									print "&nbsp; &nbsp; &nbsp; ->
 									<a href=\"".DOL_URL_ROOT."/product/card.php?id=".$value['id']."\">".$value['fullpath']."
 									</a> (".$value['nb'].")</td><td align=\"center\"> ".$value['nb_total']."</td><td>&nbsp</td><td>&nbsp</td>
-									<td align=\"center\">".$value['stock']." ".$img."</td></tr>";
+									<td align=\"center\">".$value['stock']." ".$img."</td>";
+									print "</tr>";
 								}
 							}
 						}
@@ -1060,11 +1077,12 @@ if ($action == 'create')
 					else
 					{
 						print '<td></td><td></td></tr>';	// end line and start a new one for lot/serial
-						
+
 						$subj=0;
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						
-						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) {
+						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) 
+						{
 							$warehouseObject=new Entrepot($db);
 							$warehouseObject->fetch($warehouse_id);
 							if (($stock_warehouse->real > 0) && (count($stock_warehouse->detail_batch))) {
@@ -1073,7 +1091,7 @@ if ($action == 'create')
 									//var_dump($dbatch);
 									$batchStock = + $dbatch->qty;		// To get a numeric
 									$deliverableQty = min($quantityToBeDelivered,$batchStock);
-									print '<tr><td colspan="3" ></td><td align="center">';
+									print '<tr><td colspan="3"></td><td align="center">';
 									print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$deliverableQty.'">';
 									print '</td>';
 									 
@@ -1091,25 +1109,44 @@ if ($action == 'create')
 									}
 									//dol_syslog('deliverableQty = '.$deliverableQty.' batchStock = '.$batchStock);
 									$subj++;
+									print '</td></tr>';
 								}
 							}
 						}
 					}
-					if ($subj == 0)
+					if ($subj == 0) // Line not shown yet, we show it
 					{
-						print '<tr><td colspan="3" ></td><td align="center">';
-						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
-						print '</td>';
-						
-						print '<td align="left">';
-						if ($warehouseObject) 
+						print '<tr><td colspan="3" ></td><td align="center"><!-- line not shown yet, we show it -->';
+						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->libelle);
+    						//$disabled='disabled="disabled"';
+    						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled?' '.$disabled:'').'> ';
 						}
 						else
 						{
-							print img_warning().' '.$langs->trans("StockTooLow");
+						    print $langs->trans("NA");
 						}
+						print '</td>';
+						
+						print '<td align="left">';
+						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+						{
+    						if ($warehouseObject) 
+    						{
+    							print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->libelle);
+    						}
+    						else
+    						{
+    						    if ($line->fk_product) print img_warning().' '.$langs->trans("StockTooLow");
+    						    else print '';
+    						}
+						}
+						else
+						{
+						    print $langs->trans("Service");
+						}
+						print '</td>';
+						print '</tr>';
 					}
 				}
 				
@@ -1214,44 +1251,13 @@ else if ($id || $ref)
 
 		}
 
-		// Calculate true totalWeight and totalVolume for all products
+		
+		// Calculate totalWeight and totalVolume for all products
 		// by adding weight and volume of each product line.
-		$totalWeight = '';
-		$totalVolume = '';
-		$weightUnit=0;
-		$volumeUnit=0;
-		for ($i = 0 ; $i < $num_prod ; $i++)
-		{
-			$weightUnit=0;
-			$volumeUnit=0;
-			if (! empty($lines[$i]->weight_units)) $weightUnit = $lines[$i]->weight_units;
-			if (! empty($lines[$i]->volume_units)) $volumeUnit = $lines[$i]->volume_units;
-
-			// TODO Use a function addvalueunits(val1,unit1,val2,unit2)=>(val,unit)
-			if ($lines[$i]->weight_units < 50)
-			{
-				$trueWeightUnit=pow(10,$weightUnit);
-				$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped*$trueWeightUnit;
-			}
-			else
-			{
-				$trueWeightUnit=$weightUnit;
-				$totalWeight += $lines[$i]->weight*$lines[$i]->qty_shipped;
-			}
-			if ($lines[$i]->volume_units < 50)
-			{
-				//print $lines[$i]->volume."x".$lines[$i]->volume_units."x".($lines[$i]->volume_units < 50)."x".$volumeUnit;
-				$trueVolumeUnit=pow(10,$volumeUnit);
-				//print $lines[$i]->volume;
-				$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped*$trueVolumeUnit;
-			}
-			else
-			{
-				$trueVolumeUnit=$volumeUnit;
-				$totalVolume += $lines[$i]->volume*$lines[$i]->qty_shipped;
-			}
-		}
-
+		$tmparray=$object->getTotalWeightVolume();
+		$totalWeight=$tmparray['weight'];
+		$totalVolume=$tmparray['volume'];
+		
 		print '<table class="border" width="100%">';
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
@@ -1327,7 +1333,9 @@ else if ($id || $ref)
 		print '</tr>';
 
 		// Weight
-		print '<tr><td>'.$form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer).'</td><td colspan="3">';
+		print '<tr><td>';
+		print $form->editfieldkey("Weight",'trueWeight',$object->trueWeight,$object,$user->rights->expedition->creer);
+		print '</td><td colspan="3">';
 
 		if ($action=='edittrueWeight')
 		{
@@ -1348,10 +1356,13 @@ else if ($id || $ref)
 			print ($object->trueWeight && $object->weight_units!='')?' '.measuring_units_string($object->weight_units,"weight"):'';
 		}
 
+        // Calculated
 		if ($totalWeight > 0)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
-			print $totalWeight.' '.measuring_units_string(0,"weight");
+			//print $totalWeight.' '.measuring_units_string(0,"weight");
+			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs);
+			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')'; 
 			if (!empty($object->trueWeight)) print ')';
 		}
 		print '</td></tr>';
@@ -1381,9 +1392,7 @@ else if ($id || $ref)
 		{
 			print $object->trueHeight;
 			print ($object->trueHeight && $object->height_units!='')?' '.measuring_units_string($object->height_units,"size"):'';
-
 		}
-
 
 		print '</td></tr>';
 
@@ -1399,18 +1408,28 @@ else if ($id || $ref)
 		print '</td>';
 		print '<td colspan="3">';
 		$calculatedVolume=0;
-		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) $calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		$volumeUnit=0;
+		if ($object->trueWidth && $object->trueHeight && $object->trueDepth) 
+		{
+		    $calculatedVolume=($object->trueWidth * $object->trueHeight * $object->trueDepth);
+		    $volumeUnit=$object->size_units * 3;
+		}
 		// If sending volume not defined we use sum of products
 		if ($calculatedVolume > 0)
 		{
-			print $calculatedVolume.' ';
-			if ($volumeUnit < 50) print measuring_units_string(0,"volume");
-			else print measuring_units_string($volumeUnit,"volume");
+			if ($volumeUnit < 50) 
+			{
+			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
+			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs);
+			}
+			else print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
 		}
 		if ($totalVolume > 0)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
-			print $totalVolume.' '.measuring_units_string(0,"volume");
+			//print $totalVolume.' '.measuring_units_string(0,"volume");
+			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs);
+			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
 		}
 		print "</td>\n";
@@ -1576,6 +1595,7 @@ else if ($id || $ref)
 				{
 					print (! empty($lines[$i]->description) && $lines[$i]->description!=$lines[$i]->product)?'<br>'.dol_htmlentitiesbr($lines[$i]->description):'';
 				}
+				print "</td>\n";
 			}
 			else
 			{
@@ -1711,11 +1731,12 @@ else if ($id || $ref)
 		}
 
 		// TODO add alternative status
-		/* if ($object->statut == 1 && $user->rights->expedition->creer)
+		// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
+		if ($object->statut == 2 && $object->billed && $user->rights->expedition->creer)
 		{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
-		}*/
-
+		    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+		}
+		
 		// Send
 		if ($object->statut > 0)
 		{

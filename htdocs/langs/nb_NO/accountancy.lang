@@ -1,7 +1,7 @@
 # Dolibarr language file - en_US - Accounting Expert
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_PIECE=Eksporter antall enheter
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
 ACCOUNTING_EXPORT_LABEL=Eksporter etikett
 ACCOUNTING_EXPORT_AMOUNT=Eksporter beløp
@@ -30,13 +30,14 @@ BackToChartofaccounts=Return chart of accounts
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
 Addanaccount=Add an accounting account
-AccountAccounting=Accounting account
+AccountAccounting=Regnskapskonto
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
-TradeMargin=Trade margin
+TradeMargin=Fortjenestemargin
 Reports=Rapporter
 ByCustomerInvoice=Etter kundefakturaer
 NewAccount=Ny regnskapskonto
@@ -46,9 +47,9 @@ UpdateAccount=Endring av reknskapskonto
 UpdateMvts=Endring av bevegelse
 WriteBookKeeping=Record accounts in general ledger
 Bookkeeping=Hovedbok
-AccountBalanceByMonth=Kontobalanse etter måned
+AccountBalance=Account balance
 
-AccountingVentilation=Breakdown accounting
+AccountingVentilation=Regnskapsmessig fordelingen
 AccountingVentilationSupplier=Breakdown accounting supplier
 AccountingVentilationCustomer=Breakdown accounting customer
 
@@ -103,6 +104,7 @@ Code_tiers=Tredjepart
 Labelcompte=Label account
 Sens=Sens
 Codejournal=Journal
+NumPiece=Piece number
 
 DelBookKeeping=Delete the records of the general ledger
 
@@ -151,6 +153,8 @@ MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
+MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
+
 ##Export Journal Feature
 ExportFormat=Eksportformat
 Prefixname=Prefiks for ekportfil
@@ -163,7 +167,8 @@ Type=Felttyper
 Param=Tilleggsparametre
 EnabledProduct=In Product
 EnabledTiers=In third party
-EnabledVat=In Vat
+EnabledVat=In VAT
+
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.

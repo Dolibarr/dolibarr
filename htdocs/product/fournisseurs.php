@@ -225,18 +225,20 @@ if (empty($reshook))
 				}
 				else
 				{
-					if ($price_expression !== '')
+					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
-						$priceparser = new PriceParser($db);
-						$price_result = $priceparser->parseProductSupplier($id, $price_expression, $quantity, $tva_tx);
+                        $priceparser = new PriceParser($db);
+                        $price_result = $priceparser->parseProductSupplier($object);
 						if ($price_result < 0) { //Expression is not valid
 							$error++;
 							setEventMessages($priceparser->translatedError(), null, 'errors');
 						}
 					}
-					if (! $error && ! empty($conf->dynamicprices->enabled)) {
-						$ret=$object->setPriceExpression($price_expression);
+					if (! $error && ! empty($conf->dynamicprices->enabled))
+					{
+						//Set the price expression for this supplier price
+						$ret=$object->setSupplierPriceExpression($price_expression);
 						if ($ret < 0)
 						{
 							$error++;
@@ -423,7 +425,9 @@ if ($id > 0 || $ref)
 				$mysoc2->name='Fictive seller with same country';
 				$mysoc2->tva_assuj=1;
 				$default_vat=get_default_tva($mysoc2, $mysoc, $object->id, 0);
-
+				$default_npr=get_default_npr($mysoc2, $mysoc, $object->id, 0);
+				if (empty($default_vat)) $default_npr=$default_vat;
+				
 				print '<tr><td class="fieldrequired">'.$langs->trans("VATRateForSupplierProduct").'</td>';
 				print '<td>';
 				//print $form->load_tva('tva_tx',$object->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
@@ -432,6 +436,7 @@ if ($id > 0 || $ref)
 				    $tmpproductsupplier=new ProductFournisseur($db);
 				    $tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
 					$default_vat=$tmpproductsupplier->fourn_tva_tx;
+					$default_npr=$tmpproductsupplier->fourn_tva_npr;
 				}
 				else
 				{

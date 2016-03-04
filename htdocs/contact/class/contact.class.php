@@ -664,10 +664,10 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Charge le nombre d'elements auquel est lie ce contact
+	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
 	 *  ref_contrat
-	 *  ref_commande
+	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
      *  @return     int             					<0 if KO, >=0 if OK
@@ -701,7 +701,7 @@ class Contact extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error()." - ".$sql;
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -915,7 +915,7 @@ class Contact extends CommonObject
         $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
-        if (! empty($this->email)) $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
         $phonelist=array();
         if ($this->phone_pro) $phonelist[]=$this->phone_pro;
         if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;

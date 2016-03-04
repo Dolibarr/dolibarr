@@ -46,8 +46,10 @@ create table llx_product
   cost_price			    double(24,8) DEFAULT NULL,      -- Cost price without tax. Can be used for margin calculation.
   tva_tx					double(6,3),					-- Default VAT rate of product
   recuperableonly           integer NOT NULL DEFAULT '0',   -- French NPR VAT
-  localtax1_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 1
-  localtax2_tx				double(6,3)  DEFAULT 0,         -- Spanish local VAT 2
+  localtax1_tx				double(6,3)  DEFAULT 0,         -- 
+  localtax1_type			varchar(10)  NOT NULL DEFAULT '0',         -- 
+  localtax2_tx				double(6,3)  DEFAULT 0,         -- 
+  localtax2_type			varchar(10)  NOT NULL DEFAULT '0',         -- 
   fk_user_author			integer DEFAULT NULL,			  -- user making creation
   fk_user_modif             integer,                         -- user making last change
   tosell					tinyint      DEFAULT 1,	          -- Product you sell
@@ -67,6 +69,10 @@ create table llx_product
   weight_units				tinyint      DEFAULT NULL,
   length					float        DEFAULT NULL,
   length_units				tinyint      DEFAULT NULL,
+  width					    float        DEFAULT NULL,
+  width_units				tinyint      DEFAULT NULL,
+  height					float        DEFAULT NULL,
+  height_units				tinyint      DEFAULT NULL,
   surface					float        DEFAULT NULL,
   surface_units				tinyint      DEFAULT NULL,
   volume					float        DEFAULT NULL,
@@ -79,6 +85,7 @@ create table llx_product
   finished					tinyint      DEFAULT NULL,		-- 1=manufactured product, 0=matiere premiere
   hidden					tinyint      DEFAULT 0,			-- Not used. Deprecated.
   import_key				varchar(14),					-- Import key
+  model_pdf				varchar(255),           -- model save dodument used
   fk_price_expression integer,                     -- Link to the rule for dynamic price calculation
   desiredstock              integer      DEFAULT 0,
   fk_unit					integer      DEFAULT NULL,

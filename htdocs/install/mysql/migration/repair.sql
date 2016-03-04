@@ -113,6 +113,8 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, position) values 
 
 
 -- Stock calculation on product
+DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
+
 UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 

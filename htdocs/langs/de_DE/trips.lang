@@ -31,7 +31,7 @@ TripNDF=Hinweise Spesenabrechnung
 PDFStandardExpenseReports=Standard-Vorlage, um ein PDF-Dokument für die Spesenabrechnung zu erzeugen
 ExpenseReportLine=Spesenabrechnung Zeile
 TF_OTHER=Andere
-TF_TRIP=Transportation
+TF_TRIP=Versand
 TF_LUNCH=Bewirtung
 TF_METRO=S- und U-Bahn
 TF_TRAIN=Bahn
@@ -99,5 +99,5 @@ ConfirmSaveTrip=Sind Sie sicher, dass Sie diese Spesenabrechnung bestätigen wol
 NoTripsToExportCSV=Keine Spesenabrechnung für diesen Zeitraum zu exportieren.
 ExpenseReportPayment=Spesenabrechnung Zahlung
 
-ExpenseReportsToApprove=Expense reports to approve
+ExpenseReportsToApprove=zu genehmigende Spesenabrechnungen
 ExpenseReportsToPay=zu zahlende Spesenabrechnungen

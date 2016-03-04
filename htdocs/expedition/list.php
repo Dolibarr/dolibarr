@@ -42,17 +42,16 @@ $search_company = GETPOST("search_company");
 $sall = GETPOST('sall');
 $optioncss = GETPOST('optioncss','alpha');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-
+if (! $sortfield) $sortfield="e.ref";
+if (! $sortorder) $sortorder="DESC";
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="e.ref";
-if (! $sortorder) $sortorder="DESC";
 
 $viewstatut=GETPOST('viewstatut');
 
@@ -71,11 +70,25 @@ $fieldstosearchall = array(
     's.nom'=>"ThirdParty"
 );
 
+$arrayfields=array(
+);
+// Extra fields
+/*
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+    }
+}
+*/
+
 
 /*
  * View
  */
 
+$form=new Form($db);
 $companystatic=new Societe($db);
 $shipment=new Expedition($db);
 
@@ -129,18 +142,22 @@ if ($resql)
 
 	$expedition = new Expedition($db);
 
-	$param="";
+	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".$search_ref_exp;
 	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".$search_ref_liv;
 	if ($search_company) $param.= "&amp;search_company=".$search_company;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
-	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords);
-
-
 	$i = 0;
-    print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    
+	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords, '', 0, '', '', $limit);
 
     if ($sall)
     {
@@ -149,6 +166,18 @@ if ($resql)
     }
     
     $moreforfilter='';
+    if (! empty($moreforfilter))
+    {
+        print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        print $moreforfilter;
+        $parameters=array('type'=>$type);
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        print '</div>';
+    }
+
+    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
@@ -189,12 +218,10 @@ if ($resql)
 	print '<td align="right">';
 	print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
 	print '</td>';
-	// Search
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
     print '</td>';
-
 	print "</tr>\n";
 
 	$var=True;

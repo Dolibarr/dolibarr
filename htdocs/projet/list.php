@@ -50,12 +50,12 @@ if ($socid > 0)
 if (!$user->rights->projet->lire) accessforbidden();
 
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $offset = $conf->liste_limit * $page ;
@@ -71,6 +71,7 @@ $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_opp_percent=GETPOST("search_opp_percent",'alpha');
+$search_opp_amount=GETPOST("search_opp_amount",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -88,16 +89,6 @@ $year	= GETPOST('year','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-if ($page == -1) { $page = 0; }
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-if (! $sortfield) $sortfield='p.ref';
-if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='projectlist';
@@ -160,6 +151,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_year="";
 	$search_status=-1;
 	$search_opp_status=-1;
+	$search_opp_amount='';
+	$search_opp_percent='';
 	$search_public="";
 	$search_sale="";
 	$search_user='';
@@ -237,6 +230,8 @@ if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$soc
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
 if ($search_label) $sql .= natural_search('p.title', $search_label);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_opp_amount) $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
+if ($search_opp_percent) $sql .= natural_search('p.opp_percent', $search_opp_percent, 1);
 if ($smonth > 0)
 {
     if ($syear > 0 && empty($sday))
@@ -269,6 +264,7 @@ if ($search_opp_status)
 {
     if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
     if ($search_opp_status == 'all') $sql .= " AND p.fk_opp_status IS NOT NULL";
+    if ($search_opp_status == 'openedopp') $sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WIN','LOST'))";
     if ($search_opp_status == 'none') $sql .= " AND p.fk_opp_status IS NULL";
 }
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
@@ -300,6 +296,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sday)              		$param.='&sday='.$day;
 	if ($smonth)              		$param.='&smonth='.$smonth;
 	if ($syear)               		$param.='&syear=' .$syear;
@@ -328,7 +325,6 @@ if ($resql)
 	
 	$text=$langs->trans("Projects");
 	if ($search_user == $user->id) $text=$langs->trans('MyProjects');
-	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,'','title_project');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -339,7 +335,9 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-    // Show description of content
+	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
+	
+	// Show description of content
 	if ($search_user == $user->id) print $langs->trans("MyProjectsDesc").'<br><br>';
 	else
 	{
@@ -470,8 +468,9 @@ if ($resql)
 	}
 	if (! empty($arrayfields['p.opp_amount']['checked']))
 	{
-		print '<td class="liste_titre nowrap">';
-	    print '</td>';
+		print '<td class="liste_titre nowrap right">';
+    	print '<input type="text" class="flat" name="search_opp_amount" size="3" value="'.$search_opp_amount.'">';
+		print '</td>';
 	}
 	if (! empty($arrayfields['p.fk_opp_status']['checked']))
 	{
@@ -481,8 +480,9 @@ if ($resql)
     }
 	if (! empty($arrayfields['p.opp_percent']['checked']))
 	{
-		print '<td class="liste_titre nowrap">';
-	    print '</td>';
+		print '<td class="liste_titre nowrap right">';
+    	print '<input type="text" class="flat" name="search_opp_percent" size="2" value="'.$search_opp_percent.'">';
+		print '</td>';
 	}
     // Extra fields
     if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -515,10 +515,10 @@ if ($resql)
         print '</td>';
     }
     // Action column
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 
     print '</tr>'."\n";
 

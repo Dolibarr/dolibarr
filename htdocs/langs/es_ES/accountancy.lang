@@ -34,6 +34,7 @@ AccountAccounting=Cuenta contable
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Contabilizar
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Contabilizar clientes
 SuppliersVentilation=Contabilizar proveedores
 TradeMargin=Margen de beneficio
@@ -46,7 +47,7 @@ UpdateAccount=Modificar una cuenta contable
 UpdateMvts=Modificar un movimiento
 WriteBookKeeping=Registrar los asientos en el libro mayor
 Bookkeeping=Libro Mayor
-AccountBalanceByMonth=Saldo mensual
+AccountBalance=Account balance
 
 AccountingVentilation=Descuadre contabilidad
 AccountingVentilationSupplier=Contablilización compras
@@ -103,6 +104,7 @@ Code_tiers=Tercero
 Labelcompte=Descripción
 Sens=Sentido
 Codejournal=Diario
+NumPiece=Piece number
 
 DelBookKeeping=Eliminar los registros del Diario Mayor
 
@@ -151,6 +153,8 @@ MvtNotCorrectlyBalanced=Movimiento descuadrado. Debe = %s. Haber = %s
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
+MvtNotCorrectlyBalanced=Movimiento descuadrado. Debe = %s. Haber = %s
+
 ##Export Journal Feature
 ExportFormat=Formato de exportación
 Prefixname=Prefijo del archivo de exportación
@@ -162,13 +166,14 @@ Headername=Nombre en la cabecera
 Type=Tipos de campos
 Param=Parámetros adicionales
 EnabledProduct=En producto
-EnabledTiers=In third party
-EnabledVat=En IVA
+EnabledTiers=En el tercero
+EnabledVat=In VAT
+
 ## Tools - Init accounting account on product / service
-InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
-Options=Options
-OptionModeProductSell=Mode sales
-OptionModeProductBuy=Mode purchases
-OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
-OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+InitAccountancy=Iniciar contabilidad
+InitAccountancyDesc=Esta página puede usarse para inicializar una cuenta contable en productos y servicios que no tienen definida cuenta contable de ventas y compras. Compruebe antes de que la configuración del módulo contabilidad está completa.
+Options=Opciones
+OptionModeProductSell=Modo ventas
+OptionModeProductBuy=Modo compras
+OptionModeProductSellDesc=Mostrar todos los productos sin cuenta contable definida para ventas.
+OptionModeProductBuyDesc=Mostrar todos los productos sin cuenta contable definida para compras.

@@ -270,14 +270,13 @@ else
 	$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
     //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
-    $nbtotalofrecords = 0;
+    $sql.= $db->order($sortfield,$sortorder);
+	$nbtotalofrecords = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
 	}
-
-    $sql.= $db->order($sortfield,$sortorder);
     $sql.= $db->plimit($limit + 1, $offset);
 
     $resql = $db->query($sql);
@@ -314,6 +313,8 @@ else
 		    setEventMessages($langs->trans("ProductDeleted", GETPOST('delprod')), null, 'mesgs');
 	    }
 
+	    $param='';
+        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	    if ($search_categ > 0) $param.="&amp;search_categ=".$search_categ;
     	if ($sref) $param="&amp;sref=".$sref;
     	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".$search_ref_supplier;
@@ -337,7 +338,16 @@ else
 	        if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	    } 	
 		
-    	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_products.png');
+		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+        if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+		print '<input type="hidden" name="action" value="list">';
+		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+		print '<input type="hidden" name="type" value="'.$type.'">';
+
+	    print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_products.png', 0, '', '', $limit);
 
     	if (! empty($catid))
     	{
@@ -368,15 +378,6 @@ else
     	}
     	else
     	{
-    		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
-            if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-    		print '<input type="hidden" name="action" value="list">';
-    		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-    		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    		print '<input type="hidden" name="type" value="'.$type.'">';
-
     	    if ($sall)
             {
                 foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -548,10 +549,10 @@ else
 	            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
 	            print '</td>';
     		}
-    		print '<td class="liste_titre nowrap" align="right">';
-    		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    		print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    		print '</td>';
+            print '<td class="liste_titre" align="right">';
+            $searchpitco=$form->showFilterAndCheckAddButtons(0);
+            print $searchpitco;
+            print '</td>';
 
     		print '</tr>';
 
@@ -781,8 +782,8 @@ else
     		$db->free($resql);
 
     		print "</table>";
-    		print '</form>';
     	}
+    	print '</form>';
     }
     else
     {

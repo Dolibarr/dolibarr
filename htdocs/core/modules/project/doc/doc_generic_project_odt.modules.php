@@ -698,9 +698,14 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 				catch(OdfException $e)
 				{
-					$this->error=$e->getMessage();
-					dol_syslog($this->error, LOG_WARNING);
-					return -1;
+					$ExceptionTrace=$e->getTrace();
+					// no segment defined on ODT is not an error
+					if($ExceptionTrace[0]['function'] != 'setSegment')
+					{
+						$this->error=$e->getMessage();
+						dol_syslog($this->error, LOG_WARNING);
+						return -1;
+					}
 				}
 
 				// Replace tags of project files

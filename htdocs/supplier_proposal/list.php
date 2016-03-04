@@ -78,6 +78,17 @@ if (! empty($socid))
 }
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='p.date_livraison';
+if (! $sortorder) $sortorder='DESC';
+
 if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both tests are required to be compatible with all browsers
 {
     $search_categ='';
@@ -136,19 +147,6 @@ $formsupplier_proposal = new FormSupplierProposal($db);
 $companystatic=new Societe($db);
 
 $now=dol_now();
-
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-$page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-if (! $sortfield) $sortfield='p.date_livraison';
-if (! $sortorder) $sortorder='DESC';
-
 
 $sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
 $sql.= ' p.rowid as supplier_proposalid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_livraison as dp,';
@@ -221,10 +219,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-
 $sql.= $db->plimit($limit + 1,$offset);
 $result=$db->query($sql);
-
 if ($result)
 {
 	$objectstatic=new SupplierProposal($db);
@@ -238,6 +234,7 @@ if ($result)
 	}
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
@@ -246,7 +243,6 @@ if ($result)
 	if ($search_sale > 0)    $param.='&search_sale='.$search_sale;
 	if ($search_montant_ht)  $param.='&search_montant_ht='.$search_montant_ht;
 	if ($search_author)  	 $param.='&search_author='.$search_author;
-	print_barre_liste($langs->trans('ListOfSupplierProposal').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 
 	// Lignes des champs de filtre
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -256,6 +252,8 @@ if ($result)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	
+	print_barre_liste($langs->trans('ListOfSupplierProposal').' '.($socid?'- '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);

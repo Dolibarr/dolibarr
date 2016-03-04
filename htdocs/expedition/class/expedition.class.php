@@ -8,7 +8,8 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2015  Francis Appels          <francis.appels@yahoo.com>
- * Copyright (C) 2015				Claudio Aschieri				<c.aschieri@19.coop>
+ * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -866,17 +867,28 @@ class Expedition extends CommonObject
 
 			if (! ($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS))
 			{
+			    $langs->load("errors");
 				$this->error=$langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 				return -1;
 			}
 
-			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)	// FIXME Check is done for stock of product, it must be done for stock of product into warehouse if $entrepot_id defined
+			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
 			{
+			    // Check must be done for stock of product into warehouse if $entrepot_id defined
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
-				$product_type=$product->type;
 
-				if ($product_type == 0 && $product->stock_reel < $qty)
+				$product_type=$product->type;
+				if ($entrepot_id > 0) {
+                    $product->load_stock();
+				    $product_stock = $product->stock_warehouse[$entrepot_id]->real;
+				}
+				else 
+				{
+				    $product_stock = $product->stock_reel;
+				}
+				
+				if ($product_type == 0 && $product_stock < $qty)
 				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
@@ -901,8 +913,8 @@ class Expedition extends CommonObject
 	 */
 	function addline_batch($dbatch,$array_options=0)
 	{
-		global $conf;
-		
+		global $conf,$langs;
+
 		$num = count($this->lines);
 		if ($dbatch['qty']>0)
 		{
@@ -928,7 +940,17 @@ class Expedition extends CommonObject
 
 					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
 					{
-						// TODO
+						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+						$prod_batch = new Productbatch($this->db);
+						$prod_batch->fetch($value['id_batch']);
+
+						if ($prod_batch->qty < $linebatch->dluo_qty)
+						{
+							$this->errors[] = $langs->trans('ErrorStockIsNotEnough');
+							dol_syslog(get_class($this)."::addline_batch error=Product ".$prod_batch->batch.": ".$this->errorsToString(), LOG_ERR);
+							$this->db->rollback();
+							return -1;
+						}
 					}
 					
 					//var_dump($linebatch);
@@ -945,6 +967,7 @@ class Expedition extends CommonObject
 			
 			//var_dump($line);
 			$this->lines[$num] = $line;
+			return 1;
 		}
 	}
 
@@ -980,7 +1003,7 @@ class Expedition extends CommonObject
 		if (isset($this->trueWeight)) $this->weight=trim($this->trueWeight);
 		if (isset($this->note_private)) $this->note=trim($this->note_private);
 		if (isset($this->note_public)) $this->note=trim($this->note_public);
-		if (isset($this->model_pdf)) $this->model_pdf=trim($this->model_pdf);
+		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
 
 
 
@@ -1012,7 +1035,7 @@ class Expedition extends CommonObject
 		$sql.= " weight=".(($this->trueWeight != '')?$this->trueWeight:"null").",";
 		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
 		$sql.= " entity=".$conf->entity;
 
         $sql.= " WHERE rowid=".$this->id;
@@ -1719,6 +1742,57 @@ class Expedition extends CommonObject
 
     }
 
+    /**
+     * Return into unit=0, the calculated total of weight and volume of all lines * qty
+	 * Calculate by adding weight and volume of each product line.
+     * 
+     * @return  array           array('weight'=>...,'volume'=>...)
+     */
+    function getTotalWeightVolume()
+    {
+        $weightUnit=0;
+        $volumeUnit=0;
+        $totalWeight = '';
+        $totalVolume = '';
+        $totalOrdered = '';
+        $totalToShip = '';
+        foreach ($this->lines as $line)
+        {
+            $totalOrdered+=$line->qty_asked;
+            $totalToShip+=$line->qty_shipped;
+            
+            $weightUnit=0;
+            $volumeUnit=0;
+            if (! empty($line->weight_units)) $weightUnit = $line->weight_units;
+            if (! empty($line->volume_units)) $volumeUnit = $line->volume_units;
+        
+            //var_dump($line->volume_units);
+            if ($line->weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                $trueWeightUnit=pow(10,$weightUnit);
+                $totalWeight += $line->weight*$line->qty_shipped*$trueWeightUnit;
+            }
+            else
+            {
+                $totalWeight += $line->weight*$line->qty_shipped;   // This may be wrong if we mix different units
+            }
+            if ($line->volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
+                $trueVolumeUnit=pow(10,$volumeUnit);
+                //print $line->volume;
+                $totalVolume += $line->volume*$line->qty_shipped*$trueVolumeUnit;
+            }
+            else
+            {
+                $totalVolume += $line->volume*$line->qty_shipped;   // This may be wrong if we mix different units
+            }
+        }
+        
+        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
+    }
+
+    
 	/**
 	 * Forge an set tracking url
 	 *
@@ -1769,7 +1843,7 @@ class Expedition extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			//TODO: Option to set order billed if 100% of order is shipped
+			//TODO: Add option/checkbox to set order billed if 100% of order is shipped
 			$this->statut=2;
 			$this->billed=1;
 			return 1;
@@ -1781,6 +1855,32 @@ class Expedition extends CommonObject
 		}
 	}
 
+	/**
+	 *	Classify the shipping as validated/opened
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function reOpen()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->statut=1;
+			$this->billed=0;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+	
 	/**
 	 *  Create a document onto disk according to template module.
 	 *

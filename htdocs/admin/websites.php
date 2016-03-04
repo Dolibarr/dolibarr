@@ -832,149 +832,17 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 	global $bc;
 
 	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 	foreach ($fieldlist as $field => $value)
 	{
-		if ($fieldlist[$field] == 'country')
-		{
-			if (in_array('region_id',$fieldlist))
-			{
-				print '<td>';
-				//print join(',',$fieldlist);
-				print '</td>';
-				continue;
-			}	// For state page, we do not show the country input (we link to region, not country)
-			print '<td>';
-			$fieldname='country';
-			print $form->select_country((! empty($obj->country_code)?$obj->country_code:(! empty($obj->country)?$obj->country:'')), $fieldname, '', 28, 'maxwidth300');
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'country_id')
-		{
-			if (! in_array('country',$fieldlist))	// If there is already a field country, we don't show country_id (avoid duplicate)
-			{
-				$country_id = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
-				print '<td>';
-				print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$country_id.'">';
-				print '</td>';
-			}
-		}
-		elseif ($fieldlist[$field] == 'region')
-		{
-			print '<td>';
-			$formcompany->select_region($region_id,'region');
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'region_id')
-		{
-			$region_id = (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:0);
-			print '<td>';
-			print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$region_id.'">';
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'lang')
+		if ($fieldlist[$field] == 'lang')
 		{
 			print '<td>';
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT,'lang');
 			print '</td>';
 		}
-		// Le type de template
-		elseif ($fieldlist[$field] == 'type_template')
-		{
-			print '<td>';
-			print $form->selectarray('type_template', $elementList,(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''));
-			print '</td>';
-		}
-		// Le type de l'element (pour les type de contact)
-		elseif ($fieldlist[$field] == 'element')
-		{
-			print '<td>';
-			print $form->selectarray('element', $elementList,(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''));
-			print '</td>';
-		}
-		// La source de l'element (pour les type de contact)
-		elseif ($fieldlist[$field] == 'source')
-		{
-			print '<td>';
-			print $form->selectarray('source', $sourceList,(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''));
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX."c_actioncomm")
-		{
-			print '<td>';
-			print 'user<input type="hidden" name="type" value="user">';
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm' || $fieldlist[$field] == 'deductible') {
-			print '<td>';
-			print $form->selectyesno($fieldlist[$field],(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''),1);
-			print '</td>';
-		}
-		elseif (in_array($fieldlist[$field],array('nbjour','decalage','taux','localtax1','localtax2'))) {
-			$align="left";
-			if (in_array($fieldlist[$field],array('taux','localtax1','localtax2'))) $align="right";	// Fields aligned on right
-			print '<td align="'.$align.'">';
-			print '<input type="text" class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="3" name="'.$fieldlist[$field].'">';
-			print '</td>';
-		}
-		elseif (in_array($fieldlist[$field], array('libelle_facture'))) {
-			print '<td><textarea cols="30" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'</textarea></td>';
-		}
-		elseif (in_array($fieldlist[$field], array('content')))
-		{
-			if ($tabname == MAIN_DB_PREFIX.'c_email_templates')
-			{
-				print '<td colspan="4"></td></tr><tr class="pair nohover"><td colspan="5">';		// To create an artificial CR for the current tr we are on
-			}
-			else print '<td>';
-			if ($context != 'hide')
-			{
-				//print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'</textarea>';
-				$doleditor = new DolEditor($fieldlist[$field], (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''), '', 140, 'dolibarr_mailings', 'In', 0, false, true, ROWS_5, '90%');
-				print $doleditor->Create(1);
-			}
-			else print '&nbsp;';
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'price' || preg_match('/^amount/i',$fieldlist[$field])) {
-			print '<td><input type="text" class="flat" value="'.price((! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'')).'" size="8" name="'.$fieldlist[$field].'"></td>';
-		}
 		elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldlist[$field])) {
 			print '<td><input type="text" class="flat" value="'.(! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" size="10" name="'.$fieldlist[$field].'"></td>';
-		}
-		elseif ($fieldlist[$field]=='unit') {
-			print '<td>';
-			$units = array(
-					'mm' => $langs->trans('SizeUnitmm'),
-					'cm' => $langs->trans('SizeUnitcm'),
-					'point' => $langs->trans('SizeUnitpoint'),
-					'inch' => $langs->trans('SizeUnitinch')
-			);
-			print $form->selectarray('unit', $units, (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''), 0, 0, 0);
-			print '</td>';
-		}
-		// Le type de taxe locale
-		elseif ($fieldlist[$field] == 'localtax1_type' || $fieldlist[$field] == 'localtax2_type')
-		{
-			print '<td align="center">';
-			print $form->selectarray($fieldlist[$field], $localtax_typeList, (! empty($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:''));
-			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'accountancy_code' || $fieldlist[$field] == 'accountancy_code_sell' || $fieldlist[$field] == 'accountancy_code_buy')
-		{
-			print '<td>';
-			if (! empty($conf->accounting->enabled))
-			{
-				$accountancy_account = (! empty($obj->$fieldlist[$field]) ? $obj->$fieldlist[$field] : 0);
-				print $formaccountancy->select_account($accountancy_account, $fieldlist[$field], 1, '', 1, 1);
-			}
-			else
-			{
-				print '<input type="text" size="10" class="flat" value="'.(isset($obj->$fieldlist[$field])?$obj->$fieldlist[$field]:'').'" name="'.$fieldlist[$field].'">';
-			}
-			print '</td>';
 		}
 		else
 		{

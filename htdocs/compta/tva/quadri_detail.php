@@ -416,7 +416,7 @@ else
 						print $langs->trans("NotUsedForGoods");
 					}
 					else {
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';
@@ -567,7 +567,7 @@ else
 					}
 					else
 					{
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';

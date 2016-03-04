@@ -2,8 +2,8 @@
 /* Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2011-2015 Juanjo Menent		<jmenent@2byte.es>ù
- * Copyright (C) 2015			 Claudio Aschieri	<c.aschieri@19.coop>
+ * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>ù
+ * Copyright (C) 2015      Claudio Aschieri     <c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,21 +38,34 @@ if (!$user->admin)
 
 $action=GETPOST('action','alpha');
 
+
+/*
+ * Actions
+ */
+
 // Shipment note
+if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
+{
+    // This option should always be set to on when module is on.
+    dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
+}
+/*
 if ($action == 'activate_sending')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);
     header("Location: confexped.php");
     exit;
 }
-else if ($action == 'disable_sending')
+if ($action == 'disable_sending')
 {
 	dolibarr_del_const($db, "MAIN_SUBMODULE_EXPEDITION",$conf->entity);
     header("Location: confexped.php");
     exit;
 }
+*/
+
 // Delivery note
-else if ($action == 'activate_delivery')
+if ($action == 'activate_delivery')
 {
     dolibarr_set_const($db, "MAIN_SUBMODULE_EXPEDITION", "1",'chaine',0,'',$conf->entity);    // We must also enable this
     dolibarr_set_const($db, "MAIN_SUBMODULE_LIVRAISON", "1",'chaine',0,'',$conf->entity);
@@ -68,8 +81,9 @@ else if ($action == 'disable_delivery')
 
 
 /*
- * Affiche page
+ * View
  */
+
 $dir = DOL_DOCUMENT_ROOT."/core/modules/expedition/";
 $form=new Form($db);
 
@@ -102,16 +116,15 @@ print '<td>'.$langs->trans("SendingsAbility").'</td>';
 print '<td align="center" width="20">';
 print '</td>';
 print '<td align="center" width="100">';
-
-if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
+print $langs->trans("Required");
+/*if (empty($conf->global->MAIN_SUBMODULE_EXPEDITION))
 {
 	print '<a href="confexped.php?action=activate_sending">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 }
 else
 {
 	print '<a href="confexped.php?action=disable_sending">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
-}
-
+}*/
 print "</td>";
 print '</tr>';
 

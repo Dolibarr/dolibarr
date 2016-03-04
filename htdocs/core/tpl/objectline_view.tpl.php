@@ -90,12 +90,14 @@ if (empty($usemargins)) $usemargins=0;
 	}
 	else
 	{
-		if ($line->fk_product > 0)
+		$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE?'dayhour':'day';
+		
+	    if ($line->fk_product > 0)
 		{
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 			
 			// Show range
-			echo get_date_range($line->date_start, $line->date_end);
+			echo get_date_range($line->date_start, $line->date_end, $format);
 
 			// Add description in form
 			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
@@ -119,7 +121,7 @@ if (empty($usemargins)) $usemargins=0;
 			}
 
 			// Show range
-			echo get_date_range($line->date_start,$line->date_end);
+			echo get_date_range($line->date_start,$line->date_end, $format);
 		}
 	}
 	?>
@@ -130,7 +132,11 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="linecolvat nowrap"><?php $coldisplay++; ?><?php echo vatrate($line->tva_tx,'%',$line->info_bits); ?></td>
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
-
+	
+	<?php if (!empty($conf->multicurrency->enabled)) { ?>
+	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
+	<?php } ?>
+	
 	<?php if ($inputalsopricewithtax) { ?>
 	<td align="right" class="linecoluttc nowrap"><?php $coldisplay++; ?><?php echo (isset($line->pu_ttc)?price($line->pu_ttc):price($line->subprice)); ?></td>
 	<?php } ?>
@@ -190,6 +196,9 @@ if (empty($usemargins)) $usemargins=0;
 	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
 	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
+		<?php if (!empty($conf->multicurrency->enabled)) { ?>
+		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
+		<?php } ?>
 	<?php } ?>
 
 	<?php if ($this->statut == 0  && ($object_rights->creer)) { ?>

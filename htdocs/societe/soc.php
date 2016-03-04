@@ -108,7 +108,7 @@ if (empty($reshook))
             exit;
         }    
     }
-    
+
 	if ($action == 'confirm_merge' && $confirm == 'yes')
 	{
 		$object->fetch($socid);
@@ -338,6 +338,13 @@ if (empty($reshook))
 			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
 		}
+		
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled))
+		{
+			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
+		}
+		
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0)
@@ -750,7 +757,7 @@ else
          *  Creation
          */
 		$private=GETPOST("private","int");
-		if (! empty($conf->global->MAIN_THIRPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
+		if (! empty($conf->global->MAIN_THIRDPARTY_CREATION_INDIVIDUAL) && ! isset($_GET['private']) && ! isset($_POST['private'])) $private=1;
     	if (empty($private)) $private=0;
 
         // Load object modCodeTiers
@@ -980,6 +987,10 @@ else
             print '<td colspan=2>&nbsp;</td></tr>';
         }
 
+        // Alias names (commercial, trademark or alias names)
+        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+	    print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
+
         // Prospect/Customer
         print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
 	    print '<td width="25%" class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
@@ -1033,10 +1044,6 @@ else
 	        print '<td colspan="3"><input type="text" name="barcode" id="barcode" value="'.$object->barcode.'">';
             print '</td></tr>';
         }
-
-        // Alias names (commercial, trademark or alias names)
-        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	    print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
@@ -1147,7 +1154,8 @@ else
 
         // Type - Size
         print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>'."\n";
-        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+        $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
@@ -1249,6 +1257,16 @@ else
 			}
 		}
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			print '<tr>';
+			print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+	        print '<td colspan="3" class="maxwidthonsmartphone">';
+	        print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+			print '</td></tr>';
+		}
+
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1271,7 +1289,7 @@ else
         dol_fiche_end();
 
         print '<div class="center">';
-        print '<input type="submit" class="button" name="submit" value="'.$langs->trans('AddThirdParty').'">';
+        print '<input type="submit" class="button" name="create" value="'.$langs->trans('AddThirdParty').'">';
         if ($backtopage)
         {
             print ' &nbsp; ';
@@ -1479,12 +1497,12 @@ else
 			}
 			
             // Name
-            print '<tr><td>'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td width="25%">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
 	        print '<tr id="name_alias"><td><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-	        print '<td colspan="3"><input type="text" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'" size="32"></td></tr>';
+	        print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.dol_escape_htmltag($object->name_alias).'"></td></tr>';
 
             // Prefix
             if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -1801,6 +1819,16 @@ else
 				}
 			}
 
+			// Multicurrency
+			if (! empty($conf->multicurrency->enabled))
+			{
+				print '<tr>';
+				print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+		        print '<td colspan="3" class="maxwidthonsmartphone">';
+		        print $form->selectMultiCurrency(($object->multicurrency_code ? $object->multicurrency_code : $conf->currency), 'multicurrency_code', 1);
+				print '</td></tr>';
+			}
+
             // Other attributes
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -1894,8 +1922,9 @@ else
 
         dol_htmloutput_errors($error,$errors);
 
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
         
-        dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
         
         print '<div class="fichecenter">';
@@ -1903,11 +1932,6 @@ else
         
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-
-	    // Alias names (commercial, trademark or alias names)
-	    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
-	    print $object->name_alias;
-	    print "</td></tr>";
 
     	// Prospect/Customer
     	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
@@ -2148,7 +2172,7 @@ else
         print '<table class="border tableforfield" width="100%">';
         
         // Legal
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -2212,6 +2236,16 @@ else
             print '</td></tr>';
 		}
 
+		// Multicurrency
+		if (! empty($conf->multicurrency->enabled))
+		{
+			print '<tr>';
+			print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+	        print '<td>';
+	        print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code,1) : '';
+			print '</td></tr>';
+		}
+		
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook

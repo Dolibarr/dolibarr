@@ -221,3 +221,4 @@ OtherCountriesCustomersReport=تقرير العملاء الأجانب
 BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة بأنهم مختلفون عن رمز البلد شركتك الخاصة لل
 SameCountryCustomersWithVAT=تقرير عملاء الوطني
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة هي نفس رمز البلد شركتك الخاصة لل
+LinkedFichinter=Link to an intervention

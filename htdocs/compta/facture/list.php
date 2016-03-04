@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2015 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015-2016 Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,17 +75,17 @@ $search_paymentmode=GETPOST('search_paymentmode','int');
 $option = GETPOST('option');
 if ($option == 'late') $filter = 'paye:0';
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if ($page == -1) {
     $page = 0;
 }
 $offset = $limit * $page;
+if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == 1) $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='f.datef';
-
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -104,6 +104,9 @@ $toselect = GETPOST('toselect', 'array');
 $fieldid = (! empty($ref)?'facnumber':'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
+
+$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
+if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
 
 $object=new Facture($db);
 
@@ -134,13 +137,19 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 if (empty($reshook))
 {
-	// Mass actions
+	// Mass actions. Controls on number of lines checked
+    $maxformassaction=1000;
 	if (! empty($massaction) && count($toselect) < 1)
 	{
 		$error++;
 		setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
 	}
-
+	if (! $error && count($toselect) > $maxformassaction)
+	{
+	    setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
+	    $error++;
+	}
+	
 	if (! $error && $massaction == 'confirm_presend')
 	{
 		$resaction = '';
@@ -149,7 +158,7 @@ if (empty($reshook))
 		$langs->load("mails");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		
-		if (!isset($user->email))
+		if (!$error && !isset($user->email))
 		{
 			$error++;
 			setEventMessages($langs->trans("NoSenderEmailDefined"), null, 'warnings');
@@ -408,12 +417,132 @@ if (empty($reshook))
 		$action='list';
 		$massaction='';
 	}
+
+	if (! $error && $massaction == "builddoc" && $user->rights->facture->lire && ! GETPOST('button_search'))
+	{
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+         
+        $objecttmp=new Facture($db);
+        $listofobjectid=array();
+        $listofobjectthirdparties=array();
+        $listofobjectref=array();
+        foreach($toselect as $toselectid)
+        {
+            $objecttmp=new Facture($db);	// must create new instance because instance is saved into $listofobjectref array for future use
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $listoinvoicesid[$toselectid]=$toselectid;
+                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+                $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
+                $listofobjectref[$toselectid]=$objecttmp->ref;
+            }
+        }
+
+        $arrayofinclusion=array();
+        foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
+        $factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+
+        // liste les fichiers
+        $files = array();
+        foreach($listofobjectref as $basename)
+        {
+            foreach($factures as $facture)
+            {
+                if (strstr($facture["name"],$basename))
+                {
+                    $files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"];
+                    break;
+                }
+            }
+        }
+        
+        // Define output language (Here it is not used because we do only merging existing PDF)
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+
+        // Create empty PDF
+        $pdf=pdf_getInstance();
+        if (class_exists('TCPDF'))
+        {
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+        }
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+
+        if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+
+        // Add all others
+        foreach($files as $file)
+        {
+            // Charge un document PDF depuis un fichier.
+            $pagecount = $pdf->setSourceFile($file);
+            for ($i = 1; $i <= $pagecount; $i++)
+            {
+                $tplidx = $pdf->importPage($i);
+                $s = $pdf->getTemplatesize($tplidx);
+                $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+                $pdf->useTemplate($tplidx);
+            }
+        }
+
+        // Create output dir if not exists
+        dol_mkdir($diroutputpdf);
+
+        // Save merged file
+        $filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Invoices")));
+        if ($filter=='paye:0')
+        {
+            if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));
+            else $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
+        }
+        if ($year) $filename.='_'.$year;
+        if ($month) $filename.='_'.$month;
+        if ($pagecount)
+        {
+            $now=dol_now();
+            $file=$diroutputpdf.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+            $pdf->Output($file,'F');
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($file, octdec($conf->global->MAIN_UMASK));
+
+                $langs->load("exports");
+                setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+        }
+        else
+        {
+            setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+        }
+	}
+	
+	// Remove file
+	if ($action == 'remove_file')
+	{
+	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	
+	    $langs->load("other");
+	    $upload_dir = $diroutputpdf;
+	    $file = $upload_dir . '/' . GETPOST('file');
+	    $ret=dol_delete_file($file);
+	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	    $action='';
+	}
+	
 }
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-    $search_categ='';
     $search_user='';
     $search_sale='';
     $search_product_category='';
@@ -430,6 +559,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $toselect='';
     $option='';
     $filter='';
+    $day_lim='';
+    $year_lim='';
+    $month_lim='';
 }
 
     
@@ -448,7 +580,7 @@ $facturestatic=new Facture($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom as name, s.rowid as socid, s.code_client, s.client ';
@@ -527,7 +659,7 @@ if ($search_user > 0)
 }
 if (! $sall)
 {
-    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.increment, f.total, f.tva, f.total_ttc,';
+    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, f.total, f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' s.nom, s.rowid, s.code_client, s.client';
@@ -565,25 +697,38 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($day)                $param.='&day='.$day;
     if ($month)              $param.='&month='.$month;
     if ($year)               $param.='&year=' .$year;
+    if ($day_lim)            $param.='&day_lim='.$day_lim;
+    if ($month_lim)          $param.='&month_lim='.$month_lim;
+    if ($year_lim)           $param.='&year_lim=' .$year_lim;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
     if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
     if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
+    if ($search_product_category > 0)   $param.='$search_product_category=' .$search_product_category;
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
 	if ($search_status != '') $param.='&search_status='.$search_status;
 	if ($search_paymentmode > 0) $param.='search_paymentmode='.$search_paymentmode;
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	
-	$massactionbutton=$form->selectMassAction('', $massaction ? array() : array('presend'=>$langs->trans("SendByMail")));
+	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
     
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
     
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num,$nbtotalofrecords,'title_accountancy.png');
+	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
 
 	if ($massaction == 'presend')
 	{
@@ -681,14 +826,6 @@ if ($resql)
         dol_fiche_end();
 	}
 	
-	
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -783,9 +920,11 @@ if ($resql)
 	$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 	print $form->selectarray('search_status', $liststatus, $search_status, 1);
     print '</td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    print "</td></tr>\n";
+    print '<td class="liste_titre" align="center">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
+    print $searchpitco;
+    print '</td>';
+    print "</tr>\n";
 
     if ($num > 0)
     {
@@ -810,7 +949,7 @@ if ($resql)
             $facturestatic->type=$objp->type;
             $facturestatic->statut=$objp->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($objp->datelimite);
-            $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
+            $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note_private),1);
             $paiement = $facturestatic->getSommePaiement();
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';
@@ -915,6 +1054,23 @@ if ($resql)
     print "</table>\n";
     print "</form>\n";
     $db->free($resql);
+    
+    if ($massaction == 'builddoc' || $action == 'remove_file')
+    {
+        /*
+         * Show list of available documents
+         */
+        $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+        $urlsource.=str_replace('&amp;','&',$param);
+        
+        $filedir=$diroutputpdf;
+        $genallowed=$user->rights->facture->lire;
+        $delallowed=$user->rights->facture->lire;
+    
+        print '<br>';
+        // We disable multilang because we concat already existing pdf.
+        $formfile->show_documents('unpaid','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$langs->trans("PDFMerge"),'');
+    }    
 }
 else
 {

@@ -44,5 +44,12 @@ CREATE TABLE llx_supplier_proposaldet (
   fk_product_fournisseur_price integer DEFAULT NULL,
   special_code integer DEFAULT 0,
   rang integer DEFAULT 0,
-  ref_fourn varchar(30) DEFAULT NULL
+  ref_fourn varchar(30) DEFAULT NULL,
+  
+  fk_multicurrency        integer,
+  multicurrency_code      varchar(255),
+  multicurrency_subprice  double(24,8) DEFAULT 0,
+  multicurrency_total_ht  double(24,8) DEFAULT 0,
+  multicurrency_total_tva double(24,8) DEFAULT 0,
+  multicurrency_total_ttc double(24,8) DEFAULT 0
 ) ENGINE=innodb;

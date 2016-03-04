@@ -74,7 +74,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	<td></td>
 	<td></td>
 </tr>
+-->
 </table>
- -->
- 
+
 <!-- END PHP TEMPLATE -->

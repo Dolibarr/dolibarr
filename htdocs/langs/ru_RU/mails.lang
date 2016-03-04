@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=Электронная почта успешно п
 MailUnsubcribe=Отказаться от рассылки
 Unsuscribe=Отказаться от рассылки
 MailingStatusNotContact=Не писать
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Email получателя пуста
 WarningNoEMailsAdded=Нет новых сообщений, чтобы добавить в список получателей.
 ConfirmValidMailing=Вы уверены, что хотите проверить этот адрес?

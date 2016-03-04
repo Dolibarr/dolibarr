@@ -7,6 +7,7 @@ CommRequest=Zapytanie o cenę
 CommRequests=Zapytania o cenę
 SearchRequest=Znajdź zapytanie
 DraftRequests=Projekt zapytania
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=W ostatnim% s zmodyfikowane żądania cenowe
 RequestsOpened=Otwórz zapytanie o cenę
 SupplierProposalArea=Obszar ofert dostawcy

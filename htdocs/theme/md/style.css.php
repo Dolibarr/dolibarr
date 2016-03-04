@@ -414,6 +414,9 @@ th .button {
 .valignmiddle {
 	vertical-align: middle;
 }
+.valignbottom {
+	vertical-align: bottom;
+}
 .centpercent {
 	width: 100%;
 }
@@ -503,6 +506,18 @@ div.myavailability {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
+.checkallactions {
+	vertical-align: top;
+    margin-top: 6px;	
+    margin-left: 4px;	
+}
+.selectlimit {
+	margin-right: 10px !important;
+}
+.strikefordisabled {
+	text-decoration: line-through;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -513,10 +528,14 @@ div.myavailability {
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }
+.minwidth400 { min-width: 400px; }
+.minwidth500 { min-width: 500px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
 .maxwidth300 { max-width: 300px; }
+.maxwidth400 { max-width: 400px; }
+.maxwidth500 { max-width: 500px; }
 .titlefield { width: 30%; }
 <?php if (! empty($dol_optimize_smallscreen)) { ?>
 .hideonsmartphone { display: none; }
@@ -637,7 +656,6 @@ div.fiche {
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
-
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -667,6 +685,46 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
+/* Force values for small screen */
+@media only screen and (max-width: 850px)
+{
+    div.fiche {
+    	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
+    	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:16); ?>px;
+    	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
+    	margin-bottom: 15px;
+    }
+    div.fichecenter {
+    	width: 100%;
+    	clear: both;	/* This is to have div fichecenter that are true rectangles */
+    }
+    div.fichecenterbis {
+    	margin-top: 8px;
+    }
+    div.fichethirdleft {
+    	float: none;
+    	width: auto;
+    	padding-bottom: 6px;
+    }
+    div.fichetwothirdright {
+    	float: none;
+    	width: auto;
+    	padding-bottom: 6px;
+    }
+    div.fichehalfleft {
+    	float: none;
+    	width: auto;
+    }
+    div.fichehalfright {
+    	float: none;
+    	width: auto;
+    }
+    div.ficheaddleft {
+    	<?php print "padding-".$left.": 0px;\n"; ?>
+    	margin-top: 10px;
+    }
+}
+
 .containercenter {
 	display : table;
 	margin : 0px auto;
@@ -1225,7 +1283,12 @@ div.vmenu, td.vmenu {
 	width: 202px;
 }
 
-.menu_contenu { padding-top: 4px; padding-bottom: 3px;}
+.menu_contenu { 
+	padding-top: 4px; 
+	padding-bottom: 3px;
+	overflow: hidden;
+    text-overflow: ellipsis;
+}
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 8px; }
@@ -1236,7 +1299,7 @@ a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
-a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
+a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
@@ -2800,6 +2863,14 @@ table.dp {
 	color: rgb(<?php print $colortextlink; ?>);
 }
 
+.categtextwhite, .treeview .categtextwhite.hover {
+	color: #fff !important;
+}
+.categtextblack {
+	color: #000 !important;
+}
+
+
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */
 /* ============================================================================== */
@@ -3413,6 +3484,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container .select2-choice {
+	color: #000;
+}
 .selectoptiondisabledwhite {
 	background: #FFFFFF !important;
 }
@@ -3509,22 +3583,30 @@ a span.select2-chosen
   overflow: hidden;
 }
 
+
+/* ============================================================================== */
+/*  For categories                                                                */
+/* ============================================================================== */
+
 .noborderoncategories {
 	border: none !important;
 	border-radius: 5px !important;
 	box-shadow: none;
 	-webkit-box-shadow: none !important;
     box-shadow: none !important;
-    color: #fff !important;
 }
 span.noborderoncategories a, li.noborderoncategories a {
-	color: #fff !important;
 	line-height: normal;
 }
 span.noborderoncategories {
 	padding: 5px 5px 0px 5px;
 }
-
+.categtextwhite, .treeview .categtextwhite.hover {
+	color: #fff !important;
+}
+.categtextblack {
+	color: #000 !important;
+}
 
 
 /* ============================================================================== */

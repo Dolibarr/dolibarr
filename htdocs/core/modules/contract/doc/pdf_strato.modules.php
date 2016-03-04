@@ -626,7 +626,7 @@ class pdf_strato extends ModelePDFContract
 
 			$this->recipient->name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target');
+			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target', $object);
 
 			// Show recipient
 			$widthrecbox=100;

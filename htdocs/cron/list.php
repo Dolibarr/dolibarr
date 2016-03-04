@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.srouceforge.net>
+ * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +35,23 @@ $langs->load("bills");
 
 if (!$user->rights->cron->read) accessforbidden();
 
-
-/*
- * Actions
- */
-
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 
-$sortorder=GETPOST('sortorder','alpha');
-$sortfield=GETPOST('sortfield','alpha');
-$page=GETPOST('page','int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) {
+    $page = 0;
+}
+$offset = $limit * $page;
+if (! $sortorder) $sortorder='ASC';
+if (! $sortfield) $sortfield='t.label';
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $status=GETPOST('status','int');
 if ($status == '') $status=-2;
 
@@ -57,13 +62,13 @@ if (empty($sortorder)) $sortorder="DESC";
 if (empty($sortfield)) $sortfield="t.status";
 if (empty($arch)) $arch = 0;
 if ($page == -1) {
-	$page = 0 ;
+    $page = 0 ;
 }
 
-$limit = $conf->global->MAIN_SIZE_LISTE_LIMIT;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+
+/*
+ * Actions
+ */
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -79,8 +84,8 @@ if (!empty($search_label))
 }
 
 // Delete jobs
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete){
-
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete)
+{
 	//Delete cron task
 	$object = new Cronjob($db);
 	$object->id=$id;
@@ -92,8 +97,8 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 }
 
 // Execute jobs
-if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute){
-
+if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
+{
 	$object = new Cronjob($db);
 	$job = $object->fetch($id);
 
@@ -137,6 +142,7 @@ $pagetitle=$langs->trans("CronList");
 llxHeader('',$pagetitle);
 
 // list of jobs created
+// TODO Replace this with an embedded select.
 $object = new Cronjob($db);
 $result=$object->fetch_all($sortorder, $sortfield, $limit, $offset, $status, $filter);
 if ($result < 0)
@@ -148,12 +154,8 @@ $num=count($object->lines);
 
 $param='&page='.$page.'&status='.$status.'&search_label='.$search_label;
 
+$stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(), 'dayhour');
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup');
-
-
-print $langs->trans('CronInfo');
-print "<br><br>";
 
 
 if ($action == 'delete')
@@ -171,6 +173,28 @@ if ($action == 'execute')
 
 print '<form method="GET" action="'.$url_form.'" name="search_form">'."\n";
 print '<input type="hidden" name="status" value="'.$status.'" >';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $stringcurrentdate, $num, 0, 'title_setup', 0, '', '', $limit);
+
+
+// Line with explanation and button new job
+if (! $user->rights->cron->create)
+{
+    $buttontoshow.='<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
+}
+else
+{
+    $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
+}
+print '<table class="centpercent"><tr><td>'.$langs->trans('CronInfo').'</td><td class="right">'.$buttontoshow.'</td></tr></table>';
+print '<br>';
+
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
@@ -303,7 +327,7 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td>';
-		if(!empty($line->lastoutput)) {print dol_trunc(nl2br($line->lastoutput),100);}
+		if(!empty($line->lastoutput)) {print dol_trunc(nl2br($line->lastoutput),50);}
 		print '</td>';
 
 		// Status
@@ -345,21 +369,7 @@ print '</table>';
 print '</from>';
 
 
-
-print "\n<div class=\"tabsAction\">\n";
-
-if (! $user->rights->cron->create)
-{
-	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
-}
-else
-{
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
-}
-
-print '</div>';
-
-print '<br>';
+print '<br><br>';
 
 
 dol_print_cron_urls();

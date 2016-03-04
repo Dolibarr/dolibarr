@@ -83,7 +83,7 @@ $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
 if ($page == -1) { $page = 0 ; }
-$offset = $limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -149,7 +149,7 @@ $arrayfields=array(
     's.code_compta_fournisseur'=>array('label'=>$langs->trans("SupplierAccountancyCodeShort"), 'checked'=>$checkedsupplieraccountcode, 'enabled'=>(! empty($conf->fournisseur->enabled))),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
-    'state.state_name'=>array('label'=>$langs->trans("State"), 'checked'=>0),
+    'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
     'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
     's.siren'=>array('label'=>$langs->trans("ProfId1Short"), 'checked'=>$checkedprofid1),
@@ -418,6 +418,8 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+$sql.= $db->order($sortfield,$sortorder);
+
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -426,8 +428,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$nbtotalofrecords = $db->num_rows($result);
 }
 
-$sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+$sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -435,7 +436,9 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	if ($sall != '') $param = "&amp;sall=".urlencode($sall);
+	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall != '') $param .= "&amp;sall=".urlencode($sall);
  	if ($search_categ != '') $param.='&amp;search_categ='.urlencode($search_categ);
  	if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
 	if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);
@@ -470,13 +473,20 @@ if ($resql)
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 	
     
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies');
-
     // Show delete result message
     if (GETPOST('delsoc'))
     {
 	    setEventMessages($langs->trans("CompanyDeleted",GETPOST('delsoc')), null, 'mesgs');
     }
+
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
 	$langs->load("other");
 	$textprofid=array();
@@ -491,13 +501,6 @@ if ($resql)
 		}
 	}
 
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	
     if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -560,7 +563,7 @@ if ($resql)
 	if (! empty($arrayfields['s.code_compta_fournisseur']['checked'])) print_liste_field_titre($arrayfields['s.code_compta_fournisseur']['label'],$_SERVER["PHP_SELF"],"s.code_compta_fournisseur","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.town']['checked']))           print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.town","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.zip']['checked']))            print_liste_field_titre($langs->trans("Zip"),$_SERVER["PHP_SELF"],"s.zip","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['state.state_name']['checked'])) print_liste_field_titre($langs->trans("StateShort"),$_SERVER["PHP_SELF"],"state.state_name","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['state.nom']['checked'])) print_liste_field_titre($langs->trans("StateShort"),$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($langs->trans("ThirdPartyType"),$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.siren']['checked']))          print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$param,'class="nowrap"',$sortfield,$sortorder);
@@ -653,7 +656,7 @@ if ($resql)
     	print '</td>';
     }
 	// State
-    if (! empty($arrayfields['state.state_name']['checked']))
+    if (! empty($arrayfields['state.nom']['checked']))
     {
         print '<td class="liste_titre">';
     	print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
@@ -718,7 +721,8 @@ if ($resql)
     
     // Type (customer/prospect/supplier)
     print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
-	print '<select class="flat" name="search_type">';
+	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<select class="flat" name="search_type">';
 	print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
 	if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
 	if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
@@ -762,7 +766,7 @@ if ($resql)
 	    $arraystcomm=array();
 		foreach($prospectstatic->cacheprospectstatus as $key => $val)
 		{
-			$arraystcomm[$val['id']]=$val['label'];
+	        $arraystcomm[$val['id']]=($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
 		}
 	    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
 	    print '</td>';
@@ -774,7 +778,15 @@ if ($resql)
 	   {
 			if (! empty($arrayfields["ef.".$key]['checked'])) 
 			{
-				print '<td class="liste_titre">';
+			    $typeofextrafield=$extrafields->attribute_type[$key];
+			    if (in_array($typeofextrafield, array('int'))) print '<td class="liste_titre right">'; 
+			    else print '<td class="liste_titre">';
+			    if (in_array($typeofextrafield, array('varchar', 'int', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				print '<input class="flat" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
 				print '</td>';
 			}
 	   }
@@ -803,17 +815,16 @@ if ($resql)
         print '</td>';
     }
     // Action column
-	print '<td class="liste_titre" align="right">';
-	if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 
 	print "</tr>\n";
 
 	$var=True;
 
-	while ($i < min($num,$conf->liste_limit))
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
@@ -872,7 +883,7 @@ if ($resql)
             print "<td>".$obj->zip."</td>\n";
         }        
 	    // State
-	    if (! empty($arrayfields['state.state_name']['checked']))
+	    if (! empty($arrayfields['state.nom']['checked']))
         {
             print "<td>".$obj->state_name."</td>\n";
         }        

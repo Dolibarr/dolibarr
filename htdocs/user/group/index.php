@@ -49,6 +49,12 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="g.nom";
 if (! $sortorder) $sortorder="ASC";
 
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'g.nom'=>"Group",
+    'g.note'=>"Note"
+);
+
 
 /*
  * View
@@ -85,7 +91,19 @@ if ($resql)
 
     $param="&search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
     if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
-    print '<table class="noborder" width="100%">';
+    
+    if ($sall)
+    {
+        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    }
+    
+    $moreforfilter='';
+    
+	//$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Group"),$_SERVER["PHP_SELF"],"g.nom",$param,"","",$sortfield,$sortorder);
     //multicompany

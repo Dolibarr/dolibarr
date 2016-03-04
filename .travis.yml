@@ -162,11 +162,11 @@ before_script:
     echo "MySQL"
     mysql -e 'DROP DATABASE IF EXISTS travis;'
     mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
-    mysql -D travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+    mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
   fi
   # FIXME: find a way to import a MySQL dump into PostgreSQL
   #if [ "$DB" = 'postgresql' ]; then
-  #  pgsql travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+  #  pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
   #fi
   # TODO: SQLite
   echo

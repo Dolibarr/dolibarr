@@ -148,7 +148,7 @@ MigrationFinished=Migrace dokončena
 LastStepDesc=<strong>Poslední krok:</strong> Definujte zde přihlašovací jméno a heslo které budete používat pro připojení k softwaru. Toto heslo neztraťte - jedná se o jediný administrátorský účet.
 ActivateModule=Aktivace modulu %s
 ShowEditTechnicalParameters=Klikněte zde pro zobrazení / editaci pokročilých parametrů (pro experty)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Varování:\nProvedli jste zálohu databáze jako první? \nPokud ji neprovede, můžete kvůli některým chybám v databázových systémech (například mysql verze 5.5.40/41/42/43) přijít o data, proto vám doporučujeme mít zálohu před spuštěním migrace.\n\nStiskněte OK pro spuštění migrace...
 ErrorDatabaseVersionForbiddenForMigration=Vaše verze databáze  je %s. Ta bohužel obsahuje kritickou chybu mající zásadní vliv na ztrátu dat, pokud provedete změnu struktury ve vaší databázi, stejně jako je to vyžadováno v procesu migrace. Z tohoto důvodu nebude migrace povolena, dokud neprovedete upgrade databáze na vyšší fixní verzi (seznam známých chybných verzí: %s)
 
 #########
@@ -202,6 +202,6 @@ MigrationActioncommElement=Aktualizovat údaje na činnostech
 MigrationPaymentMode=Migrace dat platebního režimu
 MigrationCategorieAssociation=Migrace kategorií
 MigrationEvents=Migrace událostí přidá vlastníka události do přiřazené tabulky
-MigrationReloadModule=Reload module %s
+MigrationReloadModule=Načíst modul %s
 ShowNotAvailableOptions=Ukázat nedostupné možnosti
 HideNotAvailableOptions=Skrýt nedostupné možnosti

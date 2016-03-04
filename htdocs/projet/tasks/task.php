@@ -220,6 +220,8 @@ if ($id > 0 || ! empty($ref))
 
 			print '<table class="border" width="100%">';
 
+			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+				
 			// Ref
 			print '<tr><td width="30%">';
 			print $langs->trans("Ref");
@@ -230,7 +232,7 @@ if ($id > 0 || ! empty($ref))
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
-			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
+			print $form->showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';

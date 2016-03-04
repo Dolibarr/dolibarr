@@ -395,7 +395,8 @@ class Cronjob extends CommonObject
     	$sql.= " t.test";
     	$sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
     	$sql.= " WHERE 1 = 1";
-    	if ($status >= 0) $sql.= " AND t.status = ".(empty($status)?'0':'1');
+    	if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
+    	if ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
     		foreach($filter as $key => $value) {
@@ -875,7 +876,6 @@ class Cronjob extends CommonObject
 
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
-
 		// Increase limit of time. Works only if we are not in safe mode
 		$ExecTimeLimit=600;
 		if (!empty($ExecTimeLimit))
@@ -891,13 +891,12 @@ class Cronjob extends CommonObject
 			@ini_set('memory_limit', $MemoryLimit);
 		}
 
-
-		// Update last run date (to track running jobs)
+		// Update last run date start (to track running jobs)
 		$this->datelastrun=$now;
 		$this->lastoutput='';
 		$this->lastresult='';
 		$this->nbrun=$this->nbrun + 1;
-		$result = $this->update($user);
+		$result = $this->update($user);       // This include begin/commit
 		if ($result<0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
 			return -1;
@@ -952,7 +951,7 @@ class Cronjob extends CommonObject
 			
 			if (! $error)
 			{
-				dol_syslog(get_class($this)."::run_jobs ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
+				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
 	
 				// Create Object for the call module
 				$object = new $this->objectname($this->db);
@@ -970,16 +969,17 @@ class Cronjob extends CommonObject
 				if ($result===false || $result != 0)
 				{
 				    $langs->load("errors");
-					dol_syslog(get_class($this)."::run_jobs result=".$result." error=".$object->error, LOG_ERR);
-					$this->error = $object->error?$object->error:$langs->trans('ErrorUnknown');
-					$this->lastoutput = $this->error;
+					dol_syslog(get_class($this)."::run_jobs END result=".$result." error=".$object->error, LOG_ERR);
+				    $this->error = $object->error?$object->error:$langs->trans('ErrorUnknown');
+					$this->lastoutput = ($object->output?$object->output."\n":"").$this->error;
 					$this->lastresult = is_numeric($result)?$result:-1;
 		            $retval = $this->lastresult;
 		            $error++;
 				}
 				else
 				{
-					$this->lastoutput=$object->output;
+					dol_syslog(get_class($this)."::run_jobs END");
+				    $this->lastoutput=$object->output;
 					$this->lastresult=var_export($result,true);
 					$retval = $this->lastresult;
 				}
@@ -1092,7 +1092,7 @@ class Cronjob extends CommonObject
 		}
 		$this->lastresult=$retval;
 		$this->datelastresult=dol_now();
-		$result = $this->update($user);
+		$result = $this->update($user);       // This include begin/commit
 		if ($result < 0)
 		{
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);

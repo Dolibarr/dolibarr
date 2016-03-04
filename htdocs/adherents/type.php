@@ -210,22 +210,6 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	{
 		dol_print_error($db);
 	}
-
-	//dol_fiche_end();
-
-	/*
-	 * Hotbar
-	 */
-	print '<div class="tabsAction">';
-
-	// New type
-	if ($user->rights->adherent->configurer)
-	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a></div>';
-	}
-
-	print "</div>";
-
 }
 
 

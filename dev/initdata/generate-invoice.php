@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       dev/intdata/generate-invoice.php
+ *      \file       dev/initdata/generate-invoice.php
  *		\brief      Script example to inject random customer invoices (for load tests)
  */
 

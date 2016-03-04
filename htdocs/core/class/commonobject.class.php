@@ -228,7 +228,7 @@ abstract class CommonObject
 	public $barcode_type_coder;
 
 	/**
-	 * @var int Payment method ID?
+	 * @var int Payment method ID (cheque, cash, ...)
 	 * @see setPaymentMethods()
 	 */
 	public $mode_reglement_id;
@@ -384,7 +384,7 @@ abstract class CommonObject
      */
     function errorsToString()
     {
-    	return $this->error.(is_array($this->errors)?(($this->error!=''?' ':'').join(',',$this->errors)):'');
+    	return $this->error.(is_array($this->errors)?(($this->error!=''?', ':'').join(', ',$this->errors)):'');
     }
 
     /**
@@ -447,7 +447,7 @@ abstract class CommonObject
     {
     	global $conf, $langs;
 
-    	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
+    	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also option MAIN_FORCE_STATE_INTO_ADDRESS
     	
     	$contactid=0;
     	$thirdpartyid=0;
@@ -483,15 +483,15 @@ abstract class CommonObject
 			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1); $outdone++;
 			$outdone++;
 		}
-		
-		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)
-				&& ! empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
+
+		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
+				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
 		{
-			$out.=($outdone?'<br>':'').$this->state;
+			$out.=($outdone?' - ':'').$this->state;
 			$outdone++;
 		}
 
-		if (! empty($this->phone_pro) || ! empty($this->phone_mobile) || ! empty($this->phone_perso) || ! empty($this->fax) || ! empty($this->office_phone) || ! empty($this->user_mobile) || ! empty($this->office_fax)) $out.=($outdone?'<br>':'');
+		if (! empty($this->phone) || ! empty($this->phone_pro) || ! empty($this->phone_mobile) || ! empty($this->phone_perso) || ! empty($this->fax) || ! empty($this->office_phone) || ! empty($this->user_mobile) || ! empty($this->office_fax)) $out.=($outdone?'<br>':'');
     	if (! empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
 			$out.=dol_print_phone($this->phone,$this->country_code,$contactid,$thirdpartyid,'AC_TEL','&nbsp;','phone',$langs->trans("PhonePro")); $outdone++;
 		}
@@ -768,9 +768,10 @@ abstract class CommonObject
      *    @param	int			$statut		Status of links to get (-1=all)
      *    @param	string		$source		Source of contact: external or thirdparty (llx_socpeople) or internal (llx_user)
      *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
+     *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
      *    @return	array		            Array of contacts
      */
-    function liste_contact($statut=-1,$source='external',$list=0)
+    function liste_contact($statut=-1,$source='external',$list=0,$code='')
     {
         global $langs;
 
@@ -788,6 +789,7 @@ abstract class CommonObject
         $sql.= " WHERE ec.element_id =".$this->id;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element='".$this->element."'";
+        if ($code) $sql.= " AND tc.code = '".$this->db->escape($code)."'";
         if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
         if ($source == 'external' || $source == 'thirdparty') $sql.= " AND tc.source = 'external'";
         $sql.= " AND tc.active=1";
@@ -825,7 +827,7 @@ abstract class CommonObject
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             dol_print_error($this->db);
             return -1;
         }
@@ -872,18 +874,19 @@ abstract class CommonObject
      *      Return array with list of possible values for type of contacts
      *
      *      @param	string	$source     'internal', 'external' or 'all'
-     *      @param	string	$order		Sort order by : 'code' or 'rowid'
+     *      @param	string	$order		Sort order by : 'position', 'code', 'rowid'...
      *      @param  int		$option     0=Return array id->label, 1=Return array code->label
      *      @param  int		$activeonly 0=all status of contact, 1=only the active
      *		@param	string	$code		Type of contact (Example: 'CUSTOMER', 'SERVICE')
      *      @return array       		Array list of type of contacts (id->label if option=0, code->label if option=1)
      */
-    function liste_type_contact($source='internal', $order='', $option=0, $activeonly=0, $code='')
+    function liste_type_contact($source='internal', $order='position', $option=0, $activeonly=0, $code='')
     {
         global $langs;
 
-        if (empty($order)) $order='code';
-
+        if (empty($order)) $order='position';
+        if ($order == 'position') $order.=',code';
+        
         $tab = array();
         $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -891,7 +894,7 @@ abstract class CommonObject
         if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active types
         if (! empty($source) && $source != 'all') $sql.= " AND tc.source='".$source."'";
         if (! empty($code)) $sql.= " AND tc.code='".$code."'";
-        $sql.= " ORDER by tc.".$order;
+        $sql.= $this->db->order($order,'ASC');
 
         //print "sql=".$sql;
         $resql=$this->db->query($sql);
@@ -1001,26 +1004,30 @@ abstract class CommonObject
     {
         global $conf;
 
-        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id)) return 0;
+        if (empty($this->socid) && empty($this->fk_soc) && empty($this->fk_thirdparty) && empty($force_thirdparty_id))
+            return 0;
 
-	    require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+        require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
-	    $idtofetch=isset($this->socid)?$this->socid:(isset($this->fk_soc)?$this->fk_soc:$this->fk_thirdparty);
-		if ($force_thirdparty_id) $idtofetch=$force_thirdparty_id;
+        $idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : $this->fk_thirdparty);
+        if ($force_thirdparty_id)
+            $idtofetch = $force_thirdparty_id;
 
-        $thirdparty = new Societe($this->db);
-        $result=$thirdparty->fetch($idtofetch);
-        $this->client = $thirdparty;  // deprecated
-        $this->thirdparty = $thirdparty;
+        if ($idtofetch) {
+            $thirdparty = new Societe($this->db);
+            $result = $thirdparty->fetch($idtofetch);
+            $this->client = $thirdparty;  // deprecated
+            $this->thirdparty = $thirdparty;
 
-        // Use first price level if level not defined for third party
-        if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level))
-        {
-            $this->client->price_level=1; // deprecated
-            $this->thirdparty->price_level=1;
-        }
+            // Use first price level if level not defined for third party
+            if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level)) {
+                $this->client->price_level = 1; // deprecated
+                $this->thirdparty->price_level = 1;
+            }
 
-        return $result;
+            return $result;
+        } else
+            return -1;
     }
 
 
@@ -1181,7 +1188,7 @@ abstract class CommonObject
     }
 
     /**
-     *	Load value from specific field
+     *	Getter generic. Load value from a specific field
      *
      *	@param	string	$table		Table of element or element line
      *	@param	int		$id			Element id
@@ -1207,7 +1214,7 @@ abstract class CommonObject
     }
 
     /**
-     *	Update a specific field into database
+     *	Setter generic. Update a specific field into database
      *
      *	@param	string		$field		Field to update
      *	@param	mixed		$value		New value
@@ -1409,6 +1416,114 @@ abstract class CommonObject
     	else
     	{
     		dol_syslog(get_class($this).'::setPaymentMethods, status of the object is incompatible');
+    		$this->error='Status of the object is incompatible '.$this->statut;
+    		return -2;
+    	}
+    }
+
+	/**
+     *  Change the multicurrency code
+     *
+     *  @param		string	$code	multicurrency code
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setMulticurrencyCode($code)
+    {
+    	dol_syslog(get_class($this).'::setMulticurrencyCode('.$id.')');
+    	if ($this->statut >= 0 || $this->element == 'societe')
+    	{
+    		$fieldname = 'multicurrency_code';
+			
+    		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql .= ' SET '.$fieldname.' = "'.$this->db->escape($code).'"';
+    		$sql .= ' WHERE rowid='.$this->id;
+
+    		if ($this->db->query($sql))
+    		{
+    			$this->multicurrency_code = $code;
+				
+				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
+				if ($rate) $this->setMulticurrencyRate($rate);
+				
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog(get_class($this).'::setMulticurrencyCode Erreur '.$sql.' - '.$this->db->error());
+    			$this->error=$this->db->error();
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog(get_class($this).'::setMulticurrencyCode, status of the object is incompatible');
+    		$this->error='Status of the object is incompatible '.$this->statut;
+    		return -2;
+    	}
+    }
+	
+	/**
+     *  Change the multicurrency rate
+     *
+     *  @param		double	$rate	multicurrency rate
+     *  @return		int				>0 if OK, <0 if KO
+     */
+    function setMulticurrencyRate($rate)
+    {
+    	dol_syslog(get_class($this).'::setMulticurrencyRate('.$id.')');
+    	if ($this->statut >= 0 || $this->element == 'societe')
+    	{
+    		$fieldname = 'multicurrency_tx';
+			
+    		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+    		$sql .= ' SET '.$fieldname.' = '.$rate;
+    		$sql .= ' WHERE rowid='.$this->id;
+
+    		if ($this->db->query($sql))
+    		{
+    			$this->multicurrency_tx = $rate;
+				
+				// Update line price
+				if (!empty($this->lines))
+				{
+					foreach ($this->lines as &$line) 
+					{
+						switch ($this->element) {
+							case 'propal':
+								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit);
+								break;
+							case 'commande':
+								$this->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit);
+								break;
+							case 'facture':
+								$this->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+								break;
+							case 'supplier_proposal':
+								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn);
+								break;
+							case 'order_supplier':
+								$this->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits,  $line->product_type, false, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit);
+								break;
+							default:
+								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
+								break;
+						}
+						
+					}
+				}
+				
+    			return 1;
+    		}
+    		else
+    		{
+    			dol_syslog(get_class($this).'::setMulticurrencyRate Erreur '.$sql.' - '.$this->db->error());
+    			$this->error=$this->db->error();
+    			return -1;
+    		}
+    	}
+    	else
+    	{
+    		dol_syslog(get_class($this).'::setMulticurrencyRate, status of the object is incompatible');
     		$this->error='Status of the object is incompatible '.$this->statut;
     		return -2;
     	}
@@ -2076,6 +2191,7 @@ abstract class CommonObject
         $sql = 'SELECT rowid, qty, '.$fieldup.' as up, remise_percent, total_ht, '.$fieldtva.' as total_tva, total_ttc, '.$fieldlocaltax1.' as total_localtax1, '.$fieldlocaltax2.' as total_localtax2,';
         $sql.= ' tva_tx as vatrate, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, info_bits, product_type';
 		if ($this->table_element_line == 'facturedet') $sql.= ', situation_percent';
+		$sql.= ', multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line;
         $sql.= ' WHERE '.$this->fk_element.' = '.$this->id;
         if ($exclspec)
@@ -2098,6 +2214,9 @@ abstract class CommonObject
             $total_ht_by_vats  = array();
             $total_tva_by_vats = array();
             $total_ttc_by_vats = array();
+			$this->multicurrency_total_ht	= 0;
+            $this->multicurrency_total_tva	= 0;
+           	$this->multicurrency_total_ttc	= 0;
 
             $num = $this->db->num_rows($resql);
             $i = 0;
@@ -2106,11 +2225,11 @@ abstract class CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 // Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
-
+				$multicurrency_tx = !empty($this->multicurrency_tx) ? $this->multicurrency_tx : 1;
                 if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
                 {
                 	$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
-                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100));
+                	$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
                 	$diff=price2num($tmpcal[1] - $obj->total_tva, 'MT', 1);
                 	if ($diff)
                 	{
@@ -2129,6 +2248,7 @@ abstract class CommonObject
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
+                
                 if (! isset($total_ht_by_vats[$obj->vatrate]))  $total_ht_by_vats[$obj->vatrate]=0;
                 if (! isset($total_tva_by_vats[$obj->vatrate])) $total_tva_by_vats[$obj->vatrate]=0;
                 if (! isset($total_ttc_by_vats[$obj->vatrate])) $total_ttc_by_vats[$obj->vatrate]=0;
@@ -2174,7 +2294,12 @@ abstract class CommonObject
 					$this->total_ttc -= $sit->total_ttc;
 				}
 			}
-
+			
+			// Multicurrency
+			$this->multicurrency_total_ht	+= $this->total_ht * $multicurrency_tx;
+            $this->multicurrency_total_tva	+= $this->total_tva * $multicurrency_tx;
+            $this->multicurrency_total_ttc	+= $this->total_ttc * $multicurrency_tx;
+			
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -2198,6 +2323,9 @@ abstract class CommonObject
                 $sql .= " ".$fieldlocaltax1."='".price2num($this->total_localtax1)."',";
                 $sql .= " ".$fieldlocaltax2."='".price2num($this->total_localtax2)."',";
                 $sql .= " ".$fieldttc."='".price2num($this->total_ttc)."'";
+				$sql .= ", multicurrency_total_ht='".price2num($this->multicurrency_total_ht, 'MT', 1)."'";
+				$sql .= ", multicurrency_total_tva='".price2num($this->multicurrency_total_tva, 'MT', 1)."'";
+				$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
                 $sql .= ' WHERE rowid = '.$this->id;
 
                 //print "xx".$sql;
@@ -2207,7 +2335,7 @@ abstract class CommonObject
                 {
                     $error++;
                     $this->error=$this->db->lasterror();
-                    $this->error[]=$this->db->lasterror();
+                    $this->errors[]=$this->db->lasterror();
                 }
             }
 
@@ -2396,6 +2524,9 @@ abstract class CommonObject
                     if ($objecttype == 'facture')			{
                         $classpath = 'compta/facture/class';
                     }
+                    else if ($objecttype == 'facturerec')			{
+                        $classpath = 'compta/facture/class'; $module = 'facture';
+                    }
                     else if ($objecttype == 'propal')			{
                         $classpath = 'comm/propal/class';
                     }
@@ -2420,7 +2551,9 @@ abstract class CommonObject
                         $classpath = 'contrat/class'; $subelement = 'contrat'; $module = 'contratabonnement';
                     }
 
+                    // Set classfile
                     $classfile = strtolower($subelement); $classname = ucfirst($subelement);
+                    
                     if ($objecttype == 'invoice_supplier') {
                         $classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
                     }
@@ -2429,6 +2562,9 @@ abstract class CommonObject
                     }
                     else if ($objecttype == 'supplier_proposal')   {
                         $classfile = 'supplier_proposal'; $classname = 'SupplierProposal';
+                    }
+                    else if ($objecttype == 'facturerec')   {
+                        $classfile = 'facture-rec'; $classname = 'FactureRec';
                     }
                     
                     // Here $module, $classfile and $classname are set
@@ -3068,6 +3204,9 @@ abstract class CommonObject
 		// Price HT
 		print '<td class="linecoluht" align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoluht_currency" align="right" width="80">'.$langs->trans('PriceUHTCurrency').'</td>';
+		
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
@@ -3100,6 +3239,9 @@ abstract class CommonObject
 
 		// Total HT
 		print '<td class="linecolht" align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+
+		// Multicurrency
+		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right" width="50">'.$langs->trans('TotalHTShortCurrency').'</td>';
 
 		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
@@ -3226,6 +3368,8 @@ abstract class CommonObject
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
+			
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -3249,7 +3393,7 @@ abstract class CommonObject
 			if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("Label").'"';
 			else $placeholder=' title="'.$langs->trans("Label").'"';
 
-			$pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -3288,6 +3432,7 @@ abstract class CommonObject
         print '<td>'.$langs->trans('Description').'</td>';
         print '<td align="right">'.$langs->trans('VAT').'</td>';
         print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+		if (!empty($conf->multicurrency->enabled)) print '<td align="right">'.$langs->trans('PriceUHTCurrency').'</td>';
         print '<td align="right">'.$langs->trans('Qty').'</td>';
 	    if($conf->global->PRODUCT_USE_UNITS)
 	    {
@@ -3418,6 +3563,7 @@ abstract class CommonObject
 
         $this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
         $this->tpl['price'] = price($line->subprice);
+		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
         $this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 	    if($conf->global->PRODUCT_USE_UNITS) $this->tpl['unit'] = $line->getLabelOfUnit('long');
         $this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate($line->remise_percent, true) : '&nbsp;';
@@ -4085,6 +4231,7 @@ abstract class CommonObject
 				else
 				{
 					$csstyle='';
+					$class=(!empty($extrafields->attribute_hidden[$key]) ? 'class="hideobject" ' : '');
 					if (is_array($params) && count($params)>0) {
 						if (array_key_exists('style',$params)) {
 							$csstyle=$params['style'];
@@ -4092,12 +4239,12 @@ abstract class CommonObject
 					}
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
-						$out .= '<tr '.$csstyle.'>';
+						$out .= '<tr '.$class.$csstyle.'>';
 						$colspan='0';
 					}
 					else
 					{
-						$out .= '<tr '.$csstyle.'>';
+						$out .= '<tr '.$class.$csstyle.'>';
 					}
 					// Convert date into timestamp format
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
@@ -4109,7 +4256,8 @@ abstract class CommonObject
 						$label = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$label.'</span>';
 
 					$out .= '<td>'.$langs->trans($label).'</td>';
-					$out .='<td'.($colspan?' colspan="'.$colspan.'"':'').'>';
+					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
+					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 					case "view":

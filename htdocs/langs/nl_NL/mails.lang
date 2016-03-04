@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=Emailing succesvol gevalideerd
 MailUnsubcribe=Uitschrijven
 Unsuscribe=Uitschrijven
 MailingStatusNotContact=Niet meer contacten
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=E-mailadres ontvanger is leeg
 WarningNoEMailsAdded=Geen nieuw E-mailadres aan de lijst van ontvangers toe te voegen.
 ConfirmValidMailing=Weet u zeker dat u deze EMailing wilt valideren?

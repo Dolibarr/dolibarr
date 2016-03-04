@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005-2010	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,61 +35,171 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Account extends CommonObject
 {
-    public $element='bank_account';
-    public $table_element='bank_account';
+    public $element = 'bank_account';
+    public $table_element = 'bank_account';
 
     /**
      * @var	int		Use id instead of rowid
      * @deprecated
      * @see id
      */
-    var $rowid;
+    public $rowid;
 
-    var $label;
-    //! 1=Compte courant/check/carte, 2=Compte liquide, 0=Compte épargne
-    var $courant;
-    var $type;      // same as courant
-    //! Name
-    var $bank;
-    var $clos;
-    var $rappro=1;    // If bank need to be conciliated
-    var $url;
-    //! BBAN field for French Code banque
-    var $code_banque;
-    //! BBAN field for French Code guichet
-    var $code_guichet;
-    //! BBAN main account number
-    var $number;
-    //! BBAN field for French Cle de controle
-    var $cle_rib;
-    //! BIC/SWIFT number
-    var $bic;
-    //! IBAN number (International Bank Account Number)
-    var $iban;			// stored into iban_prefix field into database
-    var $proprio;
-    var $owner_address;
+    /**
+     * Label
+     * @var string
+     */
+    public $label;
 
-    var $state_id;
-    var $state_code;
-    var $state;
+    /**
+     * Bank account type. Check TYPE_ constants
+     * @var int
+     */
+    public $courant;
 
-    var $type_lib=array();
+    /**
+     * Bank account type. Check TYPE_ constants
+     * @var int
+     */
+    public $type;
 
-    var $account_number;
-	var $accountancy_journal;
+    /**
+     * Bank name
+     * @var string
+     */
+    public $bank;
 
-    var $currency_code;
-    var $min_allowed;
-    var $min_desired;
-    var $comment;
+    /**
+     * Status
+     * @var int
+     */
+    public $clos = self::STATUS_OPEN;
 
+    /**
+     * Does it need to be conciliated?
+     * @var int
+     */
+    public $rappro=1;
+
+    /**
+     * Webpage
+     * @var string
+     */
+    public $url;
+
+    /**
+     * Bank number. If in SEPA area, you should move to IBAN field
+     * @var string
+     */
+    public $code_banque;
+
+    /**
+     * Branch number. If in SEPA area, you should move to IBAN field
+     * @var string
+     */
+    public $code_guichet;
+
+    /**
+     * Account number. If in SEPA area, you should move to IBAN field
+     * @var string
+     */
+    public $number;
+
+    /**
+     * Bank account number control digit. If in SEPA area, you should move to IBAN field
+     * @var string
+     */
+    public $cle_rib;
+
+    /**
+     * BIC/Swift code
+     * @var string
+     */
+    public $bic;
+
+    /**
+     * IBAN number (International Bank Account Number). Stored into iban_prefix field into database
+     * @var
+     */
+    public $iban;
+
+    /**
+     * Name of account holder
+     * @var string
+     */
+    public $proprio;
+
+    /**
+     * Address of account holder
+     * @var string
+     */
+    public $owner_address;
+
+    public $state_id;
+    public $state_code;
+    public $state;
+
+    public $type_lib=array();
+
+    /**
+     * Accountancy code
+     * @var string
+     */
+    public $account_number;
+	public $accountancy_journal;
+
+    /**
+     * Currency code
+     * @var string
+     */
+    public $currency_code;
+
+    /**
+     * Authorized minimum balance
+     * @var float
+     */
+    public $min_allowed;
+
+    /**
+     * Desired minimum balance
+     * @var float
+     */
+    public $min_desired;
+
+    /**
+     * Notes
+     * @var string
+     */
+    public $comment;
+
+    /**
+     * Date of the initial balance. Used in Account::create
+     * @var int
+     */
+    public $date_solde;
+
+    /**
+     * Current account
+     */
+    const TYPE_CURRENT = 1;
+    /**
+     * Cash account
+     */
+    const TYPE_CASH = 2;
+    /**
+     * Savings account
+     */
+    const TYPE_SAVINGS = 0;
+
+    const STATUS_OPEN = 0;
+    const STATUS_CLOSED = 1;
 
     /**
      *  Constructor
      *
      *  @param	DoliDB		$db		Database handler
      */
-    function __construct($db)
+    function __construct(DoliDB $db)
     {
         global $langs;
 
@@ -98,14 +208,16 @@ class Account extends CommonObject
         $this->clos = 0;
         $this->solde = 0;
 
-        $this->type_lib[0]=$langs->trans("BankType0");
-        $this->type_lib[1]=$langs->trans("BankType1");
-        $this->type_lib[2]=$langs->trans("BankType2");
+        $this->type_lib = array(
+            self::TYPE_SAVINGS => $langs->trans("BankType0"),
+            self::TYPE_CURRENT => $langs->trans("BankType1"),
+            self::TYPE_CASH => $langs->trans("BankType2"),
+        );
 
-        $this->status[0]=$langs->trans("StatusAccountOpened");
-        $this->status[1]=$langs->trans("StatusAccountClosed");
-
-        return 1;
+        $this->status = array(
+            self::STATUS_OPEN => $langs->trans("StatusAccountOpened"),
+            self::STATUS_CLOSED => $langs->trans("StatusAccountOpened")
+        );
     }
 
 

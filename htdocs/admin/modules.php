@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
@@ -47,7 +47,8 @@ $specialtostring=array(0=>'common', 1=>'interfaces', 2=>'other', 3=>'functional'
 $familyinfo=array(
 	'hr'=>array('position'=>'001', 'label'=>$langs->trans("ModuleFamilyHr")),
 	'crm'=>array('position'=>'006', 'label'=>$langs->trans("ModuleFamilyCrm")),
-	'financial'=>array('position'=>'009', 'label'=>$langs->trans("ModuleFamilyFinancial")),
+	'srm'=>array('position'=>'007', 'label'=>$langs->trans("ModuleFamilySrm")),
+    'financial'=>array('position'=>'009', 'label'=>$langs->trans("ModuleFamilyFinancial")),
 	'products'=>array('position'=>'012', 'label'=>$langs->trans("ModuleFamilyProducts")),
 	'projects'=>array('position'=>'015', 'label'=>$langs->trans("ModuleFamilyProjects")),
 	'ecm'=>array('position'=>'018', 'label'=>$langs->trans("ModuleFamilyECM")),
@@ -140,7 +141,7 @@ foreach ($modulesdir as $dir)
 				                $objMod = new $modName($db);
 								$modNameLoaded[$modName]=$dir;
 
-    		    		        if (! $objMod->numero > 0)
+    		    		        if (! $objMod->numero > 0 && $modName != 'modUser')
     		            		{
     		         		    	dol_syslog('The module descriptor '.$modName.' must have a numero property', LOG_ERR);
     		            		}
@@ -223,7 +224,7 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules=count($conf->modules);
-$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
+$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1), count($modules));
 if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
 print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
 

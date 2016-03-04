@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Unsubscribe
 Unsuscribe=Unsubscribe
 MailingStatusNotContact=Don't contact anymore
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=電子メールの受信者は空です
 WarningNoEMailsAdded=受信者のリストに追加するない新しい電子メール。
 ConfirmValidMailing=あなたはこのメール送信を検証してもよろしいですか？

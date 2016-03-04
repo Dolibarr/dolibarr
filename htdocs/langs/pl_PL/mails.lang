@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=Mailing pomyślnie zweryfikowany
 MailUnsubcribe=Wypisz
 Unsuscribe=Wypisz
 MailingStatusNotContact=Nie kontaktuj się więcej
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Odbiorca maila jest pusty
 WarningNoEMailsAdded=Brak nowych wiadomości mail, aby dodać adres do listy.
 ConfirmValidMailing=Czy na pewno chcesz potwierdzić tego maila?

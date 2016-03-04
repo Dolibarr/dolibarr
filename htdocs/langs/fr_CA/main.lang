@@ -19,6 +19,7 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+DatabaseConnection=Connexion à la base de donnée
 ErrorNoSocialContributionForSellerCountry=Erreur, aucun type de charges défini pour le pays '%s'.
 PriceUHT=Prix
 PriceUTTC=P.U. TTC
