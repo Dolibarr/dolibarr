@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/accountancy/supplier/list.php
- * \ingroup Accountancy
- * \brief Ventilation page from suppliers invoices
+ * \file 		htdocs/accountancy/customer/list.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Ventilation page from suppliers invoices
  */
 require '../../main.inc.php';
 
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -132,32 +133,34 @@ print '<script type="text/javascript">
 /*
  * Action
  */
-
 if ($action == 'ventil' && ! empty($btn_ventil)) {
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 	if ($_POST['codeventil'] && $_POST["mesCasesCochees"]) {
 		print '<div><font color="red">' . count($_POST["mesCasesCochees"]) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
-		
+
 		foreach ( $mesCasesCochees as $maLigneCochee ) {
 			// print '<div><font color="red">id selectionnee : '.$monChoix."</font></div>";
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
 			$monNumLigne = $maLigneCourante[1];
 			$monCompte = $mesCodesVentilChoisis[$monNumLigne];
-			
+
 			$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
-			
+
+			$accountventilated = new AccountingAccount($db);
+			$accountventilated->fetch($monCompte, '');
+
 			dol_syslog('accountancy/supplier/list.php:: sql=' . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
-				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
+				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
 			} else {
-				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . $monCompte . '<br/> <pre>' . $sql . '</pre></font></div>';
+				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
 			}
-			
+
 			$cpt ++;
 		}
 	} else {
@@ -169,7 +172,6 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 /*
  * Supplier Invoice Lines
  */
-
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
@@ -255,7 +257,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="10" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre" align="center">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
