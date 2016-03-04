@@ -529,6 +529,13 @@ div.myavailability {
 .strikefordisabled {
 	text-decoration: line-through;
 }
+.tdoverflow {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */

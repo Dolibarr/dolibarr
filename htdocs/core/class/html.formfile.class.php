@@ -796,6 +796,7 @@ class FormFile
 			// Show list of existing files
 			if (empty($useinecm)) print load_fiche_titre($title?$title:$langs->trans("AttachedFiles"));
 			if (empty($url)) $url=$_SERVER["PHP_SELF"];
+			print '<!-- html.formfile::list_of_documents -->'."\n";
 			print '<table width="100%" class="'.($useinecm?'nobordernopadding':'liste').'">';
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("Documents2"),$url,"name","",$param,'align="left"',$sortfield,$sortorder);
@@ -829,10 +830,9 @@ class FormFile
 	                {
 	                    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
 	                }
-					
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
-					print '<td>';
+					print '<td class="tdoverflow">';
 					//print "XX".$file['name'];	//$file['name'] must be utf8
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
@@ -849,11 +849,12 @@ class FormFile
 
 					print img_mime($file['name'],$file['name'].' ('.dol_print_size($file['size'],0,0).')').' ';
 					if ($showrelpart == 1) print $relativepath;
-					print dol_trunc($file['name'],$maxlength,'middle');
+					//print dol_trunc($file['name'],$maxlength,'middle');
+					print $file['name'];
 					print '</a>';
 					print "</td>\n";
-					print '<td align="right">'.dol_print_size($file['size'],1,1).'</td>';
-					print '<td align="center">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
+					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
+					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
 					// Preview
 					if (empty($useinecm))
 					{
@@ -871,7 +872,7 @@ class FormFile
 					}
 					// Delete or view link
 					// ($param must start with &)
-					print '<td align="right">';
+					print '<td class="valignmiddle right" width="50px">';
 					if ($useinecm)     print '<a href="'.DOL_URL_ROOT.'/ecm/docfile.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view().'</a> &nbsp; ';
 					else
 					{
