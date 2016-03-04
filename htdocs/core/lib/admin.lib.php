@@ -66,12 +66,12 @@ function versioncompare($versionarray1,$versionarray2)
         if (preg_match('/alpha|dev/i',$operande2)) $operande2=-5;
         if (preg_match('/beta$/i',$operande1)) $operande1=-4;
         if (preg_match('/beta$/i',$operande2)) $operande2=-4;
-        if (preg_match('/beta([0-9])*/i',$operande1)) $operande1=-3;
-        if (preg_match('/beta([0-9])*/i',$operande2)) $operande2=-3;
+        if (preg_match('/beta([0-9])+/i',$operande1)) $operande1=-3;
+        if (preg_match('/beta([0-9])+/i',$operande2)) $operande2=-3;
         if (preg_match('/rc$/i',$operande1)) $operande1=-2;
         if (preg_match('/rc$/i',$operande2)) $operande2=-2;
-        if (preg_match('/rc([0-9])*/i',$operande1)) $operande1=-1;
-        if (preg_match('/rc([0-9])*/i',$operande2)) $operande2=-1;
+        if (preg_match('/rc([0-9])+/i',$operande1)) $operande1=-1;
+        if (preg_match('/rc([0-9])+/i',$operande2)) $operande2=-1;
         $level++;
         //print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
         if ($operande1 < $operande2) { $ret = -$level; break; }
