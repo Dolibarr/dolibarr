@@ -1076,7 +1076,7 @@ if ($action == 'create')
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.fournisseur = 1', 1);
+		print $form->select_company('', 'socid', 's.fournisseur = 1', 'SelectThirdParty');
 		print '</td>';
 	}
 	print '</tr>' . "\n";

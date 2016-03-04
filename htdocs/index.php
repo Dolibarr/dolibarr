@@ -170,6 +170,7 @@ if (empty($user->societe_id))
 	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
 		! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
 		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
+		! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
 	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
 	    ! empty($conf->projet->enabled) && $user->rights->projet->lire
 	    );
@@ -188,6 +189,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
+    	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
 	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
             DOL_DOCUMENT_ROOT."/projet/class/project.class.php" 
 	    );
@@ -205,7 +207,8 @@ if (empty($user->societe_id))
 	                   'Contrat',
 	                   'CommandeFournisseur',
 	                   'FactureFournisseur',
-					   'ExpenseReport',
+            	       'SupplierProposal',
+	                   'ExpenseReport',
 	                   'Project'
 	    );
 	    // Cle array returned by the method load_state_board for each line
@@ -222,7 +225,8 @@ if (empty($user->societe_id))
 	                'Contracts',
 	                'supplier_orders',
 	                'supplier_invoices',
-					'expensereports',
+	                'askprice',
+	                'expensereports',
 	                'projects'
 	    );
 	    // Dashboard Icon lines
@@ -239,6 +243,7 @@ if (empty($user->societe_id))
 	                 'order',
 	                 'order',
 	                 'bill',
+	                 'propal',
 					 'trip',
 	                 'project'
 	    );
@@ -255,7 +260,8 @@ if (empty($user->societe_id))
 	                  "BillsCustomers",
 	                  "Contracts",
 	                  "SuppliersOrders",
-	                  "SuppliersInvoices",
+                      "SuppliersInvoices",
+	                  "SupplierProposalShort",
 					  "ExpenseReports",
 	                  "Projects"
 	    );
@@ -273,7 +279,8 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
     	    DOL_URL_ROOT.'/contrat/list.php',
     	    DOL_URL_ROOT.'/fourn/commande/list.php',
-    	    DOL_URL_ROOT.'/fourn/facture/list.php',
+	        DOL_URL_ROOT.'/fourn/facture/list.php',
+	        DOL_URL_ROOT.'/supplier_proposal/list.php',
     		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project'
 	    );
@@ -287,7 +294,8 @@ if (empty($user->societe_id))
 	                    "produts",
 	                    "propal",
 	                    "orders",
-	                    "bills",
+            	        "bills",
+            	        "supplier_proposal",
 						"contracts",
 						"trips",
 	                    "projects"
@@ -387,9 +395,19 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
     $board=new Propal($db);
-	$dashboardlines[] = $board->load_board($user,"opened");
-	// Number of commercial proposals CLOSED signed (billed)
-	$dashboardlines[] = $board->load_board($user,"signed");
+    $dashboardlines[] = $board->load_board($user,"opened");
+    // Number of commercial proposals CLOSED signed (billed)
+    $dashboardlines[] = $board->load_board($user,"signed");
+}
+
+// Number of commercial proposals opened (expired)
+if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+{
+    include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
+    $board=new SupplierProposal($db);
+    $dashboardlines[] = $board->load_board($user,"opened");
+    // Number of commercial proposals CLOSED signed (billed)
+    $dashboardlines[] = $board->load_board($user,"signed");
 }
 
 // Number of customer orders a deal

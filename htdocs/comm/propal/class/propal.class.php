@@ -2565,7 +2565,7 @@ class Propal extends CommonObject
             if ($mode == 'signed') {
 	            $delay_warning=$conf->propal->facturation->warning_delay;
 	            $statut = self::STATUS_SIGNED;
-	            $label = $langs->trans("PropalsToBill");
+	            $label = $langs->trans("PropalsToBill");         // We set here bill but may be billed or ordered
             }
 
 	        $response = new WorkboardResponse();
