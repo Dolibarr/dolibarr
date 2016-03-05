@@ -102,7 +102,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
     $listofsearchfields['search_contract']=array('text'=>'Contrat');
 }
-// Search contract
+// Search supplier proposal
 if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
 {
     $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');

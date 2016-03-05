@@ -4057,6 +4057,7 @@ border-top-right-radius: 6px;
 
 }
 
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 @media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 10; ?>px)
 {
 	.mainmenuaspan {
