@@ -952,7 +952,7 @@ class FormMail extends Form
 				'__PROJECT_REF__', 
 				'__PROJECT_NAME__',
 				'__CONTACTCIVNAME__',
-				'__PERSONALIZED__',			// Paypal link is added here
+				'__PERSONALIZED__',			// Paypal link will be added here in form mode
 				'__SIGNATURE__', 
 			);
 		}
