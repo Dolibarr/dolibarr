@@ -448,15 +448,13 @@ if ($action == 'create')
 			}
 		}
 		$ibankey="IBANNumber";
-		$bickey="BICNumber";
 		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
 		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$account->iban.'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans($bickey).'</td>';
+		print '<tr><td>'.$langs->trans('BICNumber').'</td>';
 		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
@@ -712,9 +710,7 @@ else
 			}
 
 			$ibankey="IBANNumber";
-			$bickey="BICNumber";
 			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
 			print '<td colspan="3">'.$account->iban.'&nbsp;';
@@ -727,7 +723,7 @@ else
 			}
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans($bickey).'</td>';
+			print '<tr><td>'.$langs->trans('BICNumber').'</td>';
 			print '<td colspan="3">'.$account->bic.'&nbsp;';
 			if (! empty($account->bic)) {
 				if (! checkSwiftForAccount($account)) {
@@ -1001,15 +997,13 @@ else
 			}
 
 			$ibankey="IBANNumber";
-			$bickey="BICNumber";
 			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
-			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			// IBAN
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
 			print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$account->iban.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans($bickey).'</td>';
+			print '<tr><td>'.$langs->trans('BICNumber').'</td>';
 			print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
