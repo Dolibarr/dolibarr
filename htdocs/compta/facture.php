@@ -4150,14 +4150,8 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withcancel = 1;
 		// Tableau des substitutions
-		$formmail->substit['__REF__'] = $object->ref;
-		$formmail->substit['__SIGNATURE__'] = $user->signature;
-		$formmail->substit['__REFCLIENT__'] = $object->ref_client;
-		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
-		$formmail->substit['__PERSONALIZED__'] = '';
-		$formmail->substit['__CONTACTCIVNAME__'] = '';
+		$formmail->setSubstitFromObject($object);
+		$formmail->substit['__INVREF__'] = $object->ref;
 
 		// Find the good contact adress
 		$custcontact = '';

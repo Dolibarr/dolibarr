@@ -249,8 +249,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'order' + order_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'order' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + order_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }
@@ -267,8 +267,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'invoice' + invoice_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'invoice' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }
@@ -285,8 +285,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'contactline' + contractline_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }
@@ -303,8 +303,8 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
             else
             {
                 $out.='&securekey='.($mode?'<font color="#666666">':'');
-                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + 'membersubscription' + member_ref)";
-                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $ref, 2);
+                if ($mode == 1) $out.="hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + member_ref)";
+                if ($mode == 0) $out.= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . $type . $ref, 2);
                 $out.=($mode?'</font>':'');
             }
         }

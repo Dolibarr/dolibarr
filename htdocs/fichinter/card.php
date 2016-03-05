@@ -1866,10 +1866,8 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->withcancel=1;
 
 		// Tableau des substitutions
+		$formmail->setSubstitFromObject($object);
 		$formmail->substit['__FICHINTERREF__']=$object->ref;
-		$formmail->substit['__SIGNATURE__']=$user->signature;
-		$formmail->substit['__PERSONALIZED__']='';
-		$formmail->substit['__CONTACTCIVNAME__']='';
 
 		//Find the good contact adress
 		$custcontact='';

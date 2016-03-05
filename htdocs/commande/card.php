@@ -2667,13 +2667,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$formmail->withdeliveryreceipt = 1;
 			$formmail->withcancel = 1;
 			// Tableau des substitutions
+			$formmail->setSubstitFromObject($object);
 			$formmail->substit ['__ORDERREF__'] = $object->ref;
-			$formmail->substit ['__SIGNATURE__'] = $user->signature;
-			$formmail->substit ['__REFCLIENT__'] = $object->ref_client;
-			$formmail->substit ['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-			$formmail->substit ['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-			$formmail->substit ['__PERSONALIZED__'] = '';
-			$formmail->substit ['__CONTACTCIVNAME__'] = '';
 
 			$custcontact = '';
 			$contactarr = array();

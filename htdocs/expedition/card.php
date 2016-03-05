@@ -1895,10 +1895,8 @@ else if ($id || $ref)
 		$formmail->withdeliveryreceipt=1;
 		$formmail->withcancel=1;
 		// Tableau des substitutions
+		$formmail->setSubstitFromObject($object);
 		$formmail->substit['__SHIPPINGREF__']=$object->ref;
-		$formmail->substit['__SIGNATURE__']=$user->signature;
-		$formmail->substit['__PERSONALIZED__']='';
-		$formmail->substit['__CONTACTCIVNAME__']='';
 
 		//Find the good contact adress
 		//Find the good contact adress

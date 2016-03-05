@@ -1930,12 +1930,8 @@ if ($action == 'create')
 		$formmail->withcancel = 1;
 
 		// Tableau des substitutions
-		$formmail->substit['__ASKREF__'] = $object->ref;
-		$formmail->substit['__SIGNATURE__'] = $user->signature;
-		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit['__CONTACTCIVNAME__'] = '';
-		$formmail->substit['__PERSONALIZED__'] = '';
+		$formmail->setSubstitFromObject($object);
+		$formmail->substit['__SUPPLIERPROPREF__'] = $object->ref;
 
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';

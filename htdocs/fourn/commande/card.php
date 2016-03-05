@@ -2481,13 +2481,9 @@ elseif (! empty($object->id))
 
 		$object->fetch_projet();
 		// Tableau des substitutions
-		$formmail->substit['__ORDERREF__']=$object->ref;
-		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;
-		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit['__SIGNATURE__']=$user->signature;
-		$formmail->substit['__PERSONALIZED__']='';
-		$formmail->substit['__CONTACTCIVNAME__']='';
+		$formmail->setSubstitFromObject($object);
+		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;	// For backward compatibility
+		$formmail->substit['__SUPPLIERORDERREF__']=$object->ref_supplier;
 
 		//Find the good contact adress
 		$custcontact='';

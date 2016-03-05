@@ -2474,11 +2474,9 @@ else
             $formmail->withbody=1;
             $formmail->withdeliveryreceipt=1;
             $formmail->withcancel=1;
-            // Tableau des substitutions
-            $formmail->substit['__REF__']=$object->ref;
-            $formmail->substit['__SIGNATURE__']=$user->signature;
-            $formmail->substit['__PERSONALIZED__']='';
-            $formmail->substit['__CONTACTCIVNAME__']='';
+			// Tableau des substitutions
+			$formmail->setSubstitFromObject($object);
+            $formmail->substit['__SUPPLIERINVREF__']=$object->ref;
 
             //Find the good contact adress
             $custcontact='';
