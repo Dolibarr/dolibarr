@@ -3566,7 +3566,7 @@ class Facture extends CommonInvoice
 				$line->remise_percent=0;
 				if ($xnbp == 1)        // Qty is negative (product line)
 				{
-					$prodid = rand(1, $num_prods);
+					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];
 					$line->qty=-1;
 					$line->total_ht=-100;
@@ -3583,7 +3583,7 @@ class Facture extends CommonInvoice
 				}
 				else if ($xnbp == 3)    // Discount is 50% (product line)
 				{
-					$prodid = rand(1, $num_prods);
+					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];
 					$line->total_ht=50;
 					$line->total_ttc=59.8;
@@ -3592,7 +3592,7 @@ class Facture extends CommonInvoice
 				}
 				else    // (product line)
 				{
-					$prodid = rand(1, $num_prods);
+					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];
 					$line->total_ht=100;
 					$line->total_ttc=119.6;
@@ -3621,7 +3621,7 @@ class Facture extends CommonInvoice
 			$line->total_ht=0;
 			$line->total_ttc=0;    // 90 * 1.196
 			$line->total_tva=0;
-			$prodid = rand(1, $num_prods);
+			$prodid = mt_rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
 
 			$this->lines[$xnbp]=$line;

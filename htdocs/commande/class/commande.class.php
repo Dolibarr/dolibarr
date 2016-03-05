@@ -3224,7 +3224,7 @@ class Commande extends CommonOrder
                 $line->total_tva=19.6;
                 $line->remise_percent=0;
             }
-            $prodid = rand(1, $num_prods);
+            $prodid = mt_rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
 
             $this->lines[$xnbp]=$line;

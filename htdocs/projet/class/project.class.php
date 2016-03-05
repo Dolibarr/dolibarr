@@ -955,7 +955,7 @@ class Project extends CommonObject
         $this->budget_amount = 10000;
 
         /*
-        $nbp = rand(1, 9);
+        $nbp = mt_rand(1, 9);
         $xnbp = 0;
         while ($xnbp < $nbp)
         {

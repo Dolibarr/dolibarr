@@ -5393,7 +5393,7 @@ function dol_set_focus($selector)
 function dol_getmypid()
 {
     if (! function_exists('getmypid')) {
-        return rand(1,32768);
+        return mt_rand(1,32768);
     } else {
         return getmypid();
     }
