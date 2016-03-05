@@ -859,6 +859,9 @@ function write_conf_file($conffile)
 		fputs($fp, '// Specific settings');
         fputs($fp,"\n");
 
+        fputs($fp, '//$dolibarr_main_demo=\'autologin,autopass\';');
+        fputs($fp,"\n");
+
         fputs($fp, '$dolibarr_main_prod=\'0\';');
         fputs($fp,"\n");
 
