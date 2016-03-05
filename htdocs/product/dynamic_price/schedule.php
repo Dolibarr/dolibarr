@@ -126,12 +126,12 @@ if (empty($sel_day))    $sel_day = $now['mday'];
 $first_date = dol_getdate(dol_get_first_day($year, $sel_month, $gm), true);
 $last_date = dol_getdate(dol_get_last_day($year, $sel_month, $gm), true);
 $sel_day = min($sel_day, $last_date['mday']);
-if (empty($range_start_month))    $range_start_month = $sel_month;
-if (empty($range_start_day))      $range_start_day = $sel_day;
+if (empty($range_start_month))    $range_start_month = empty($conf->global->SCHEDULE_DATE_RANGE_YEAR) ? $sel_month : 1;
+if (empty($range_start_day))      $range_start_day = empty($conf->global->SCHEDULE_DATE_RANGE_YEAR) ? $sel_day : 1;
 if (empty($range_start_hour))     $range_start_hour = 0;
 if (empty($range_start_min))      $range_start_min = 0;
-if (empty($range_end_month))      $range_end_month = $sel_month;
-if (empty($range_end_day))        $range_end_day = $sel_day;
+if (empty($range_end_month))      $range_end_month = empty($conf->global->SCHEDULE_DATE_RANGE_YEAR) ? $sel_month : 12;
+if (empty($range_end_day))        $range_end_day = empty($conf->global->SCHEDULE_DATE_RANGE_YEAR) ? $sel_day : 31;
 if (empty($range_end_hour))       $range_end_hour = 23;
 if (empty($range_end_min))        $range_end_min = 59;
 
