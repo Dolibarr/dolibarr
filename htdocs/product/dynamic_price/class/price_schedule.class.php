@@ -90,7 +90,7 @@ class PriceSchedule extends CommonObject
         $sql.= " ".$this->schedule_type.",";
         $sql.= " ".$this->schedule_year.",";
         $sql.= " ".$this->starting_hour.",";
-        $sql.= " ".getEntity('product', 1);
+        $sql.= " ".getEntity('product', 0);
         $sql.= ")";
 
         $this->db->begin();
