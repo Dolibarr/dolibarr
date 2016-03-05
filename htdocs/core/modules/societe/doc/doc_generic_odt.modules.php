@@ -209,6 +209,10 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
+				if ( ! empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME))
+				{
+				    $newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+				}
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
 				    $format=$conf->global->MAIN_DOC_USE_TIMING;
