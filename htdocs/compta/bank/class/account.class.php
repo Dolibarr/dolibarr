@@ -358,7 +358,7 @@ class Account extends CommonObject
      *  @param	string		$banque			Bank of cheque writer
      *  @return	int							Rowid of added entry, <0 if KO
      */
-    function addline($date, $oper, $label, $amount, $num_chq, $categorie, $user, $emetteur='',$banque='')
+    function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='')
     {
 	    // Deprecatîon warning
 	    if (is_numeric($oper)) {
@@ -473,7 +473,7 @@ class Account extends CommonObject
      *  @param	User	$user		Object user making creation
      *  @return int        			< 0 if KO, > 0 if OK
      */
-    function create($user='')
+    function create(User $user = null)
     {
         global $langs,$conf, $hookmanager;
 
@@ -633,7 +633,7 @@ class Account extends CommonObject
      *    	@param	User	$user       Object user making action
      *		@return	int					<0 si ko, >0 si ok
      */
-    function update($user='')
+    function update(User $user = null)
     {
         global $langs,$conf, $hookmanager;
 
@@ -731,7 +731,7 @@ class Account extends CommonObject
      *    	@param	User	$user       Object user making update
      *		@return	int					<0 if KO, >0 if OK
      */
-    function update_bban($user='')
+    function update_bban(User $user = null)
     {
         global $conf,$langs;
 
@@ -889,7 +889,7 @@ class Account extends CommonObject
      *	@param	User	$user	User deleting
      *  @return int             <0 if KO, >0 if OK
      */
-    function delete($user='')
+    function delete(User $user = null)
     {
         global $conf;
 
@@ -944,36 +944,40 @@ class Account extends CommonObject
         global $langs;
         $langs->load('banks');
 
-        if ($mode == 0)
-        {
-            if ($statut==0) return $langs->trans("StatusAccountOpened");
-            if ($statut==1) return $langs->trans("StatusAccountClosed");
+        if ($statut == self::STATUS_OPEN) {
+            $label = $langs->trans("StatusAccountOpened");
+        } else {
+            $label = $langs->trans("StatusAccountClosed");
         }
-        if ($mode == 1)
-        {
-            if ($statut==0) return $langs->trans("StatusAccountOpened");
-            if ($statut==1) return $langs->trans("StatusAccountClosed");
+
+        if ($mode == 2) {
+            if ($statut == self::STATUS_OPEN) {
+                return img_picto($label, 'statut4').' '.$label;
+            } elseif ($statut == self::STATUS_CLOSED) {
+                return img_picto($label, 'statut5').' '.$label;
+            }
+        } elseif ($mode == 3) {
+            if ($statut == self::STATUS_OPEN) {
+                return img_picto($label, 'statut4');
+            } elseif ($statut == self::STATUS_CLOSED) {
+                return img_picto($label, 'statut5');
+            }
+        } elseif ($mode == 4) {
+            if ($statut == self::STATUS_OPEN) {
+                return img_picto($label, 'statut4').' '.$label;
+            } elseif ($statut == self::STATUS_CLOSED) {
+                return img_picto($label, 'statut5').' '.$label;
+            }
+        } elseif ($mode == 5) {
+            if ($statut == self::STATUS_OPEN) {
+                return $label.' '.img_picto($label, 'statut4');
+            } elseif ($statut == self::STATUS_CLOSED) {
+                return $label.' '.img_picto($label, 'statut5');
+            }
         }
-        if ($mode == 2)
-        {
-            if ($statut==0) return img_picto($langs->trans("StatusAccountOpened"),'statut4').' '.$langs->trans("StatusAccountOpened");
-            if ($statut==1) return img_picto($langs->trans("StatusAccountClosed"),'statut5').' '.$langs->trans("StatusAccountClosed");
-        }
-        if ($mode == 3)
-        {
-            if ($statut==0) return img_picto($langs->trans("StatusAccountOpened"),'statut4');
-            if ($statut==1) return img_picto($langs->trans("StatusAccountClosed"),'statut5');
-        }
-        if ($mode == 4)
-        {
-            if ($statut==0) return img_picto($langs->trans("StatusAccountOpened"),'statut4').' '.$langs->trans("StatusAccountOpened");
-            if ($statut==1) return img_picto($langs->trans("StatusAccountClosed"),'statut5').' '.$langs->trans("StatusAccountClosed");
-        }
-        if ($mode == 5)
-        {
-            if ($statut==0) return $langs->trans("StatusAccountOpened").' '.img_picto($langs->trans("StatusAccountOpened"),'statut4');
-            if ($statut==1) return $langs->trans("StatusAccountClosed").' '.img_picto($langs->trans("StatusAccountClosed"),'statut5');
-        }
+
+        //There is no short mode for this label
+        return $label;
     }
 
 
@@ -1045,7 +1049,7 @@ class Account extends CommonObject
      *		@param	int		$filteraccountid	To get info for a particular account id
      *      @return WorkboardResponse|int 		<0 if KO, WorkboardResponse if OK
      */
-    function load_board($user,$filteraccountid=0)
+    function load_board(User $user, $filteraccountid = 0)
     {
         global $conf, $langs;
 
@@ -1297,7 +1301,7 @@ class AccountLine extends CommonObject
      *
      *  @param	DoliDB	$db		Database handler
      */
-    function __construct($db)
+    function __construct(DoliDB $db)
     {
         $this->db = $db;
     }
@@ -1384,7 +1388,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete($user=null)
+    function delete(User $user = null)
     {
         $nbko=0;
 
@@ -1433,7 +1437,7 @@ class AccountLine extends CommonObject
      *		@param	User	$user	User object that delete
      *      @return	int 			<0 if KO, >0 if OK
      */
-    function delete_urls($user=null)
+    function delete_urls(User $user = null)
     {
         $nbko=0;
 
@@ -1471,7 +1475,7 @@ class AccountLine extends CommonObject
      *		@param 	int		$notrigger		0=Disable all triggers
      *		@return	int						<0 if KO, >0 if OK
      */
-    function update($user,$notrigger=0)
+    function update(User $user, $notrigger = 0)
     {
         $this->db->begin();
 
@@ -1504,7 +1508,7 @@ class AccountLine extends CommonObject
      *		@param 	int		$cat		Category id
      *		@return	int					<0 if KO, >0 if OK
      */
-    function update_conciliation($user,$cat)
+    function update_conciliation(User $user, $cat)
     {
         $this->db->begin();
 
