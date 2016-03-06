@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -1660,10 +1660,19 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
+        $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.email";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
-        $sql.= " AND entity in (0, ".$conf->entity.")";
+        if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+        {
+        	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+        	$sql.= " WHERE ((ug.fk_user = sc.fk_user";
+        	$sql.= " AND ug.entity = ".$conf->entity.")";
+        	$sql.= " OR u.admin = 1)";
+        }
+        else
+        	$sql.= " WHERE entity in (0, ".$conf->entity.")";
+
+        $sql.= " AND u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
 
         $resql = $this->db->query($sql);
         if ($resql)

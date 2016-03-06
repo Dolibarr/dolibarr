@@ -160,12 +160,24 @@ if (! empty($socid))
 	print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
-	$sql = "SELECT u.rowid, u.lastname, u.firstname";
+	$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE sc.fk_soc =".$soc->id;
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+		$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+	$sql .= " WHERE sc.fk_soc = ".$soc->id;
 	$sql .= " AND sc.fk_user = u.rowid";
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+	{
+		$sql.= " AND ((ug.fk_user = sc.fk_user";
+		$sql.= " AND ug.entity = ".$conf->entity.")";
+		$sql.= " OR u.admin = 1)";
+	}
+	else
+		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+
 	$sql .= " ORDER BY u.lastname ASC ";
+
 	dol_syslog('societe/commerciaux.php::list salesman sql = '.$sql,LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
@@ -227,9 +239,9 @@ if (! empty($socid))
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
 		{
 			$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql.= " WHERE (ug.fk_user = u.rowid";
+			$sql.= " WHERE ((ug.fk_user = u.rowid";
 			$sql.= " AND ug.entity = ".$conf->entity.")";
-			$sql.= " OR u.admin = 1";
+			$sql.= " OR u.admin = 1)";
 		}
 		else
 			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
