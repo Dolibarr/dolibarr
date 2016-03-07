@@ -933,7 +933,6 @@ class FormMail extends Form
 	/**
 	 * Set substit array from object
 	 * 
-	 * @param	Object	$object		Object to use
 	 * @param	string	$mode		'form' or 'emailing'
 	 * @return	void
 	 */
