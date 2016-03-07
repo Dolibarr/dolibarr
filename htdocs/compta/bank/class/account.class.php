@@ -939,46 +939,32 @@ class Account extends CommonObject
      *    @param    int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *    @return   string        			Libelle du statut
      */
-    function LibStatut($statut,$mode=0)
-    {
-        global $langs;
-        $langs->load('banks');
+	public function LibStatut($statut, $mode = 0)
+	{
+		global $langs;
+		$langs->load('banks');
 
-        if ($statut == self::STATUS_OPEN) {
-            $label = $langs->trans("StatusAccountOpened");
-        } else {
-            $label = $langs->trans("StatusAccountClosed");
-        }
+		if ($statut == self::STATUS_OPEN) {
+			$label = $langs->trans("StatusAccountOpened");
+			$picto = img_picto($label, 'statut4');
+		} else {
+			$label = $langs->trans("StatusAccountClosed");
+			$picto = img_picto($label, 'statut5');
+		}
 
-        if ($mode == 2) {
-            if ($statut == self::STATUS_OPEN) {
-                return img_picto($label, 'statut4').' '.$label;
-            } elseif ($statut == self::STATUS_CLOSED) {
-                return img_picto($label, 'statut5').' '.$label;
-            }
-        } elseif ($mode == 3) {
-            if ($statut == self::STATUS_OPEN) {
-                return img_picto($label, 'statut4');
-            } elseif ($statut == self::STATUS_CLOSED) {
-                return img_picto($label, 'statut5');
-            }
-        } elseif ($mode == 4) {
-            if ($statut == self::STATUS_OPEN) {
-                return img_picto($label, 'statut4').' '.$label;
-            } elseif ($statut == self::STATUS_CLOSED) {
-                return img_picto($label, 'statut5').' '.$label;
-            }
-        } elseif ($mode == 5) {
-            if ($statut == self::STATUS_OPEN) {
-                return $label.' '.img_picto($label, 'statut4');
-            } elseif ($statut == self::STATUS_CLOSED) {
-                return $label.' '.img_picto($label, 'statut5');
-            }
-        }
+		if ($mode == 2) {
+			return $picto.' '.$label;
+		} elseif ($mode == 3) {
+			return $picto;
+		} elseif ($mode == 4) {
+			return $picto.' '.$label;
+		} elseif ($mode == 5) {
+			return $label.' '.$picto;
+		}
 
-        //There is no short mode for this label
-        return $label;
-    }
+		//There is no short mode for this label
+		return $label;
+	}
 
 
     /**
