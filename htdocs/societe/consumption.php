@@ -306,7 +306,13 @@ if ($month > 0) {
 	$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 }
 if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
-if ($sprod_fulldescr) $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%' OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%' OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%')";
+if ($sprod_fulldescr) 
+{
+    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
+    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
+    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
+    $sql.=")";
+}
 $sql.= $db->order($sortfield,$sortorder);
 
 $resql=$db->query($sql);
