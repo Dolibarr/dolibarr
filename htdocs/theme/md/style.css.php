@@ -3861,6 +3861,13 @@ border-top-right-radius: 6px;
 
 
 
+/* For demo pages */
+img.demothumb {
+    box-shadow: 2px 2px 8px #888;
+	margin-bottom: 4px;
+}
+
+
 /* The theme for public pages */
 .public_body {
 	margin: 20px;
