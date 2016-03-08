@@ -796,4 +796,3 @@ ALTER TABLE llx_societe_remise_except MODIFY COLUMN description text NOT NULL;
 -- Fix bad data
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
-
