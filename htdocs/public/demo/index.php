@@ -273,7 +273,18 @@ background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,25
 	    column-count: 2;
 	}
 }
+<<<<<<< HEAD
 
+=======
+@media only screen and (max-width: 420px)
+{
+	.csscolumns {
+		-webkit-column-count: 1; /* Chrome, Safari, Opera */
+	    -moz-column-count: 1; /* Firefox */
+	    column-count: 1;
+	}
+}
+>>>>>>> refs/remotes/origin/3.9
 </style>
 
 <script type="text/javascript">

@@ -456,7 +456,11 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
     $board=new Account($db);
-	$dashboardlines[] = $board->load_board($user);
+    $nb = $board::countAccountToReconcile();
+    if ($nb > 0)
+    {
+        $dashboardlines[] = $board->load_board($user);
+    }
 }
 
 // Number of cheque to send

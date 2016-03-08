@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Dimitri Mouillard <dmouillard@teclib.com>
- * Copyright (C) 2013      Marcos García <marcosgdf@gmail.com>
+/* Copyright (C) 2007-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +133,7 @@ elseif($action == 'add_event')
         $new_holiday = $nb_holiday + $add_holiday;
 
         // add event to existing types of vacation
-        foreach ($typeleaves as $key => $leave) 
+        foreach ($typeleaves as $key => $leave)
         {
         	$vacationTypeID = $leave['rowid'];
 
@@ -160,7 +161,7 @@ print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
-if ($lastUpdate) 
+if ($lastUpdate)
 {
     $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
@@ -215,7 +216,7 @@ else
 {
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<input type="hidden" name="action" value="update" />';
-    
+
     print '<table class="noborder" width="100%;">';
     print "<tr class=\"liste_titre\">";
     print '<td width="55%">'.$langs->trans('Employee').'</td>';
@@ -233,12 +234,12 @@ else
     print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
     print '<td></td>';
     print '</tr>';
-    
-    
+
+
     foreach($listUsers as $users)
     {
         $var=!$var;
-    
+
         print '<tr '.$bc[$var].' style="height: 20px;">';
         print '<td>';
         $userstatic->id=$users['rowid'];
@@ -246,7 +247,7 @@ else
         $userstatic->firstname=$users['firstname'];
         print $userstatic->getNomUrl(1);
         print '</td>';
-    
+
         if (count($typeleaves))
         {
         	foreach($typeleaves as $key => $val)
@@ -261,17 +262,17 @@ else
         }
         else
         {
-            print '<td></td>';   
+            print '<td></td>';
         }
         print '<td style="text-align:center"><input type="text" value="" name="note_holiday['.$users['rowid'].']" size="30"/></td>';
         print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
         print '</tr>';
-    
+
         $i++;
     }
-    
+
     print '</table>';
-    
+
     print '</form>';
 }
 

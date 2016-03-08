@@ -1094,6 +1094,34 @@ class Account extends CommonObject
 
 
     /**
+     *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+     *
+     *      @return int     Nb of account we can reconciliate
+     */
+    public static function countAccountToReconcile()
+    {
+        global $db, $conf, $langs;
+    
+        if ($user->societe_id) return 0;   // protection pour eviter appel par utilisateur externe
+    
+        $nb=0;
+        
+        $sql = "SELECT COUNT(ba.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+        $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
+        if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) $sql.= " AND ba.courant != 2";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            $nb = $obj->nb;
+        }
+        else dol_print_error($db);
+
+        return $nb;
+    }
+        
+    /**
      *    	Return clicable name (with picto eventually)
      *
      *		@param	int		$withpicto		Include picto into link
