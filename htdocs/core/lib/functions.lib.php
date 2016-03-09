@@ -3418,9 +3418,10 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * @param   int         $unit           Unit of dimension (0, -3, ...)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
+ * @param   int         $round          -1 = non rounding, x = number of decimal
  * @return  string                      String to show dimensions
  */
-function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs)
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1)
 {
     if ($dimension < 1/10000) 
     {
@@ -3443,7 +3444,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs)
         $unit = $unit + 3;
     }
     
-    $ret=price($dimension, 0, $outputlangs, 0, 0).' '.measuring_units_string($unit, $type);
+    $ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
     
     return $ret;
 }
