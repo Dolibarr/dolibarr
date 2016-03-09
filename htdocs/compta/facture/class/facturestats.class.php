@@ -84,8 +84,8 @@ class FactureStats extends Stats
 			$this->where.=" AND f.fk_soc = ".$this->socid;
 		}
         if ($this->userid > 0) $this->where.=' AND f.fk_user_author = '.$this->userid;
-		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $this->where.= " AND f.type IN (0,1,2)";
-		else $this->where.= " AND f.type IN (0,1,2,3)";
+		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $this->where.= " AND f.type IN (0,1,2,5)";
+		else $this->where.= " AND f.type IN (0,1,2,3,5)";
 	}
 
 
