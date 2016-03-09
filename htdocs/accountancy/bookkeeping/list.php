@@ -285,6 +285,31 @@ if ($action == 'delbookkeeping') {
 			print 'E' . $sep;
 			print length_accountg($line->code_tiers) . $sep;
 			print "\n";
+		}	elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 4) {
+			
+			// Bob50
+			print $line->piece_num . $sep;
+			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
+			print $date . $sep;
+			
+			if (empty($line->code_tiers)) {
+				print 'G' . $sep;
+				print length_accounta($line->numero_compte) . $sep;
+			} else {
+				if (substr($line->numero_compte,0,3)=='411') {
+					print 'C' . $sep;
+				}
+				if (substr($line->numero_compte,0,3)=='401') {
+					print 'F' . $sep;
+				}
+				print length_accountg($line->code_tiers) . $sep;
+				
+			}
+
+			print price($line->debit) . $sep;
+			print price($line->credit) . $sep;
+			print dol_trunc($line->label_compte, 32) . $sep;
+			print "\n";
 		}
 	}
 } 
