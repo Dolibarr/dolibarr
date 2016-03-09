@@ -162,8 +162,8 @@ $sql .= " fd.situation_percent, co.label as country, s.tva_intra";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
-$sql .= " JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
-$sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
+$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
+$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
 $sql .= " WHERE fd.fk_code_ventilation > 0 ";
 if (! empty($conf->multicompany->enabled)) {
@@ -285,7 +285,7 @@ if ($result) {
 	$var = True;
 	while ( $objp = $db->fetch_object($result) ) {
 		$var = ! $var;
-		$codecompta = $objp->account_number . ' ' . $objp->label;
+		$codecompta = $objp->account_number . ' - ' . $objp->label_compte;
 
 		print "<tr $bc[$var]>";
 
@@ -309,14 +309,12 @@ if ($result) {
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
-		print '<td align="center">' . $codecompta . '</td>';
+		print '<td align="center">' . $codecompta . '<a href="./card.php?id=' . $objp->fdid . '">';
+		print img_edit();
+		print '</a></td>';
 		print '<td align="right">' . $objp->country .'</td>';
 		print '<td align="center">' . $objp->tva_intra . '</td>';
-		print '<td align="center"><a href="./card.php?id=' . $objp->rowid . '">';
-		print img_edit();
-		print '</a><input type="checkbox" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
-
-		//print '<td align="center"></td>';
+		print '<td align="center"><input type="checkbox" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
 
 		print "</tr>";
 		$i ++;
