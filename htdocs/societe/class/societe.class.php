@@ -867,7 +867,7 @@ class Societe extends CommonObject
             }
             $sql .= ", fk_user_modif = ".(! empty($user->id)?"'".$user->id."'":"null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
-			$sql .= ', multicurrency_code = "'.$this->db->escape($this->multicurrency_code).'"';
+			$sql .= ', multicurrency_code = \''.$this->db->escape($this->multicurrency_code)."'";
             $sql .= " WHERE rowid = '" . $id ."'";
 
 
