@@ -630,14 +630,14 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
 		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
+		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
 		{
 			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
-		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a log handler dedicated to HTML output
+		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
 		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
-		if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
+		if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
 		{
 			print "\n\n<!-- Log start\n";
 			print $message."\n";
