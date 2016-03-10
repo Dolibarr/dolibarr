@@ -89,28 +89,44 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";
 
-$var = true;
+$sql = "SELECT rowid, label";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql.= " WHERE entity = ".$conf->entity;
+$sql.= " ORDER BY label";
 
-foreach ($bankcateg->fetchAll() as $category) {
-	$var = !$var;
-	print "<tr ".$bc[$var].">";
-	print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$category->id.'">'.$category->id.'</a></td>';
+$result = $db->query($sql);
+if ($result)
+{
+	$num = $db->num_rows($result);
+	$i = 0; $total = 0;
 
-	if ($action == 'edit' && $categid == $category->id) {
-		print "<td colspan=2>";
-		print '<input type="hidden" name="categid" value="'.$category->id.'">';
-		print '<input name="label" type="text" size=45 value="'.$category->label.'">';
-		print ' <input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
+	$var=True;
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
+		print "<tr ".$bc[$var].">";
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
+		if (GETPOST("action") == 'edit' && GETPOST("categid")== $objp->rowid)
+		{
+			print "<td colspan=2>";
+			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
+			print '<input name="label" type="text" size=45 value="'.$objp->label.'">';
+			print '<input type="submit" name="update" class="button" value="'.$langs->trans("Edit").'">';
 
-		print "</td>";
-	} else {
-		print "<td >".$category->label."</td>";
-		print '<td style="text-align: center;">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$category->id.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$category->id.'&amp;action=delete">'.img_delete().'</a></td>';
+			print "</td>";
+		}
+		else
+		{
+			print "<td >".$objp->label."</td>";
+			print '<td style="text-align: center;">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
+		}
+		print "</tr>";
+		$i++;
 	}
-
-	print "</tr>";
+	$db->free($result);
 }
 
 
