@@ -322,10 +322,22 @@ if ($resql)
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-	   foreach($extrafields->attribute_label as $key => $val) 
-	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
-	   }
+        foreach($extrafields->attribute_label as $key => $val) 
+        {
+            if (! empty($arrayfields["ef.".$key]['checked']))
+            {
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+                if (in_array($typeofextrafield, array('varchar', 'int', 'select')))
+                {
+                   $crit=$val;
+                			$tmpkey=preg_replace('/search_options_/','',$key);
+                			print '<input class="flat" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+                }
+                print '</td>';
+            }
+        }
 	}
     // Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
