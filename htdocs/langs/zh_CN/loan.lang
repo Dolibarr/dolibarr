@@ -43,8 +43,8 @@ AmortizationMonthlyPaymentOverYears=月度付款的摊销：: <b>%s</b> 按 %s �
 Totalsforyear=年度合计
 MonthlyPayment=月度付款
 LoanCalcDesc= <b>抵押计算器</b> 可以用来计算房屋抵押贷款中月度付款的金额（需要知道房屋出售价格、贷款条件、买家定金比例、贷款利率）。<br> 
-GoToInterest=%s will go towards INTEREST
-GoToPrincipal=%s will go towards PRINCIPAL
+GoToInterest=%s 将指向利率
+GoToPrincipal=%s 将指向资本
 YouWillSpend=You will spend %s on your house in year %s
 # Admin
 ConfigLoan=Configuration of the module loan

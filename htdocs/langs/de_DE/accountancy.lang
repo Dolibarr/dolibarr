@@ -6,7 +6,7 @@ ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Mit globalem Konto exportieren
 ACCOUNTING_EXPORT_LABEL=Export the label
 ACCOUNTING_EXPORT_AMOUNT=Betrag exportieren
 ACCOUNTING_EXPORT_DEVISE=Währungskurs exportieren
-Selectformat=Select the format for the file
+Selectformat=Wählen Sie das Format für die Datei
 ACCOUNTING_EXPORT_PREFIX_SPEC=Präfix für den Dateinamen angeben
 
 Accounting=Buchhaltung
@@ -34,7 +34,7 @@ AccountAccounting=Buchhaltungskonto
 AccountAccountingSuggest=Buchhaltungskontovorschlag
 Ventilation=Aufteilung
 
-MenuAccountancy=Accountancy
+MenuAccountancy=Buchhaltung
 CustomersVentilation=Aufteilung Kunden
 SuppliersVentilation=Aufteilung Lieferanten
 TradeMargin=Handelsspanne
@@ -47,7 +47,7 @@ UpdateAccount=Änderung eines Bilanzkontos
 UpdateMvts=Lagerbewegung ändern
 WriteBookKeeping=Konten ins Hauptbuch übernehmen
 Bookkeeping=Hauptbuch
-AccountBalance=Account balance
+AccountBalance=Saldo Sachkonto
 
 AccountingVentilation=Überblick Rechnungswesen
 AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
@@ -104,7 +104,7 @@ Code_tiers=Partner
 Labelcompte=Konto-Beschriftung
 Sens=Zweck
 Codejournal=Journal
-NumPiece=Piece number
+NumPiece=Teilenummer
 
 DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs
 
@@ -167,7 +167,7 @@ Type=Feldtyp
 Param=zusätzliche Parameter
 EnabledProduct=in Produkt
 EnabledTiers=In Partner
-EnabledVat=In VAT
+EnabledVat=in Steuer
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren

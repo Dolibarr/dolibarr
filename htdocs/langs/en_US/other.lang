@@ -203,6 +203,7 @@ YouMustClickToChange=You must however first click on the following link to valid
 ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
+Chart=Chart
 
 ##### Calendar common #####
 AddCalendarEntry=Add entry in calendar %s

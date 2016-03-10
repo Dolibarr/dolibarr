@@ -194,7 +194,7 @@ if (empty($reshook))
 			$newlocaltax2_type = GETPOST('localtax2_type', 'array');
 
 			//Shall we generate prices using price rules?
-			$object->price_autogen = GETPOST('usePriceRules') == 'on' ? true : false;
+			$object->price_autogen = GETPOST('usePriceRules') == 'on';
 
 			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i ++) 
 			{
