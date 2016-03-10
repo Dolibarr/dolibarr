@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
  *
@@ -24,7 +24,7 @@
 
 /**
  * \file htdocs/accountancy/journal/bankjournal.php
- * \ingroup Accounting Expert
+ * \ingroup 	Advanced accountancy
  * \brief Page with bank journal
  */
 require '../../main.inc.php';
@@ -171,7 +171,6 @@ if ($result) {
 		
 		// get_url may return -1 which is not traversable
 		if (is_array($links)) {
-			
 			foreach ( $links as $key => $val ) {
 				$tabtype[$obj->rowid] = $links[$key]['type'];
 				
