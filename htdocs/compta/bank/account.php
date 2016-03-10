@@ -397,15 +397,11 @@ if ($id > 0 || ! empty($ref))
             }
         }
 
-		if ($object->type != 2 && $object->rappro) 
-		{ 
+		if ($object->canBeConciliated() > 0) {
 			// If not cash account and can be reconciliate
-			if ($user->rights->banque->consolidate) 
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
-			}
-			else
-			{
+			if ($user->rights->banque->consolidate) {
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline ? '&amp;vline='.$vline : '').'">'.$langs->trans("Conciliate").'</a>';
+			} else {
 				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
 			}
 		}
@@ -529,8 +525,11 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '<td align="center" width="60">';
-	if ($object->type != 2 && $object->rappro) print $langs->trans("AccountStatementShort");
-	else print '&nbsp;';
+	if ($object->canBeConciliated() > 0) {
+		print $langs->trans("AccountStatementShort");
+	} else {
+		print '&nbsp;';
+	}
 	print '</td></tr>';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" name="search" method="POST">';
