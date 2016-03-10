@@ -406,8 +406,7 @@ if ($action == 'export_csv') {
 	$companystatic = new Client($db);
 	
 	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
-	{
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
 		$sep = ";";
 		
 		foreach ( $tabpay as $key => $val ) {
