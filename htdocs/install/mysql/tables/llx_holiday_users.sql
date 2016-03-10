@@ -18,7 +18,6 @@
 
 CREATE TABLE llx_holiday_users 
 (
-	rowid       integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	fk_user     integer NOT NULL,
 	fk_type     integer NOT NULL,
 	nb_holiday   real NOT NULL DEFAULT '0'
