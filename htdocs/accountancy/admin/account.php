@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
+/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 /**
  * \file 		htdocs/accountancy/admin/account.php
- * \ingroup 	Accounting Expert
+ * \ingroup		Advanced accountancy
  * \brief 		List accounting account
  */
 require '../../main.inc.php';
