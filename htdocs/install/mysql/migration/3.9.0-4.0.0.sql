@@ -322,3 +322,4 @@ ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ttc double(24,8
 
 ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
