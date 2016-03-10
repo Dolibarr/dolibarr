@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -151,11 +152,14 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
 			
+			$accountventilated = new AccountingAccount($db);
+			$accountventilated->fetch($monCompte, '');
+
 			dol_syslog('accountancy/supplier/list.php:: sql=' . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
-				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
+				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
 			} else {
-				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . $monCompte . '<br/> <pre>' . $sql . '</pre></font></div>';
+				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
 			}
 			
 			$cpt ++;
@@ -168,7 +172,6 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 
 /*
  * Supplier Invoice Lines
- *
  */
 
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {

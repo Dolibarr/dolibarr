@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,13 @@
 
 /**
  * \file htdocs/accountancy/bookkeeping/card.php
- * \ingroup Accounting Expert
- * \brief Page to show account
+ * \ingroup 	Advanced accountancy
+ * \brief 		Page to show book-entry
  */
 require '../../main.inc.php';
 
 // Class
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
@@ -33,8 +34,9 @@ $langs->load("accountancy");
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->societe_id > 0)
+if ($user->societe_id > 0) {
 	accessforbidden();
+}
 
 $action = GETPOST('action');
 $piece_num = GETPOST("piece_num");
@@ -189,6 +191,9 @@ else if ($action == "confirm_create") {
 	}
 }
 
+/*
+ * View
+ */
 llxHeader();
 
 $html = new Form($db);
@@ -236,29 +241,32 @@ if ($action == 'create') {
 	
 	print '<table class="border" width="100%">';
 	print '<tr>';
-	print '<td>' . $langs->trans("NumMvts") . '</td>';
+	print '<td width="25%">' . $langs->trans("NumMvts") . '</td>';
 	print '<td>' . $next_num_mvt . '</td>';
 	print '</tr>';
+	
 	print '<tr>';
 	print '<td>' . $langs->trans("Docdate") . '</td>';
 	print '<td>';
 	print $html->select_date('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
-	
 	print '</tr>';
+	
 	print '<tr>';
 	print '<td>' . $langs->trans("Codejournal") . '</td>';
-	
 	print '<td>' . $html->selectarray('code_journal', $code_journal_array) . '</td>';
 	print '</tr>';
+	
 	print '<tr>';
 	print '<td>' . $langs->trans("Docref") . '</td>';
 	print '<td><input type="text" size="20" name="doc_ref" value=""/></td>';
 	print '</tr>';
+	
 	print '<tr>';
 	print '<td>' . $langs->trans("Doctype") . '</td>';
 	print '<td><input type="text" size="20" name="doc_type" value=""/></td>';
 	print '</tr>';
+	
 	print '</table>';
 	
 	dol_fiche_end();
@@ -280,7 +288,7 @@ if ($action == 'create') {
 		
 		print '<table class="border" width="100%">';
 		print '<tr class="pair">';
-		print '<td>' . $langs->trans("NumMvts") . '</td>';
+		print '<td width="25%">' . $langs->trans("NumMvts") . '</td>';
 		print '<td>' . $book->piece_num . '</td>';
 		print '</tr>';
 		print '<tr class="impair">';
@@ -300,6 +308,7 @@ if ($action == 'create') {
 		print '<td>' . $book->doc_type . '</td>';
 		print '</tr>';
 		print '</table>';
+		print '<br />';
 		
 		$result = $book->fetch_all_per_mvt($piece_num);
 		if ($result < 0) {
@@ -327,11 +336,11 @@ if ($action == 'create') {
 				print_liste_field_titre($langs->trans("Numerocompte"));
 				print_liste_field_titre($langs->trans("Code_tiers"));
 				print_liste_field_titre($langs->trans("Labelcompte"));
-				print_liste_field_titre($langs->trans("Debit"));
-				print_liste_field_titre($langs->trans("Credit"));
-				print_liste_field_titre($langs->trans("Amount"));
-				print_liste_field_titre($langs->trans("Sens"));
-				print_liste_field_titre('');
+				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="center"');
+				print_liste_field_titre($langs->trans("Credit"), "", "", "", "", 'align="center"');
+				print_liste_field_titre($langs->trans("Amount"), "", "", "", "", 'align="center"');
+				print_liste_field_titre($langs->trans("Sens"), "", "", "", "", 'align="center"');
+				print_liste_field_titre($langs->trans("Action"), "", "", "", "", 'width="60" align="center"');
 				
 				print "</tr>\n";
 				
@@ -351,24 +360,24 @@ if ($action == 'create') {
 						print $formventilation->select_auxaccount($line->code_tiers, 'code_tiers', 1);
 						print '</td>';
 						print '<td><input type="text" size="15" name="label_compte" value="' . $line->label_compte . '"/></td>';
-						print '<td><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
-						print '<td><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
-						print '<td>' . $line->montant . '</td>';
-						print '<td>' . $line->sens . '</td>';
+						print '<td align="right"><input type="text" size="6" name="debit" value="' . price($line->debit) . '"/></td>';
+						print '<td align="right"><input type="text" size="6" name="credit" value="' . price($line->credit) . '"/></td>';
+						print '<td align="right">' . price($line->montant) . '</td>';
+						print '<td align="center">' . $line->sens . '</td>';
 						print '<td>';
 						print '<input type="hidden" name="id" value="' . $line->id . '">' . "\n";
 						print '<input type="submit" class="button" name="update" value="' . $langs->trans("Update") . '">';
 						print '</td>';
 					} else {
-						print '<td>' . $line->numero_compte . '</td>';
-						print '<td>' . $line->code_tiers . '</td>';
+						print '<td>' . length_accountg($line->numero_compte) . '</td>';
+						print '<td>' . length_accounta($line->code_tiers) . '</td>';
 						print '<td>' . $line->label_compte . '</td>';
-						print '<td>' . $line->debit . '</td>';
-						print '<td>' . $line->credit . '</td>';
-						print '<td>' . $line->montant . '</td>';
-						print '<td>' . $line->sens . '</td>';
+						print '<td align="right">' . price($line->debit) . '</td>';
+						print '<td align="right">' . price($line->credit) . '</td>';
+						print '<td align="right">' . price($line->montant) . '</td>';
+						print '<td align="center">' . $line->sens . '</td>';
 						
-						print '<td>';
+						print '<td align="center">';
 						print '<a href="./card.php?action=update&amp;id=' . $line->id . '&amp;piece_num=' . $line->piece_num . '">';
 						print img_edit();
 						print '</a>&nbsp;';
@@ -399,8 +408,8 @@ if ($action == 'create') {
 					print $formventilation->select_auxaccount($code_tiers, 'code_tiers', 1);
 					print '</td>';
 					print '<td><input type="text" size="15" name="label_compte" value="' . $label_compte . '"/></td>';
-					print '<td><input type="text" size="6" name="debit" value="' . price($debit) . '"/></td>';
-					print '<td><input type="text" size="6" name="credit" value="' . price($credit) . '"/></td>';
+					print '<td align="right"><input type="text" size="6" name="debit" value="' . price($debit) . '"/></td>';
+					print '<td align="right"><input type="text" size="6" name="credit" value="' . price($credit) . '"/></td>';
 					print '<td></td>';
 					print '<td></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Save") . '"></td>';

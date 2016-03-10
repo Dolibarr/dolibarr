@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2016 Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -643,6 +643,116 @@ class BookKeeping extends CommonObject
 	}
 	
 	/**
+	 * Load object in memory from the database
+	 *
+	 * @param string $sortorder Sort Order
+	 * @param string $sortfield Sort field
+	 * @param int $limit offset limit
+	 * @param int $offset offset limit
+	 * @param array $filter filter array
+	 * @param string $filtermode filter mode (AND or OR)
+	 *
+	 * @return int <0 if KO, >0 if OK
+	 */
+	public function fetchAllBalance($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+		dol_syslog(__METHOD__, LOG_DEBUG);
+	
+		$sql = 'SELECT';
+	//	$sql .= ' t.rowid,';
+	
+	//	$sql .= " t.doc_date,";
+	//	$sql .= " t.doc_type,";
+	//	$sql .= " t.doc_ref,";
+	//	$sql .= " t.fk_doc,";
+	//	$sql .= " t.fk_docdet,";
+	//	$sql .= " t.code_tiers,";
+		$sql .= " t.numero_compte,";
+	//	$sql .= " t.label_compte,";
+		$sql .= " SUM(t.debit) as debit,";
+		$sql .= " SUM(t.credit) as credit";
+	//	$sql .= " t.montant,";
+	//	$sql .= " t.sens,";
+	//	$sql .= " t.fk_user_author,";
+	//	$sql .= " t.import_key,";
+	//	$sql .= " t.code_journal,";
+	//	$sql .= " t.piece_num";
+	
+		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+	
+		// Manage filter
+		$sqlwhere = array ();
+		if (count($filter) > 0) {
+			foreach ( $filter as $key => $value ) {
+				if ($key == 't.doc_date') {
+					$sqlwhere[] = $key . '=\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.doc_date>=' || $key == 't.doc_date<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.numero_compte>=' || $key == 't.numero_compte<=' || $key == 't.code_tiers>=' || $key == 't.code_tiers<=') {
+					$sqlwhere[] = $key . '\'' . $this->db->escape($value) . '\'';
+				} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
+					$sqlwhere[] = $key . '=' . $value;
+				} elseif ($key == 't.code_tiers' || $key == 't.numero_compte') {
+					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
+				} else {
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				}
+			}
+		}
+	
+		if (count($sqlwhere) > 0) {
+			$sql .= ' WHERE ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+		}
+		
+		$sql .= ' GROUP BY t.numero_compte';
+	
+		if (! empty($sortfield)) {
+			$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (! empty($limit)) {
+			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
+		}
+		$this->lines = array ();
+	
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+				
+			while ( $obj = $this->db->fetch_object($resql) ) {
+				$line = new BookKeepingLine();
+	
+			//	$line->id = $obj->rowid;
+	
+			//	$line->doc_date = $this->db->jdate($obj->doc_date);
+			//	$line->doc_type = $obj->doc_type;
+			//	$line->doc_ref = $obj->doc_ref;
+			//	$line->fk_doc = $obj->fk_doc;
+			//	$line->fk_docdet = $obj->fk_docdet;
+			//	$line->code_tiers = $obj->code_tiers;
+				$line->numero_compte = $obj->numero_compte;
+			//	$line->label_compte = $obj->label_compte;
+				$line->debit = $obj->debit;
+				$line->credit = $obj->credit;
+			//	$line->montant = $obj->montant;
+			//	$line->sens = $obj->sens;
+			//	$line->fk_user_author = $obj->fk_user_author;
+			//	$line->import_key = $obj->import_key;
+			//	$line->code_journal = $obj->code_journal;
+			//	$line->piece_num = $obj->piece_num;
+	
+				$this->lines[] = $line;
+			}
+			$this->db->free($resql);
+				
+			return $num;
+		} else {
+			$this->errors[] = 'Error ' . $this->db->lasterror();
+			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+				
+			return - 1;
+		}
+	}
+	
+	/**
 	 * Update object into database
 	 *
 	 * @param User $user User that modifies
@@ -984,7 +1094,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		
-		dol_syslog(get_class($this) . "fetchPerMvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -996,7 +1106,7 @@ class BookKeeping extends CommonObject
 			$this->doc_type = $obj->doc_type;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetchPerMvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
 		
@@ -1039,7 +1149,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		
-		dol_syslog(get_class($this) . "fetch_all_per_mvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			
@@ -1068,7 +1178,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetchPerMvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
 		

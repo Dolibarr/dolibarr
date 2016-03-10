@@ -4,7 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
  *
@@ -24,7 +24,7 @@
 
 /**
  * \file htdocs/accountancy/journal/bankjournal.php
- * \ingroup Accounting Expert
+ * \ingroup 	Advanced accountancy
  * \brief Page with bank journal
  */
 require '../../main.inc.php';
@@ -171,7 +171,6 @@ if ($result) {
 		
 		// get_url may return -1 which is not traversable
 		if (is_array($links)) {
-			
 			foreach ( $links as $key => $val ) {
 				$tabtype[$obj->rowid] = $links[$key]['type'];
 				
@@ -407,8 +406,7 @@ if ($action == 'export_csv') {
 	$companystatic = new Client($db);
 	
 	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
-	{
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
 		$sep = ";";
 		
 		foreach ( $tabpay as $key => $val ) {
@@ -429,7 +427,7 @@ if ($action == 'export_csv') {
 				print ($mt < 0 ? 'C' : 'D') . $sep;
 				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 				print $val["type_payment"] . $sep;
-				print $val["ref"] . $sep;
+				print utf8_decode($val["ref"]) . $sep;
 				print "\n";
 			}
 			
@@ -448,7 +446,7 @@ if ($action == 'export_csv') {
 						print ($mt < 0 ? 'D' : 'C') . $sep;
 						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 						print $val["type_payment"] . $sep;
-						print $val["ref"] . $sep;
+						print utf8_decode($val["ref"]) . $sep;
 						print "\n";
 					}
 				}
@@ -461,7 +459,7 @@ if ($action == 'export_csv') {
 					print ($mt < 0 ? 'D' : 'C') . $sep;
 					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 					print $val["type_payment"] . $sep;
-					print $val["ref"] . $sep;
+					print utf8_decode($val["ref"]) . $sep;
 					print "\n";
 				}
 			}
@@ -479,7 +477,12 @@ if ($action == 'export_csv') {
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["type_payment"] . '"' . $sep;
 				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-				print '"' . $langs->trans("Bank") . '"' . $sep;
+				if ($companystatic->name == '') {
+							print '"' . $langs->trans('Bank')." - ". utf8_decode($val["ref"]) . '"' . $sep;
+						} else {
+							print '"' . $langs->trans("Bank") .' - '.utf8_decode($companystatic->name) . '"' . $sep;
+						}
+				//print '"' . $langs->trans("Bank") . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
 				print "\n";
@@ -492,7 +495,12 @@ if ($action == 'export_csv') {
 						print '"' . $date . '"' . $sep;
 						print '"' . $val["type_payment"] . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-						print '"' . $companystatic->name . '"' . $sep;
+						//print '"' . $companystatic->name . '"' . $sep;
+						if ($companystatic->name == '') {
+							print '"' . $langs->trans('ThirdParty')." - ". utf8_decode($val["ref"]) . '"' . $sep;
+						} else {
+							print '"' . $langs->trans('ThirdParty')." - ". utf8_decode($companystatic->name) . '"'. $sep;
+						}
 						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 						print "\n";
@@ -503,7 +511,12 @@ if ($action == 'export_csv') {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
-					print '"' . $langs->trans("Bank") . '"' . $sep;
+					//print '"' . $langs->trans("Bank") . '"' . $sep;
+					if ($companystatic->name == '') {
+							print '"' . $langs->trans("Bank") .' - '. utf8_decode($val["ref"]) . '"' . $sep;
+						} else {
+							print '"' . $langs->trans("Bank") .' - '. utf8_decode($companystatic->name) . '"' . $sep;
+						}
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 					print "\n";
@@ -579,7 +592,12 @@ if ($action == 'export_csv') {
 			print "<td>" . $date . "</td>";
 			print "<td>" . $reflabel . "</td>";
 			print "<td>" . length_accountg($k) . "</td>";
-			print "<td>" . $langs->trans('Bank') . "</td>";
+			//print "<td>" . $langs->trans('Bank') . "</td>";
+			if ($val['soclib'] == '') {
+							print "<td>" . $langs->trans('Bank')." - ". $val["ref"] . "</td>";
+						} else {
+							print "<td>" . $langs->trans("Bank") ." - " . $val['soclib'] . "</td>";
+						}
 			print "<td>" . $val["type_payment"] . "</td>";
 			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
@@ -593,8 +611,18 @@ if ($action == 'export_csv') {
 					print "<tr " . $bc[$var] . ">";
 					print "<td>" . $date . "</td>";
 					print "<td>" . $val["soclib"] . "</td>";
-					print "<td>" . length_accounta($k) . "</td>";
-					print "<td>" . $langs->trans('ThirdParty') . " (" . $val['soclib'] . ")</td>";
+					//print "<td>" . length_accounta($k) . "</td>";
+					if (length_accounta($k)  == ''){
+							print "<td>" . length_accounta($conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH) . "</td>";
+						} else {
+							print "<td>" . length_accounta($k) . "</td>";
+						}
+					//print "<td>" . $langs->trans('ThirdParty') . " (" . $val['soclib'] . ")</td>";
+					if ($val['soclib'] == '') {
+							print "<td>" . $langs->trans('ThirdParty')." - ". $val["ref"] . "</td>";
+						} else {
+							print "<td>" . $langs->trans("ThirdParty") . ' - ' . $val['soclib'] . "</td>";
+						}
 					print "<td>" . $val["type_payment"] . "</td>";
 					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 					print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
@@ -607,7 +635,12 @@ if ($action == 'export_csv') {
 				print "<td>" . $date . "</td>";
 				print "<td>" . $reflabel . "</td>";
 				print "<td>" . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . "</td>";
-				print "<td>" . $langs->trans('ThirdParty') . "</td>";
+				//print "<td>" . $langs->trans('ThirdParty') . "</td>";
+				if ($val['soclib'] == '') {
+							print "<td>" . $langs->trans('ThirdParty')." - ". $val["ref"] . "</td>";
+						} else {
+							print "<td>" . $langs->trans("ThirdParty") . ' - ' . $val['soclib'] . "</td>";
+						}
 				print "<td>&nbsp;</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
