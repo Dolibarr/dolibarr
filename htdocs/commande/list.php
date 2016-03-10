@@ -554,7 +554,7 @@ if ($resql)
         // Warning late icon
 		print '<td class="nobordernopadding nowrap">';
 		if ($generic_commande->hasDelay()) {
-			print img_picto($langs->trans("Late"), "warning");
+			print img_picto($langs->trans("Late").' : '.$generic_commande->showDelay(), "warning");
 		}
 		if(!empty($objp->note_private))
 		{
