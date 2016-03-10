@@ -797,7 +797,9 @@ ALTER TABLE llx_societe_remise_except MODIFY COLUMN description text NOT NULL;
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
 update llx_opensurvey_sondage set format = 'A' where format = 'A+';
 
+
 --Deal with holidays_user that do not have rowid
+-- Disabled: too dangerous patch. rowid is a primary key. How is it possible to have no rowid ?
 --CREATE TABLE llx_holiday_users_tmp
 --(
 --	rowid       integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
