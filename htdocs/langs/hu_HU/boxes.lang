@@ -60,8 +60,8 @@ BoxTitleLastContracts=Utolsó %s szerzősédesk
 BoxTitleLastModifiedDonations=Utolsó módosítás adományok %s
 BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
-BoxGoodCustomers=Good Customers
-BoxTitleGoodCustomers=%s Good Customers
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Nem sikerült az RSS-t frissíteni. Az utolsó sikeres frissítés: %s
 LastRefreshDate=Utolsó frissítés
 NoRecordedBookmarks=Nincs könyvjezlő. Kattintson <a href="%s">ide</a> könyvjelző hozzáadásához.

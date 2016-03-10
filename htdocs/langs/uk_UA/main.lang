@@ -25,6 +25,7 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Підключеня до Бази Данних
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Немає перекладу
 NoRecordFound=Записів не знайдено
 NoError=Немає помилок

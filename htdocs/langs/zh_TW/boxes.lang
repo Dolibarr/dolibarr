@@ -60,8 +60,8 @@ BoxTitleLastContracts=上次%的承
 BoxTitleLastModifiedDonations=最後更新的捐款清單
 BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
-BoxGoodCustomers=Good Customers
-BoxTitleGoodCustomers=%s Good Customers
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=無法刷新的RSS流量。上次成功刷新日期：%s
 LastRefreshDate=最後更新日期
 NoRecordedBookmarks=沒有書簽定義。點擊<a href="%s">這裏</a>添加書簽。

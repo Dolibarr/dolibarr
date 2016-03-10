@@ -32,6 +32,7 @@ StatusOrderSent=Preprava v procese
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=Spracované
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Dodáva sa
 StatusOrderToBill2Short=K účtu
 StatusOrderApprovedShort=Schválený

@@ -4,7 +4,7 @@ Proposal=Pressupost
 ProposalShort=Pressupost
 ProposalsDraft=Pressupostos esborrany
 ProposalDraft=Pressupost esborrany
-ProposalsOpened=Obre pressupostos
+ProposalsOpened=Pressupostos oberts
 Prop=Pressupostos
 CommercialProposal=Pressupost
 CommercialProposals=Pressupostos
@@ -31,7 +31,7 @@ NumberOfProposalsByMonth=Número per mes
 AmountOfProposalsByMonthHT=Import per mes (Sense IVA)
 NbOfProposals=Número pressupostos
 ShowPropal=Veure pressupost
-PropalsDraft=Esborrany
+PropalsDraft=Esborranys
 PropalsOpened=Actiu
 PropalsNotBilled=No facturats
 PropalStatusDraft=Esborrany (a validar)
@@ -92,7 +92,7 @@ AvailabilityTypeAV_2W=2 setmanes
 AvailabilityTypeAV_3W=3 setmanes
 AvailabilityTypeAV_1M=1 mes
 ##### Types de contacts #####
-TypeContact_propal_internal_SALESREPFOLL=Comercial seguiment pressupost
+TypeContact_propal_internal_SALESREPFOLL=Agent comercial del seguiment del pressupost
 TypeContact_propal_external_BILLING=Contacte client de facturació pressupost
 TypeContact_propal_external_CUSTOMER=Contacte client seguiment pressupost
 # Document models

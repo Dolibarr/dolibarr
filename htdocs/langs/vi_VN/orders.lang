@@ -32,6 +32,7 @@ StatusOrderSent=Đang vận chuyển
 StatusOrderOnProcessShort=Đã đặt hàng
 StatusOrderProcessedShort=Đã xử lý
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Đã giao hàng
 StatusOrderToBill2Short=Để thanh toán
 StatusOrderApprovedShort=Đã duyệt

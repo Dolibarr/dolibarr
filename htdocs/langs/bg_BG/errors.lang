@@ -172,6 +172,8 @@ ErrorMandatoryParametersNotProvided=Задължителен параметър(
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
 ErrorSavingChanges=An error has ocurred when saving the changes
+ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
+ErrorFileMustHaveFormat=File must have format %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=Парола е зададено за този член. Обаче, няма създаден потребителски акаунт. Следователно тази парола е записана, но не може да бъде използвана за влизане в Dolibarr. Може да бъде използвана от външен модул/интерфейс, но ако нямате нужда да определите нито потребителско име нито парола за член, можете да деактивирате тази опция. Ако имате нужда да управлявате потребителско име, но нямата нужда от парола, можете да оставите това поле празно, за да избегнете това предупреждение. Забележка: Имейл също може да бъде използван като потребителско име ако члена с свързан към потребител.
