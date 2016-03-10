@@ -75,7 +75,6 @@ if ($action == 'update') {
 	}
 	
 	if (! empty($modelcsv)) {
-		
 		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
