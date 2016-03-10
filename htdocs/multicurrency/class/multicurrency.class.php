@@ -520,6 +520,17 @@ class MultiCurrency extends CommonObject
 		 
 		 return false;
 	   }
+	   
+	/**
+	 *  Sync rates from api
+	 * 
+	 *  @param 	array 	$response 	array of reponse from api to sync dolibarr rates
+	 */
+	public static function syncRates($response)
+	{
+		$TRate = $response['quotes'];
+		$timestamp = $response['timestamp'];
+	}
 }
 
 /**
