@@ -416,63 +416,55 @@ class Account extends CommonObject
 
         $datev = $date;
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (";
-        $sql.= "datec";
-        $sql.= ", dateo";
-        $sql.= ", datev";
-        $sql.= ", label";
-        $sql.= ", amount";
-        $sql.= ", fk_user_author";
-        $sql.= ", num_chq";
-        $sql.= ", fk_account";
-        $sql.= ", fk_type";
-        $sql.= ",emetteur,banque";
-        $sql.= ") VALUES (";
-        $sql.= "'".$this->db->idate($now)."'";
-        $sql.= ", '".$this->db->idate($date)."'";
-        $sql.= ", '".$this->db->idate($datev)."'";
-        $sql.= ", '".$this->db->escape($label)."'";
-        $sql.= ", ".price2num($amount);
-        $sql.= ", '".$user->id."'";
-        $sql.= ", ".($num_chq?"'".$num_chq."'":"null");
-        $sql.= ", '".$this->rowid."'";
-        $sql.= ", '".$oper."'";
-        $sql.= ", ".($emetteur?"'".$this->db->escape($emetteur)."'":"null");
-        $sql.= ", ".($banque?"'".$this->db->escape($banque)."'":"null");
-        $sql.= ")";
+		$accline = new AccountLine($this->db);
+		$accline->datec = $now;
+		$accline->dateo = $date;
+		$accline->datev = $datev;
+		$accline->label = $label;
+		$accline->amount = $amount;
+		$accline->fk_user_author = $user->id;
+		$accline->fk_account = $this->rowid;
+		$accline->fk_type = $oper;
 
-        dol_syslog(get_class($this)."::addline", LOG_DEBUG);
-        if ($this->db->query($sql))
-        {
-            $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
-            if ($categorie)
-            {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
-                $sql.= "lineid";
-                $sql.= ", fk_categ";
-                $sql.= ") VALUES (";
-                $sql.= "'".$rowid."'";
-                $sql.= ", '".$categorie."'";
-                $sql.= ")";
+		if ($num_chq) {
+			$accline->num_chq = $num_chq;
+		}
 
-                $result = $this->db->query($sql);
-                if (! $result)
-                {
-                    $this->db->rollback();
-                    $this->error=$this->db->error();
-                    return -3;
-                }
-            }
-            $this->db->commit();
-            return $rowid;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            $this->db->rollback();
-            return -2;
-        }
-    }
+		if ($emetteur) {
+			$accline->emetteur = $emetteur;
+		}
+
+		if ($banque) {
+			$accline->bank_chq = $banque;
+		}
+
+		if ($accline->insert() > 0) {
+
+			if ($categorie) {
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (";
+				$sql .= "lineid";
+				$sql .= ", fk_categ";
+				$sql .= ") VALUES (";
+				$sql .= "'".$accline->id."'";
+				$sql .= ", '".$categorie."'";
+				$sql .= ")";
+
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$this->db->rollback();
+					$this->error = $this->db->error();
+					return -3;
+				}
+			}
+
+			$this->db->commit();
+			return $accline->id;
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -2;
+		}
+	}
 
     /**
      *  Create bank account into database
@@ -574,32 +566,18 @@ class Account extends CommonObject
             $result=$this->update();
             if ($result > 0)
             {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (";
-                $sql.= "datec";
-                $sql.= ", label";
-                $sql.= ", amount";
-                $sql.= ", fk_account";
-                $sql.= ", datev";
-                $sql.= ", dateo";
-                $sql.= ", fk_type";
-                $sql.= ", rappro";
-                $sql.= ") VALUES (";
-                $sql.= "'".$this->db->idate($now)."'";
-                $sql.= ", '(".$langs->trans("InitialBankBalance").")'";
-                $sql.= ", ".price2num($this->solde);
-                $sql.= ", '".$this->id."'";
-                $sql.= ", '".$this->db->idate($this->date_solde)."'";
-                $sql.= ", '".$this->db->idate($this->date_solde)."'";
-                $sql.= ", 'SOLD'";
-                $sql.= ", 0";		// Not conciliated by default
-                $sql.= ")";
+				$accline = new AccountLine($this->db);
+				$accline->datec = $this->db->idate($now);
+				$accline->label = '('.$langs->trans("InitialBankBalance").')';
+				$accline->amount = price2num($this->solde);
+				$accline->fk_account = $this->id;
+				$accline->datev = $this->db->idate($this->date_solde);
+				$accline->dateo = $this->db->idate($this->date_solde);
+				$accline->fk_type = 'SOLD';
 
-                $resql=$this->db->query($sql);
-                if (! $resql)
-                {
-                    $this->error=$this->db->lasterror();
-                    return -3;
-                }
+				if ($accline->insert() < 0) {
+					return -3;
+				}
 
                 // Actions on extra fields (by external module or standard code)
                 $hookmanager->initHooks(array('bankdao'));
@@ -830,7 +808,7 @@ class Account extends CommonObject
                 $obj = $this->db->fetch_object($result);
 
                 $this->id            = $obj->rowid;
-                $this->rowid         = $obj->rowid;		// deprecated
+                $this->rowid         = $obj->rowid;
                 $this->ref           = $obj->ref;
                 $this->label         = $obj->label;
                 $this->type          = $obj->courant;
@@ -1316,6 +1294,7 @@ class AccountLine extends CommonObject
     var $fk_account;            // Id of bank account
     var $bank_account_label;    // Label of bank account
 
+    public $emetteur;
 
     /**
      *  Constructor
@@ -1384,7 +1363,7 @@ class AccountLine extends CommonObject
                 $this->num_releve		= $obj->num_releve;
 
                 $this->num_chq			= $obj->num_chq;
-                $this->bank_chq			= $obj->bank_chq;
+                $this->bank_chq			= $obj->banque;
                 $this->fk_bordereau		= $obj->fk_bordereau;
 
                 $this->fk_account		= $obj->fk_account;
@@ -1402,6 +1381,52 @@ class AccountLine extends CommonObject
         }
     }
 
+	/**
+	 * Inserts a transaction to a bank account
+	 *
+	 * @return int <0 if KO, rowid of the line if OK
+	 */
+	public function insert()
+	{
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (";
+		$sql .= "datec";
+		$sql .= ", dateo";
+		$sql .= ", datev";
+		$sql .= ", label";
+		$sql .= ", amount";
+		$sql .= ", fk_user_author";
+		$sql .= ", num_chq";
+		$sql .= ", fk_account";
+		$sql .= ", fk_type";
+		$sql .= ",emetteur,banque";
+		$sql .= ", rappro";
+		$sql .= ") VALUES (";
+		$sql .= "'".$this->db->idate($this->datec)."'";
+		$sql .= ", '".$this->db->idate($this->dateo)."'";
+		$sql .= ", '".$this->db->idate($this->datev)."'";
+		$sql .= ", '".$this->db->escape($this->label)."'";
+		$sql .= ", ".price2num($this->amount);
+		$sql .= ", '".$this->fk_user_author."'";
+		$sql .= ", ".($this->num_chq ? "'".$this->num_chq."'" : "null");
+		$sql .= ", '".$this->fk_account."'";
+		$sql .= ", '".$this->db->escape($this->fk_type)."'";
+		$sql .= ", ".($this->emetteur ? "'".$this->db->escape($this->emetteur)."'" : "null");
+		$sql .= ", ".($this->bank_chq ? "'".$this->db->escape($this->bank_chq)."'" : "null");
+		$sql .= ", ".(int) $this->rappro;
+		$sql .= ")";
+
+		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'bank');
+
+		return $this->id;
+	}
 
     /**
      *      Delete transaction bank line record
