@@ -258,7 +258,7 @@ class UserGroup extends CommonObject
 	 */
 	function addrights($rid,$allmodule='',$allperms='')
 	{
-		global $conf;
+		global $conf, $user;
 
 		dol_syslog(get_class($this)."::addrights $rid, $allmodule, $allperms");
 		$err=0;
@@ -320,15 +320,30 @@ class UserGroup extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
-
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=".$nid;
-					if (! $this->db->query($sql)) $err++;
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (fk_usergroup, fk_id) VALUES ($this->id, $nid)";
-					if (! $this->db->query($sql)) $err++;
-
+					$add_ids[]=$obj->id;
+					$insert_rights[]='('.(int) $this->id.','.(int) $obj->id.')';
 					$i++;
 				}
+				
+				// Call trigger
+				$this->trigger_parameters=array(
+						'rid'=> $rid,
+						'allmodule'=> $allmodule,
+						'allperms'=> $allperms,
+						'add_ids' => $add_ids
+				);
+				$result=$this->call_trigger('GROUP_ADDRIGHTS', $user);
+				if ($result < 0) { $err++; }
+				// End call trigger
+				
+				if(!empty($add_ids) AND !$err){
+					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'usergroup_rights WHERE fk_usergroup = '.$this->id.' AND fk_id in ('.implode(',', $add_ids).')';
+					if (! $this->db->query($sql)) $err++;
+					
+					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'usergroup_rights (fk_usergroup, fk_id) VALUES '.implode(',',$insert_rights);
+					if (! $this->db->query($sql)) $err++;
+				}
+				
 			}
 			else
 			{
@@ -337,6 +352,11 @@ class UserGroup extends CommonObject
 			}
 		}
 
+		// Call trigger
+		$this->trigger_parameters['result'] = !($err);
+		$this->call_trigger('GROUP_ADDRIGHTS_AFTER', $user);
+		// End call trigger
+		
 		if ($err) {
 			$this->db->rollback();
 			return -$err;
@@ -359,7 +379,7 @@ class UserGroup extends CommonObject
 	 */
 	function delrights($rid,$allmodule='',$allperms='')
 	{
-		global $conf;
+		global $conf, $user;
 
 		$err=0;
 		$wherefordel='';
@@ -420,14 +440,27 @@ class UserGroup extends CommonObject
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					$nid = $obj->id;
-
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
-					$sql.= " WHERE fk_usergroup = $this->id AND fk_id=".$nid;
-					if (! $this->db->query($sql)) $err++;
-
+					$del_ids[]=$obj->id;
 					$i++;
 				}
+				
+				// Call trigger
+				$this->trigger_parameters=array(
+						'rid'=> $rid,
+						'allmodule'=> $allmodule,
+						'allperms'=> $allperms,
+						'del_ids' => $del_ids
+				);
+				$result=$this->call_trigger('GROUP_DELRIGHTS',$user);
+				if ($result < 0) { $err++; }
+				// End call trigger
+				
+				if(!empty($del_ids) AND !$err){				
+					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'usergroup_rights';
+					$sql.= ' WHERE fk_usergroup = '.$this->id.' AND fk_id in ('.implode(',', $del_ids).')';
+					if (! $this->db->query($sql)) $err++;
+				}
+
 			}
 			else
 			{
@@ -435,6 +468,11 @@ class UserGroup extends CommonObject
 				dol_print_error($this->db);
 			}
 		}
+		
+		// Call trigger
+		$this->trigger_parameters['result'] = !($err);
+		$this->call_trigger('GROUP_DELRIGHTS_AFTER',$user);
+		// End call trigger
 
 		if ($err) {
 			$this->db->rollback();
