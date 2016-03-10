@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2016 Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1094,7 +1094,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		
-		dol_syslog(get_class($this) . "fetchPerMvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -1106,7 +1106,7 @@ class BookKeeping extends CommonObject
 			$this->doc_type = $obj->doc_type;
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetchPerMvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
 		
@@ -1149,7 +1149,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		
-		dol_syslog(get_class($this) . "fetch_all_per_mvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			
@@ -1178,7 +1178,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetchPerMvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
 		

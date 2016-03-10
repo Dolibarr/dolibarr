@@ -75,7 +75,6 @@ if ($action == 'update') {
 	}
 	
 	if (! empty($modelcsv)) {
-		
 		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
@@ -199,7 +198,8 @@ if (! $conf->use_javascript_ajax) {
 	$listmodelcsv = array (
 			'1' => $langs->trans("Modelcsv_normal"),
 			'2' => $langs->trans("Modelcsv_CEGID"),
-			'3' => $langs->trans("Modelcsv_COALA") 
+			'3' => $langs->trans("Modelcsv_COALA"),
+			'4' => $langs->trans("Modelcsv_bob50") 			
 	);
 	print $form->selectarray("modelcsv", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
 	
