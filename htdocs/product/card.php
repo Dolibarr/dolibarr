@@ -321,8 +321,11 @@ if (empty($reshook))
                 $object->status                 = GETPOST('statut');
                 $object->status_buy             = GETPOST('statut_buy');
                 $object->status_batch	        = GETPOST('status_batch');
+                // removed from update view
+                /*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
+                */
                 $object->duration_value         = GETPOST('duration_value');
                 $object->duration_unit          = GETPOST('duration_unit');
                 $object->canvas                 = GETPOST('canvas');
