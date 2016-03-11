@@ -71,7 +71,7 @@ $now = dol_now();
 // Security check
 if ($user->societe_id > 0 && empty($id_bank_account))
 	accessforbidden();
-	
+
 /*
  * View
  */
@@ -148,7 +148,7 @@ if ($result) {
 		$tabcompany[$obj->rowid] = array (
 				'id' => $obj->socid,
 				'name' => $obj->name,
-				'code_client' => $obj->code_compta 
+				'code_client' => $obj->code_compta
 		);
 
 		// Controls
@@ -251,7 +251,7 @@ if ($result) {
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
-		
+
 		$i ++;
 	}
 } else {
@@ -312,14 +312,13 @@ if ($action == 'writebookkeeping') {
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
 					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
-					;
 				}
 			}
 
 			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 			}
 		}
 		// Third party
@@ -388,7 +387,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->code_tiers = $k;
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			} else {
-				
+
 				$bookkeeping->doc_ref = $k;
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			}
@@ -396,7 +395,7 @@ if ($action == 'writebookkeeping') {
 			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 			}
 		}
 	}
@@ -414,7 +413,7 @@ if ($action == 'export_csv') {
 	$companystatic = new Client($db);
 
 	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) 
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2)
 	{
 		$sep = ";";
 
@@ -530,7 +529,7 @@ if ($action == 'export_csv') {
 
 	$varlink = 'id_account=' . $id_bank_account;
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
-			'action' => '' 
+			'action' => ''
 	), '', $varlink);
 
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
@@ -572,7 +571,7 @@ if ($action == 'export_csv') {
 
 	foreach ( $tabpay as $key => $val ) {
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
-		
+
 		if ($val["lib"] == '(SupplierInvoicePayment)') {
 			$reflabel = $langs->trans('SupplierInvoicePayment');
 		}
