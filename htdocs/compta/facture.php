@@ -755,10 +755,17 @@ if (empty($reshook))
 	                $facture_source = new Facture($db); // fetch origin object
 	                if ($facture_source->fetch($object->fk_facture_source)>0)
 	                {
+	                	$fk_parent_line = 0;
 
 	                    foreach($facture_source->lines as $line)
 	                    {
+	                    	// Reset fk_parent_line for no child products and special product
+	                    	if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+	                    		$fk_parent_line = 0;
+	                    	}
+
 	                        $line->fk_facture = $object->id;
+	                        $line->fk_parent_line = $fk_parent_line;
 
 	                        $line->subprice =-$line->subprice; // invert price for object
 	                        $line->pa_ht = -$line->pa_ht;
@@ -768,9 +775,14 @@ if (empty($reshook))
 	                        $line->total_localtax1=-$line->total_localtax1;
 	                        $line->total_localtax2=-$line->total_localtax2;
 
-	                        $line->insert();
+	                        $result = $line->insert();
 
 	                        $object->lines[] = $line; // insert new line in current object
+
+	                        // Defined the new fk_parent_line
+	                        if ($result > 0 && $line->product_type == 9) {
+	                        	$fk_parent_line = $result;
+	                        }
 	                    }
 
 	                    $object->update_price(1);
@@ -1749,7 +1761,7 @@ if (empty($reshook))
 				}
 			}
 		}
-	
+
 		// bascule du statut d'un contact
 		else if ($action == 'swapstatut')
 		{
@@ -1759,13 +1771,13 @@ if (empty($reshook))
 				dol_print_error($db);
 				}
 		}
-	
+
 		// Efface un contact
 		else if ($action == 'deletecontact')
 		{
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
-	
+
 			if ($result >= 0) {
 				header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 				exit();
@@ -1854,7 +1866,7 @@ if ($action == 'create')
 
 		if ($element == 'project') {
 			$projectid = $originid;
-			
+
 			if (!$cond_reglement_id) {
 				$cond_reglement_id = $soc->cond_reglement_id;
 			}
@@ -1867,7 +1879,7 @@ if ($action == 'create')
 			if (!$dateinvoice) {
 				// Do not set 0 here (0 for a date is 1970)
 				$dateinvoice = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
-			}			
+			}
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -2564,7 +2576,7 @@ else if ($id > 0 || ! empty($ref))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1) 
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1)
 		{
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -2755,7 +2767,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	// Clone confirmation
-	if ($action == 'clone') 
+	if ($action == 'clone')
 	{
 		// Create an array for form
 		$formquestion = array(
@@ -2766,7 +2778,7 @@ else if ($id > 0 || ! empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	if (! $formconfirm) 
+	if (! $formconfirm)
 	{
 		$parameters = array('lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -3557,14 +3569,14 @@ else if ($id > 0 || ! empty($ref))
 		                                                                                          // modified by hook
 		if (empty($reshook)) {
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
-			if ($object->statut == 1) 
+			if ($object->statut == 1)
 			{
 				// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 				$ventilExportCompta = $object->getVentilExportCompta();
 
-				if ($resteapayer == $object->total_ttc && empty($object->paye) && $ventilExportCompta == 0) 
+				if ($resteapayer == $object->total_ttc && empty($object->paye) && $ventilExportCompta == 0)
 				{
-					if (! $objectidnext && $object->is_last_in_cycle()) 
+					if (! $objectidnext && $object->is_last_in_cycle())
 					{
 					    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
        						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
