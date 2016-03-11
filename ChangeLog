@@ -2,6 +2,9 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 3.6.7 compared to 3.6.6 *****
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: CVE CVE-2015-8685
 
 ***** ChangeLog for 3.6.6 compared to 3.6.5 *****
 FIX: #3734 Do not show empty links of deleted source objects in stock movement list
