@@ -192,18 +192,21 @@ class AccountancyExport
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
 		foreach ($TData as $data)
 		{
+			$code_compta = $data->numero_compte;
+			if (!empty($data->code_tiers)) $code_compta = $data->code_tiers;
+			
 			$Tab = array();
 			$Tab['num_ecriture'] = str_pad($i, 5);
 			$Tab['code_journal'] = str_pad($data->code_journal, 2);
 			$Tab['date_ecriture'] = $date_ecriture;
 			$Tab['date_ope'] = dol_print_date($data->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-			$Tab['num_piece'] = str_pad($data->piece_num, 12);
-			$Tab['num_compte'] = str_pad($data->numero_compte, 11);
+			$Tab['num_piece'] = str_pad(self::trunc($data->piece_num, 12), 12);
+			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 11), 11);
 			$Tab['libelle_ecriture'] = str_pad(self::trunc($data->doc_ref.$data->label_compte, 25), 25);
 			$Tab['montant'] = str_pad(abs($data->montant), 13, ' ', STR_PAD_LEFT); 
 			$Tab['type_montant'] = str_pad($data->sens, 1);
 			$Tab['vide'] = str_repeat(' ', 18);
-			$Tab['intitule_compte'] = str_pad($data->label_compte, 34);
+			$Tab['intitule_compte'] = str_pad(self::trunc($data->label_compte, 34), 34);
 			$Tab['end'] = 'O2003';
 			
 			$Tab['end_line'] = $this->end_line;
@@ -211,7 +214,6 @@ class AccountancyExport
 			print implode($Tab);
 			$i++;
 		}
-		
 	}
 	
 	/**
@@ -226,10 +228,12 @@ class AccountancyExport
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ($TData as $data)
 		{
-			$Tab = array();
+			$code_compta = $data->numero_compte;
+			if (!empty($data->code_tiers)) $code_compta = $data->code_tiers;
 			
+			$Tab = array();
 			$Tab['type_ligne'] = 'M';
-			$Tab['num_compte'] = str_pad($data->numero_compte, 8);
+			$Tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
 			$Tab['code_journal'] = str_pad(self::trunc($data->code_journal, 2), 2);
 			$Tab['folio'] = '000';
 			$Tab['date_ecriture'] = $date_ecriture;

@@ -219,11 +219,6 @@ if ($action == 'delbookkeeping') {
 	}
 } elseif ($action == 'export_csv') {
 	
-	
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	
-	
-	
 	include DOL_DOCUMENT_ROOT . '/core/class/accountancyexport.class.php';
 	
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
@@ -243,7 +238,11 @@ if ($action == 'delbookkeeping') {
 	}
 	
 	
-	// TODO remove foreach and implement the AccountancyExport method for each model
+	// TODO remove next 3 lines and foreach to implement the AccountancyExport method for each model
+	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$journal = 'bookkepping';
+	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+		
 	foreach ( $object->lines as $line ) {
 		
 		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
