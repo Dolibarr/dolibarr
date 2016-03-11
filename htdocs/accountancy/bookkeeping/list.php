@@ -218,16 +218,32 @@ if ($action == 'delbookkeeping') {
 		exit();
 	}
 } elseif ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = 'bookkepping';
 	
-	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+	
+	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	
+	
+	
+	include DOL_DOCUMENT_ROOT . '/core/class/accountancyexport.class.php';
 	
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
-	if ($result < 0) {
+	if ($result < 0) 
+	{
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
+	else
+	{
+		if (in_array($conf->global->ACCOUNTING_EXPORT_MODELCSV, array(5,6))) // TODO remove the conditional and keep the code in the "else"
+		{
+			$accountancyexport = new AccountancyExport($db);
+			$accountancyexport->export($object->lines);
+			if (!empty($accountancyexport->errors)) setEventMessages('', $accountancyexport->errors, 'errors');
+			else exit;
+		}
+	}
 	
+	
+	// TODO remove foreach and implement the AccountancyExport method for each model
 	foreach ( $object->lines as $line ) {
 		
 		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
