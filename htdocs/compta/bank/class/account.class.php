@@ -924,7 +924,7 @@ class Account extends CommonObject
      *    @param    int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *    @return   string        			Libelle du statut
      */
-	public function LibStatut($statut, $mode = 0)
+	function LibStatut($statut, $mode = 0)
 	{
 		global $langs;
 		$langs->load('banks');
