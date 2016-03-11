@@ -121,7 +121,6 @@ if (! empty($id)) {
 			print '<tr><td width="20%">' . $langs->trans("Line") . '</td>';
 			print '<td>' . nl2br($objp->description) . '</td></tr>';
 			print '<tr><td width="20%">' . $langs->trans("Account") . '</td><td>';
-			var_dump($objp->fk_code_ventilation);
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
 			print '</table>';
