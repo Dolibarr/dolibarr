@@ -98,7 +98,8 @@ function test_sql_and_script_inject($val, $type)
     // All examples on page: http://ha.ckers.org/xss.html#XSScalc
     $sql_inj += preg_match('/<script/i', $val);
     if (! defined('NOSTYLECHECK')) $sql_inj += preg_match('/<style/i', $val);
-    $sql_inj += preg_match('/base[\s]+href/i', $val);
+    $sql_inj += preg_match('/base[\s]+href/si', $val);
+    $sql_inj += preg_match('/<.*onmouse/si', $val);       // onmouseover can be set on img or any html tag like <img title='>' onmouseover=alert(1)>
     if ($type == 1)
     {
         $sql_inj += preg_match('/javascript:/i', $val);
@@ -1500,7 +1501,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 /**
  *  Show left menu bar
  *
- *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler
+ *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
  * 									         		       For other external page: http://server/url
@@ -1518,6 +1519,8 @@ function left_menu($menu_array_before, $helppagename='', $moresearchform='', $me
     $searchform='';
     $bookmarks='';
 
+    if (! empty($menu_array_before)) dol_syslog("Deprecated parameter menu_array_before was used when calling main::left_menu function. Menu entries of module should now be defined into module descriptor and not provided when calling left_menu.", LOG_WARNING); 
+        
     if (empty($conf->dol_hide_leftmenu))
     {
 	    // Instantiate hooks of thirdparty module

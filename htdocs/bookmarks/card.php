@@ -70,7 +70,9 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 	}
 
 	if ($action == 'update') $bookmark->fetch($_POST["id"]);
-	$bookmark->fk_user=$userid;
+	// Check if null because user not admin can't set an user and send empty value here.
+	if(!empty($userid))
+		$bookmark->fk_user=$userid;
 	$bookmark->title=$title;
 	$bookmark->url=$url;
 	$bookmark->target=$target;

@@ -9,6 +9,7 @@
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@ltairis.fr>
  * Copyright (C) 2011-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
