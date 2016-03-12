@@ -77,7 +77,7 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     else
     {
         $db->rollback();
-        $mesg='<div class="error">'.$localtax->error.'</div>';
+        setEventMessages($localtax->error, $localtax->errors, 'errors');
         $_GET["action"]="create";
     }
 }
@@ -112,18 +112,19 @@ if ($_GET["action"] == 'delete')
 			{
 				$localtax->error=$accountline->error;
 				$db->rollback();
-				$mesg='<div class="error">'.$localtax->error.'</div>';
+				setEventMessages($localtax->error, $localtax->errors, 'errors');
 			}
 	    }
 	    else
 	    {
 	        $db->rollback();
-	        $mesg='<div class="error">'.$localtax->error.'</div>';
+	        setEventMessages($localtax->error, $localtax->errors, 'errors');
 	    }
 	}
 	else
 	{
-        $mesg='<div class="error">Error try do delete a line linked to a conciliated bank transaction</div>';
+        $mesg='Error try do delete a line linked to a conciliated bank transaction';
+        setEventMessages($mesg, null, 'errors');
 	}
 }
 
