@@ -1262,7 +1262,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	$projectid = 0;
 	$remise_absolue = 0;
-		
+
 	if (! empty($origin) && ! empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1273,7 +1273,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		if ($element == 'project') {
 			$projectid = $originid;
-			
+
 			if (!$cond_reglement_id) {
 				$cond_reglement_id = $soc->cond_reglement_id;
 			}
@@ -1590,7 +1590,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			default:
 				$newclassname = $classname;
 		}
-		
+
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";

@@ -4256,15 +4256,22 @@ class FactureLigne extends CommonInvoiceLine
 	}
 
 	/**
-	 * Returns situation_percent of the previous line
+	 * Returns situation_percent of the previous line.
+	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line. 
 	 *
-	 * @return int >= 0
+	 * @param  int     $invoiceid      Invoice id
+	 * @return int                     >= 0
 	 */
-	function get_prev_progress()
+	function get_prev_progress($invoiceid)
 	{
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {
+		    // If invoice is a not a situation invoice, this->fk_prev_id is used for something else
+            $tmpinvoice=new Facture($this->db);
+            $tmpinvoice->fetch($invoiceid);
+            if ($tmpinvoice->type != Facture::TYPE_SITUATION) return 0;
+
 			$sql = 'SELECT situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet WHERE rowid=' . $this->fk_prev_id;
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
