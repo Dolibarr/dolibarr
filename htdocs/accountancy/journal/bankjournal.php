@@ -71,7 +71,7 @@ $now = dol_now();
 // Security check
 if ($user->societe_id > 0 && empty($id_bank_account))
 	accessforbidden();
-	
+
 /*
  * View
  */
@@ -148,7 +148,7 @@ if ($result) {
 		$tabcompany[$obj->rowid] = array (
 				'id' => $obj->socid,
 				'name' => $obj->name,
-				'code_client' => $obj->code_compta 
+				'code_client' => $obj->code_compta
 		);
 
 		// Controls
@@ -251,7 +251,7 @@ if ($result) {
 		$tabbq[$obj->rowid][$compta_bank] += $obj->amount;
 
 		// if($obj->socid)$tabtp[$obj->rowid][$compta_soc] += $obj->amount;
-		
+
 		$i ++;
 	}
 } else {
@@ -319,7 +319,7 @@ if ($action == 'writebookkeeping') {
 			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 			}
 		}
 		// Third party
@@ -388,7 +388,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->code_tiers = $k;
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			} else {
-				
+
 				$bookkeeping->doc_ref = $k;
 				$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
 			}
@@ -396,7 +396,7 @@ if ($action == 'writebookkeeping') {
 			$result = $bookkeeping->create($user);
 			if ($result < 0) {
 				$error ++;
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 			}
 		}
 	}
@@ -537,7 +537,7 @@ else {
 	$form = new Form($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
-	
+
 	$nom = $langs->trans("FinanceJournal") . ' - ' . $bank_code_journal->getNomUrl(1);
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
@@ -545,7 +545,7 @@ else {
 
 	$varlink = 'id_account=' . $id_bank_account;
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
-			'action' => '' 
+			'action' => ''
 	), '', $varlink);
 
 	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
@@ -587,7 +587,7 @@ else {
 
 	foreach ( $tabpay as $key => $val ) {
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
-		
+
 		if ($val["lib"] == '(SupplierInvoicePayment)') {
 			$reflabel = $langs->trans('SupplierInvoicePayment');
 		}
