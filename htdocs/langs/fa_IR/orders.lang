@@ -32,6 +32,7 @@ StatusOrderSent=حمل و نقل در فرایند
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=پردازش
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=تحویل
 StatusOrderToBill2Short=به بیل
 StatusOrderApprovedShort=تایید شده

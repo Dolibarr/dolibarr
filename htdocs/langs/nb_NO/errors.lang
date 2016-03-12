@@ -172,6 +172,8 @@ ErrorMandatoryParametersNotProvided=Obligatorisk(e) parametre ikke angitt
 ErrorOppStatusRequiredIfAmount=Sett inn et estimert beløp for denne muligheten. Status må også settes
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
 ErrorSavingChanges=En feil oppsto under lagring av endringer
+ErrorWarehouseRequiredIntoShipmentLine=Lager er obligatorisk for å kunne levere
+ErrorFileMustHaveFormat=Filen må ha formatet %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=Et passord ble satt for dette medlemmet, men ingen brukerkonto ble opprettet. Det fører til at passordet ikke kan benyttes for å logge inn på Dolibarr. Det kan brukes av en ekstern modul/grensesnitt, men hvis du ikke trenger å definere noen innlogging eller passord for et medlem, kan du deaktivere alternativet "opprett en pålogging for hvert medlem" fra medlemsmodul-oppsettet. Hvis du trenger å administrere en pålogging, men ikke trenger noe passord, kan du holde dette feltet tomt for å unngå denne advarselen. Merk: E-post kan også brukes som en pålogging dersom medlemmet er knyttet til en bruker.

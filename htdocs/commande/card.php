@@ -1931,7 +1931,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		/*
 		 *   Commande
-		*/
+		 */
 		$nbrow = 9;
 		if (! empty($conf->projet->enabled))
 			$nbrow ++;
@@ -2050,6 +2050,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</form>';
 		} else {
 			print $object->date ? dol_print_date($object->date, 'daytext') : '&nbsp;';
+			if ($object->hasDelay() && empty($object->date_livraison)) {
+			    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
+			}
 		}
 		print '</td>';
 		print '</tr>';
@@ -2072,6 +2075,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</form>';
 		} else {
 			print $object->date_livraison ? dol_print_date($object->date_livraison, 'daytext') : '&nbsp;';
+			if ($object->hasDelay() && ! empty($object->date_livraison)) {
+			    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
+			}
 		}
 		print '</td>';
 		print '</tr>';

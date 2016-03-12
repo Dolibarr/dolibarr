@@ -802,8 +802,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/paiement/rapport.php",$langs->trans("Reportings"),2,$user->rights->facture->lire);
 
 				$newmenu->add("/compta/facture/stats/index.php", $langs->trans("Statistics"),1,$user->rights->facture->lire);
-
-				$newmenu->add("/compta/facture/mergepdftool.php",$langs->trans("MergingPDFTool"),1,$user->rights->facture->lire);
 			}
 
 			// Suppliers invoices

@@ -32,6 +32,7 @@ StatusOrderSent=شحنة في عملية
 StatusOrderOnProcessShort=أمر
 StatusOrderProcessedShort=تجهيز
 StatusOrderDelivered=تم التوصيل
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=على مشروع قانون
 StatusOrderToBill2Short=على مشروع قانون
 StatusOrderApprovedShort=وافق

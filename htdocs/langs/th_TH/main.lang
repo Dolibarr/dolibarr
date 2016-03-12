@@ -25,6 +25,7 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=เชื่อมต่อฐานข้อมูล
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=แปลไม่มี
 NoRecordFound=บันทึกไม่พบ
 NoError=ไม่มีข้อผิดพลาด

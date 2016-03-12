@@ -61,6 +61,7 @@ $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
 $userid=GETPOST('userid','int');
@@ -131,7 +132,8 @@ if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-
+if (! GETPOST('confirmmassaction')) { $massaction=''; }
+    
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -533,8 +535,8 @@ if (empty($reshook))
 	    $upload_dir = $diroutputpdf;
 	    $file = $upload_dir . '/' . GETPOST('file');
 	    $ret=dol_delete_file($file);
-	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 	    $action='';
 	}
 	
@@ -714,6 +716,7 @@ if ($resql)
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
 	if ($search_status != '') $param.='&search_status='.$search_status;
 	if ($search_paymentmode > 0) $param.='search_paymentmode='.$search_paymentmode;
+    if ($show_files)         $param.='&show_files=' .$show_files;
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	
 	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
@@ -1055,7 +1058,7 @@ if ($resql)
     print "</form>\n";
     $db->free($resql);
     
-    if ($massaction == 'builddoc' || $action == 'remove_file')
+    if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
     {
         /*
          * Show list of available documents
@@ -1067,10 +1070,16 @@ if ($resql)
         $genallowed=$user->rights->facture->lire;
         $delallowed=$user->rights->facture->lire;
     
-        print '<br>';
-        // We disable multilang because we concat already existing pdf.
-        $formfile->show_documents('unpaid','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$langs->trans("PDFMerge"),'');
-    }    
+        print '<br><a name="show_files"></a>';
+        $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
+        $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
+        
+        $formfile->show_documents('massfilesarea','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+    }
+    else
+    {
+        print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+    }
 }
 else
 {

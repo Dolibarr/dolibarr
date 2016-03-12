@@ -32,6 +32,7 @@ StatusOrderSent=Поставки в процессе
 StatusOrderOnProcessShort=Заказано
 StatusOrderProcessedShort=Обработано
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=В законопроекте
 StatusOrderToBill2Short=Для выставления
 StatusOrderApprovedShort=Утверждено

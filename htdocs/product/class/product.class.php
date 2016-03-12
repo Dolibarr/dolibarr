@@ -4124,13 +4124,12 @@ class Product extends CommonObject
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 
 			$price = $baseprice;
-			$price_min = 0;
+			$price_min = $baseprice;
 
-			if ($i > 1) {
-				//We have to make sure it does exist and it is > 0
-				if (isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
-					$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
-				}
+			//We have to make sure it does exist and it is > 0
+			//First price level only allows changing min_price
+			if ($i > 1 && isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
+				$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
 			}
 
 			$prices[$i] = $price;

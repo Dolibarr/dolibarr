@@ -34,7 +34,7 @@ AccountAccounting=Muhasebe hesabı
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Analiz
 
-MenuAccountancy=Accountancy
+MenuAccountancy=Muhasebe
 CustomersVentilation=Müşteri analizi
 SuppliersVentilation=Tedarikçi analizi
 TradeMargin=Ticaret kar oranı
@@ -47,7 +47,7 @@ UpdateAccount=Bir muhasebe hesabının değiştirilmesi
 UpdateMvts=Bir hareketin değiştirilmesi
 WriteBookKeeping=Büyük defter hesap kayıtları
 Bookkeeping=Büyük Defter
-AccountBalance=Account balance
+AccountBalance=Hesap bakiyesi
 
 AccountingVentilation=Analiz muhasebesi
 AccountingVentilationSupplier=Tedarikçi hesabı analizi
@@ -104,7 +104,7 @@ Code_tiers=Üçüncü parti
 Labelcompte=Hesap etiketi
 Sens=Sens (borsa haberleri yayınlama günlüğü)
 Codejournal=Günlük
-NumPiece=Piece number
+NumPiece=Parça sayısı
 
 DelBookKeeping=Büyük defter kayıtlarını sil
 
@@ -167,7 +167,7 @@ Type=Alan türü
 Param=Ek parametreler
 EnabledProduct=Ürünlerde
 EnabledTiers=Üçüncü partide
-EnabledVat=In VAT
+EnabledVat=KDV nde
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı

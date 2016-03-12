@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=كمية المنتج إلى أوامر ال�
 ProductQtyInShipmentAlreadySent=كمية المنتج من فتح النظام العميل ارسلت بالفعل
 ProductQtyInSuppliersShipmentAlreadyRecevied=كمية المنتج من فتح المورد النظام وردت بالفعل
 NoProductToShipFoundIntoStock=لا يوجد منتج للسفينة وجدت في <b>مستودع٪ الصورة.</b> الأسهم الصحيح أو العودة إلى اختيار مستودع آخر.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=القبض على العملاء

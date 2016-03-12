@@ -1027,7 +1027,7 @@ else
             
 	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
 
-			print $langs->trans("ToCreateAPredefinedInvoice").'<br><br>';
+			print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 
 			$i = 0;
 			print '<table class="noborder" width="100%">';

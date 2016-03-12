@@ -140,10 +140,6 @@ class Commande extends CommonOrder
 	 */
 	var $lines = array();
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
 	// Multicurrency
 	var $fk_multicurrency;
 	var $multicurrency_code;
@@ -3435,6 +3431,22 @@ class Commande extends CommonOrder
         $now = dol_now();
 
         return max($this->date_commande, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
+    }
+    
+    /**
+     * Show the customer delayed info
+     *
+     * @return string       Show delayed information
+     */
+    public function showDelay()
+    {
+        global $conf, $langs;
+    
+        if (empty($this->date_livraison)) $text=$langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+        else $text=$text=$langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');
+        $text.=' '.($conf->commande->client->warning_delay>0?'+':'-').' '.round(abs($conf->commande->client->warning_delay)/3600/24,1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+            
+        return $text;
     }
 }
 

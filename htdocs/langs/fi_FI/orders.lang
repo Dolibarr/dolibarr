@@ -32,6 +32,7 @@ StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=Jalostettu
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Bill
 StatusOrderToBill2Short=Bill
 StatusOrderApprovedShort=Hyväksyttiin

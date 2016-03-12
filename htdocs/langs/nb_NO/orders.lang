@@ -32,6 +32,7 @@ StatusOrderSent=Under transport
 StatusOrderOnProcessShort=Bestilt
 StatusOrderProcessedShort=Behandlet
 StatusOrderDelivered=Levert
+StatusOrderDeliveredShort=Levert
 StatusOrderToBillShort=Levert
 StatusOrderToBill2Short=Til fakturering
 StatusOrderApprovedShort=Godkjent

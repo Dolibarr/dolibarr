@@ -22,6 +22,9 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_ENABLE_LOG_TO_HTML','0','chaine','If this option is set to 1, it is possible to see log output at end of HTML sources by adding paramater logtohtml=1 on URL',1,0);
+
+
 -- Was done into a 3.8 fix, so we must do it also in 3.9 
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
 

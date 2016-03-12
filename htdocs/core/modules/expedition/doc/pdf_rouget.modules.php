@@ -451,7 +451,7 @@ class pdf_rouget extends ModelePdfExpedition
 					$voltxt='';
 					if ($object->lines[$i]->fk_product_type == 0 && $object->lines[$i]->volume) 
 					{
-					    $voltxt=$object->lines[$i]->volume*$object->lines[$i]->qty_shipped.' '.measuring_units_string($object->lines[$i]->volume_units,"volume");
+					    $voltxt=$object->lines[$i]->volume*$object->lines[$i]->qty_shipped.' '.measuring_units_string($object->lines[$i]->volume_units?$object->lines[$i]->volume_units:0,"volume");
 					}
 					
 					$pdf->MultiCell(($this->posxqtyordered - $this->posxweightvol), 3, $weighttxt.(($weighttxt && $voltxt)?', ':'').$voltxt,'','C');

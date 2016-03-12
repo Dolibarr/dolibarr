@@ -32,6 +32,7 @@ StatusOrderSent=Envío en curso
 StatusOrderOnProcessShort=Pedido
 StatusOrderProcessedShort=Procesado
 StatusOrderDelivered=Emitido
+StatusOrderDeliveredShort=Enviado
 StatusOrderToBillShort=Emitido
 StatusOrderToBill2Short=A facturar
 StatusOrderApprovedShort=Aprobado

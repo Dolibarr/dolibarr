@@ -32,6 +32,7 @@ StatusOrderSent=船运处理中
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=处理中
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=已递送
 StatusOrderToBill2Short=待付账
 StatusOrderApprovedShort=已核准

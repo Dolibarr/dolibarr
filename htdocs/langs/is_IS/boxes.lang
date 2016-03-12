@@ -60,8 +60,8 @@ BoxTitleLastContracts=Last %s  samninga
 BoxTitleLastModifiedDonations=Síðustu %s breytt framlög
 BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=Global activity (invoices, proposals, orders)
-BoxGoodCustomers=Good Customers
-BoxTitleGoodCustomers=%s Good Customers
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Ekki tókst að hressa RSS hreyfingu. Síðast vel hressa dagsetning: %s
 LastRefreshDate=Síðast endurnýjað dagsetningu
 NoRecordedBookmarks=Engin bókamerki skilgreind. Smelltu <a href="%s">hér</a> til að bæta við bókamerki.
