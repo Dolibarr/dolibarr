@@ -1564,7 +1564,7 @@ if (empty($reshook))
 
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOST('lineid'));
-		$percent = $line->get_prev_progress();
+		$percent = $line->get_prev_progress($object->id);
 
 		if (GETPOST('progress') < $percent)
 		{
@@ -1682,7 +1682,7 @@ if (empty($reshook))
 		{
 			foreach ($object->lines as $line)
 			{
-				$percent = $line->get_prev_progress();
+				$percent = $line->get_prev_progress($object->id);
 				if (GETPOST('all_progress') < $percent) {
 					$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
 					$result = -1;
