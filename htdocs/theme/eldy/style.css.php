@@ -209,6 +209,8 @@ print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
 print '$colortextlink='.$colortextlink."\n";
+print '$colortextbackhmenu='.$colortextbackhmenu."\n";
+print '$colortextbackvmenu='.$colortextbackvmenu."\n";
 print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
@@ -284,15 +286,24 @@ input.removedassigned  {
 	vertical-align: text-bottom;
 	margin-bottom: -3px;
 }
-input.smallpadd {
+input.smallpadd {	/* Used for timesheet input */
 	padding-left: 0px !important;
 	padding-right: 0px !important;
+}
+span.timesheetalreadyrecorded input {
+    /*font-size: smaller;*/
+    border: none;
+    /*background:	transparent;*/
 }
 <?php } ?>
 
 select.flat, form.flat select {
 	font-weight: normal;
 }
+.optiongrey {
+	opacity: 0.5;
+}
+select:invalid { color: gray; }
 input:disabled {
 	background:#ddd;
 }
@@ -509,6 +520,23 @@ div.myavailability {
 	padding-top: 4px;
 	padding-bottom: 4px;
 }
+.checkallactions {
+	vertical-align: top;
+    margin-top: 6px;	
+    margin-left: 4px;	
+}
+.selectlimit {
+	margin-right: 10px !important;
+}
+.strikefordisabled {
+	text-decoration: line-through;
+}
+.tdoverflow {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
 
 /* ============================================================================== */
@@ -593,7 +621,6 @@ div.fiche {
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 }
-
 div.fichecenter {
 	width: 100%;
 	clear: both;	/* This is to have div fichecenter that are true rectangles */
@@ -1184,6 +1211,8 @@ div.vmenu, td.vmenu {
 .menu_contenu {
 	padding-top: 5px;
 	padding-bottom: 2px;
+	overflow: hidden;
+    text-overflow: ellipsis;
 }
 #menu_contenu_logo { padding-right: 4px; }
 .companylogo { }
@@ -1195,7 +1224,7 @@ a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
 a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 8px; }
 font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
-a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
+a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 8px; }
 
 a.help:link, a.help:visited, a.help:hover, a.help:active { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #666666; text-decoration: none; }
@@ -2546,12 +2575,23 @@ div.tabBar .noborder {
 	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
 <?php } ?>
 }
+span.boxstatstext {
+	opacity: 0.8;
+    line-height: 18px;
+}
 span.boxstatsindicator {
 	font-size: 110%;
-	font-weight: bold;
+	font-weight: normal;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
 	font-size: 120%;
+	font-weight: normal;
+}
+span.dashboardlineok {
+	color: #008800;
+}
+span.dashboardlineko {
+	color: #880000;
 	font-weight: bold;
 }
 .boxtable {
@@ -3950,6 +3990,12 @@ border-top-right-radius: 6px;
 
 
 
+/* For demo pages */
+img.demothumb {
+    box-shadow: 2px 2px 8px #888;
+}
+
+
 /* The theme for public pages */
 .public_body {
 	margin: 20px;
@@ -3957,6 +4003,9 @@ border-top-right-radius: 6px;
 .public_border {
 	border: 1px solid #888;
 }
+
+
+
 
 
 
@@ -3977,25 +4026,53 @@ border-top-right-radius: 6px;
 
 }
 
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 10; ?>px)
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
+/* rule to reduce top menu - 1st reduction */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 8; ?>px)
 {
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+    	white-space: nowrap;
+  		overflow: hidden;
+  		text-overflow: ellipsis;
+  		color: #<?php echo $colortextbackhmenu; ?>;
+	}
 	.mainmenuaspan {
-    	display: none;
+    	/*display: none;*/
+  		font-size: 10px;
     }
+    .topmenuimage {
+    	background-size: 26px auto;
+    	margin-top: 0px;
+	}
+
     li.tmenu, li.tmenusel {
     	min-width: 32px;
     }
     div.mainmenu {
     	min-width: auto;
     }
-    .topmenuimage {
-    	background-size: 26px auto;
-    	margin-top: 8px;
-	}
 	div.tmenuleft {
 		display: none;
 	}
 }
+/* rule to reduce top menu - 2nd reduction */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 8; ?>px)
+{
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
+  		text-overflow: clip;
+	}
+	.mainmenuaspan {
+    	/*display: none;*/
+  		font-size: 10px;
+    }
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px;
+	}
+}
+/* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
 	/* Reduce login top right info */
@@ -4013,12 +4090,19 @@ border-top-right-radius: 6px;
 		top: 4px;
 		max-width: 82px;
 	}
+    li.tmenu, li.tmenusel {
+        min-width: 30px;
+    }
 
+	div.tmenucenter {
+  		text-overflow: clip;
+	}
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px !important;
+	}
 	div.mainmenu {
     	min-width: 20px;
-    }
-	.topmenuimage {
-    	background-size: 20px auto;
     }
 
 	#tooltip {
