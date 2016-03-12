@@ -65,7 +65,7 @@ if ($action == 'create')
     $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
     if ($result < 0)
     {
-    	setEventMessages($bprev->error , $bprev->errors, 'errors');
+    	setEventMessages($bprev->error, $bprev->errors, 'errors');
     }
     if ($result == 0)
     {
