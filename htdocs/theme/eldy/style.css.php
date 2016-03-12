@@ -209,6 +209,8 @@ print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
 print '$colortextlink='.$colortextlink."\n";
+print '$colortextbackhmenu='.$colortextbackhmenu."\n";
+print '$colortextbackvmenu='.$colortextbackvmenu."\n";
 print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
@@ -4067,25 +4069,52 @@ img.demothumb {
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 10; ?>px)
+/* rule to reduce top menu - 1st reduction */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 8; ?>px)
 {
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+    	white-space: nowrap;
+  		overflow: hidden;
+  		text-overflow: ellipsis;
+  		color: #<?php echo $colortextbackhmenu; ?>;
+	}
 	.mainmenuaspan {
-    	display: none;
+    	/*display: none;*/
+  		font-size: 10px;
     }
+    .topmenuimage {
+    	background-size: 26px auto;
+    	margin-top: 0px;
+	}
+
     li.tmenu, li.tmenusel {
     	min-width: 32px;
     }
     div.mainmenu {
     	min-width: auto;
     }
-    .topmenuimage {
-    	background-size: 26px auto;
-    	margin-top: 8px;
-	}
 	div.tmenuleft {
 		display: none;
 	}
 }
+/* rule to reduce top menu - 2nd reduction */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 8; ?>px)
+{
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
+  		text-overflow: clip;
+	}
+	.mainmenuaspan {
+    	/*display: none;*/
+  		font-size: 10px;
+    }
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px;
+	}
+}
+/* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
 	/* Reduce login top right info */
@@ -4103,12 +4132,19 @@ img.demothumb {
 		top: 4px;
 		max-width: 82px;
 	}
+    li.tmenu, li.tmenusel {
+        min-width: 30px;
+    }
 
+	div.tmenucenter {
+  		text-overflow: clip;
+	}
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px !important;
+	}
 	div.mainmenu {
     	min-width: 20px;
-    }
-	.topmenuimage {
-    	background-size: 20px auto;
     }
 
 	#tooltip {
