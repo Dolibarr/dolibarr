@@ -94,10 +94,11 @@ class Notify
      *
      * @param	string	$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
      * @param	int		$socid			Id of third party or 0 for all thirdparties
+     * @param	int		$userid         Id of user or 0 for all users
      * @param	Object	$object			Object the notification is about (need it to check threshold value of some notifications)
      * @return	array|int				<0 if KO, array of notifications to send if OK
      */
-	function getNotificationsArray($notifcode,$socid,$object=null)
+	function getNotificationsArray($notifcode,$socid= 0,$userid= 0,$object=null)
 	{
 		global $conf, $user;
 
@@ -111,7 +112,8 @@ class Notify
         {
 	        $sql = "SELECT a.code, c.email, c.rowid";
 	        $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
-	        $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
+	        if ($userid > 0) $sql.= " ".MAIN_DB_PREFIX."user as c,";
+            else $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
 	        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
 	        $sql.= " ".MAIN_DB_PREFIX."societe as s";
 	        $sql.= " WHERE n.fk_contact = c.rowid";
@@ -124,6 +126,7 @@ class Notify
 	        }
 	        $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
+	        elseif ($userid > 0) $sql.= " AND u.rowid = ".$userid;
 
 			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
 
@@ -253,7 +256,7 @@ class Notify
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
 
 		// Check notification per third party
-		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
+		$sql = "SELECT 0 as user, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
@@ -264,6 +267,20 @@ class Notify
         if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
         else $sql.= " AND a.code = '".$notifcode."'";	// New usage
         $sql .= " AND s.rowid = ".$object->socid;
+
+		// Check notification per user
+        $sql.= "\nUNION\n";
+		$sql.= "SELECT  1 as user, c.email, c.rowid as cid, c.lastname, c.firstname, '$langs->defaultlang' as default_lang,";
+		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
+        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+        $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
+        $sql.= " ".MAIN_DB_PREFIX."element_contact as ec";
+        $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+        $sql.= " AND n.fk_user = ec.fk_socpeople";
+        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+        else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+        $sql .= " AND ec.element_id = ".$object->id;
 
         $result = $this->db->query($sql);
         if ($result)
@@ -386,9 +403,16 @@ class Notify
 	                    );
 
 	                    if ($mailfile->sendfile())
-	                    {
-	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, objet_id, email)";
-	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".$object->socid.", ".$obj->cid.", '".$obj->type."', '".$object_type."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+	                    {   if ($obj->user==1){
+     	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action,  fk_user, type, objet_type, objet_id, email)";
+    	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".$obj->cid.", '".$obj->type."', '".$object_type."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+                           
+                            }
+                            else {
+    	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, objet_id, email)";
+    	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".$object->socid.", ".$obj->cid.", '".$obj->type."', '".$object_type."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+                                
+                            }
 	                        if (! $this->db->query($sql))
 	                        {
 	                            dol_print_error($this->db);

@@ -416,6 +416,7 @@ Organization=Organization
 AutomaticallyGenerated=Automatically generated
 FiscalYearInformation=Information on the fiscal year
 FiscalMonthStart=Starting month of the fiscal year
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
 YouMustCreateContactFirst=You must create emails contacts for third party first to be able to add emails notifications.
 ListSuppliersShort=List of suppliers
 ListProspectsShort=List of prospects
