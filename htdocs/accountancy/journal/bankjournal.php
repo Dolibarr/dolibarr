@@ -312,7 +312,6 @@ if ($action == 'writebookkeeping') {
 				if ($resultmid) {
 					$objmid = $db->fetch_object($resultmid);
 					$bookkeeping->doc_ref = $objmid->ref_supplier . ' (' . $objmid->ref . ')';
-					;
 				}
 			}
 
@@ -414,7 +413,8 @@ if ($action == 'export_csv') {
 	$companystatic = new Client($db);
 
 	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2)
+	{
 		$sep = ";";
 
 		foreach ( $tabpay as $key => $val ) {
