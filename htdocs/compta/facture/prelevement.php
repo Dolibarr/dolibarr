@@ -454,7 +454,7 @@ if ($object->id > 0)
 
 
 	/*
-	 * Withdrawal request
+	 * Withdrawal opened requests
 	 */
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
@@ -564,6 +564,8 @@ if ($object->id > 0)
 		dol_print_error($db);
 	}
 
+	// Closed requests
+	
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande,";
 	$sql.= " pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql.= " pb.ref,";
