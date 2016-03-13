@@ -422,6 +422,9 @@ th .button {
 .centpercent {
 	width: 100%;
 }
+.quatrevingtpercent, .inputsearch {
+	width: 80%;
+}
 textarea.centpercent {
 	width: 96%;
 }
