@@ -2156,11 +2156,11 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 5px 0px;
 
-	-moz-box-shadow: 2px 2px 4px #CCC;
+/*	-moz-box-shadow: 2px 2px 4px #CCC;
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
 
-/*	-moz-border-radius: 0.2em;
+	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
@@ -2226,7 +2226,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #766;
+  	color: #866;
   	font-size: 160%;
 }
 div.refidno  {
@@ -2637,9 +2637,9 @@ span.dashboardlineko {
 	font-weight: bold;
 }
 .boxtable {
-    -moz-box-shadow: 3px 3px 4px #DDD;
+/*    -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    box-shadow: 3px 3px 4px #DDD; */
     margin-bottom: 8px !important;
 }
 
@@ -2647,7 +2647,7 @@ span.dashboardlineko {
 .box {
     padding-right: 0px;
     padding-left: 0px;
-    padding-bottom: 4px;
+    padding-bottom: 12px;
 }
 
 tr.box_titre {
@@ -2697,9 +2697,13 @@ tr.box_pair {
 
 tr.box_pair td, tr.box_impair td {
 	padding: 4px;
+}
+tr.box_pair:not(:last-child) td, tr.box_impair:not(:last-child) td {
     border-bottom: 1px solid #ddd;
 }
-
+.noborderbottom {
+	border-bottom: none !important;
+}
 .formboxfilter {
 	vertical-align: middle;
 	margin-bottom: 6px;
