@@ -214,6 +214,16 @@ if (count($typeleaves) == 0)
 }
 else
 {
+    $canedit=0;
+    if (! empty($user->rights->holiday->define_holiday)) $canedit=1;
+    
+    // Get array of ids of all childs
+    $userchilds=array();
+    if (empty($user->rights->holiday->read_all))
+    {
+        $userchilds=$user->getAllChildIds();
+    }
+    
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<input type="hidden" name="action" value="update" />';
 
@@ -231,23 +241,18 @@ else
     {
         print '<td>'.$langs->trans("NoLeaveWithCounterDefined").'</td>';
     }
-    print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
+    print '<td width="20%" style="text-align:center">';
+    if ($canedit) print $langs->trans('Note');
+    print '</td>';
     print '<td></td>';
     print '</tr>';
 
-    // Get array of ids of all childs
-    $userchilds=array();
-    if (empty($user->rights->holiday->define_holiday))
-    {
-        $userchilds=$user->getAllChildIds();
-    }
-    
     foreach($listUsers as $users)
     {
         $var=!$var;
 
         // If user has not permission to edit/read all, we must see only subordinates
-        if (empty($user->rights->holiday->define_holiday))  
+        if (empty($user->rights->holiday->read_all))  
         {
             if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
         }
@@ -267,7 +272,8 @@ else
         		$nbtoshow='';
         		if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
             	print '<td style="text-align:center">';
-            	print '<input type="text" value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+            	if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+            	else print $nbtoshow;
         	    //print ' '.$langs->trans('days');
             	print '</td>'."\n";
         	}
@@ -276,8 +282,15 @@ else
         {
             print '<td></td>';
         }
-        print '<td style="text-align:center"><input type="text" value="" name="note_holiday['.$users['rowid'].']" size="30"/></td>';
-        print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
+        print '<td style="text-align:center">';
+        if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+        print '</td>';
+        print '<td>';
+        if (! empty($user->rights->holiday->define_holiday))
+        {
+            print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/>';
+        }
+        print '</td>'."\n";
         print '</tr>';
 
         $i++;
