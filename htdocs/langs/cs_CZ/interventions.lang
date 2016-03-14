@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Návrat čísla ve formátu %syymm-nnnn, kde yy je rok, 
 PacificNumRefModelError=Zásahová karta začíná s $ syymm již existuje a není kompatibilní s tímto modelem sekvence. Odstraňte ji nebo přejmenujte pro aktivaci tohoto modulu.
 PrintProductsOnFichinter=Výpis produktů na intervenční kartě
 PrintProductsOnFichinterDetails=intervence generované z objednávek
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=تست حالت / گودال ماسهبازی
 PAYPAL_API_USER=نام کاربری API
 PAYPAL_API_PASSWORD=رمز عبور API
 PAYPAL_API_SIGNATURE=امضا API
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=ارائه پرداخت "جدایی ناپذیر" (کارت اعتباری + پی پال) و یا "پی پال" تنها
 PaypalModeIntegral=انتگرال
 PaypalModeOnlyPaypal=پی پال تنها

@@ -8,7 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015 	   Abbes Bahfir 	<bafbes@gmail.com>
- * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015-2016 Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,6 +97,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$search_status="";
 	$year="";
 	$month="";
+	$day="";
+	$year_lim="";
+	$month_lim="";
+	$day_lim="";
 }
 
 // List of fields to search into when doing a "search in all"
@@ -249,8 +253,12 @@ if ($resql)
 	}
 
 	$param='&socid='.$socid;
+	if ($day) 					$param.='&day='.urlencode($day);
 	if ($month) 				$param.='&month='.urlencode($month);
 	if ($year)  				$param.='&year=' .urlencode($year);
+	if ($day_lim) 				$param.='&day_lim='.urlencode($day_lim);
+	if ($month_lim) 			$param.='&month_lim='.urlencode($month_lim);
+	if ($year_lim)  			$param.='&year_lim=' .urlencode($year_lim);
 	if ($search_ref)          	$param.='&search_ref='.urlencode($search_ref);
 	if ($search_ref_supplier) 	$param.='&search_ref_supplier'.urlencode($search_ref_supplier);
 	if ($search_label)      	$param.='&search_label='.urlencode($search_label);
@@ -331,7 +339,7 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('0'=>$langs->trans("Draft"),'1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
-	print $form->selectarray('filtre', $liststatus, $search_status, 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1);
 	print '</td><td class="liste_titre" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

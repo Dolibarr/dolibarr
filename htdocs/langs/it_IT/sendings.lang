@@ -6,7 +6,7 @@ AllSendings=Tutte le spedizioni
 Shipment=Spedizione
 Shipments=Spedizioni
 ShowSending=Mostra le spedizioni
-Receivings=Ricevuta di consegna
+Receivings=Delivery Receipts
 SendingsArea=Sezione spedizioni
 ListOfSendings=Elenco delle spedizioni
 SendingMethod=Metodo di invio
@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 NoProductToShipFoundIntoStock=Nessun prodotto da spedire presente all'interno del magazzino <b>%s</b>
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Ritiro da parte del Cliente

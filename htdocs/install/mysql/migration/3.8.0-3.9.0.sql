@@ -22,8 +22,21 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+insert into llx_const (name, value, type, note, visible, entity) values ('MAIN_ENABLE_LOG_TO_HTML','0','chaine','If this option is set to 1, it is possible to see log output at end of HTML sources by adding paramater logtohtml=1 on URL',1,0);
+
+
 -- Was done into a 3.8 fix, so we must do it also in 3.9 
 ALTER TABLE llx_don ADD COLUMN fk_country integer NOT NULL DEFAULT 0 after country;
+
+
+ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
+ALTER TABLE llx_product ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
+ALTER TABLE llx_product_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
+ALTER TABLE llx_product_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
+ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
+ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 
 
 UPDATE llx_user set api_key = null where api_key = '';
@@ -33,9 +46,6 @@ ALTER TABLE llx_actioncomm ADD COLUMN email_subject varchar(256) after email_msg
 ALTER TABLE llx_actioncomm ADD COLUMN email_tocc varchar(256) after email_to;
 ALTER TABLE llx_actioncomm ADD COLUMN email_tobcc varchar(256) after email_tocc;
 
-
-UPDATE llx_commande_fourn set billed=1 where statut = 8;
-UPDATE llx_commande_fourn set statut=5 where statut = 8 and billed=1;
 
 ALTER TABLE llx_user MODIFY COLUMN pass varchar(128);
 ALTER TABLE llx_user MODIFY COLUMN pass_temp varchar(128); 
@@ -110,6 +120,9 @@ ALTER TABLE llx_commande ADD COLUMN fk_warehouse integer DEFAULT NULL AFTER fk_s
 
 ALTER TABLE llx_commande_fournisseur ADD COLUMN billed smallint DEFAULT 0 AFTER fk_statut;
 ALTER TABLE llx_commande_fournisseur ADD INDEX billed (billed);
+
+UPDATE llx_commande_fournisseur set billed=1 where statut = 8;
+UPDATE llx_commande_fournisseur set statut=5 where statut = 8 and billed=1;
 
 ALTER TABLE llx_product ADD COLUMN cost_price	double(24,8) DEFAULT NULL;
 
@@ -583,3 +596,14 @@ ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN doc_ref varchar(300) NOT NU
 
 ALTER TABLE llx_holiday ADD COLUMN tms timestamp;
 ALTER TABLE llx_holiday ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_entity (entity);
+
+-- Fix Argentina provences
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2326', 2305, '', 0, 'MISIONES', 'Misiones', 1);
+UPDATE llx_c_departements SET ncc = "FORMOSA", nom = "Formosa" WHERE nom = "Formosa Misiones";
+
+-- MALTA VATS (id country=148)
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1481,  148, '18','0','VAT standard rate',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1482,  148, '7','0','VAT reduced rate',1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1483,  148, '5','0','VAT super-reduced rate', 1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1484,  148, '0','0','VAT Rate 0', 1);

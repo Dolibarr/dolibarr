@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=モード試験/サンドボックス
 PAYPAL_API_USER=API名
 PAYPAL_API_PASSWORD=APIパスワード
 PAYPAL_API_SIGNATURE=APIの署名
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=オファー支払い&quot;インテグラル&quot;（クレジットカード+ペイパル）または&quot;ペイパル&quot;のみ
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only

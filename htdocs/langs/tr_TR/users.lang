@@ -121,3 +121,5 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Oturum açmak için OpenID kullan
 WeeklyHours=Haftalık saatler
 ColorUser=Kullanıcı rengi
+DisabledInMonoUserMode=Bakım modunda devre dışıdır
+UserAccountancyCode=Kullanıcı muhasebe kodu

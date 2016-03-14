@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2014	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -53,7 +53,7 @@ class CommandeFournisseur extends CommonOrder
     var $id;
 
 	/**
-	 * Supplier invoice reference
+	 * Supplier order reference
 	 * @var string
 	 */
     var $ref;
@@ -103,7 +103,7 @@ class CommandeFournisseur extends CommonOrder
     var $user_approve_id;
     var $user_approve_id2;	// Used when SUPPLIER_ORDER_DOUBLE_APPROVAL is set
 
-	//Incorterms
+	//Incoterms
 	var $fk_incoterms;
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
@@ -114,7 +114,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var CommandeFournisseurLigne[]
 	 */
 	public $lines = array();
-	//Ajout pour supplier_proposal
+	//Add for supplier_proposal
 	var $origin;
     var $origin_id;
     var $linked_objects=array();
@@ -141,7 +141,7 @@ class CommandeFournisseur extends CommonOrder
         $this->statuts[5] = 'StatusOrderReceivedAll';
         $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
         $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finish, order received totally and bill received
+        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
         $this->statuts[9] = 'StatusOrderRefused';
     }
 
@@ -243,7 +243,7 @@ class CommandeFournisseur extends CommonOrder
 
             $this->db->free($resql);
 
-            // Retreive all extrafield
+            // Retrieve all extrafields
             // fetch optionals attributes and labels
             require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
             $extrafields=new ExtraFields($this->db);
@@ -390,7 +390,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
-            // Definition du nom de modele de numerotation de commande
+            // Definition of supplier order numbering model name
             $soc = new Societe($this->db);
             $soc->fetch($this->fourn_id);
 
@@ -435,7 +435,7 @@ class CommandeFournisseur extends CommonOrder
                 // Rename directory if dir was a temporary ref
                 if (preg_match('/^[\(]?PROV/i', $this->ref))
                 {
-                    // On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
+                    // We rename directory ($this->ref = ancienne ref, $num = nouvelle ref)
                     // in order not to lose the attached files
                     $oldref = dol_sanitizeFileName($this->ref);
                     $newref = dol_sanitizeFileName($num);
@@ -585,8 +585,8 @@ class CommandeFournisseur extends CommonOrder
      *	Return clicable name (with picto eventually)
      *
      *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param		string	$option			Sur quoi pointe le lien
-     *	@return		string					Chaine avec URL
+     *	@param		string	$option			On what the link points
+     *	@return		string					Chain with URL
      */
     function getNomUrl($withpicto=0,$option='')
     {
@@ -618,11 +618,11 @@ class CommandeFournisseur extends CommonOrder
 
 
     /**
-     *  Renvoie la reference de commande suivante non utilisee en fonction du modele
-     *                  de numerotation actif defini dans COMMANDE_SUPPLIER_ADDON_NUMBER
+     *  Returns the following order reference not used depending on the numbering model activated
+     *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
      *
-     *  @param	    Societe		$soc  		objet societe
-     *  @return     string                  reference libre pour la facture
+     *  @param	    Company		$soc  		company object
+     *  @return     string                  free reference for the invoice
      */
     function getNextNumRef($soc)
     {
@@ -716,7 +716,7 @@ class CommandeFournisseur extends CommonOrder
 
             $this->db->begin();
 
-			// Definition du nom de modele de numerotation de commande
+			// Definition of order numbering model name
             $soc = new Societe($this->db);
             $soc->fetch($this->fourn_id);
 
@@ -904,7 +904,7 @@ class CommandeFournisseur extends CommonOrder
 
     /**
      * 	Cancel an approved order.
-     *	L'annulation se fait apres l'approbation
+     *	The cancellation is done after approval
      *
      * 	@param	User	$user			User making action
      *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
@@ -1028,7 +1028,7 @@ class CommandeFournisseur extends CommonOrder
         // Clean parameters
         if (empty($this->source)) $this->source = 0;
 
-        /* On positionne en mode brouillon la commande */
+        /* One positions in draft mode the order  */
         $this->brouillon = 1;
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur (";
@@ -1078,7 +1078,7 @@ class CommandeFournisseur extends CommonOrder
 				$num=count($this->lines);
 
 	            /*
-	             *  Insertion du detail des produits dans la base
+	             *  integration of products detail in the database
 	             */
 	            for ($i=0;$i<$num;$i++)
 	            {

@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - contracts
+ServiceStatusClosed=Cerrada
+ContractStartDate=Fecha de inicio
+ContractEndDate=Fecha de finalización
+DateStartPlanned=Fecha de inicio planificada
+DateStartPlannedShort=Fecha de inicio planificada
+DateEndPlanned=Fecha de finalización planificada
+DateEndPlannedShort=Fecha de finalización planificada
+DateStartReal=Fecha de inicio real
+DateStartRealShort=Fecha de inicio real
+DateEndReal=Fecha de finalización real
+DateEndRealShort=Fecha de finalización real

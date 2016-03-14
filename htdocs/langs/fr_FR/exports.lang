@@ -128,6 +128,10 @@ SpecialCode=Code spécial
 ExportStringFilter=%% permet de remplacer 1 ou plusieurs caractères dans le texte
 ExportDateFilter=AAAA, AAAAMM, AAAAMMJJ: filtre pour une année/mois/jour<br>AAAA+AAAA, AAAAMM+AAAAMM, AAAAMMJJ+AAAAMMJJ: filtre pour une plage année/mois/jour<br> > AAAA, > AAAAMM, > AAAAMMJJ': filtre pour une date supérieure à une année/mois/jour donné<br> < AAAA, < AAAAMM, < AAAAMMJJ: filtre pour une date inférieure à une année/mois/jour donné
 ExportNumericFilter='NNNNN' filtres sur une valeur<br>'NNNNN+NNNNN' filtres sur une place de valeurs<br>'&gt;NNNNN' filtres sur les valeurs plus petites<br>'&gt;NNNNN' filtres sur les valeurs plus grandes
+ImportFromLine=Début d'import à la ligne numéro
+EndAtLineNb=Fin à la ligne numéro
+SetThisValueTo2ToExcludeFirstLine=Par exemple, positionnez cette valeur à 3 pour exclure les 2 premières lignes
+KeepEmptyToGoToEndOfFile=Laissez ce champ vide pour aller jusqu'à la fin du fichier
 ## filters
 SelectFilterFields=Si vous voulez filtrer sur certaines valeurs, saisissez ces valeurs.
 FilterableFields=Champs filtrables

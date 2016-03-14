@@ -23,8 +23,8 @@ ChooseProduct/Service=Choose product or service
 StartDate=Start date
 EndDate=End date
 Launch=Start
-ForceBuyingPriceIfNull=Force buying price if null
-ForceBuyingPriceIfNullDetails=if "ON", margin will be zero on line (buying price = selling price), otherwise ("OFF"), marge will be equal to selling price (buying price = 0)
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
 MARGIN_METHODE_FOR_DISCOUNT=Margin method for global discounts
 UseDiscountAsProduct=As a product
 UseDiscountAsService=As a service
@@ -35,8 +35,9 @@ MargeBrute=Raw margin
 MargeNette=Net margin
 MargeType1=Margin on Best supplier price
 MargeType2=Margin on Weighted Average Price (WAP)
-MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br/>Net margin : Selling price - Cost price
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Cost price
 BuyingCost=Cost price
 UnitCharges=Unit charges

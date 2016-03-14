@@ -6,7 +6,7 @@ AllSendings=All Shipments
 Shipment=Lô hàng
 Shipments=Lô hàng
 ShowSending=Show Shipments
-Receivings=Receipts
+Receivings=Delivery Receipts
 SendingsArea=Diện tích lô hàng
 ListOfSendings=Danh sách các lô hàng
 SendingMethod=Phương thức vận chuyển
@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Product quantity into opened suppliers orders
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened supplier order already received
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Catch của khách hàng

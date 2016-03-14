@@ -77,7 +77,8 @@ $conffiletoshow = "htdocs/conf/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
 
 
-if (! defined('DONOTLOADCONF') && file_exists($conffile))
+// Load conf file if it is already defined
+if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) > 8) // Test on filesize is to ensure that conf file is more that an empty template with just <?php in first line
 {
     $result=include_once $conffile;	// Load conf file
     if ($result)
@@ -126,7 +127,7 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile))
         $includeconferror='ErrorBadFormatForConfFile';
     }
 }
-$conf->global->MAIN_LOGTOHTML = 1;
+$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_';

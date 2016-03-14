@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014-2016	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
@@ -458,6 +458,8 @@ if (empty($reshook))
 	
 	            $tva_tx = get_default_tva($mysoc,$object->thirdparty,$prod->id);
 	            $tva_npr = get_default_npr($mysoc,$object->thirdparty,$prod->id);
+	            if (empty($tva_tx)) $tva_npr=0;
+	            
 	            $pu_ht = $prod->price;
 	            $pu_ttc = $prod->price_ttc;
 	            $price_min = $prod->price_min;
@@ -518,8 +520,8 @@ if (empty($reshook))
 				$fk_unit= GETPOST('units', 'alpha');
 	        }
 	
-	        $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty);
-	        $localtax2_tx=get_localtax($tva_tx,2,$object->thirdparty);
+	        $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty,$mysoc,$tva_npr);
+	        $localtax2_tx=get_localtax($tva_tx,2,$object->thirdparty,$mysoc,$tva_npr);
 	
 			// ajout prix achat
 			$fk_fournprice = $_POST['fournprice'];
@@ -704,6 +706,11 @@ if (empty($reshook))
 	else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 	    $result = $object->validate($user);
+	}
+	
+	else if ($action == 'reopen' && $user->rights->contrat->creer)
+	{
+	    $result = $object->reopen($user);
 	}
 	
 	// Close all lines
@@ -1077,7 +1084,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('','socid','',1);
+		print $form->select_company('','socid','',1,1);
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1110,12 +1117,13 @@ if ($action == 'create')
     $form->select_date($datecontrat,'',0,0,'',"contrat");
     print "</td></tr>";
 
+    // Project
     if (! empty($conf->projet->enabled))
     {
     	$formproject=new FormProjets($db);
 
         print '<tr><td>'.$langs->trans("Project").'</td><td>';
-        $formproject->select_projects($soc->id,$projectid,"projectid");
+        $formproject->select_projects(($soc->id>0?$soc->id:-1),$projectid,"projectid",0,0,1,1);
         print "</td></tr>";
     }
 
@@ -1325,11 +1333,11 @@ else
             print '</td><td colspan="3">';
             if ($action == "classify")
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"projectid", 0, 0, 1);
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, "projectid", 1, 0, 1);
             }
             else
             {
-                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id,$object->socid,$object->fk_project,"none", 0, 0);
+                $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, "none", 0, 0);
             }
             print "</td></tr>";
         }
@@ -1384,9 +1392,9 @@ else
             print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="updateligne">';
-            print '<input type="hidden" name="elrowid" value="'.GETPOST('rowid').'">';
-            print '<input type="hidden" name="idprod" value="'.($objp->fk_product?$objp->fk_product:'0').'">';
-            print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
+            print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline-1]->id.'">';
+            print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline-1]->fk_product) ? $object->lines[$cursorline-1]->fk_product : 0).'">';
+            print '<input type="hidden" name="fournprice" value="'.(!empty($object->lines[$cursorline-1]->fk_fournprice) ? $object->lines[$cursorline-1]->fk_fournprice : 0).'">';
 
             // Area with common detail of line
             print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
@@ -1712,9 +1720,11 @@ else
                     {
                         $tmpaction='activateline';
                         if ($objp->statut == 4) $tmpaction='unactivateline';
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action='.$tmpaction.'">';
-                        print img_edit();
-                        print '</a>';
+						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver)) {
+							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
+							print img_edit();
+							print '</a>';
+						}
                     }
                 }
                 print '</td>';
@@ -1759,7 +1769,7 @@ else
                 print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
+                print '<table class="noborder tableforservicepart2" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut;
@@ -1779,15 +1789,15 @@ else
                 }
 
                 print '<tr '.$bc[$var].'>';
-                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center nohover" rowspan="2" valign="middle">';
+                print '<td align="center nohover" rowspan="2" valign="middle" class="nohover">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
@@ -1915,7 +1925,12 @@ else
                 if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a></div>';
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Validate").'</a></div>';
             }
-
+            if ($object->statut == 1 && $nbofservices)
+            {
+                if ($user->rights->contrat->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("Modify").'</a></div>';
+                else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("Modify").'</a></div>';
+            }
+            
             if (! empty($conf->facture->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
             {
                 $langs->load("bills");
@@ -1975,6 +1990,12 @@ else
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'contract', $socid);
+        
+        
         print '</div></div></div>';
     }
 }

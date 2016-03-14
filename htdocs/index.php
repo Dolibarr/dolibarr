@@ -65,6 +65,8 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
  * View
  */
 
+if (! is_object($form)) $form=new Form($db);
+
 // Title
 $title=$langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
 if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeArea").' - '.$conf->global->MAIN_APPLICATION_TITLE;
@@ -398,7 +400,11 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
     $board=new Account($db);
-	$dashboardlines[] = $board->load_board($user);
+    $nb = $board::countAccountToReconcile();
+    if ($nb > 0)
+    {
+        $dashboardlines[] = $board->load_board($user);
+    }
 }
 
 // Number of cheque to send

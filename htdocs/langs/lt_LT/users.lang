@@ -121,3 +121,5 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Prisijungimui naudoti OpenID
 WeeklyHours=Savaitės valandos
 ColorUser=Vartotojo spalva
+DisabledInMonoUserMode=Disabled in maintenance mode
+UserAccountancyCode=User accountancy code

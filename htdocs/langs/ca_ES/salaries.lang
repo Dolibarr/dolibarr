@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Codi comptable pagament de salaris
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Codi comptable càrregues financeres
 Salary=Sou
 Salaries=Sous
-Employee=Empleat
 NewSalaryPayment=Nou pagament de sous
 SalaryPayment=Pagament de sous
 SalariesPayments=Pagaments de sous

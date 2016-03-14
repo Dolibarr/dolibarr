@@ -121,3 +121,5 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Χρησιμοποιήστε το OpenID για να συνδεθείτε
 WeeklyHours=Εβδομαδιαίες ώρες
 ColorUser=Χρώμα του χρήστη
+DisabledInMonoUserMode=Disabled in maintenance mode
+UserAccountancyCode=User accountancy code

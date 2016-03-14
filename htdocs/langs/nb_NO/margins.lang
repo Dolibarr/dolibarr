@@ -23,8 +23,8 @@ ChooseProduct/Service=Velg vare eller tjenester
 StartDate=Startdato
 EndDate=Sluttdato
 Launch=Start
-ForceBuyingPriceIfNull=Tving innkjøpspris hvis 0
-ForceBuyingPriceIfNullDetails=hvis "PÅ", vil marginen være null på linjen (innkjøpspris=utsalgspris), ellers ("AV"). Margin vil bli lik utsalgspris (innkjøpspris = 0)
+ForceBuyingPriceIfNull=Tving innkjøps-/kostpris til utsalgspris hvis udefinert
+ForceBuyingPriceIfNullDetails=Hvis innkjøps-/kostpris ikke er definert, og denne opsjonen er "PÅ", vil margin bli satt til null på linjen (innkjøps-/kostpris = utsalgspris). Ellers ("AV") vil margin bli satt til foreslått standard.
 MARGIN_METHODE_FOR_DISCOUNT=Margin-metode for globale rabatter
 UseDiscountAsProduct=Som vare
 UseDiscountAsService=Som tjeneste
@@ -35,8 +35,9 @@ MargeBrute=Bruttomargin
 MargeNette=Nettomargin
 MargeType1=Margin på beste leverandørpris
 MargeType2=Margin på gjennomsnittspris (Weighted Average Price - WAP)
-MARGIN_TYPE_DETAILS=Brutto margin = Utsalgspris - Innkjøpspris<br/>Nettomargin = Utsalgspris - Kostpris
-MarginTypeDesc=Nargin på beste innkjøpspris: Utsalgspris - Beste leverandørpris definert på varekortet<br/>Margin på gjennomsnittspris (WAP): Utsalgspris - Gjennomsnittspris
+MargeType3=Marginer på kostpris
+MARGIN_TYPE_DETAILS=Råmargin: Salgspris - Innkjøpspris<br>Nettomargin: Salgspris - Kostpris
+MarginTypeDesc=* Margin på beste kjøpskurs = Salgspris - Beste leverandørpris definert på varekortet<br> * Margin på vektet gjennomsnittlig pris (WAP) = Salgspris - Vektet gjennomsnittspris (WAP) eller beste leverandør pris hvis WAP ennå ikke er definert <br> * Margin på kostpris = Salgspris - Kostpris definert på varekortet, eller WAP hvis kostpris ikke er definert, eller beste leverandør pris hvis WAP ikke er definert
 CostPrice=Kostpris
 BuyingCost=Kostpris
 UnitCharges=Enhets-avgifter

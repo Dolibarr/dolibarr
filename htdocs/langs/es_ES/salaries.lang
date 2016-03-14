@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Código contable pago de salarios
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Código contable cargas financieras
 Salary=Salario
 Salaries=Salarios
-Employee=Empleado
 NewSalaryPayment=Nuevo pago
 SalaryPayment=Pago de salario
 SalariesPayments=Pagos de salarios

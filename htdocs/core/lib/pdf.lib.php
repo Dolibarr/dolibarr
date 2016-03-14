@@ -340,22 +340,21 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 /**
  * Returns the name of the thirdparty
  *
- * @param Societe|Contact $thirdparty Contact or thirdparty
- * @param Translate $outputlangs Output language
+ * @param   Societe|Contact     $thirdparty     Contact or thirdparty
+ * @param   Translate           $outputlangs    Output language
+ * @param   int                 $includealias   1=Include alias name after name
  * @return string
  */
-function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs)
+function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includealias=0)
 {
-	//Recipient name
+	// Recipient name
 	$socname = '';
 
-	// On peut utiliser le nom de la societe du contact
 	if ($thirdparty instanceof Societe) {
-		if (!empty($thirdparty->name_alias)) {
-			$socname = $thirdparty->name_alias."\n";
-		}
-
 		$socname .= $thirdparty->name;
+		if ($includealias && !empty($thirdparty->name_alias)) {
+		    $socname .= "\n".$thirdparty->name_alias;
+		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
 	} else {
@@ -364,6 +363,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs)
 
 	return $outputlangs->convToOutputCharset($socname);
 }
+
 
 /**
  *   	Return a string with full address formated
@@ -1838,10 +1838,10 @@ function pdf_getLinkedObjects($object,$outputlangs)
 	$linkedobjects=array();
 
 	$object->fetchObjectLinked();
-
+	
 	foreach($object->linkedObjects as $objecttype => $objects)
 	{
-		if ($objecttype == 'propal')
+	    if ($objecttype == 'propal')
 		{
 			$outputlangs->load('propal');
 
@@ -1879,27 +1879,33 @@ function pdf_getLinkedObjects($object,$outputlangs)
 		{
 			$outputlangs->load('orders');
 			$outputlangs->load('sendings');
-			foreach($objects as $elementobject)
+			foreach($objects as $x => $elementobject)
 			{
-				$elementobject->fetchObjectLinked();
-				$order = $elementobject->linkedObjects['commande'][0];
-
-				if (! empty($object->linkedObjects['commande']))	// There is already a link to order so we show only info of shipment
-				{
-					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
-					$linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($elementobject->ref);
-					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateSending");
-					$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
-				}
-				else	// We show both info of order and shipment
-				{
-					$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
-					$linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
-					$linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($elementobject->ref);
-					$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ' / ' . $outputlangs->transnoentities("DateSending");
-					$linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
-					$linkedobjects[$objecttype]['date_value'].= ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
-				}
+			    $order=null;
+			    // We concat this record info into fields xxx_value. title is overwrote.
+			    if (empty($object->linkedObjects['commande']) && $object->element != 'commande')	// There is not already a link to order and object is not the order, so we show also info with order
+			    {
+			        $elementobject->fetchObjectLinked();
+			        if (! empty($elementobject->linkedObjects['commande'])) $order = reset($elementobject->linkedObjects['commande']);
+			    }
+			    if (! is_object($order))
+			    {
+			        $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
+			        if (! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'].=' / ';
+			        $linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($elementobject->ref);
+			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateSending");
+			        //if (! empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'].=' / '; 
+			        //$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
+			    }
+			    else
+			    {
+			        $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
+			        if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
+			        $linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($elementobject->ref);
+			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateSending") : '');
+			        //if (empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
+			        //$linkedobjects[$objecttype]['date_value'].= ($elementobject->date_delivery ? ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs) : '');
+			    }
 			}
 		}
 	}

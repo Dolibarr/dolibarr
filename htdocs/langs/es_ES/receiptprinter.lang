@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
+ReceiptPrinterSetup=Configuración del módulo impresora de tickets
 PrinterAdded=Impresora %s añadida
 PrinterUpdated=Impresora %s actualizada
 PrinterDeleted=Impresora %s eliminada
 TestSentToPrinter=Enviar prueba a la impresora %s
+ReceiptPrinter=Impresora de tickets
 ReceiptPrinterDesc=Configuración de impresoras
 ReceiptPrinterTemplateDesc=Configuración de plantillas
 ReceiptPrinterTypeDesc=Descripción del tipo de impresora de tickets

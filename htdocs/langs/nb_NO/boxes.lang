@@ -60,6 +60,8 @@ BoxTitleLastContracts=Siste %s kontrakter
 BoxTitleLastModifiedDonations=Siste %s endrede donasjoner
 BoxTitleLastModifiedExpenses=Siste %s endrede utgiftsrapporter
 BoxGlobalActivity=Global aktivitet (fakturaer, tilbud, ordrer)
+BoxGoodCustomers=Gode kunder
+BoxTitleGoodCustomers=%s gode kunder
 FailedToRefreshDataInfoNotUpToDate=Klarte ikke å oppdatere RSS-strøm. Siste vellykkede oppdatering: %s
 LastRefreshDate=Siste oppdateringsdato
 NoRecordedBookmarks=Ingen bokmerker definert. Trykk <a href="%s">her</a> for å legge til bokmerker.
@@ -95,3 +97,4 @@ ForCustomersInvoices=Kundens fakturaer
 ForCustomersOrders=Kundeordrer
 ForProposals=Tilbud
 LastXMonthRolling=Rullering av de siste %s måneder
+ChooseBoxToAdd=Legg til en boks i ditt kontrollpanel...

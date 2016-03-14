@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
+ReceiptPrinterSetup=MakbuzYazıcısı modülü ayarları
 PrinterAdded=Yazıcı %s eklendi
 PrinterUpdated=Yazıcı %s güncellendi
 PrinterDeleted=Yazıcı %s silindi
 TestSentToPrinter=Deneme %s Yazıcısına Gönderildi
+ReceiptPrinter=Makbuz yazıcıları
 ReceiptPrinterDesc=Yazıcı ayarları
 ReceiptPrinterTemplateDesc=Şablon ayarları
 ReceiptPrinterTypeDesc=Fiş Yazıcısı türü açıklaması

@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Weet u zeker dat u dit ontvangstbewijs wilt verwijd
 DeliveryMethod=Leveringswijze
 TrackingNumber=Volgnummer
 DeliveryNotValidated=Levering niet gevalideerd
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Naam en handtekening:
 ToAndDate=Aan________________________________ op ____ / _____ / __________

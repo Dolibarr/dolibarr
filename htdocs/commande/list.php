@@ -9,6 +9,7 @@
  * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
  * Copyright (C) 2015      Marcos García          <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry    <jfefe@aternatik.fr>
+ * Copyright (C) 2016	   Ferran Marcet		  <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +43,14 @@ $langs->load('orders');
 $langs->load('deliveries');
 $langs->load('companies');
 $langs->load('compta');
+$langs->load('bills');
 
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
+$orderday=GETPOST("orderday","int");
 $deliveryyear=GETPOST("deliveryyear","int");
 $deliverymonth=GETPOST("deliverymonth","int");
+$deliveryday=GETPOST("deliveryday","int");
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('search_ref','alpha')!=''?GETPOST('search_ref','alpha'):GETPOST('sref','alpha');
 $search_ref_customer=GETPOST('search_ref_customer','alpha');
@@ -90,7 +94,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $search_total_ht='';
     $orderyear='';
     $ordermonth='';
-    $deliverymonth='';
+	$orderday='';
+	$deliveryday='';
+	$deliverymonth='';
     $deliveryyear='';
     $viewstatut='';
     $billed='';
@@ -162,10 +168,6 @@ if ($viewstatut <> '')
 	{
 		if ($viewstatut == 1 && empty($conf->expedition->enabled)) $sql.= ' AND c.fk_statut IN (1,2)';	// If module expedition disabled, we include order with status 'sending in process' into 'validated'
 		else $sql.= ' AND c.fk_statut = '.$viewstatut; // brouillon, validee, en cours, annulee
-		if ($viewstatut == 3)
-		{
-			$sql.= ' AND c.facture = 0'; // need to create invoice
-		}
 	}
 	if ($viewstatut == 4)
 	{
@@ -185,10 +187,10 @@ if ($viewstatut <> '')
 }
 if ($ordermonth > 0)
 {
-    if ($orderyear > 0 && empty($day))
+    if ($orderyear > 0 && empty($orderday))
     $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,$ordermonth,false))."' AND '".$db->idate(dol_get_last_day($orderyear,$ordermonth,false))."'";
-    else if ($orderyear > 0 && ! empty($day))
-    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $day, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $day, $orderyear))."'";
+    else if ($orderyear > 0 && ! empty($orderday))
+    $sql.= " AND c.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $orderday, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $orderday, $orderyear))."'";
     else
     $sql.= " AND date_format(c.date_commande, '%m') = '".$ordermonth."'";
 }
@@ -198,10 +200,10 @@ else if ($orderyear > 0)
 }
 if ($deliverymonth > 0)
 {
-    if ($deliveryyear > 0 && empty($day))
+    if ($deliveryyear > 0 && empty($deliveryday))
     $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_get_first_day($deliveryyear,$deliverymonth,false))."' AND '".$db->idate(dol_get_last_day($deliveryyear,$deliverymonth,false))."'";
-    else if ($deliveryyear > 0 && ! empty($day))
-    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $deliverymonth, $day, $deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $deliverymonth, $day, $deliveryyear))."'";
+    else if ($deliveryyear > 0 && ! empty($deliveryday))
+    $sql.= " AND c.date_livraison BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $deliverymonth, $deliveryday, $deliveryyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $deliverymonth, $deliveryday, $deliveryyear))."'";
     else
     $sql.= " AND date_format(c.date_livraison, '%m') = '".$deliverymonth."'";
 }
@@ -259,8 +261,10 @@ if ($resql)
 	$param='';
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
+	if ($orderday)      		$param.='&orderday='.$orderday;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
 	if ($orderyear)       		$param.='&orderyear='.$orderyear;
+	if ($deliveryday)   		$param.='&deliveryday='.$deliveryday;
 	if ($deliverymonth)   		$param.='&deliverymonth='.$deliverymonth;
 	if ($deliveryyear)    		$param.='&deliveryyear='.$deliveryyear;
 	if ($search_ref)      		$param.='&search_ref='.$search_ref;
@@ -341,7 +345,7 @@ if ($resql)
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 	print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'c.fk_statut','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans('Billed'),$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
+	if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) print_liste_field_titre($langs->trans('Billed'),$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 	print '</tr>';
 
@@ -372,12 +376,21 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_total_ht" value="'.$search_total_ht.'">';
 	print '</td>';
 	print '<td align="right">';
-	$liststatus=array('0'=>$langs->trans("StatusOrderDraftShort"), '1'=>$langs->trans("StatusOrderValidated"), '2'=>$langs->trans("StatusOrderSentShort"), '3'=>$langs->trans("StatusOrderDelivered"), '-1'=>$langs->trans("StatusOrderCanceledShort"));
+	$liststatus=array(
+	    '0'=>$langs->trans("StatusOrderDraftShort"), 
+	    '1'=>$langs->trans("StatusOrderValidated"), 
+	    '2'=>$langs->trans("StatusOrderSentShort"), 
+	    '3'=>$langs->trans("StatusOrderDelivered"), 
+	    '-1'=>$langs->trans("StatusOrderCanceledShort")
+	);
 	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
 	print '</td>';
-	print '<td align="center">';
-	print $form->selectyesno('billed', $billed, 1, 0, 1);
-	print '</td>';
+	if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
+	{
+    	print '<td align="center">';
+    	print $form->selectyesno('billed', $billed, 1, 0, 1);
+    	print '</td>';
+	}
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print "</td></tr>\n";
@@ -422,6 +435,7 @@ if ($resql)
                 $notshippable=0;
                 $warning = 0;
                 $text_info='';
+                $text_warning='';
                 $nbprod=0;
                 
                 $numlines = count($generic_commande->lines); // Loop on each line of order
@@ -585,7 +599,7 @@ if ($resql)
 		print '<td align="right" class="nowrap">'.$generic_commande->LibStatut($objp->fk_statut, $objp->billed, 5, 1).'</td>';
 
 		// Billed
-		print '<td align="center">'.yn($objp->billed).'</td>';
+		if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) print '<td align="center">'.yn($objp->billed).'</td>';
 		
 		print '<td></td>';
 

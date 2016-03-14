@@ -23,8 +23,8 @@ ChooseProduct/Service=Produkt oder Service wählen
 StartDate=Vertragsbeginn
 EndDate=Vertragsende
 Launch=Start
-ForceBuyingPriceIfNull=Einkaufspreis erzwingen wenn Null
-ForceBuyingPriceIfNullDetails=falls "AN", wird die Spanne der Zeile als Null angezeigt (Kaufpreis = Verkaufspreis), andernfalls ("AUS"), ist die Gewinnspanne gleich dem Verkaufspreis (Kaufpreis = 0)
+ForceBuyingPriceIfNull=Benutze EK-Preis/Herstellkosten als Verkaufspreis, wenn nicht definiert
+ForceBuyingPriceIfNullDetails=Falls die Option aktiviert ist, wird die Spanne der Zeile mit Null angezeigt (EK-Preis/Herstellkosten = Verkaufspreis). Ist die Option deaktiviert, wird die Spanne gleich der Voreinstellung sein.
 MARGIN_METHODE_FOR_DISCOUNT=Margin-Methode für globale Rabatte
 UseDiscountAsProduct=Als Produkt
 UseDiscountAsService=Als Service
@@ -35,8 +35,9 @@ MargeBrute=Roherlös
 MargeNette=Nettoerlös
 MargeType1=Spanne vom besten Lieferantenpreis
 MargeType2=gewichtete Durchschnittspreis (WAP)
+MargeType3=Marge auf Herstellkosten
 MARGIN_TYPE_DETAILS=Roherlös: Verkaufspreis - Einkaufspreis<br/>Nettoerlös: Verkaufspreis - Kosten
-MarginTypeDesc=Gewinnspanne nach bestem Verkaufpreis: Verkaufspreis - Bester Lieferantenpreis definiert auf Produktkarte <br/> Gewinnspanne nach gewichteten Durchschnittspreis (WAP): Verkaufspreis - gewichteter Produkt Durchschnittspreis
+MarginTypeDesc=* Marge auf den günstigsten EK-Preis : Verkaufspreis - günstigster EK-Preis aus den Artikeldaten<br>* Marge auf den gleitenden Durchschnittspreis (GLD) : Verkaufspreis - gleitender Durchschnittspreis (GLD) oder günstigster EK-Preis falls der GLD nicht definiert ist<br>* Marge auf Herstellkosten = Verkaufspreis - Herstellkosten aus den Artikeldaten oder GLD, wenn die Herstellkosten nicht definiert sind oder günstigster EK-Preis, wenn der GLD nicht definiert ist
 CostPrice=Selbstkostenpreis
 BuyingCost=Kosten
 UnitCharges=Einheit Kosten

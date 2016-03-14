@@ -121,3 +121,5 @@ OpenIDURL=OpenID URL
 LoginUsingOpenID=Použiť OpenID pre prihlásenie
 WeeklyHours=Počet hodín za týžden
 ColorUser=Farba priradená užívateľovi
+DisabledInMonoUserMode=Disabled in maintenance mode
+UserAccountancyCode=User accountancy code

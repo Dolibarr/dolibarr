@@ -10,7 +10,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015-2016 Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,7 @@ if ($page == -1) {
     $page = 0;
 }
 $offset = $limit * $page;
+if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == 1) $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='f.datef';
 
@@ -413,7 +414,6 @@ if (empty($reshook))
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
-    $search_categ='';
     $search_user='';
     $search_sale='';
     $search_product_category='';
@@ -430,6 +430,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $toselect='';
     $option='';
     $filter='';
+    $day_lim='';
+    $year_lim='';
+    $month_lim='';
 }
 
     
@@ -448,7 +451,7 @@ $facturestatic=new Facture($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
 $sql.= ' s.nom as name, s.rowid as socid, s.code_client, s.client ';
@@ -527,7 +530,7 @@ if ($search_user > 0)
 }
 if (! $sall)
 {
-    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.increment, f.total, f.tva, f.total_ttc,';
+    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, f.total, f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' s.nom, s.rowid, s.code_client, s.client';
@@ -565,13 +568,18 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
+    if ($day)                $param.='&day='.$day;
     if ($month)              $param.='&month='.$month;
     if ($year)               $param.='&year=' .$year;
+    if ($day_lim)            $param.='&day_lim='.$day_lim;
+    if ($month_lim)          $param.='&month_lim='.$month_lim;
+    if ($year_lim)           $param.='&year_lim=' .$year_lim;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
     if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
     if ($search_societe)     $param.='&search_societe=' .$search_societe;
     if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
     if ($search_user > 0)    $param.='&search_user=' .$search_user;
+    if ($search_product_category > 0)   $param.='$search_product_category=' .$search_product_category;
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
     if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
 	if ($search_status != '') $param.='&search_status='.$search_status;
@@ -810,7 +818,7 @@ if ($resql)
             $facturestatic->type=$objp->type;
             $facturestatic->statut=$objp->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($objp->datelimite);
-            $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note),1);
+            $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note_private),1);
             $paiement = $facturestatic->getSommePaiement();
 
             print '<table class="nobordernopadding"><tr class="nocellnopadd">';

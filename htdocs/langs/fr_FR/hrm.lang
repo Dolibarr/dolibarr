@@ -15,5 +15,6 @@ DictionaryFunction=GRH - List des fonctions
 ListOfEmployees=List des salariés
 Employees=Salariés
 Employee=Salarié
+Employe=Employeur
 NewEmployee=Nouveau salarié
 EmployeeCard=Fiche salarié

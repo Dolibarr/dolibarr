@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -191,7 +191,6 @@ if (!empty($sall))
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
 
-
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
 
@@ -233,16 +232,16 @@ if ($id > 0)
 	$title = $langs->trans("User");
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	$head = user_prepare_head($fuser);
-	
+
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
-    
+
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<br>';
-    
+
 }
 else
 {
@@ -284,7 +283,7 @@ if ($sall)
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
     print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
-    
+
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
@@ -436,13 +435,13 @@ if($holiday_payes == '2')
 print '</table>';
 print '</form>';
 
-if ($user_id == $user->id)
+/*if ($user_id == $user->id)
 {
 	print '<br>';
 	print '<div style="float: right; margin-top: 8px;">';
 	print '<a href="./card.php?action=request" class="butAction">'.$langs->trans('AddCP').'</a>';
 	print '</div>';
-}
+}*/
 
 llxFooter();
 

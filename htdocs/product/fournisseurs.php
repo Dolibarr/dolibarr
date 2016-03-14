@@ -7,6 +7,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
 $socid=GETPOST('socid', 'int');
-$cost_price=GETPOST('cost_price', 'int');
+$cost_price=GETPOST('cost_price', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $error=0;
 
@@ -422,7 +423,9 @@ if ($id > 0 || $ref)
 				$mysoc2->name='Fictive seller with same country';
 				$mysoc2->tva_assuj=1;
 				$default_vat=get_default_tva($mysoc2, $mysoc, $object->id, 0);
-
+				$default_npr=get_default_npr($mysoc2, $mysoc, $object->id, 0);
+				if (empty($default_vat)) $default_npr=$default_vat;
+				
 				print '<tr><td class="fieldrequired">'.$langs->trans("VATRateForSupplierProduct").'</td>';
 				print '<td>';
 				//print $form->load_tva('tva_tx',$object->tva_tx,$supplier,$mysoc);    // Do not use list here as it may be any vat rates for any country
@@ -431,6 +434,7 @@ if ($id > 0 || $ref)
 				    $tmpproductsupplier=new ProductFournisseur($db);
 				    $tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
 					$default_vat=$tmpproductsupplier->fourn_tva_tx;
+					$default_npr=$tmpproductsupplier->fourn_tva_npr;
 				}
 				else
 				{

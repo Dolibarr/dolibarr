@@ -121,3 +121,5 @@ OpenIDURL=Spletni naslov OpenID
 LoginUsingOpenID=Uporabi OpenID za prijavo
 WeeklyHours=Tedenske ure
 ColorUser=Barve uporabnika
+DisabledInMonoUserMode=Disabled in maintenance mode
+UserAccountancyCode=User accountancy code

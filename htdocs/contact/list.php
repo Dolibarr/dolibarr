@@ -218,7 +218,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contact_extrafields as ef on (p.rowid = ef.fk_object)";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON p.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
@@ -610,23 +610,23 @@ if ($result)
         if (! empty($arrayfields['p.lastname']['checked']))
         {
             print '<td valign="middle">';
-		  print $contactstatic->getNomUrl(1,'',20);
+		  print $contactstatic->getNomUrl(1,'',0);
 		  print '</td>';
         }
 		// Firstname
         if (! empty($arrayfields['p.firstname']['checked']))
         {
-            print '<td>'.dol_trunc($obj->firstname,20).'</td>';
+            print '<td>'.$obj->firstname.'</td>';
         }
     	// Zip
         if (! empty($arrayfields['p.zip']['checked']))
         {
-            print '<td>'.dol_trunc($obj->zip,20).'</td>';
+            print '<td>'.$obj->zip.'</td>';
         }
     	// Town
         if (! empty($arrayfields['p.town']['checked']))
         {
-            print '<td>'.dol_trunc($obj->town,20).'</td>';
+            print '<td>'.$obj->town.'</td>';
         }
         // Function
         if (! empty($arrayfields['p.poste']['checked']))

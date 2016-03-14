@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -1630,10 +1630,19 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
+        $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.email";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
-        $sql.= " AND entity in (0, ".$conf->entity.")";
+        if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+        {
+        	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+        	$sql.= " WHERE ((ug.fk_user = sc.fk_user";
+        	$sql.= " AND ug.entity = ".$conf->entity.")";
+        	$sql.= " OR u.admin = 1)";
+        }
+        else
+        	$sql.= " WHERE entity in (0, ".$conf->entity.")";
+
+        $sql.= " AND u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -3026,7 +3035,7 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if we must use localtax feature or not according to country (country of $mysocin most cases).
+     *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
      *
      *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
      *  @return		boolean					true or false
@@ -3050,6 +3059,27 @@ class Societe extends CommonObject
     	else return false;
     }
 
+    /**
+     *  Check if we must use NPR Vat (french stupid rule) or not according to country (country of $mysoc in most cases).
+     *
+     *  @return		boolean					true or false
+     */
+    function useNPR()
+    {
+        $sql  = "SELECT t.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+        $sql .= " AND t.active = 1 AND t.recuperableonly = 1";
+
+        dol_syslog("useNPR", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            return ($this->db->num_rows($resql) > 0);
+        }
+        else return false;
+    }
+    
     /**
      *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *

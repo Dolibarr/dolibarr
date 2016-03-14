@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
@@ -340,12 +340,13 @@ if (empty($reshook))
 	    		$desc = $productsupplier->description;
 	    		if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
-	    		$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 	    		$type = $productsupplier->type;
-
-	    		// Local Taxes
-	    		$localtax1_tx= get_localtax($tva_tx, 1,$mysoc,$object->thirdparty);
-	    		$localtax2_tx= get_localtax($tva_tx, 2,$mysoc,$object->thirdparty);
+	    		
+	    		$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+	    		$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+				if (empty($tva_tx)) $tva_npr=0;
+	    		$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
+	    		$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
 	    		$result=$object->addline(
 	    			$desc,
@@ -361,7 +362,7 @@ if (empty($reshook))
 	    			'HT',
 	    			$pu_ttc,
 	    			$type,
-	    			'',
+	    			$tva_npr,
 	    			'',
 	    			$date_start,
 	    			$date_end,
@@ -722,7 +723,8 @@ if (empty($reshook))
 	    $result = $object->commande($user, $_REQUEST["datecommande"],	$_REQUEST["methode"], $_REQUEST['comment']);
 	    if ($result > 0)
 	    {
-	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+	        if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) 
+	        {
 	            $outputlangs = $langs;
 	            $newlang = '';
 	            if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id','alpha');
@@ -1980,7 +1982,7 @@ elseif (! empty($object->id))
 		//print "$object->id, $object->socid, $object->fk_project";
 		if ($action == 'classify')
 		{
-			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:'-1'), $object->fk_project, 'projectid', 0, 0, 1);
+			$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$object->socid:-1), $object->fk_project, 'projectid', 0, 0, 1);
 		}
 		else
 		{
@@ -2757,6 +2759,18 @@ elseif (! empty($object->id))
 					if ($user->rights->fournisseur->commande->commander)
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					}
+				}
+
+				// Ship
+				if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+				{
+					if (in_array($object->statut, array(3,4))) {
+						if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+						} else {
+							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+						}
 					}
 				}
 

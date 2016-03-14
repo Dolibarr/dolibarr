@@ -26,7 +26,6 @@ Selectmodelcsv=Izberite model izvoza
 Modelcsv_normal=Classic izvoz
 Modelcsv_CEGID=Izvoz v CEGID Expert
 BackToChartofaccounts=Prikaz kontnega plana
-Back=Return
 
 Definechartofaccounts=Določite kontni plan
 Selectchartofaccounts=Izberite kontni plan
@@ -35,6 +34,7 @@ AccountAccounting=Računovodstvo račun
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Pregled
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Pregled kupcev
 SuppliersVentilation=Pregled dobaviteljev
 TradeMargin=Trgovska marža
@@ -47,7 +47,7 @@ UpdateAccount=Sprememba obračunskega računa
 UpdateMvts=Sprememba pretoka
 WriteBookKeeping=Evidenčnih računov v glavno knjigo
 Bookkeeping=Glavna knjiga
-AccountBalanceByMonth=Stanje na računu po mesecu
+AccountBalance=Account balance
 
 AccountingVentilation=Pregled računov
 AccountingVentilationSupplier=Pregled računov dobaviteljev
@@ -104,15 +104,12 @@ Code_tiers=Thirdparty
 Labelcompte=Račun Label
 Sens=Sens
 Codejournal=Revija
+NumPiece=Piece number
 
 DelBookKeeping=Izbriši zapise v glavno knjigo
 
 DescSellsJournal=Sells revija
 DescPurchasesJournal=Nakupi revija
-BankJournal=Bank revija
-DescBankJournal=Bank revija vključno z vsemi vrstami, razen gotovine plačila
-CashJournal=Cash revija
-DescCashJournal=Cash revija, vključno z načinom plačila gotovine
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,9 +149,11 @@ DescVentilDoneSupplier=Tukaj poglejte seznam vrstic na računih dobaviteljev in 
 ValidateHistory=Potrditi Samodejno
 
 ErrorAccountancyCodeIsAlreadyUse=Napaka, ne morete izbrisati to računovodsko račun, ker se uporablja
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Kartica pregleda
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 
 ##Export Journal Feature
 ExportFormat=Format of Export
@@ -167,7 +166,14 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
+EnabledTiers=In third party
+EnabledVat=In VAT
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

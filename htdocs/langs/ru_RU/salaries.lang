@@ -1,9 +1,8 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Бухгалтерский код для выплат зарплаты
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Бухгалтерский код для финансовых выплат
 Salary=Зарплата
 Salaries=Зарплаты
-Employee=Сотрудник
 NewSalaryPayment=Новая выплата зарплаты
 SalaryPayment=Выплата зарплаты
 SalariesPayments=Выплата зарплат

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Komercyjne
-CommercialArea=Powierzchnia handlowa
-CommercialCard=Karta komercyjna
-CustomerArea=Klienci obszaru
+Commercial=Handel
+CommercialArea=Obszar zamówień
+CommercialCard=Karta zamówienia
+CustomerArea=Obszar klienta
 Customer=Klient
 Customers=Klienci
 Prospect=Widok

@@ -870,7 +870,7 @@ else
         $conciliate=$account->canBeConciliated();
         if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
-        else print '<input type="checkbox" class="flat" name="norappro"'.($account->rappro?'':' checked').'"> '.$langs->trans("DisableConciliation");
+        else print '<input type="checkbox" class="flat" name="norappro"'.(($conciliate > 0)?'':' checked="checked"').'"> '.$langs->trans("DisableConciliation");
         print '</td></tr>';
 
         // Balance

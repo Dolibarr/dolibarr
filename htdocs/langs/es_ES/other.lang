@@ -238,3 +238,8 @@ ToExport=Exportar
 NewExport=Nueva exportación
 ##### External sites #####
 ExternalSites=Sitios externos
+WebsiteSetup=Configuración del módulo website
+WEBSITE_PAGEURL=URL de la página
+WEBSITE_TITLE=Título
+WEBSITE_DESCRIPTION=Descripción
+WEBSITE_KEYWORDS=Claves

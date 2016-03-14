@@ -325,7 +325,7 @@ $title = $langs->trans('MassMovement');
 
 llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("MassStockMovement"));
+print load_fiche_titre($langs->trans("MassStockTransferShort"));
 
 $titletoadd=$langs->trans("Select");
 $titletoaddnoent=$langs->transnoentitiesnoconv("Select");

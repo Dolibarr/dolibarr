@@ -329,10 +329,14 @@ if (empty($reshook))
                 $object->status                 = GETPOST('statut');
                 $object->status_buy             = GETPOST('statut_buy');
                 $object->status_batch	        = GETPOST('status_batch');
+                // removed from update view so GETPOST always empty
+                /*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
-                $object->duration_value         = $duration_value;
-                $object->duration_unit          = $duration_unit;
+                */
+                $object->duration_value         = GETPOST('duration_value');
+                $object->duration_unit          = GETPOST('duration_unit');
+
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
                 $object->weight_units           = GETPOST('weight_units');
@@ -564,8 +568,10 @@ if (empty($reshook))
             $desc = $object->description;
 
             $tva_tx = get_default_tva($mysoc, $soc, $object->id);
-            $localtax1_tx = get_localtax($tva_tx, 1, $soc);
-            $localtax2_tx = get_localtax($tva_tx, 2, $soc);
+            $tva_npr = get_default_npr($mysoc, $soc, $object->id);
+            if (empty($tva_tx)) $tva_npr=0;
+            $localtax1_tx = get_localtax($tva_tx, 1, $soc, $mysoc, $tva_npr);
+            $localtax2_tx = get_localtax($tva_tx, 2, $soc, $mysoc, $tva_npr);
 
             $pu_ht = $object->price;
             $pu_ttc = $object->price_ttc;

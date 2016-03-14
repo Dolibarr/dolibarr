@@ -758,10 +758,17 @@ if (empty($reshook))
 	                $facture_source = new Facture($db); // fetch origin object
 	                if ($facture_source->fetch($object->fk_facture_source)>0)
 	                {
+	                	$fk_parent_line = 0;
 
 	                    foreach($facture_source->lines as $line)
 	                    {
+	                    	// Reset fk_parent_line for no child products and special product
+	                    	if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
+	                    		$fk_parent_line = 0;
+	                    	}
+
 	                        $line->fk_facture = $object->id;
+	                        $line->fk_parent_line = $fk_parent_line;
 
 	                        $line->subprice =-$line->subprice; // invert price for object
 	                        $line->pa_ht = -$line->pa_ht;
@@ -771,9 +778,14 @@ if (empty($reshook))
 	                        $line->total_localtax1=-$line->total_localtax1;
 	                        $line->total_localtax2=-$line->total_localtax2;
 
-	                        $line->insert();
+	                        $result = $line->insert();
 
 	                        $object->lines[] = $line; // insert new line in current object
+
+	                        // Defined the new fk_parent_line
+	                        if ($result > 0 && $line->product_type == 9) {
+	                        	$fk_parent_line = $result;
+	                        }
 	                    }
 
 	                    $object->update_price(1);
@@ -942,7 +954,15 @@ if (empty($reshook))
 
 					if ($id > 0)
 					{
-						// If deposit invoice
+						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+
+						$classname = ucfirst($subelement);
+						$srcobject = new $classname($db);
+
+						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines or deposit lines");
+						$result = $srcobject->fetch($object->origin_id);
+						
+					    // If deposit invoice
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 						{
 							$typeamount = GETPOST('typedeposit', 'alpha');
@@ -956,13 +976,6 @@ if (empty($reshook))
 							{
 								$amountdeposit = 0;
 
-								dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-
-								$classname = ucfirst($subelement);
-								$srcobject = new $classname($db);
-
-								dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add deposit lines");
-								$result = $srcobject->fetch($object->origin_id);
 								if ($result > 0)
 								{
 									$totalamount = 0;
@@ -1012,14 +1025,6 @@ if (empty($reshook))
 						}
 						else
 						{
-
-							dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-
-							$classname = ucfirst($subelement);
-							$srcobject = new $classname($db);
-
-							dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
-							$result = $srcobject->fetch($object->origin_id);
 							if ($result > 0)
 							{
 								$lines = $srcobject->lines;
@@ -1124,12 +1129,38 @@ if (empty($reshook))
 								$error ++;
 							}
 						}
+						
+						// Now we create same links to contact than the ones found on origin object
+						if (empty($conf->global->INVOICE_NO_PROPAGATE_CONTACTS_FROM_ORIGIN))
+						{
+    						$originforcontact = $object->origin;
+    						$originidforcontact = $object->origin_id;
+    						if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+    						{
+    						    $originforcontact=$srcobject->origin;
+    						    $originidforcontact=$srcobject->origin_id;
+    						}
+    						$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+    						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+    
+    						$resqlcontact = $db->query($sqlcontact);
+    						if ($resqlcontact)
+    						{
+                                while($objcontact = $db->fetch_object($resqlcontact))
+                                {
+                                    //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";                                
+                                    $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
+                                }
+    						}
+    						else dol_print_error($resqlcontact);					
+						}						
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
-				} 			// If some invoice's lines already known
-				else {
+				} 			
+				else 
+				{   // If some invoice's lines coming from page
 					$id = $object->create($user);
 
 					for($i = 1; $i <= $NBLINES; $i ++) {
@@ -1295,6 +1326,8 @@ if (empty($reshook))
 				// Update if prices fields are defined
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+					if (empty($tva_tx)) $tva_npr=0;
+					
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -1311,6 +1344,7 @@ if (empty($reshook))
 						{
                             if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
                             if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
@@ -1394,6 +1428,7 @@ if (empty($reshook))
 				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
 				$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 				$tva_tx = str_replace('*', '', $tva_tx);
+				if (empty($tva_tx)) $tva_npr=0;
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 				$desc = $product_desc;
 				$type = GETPOST('type');
@@ -1405,8 +1440,8 @@ if (empty($reshook))
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
 
 			// Local Taxes
-			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc);
-			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc);
+			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
+			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
 			
 			$info_bits = 0;
 			if ($tva_npr)
@@ -1529,7 +1564,7 @@ if (empty($reshook))
 
 		$line = new FactureLigne($db);
 		$line->fetch(GETPOST('lineid'));
-		$percent = $line->get_prev_progress();
+		$percent = $line->get_prev_progress($object->id);
 
 		if (GETPOST('progress') < $percent)
 		{
@@ -1647,7 +1682,7 @@ if (empty($reshook))
 		{
 			foreach ($object->lines as $line)
 			{
-				$percent = $line->get_prev_progress();
+				$percent = $line->get_prev_progress($object->id);
 				if (GETPOST('all_progress') < $percent) {
 					$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
 					$result = -1;
@@ -1823,14 +1858,7 @@ $now = dol_now();
 llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
-
-/**
- * *******************************************************************
- *
- * Mode creation
- *
- * ********************************************************************
- */
+// Mode creation
 
 if ($action == 'create')
 {
@@ -1857,7 +1885,7 @@ if ($action == 'create')
 
 		if ($element == 'project') {
 			$projectid = $originid;
-			
+
 			if (!$cond_reglement_id) {
 				$cond_reglement_id = $soc->cond_reglement_id;
 			}
@@ -1870,7 +1898,7 @@ if ($action == 'create')
 			if (!$dateinvoice) {
 				// Do not set 0 here (0 for a date is 1970)
 				$dateinvoice = (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);
-			}			
+			}
 		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
@@ -1976,7 +2004,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 1);
+		print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty');
 		// Option to reload page to retrieve customer informations. Note, this clear other input
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
@@ -2575,7 +2603,7 @@ else if ($id > 0 || ! empty($ref))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1) 
+		if ($object->type != Facture::TYPE_DEPOSIT && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $qualified_for_stock_change && $object->statut >= 1)
 		{
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -2766,7 +2794,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	// Clone confirmation
-	if ($action == 'clone') 
+	if ($action == 'clone')
 	{
 		// Create an array for form
 		$formquestion = array(
@@ -2777,7 +2805,7 @@ else if ($id > 0 || ! empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	if (! $formconfirm) 
+	if (! $formconfirm)
 	{
 		$parameters = array('lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -3313,7 +3341,9 @@ else if ($id > 0 || ! empty($ref))
 			print ' ';
 
 			print $prevsits[0]->situation_counter;
-			for ($i = 1; $i < count($prevsits); $i++) {
+			$cprevsits = count($prevsits);
+
+		  for ($i = 1; $i < $cprevsits; $i++) {
 				print ' + ';
 				print $prevsits[$i]->situation_counter;
 			}
@@ -3334,7 +3364,7 @@ else if ($id > 0 || ! empty($ref))
 			print '<td>' . $langs->trans('Currency' . $conf->currency) . '</td></tr>';
 
 			// Previous situation(s) deduction(s)
-			for ($i = 0; $i < count($prevsits); $i++) {
+			for ($i = 0; $i < $cprevsits; $i++) {
 				print '<tr><td>';
 				print '<a href="' . $_SERVER['PHP_SELF'] . '?facid=' . $prevsits[$i]->id . '">';
 				print $langs->trans('SituationDeduction');
@@ -3569,14 +3599,14 @@ else if ($id > 0 || ! empty($ref))
 		                                                                                          // modified by hook
 		if (empty($reshook)) {
 			// Editer une facture deja validee, sans paiement effectue et pas exporte en compta
-			if ($object->statut == 1) 
+			if ($object->statut == 1)
 			{
 				// On verifie si les lignes de factures ont ete exportees en compta et/ou ventilees
 				$ventilExportCompta = $object->getVentilExportCompta();
 
-				if ($resteapayer == $object->total_ttc && empty($object->paye) && $ventilExportCompta == 0) 
+				if ($resteapayer == $object->total_ttc && empty($object->paye) && $ventilExportCompta == 0)
 				{
-					if (! $objectidnext && $object->is_last_in_cycle()) 
+					if (! $objectidnext && $object->is_last_in_cycle())
 					{
 					    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
        						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
@@ -3629,6 +3659,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
+			// deprecated. Useless because now we can use templates
 			if (! empty($conf->global->FACTURE_SHOW_SEND_REMINDER)) 			// For backward compatibility
 			{
 				if (($object->statut == 1 || $object->statut == 2) && $resteapayer > 0) {
@@ -3684,7 +3715,7 @@ else if ($id > 0 || ! empty($ref))
 
 			// Classify paid
 			if ($object->statut == 1 && $object->paye == 0 && $user->rights->facture->paiement && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0))
-				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
+				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
 			)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
@@ -3714,10 +3745,10 @@ else if ($id > 0 || ! empty($ref))
 				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=clone&amp;object=invoice">' . $langs->trans("ToClone") . '</a></div>';
 			}
 
-			// Clone as predefined
+			// Clone as predefined / Create template
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut == 0 && $user->rights->facture->creer)
 			{
-				if (! $objectidnext)
+				if (! $objectidnext && count($object->lines) > 0)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
@@ -3732,7 +3763,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 
-			//Create next situation invoice
+			// Create next situation invoice
 			if ($user->rights->facture->creer && ($object->type == 5) && ($object->statut == 1 || $object->statut == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?action=create&amp;type=5&amp;origin=facture&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '" >' . $langs->trans('CreateNextSituationInvoice') . '</a></div>';

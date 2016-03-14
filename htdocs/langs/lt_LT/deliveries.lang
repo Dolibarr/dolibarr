@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Ar tikrai norite ištrinti pristatymo kvitą <b>%s<
 DeliveryMethod=Pristatymo būdas
 TrackingNumber=Sekimo numeris
 DeliveryNotValidated=Pristatymas nepatvirtintas
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Vardas, Pavardė ir parašas:
 ToAndDate=Kam___________________________________ nuo ____ / _____ / __________

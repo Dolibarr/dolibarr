@@ -26,7 +26,6 @@ Selectmodelcsv=Επιλέξτε ένα πρότυπο από την εξαγωγ
 Modelcsv_normal=Κλασική εξαγωγή
 Modelcsv_CEGID=Εξαγωγή προς CEGID εμπειρογνωμόνων
 BackToChartofaccounts=Επιστροφή στο διάγραμμα των λογαριασμών
-Back=Επιστροφή
 
 Definechartofaccounts=Ορίστε ένα διάγραμμα των λογαριασμών
 Selectchartofaccounts=Επιλέξτε ένα διάγραμμα των λογαριασμών
@@ -35,6 +34,7 @@ AccountAccounting=Λογιστική λογαριασμού
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Ανάλυση
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Ανάλυση πελατών
 SuppliersVentilation=Ανάλυση προμηθευτών
 TradeMargin=Εμπορικό Περιθώριο
@@ -47,7 +47,7 @@ UpdateAccount=Τροποποίηση του λογιστικού λογαρια�
 UpdateMvts=Τροποποίηση μιας κίνησης
 WriteBookKeeping=Εγγραφή λογαριασμών στο γενικό καθολικό
 Bookkeeping=Γενικό Καθολικό
-AccountBalanceByMonth=Το υπόλοιπο του λογαριασμού ανά μήνα
+AccountBalance=Account balance
 
 AccountingVentilation=Ανάλυση των λογαριασμών
 AccountingVentilationSupplier=Ανάλυση λογιστικών προμηθευτή
@@ -104,15 +104,12 @@ Code_tiers=Πελ./Προμ.
 Labelcompte=Ετικέτα λογαριασμού
 Sens=Σημασία
 Codejournal=Ημερολόγιο
+NumPiece=Piece number
 
 DelBookKeeping=Διαγράψτε τα αρχεία της γενικής λογιστικής
 
 DescSellsJournal=Ημερολόγιο πωλήσεων
 DescPurchasesJournal=Ημερολόγιο αγορών
-BankJournal=Τραπεζικό ημερολόγιο
-DescBankJournal=Ημερολόγιο Τράπεζας, συμπεριλαμβανομένων όλων των ειδών πληρωμών εκτός από τα μετρητά
-CashJournal=Ημερολόγιο μετρητών
-DescCashJournal=Ημερολόγιο μετρητών καθώς και το είδος των ταμειακών πληρωμών
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,22 +149,31 @@ DescVentilDoneSupplier=Συμβουλευτείτε εδώ τη λίστα τω�
 ValidateHistory=Αυτόματη επικύρωση
 
 ErrorAccountancyCodeIsAlreadyUse=Σφάλμα, δεν μπορείτε να διαγράψετε αυτόν τον λογιστικό λογαριασμό γιατί χρησιμοποιείται
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Φόρμα ανάλυσης
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+
 ##Export Journal Feature
-ExportFormat=Format of Export
+ExportFormat=Τύπος εξαγωγής
 Prefixname=Prefix of export File
-Separate=Export separator
+Separate=Διαχωριστικό εξαγωγής
 Textframe=Frame of text value
 Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
+Fieldname=Όνομα πεδίου
+Headername=Όνομα στην επικεφαλίδα
+Type=Τύπος πεδίων
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
+EnabledTiers=In third party
+EnabledVat=In VAT
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Επιλογές
+OptionModeProductSell=Κατάσταση πωλήσεων
+OptionModeProductBuy=Κατάσταση αγορών
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

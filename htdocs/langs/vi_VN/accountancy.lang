@@ -26,7 +26,6 @@ Selectmodelcsv=Chọn một mô hình xuất khẩu
 Modelcsv_normal=Cổ điển xuất khẩu
 Modelcsv_CEGID=Xuất khẩu theo hướng CEGID chuyên gia
 BackToChartofaccounts=Quay trở lại biểu đồ của tài khoản
-Back=Quay trở lại
 
 Definechartofaccounts=Xác định một biểu đồ của tài khoản
 Selectchartofaccounts=Chọn một biểu đồ của tài khoản
@@ -35,6 +34,7 @@ AccountAccounting=Tài khoản kế toán
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 
+MenuAccountancy=Accountancy
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
 TradeMargin=Lợi nhuận thương mại
@@ -47,7 +47,7 @@ UpdateAccount=Sự biến đổi của một tài khoản kế toán
 UpdateMvts=Sửa đổi của một thay đổi
 WriteBookKeeping=Tài khoản ghi trong sổ kế toán tổng
 Bookkeeping=Sổ cái tổng hợp
-AccountBalanceByMonth=Số dư tài khoản theo tháng
+AccountBalance=Account balance
 
 AccountingVentilation=Breakdown accounting
 AccountingVentilationSupplier=Breakdown accounting supplier
@@ -104,15 +104,12 @@ Code_tiers=Của bên thứ ba
 Labelcompte=Tài khoản Label
 Sens=Sens
 Codejournal=Tạp chí
+NumPiece=Piece number
 
 DelBookKeeping=Xóa các bản ghi của sổ kế toán tổng
 
 DescSellsJournal=Bán tạp chí
 DescPurchasesJournal=Mua tạp chí
-BankJournal=Tạp chí Ngân hàng
-DescBankJournal=Tạp chí Ngân hàng bao gồm tất cả các loại chi phí khác hơn tiền mặt
-CashJournal=Tạp chí Tiền
-DescCashJournal=Tiền tạp chí bao gồm cả các loại tiền thanh toán
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,9 +149,11 @@ DescVentilDoneSupplier=Tham khảo ý kiến ​​ở đây là danh sách các
 ValidateHistory=Tự động xác nhận
 
 ErrorAccountancyCodeIsAlreadyUse=Lỗi, bạn không thể xóa tài khoản kế toán này bởi vì nó được sử dụng
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 
 ##Export Journal Feature
 ExportFormat=Format of Export
@@ -167,7 +166,14 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
+EnabledTiers=In third party
+EnabledVat=In VAT
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

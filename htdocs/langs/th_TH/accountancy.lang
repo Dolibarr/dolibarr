@@ -26,7 +26,6 @@ Selectmodelcsv=เลือกรูปแบบของการส่งอ�
 Modelcsv_normal=การส่งออกคลาสสิก
 Modelcsv_CEGID=การส่งออกที่มีต่อ CEGID ผู้เชี่ยวชาญ
 BackToChartofaccounts=กลับผังบัญชี
-Back=กลับ
 
 Definechartofaccounts=กำหนดผังบัญชี
 Selectchartofaccounts=เลือกผังบัญชี
@@ -35,6 +34,7 @@ AccountAccounting=บัญชีการบัญชี
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=การเสีย
 
+MenuAccountancy=Accountancy
 CustomersVentilation=รายละเอียดของลูกค้า
 SuppliersVentilation=ซัพพลายเออร์ที่พังทลาย
 TradeMargin=อัตรากำไรขั้นต้นการค้า
@@ -47,7 +47,7 @@ UpdateAccount=การเปลี่ยนแปลงของบัญชี
 UpdateMvts=การปรับเปลี่ยนของการเคลื่อนไหว
 WriteBookKeeping=บันทึกในบัญชีแยกประเภททั่วไป
 Bookkeeping=บัญชีแยกประเภททั่วไป
-AccountBalanceByMonth=ยอดเงินในบัญชีโดย
+AccountBalance=Account balance
 
 AccountingVentilation=รายละเอียดบัญชี
 AccountingVentilationSupplier=รายละเอียดผู้จัดจำหน่ายบัญชี
@@ -104,15 +104,12 @@ Code_tiers=Thirdparty
 Labelcompte=บัญชีฉลาก
 Sens=ซองส์
 Codejournal=วารสาร
+NumPiece=Piece number
 
 DelBookKeeping=ลบบันทึกบัญชีแยกประเภททั่วไป
 
 DescSellsJournal=วารสารขาย
 DescPurchasesJournal=ซื้อวารสาร
-BankJournal=ธนาคารวารสาร
-DescBankJournal=วารสารธนาคารรวมถึงประเภททั้งหมดของการชำระเงินอื่นที่ไม่ใช่เงินสด
-CashJournal=วารสารเงินสด
-DescCashJournal=วารสารเงินสดรวมทั้งประเภทของการชำระเงินเงินสด
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,9 +149,11 @@ DescVentilDoneSupplier=ให้คำปรึกษาที่นี่รา
 ValidateHistory=ตรวจสอบโดยอัตโนมัติ
 
 ErrorAccountancyCodeIsAlreadyUse=ข้อผิดพลาดที่คุณไม่สามารถลบบัญชีบัญชีนี้เพราะมันถูกนำมาใช้
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=บัตรพังทลาย
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 
 ##Export Journal Feature
 ExportFormat=Format of Export
@@ -167,7 +166,14 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
+EnabledTiers=In third party
+EnabledVat=In VAT
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

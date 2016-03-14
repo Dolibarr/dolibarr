@@ -1013,14 +1013,14 @@ else
 		print '<tr><td align="left">'.$langs->trans("CalcLocaltax").': ';
 		if($conf->global->MAIN_INFO_LOCALTAX_CALC1==0)
 		{
-			print $langs->transcountry("CalcLocaltax1",$mysoc->country_code);
+			print $langs->trans("CalcLocaltax1").' - '.$langs->trans("CalcLocaltax1Desc");
 		}
 		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==1)
 		{
-			print $langs->transcountry("CalcLocaltax2",$mysoc->country_code);
+			print $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc");
 		}
 		else if($conf->global->MAIN_INFO_LOCALTAX_CALC1==2){
-			print $langs->transcountry("CalcLocaltax3",$mysoc->country_code);
+			print $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc");
 		}
 
 		print '</td></tr>';

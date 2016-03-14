@@ -503,7 +503,8 @@ class Form
     		$ret.='<option value="'.$code.'"'.($disabled?' disabled="disabled"':'').'>'.$label.'</option>';
     	}
     	$ret.='</select>';
-    	$ret.='<input type="submit" name="confirmmassaction" disabled="disabled" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+    	// Warning: if you set submit button to disabled, post using Enter will no more work
+    	$ret.='<input type="submit" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
     	$ret.='</div>';
     	
     	$ret.='<!-- JS CODE TO ENABLE mass action select -->
@@ -516,7 +517,6 @@ class Form
 	  				/* console.log( index + ": " + $( this ).text() ); */
 	  				if ($(this).is(\':checked\')) atleastoneselected++;
 	  			});
-	  			console.log(atleastoneselected);
 	  			if (atleastoneselected)
 	  			{
 	  				jQuery(".massaction").show();
@@ -530,6 +530,7 @@ class Form
     		jQuery(".checkforselect").click(function() {
     			initCheckForSelect();
 	  		});
+    	    /* Warning: if you set submit button to disabled, post using Enter will no more work
 	  		jQuery(".massactionselect").change(function() {
 	  			console.log( $( this ).val() );
 	  			if ($(this).val() != \'0\')
@@ -541,6 +542,7 @@ class Form
 	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
 	  			}
 	  		});
+    	    */
     	});
 		</script>
     	';
@@ -892,7 +894,7 @@ class Form
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
      *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client IN (1,3)')
-     *	@param	int		$showempty		Add an empty field
+     *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -901,7 +903,7 @@ class Form
      *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      * 	@return	string					HTML string with select box for thirdparty.
      */
-    function select_company($selected='', $htmlname='socid', $filter='', $showempty=0, $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100', $moreparam='')
+    function select_company($selected='', $htmlname='socid', $filter='', $showempty='', $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100', $moreparam='')
     {
     	$out='';
 
@@ -947,7 +949,7 @@ class Form
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
      *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
-     *	@param	int		$showempty		Add an empty field
+     *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -958,7 +960,7 @@ class Form
      *	@param  string	$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
      * 	@return	string					HTML string with
      */
-    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100', $moreparam='')
+    function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty='', $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100', $moreparam='')
     {
         global $conf,$user,$langs;
 
@@ -1015,10 +1017,13 @@ class Form
             $out.= '<select id="'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'"'.($moreparam?' '.$moreparam:'').' name="'.$htmlname.'"'.$nodatarole.'>'."\n";
 
             $textifempty='';
-            // Do not use textempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
-            //$textifempty=' ';
+            // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
             //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) $textifempty.=$langs->trans("NoFilter");
+            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) 
+            {
+                if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty); 
+                else $textifempty.=$langs->trans("All");
+            }
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
 
             $num = $this->db->num_rows($resql);
@@ -1829,14 +1834,15 @@ class Form
     /**
      * constructProductListOption
      *
-     * @param 	resultset	$objp			Resultset of fetch
-     * @param 	string		$opt			Option
-     * @param 	string		$optJson		Option
-     * @param 	int			$price_level	Price level
-     * @param 	string		$selected		Preselected value
+     * @param 	resultset	$objp			    Resultset of fetch
+     * @param 	string		$opt			    Option (var used for returned value in string option format)
+     * @param 	string		$optJson		    Option (var used for returned value in json format)
+     * @param 	int			$price_level	    Price level
+     * @param 	string		$selected		    Preselected value
+     * @param   int         $hidepriceinlabel   Hide price in label
      * @return	void
      */
-	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected)
+	private function constructProductListOption(&$objp, &$opt, &$optJson, $price_level, $selected, $hidepriceinlabel=0)
 	{
 		global $langs,$conf,$user,$db;
 
@@ -1883,14 +1889,14 @@ class Form
         $found=0;
 
         // Multiprice
-        if ($price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
+        if (empty($hidepriceinlabel) && $price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
         {
             $sql = "SELECT price, price_ttc, price_base_type, tva_tx";
             $sql.= " FROM ".MAIN_DB_PREFIX."product_price";
             $sql.= " WHERE fk_product='".$objp->rowid."'";
             $sql.= " AND entity IN (".getEntity('productprice', 1).")";
             $sql.= " AND price_level=".$price_level;
-            $sql.= " ORDER BY date_price";
+            $sql.= " ORDER BY date_price, rowid";
             $sql.= " DESC LIMIT 1";
 
             dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
@@ -1924,7 +1930,7 @@ class Form
         }
 
 		// Price by quantity
-		if (!empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
@@ -1949,20 +1955,22 @@ class Form
             $outpricebasetype=$objp->price_base_type;
             $outtva_tx=$objp->tva_tx;
 		}
-		if (!empty($objp->quantity) && $objp->quantity >= 1)
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1)
 		{
 			$opt.=" (".price($objp->unitprice,1,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
 			$outval.=" (".price($objp->unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->transnoentities("Unit").")";	// Do not use strtolower because it breaks utf8 encoding
 		}
-		if (!empty($objp->remise_percent) && $objp->remise_percent >= 1)
+		if (empty($hidepriceinlabel) && !empty($objp->remise_percent) && $objp->remise_percent >= 1)
 		{
 			$opt.=" - ".$langs->trans("Discount")." : ".vatrate($objp->remise_percent).' %';
 			$outval.=" - ".$langs->transnoentities("Discount")." : ".vatrate($objp->remise_percent).' %';
 		}
 
-		//Price by customer
-		if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
-			if (!empty($objp->idprodcustprice)) {
+		// Price by customer
+		if (empty($hidepriceinlabel) && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) 
+		{
+			if (!empty($objp->idprodcustprice)) 
+			{
 				$found = 1;
 
 				if ($objp->custprice_base_type == 'HT')
@@ -1984,7 +1992,7 @@ class Form
 		}
 
         // If level no defined or multiprice not found, we used the default price
-        if (! $found)
+        if (empty($hidepriceinlabel) && ! $found)
         {
             if ($objp->price_base_type == 'HT')
             {
@@ -3444,7 +3452,7 @@ class Form
      *    @param	int		$socid       		Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
      *    @param    int		$selected    		Id pre-selected project
      *    @param    string	$htmlname    		Name of select field
-     *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely,2=Disable)
+     *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
      *    @param	int		$maxlength			Max length
      *    @param	int		$forcefocus			Force focus on field (works with javascript only)
      *    @return	void
@@ -3467,7 +3475,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $formproject->select_projects($socid,$selected,$htmlname,$maxlength,0,1,$discard_closed, $forcefocus);
+            $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -4075,6 +4083,7 @@ class Form
         	{
         		$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
         		$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
+        		if (empty($defaulttx)) $defaultnpr=0;
         	}
 
         	// Si taux par defaut n'a pu etre determine, on prend dernier de la liste.
@@ -5079,17 +5088,18 @@ class Form
 					print '<tr ' . $bc [$var] . '>';
 					print '<td aling="left">';
 					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '</td>';
 					print '<td align="center">' . $objp->ref . '</td>';
 					print '<td>' . $objp->ref_client . '</td>';
 					print '<td>' . price($objp->total_ht) . '</td>';
 					print '<td>' . $objp->name . '</td>';
-					print '</td>';
 					print '</tr>';
 
 					$i ++;
 				}
 				print '</table>';
 				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				
 				print '</form>';
 				$this->db->free($resqlorderlist);
 			} else {
@@ -5145,11 +5155,11 @@ class Form
 					print '<tr ' . $bc [$var] . '>';
 					print '<td aling="left">';
 					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
+					print '</td>';
 					print '<td align="center">' . $objp->ref . '</td>';
 					print '<td>' . $objp->ref_supplier . '</td>';
 					print '<td>' . price($objp->total_ht) . '</td>';
 					print '<td>' . $objp->name . '</td>';
-					print '</td>';
 					print '</tr>';
 
 					$i ++;

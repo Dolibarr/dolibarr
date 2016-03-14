@@ -1,50 +1,50 @@
 # Dolibarr language file - Source file is en_US - loan
-Loan=Loan
-Loans=Loans
-NewLoan=New Loan
-ShowLoan=Show Loan
-PaymentLoan=Loan payment
-ShowLoanPayment=Show Loan Payment
-Capital=Capital
-Insurance=Insurance
-Interest=Interest
-Nbterms=Number of terms
-LoanAccountancyCapitalCode=Accountancy code capital
-LoanAccountancyInsuranceCode=Accountancy code insurance
-LoanAccountancyInterestCode=Accountancy code interest
-LoanPayment=Loan payment
-ConfirmDeleteLoan=Confirm deleting this loan
-LoanDeleted=Loan Deleted Successfully
-ConfirmPayLoan=Confirm classify paid this loan
-LoanPaid=Loan Paid
-ErrorLoanCapital=Loan amount has to be numeric and greater than zero.
-ErrorLoanLength=Loan length has to be numeric and greater than zero.
-ErrorLoanInterest=Annual interest has to be numeric and greater than zero.
+Loan=贷款
+Loans=贷款
+NewLoan=新贷款
+ShowLoan=显示贷款
+PaymentLoan=贷款付款
+ShowLoanPayment=显示支付贷款
+Capital=资本
+Insurance=保险
+Interest=利率
+Nbterms=术语数
+LoanAccountancyCapitalCode=会计代码（资本）
+LoanAccountancyInsuranceCode=会计代码（保险）
+LoanAccountancyInterestCode=会计代码（利率）
+LoanPayment=贷款付款
+ConfirmDeleteLoan=确认删除本贷款
+LoanDeleted=成功删除贷款
+ConfirmPayLoan=确认支付本贷款
+LoanPaid=贷款已支付
+ErrorLoanCapital=贷款金额必须为数字且大于0
+ErrorLoanLength=贷款输入有误，必须为数字且大于0
+ErrorLoanInterest=年度利率必须为数字且大于0
 # Calc
-LoanCalc=Bank Loans Calculator
-PurchaseFinanceInfo=Purchase & Financing Information
-SalePriceOfAsset=Sale Price of Asset
-PercentageDown=Percentage Down
-LengthOfMortgage=Length of Mortgage
-AnnualInterestRate=Annual Interest Rate
-ExplainCalculations=Explain Calculations
-ShowMeCalculationsAndAmortization=Show me the calculations and amortization
-MortgagePaymentInformation=Mortgage Payment Information
-DownPayment=Down Payment
-DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
-InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
-MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
-MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
-MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
-MonthlyPaymentDesc=The montly payment is figured out using the following formula
-AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
-AmountFinanced=Amount Financed
-AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
-Totalsforyear=Totals for year
-MonthlyPayment=Monthly Payment
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s will go towards INTEREST
-GoToPrincipal=%s will go towards PRINCIPAL
+LoanCalc=银行贷款计算器
+PurchaseFinanceInfo=购买及金融信息
+SalePriceOfAsset=资产出售价格
+PercentageDown=贬值比率
+LengthOfMortgage=质押期限
+AnnualInterestRate=年度利率
+ExplainCalculations=解释计算方式
+ShowMeCalculationsAndAmortization=显示计算结果及分期摊销
+MortgagePaymentInformation=抵押付款信息
+DownPayment=定金
+DownPaymentDesc=这个 <b>预付订金</b>（注：订金，根据中国现行法律的有关规定，其不具有定金，不是订金哦，其不具有定金的性质，只是单方行为，不具有明显的担保性质。交付订金的一方主张定金权利的，人民法院不予支持。 = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)这句数学没学好不译了：）
+InterestRateDesc=<b>利率</b> = 按百分比显示的年度利率
+MonthlyFactorDesc=<b>月度因子</b> = 下列公式的结果
+MonthlyInterestRateDesc=<b>月度利率</b> = 年度利率除以12（按每年12个月计算）
+MonthTermDesc=贷款按每月计算的 <b>月限</b> =您借款年限乘以12
+MonthlyPaymentDesc=月度付款按以下公式计算
+AmortizationPaymentDesc= <a href="#摊销">摊销</a> 确定您每月支付的银行利息是多少，而本金又是多少。
+AmountFinanced=融资金额
+AmortizationMonthlyPaymentOverYears=月度付款的摊销：: <b>%s</b> 按 %s 年计算
+Totalsforyear=年度合计
+MonthlyPayment=月度付款
+LoanCalcDesc= <b>抵押计算器</b> 可以用来计算房屋抵押贷款中月度付款的金额（需要知道房屋出售价格、贷款条件、买家定金比例、贷款利率）。<br> 
+GoToInterest=%s 将指向利率
+GoToPrincipal=%s 将指向资本
 YouWillSpend=You will spend %s on your house in year %s
 # Admin
 ConfigLoan=Configuration of the module loan
