@@ -2437,7 +2437,7 @@ div.tabBar .noborder {
     -webkit-box-shadow: 3px 3px 4px #f4f4f4;
     box-shadow: 3px 3px 4px #f4f4f4;
     margin-bottom: 8px !important;*/
-    border: 1px solid #AAA;
+    border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
     min-height: 38px;
