@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin		<regis.houssin@capnetworks.com>
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 if ($user->societe_id > 0) accessforbidden();
 
 // If the user does not have perm to read the page
-if(!$user->rights->holiday->define_holiday) accessforbidden();
+if(!$user->rights->holiday->read) accessforbidden();
 
 $action=GETPOST('action');
 
@@ -235,11 +235,23 @@ else
     print '<td></td>';
     print '</tr>';
 
-
+    // Get array of ids of all childs
+    $userchilds=array();
+    if (empty($user->rights->holiday->define_holiday))
+    {
+        $userchilds=$user->getAllChildIds();
+    }
+    
     foreach($listUsers as $users)
     {
         $var=!$var;
 
+        // If user has not permission to edit/read all, we must see only subordinates
+        if (empty($user->rights->holiday->define_holiday))  
+        {
+            if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
+        }
+        
         print '<tr '.$bc[$var].' style="height: 20px;">';
         print '<td>';
         $userstatic->id=$users['rowid'];
