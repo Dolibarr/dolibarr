@@ -45,6 +45,16 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $numero;
 
     /**
+     * @var string  Publisher name
+     */
+    public $editor_name;
+    
+    /**
+     * @var string  URL of module at publisher site
+     */
+    public $editor_web;    
+    
+    /**
      * @var string Family
      */
     public $family;
@@ -153,10 +163,15 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $version;
 
     /**
-     * @var string Module description
+     * @var string Module description (short text)
      */
     public $description;
 
+    /**
+     * @var string Module description (long text)
+     */
+    public $descriptionlong;
+    
     /**
      * @var string[] Module language files
      */
@@ -444,7 +459,47 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
     }
 
-
+    /**
+     * Gives the translated module description if translation exists in admin.lang or the default module description
+     *
+     * @return  string  Translated module description
+     */
+    function getDescLong()
+    {
+        global $langs;
+        $langs->load("admin");
+        
+        // If module description translation does not exist using its unique id, we can use its name to find translation
+        if (is_array($this->langfiles))
+        {
+            foreach($this->langfiles as $val)
+            {
+                if ($val) $langs->load($val);
+            }
+        }
+        return $langs->trans($this->descriptionlong);
+    }
+    
+    /**
+     * Gives the publisher name
+     *
+     * @return  string  Publisher name
+     */
+    function getPublisher()
+    {
+        return $this->editor_name;
+    }
+    
+    /**
+     * Gives the publisher url
+     *
+     * @return  string  Publisher url
+     */
+    function getPublisherUrl()
+    {
+        return $this->editor_url;
+    }
+    
     /**
      * Gives module version
      * For 'experimental' modules, gives 'experimental' translation
