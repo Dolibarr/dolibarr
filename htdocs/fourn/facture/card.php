@@ -620,6 +620,19 @@ if (empty($reshook))
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
+				unset($_POST['date_starthour']);
+				unset($_POST['date_startmin']);
+				unset($_POST['date_startsec']);
+				unset($_POST['date_startday']);
+				unset($_POST['date_startmonth']);
+				unset($_POST['date_startyear']);
+				unset($_POST['date_endhour']);
+				unset($_POST['date_endmin']);
+				unset($_POST['date_endsec']);
+				unset($_POST['date_endday']);
+				unset($_POST['date_endmonth']);
+				unset($_POST['date_endyear']);
+
 	            $db->commit();
 	        }
 	        else
@@ -1709,12 +1722,6 @@ else
             if ($objectref == 'PROV')
             {
                 $savdate=$object->date;
-                if (! empty($conf->global->FAC_FORCE_DATE_VALIDATION))
-                {
-                    $object->date=dol_now();
-                    //TODO: Possibly will have to control payment information into suppliers
-                    //$object->date_lim_reglement=$object->calculate_date_lim_reglement();
-                }
                 $numref = $object->getNextNumRef($societe);
             }
             else
@@ -2321,6 +2328,12 @@ else
 	                    }
 	                }
 	            }
+				
+				// Create event
+				if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
+				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a></div>';
+				}
 	
 	            // Clone
 	            if ($action != 'edit' && $user->rights->fournisseur->facture->creer)
@@ -2455,11 +2468,9 @@ else
             $formmail->withbody=1;
             $formmail->withdeliveryreceipt=1;
             $formmail->withcancel=1;
-            // Tableau des substitutions
-            $formmail->substit['__REF__']=$object->ref;
-            $formmail->substit['__SIGNATURE__']=$user->signature;
-            $formmail->substit['__PERSONALIZED__']='';
-            $formmail->substit['__CONTACTCIVNAME__']='';
+			// Tableau des substitutions
+			$formmail->setSubstitFromObject($object);
+            $formmail->substit['__SUPPLIERINVREF__']=$object->ref;
 
             //Find the good contact adress
             $custcontact='';

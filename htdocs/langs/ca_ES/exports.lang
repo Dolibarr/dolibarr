@@ -128,6 +128,10 @@ SpecialCode=Codi especial
 ExportStringFilter=%% Permet la substitució d'un o mes caràcters en el text
 ExportDateFilter=AAAA, AAAAMM, AAAAMMDD: filtres per any/mes/dia<br>AAAA+AAAA, AAAAMM+AAAAMM, AAAAMMDD+AAAAMMDD: filtres sobre una gamma d'anys/mes/dia<br> > AAAA, > AAAAMM, > AAAAMMDD: filtres en tots els següents anys/mesos/dia<br> < AAAA, < AAAAMM, < AAAAMMDD: filtres en tots els anys/mes/dia anteriors
 ExportNumericFilter=Filtres 'NNNNN' per un valor<br>Filtres 'NNNNN+NNNN' més d'un rang de valors<br> '&gt; NNNNN' filtres per valors més baixos <br> '&gt; NNNNN' filtres pels valors més alts
+ImportFromLine=Importa començant des del número de línia
+EndAtLineNb=Final en el número de línia
+SetThisValueTo2ToExcludeFirstLine=Per exemple, defineix aquest valor a 3 per excloure les 2 primeres línies
+KeepEmptyToGoToEndOfFile=Deixa aquest camp buit per anar al final del fitxer
 ## filters
 SelectFilterFields=Si vol aplicar un filtre sobre alguns valors, introduïu-los aquí.
 FilterableFields=Camps filtrables

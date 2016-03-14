@@ -2147,7 +2147,7 @@ class Contrat extends CommonObject
 			$line->total_ht=90;
 			$line->total_ttc=107.64;	// 90 * 1.196
 			$line->total_tva=17.64;
-			$prodid = rand(1, $num_prods);
+			$prodid = mt_rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
 			$this->lines[$xnbp]=$line;
 			$xnbp++;

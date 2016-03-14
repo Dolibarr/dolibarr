@@ -35,6 +35,7 @@ UseLocalTax=Incluir impuestos
 CommercialProposalsShort=Cotizaciones
 RequestAlreadyDone=La solicitud ya ha sido procesada
 December=diciembre
+FindBug=Señalar un bug
 NbOfReferers=Número de remitentes
 Currency=Moneda
 SelectElementAndClickRefresh=Seleccione un elemento y haga clic en Actualizar

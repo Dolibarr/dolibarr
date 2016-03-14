@@ -1,22 +1,22 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
+ACCOUNTING_EXPORT_SEPARATORCSV=Разделител за колона за експорт на файл
+ACCOUNTING_EXPORT_DATE=Формат на дата за експорт на файл
+ACCOUNTING_EXPORT_PIECE=Експортирай номера от частта
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Експортирай глобалния акаунт
+ACCOUNTING_EXPORT_LABEL=Експортирай етикета
+ACCOUNTING_EXPORT_AMOUNT=Експортирай количеството
 ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+Selectformat=Избери формата за файла
+ACCOUNTING_EXPORT_PREFIX_SPEC=Уточнете префикса за името на файла
 
 Accounting=Accounting
-Globalparameters=Global parameters
+Globalparameters=Глобални параметри
 Menuaccount=Accounting accounts
 Menuthirdpartyaccount=Thirdparty accounts
 MenuTools=Инструменти
 
 ConfigAccountingExpert=Configuration of the module accounting expert
-Journaux=Journals
+Journaux=Журнали
 JournalFinancial=Financial journals
 Exports=Exports
 Export=Export
@@ -104,7 +104,7 @@ Code_tiers=Трета страна
 Labelcompte=Етикет на сметка
 Sens=Sens
 Codejournal=Дневник
-NumPiece=Piece number
+NumPiece=Номер на част
 
 DelBookKeeping=Delete the records of the general ledger
 

@@ -62,7 +62,7 @@ class SupplierProposal extends CommonObject
 	 */
     var $author;
 	var $ref_fourn;  //Reference saisie lors de l'ajout d'une ligne à la demande
-    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (billed)
+    var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
     var $date;						// Date of proposal
     var $date_livraison;
 
@@ -138,6 +138,29 @@ class SupplierProposal extends CommonObject
 	var $multicurrency_total_ht;
 	var $multicurrency_total_tva;
 	var $multicurrency_total_ttc;
+	
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Signed quote
+	 */
+	const STATUS_SIGNED = 2;
+	/**
+	 * Not signed quote
+	 */
+	const STATUS_NOTSIGNED = 3;
+	/**
+	 * Billed or processed quote
+	 */
+	const STATUS_BILLED = 4;	
+	
+	
 	
     /**
      *	Constructor
@@ -2087,7 +2110,7 @@ class SupplierProposal extends CommonObject
      */
     function load_board($user,$mode)
     {
-        global $conf, $user;
+        global $conf, $user, $langs;
 
         $now=dol_now();
 
@@ -2110,29 +2133,43 @@ class SupplierProposal extends CommonObject
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            if ($mode == 'opened') $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
-            if ($mode == 'signed') $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
+            if ($mode == 'opened') {
+	            $delay_warning=$conf->supplier_proposal->cloture->warning_delay;
+	            $statut = self::STATUS_VALIDATED;
+	            $label = $langs->trans("SupplierProposalsToClose");
+            }
+            if ($mode == 'signed') {
+	            $delay_warning=$conf->supplier_proposal->facturation->warning_delay;
+	            $statut = self::STATUS_SIGNED;
+	            $label = $langs->trans("SupplierProposalsToProcess");      // May be billed or ordered
+            }
 
+	        $response = new WorkboardResponse();
+	        $response->warning_delay = $delay_warning/60/60/24;
+	        $response->label = $label;
+	        $response->url = DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut='.$statut;
+	        $response->img = img_object($langs->trans("SupplierProposals"),"propal");
+            
             // This assignment in condition is not a bug. It allows walking the results.
             while ($obj=$this->db->fetch_object($resql))
             {
-                $this->nbtodo++;
+                $response->nbtodo++;
                 if ($mode == 'opened')
                 {
                     $datelimit = $this->db->jdate($obj->datefin);
                     if ($datelimit < ($now - $delay_warning))
                     {
-                        $this->nbtodolate++;
+                        $response->nbtodolate++;
                     }
                 }
                 // TODO Definir regle des propales a facturer en retard
                 // if ($mode == 'signed' && ! count($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
             }
-            return 1;
+            return $response;
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             return -1;
         }
     }
@@ -2207,7 +2244,7 @@ class SupplierProposal extends CommonObject
                 $line->remise_percent=00;
             }
 
-            $prodid = rand(1, $num_prods);
+            $prodid = mt_rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
 
             $this->lines[$xnbp]=$line;
@@ -2257,7 +2294,7 @@ class SupplierProposal extends CommonObject
         else
         {
             dol_print_error($this->db);
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             return -1;
         }
     }

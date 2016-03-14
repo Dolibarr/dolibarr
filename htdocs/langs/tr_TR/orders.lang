@@ -32,6 +32,7 @@ StatusOrderSent=Sevkiyat işlemde
 StatusOrderOnProcessShort=Sipariş edildi
 StatusOrderProcessedShort=İşlenmiş
 StatusOrderDelivered=Teslim edildi
+StatusOrderDeliveredShort=Teslim edildi
 StatusOrderToBillShort=Teslim edlidi
 StatusOrderToBill2Short=Faturalanacak
 StatusOrderApprovedShort=Onaylı

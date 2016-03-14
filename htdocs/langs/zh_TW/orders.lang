@@ -32,6 +32,7 @@ StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=處理完畢
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=等待帳單
 StatusOrderToBill2Short=為了法案
 StatusOrderApprovedShort=核準

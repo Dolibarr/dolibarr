@@ -325,6 +325,11 @@ if (! empty($_SESSION["disablemodules"]))
         {
         	if (empty($conf->$module)) $conf->$module=new stdClass();
         	$conf->$module->enabled=false;
+        	if ($module == 'fournisseur')		// Special case
+        	{
+        		$conf->supplier_order->enabled=0;
+        		$conf->supplier_invoice->enabled=0;
+        	}
         }
     }
 }

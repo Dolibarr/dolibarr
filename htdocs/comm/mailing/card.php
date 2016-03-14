@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("mails");
@@ -55,27 +56,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 $hookmanager->initHooks(array('mailingcard','globalcard'));
 
 // Array of possible substitutions (See also file mailing-send.php that should manage same substitutions)
-$object->substitutionarray=array(
-    '__ID__' => 'IdRecord',
-    '__EMAIL__' => 'EMail',
-    '__LASTNAME__' => 'Lastname',
-    '__FIRSTNAME__' => 'Firstname',
-    '__MAILTOEMAIL__' => 'TagMailtoEmail',
-    '__OTHER1__' => 'Other1',
-    '__OTHER2__' => 'Other2',
-    '__OTHER3__' => 'Other3',
-    '__OTHER4__' => 'Other4',
-    '__OTHER5__' => 'Other5',
-    '__SIGNATURE__' => 'TagSignature',
-    '__CHECK_READ__' => 'TagCheckMail',
-	'__UNSUBSCRIBE__' => 'TagUnsubscribe'
-	//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet
-);
-if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
-{
-	$object->substitutionarray['__SECUREKEYPAYPAL__']='SecureKeyPaypal';
-	if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $object->substitutionarray['__SECUREKEYPAYPAL_MEMBER__']='SecureKeyPaypalUniquePerMember';
-}
+$object->substitutionarray=FormMail::getAvailableSubstitKey('emailing');
 
 $object->substitutionarrayfortest=array(
     '__ID__' => 'TESTIdRecord',
@@ -243,8 +224,18 @@ if (empty($reshook))
 						if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
 						{
 							$substitutionarray['__SECUREKEYPAYPAL__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+
 							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
 							else $substitutionarray['__SECUREKEYPAYPAL_MEMBER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $obj->source_id, 2);
+
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_ORDER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_ORDER__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'order' . $obj->source_id, 2);
+							
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_INVOICE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_INVOICE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'invoice' . $obj->source_id, 2);
+							
+							if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN, 2);
+							else $substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__']=dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'contractline' . $obj->source_id, 2);
 						}
 						$substitutionisok=true;
 	                    complete_substitutions_array($substitutionarray, $langs);

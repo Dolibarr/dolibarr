@@ -630,14 +630,14 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
 		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
+		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
 		{
 			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
-		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a log handler dedicated to HTML output
+		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
 		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
-		if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
+		if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
 		{
 			print "\n\n<!-- Log start\n";
 			print $message."\n";
@@ -3418,9 +3418,10 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * @param   int         $unit           Unit of dimension (0, -3, ...)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
+ * @param   int         $round          -1 = non rounding, x = number of decimal
  * @return  string                      String to show dimensions
  */
-function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs)
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1)
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
     
@@ -3445,7 +3446,7 @@ function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs)
         $unit = $unit + 3;
     }
     
-    $ret=price($dimension, 0, $outputlangs, 0, 0).' '.measuring_units_string($unit, $type);
+    $ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
     
     return $ret;
 }
@@ -5395,7 +5396,7 @@ function dol_set_focus($selector)
 function dol_getmypid()
 {
     if (! function_exists('getmypid')) {
-        return rand(1,32768);
+        return mt_rand(1,32768);
     } else {
         return getmypid();
     }

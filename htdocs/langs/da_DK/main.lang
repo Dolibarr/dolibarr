@@ -25,6 +25,7 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Database forbindelse
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Ingen oversættelse
 NoRecordFound=Ingen poster fundet
 NoError=Ingen fejl

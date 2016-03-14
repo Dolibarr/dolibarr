@@ -729,6 +729,18 @@ if (empty($reshook))
 					unset($_POST['dp_desc']);
 					unset($_POST['idprod']);
 
+					unset($_POST['date_starthour']);
+					unset($_POST['date_startmin']);
+					unset($_POST['date_startsec']);
+					unset($_POST['date_startday']);
+					unset($_POST['date_startmonth']);
+					unset($_POST['date_startyear']);
+					unset($_POST['date_endhour']);
+					unset($_POST['date_endmin']);
+					unset($_POST['date_endsec']);
+					unset($_POST['date_endday']);
+					unset($_POST['date_endmonth']);
+					unset($_POST['date_endyear']);
 				} else {
 					$db->rollback();
 
@@ -836,6 +848,19 @@ if (empty($reshook))
 				unset($_POST['product_desc']);
 				unset($_POST['fournprice']);
 				unset($_POST['buying_price']);
+
+				unset($_POST['date_starthour']);
+				unset($_POST['date_startmin']);
+				unset($_POST['date_startsec']);
+				unset($_POST['date_startday']);
+				unset($_POST['date_startmonth']);
+				unset($_POST['date_startyear']);
+				unset($_POST['date_endhour']);
+				unset($_POST['date_endmin']);
+				unset($_POST['date_endsec']);
+				unset($_POST['date_endday']);
+				unset($_POST['date_endmonth']);
+				unset($_POST['date_endyear']);
 			} else {
 				$db->rollback();
 
@@ -1076,7 +1101,7 @@ if ($action == 'create')
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.fournisseur = 1', 1);
+		print $form->select_company('', 'socid', 's.fournisseur = 1', 'SelectThirdParty');
 		print '</td>';
 	}
 	print '</tr>' . "\n";
@@ -1905,12 +1930,8 @@ if ($action == 'create')
 		$formmail->withcancel = 1;
 
 		// Tableau des substitutions
-		$formmail->substit['__ASKREF__'] = $object->ref;
-		$formmail->substit['__SIGNATURE__'] = $user->signature;
-		$formmail->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
-		$formmail->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
-		$formmail->substit['__CONTACTCIVNAME__'] = '';
-		$formmail->substit['__PERSONALIZED__'] = '';
+		$formmail->setSubstitFromObject($object);
+		$formmail->substit['__SUPPLIERPROPREF__'] = $object->ref;
 
 		// Tableau des parametres complementaires
 		$formmail->param['action'] = 'send';

@@ -182,7 +182,7 @@ class Propal extends CommonObject
 	 */
 	const STATUS_NOTSIGNED = 3;
 	/**
-	 * Billed quote
+	 * Billed or processed quote
 	 */
 	const STATUS_BILLED = 4;
 
@@ -2565,7 +2565,7 @@ class Propal extends CommonObject
             if ($mode == 'signed') {
 	            $delay_warning=$conf->propal->facturation->warning_delay;
 	            $statut = self::STATUS_SIGNED;
-	            $label = $langs->trans("PropalsToBill");
+	            $label = $langs->trans("PropalsToBill");         // We set here bill but may be billed or ordered
             }
 
 	        $response = new WorkboardResponse();
@@ -2675,7 +2675,7 @@ class Propal extends CommonObject
                 $line->remise_percent=00;
             }
 
-            $prodid = rand(1, $num_prods);
+            $prodid = mt_rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
 
             $this->lines[$xnbp]=$line;

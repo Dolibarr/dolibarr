@@ -229,6 +229,7 @@ if (empty($reshook))
 					{
 						//Check the expression validity by parsing it
                         $priceparser = new PriceParser($db);
+                        $object->fk_supplier_price_expression = $price_expression;
                         $price_result = $priceparser->parseProductSupplier($object);
 						if ($price_result < 0) { //Expression is not valid
 							$error++;
@@ -470,7 +471,7 @@ if ($id > 0 || $ref)
 							on_change();
 						}
 						function on_click() {
-							window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=fournisseurs&eid=" + $("#eid").attr("value");
+							window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=fournisseurs&eid=" + $("#eid").val();
 						}
 						function on_change() {
 							if ($("#eid").val() == 0) {

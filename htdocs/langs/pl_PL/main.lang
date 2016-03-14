@@ -25,6 +25,7 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Połączenia z bazą danych
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Brak tłumaczenia
 NoRecordFound=Rekord nie został znaleziony.
 NoError=Brak błędów

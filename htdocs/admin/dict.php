@@ -405,7 +405,7 @@ $tabhelp[21] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[22] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[23] = array();
 $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[25] = array('type_template'=>$langs->trans("TemplateForElement"),'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
+$tabhelp[25] = array('topic'=>$langs->trans('SeeSubstitutionVars'),'content'=>$langs->trans('SeeSubstitutionVars'),'type_template'=>$langs->trans("TemplateForElement"),'private'=>$langs->trans("TemplateIsVisibleByOwnerOnly"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"),'delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
@@ -493,7 +493,7 @@ if ($id == 11)
 }
 if ($id == 25)
 {
-	// We save list of template type Dolibarr can manage. This list can found by a grep into code on "->param['models']"
+	// We save list of template email Dolibarr can manage. This list can found by a grep into code on "->param['models']"
 	$elementList = array();
 	if ($conf->propal->enabled) $elementList['propal_send']=$langs->trans('MailToSendProposal');
 	if ($conf->commande->enabled) $elementList['order_send']=$langs->trans('MailToSendOrder');
@@ -1017,8 +1017,18 @@ if ($id)
         }
         print '</td>';
         print "</tr>";
+        
+        if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates')
+        {
+        	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
+        	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+        	$formmail=new FormMail($db);
+        	$tmp=$formmail->getAvailableSubstitKey('form');
+        	print join(', ', $tmp);
+        	print '</td></tr>';
+        }
 
-        $colspan=count($fieldlist)+2;
+        $colspan=count($fieldlist)+3;
         if ($id == 4) $colspan++;
 
         if (! empty($alabelisused) && $id != 25)  // If there is one label among fields, we show legend of *
@@ -1583,7 +1593,9 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($context != 'hide')
 			{
 				//print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
-				$doleditor = new DolEditor($fieldlist[$field], (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), '', 140, 'dolibarr_mailings', 'In', 0, false, true, ROWS_5, '90%');
+				$okforextended=true;
+				if ($tabname == MAIN_DB_PREFIX.'c_email_templates' && empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $okforextended=false;
+				$doleditor = new DolEditor($fieldlist[$field], (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_5, '90%');
 				print $doleditor->Create(1);
 			}
 			else print '&nbsp;';

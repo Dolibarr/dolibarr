@@ -778,9 +778,9 @@ if ($resql)
 	   {
 			if (! empty($arrayfields["ef.".$key]['checked'])) 
 			{
-			    $typeofextrafield=$extrafields->attribute_type[$key];
-			    if (in_array($typeofextrafield, array('int'))) print '<td class="liste_titre right">'; 
-			    else print '<td class="liste_titre">';
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
 			    if (in_array($typeofextrafield, array('varchar', 'int', 'select')))
 				{
 				    $crit=$val;

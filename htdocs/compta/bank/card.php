@@ -286,13 +286,13 @@ if ($action == 'create')
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">';
-	$formbank->select_type_comptes_financiers(isset($_POST["type"])?$_POST["type"]:1,"type");
+	$formbank->selectTypeOfBankAccount(isset($_POST["type"])?$_POST["type"]:1,"type");
 	print '</td></tr>';
 
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
 	print '<td colspan="3">';
-	$selectedcode=$account->account_currency_code;
+	$selectedcode=$account->currency_code;
 	if (! $selectedcode) $selectedcode=$conf->currency;
 	print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 	//print $langs->trans("Currency".$conf->currency);
@@ -302,7 +302,7 @@ if ($action == 'create')
 	// Status
     print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
     print '<td colspan="3">';
-    print $form->selectarray("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+    print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
     print '</td></tr>';
 
     // Country
@@ -369,10 +369,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->account_min_allowed).'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->min_allowed).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->account_min_desired).'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->min_desired).'"></td></tr>';
 
 	print '</table>';
 	print '<br>';
@@ -583,7 +583,7 @@ else
 		// Currency
 		print '<tr><td>'.$langs->trans("Currency").'</td>';
 		print '<td colspan="3">';
-		$selectedcode=$account->account_currency_code;
+		$selectedcode=$account->currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
 		print $langs->trans("Currency".$selectedcode);
 		print '</td></tr>';
@@ -643,7 +643,7 @@ else
 
 		print '<br>';
 
-		if ($account->type == 0 || $account->type == 1)
+		if ($account->type == Account::TYPE_SAVINGS || $account->type == Account::TYPE_CURRENT)
 		{
 			print '<table class="border" width="100%">';
 
@@ -843,7 +843,7 @@ else
         // Type
         print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
         print '<td colspan="3">';
-		$formbank->select_type_comptes_financiers((isset($_POST["type"])?$_POST["type"]:$account->type),"type");
+		$formbank->selectTypeOfBankAccount((isset($_POST["type"])?$_POST["type"]:$account->type),"type");
         print '</td></tr>';
 
 		// Currency
@@ -851,7 +851,7 @@ else
 		print '<input type="hidden" value="'.$account->currency_code.'">';
 		print '</td>';
 		print '<td colspan="3">';
-		$selectedcode=$account->account_currency_code;
+		$selectedcode=$account->currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
 		print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 		//print $langs->trans("Currency".$conf->currency);
@@ -861,7 +861,7 @@ else
 		// Status
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
         print '<td colspan="3">';
-        print $form->selectarray("clos",array(0=>$account->status[0],1=>$account->status[1]),(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+        print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
         print '</td></tr>';
 
 		// Country
@@ -895,7 +895,7 @@ else
         $conciliate=$account->canBeConciliated();
         if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
-        else print '<input type="checkbox" class="flat" name="norappro"'.($account->rappro?'':' checked').'"> '.$langs->trans("DisableConciliation");
+        else print '<input type="checkbox" class="flat" name="norappro"'.(($conciliate > 0)?'':' checked="checked"').'"> '.$langs->trans("DisableConciliation");
         print '</td></tr>';
 
         // Balance

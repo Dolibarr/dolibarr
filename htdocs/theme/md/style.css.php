@@ -204,6 +204,8 @@ print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
 print '$colortextlink='.$colortextlink."\n";
+print '$colortextbackhmenu='.$colortextbackhmenu."\n";
+print '$colortextbackvmenu='.$colortextbackvmenu."\n";
 print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
@@ -420,6 +422,9 @@ th .button {
 .centpercent {
 	width: 100%;
 }
+.quatrevingtpercent, .inputsearch {
+	width: 80%;
+}
 textarea.centpercent {
 	width: 96%;
 }
@@ -516,6 +521,12 @@ div.myavailability {
 }
 .strikefordisabled {
 	text-decoration: line-through;
+}
+.tdoverflow {
+    max-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
@@ -881,13 +892,14 @@ ul.tmenu {	/* t r b l */
 }
 ul.tmenu li {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
-
+	/*
 	background-image: linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.3) 0%, rgba(0,0,0,.3) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.3)), color-stop(1, rgba(0,0,0,.3)) );
+	*/
 }
 li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
@@ -3855,6 +3867,13 @@ border-top-right-radius: 6px;
 
 
 
+/* For demo pages */
+img.demothumb {
+    box-shadow: 2px 2px 8px #888;
+	margin-bottom: 4px;
+}
+
+
 /* The theme for public pages */
 .public_body {
 	margin: 20px;
@@ -3897,25 +3916,53 @@ border-top-right-radius: 6px;
 	}
 }
 
+
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
+/* rule to reduce top menu - 1st reduction */
 @media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 200; ?>px)
 {
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+    	white-space: nowrap;
+  		overflow: hidden;
+  		text-overflow: ellipsis;
+  		color: #<?php echo $colortextbackhmenu; ?>;
+	}
 	.mainmenuaspan {
-    	display: none;
+    	/*display: none;*/
+  		font-size: 10px;
     }
+    .topmenuimage {
+    	background-size: 26px auto;
+    	margin-top: 0px;
+	}
     li.tmenu, li.tmenusel {
     	min-width: 32px;
     }
     div.mainmenu {
     	min-width: auto;
     }
-    .topmenuimage {
-    	background-size: 26px auto;
-    	margin-top: 8px;
-	}
 	div.tmenuleft {
 		display: none;
 	}
 }
+/* rule to reduce top menu - 2nd reduction */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 200; ?>px)
+{
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
+  		text-overflow: clip;
+	}
+	.mainmenuaspan {
+    	/*display: none;*/
+  		font-size: 10px;
+    }
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px;
+	}
+}
+/* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
 	/* Reduce login top right info */
@@ -3933,11 +3980,19 @@ border-top-right-radius: 6px;
 		top: 9px;
 	}
 
+    li.tmenu, li.tmenusel {
+        min-width: 30px;
+    }
+
+	div.tmenucenter {
+  		text-overflow: clip;
+	}
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px !important;
+	}
 	div.mainmenu {
     	min-width: 20px;
-    }
-	.topmenuimage {
-    	background-size: 20px auto;
     }
     
 	#tooltip {

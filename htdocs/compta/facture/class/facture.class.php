@@ -3566,7 +3566,7 @@ class Facture extends CommonInvoice
 				$line->remise_percent=0;
 				if ($xnbp == 1)        // Qty is negative (product line)
 				{
-					$prodid = rand(1, $num_prods);
+					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];
 					$line->qty=-1;
 					$line->total_ht=-100;
@@ -3583,7 +3583,7 @@ class Facture extends CommonInvoice
 				}
 				else if ($xnbp == 3)    // Discount is 50% (product line)
 				{
-					$prodid = rand(1, $num_prods);
+					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];
 					$line->total_ht=50;
 					$line->total_ttc=59.8;
@@ -3592,7 +3592,7 @@ class Facture extends CommonInvoice
 				}
 				else    // (product line)
 				{
-					$prodid = rand(1, $num_prods);
+					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product=$prodids[$prodid];
 					$line->total_ht=100;
 					$line->total_ttc=119.6;
@@ -3621,7 +3621,7 @@ class Facture extends CommonInvoice
 			$line->total_ht=0;
 			$line->total_ttc=0;    // 90 * 1.196
 			$line->total_tva=0;
-			$prodid = rand(1, $num_prods);
+			$prodid = mt_rand(1, $num_prods);
 			$line->fk_product=$prodids[$prodid];
 
 			$this->lines[$xnbp]=$line;
@@ -4533,15 +4533,22 @@ class FactureLigne extends CommonInvoiceLine
 	}
 
 	/**
-	 * Returns situation_percent of the previous line
+	 * Returns situation_percent of the previous line.
+	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line. 
 	 *
-	 * @return int >= 0
+	 * @param  int     $invoiceid      Invoice id
+	 * @return int                     >= 0
 	 */
-	function get_prev_progress()
+	function get_prev_progress($invoiceid)
 	{
 		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
 			return 0;
 		} else {
+		    // If invoice is a not a situation invoice, this->fk_prev_id is used for something else
+            $tmpinvoice=new Facture($this->db);
+            $tmpinvoice->fetch($invoiceid);
+            if ($tmpinvoice->type != Facture::TYPE_SITUATION) return 0;
+
 			$sql = 'SELECT situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet WHERE rowid=' . $this->fk_prev_id;
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {

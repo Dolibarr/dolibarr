@@ -32,6 +32,7 @@ StatusOrderSent=Livrare în curs
 StatusOrderOnProcessShort=Comandat
 StatusOrderProcessedShort=Procesate
 StatusOrderDelivered=Livrate
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Livrate
 StatusOrderToBill2Short=De facturat
 StatusOrderApprovedShort=Aprobată
