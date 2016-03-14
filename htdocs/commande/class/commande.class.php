@@ -2548,7 +2548,14 @@ class Commande extends CommonOrder
 			
             // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
             $price = $pu;
-            $subprice = $pu;
+			if ($price_base_type == 'TTC') 
+			{
+				$subprice = $tabprice[5];
+			} 
+			else 
+			{
+				$subprice = $pu;
+			}
             $remise = 0;
             if ($remise_percent > 0)
             {
