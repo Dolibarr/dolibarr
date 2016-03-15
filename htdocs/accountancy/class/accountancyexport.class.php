@@ -106,7 +106,7 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config
 	 *
-	 * @param unknown $TData
+	 * @param unknown $TData data
 	 */
 	public function export(&$TData)
 	{
@@ -142,7 +142,7 @@ class AccountancyExport
 	/**
 	 * Export format : Normal
 	 *
-	 * @param unknown $TData
+	 * @param unknown $TData data
 	 *
 	 * @return void
 	 */
@@ -154,7 +154,7 @@ class AccountancyExport
 	/**
 	 * Export format : CEGID
 	 *
-	 * @param unknown $TData
+	 * @param unknown $TData data
 	 *
 	 * @return void
 	 */
@@ -166,7 +166,7 @@ class AccountancyExport
 	/**
 	 * Export format : COALA
 	 *
-	 * @param unknown $TData
+	 * @param unknown $TData data
 	 *
 	 * @return void
 	 */
@@ -178,7 +178,7 @@ class AccountancyExport
 	/**
 	 * Export format : BOB50
 	 *
-	 * @param unknown $TData
+	 * @param unknown $TData data
 	 *
 	 * @return void
 	 */
@@ -190,7 +190,7 @@ class AccountancyExport
 	/**
 	 * Export format : CIEL
 	 *
-	 * @param unknown $TData
+	 * @param unknown $TData data
 	 *
 	 * @return void
 	 */
@@ -229,7 +229,7 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus
 	 *
-	 * @param unknown $TData
+	 * @param unknown $TData data
 	 *
 	 * @return void
 	 */
@@ -276,8 +276,8 @@ class AccountancyExport
 
 	/**
 	 *
-	 * @param unknown $str
-	 * @param unknown $size
+	 * @param unknown $str data
+	 * @param unknown $size data
 	 */
 	public static function trunc($str, $size)
 	{
