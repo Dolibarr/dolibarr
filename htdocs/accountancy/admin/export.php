@@ -30,6 +30,7 @@ require '../../main.inc.php';
 // Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -195,12 +196,7 @@ if (! $conf->use_javascript_ajax) {
 	print "</td>";
 } else {
 	print '<td>';
-	$listmodelcsv = array (
-			'1' => $langs->trans("Modelcsv_normal"),
-			'2' => $langs->trans("Modelcsv_CEGID"),
-			'3' => $langs->trans("Modelcsv_COALA"),
-			'4' => $langs->trans("Modelcsv_bob50") 			
-	);
+	$listmodelcsv = AccountancyExport::getType();
 	print $form->selectarray("modelcsv", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
 	
 	print '</td>';
