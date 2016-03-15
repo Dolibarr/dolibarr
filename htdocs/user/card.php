@@ -8,7 +8,7 @@
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
  *
@@ -1065,7 +1065,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print "</tr>\n";
 
 	// Accountancy code
-	if ($conf->salaries->enabled)
+	if ($conf->accounting->enabled)
 	{
 		print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td>';
@@ -1402,7 +1402,7 @@ else
 		    print "</tr>\n";
 
 			// Accountancy code
-			if ($conf->salaries->enabled)
+			if ($conf->accounting->enabled)
 			{
 				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>'.$object->accountancy_code.'</td>';
@@ -1749,13 +1749,14 @@ else
 
             dol_fiche_head($head, 'user', $title, 0, 'user');
 
-        	$rowspan=17;
+        	$rowspan=22;
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
 			if (! empty($conf->skype->enabled)) $rowspan++;
 			if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) $rowspan = $rowspan+3;
 			if (! empty($conf->agenda->enabled)) $rowspan++;
+			if (! empty($conf->accounting->enabled)) $rowspan++;
 
             print '<table width="100%" class="border">';
 
@@ -2173,7 +2174,7 @@ else
 		    print "</tr>\n";
 
 		    // Accountancy code
-			if ($conf->salaries->enabled)
+			if ($conf->accounting->enabled)
 			{
 				print "<tr>";
 				print '<td>'.$langs->trans("AccountancyCode").'</td>';
