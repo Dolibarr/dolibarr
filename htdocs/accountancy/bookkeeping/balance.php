@@ -109,7 +109,7 @@ if ($action == 'export_csv') {
 	
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 	
-	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
+	$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -118,56 +118,13 @@ if ($action == 'export_csv') {
 		
 		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
 			$sep = ";";
-			// Model Cegid Expert Export
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
-			print $date . $sep;
-			print $line->code_journal . $sep;
-			print length_accountg($line->numero_compte) . $sep;
-			print ' ' . $sep;
-			print $line->sens . $sep;
-			print price($line->montant) . $sep;
-			print dol_trunc($line->label_compte, 32) . $sep;
-			print $line->doc_ref . $sep;
-			
-			/*print $line->piece_num . $sep;
-			 print length_accounta($line->code_tiers) . $sep;
-			 print  . $sep;
-			 print price($line->debit) . $sep;
-			 print price($line->credit) . $sep;*/
-			
-			print "\n";
-		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) {
-			
-			// Std export
-			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-			print $date . $sep;
-			print $line->doc_ref . $sep;
-			print length_accounta($line->numero_compte) . $sep;
-			print length_accountg($line->code_tiers) . $sep;
-			print price($line->debit) . $sep;
-			print price($line->credit) . $sep;
-			
-			/*print $line->piece_num . $sep;
-			 print $line->label_compte . $sep;
-			 print price($line->montant) . $sep;
-			 print $line->sens . $sep;*/
-			print $line->code_journal . $sep;
-			print "\n";
-		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 3) {
-			
-			// Coala export
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
-			print $date . $sep;
-			print $line->code_journal . $sep;
-			print length_accounta($line->numero_compte) . $sep;
-			print $line->piece_num . $sep;
-			print $line->doc_ref . $sep;
-			print price($line->debit) . $sep;
-			print price($line->credit) . $sep;
-			print 'E' . $sep;
-			print length_accountg($line->code_tiers) . $sep;
-			print "\n";
 		}
+			print length_accountg($line->numero_compte) . $sep;
+		print $line->debit . $sep;
+		print $line->credit . $sep;
+		print $line->debit . $sep;
+		print $line->credit - $line->debit . $sep;
+		print "\n";
 	}
 } 
 
