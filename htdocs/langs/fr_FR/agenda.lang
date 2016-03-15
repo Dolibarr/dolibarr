@@ -106,3 +106,4 @@ EveryMonth=Chaque mois
 DayOfMonth=Jour du mois
 DayOfWeek=Jour de la semaine
 DateStartPlusOne=Date de début + 1 heure
+ConfirmCloneAction=Êtes-vous sûr de vouloir cloner ce projet ?
