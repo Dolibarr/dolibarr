@@ -1394,7 +1394,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Delivery delay
-	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
+	print '<tr class="fielddeliverydelay"><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
 	print '</td></tr>';
 
@@ -1869,7 +1869,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Delivery delay
-	print '<tr><td>';
+	print '<tr class="fielddeliverydelay"><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('AvailabilityPeriod');
 	if (! empty($conf->commande->enabled))
