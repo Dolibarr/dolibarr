@@ -1,39 +1,35 @@
 # ColReorder
 
-ColReorder adds the ability for the end user to click and drag column headers to reorder a table as they see fit, to DataTables. Key features include:
-
-* Very easy integration with DataTables
-* Tight integration with all other DataTables plug-ins
-* The ability to exclude the first (or more) column from being movable
-* Predefine a column order
-* Save staving integration with DataTables
+ColReorder adds the ability for the end user to click and drag column headers to reorder a table as they see fit, to DataTables. See the [documentation](http://datatables.net/extensions/colreorder/) for full details.
 
 
 # Installation
 
-To use ColReorder, first download DataTables ( http://datatables.net/download ) and place the unzipped ColReorder package into a `extensions` directory in the DataTables package. This will allow the pages in the examples to operate correctly. To see the examples running, open the `examples` directory in your web-browser.
+To use ColReorder the primary way to obtain the software is to use the [DataTables downloader](//datatables.net/download). You can also include the individual files from the [DataTables CDN](//cdn.datatables.net). See the [documentation](http://datatables.net/extensions/colreorder/) for full details.
+
+## NPM and Bower
+
+If you prefer to use a package manager such as NPM or Bower, distribution repositories are available with software built from this repository under the name `datatables.net-colreorder`. Styling packages for Bootstrap, Foundation and other styling libraries are also available by adding a suffix to the package name.
+
+Please see the DataTables [NPM](//datatables.net/download/npm) and [Bower](//datatables.net/download/bower) installation pages for further information. The [DataTables installation manual](//datatables.net/manual/installation) also has details on how to use package managers with DataTables.
 
 
 # Basic usage
 
-ColReorder is initialised using the `$.fn.dataTable.ColReorder` constructor. For example:
+ColReorder is initialised using the `colReorder` option in the DataTables constructor - a simple boolean `true` will enable the feature. Further options can be specified using this option as an object - see the documentation for details.
+
+Example:
 
 ```js
 $(document).ready( function () {
-    $('#example').DataTable();
-
-    new $.fn.dataTable.ColReorder( table );
+    $('#myTable').DataTable( {
+    	colReorder: true
+    } );
 } );
 ```
 
 
 # Documentation / support
 
-* Documentation: http://datatables.net/extensions/colreorder/
-* DataTables support forums: http://datatables.net/forums
-
-
-# GitHub
-
-If you fancy getting involved with the development of ColReorder and help make it better, please refer to its GitHub repo: https://github.com/DataTables/ColReorder
-
+* [Documentation](https://datatables.net/extensions/colreorder/)
+* [DataTables support forums](http://datatables.net/forums)
