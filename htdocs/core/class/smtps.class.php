@@ -3,6 +3,7 @@
  * Copyright (C)           Walter Torres        <walter@torres.ws> [with a *lot* of help!]
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
+ * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,6 +388,8 @@ class SMTPs
 	 */
 	function _server_authenticate()
 	{
+		global $conf;
+		
 		// Send the RFC2554 specified EHLO.
 		// This improvment as provided by 'SirSir' to
 		// accomodate both SMTP AND ESMTP capable servers
@@ -395,6 +398,24 @@ class SMTPs
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
 		{
+			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
+			{
+				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
+				{
+					$this->_setErr(131, 'STARTTLS connection is not supported.');
+					return $_retVal;
+				}
+				if (!stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT))
+				{
+					$this->_setErr(132, 'STARTTLS connection failed.');
+					return $_retVal;
+				}
+				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
+				{
+					$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
+					return $_retVal;
+				}				
+			}
 			// Send Authentication to Server
 			// Check for errors along the way
 			$this->socket_send_str('AUTH LOGIN', '334');
