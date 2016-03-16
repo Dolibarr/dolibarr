@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Метод, используемый для передачи 
 MAIN_MAIL_SMTPS_ID=SMTP ID, если требуется проверка подлинности
 MAIN_MAIL_SMTPS_PW=SMTP пароль, если требуется проверка подлинности
 MAIN_MAIL_EMAIL_TLS= Использовать TLS (SSL) шифрует
+MAIN_MAIL_EMAIL_STARTTLS= Использовать TLS (STARTTLS) шифрует
 MAIN_DISABLE_ALL_SMS=Отключить все посылки SMS (для тестовых целей или демо)
 MAIN_SMS_SENDMODE=Метод, используемый для передачи SMS
 MAIN_MAIL_SMS_FROM=По умолчанию отправителю номер телефона для отправки смс

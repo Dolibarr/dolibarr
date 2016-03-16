@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=E-kirjade saatmiseks kasutatav meetod
 MAIN_MAIL_SMTPS_ID=SMTP kasutaja, kui autentimine on nõutud
 MAIN_MAIL_SMTPS_PW=SMTP parool, kui autentimine on nõutud
 MAIN_MAIL_EMAIL_TLS= Kasuta TLS (SSL) krüpteerimist
+MAIN_MAIL_EMAIL_STARTTLS= Kasuta TLS (STARTTLS) krüpteerimist
 MAIN_DISABLE_ALL_SMS=Keela SMSide saatmine (testimise või demo paigaldused)
 MAIN_SMS_SENDMODE=SMSi saatmiseks kasutatav meetod
 MAIN_MAIL_SMS_FROM=Vaikimisi määratud saatja telefoninumber SMSide saatmiseks

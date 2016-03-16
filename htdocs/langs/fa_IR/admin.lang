@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=روش استفاده برای ارسال ایمیل
 MAIN_MAIL_SMTPS_ID=SMTP ID اگر احراز هویت مورد نیاز
 MAIN_MAIL_SMTPS_PW=SMTP رمز عبور در صورت احراز هویت مورد نیاز
 MAIN_MAIL_EMAIL_TLS= استفاده از TLS (SSL) رمزگذاری
+MAIN_MAIL_EMAIL_STARTTLS= استفاده از TLS (STARTTLS) رمزگذاری
 MAIN_DISABLE_ALL_SMS=غیر فعال کردن همه sendings SMS (برای تست و یا دموی)
 MAIN_SMS_SENDMODE=روش استفاده برای ارسال SMS
 MAIN_MAIL_SMS_FROM=شماره تلفن پیش فرض فرستنده برای ارسال SMS

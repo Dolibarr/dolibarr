@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Mètode d'enviament d'e-mails
 MAIN_MAIL_SMTPS_ID=ID d'autenticació SMTP si es requereix autenticació SMTP
 MAIN_MAIL_SMTPS_PW=Contrasenya autentificació SMTP si es requereix autenticació SMTP
 MAIN_MAIL_EMAIL_TLS= Ús d'encriptació TLS (SSL)
+MAIN_MAIL_EMAIL_STARTTLS= Ús d'encriptació TLS (STARTTLS)
 MAIN_DISABLE_ALL_SMS=Desactivar globalment tot enviament de SMS (per mode de proves o demo)
 MAIN_SMS_SENDMODE=Mètode d'enviament de SMS
 MAIN_MAIL_SMS_FROM=Número de telèfon per defecte per als enviaments SMS
