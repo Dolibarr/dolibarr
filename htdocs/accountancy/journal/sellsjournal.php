@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 // Langs
+$langs->load("commercial");
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
