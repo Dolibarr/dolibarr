@@ -644,7 +644,7 @@ if (empty($reshook))
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
-					
+
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -1397,7 +1397,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
 			print '<script type="text/javascript">
-			$(document).ready(function() { 
+			$(document).ready(function() {
 				$("#socid").change(function() {
 					var socid = $(this).val();
 					// reload page
@@ -2311,7 +2311,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
 				}
-				
+
 				// Create intervention
 				if ($conf->ficheinter->enabled) {
 					$langs->load("interventions");
@@ -2328,12 +2328,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 				// Create contract
 				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED)) {
 				    $langs->load("contracts");
-				
+
 				    if ($user->rights->contrat->creer) {
 				        print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a></div>';
 				    }
 				}
-				
+
 				// Ship
 				$numshipping = 0;
 				if (! empty($conf->expedition->enabled)) {
@@ -2398,6 +2398,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 			}
 			print '</div>';
+		}
+
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
 		}
 
 		if ($action != 'presend')
@@ -2498,7 +2503,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			{
 				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-			}			
+			}
 			$formmail->withfrom = 1;
 			$liste = array();
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
