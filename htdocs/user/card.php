@@ -481,7 +481,7 @@ if (empty($reshook)) {
 				{
 					$object->fetch($id);
 
-					$object->oldcopy = dol_clone($object);
+					$object->oldcopy = clone $object;
 
 					$ret = $object->setPassword($user, $_POST["password"]);
 					if ($ret < 0)
