@@ -476,20 +476,24 @@ if (empty($reshook)) {
 						$db->rollback();
 					}
 				}
-			} else {
-				if ($caneditpassword)    // Case we can edit only password
-				{
-					$object->fetch($id);
-
-					$object->oldcopy = clone $object;
-
-					$ret = $object->setPassword($user, $_POST["password"]);
-					if ($ret < 0)
-					{
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
-				}
 			}
+		}
+		else
+		{
+		    if ($caneditpassword)    // Case we can edit only password
+		    {
+		        dol_syslog("Not allowed to change fields, only password");
+		        
+		        $object->fetch($id);
+		    
+		        $object->oldcopy = clone $object;
+		    
+		        $ret = $object->setPassword($user, GETPOST("password"));
+		        if ($ret < 0)
+		        {
+		            setEventMessages($object->error, $object->errors, 'errors');
+		        }
+		    }
 		}
 	}
 
