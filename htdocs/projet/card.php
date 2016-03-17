@@ -352,7 +352,7 @@ if (empty($reshook))
 	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
-	        setEventMessagess($langs->trans("RecordDeleted"), null, 'mesgs');
+	        setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	    	header("Location: index.php");
 	        exit;
 	    }

@@ -5,9 +5,6 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
  *
- * Version V1.1 Initial version of Philippe Berthet
- * Version V2   Change to be compatible with 3.4 and enhanced to be more generic
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -79,6 +76,7 @@ $langs->load("suppliers");
 $langs->load("propal");
 $langs->load("interventions");
 $langs->load("contracts");
+$langs->load("products");
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('consumptionthirdparty'));

@@ -1845,7 +1845,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: [ bug #810 ] Cannot update ODT template path
 - Fix: [ bug #816 ] Sales journal does not reflect localtaxes
 - Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
-- Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionnary
+- Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionary
 - Fix: [ bug #828 ] Error when code_region is not a number in llx_c_regions (with postgres)
 - Fix: [ bug #855 ] Holiday approval email in French
 - Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
@@ -1864,7 +1864,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
 - Fix: Localtax2 for Spain must be based into buyer
 - Fix: [ bug #762 ] Bad profit calculation in Reporting
-- Fix: bug dictionnary with wrong prefix table
+- Fix: bug dictionary with wrong prefix table
 
 ***** ChangeLog for 3.3 compared to 3.2.* *****
 For users:
@@ -1952,7 +1952,7 @@ New experimental module:
 For developers:
 - New: Add webservice for thirdparty creation and list.
 - New: A module can overwrite templates parts.
-- New: Can add a link on title field of added dictionnary.
+- New: Can add a link on title field of added dictionary.
 - New: Uniformize code.
 - New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
        WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER.
