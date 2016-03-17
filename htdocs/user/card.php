@@ -349,6 +349,8 @@ if (empty($reshook)) {
 					$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
 					$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
+					$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+
 					if (! empty($conf->multicompany->enabled))
 					{
 						if (! empty($_POST["superadmin"]))
