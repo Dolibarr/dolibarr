@@ -535,7 +535,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     dol_fiche_end();
 
     print '<div class="center">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
+    print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
     if (! empty($backtopage))
     {
         print ' &nbsp; &nbsp; ';
