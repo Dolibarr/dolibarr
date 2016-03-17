@@ -231,6 +231,7 @@ CustomerBillsUnpaid=Unpaid customer invoices
 NonPercuRecuperable=Non-recoverable
 SetConditions=Set payment terms
 SetMode=Set payment mode
+SetRevenuStamp=Set revenue stamp
 Billed=Billed
 RecurringInvoices=Recurring invoices
 RepeatableInvoice=Template invoice
