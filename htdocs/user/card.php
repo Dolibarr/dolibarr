@@ -521,7 +521,7 @@ if (empty($reshook)) {
             }
             else
             {
-                setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'errors');
+                setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'warnings');
             }
         }
     }
