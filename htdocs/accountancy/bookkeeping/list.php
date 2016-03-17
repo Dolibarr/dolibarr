@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,9 +182,9 @@ if (! empty($search_mvt_num)) {
  * Action
  */
 if ($action == 'delbookkeeping') {
-	
+
 	$import_key = GETPOST('importkey', 'alpha');
-	
+
 	if (! empty($import_key)) {
 		$result = $object->deleteByImportkey($import_key);
 		if ($result < 0) {
@@ -194,9 +194,9 @@ if ($action == 'delbookkeeping') {
 		exit();
 	}
 } elseif ($action == 'delbookkeepingyearconfirm') {
-	
+
 	$delyear = GETPOST('delyear', 'int');
-	
+
 	if (! empty($delyear)) {
 		$result = $object->deleteByYear($delyear);
 		if ($result < 0) {
@@ -206,9 +206,9 @@ if ($action == 'delbookkeeping') {
 		exit();
 	}
 } elseif ($action == 'delmouvconfirm') {
-	
+
 	$mvt_num = GETPOST('mvt_num', 'int');
-	
+
 	if (! empty($mvt_num)) {
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
@@ -218,18 +218,33 @@ if ($action == 'delbookkeeping') {
 		exit();
 	}
 } elseif ($action == 'export_csv') {
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = 'bookkepping';
-	
-	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
-	
+
+	include DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
+
 	$result = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
-	if ($result < 0) {
+	if ($result < 0)
+	{
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+	else
+	{
+		if (in_array($conf->global->ACCOUNTING_EXPORT_MODELCSV, array(5,6))) // TODO remove the conditional and keep the code in the "else"
+		{
+			$accountancyexport = new AccountancyExport($db);
+			$accountancyexport->export($object->lines);
+			if (!empty($accountancyexport->errors)) setEventMessages('', $accountancyexport->errors, 'errors');
+			else exit;
+		}
+	}
+
+
+	// TODO remove next 3 lines and foreach to implement the AccountancyExport method for each model
+	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
+	$journal = 'bookkepping';
+	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
+
 	foreach ( $object->lines as $line ) {
-		
+
 		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
 			$sep = ";";
 			// Model Cegid Expert Export
@@ -244,7 +259,7 @@ if ($action == 'delbookkeeping') {
 			print $line->doc_ref . $sep;
 			print "\n";
 		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) {
-			
+
 			// Std export
 			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
 			print $date . $sep;
@@ -256,7 +271,7 @@ if ($action == 'delbookkeeping') {
 			print $line->code_journal . $sep;
 			print "\n";
 		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 3) {
-			
+
 			// Coala export
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $sep;
@@ -270,12 +285,12 @@ if ($action == 'delbookkeeping') {
 			print length_accountg($line->code_tiers) . $sep;
 			print "\n";
 		}	elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 4) {
-			
+
 			// Bob50
 			print $line->piece_num . $sep;
 			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
 			print $date . $sep;
-			
+
 			if (empty($line->code_tiers)) {
 				print 'G' . $sep;
 				print length_accounta($line->numero_compte) . $sep;
@@ -287,7 +302,7 @@ if ($action == 'delbookkeeping') {
 					print 'F' . $sep;
 				}
 				print length_accountg($line->code_tiers) . $sep;
-				
+
 			}
 
 			print price($line->debit) . $sep;
@@ -296,21 +311,21 @@ if ($action == 'delbookkeeping') {
 			print "\n";
 		}
 	}
-} 
+}
 
 /*
  * View
  */
 else {
-	
+
 	$title_page = $langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
-	
+
 	llxHeader('', $title_page);
-	
+
 	/*
 	 * List
 	 */
-	
+
 	$nbtotalofrecords = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$nbtotalofrecords = $object->fetchAll($sortorder, $sortfield, 0, 0, $filter);
@@ -318,38 +333,38 @@ else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-	
+
 	$result = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	if ($action == 'delmouv') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
 		print $formconfirm;
 	}
 	if ($action == 'delbookkeepingyear') {
-		
+
 		$form_question = array ();
 		$delyear = GETPOST('delyear');
-		
+
 		if (empty($delyear)) {
 			$delyear = dol_print_date(dol_now(), '%Y');
 		}
 		$year_array = $formventilation->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
-		
+
 		$form_question['delyear'] = array (
 				'name' => 'delyear',
 				'type' => 'select',
 				'label' => $langs->trans('DelYear'),
 				'values' => $year_array,
-				'default' => $delyear 
+				'default' => $delyear
 		);
-		
+
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1);
 		print $formconfirm;
 	}
-	
+
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
 
 	print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
@@ -357,9 +372,9 @@ else {
 	print '<div class="inline-block divButAction"><input type="submit"  name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 	print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 	print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';
-	
+
 	print '</div>';
-	
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
@@ -373,7 +388,7 @@ else {
 	print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print "</tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="GET">';
 	print '<td><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
@@ -399,7 +414,7 @@ else {
 	print $langs->trans('To');
 	print $formventilation->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 	print '</td>';
-	
+
 	print '<td class="liste_titre">';
 	print '<input type="text" size=6 class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/>';
 	print '</td>';
@@ -411,22 +426,22 @@ else {
 	print '&nbsp;';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 	print '</td>';
-	
+
 	print '</tr>';
-	
+
 	$var = True;
-	
+
 	$total_debit = 0;
 	$total_credit = 0;
-	
+
 	foreach ( $object->lines as $line ) {
 		$var = ! $var;
-		
+
 		$total_debit += $line->debit;
 		$total_credit += $line->credit;
-		
+
 		print "<tr $bc[$var]>";
-		
+
 		print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
 		print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
 		print '<td>' . $line->doc_ref . '</td>';
@@ -442,7 +457,7 @@ else {
 		print '</td>';
 		print "</tr>\n";
 	}
-	
+
 	print '<tr class="liste_total">';
 	print '<td colspan="6"></td>';
 	print '<td  align="right">';
@@ -453,10 +468,10 @@ else {
 	print '</td>';
 	print '<td colspan="2"></td>';
 	print '</tr>';
-	
+
 	print "</table>";
 	print '</form>';
-	
+
 	llxFooter();
 }
 
