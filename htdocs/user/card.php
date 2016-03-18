@@ -470,7 +470,7 @@ if (empty($reshook)) {
 						{
 							$error++;
 							$langs->load("errors");
-							setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+							setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
 						}
 					} else {
 						$db->rollback();

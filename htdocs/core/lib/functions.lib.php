@@ -4559,7 +4559,7 @@ function setEventMessage($mesgs, $style='mesgs')
  */
 function setEventMessages($mesg, $mesgs, $style='mesgs')
 {
-	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
+	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
 	if (empty($mesgs)) setEventMessage($mesg, $style);
 	else
 	{
