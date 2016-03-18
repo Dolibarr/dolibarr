@@ -234,11 +234,11 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add');
+    print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add');
+    print $form->select_date($datev,"datev",'','','','add',1,1);
     print '</td></tr>';
 
 	// Label
