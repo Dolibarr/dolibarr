@@ -483,9 +483,9 @@ if (empty($reshook)) {
 						$login = $_SESSION["dol_login"];
 						if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)    // Current user has changed its login
 						{
-						    $error++;
-						    $langs->load("errors");
-						    setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+							$error++;
+							$langs->load("errors");
+							setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
 						}
 					}
 					else {
