@@ -64,9 +64,9 @@ else
 			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
 			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
 			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
-			'/includes/jstz/jszip.min.js',
+			'/includes/jszip/jszip.min.js',
 			'/includes/pdfmake/pdfmake.min.js',
-			'/includes/vfs_fonts/vfs_fonts.js'
+			'/includes/pdfmake/vfs_fonts.js'
 	);
 
 
