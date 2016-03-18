@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Použitá metóda pri odosielaní e-mailov
 MAIN_MAIL_SMTPS_ID=SMTP ID ak sa vyžaduje overenie
 MAIN_MAIL_SMTPS_PW=Heslo SMTP Ak sa vyžaduje overenie
 MAIN_MAIL_EMAIL_TLS= Použiť TLS (SSL) šifrovanie
+MAIN_MAIL_EMAIL_STARTTLS= Použiť TLS (STARTTLS) šifrovanie
 MAIN_DISABLE_ALL_SMS=Zakázať všetky SMS sendings (len na skúšobné účely alebo ukážky)
 MAIN_SMS_SENDMODE=Použitá metóda pri odosielaní SMS
 MAIN_MAIL_SMS_FROM=Predvolené odosielateľa telefónne číslo pre posielanie SMS

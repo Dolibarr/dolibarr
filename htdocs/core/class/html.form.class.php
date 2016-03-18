@@ -5136,8 +5136,11 @@ class Form
         		else if ($objecttype == 'order_supplier')   {
         			$tplpath = 'fourn/commande';
         		}
-        		
-        		global $linkedObjectBlock;
+        		else if ($objecttype == 'expensereport')   {
+        			$tplpath = 'expensereport';
+        		}
+
+                global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
         		// Output template part (modules that overwrite templates must declare this into descriptor)

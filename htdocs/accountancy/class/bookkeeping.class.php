@@ -170,7 +170,7 @@ class BookKeeping extends CommonObject
 		$this->piece_num = 0;
 		
 		// first check if line not yet in bookkeeping
-		$sql = "SELECT count(*)";
+		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE doc_type = '" . $this->doc_type . "'";
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;
@@ -180,8 +180,8 @@ class BookKeeping extends CommonObject
 		$resql = $this->db->query($sql);
 		
 		if ($resql) {
-			$row = $this->db->fetch_array($resql);
-			if ($row[0] == 0) {
+			$row = $this->db->fetch_object($resql);
+			if ($row->nb == 0) {
 				
 				// Determine piece_num
 				$sqlnum = "SELECT piece_num";

@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Phương pháp sử dụng để gửi email
 MAIN_MAIL_SMTPS_ID=SMTP ID nếu có yêu cầu xác thực
 MAIN_MAIL_SMTPS_PW=Mật khẩu SMTP nếu có yêu cầu xác thực
 MAIN_MAIL_EMAIL_TLS= Sử dụng TLS (SSL) mã hóa
+MAIN_MAIL_EMAIL_STARTTLS= Sử dụng TLS (STARTTLS) mã hóa
 MAIN_DISABLE_ALL_SMS=Vô hiệu hoá tất cả sendings SMS (cho mục đích thử nghiệm hoặc trình diễn)
 MAIN_SMS_SENDMODE=Phương pháp sử dụng để gửi SMS
 MAIN_MAIL_SMS_FROM=Số điện thoại mặc định cho việc gửi SMS gửi

@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Método de envío de e-mails
 MAIN_MAIL_SMTPS_ID=ID SMTP para autenticação SMTP
 MAIN_MAIL_SMTPS_PW=Password SMTP para autenticação SMTP
 MAIN_MAIL_EMAIL_TLS= Utilizar TLS (SSL) criptografia
+MAIN_MAIL_EMAIL_STARTTLS= Utilizar TLS (STARTTLS) criptografia
 MAIN_DISABLE_ALL_SMS=Desative todos os envios de SMS (para fins de teste ou demonstrações)
 MAIN_SMS_SENDMODE=Método a ser usado para enviar SMS
 MAIN_MAIL_SMS_FROM=Número de telefone padrão do remetente para envio de SMS

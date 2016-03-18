@@ -30,6 +30,7 @@
     jQuery(document).ready(function() {
     	function init_typeoffields(type)
     	{
+        	console.log("select new type "+type);
     		var size = jQuery("#size");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
@@ -92,23 +93,21 @@
 <tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php echo GETPOST('pos'); ?>"></td></tr>
 <!-- Default Value (for select list / radio/ checkbox) -->
 <tr id="value_choice">
-
 <td>
 	<?php echo $langs->trans("Value"); ?>
 </td>
 <td>
-<table class="nobordernopadding">
-<tr><td>
-	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
-</td><td>
-<span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
-<span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
-<span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
-<span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
-</td></tr>
-</table>
+    <table class="nobordernopadding">
+    <tr><td>
+    	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
+    </td><td>
+    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
+    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
+    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
+    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
+    </td></tr>
+    </table>
 </td>
-
 </tr>
 <!-- Default Value -->
 <tr><td><?php echo $langs->trans("DefaultValue"); ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo (GETPOST('"default_value"')?GETPOST('"default_value"'):''); ?>"></td></tr>
