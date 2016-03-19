@@ -189,7 +189,7 @@ if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
 	$listofval=array();
 	if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
 	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
-	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
+	print Form::selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
 	print "</td></tr>\n";
 }
 

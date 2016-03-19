@@ -51,16 +51,16 @@ print '<br><br>'."\n";
 print "Test 4a: a select<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3 ith a very long text. aze eazeae e ae aeae a e a ea ea ea e a e aea e ae aeaeaeaze.');
 $selected=3;
-print $form->selectarray('testselecta', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
+print Form::selectarray('testselecta', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
 print '<br><br>';
 print "Test 4b: a select<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
 $selected=3;
-print $form->selectarray('testselectb', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
+print Form::selectarray('testselectb', $array, $selected, 1, 0, 0, 'style="min-width: 250px;"', 0, 0, 0, '', '', 1);
 print '<br><br>'."\n";
 print "Test 4c: Select array with no js forced<br>\n";
 $array=array(1=>'Value 1',2=>'Value 2',3=>'Value 3');
-print $form->selectarray('selectarray',$array);
+print Form::selectarray('selectarray',$array);
 
 print '<br><br>'."\n";
 

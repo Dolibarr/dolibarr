@@ -224,7 +224,7 @@ if ($action == 'create')
     print '<tr>';
     print '<td>'.fieldLabel('Status','status',1).'</td>';
 	print '<td>';
-	print $form->selectarray('status',$status2label,GETPOST('status'));
+	print Form::selectarray('status',$status2label,GETPOST('status'));
     print '</td></tr>';
 
     print '</table>';
@@ -296,7 +296,7 @@ else if ($id)
 
 			// Status
 			print '<tr><td>'.fieldLabel('Status','status',1).'</td><td>';
-			print $form->selectarray('status',$status2label,$object->status);
+			print Form::selectarray('status',$status2label,$object->status);
 			print '</td></tr>';
 
             print '</table>';

@@ -812,7 +812,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 			$arraytypeleaves[$val['rowid']]=$labeltoshow;
         }
-        print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+        print Form::selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '</tr>';
@@ -829,7 +829,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
             $form->select_date($tmpdate,'date_debut_');
         }
         print ' &nbsp; &nbsp; ';
-        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
+        print Form::selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
         print '</td>';
         print '</tr>';
 
@@ -845,7 +845,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
             $form->select_date($tmpdate,'date_fin_');
         }
         print ' &nbsp; &nbsp; ';
-        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
+        print Form::selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
         print '</td>';
         print '</tr>';
 
@@ -1037,7 +1037,7 @@ else
                     print '<td>';
                     $form->select_date($cp->date_debut,'date_debut_');
 			        print ' &nbsp; &nbsp; ';
-        			print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
+        			print Form::selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
                     print '</td>';
                     print '</tr>';
                 }
@@ -1059,7 +1059,7 @@ else
                     print '<td>';
                     $form->select_date($cp->date_fin,'date_fin_');
 			        print ' &nbsp; &nbsp; ';
-        			print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+        			print Form::selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
                     print '</td>';
                     print '</tr>';
                 }

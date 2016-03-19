@@ -294,7 +294,7 @@ foreach(array_keys($_Avery_Labels) as $codecards)
 	$arrayoflabels[$codecards]=$labeltoshow;
 	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
-print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
+print Form::selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
 print '</div></div>';
 
 // Number of stickers to print

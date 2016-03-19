@@ -178,7 +178,7 @@ if (! empty($conf->banque->enabled)) $arraychoices['bankdirect']=$langs->trans("
 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['bankviainvoice']=$langs->trans("MoreActionBankViaInvoice");
 print '<td>';
-print $form->selectarray('constvalue',$arraychoices,$conf->global->ADHERENT_BANK_USE,0);
+print Form::selectarray('constvalue',$arraychoices,$conf->global->ADHERENT_BANK_USE,0);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print '</td>';
@@ -197,7 +197,7 @@ if ($conf->facture->enabled)
 	if (! empty($conf->banque->enabled))
 	{
 		print '<td>';
-		print $form->selectarray('constvalue', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+		print Form::selectarray('constvalue', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
 		print '</td><td align="center" width="80">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 		print '</td>';
