@@ -238,6 +238,31 @@ class Account extends CommonObject
         );
     }
 
+	/**
+	 * Shows the account number in the appropiate format
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		$string = '';
+
+		foreach ($this->getFieldsToShow() as $val) {
+
+			if ($val == 'BankCode') {
+				$string .= $this->code_banque.' ';
+			} elseif ($val == 'BankAccountNumber') {
+				$string .= $this->number.' ';
+			} elseif ($val == 'DeskCode') {
+				$string .= $this->code_guichet.' ';
+			} elseif ($val == 'BankAccountNumberKey') {
+				$string .= $this->cle_rib.' ';
+			}
+		}
+
+		return trim($string);
+	}
+
 
     /**
      *  Return if a bank account need to be conciliated
@@ -1229,6 +1254,83 @@ class Account extends CommonObject
     {
 
     }
+
+	/**
+	 * Returns the fields in order that this bank account should show to the user
+	 * Will return an array with the following values:
+	 * - BankAccountNumber
+	 * - BankCode
+	 * - BankAccountNumberKey
+	 * - DeskCode
+	 *
+	 * Some countries show less or more bank account properties to the user
+	 *
+	 * @return array
+	 * @see useDetailedBBAN
+	 */
+	public function getFieldsToShow()
+	{
+		//Get the required properties depending on the country
+		$detailedBBAN = $this->useDetailedBBAN();
+
+		if ($detailedBBAN == 0) {
+			return array(
+				'BankAccountNumber'
+			);
+		} elseif ($detailedBBAN == 2) {
+			return array(
+				'BankCode',
+				'BankAccountNumber'
+			);
+		}
+
+		//Get the order the properties are shown
+		return self::getAccountNumberOrder();
+	}
+
+	/**
+	 * Returns the components of the bank account in order.
+	 * Will return an array with the following values:
+	 * - BankAccountNumber
+	 * - BankCode
+	 * - BankAccountNumberKey
+	 * - DeskCode
+	 *
+	 * @return array
+	 */
+	public static function getAccountNumberOrder()
+	{
+		global $conf;
+
+		$fieldlists = array(
+			'BankCode',
+			'DeskCode',
+			'BankAccountNumber',
+			'BankAccountNumberKey'
+		);
+
+		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
+			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
+				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
+					$fieldlists = array(
+						'BankCode',
+						'DeskCode',
+						'BankAccountNumberKey',
+						'BankAccountNumber'
+					);
+				}
+			} else {
+				//Replace the old AccountNumber key with the new BankAccountNumber key
+				$fieldlists = explode(
+					' ',
+					preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
+						$conf->global->BANK_SHOW_ORDER_OPTION)
+				);
+			}
+		}
+
+		return $fieldlists;
+	}
 
 
     /**
