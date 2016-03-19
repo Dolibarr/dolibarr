@@ -119,7 +119,7 @@ $langs->load("cashdesk");
 				<td></td>
     			<!-- Choix de la remise -->
     			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
-<?php print genkeypad("txtRemise", "frmQte");?>
+					<?php print genkeypad("txtRemise", "frmQte");?>
     			</td>
     			<!-- Affichage du total HT -->
     			<td><input class="texte1_off" type="text" name="txtTotal" value="" disabled /></td><td></td>
@@ -128,16 +128,17 @@ $langs->load("cashdesk");
                 <?php //var_dump($tab_tva); ?>
                 <select name="selTva" onchange="javascript: modif();" >
                     <?php
-                        $tva_tx = $obj_facturation->tva();
-                        $tab_tva_size=count($tab_tva);
-                        for($i=0;$i < $tab_tva_size;$i++) {
+                        $tva_tx = $obj_facturation->tva();  // Try to get a previously entered VAT rowid. First time, this will return empty.
 
-                            if ( $tva_tx == $tab_tva[$i]['taux'] )
+                        $tab_tva_size=count($tab_tva);      // $tab_tva contains list of possible vat array('rowid'=> , 'taux'=> ) 
+                        for ($i=0;$i < $tab_tva_size;$i++) 
+                        {
+                            if ($tva_tx == $tab_tva[$i]['rowid'])
                                 $selected = 'selected';
                             else
-                            $selected = '';
+                                $selected = '';
 
-                            echo ('<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ");
+                            echo '<option '.$selected.' value="'.$tab_tva[$i]['rowid'].'">'.$tab_tva[$i]['taux'].'</option>'."\n               ";
                         }
                     ?>
                 </select>
