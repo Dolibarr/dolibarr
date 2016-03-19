@@ -121,7 +121,7 @@ print '<table class="border" width="100%">';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
-print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
@@ -349,7 +349,7 @@ $langs->load("proposals");
 $langs->load("margins");
 
 //print load_fiche_titre($langs->trans("Profit"),'','title_accountancy');
-print '<div class="center">'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
+print '<br><div>'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
