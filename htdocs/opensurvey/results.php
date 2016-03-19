@@ -527,7 +527,7 @@ if (GETPOST('ajoutsujet'))
 		print $langs->trans("AddNewColumn") .':<br><br>';
 		print $langs->trans("Title").' <input type="text" name="nouvellecolonne" size="40"><br>';
 		$tmparray=array('checkbox'=>$langs->trans("CheckBox"),'yesno'=>$langs->trans("YesNoList"),'foragainst'=>$langs->trans("PourContreList"));
-		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
+		print $langs->trans("Type").' '.Form::selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
@@ -850,12 +850,12 @@ while ($compteur < $num)
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 				{
 					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
-					print $form->selectarray("choix".$i, $arraychoice, $car);
+					print Form::selectarray("choix".$i, $arraychoice, $car);
 				}
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 				{
 					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
-					print $form->selectarray("choix".$i, $arraychoice, $car);
+					print Form::selectarray("choix".$i, $arraychoice, $car);
 				}
 				print '</td>'."\n";
 			}
@@ -948,12 +948,12 @@ if (empty($testligneamodifier))
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 		{
 			$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
-			print $form->selectarray("choix".$i, $arraychoice);
+			print Form::selectarray("choix".$i, $arraychoice);
 		}
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 		{
 			$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
-			print $form->selectarray("choix".$i, $arraychoice);
+			print Form::selectarray("choix".$i, $arraychoice);
 		}
 		print '</td>'."\n";
 	}

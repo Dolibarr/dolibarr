@@ -299,10 +299,10 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
+    $moreforfilter.= $langs->trans('Status') . ': '.Form::selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Nature') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Standard"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
+    $moreforfilter.= $langs->trans('Nature') . ': '.Form::selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Standard"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.=' ';
     $moreforfilter.='<div class="divsearchfield">';
