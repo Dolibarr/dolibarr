@@ -749,8 +749,8 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 	else if (! $usedetailedbban) $cury+=1;
 
 	// Use correct name of bank id according to country
-	$ibankey="IBANNumber";
-	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+	$ibankey = FormBank::getIBANLabel($account);
+	
 	if (! empty($account->iban))
 	{
 		//Remove whitespaces to ensure we are dealing with the format we expect
