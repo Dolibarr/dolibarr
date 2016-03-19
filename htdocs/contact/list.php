@@ -126,7 +126,7 @@ $fieldstosearchall = array(
 // Definition of fields for list
 $arrayfields=array(
     'p.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-    'p.firstname'=>array('label'=>$langs->trans("Firsname"), 'checked'=>1),
+    'p.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
     'p.poste'=>array('label'=>$langs->trans("Post"), 'checked'=>1),
     'p.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
     'p.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),

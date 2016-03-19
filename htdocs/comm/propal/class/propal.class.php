@@ -2877,9 +2877,11 @@ class Propal extends CommonObject
                 $this->lines[$i]->id				= $obj->rowid; // for backward compatibility
                 $this->lines[$i]->rowid				= $obj->rowid;
                 $this->lines[$i]->label 			= $obj->custom_label;
+                $this->lines[$i]->desc       		= $obj->description;
                 $this->lines[$i]->description 		= $obj->description;
                 $this->lines[$i]->fk_product		= $obj->fk_product;
                 $this->lines[$i]->ref				= $obj->ref;
+                $this->lines[$i]->product_ref		= $obj->ref;
                 $this->lines[$i]->entity            = $obj->entity;             // Product entity
                 $this->lines[$i]->product_label		= $obj->product_label;
                 $this->lines[$i]->product_desc		= $obj->product_desc;
