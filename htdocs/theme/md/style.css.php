@@ -3867,12 +3867,55 @@ border-top-right-radius: 6px;
 
 
 
-/* For demo pages */
+/* ============================================================================== */
+/*  POS                                                                           */
+/* ============================================================================== */
+
+.menu_choix1 a {
+	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1) ?>') top left no-repeat;
+	background-position-y: 15px;
+}
+
+.menu_choix2 a {
+	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>') top left no-repeat;
+	background-position-y: 15px;
+}
+.menu_choix1,.menu_choix2 {
+	font-size: 1.4em;
+	text-align: left;
+	border: 1px solid #666;
+	margin-right: 20px;
+}
+.menu_choix1 a, .menu_choix2 a {
+	display: block;
+	color: #fff;
+	text-decoration: none;
+	padding-top: 18px;
+	padding-left: 54px;
+	font-size: 14px;
+	height: 40px;
+}
+.menu_choix1 a:hover,.menu_choix2 a:hover {
+	color: #6d3f6d;
+}
+
+
+
+
+/* ============================================================================== */
+/*  Demo                                                                          */
+/* ============================================================================== */
+
 img.demothumb {
     box-shadow: 2px 2px 8px #888;
 	margin-bottom: 4px;
 }
 
+
+
+/* ============================================================================== */
+/*  Public                                                                        */
+/* ============================================================================== */
 
 /* The theme for public pages */
 .public_body {
