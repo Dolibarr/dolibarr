@@ -454,7 +454,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Ref
     $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
+    print '<tr><td width="25%"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
     print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
     print '</td></tr>';
 
@@ -647,7 +647,7 @@ else
 
         // Ref
         $suggestedref=$object->ref;
-        print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
+        print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Ref").'</td>';
         print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
         print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
         print '</td></tr>';
@@ -735,7 +735,7 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+        print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
