@@ -234,7 +234,11 @@ $help_url='EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividende
 llxHeader("",$langs->trans("SocialContribution"),$help_url);
 
 
-// Mode creation
+/* *************************************************************************** */
+/*                                                                             */
+/* Create mode                                                                 */
+/*                                                                             */
+/* *************************************************************************** */
 if ($action == 'create')
 {
 	print load_fiche_titre($langs->trans("NewSocialContribution"));
@@ -248,47 +252,36 @@ if ($action == 'create')
     dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-    print "<tr>";
-    // Label
-    print '<td class="fieldrequired">';
-    print $langs->trans("Label");
-    print '</td>';
-    print '<td align="left"><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
-    print '</tr>';
-    print '<tr>';
+    
+	// Label
+	print '<tr><td width="20%">';
+    print fieldLabel('Label','label',1).'</td><td>';
+	print '<input type="text" size="34" name="label" id="label" class="flat" value="'.GETPOST('label').'">';
+	print '</td></tr>';
+
     // Type
-    print '<td class="fieldrequired">';
-    print $langs->trans("Type");
-    print '</td>';
-    print '<td>';
+    print '<tr><td>';
+    print fieldLabel('Type','actioncode',1).'</td><td>';
     $formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode")?GETPOST("actioncode"):'','actioncode',1);
-    print '</td>';
-    print '</tr>';
+    print '</td></tr>';
+
 	// Date end period
-    print '<tr>';
-    print '<td class="fieldrequired">';
-    print $langs->trans("PeriodEndDate");
-    print '</td>';
-   	print '<td>';
+    print '<tr><td>';
+    print fieldLabel('PeriodEndDate','period',1).'</td><td>';
     print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
-	print '</td>';
-    print '</tr>';
+	print '</td></tr>';
+
     // Amount
-    print '<tr>';
-    print '<td class="fieldrequired">';
-    print $langs->trans("Amount");
-    print '</td>';
-	print '<td><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
-    print '</tr>';
+    print '<tr><td>';
+    print fieldLabel('Amount','amount',1).'</td><td>';
+	print '<input type="text" size="6" name="amount" id="amount" class="flat" value="'.GETPOST('amount').'">';
+    print '</td></tr>';
+
     // Date due
-    print '<tr>';
-    print '<td class="fieldrequired">';
-    print $langs->trans("DateDue");
-    print '</td>';
-    print '<td>';
+    print '<tr><td>';
+    print fieldLabel('DateDue','ech',1).'</td><td>';
     print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
-	print '</td>';
-    print "</tr>\n";
+	print '</td><tr>';
 
     print '</table>';
 
@@ -303,7 +296,7 @@ if ($action == 'create')
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode fiche                                                                  */
+/* View mode                                                                   */
 /*                                                                             */
 /* *************************************************************************** */
 if ($id > 0)
