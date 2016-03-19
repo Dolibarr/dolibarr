@@ -125,7 +125,7 @@ if ( $retour >= 0 )
         $_SESSION['CASHDESK_ID_BANKACCOUNT_CB'] = ($bankid_cb > 0 ? $bankid_cb : '');
         //var_dump($_SESSION);exit;
 
-		header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&id=NOUV');
+		header('Location: '.DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&id=NOUV');
 		exit;
 	}
 	else
