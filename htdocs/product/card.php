@@ -1040,7 +1040,7 @@ else
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print Form::multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
 		}
 
@@ -1343,7 +1343,7 @@ else
 				foreach($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+				print Form::multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
 

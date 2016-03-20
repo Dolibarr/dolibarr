@@ -662,7 +662,7 @@ else
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, 'parent', null, null, 1 );
-				print $form->multiselectarray( 'contcats', $cate_arbo, GETPOST( 'contcats', 'array' ), null, null, null,
+				print Form::multiselectarray( 'contcats', $cate_arbo, GETPOST( 'contcats', 'array' ), null, null, null,
 					null, '90%' );
 				print "</td></tr>";
 			}
@@ -922,7 +922,7 @@ else
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
-				print $form->multiselectarray( 'contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+				print Form::multiselectarray( 'contcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
 				print "</td></tr>";
 			}
 
