@@ -765,8 +765,11 @@ if (empty($reshook))
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+						{
+						  if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						  if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						}
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
@@ -1394,7 +1397,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Delivery delay
-	print '<tr><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
+	print '<tr class="fielddeliverydelay"><td>' . $langs->trans('AvailabilityPeriod') . '</td><td colspan="2">';
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
 	print '</td></tr>';
 
@@ -1869,7 +1872,7 @@ if ($action == 'create')
 	print '</tr>';
 
 	// Delivery delay
-	print '<tr><td>';
+	print '<tr class="fielddeliverydelay"><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('AvailabilityPeriod');
 	if (! empty($conf->commande->enabled))

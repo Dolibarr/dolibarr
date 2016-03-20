@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 
 // Langs
+$langs->load("commercial");
 $langs->load("compta");
 $langs->load("bills");
 $langs->load("other");
@@ -141,14 +142,15 @@ if ($result) {
 
 		// Situation invoices handling
 		$line = new FactureLigne($db);
-		$line->fetch($obj->rowid);
-		$prev_progress = $line->get_prev_progress();
+		$line->fetch($obj->fdid); // id of line
+		$prev_progress = 0;
 		if ($obj->type == Facture::TYPE_SITUATION) {
-			// Avoid divide by 0
+		    // Avoid divide by 0
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
-				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+		        $prev_progress = $line->get_prev_progress($obj->rowid);   // id of invoice
+			    $situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
 			}
 		} else {
 			$situation_ratio = 1;

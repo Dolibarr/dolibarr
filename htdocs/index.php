@@ -541,7 +541,7 @@ foreach($valid_dashboardlines as $board)
     
     if ($showweather)
     {
-        $boxwork.='<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
+        $boxwork.='<td class="nohover hideonsmartphone noborderbottom" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
         $text='';
         if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
         $options='height="64px"';

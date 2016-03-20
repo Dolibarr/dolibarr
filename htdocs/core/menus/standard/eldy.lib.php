@@ -1220,7 +1220,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/holiday/card.php?&action=request", $langs->trans("New"), 1,$user->rights->holiday->write);
 				$newmenu->add("/holiday/list.php?&leftmenu=hrm", $langs->trans("List"), 1,$user->rights->holiday->read);
 				$newmenu->add("/holiday/list.php?select_statut=2&leftmenu=hrm", $langs->trans("ListToApprove"), 2, $user->rights->holiday->read);
-				$newmenu->add("/holiday/define_holiday.php?&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->define_holiday);
+				$newmenu->add("/holiday/define_holiday.php?&action=request", $langs->trans("MenuConfCP"), 1, $user->rights->holiday->read);
 				$newmenu->add("/holiday/view_log.php?&action=request", $langs->trans("MenuLogCP"), 1, $user->rights->holiday->define_holiday);
 			}
 

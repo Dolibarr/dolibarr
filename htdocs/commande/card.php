@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador      	<csalvador@gpcsolutions.fr>
@@ -681,7 +681,7 @@ if (empty($reshook))
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
-					
+
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -694,10 +694,11 @@ if (empty($reshook))
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_tva_tx[$object->client->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->client->price_level];
-						if (isset($prod->multiprices_recuperableonly[$object->client->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->client->price_level];
-						$tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-						$tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+						{
+						  if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						  if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						}
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
@@ -1321,6 +1322,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 	$projectid = 0;
 	$remise_absolue = 0;
+
 	$currency_code = $conf->currency;
 	
 	if (! empty($origin) && ! empty($originid)) {
@@ -1333,7 +1335,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		if ($element == 'project') {
 			$projectid = $originid;
-			
+
 			if (!$cond_reglement_id) {
 				$cond_reglement_id = $soc->cond_reglement_id;
 			}
@@ -1465,7 +1467,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
 			print '<script type="text/javascript">
-			$(document).ready(function() { 
+			$(document).ready(function() {
 				$("#socid").change(function() {
 					var socid = $(this).val();
 					// reload page
@@ -1669,7 +1671,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			default:
 				$newclassname = $classname;
 		}
-		
+
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalHT') . '</td><td colspan="2">' . price($objectsrc->total_ht) . '</td></tr>';
 		print '<tr><td>' . $langs->trans('TotalVAT') . '</td><td colspan="2">' . price($objectsrc->total_tva) . "</td></tr>";
@@ -2469,7 +2471,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				{
 					print '<a class="butAction" href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans("AddAction") . '</a>';
 				}
-				
+
 				// Create intervention
 				if ($conf->ficheinter->enabled) {
 					$langs->load("interventions");
@@ -2486,12 +2488,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 				// Create contract
 				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED)) {
 				    $langs->load("contracts");
-				
+
 				    if ($user->rights->contrat->creer) {
 				        print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/contrat/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '">' . $langs->trans('AddContract') . '</a></div>';
 				    }
 				}
-				
+
 				// Ship
 				$numshipping = 0;
 				if (! empty($conf->expedition->enabled)) {
@@ -2558,6 +2560,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</div>';
 		}
 
+		// Select mail models is same action as presend
+		if (GETPOST('modelselected')) {
+			$action = 'presend';
+		}
+
 		if ($action != 'presend')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -2605,6 +2612,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			$ref = dol_sanitizeFileName($object->ref);
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+			$fileparams = dol_most_recent_file($conf->commande->dir_output . '/' . $ref, preg_quote($ref, '/').'[^\-]+');
 			$file = $fileparams['fullname'];
 
 			// Define output language
@@ -2655,7 +2663,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			{
 				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 				$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
-			}			
+			}
 			$formmail->withfrom = 1;
 			$liste = array();
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)

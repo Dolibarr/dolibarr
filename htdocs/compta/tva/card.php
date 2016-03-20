@@ -71,7 +71,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $tva->datev=$datev;
     $tva->datep=$datep;
 	
-	$amount = GETPOST("amount");
+	$amount = price2num(GETPOST("amount"));
 	if ($refund == 1) {
 		$amount= -$amount;
 	}
@@ -234,11 +234,11 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add');
+    print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add');
+    print $form->select_date($datev,"datev",'','','','add',1,1);
     print '</td></tr>';
 
 	// Label

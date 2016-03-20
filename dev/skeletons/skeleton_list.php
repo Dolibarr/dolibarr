@@ -58,6 +58,7 @@ $myparam	= GETPOST('myparam','alpha');
 
 $search_field1=GETPOST("search_field1");
 $search_field2=GETPOST("search_field2");
+$search_myfield=GETPOST('search_myfield');
 $optioncss = GETPOST('optioncss','alpha');
 
 // Load variable for pagination
@@ -273,6 +274,11 @@ if ($resql)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall);
     }
+    
+    $moreforfilter = '';
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escpae_htmltag($search_myfield).'">';
+    $moreforfilter.= '</div>';
     
 	if (! empty($moreforfilter))
 	{

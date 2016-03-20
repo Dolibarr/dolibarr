@@ -254,11 +254,11 @@ if ($result) {
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_invoice" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre">%<input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="10" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
+	print '<td class="liste_titre" align="center">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
 	print '<td class="liste_titre" align="center">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';

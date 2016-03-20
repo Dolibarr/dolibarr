@@ -42,7 +42,7 @@ switch ($action)
 
 	default:
 
-		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=validation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=validation';
 		break;
 
 
@@ -85,13 +85,13 @@ switch ($action)
 			$obj_facturation->paiementLe($txtDatePaiement);
 		}
 
-		$redirection = 'affIndex.php?menu=validation';
+		$redirection = 'affIndex.php?menutpl=validation';
 		break;
 
 
 	case 'retour':
 
-		$redirection = 'affIndex.php?menu=facturation';
+		$redirection = 'affIndex.php?menutpl=facturation';
 		break;
 
 
@@ -336,7 +336,7 @@ switch ($action)
 		if (! $error)
 		{
 			$db->commit();
-			$redirection = 'affIndex.php?menu=validation_ok&facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
+			$redirection = 'affIndex.php?menutpl=validation_ok&facid='.$id;	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}
 		else
 		{

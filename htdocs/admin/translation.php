@@ -118,7 +118,7 @@ print "<br>\n";
 print $langs->trans("CurrentUserLanguage").': <strong>'.$langs->defaultlang.'</strong><br>';
 print '<br>';
 
-print img_warning().' '.$langs->trans("SomeTranslationAreUncomplete").'<br>';
+print img_info().' '.$langs->trans("SomeTranslationAreUncomplete").'<br>';
 $urlwikitranslatordoc='http://wiki.dolibarr.org/index.php/Translator_documentation';
 print $langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a><br>';
 
@@ -134,7 +134,7 @@ print '<input type="hidden" id="action" name="action" value="">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Language").'</td>';
+print '<td>'.$langs->trans("Language").' (en_US, es_MX, ...)</td>';
 print '<td>'.$langs->trans("Key").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';

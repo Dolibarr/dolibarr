@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,6 +170,7 @@ if ($conf->societe->enabled)
 	    elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
 	    elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
 	    elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
+	    elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
 
 	    print '<tr '.$bc[$var].'>';
 	    print '<td>'.$elementLabel.'</td>';
@@ -213,6 +215,7 @@ foreach($listofnotifiedevents as $notifiedevent)
     elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
     elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
     elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
+	elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
 
     print '<tr '.$bc[$var].'>';
     print '<td>'.$elementLabel.'</td>';

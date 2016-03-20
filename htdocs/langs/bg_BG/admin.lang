@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Метод за изпращане на имейли
 MAIN_MAIL_SMTPS_ID=SMTP ID, ако разпознаване, изискван
 MAIN_MAIL_SMTPS_PW=SMTP парола, ако разпознаване, изискван
 MAIN_MAIL_EMAIL_TLS= Използване на TLS (SSL) криптиране
+MAIN_MAIL_EMAIL_STARTTLS= Използване на TLS (STARTTLS) криптиране
 MAIN_DISABLE_ALL_SMS=Изключване на всички SMS sendings (за тестови цели или демонстрации)
 MAIN_SMS_SENDMODE=Метод за изпращане на SMS
 MAIN_MAIL_SMS_FROM=Номер по подразбиране на телефона за изпращане на SMS

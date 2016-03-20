@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=E-posta göndermek için kullanılan yöntem
 MAIN_MAIL_SMTPS_ID=Doğrulama gerektirdiğinde SMTP Kimliği
 MAIN_MAIL_SMTPS_PW=Doğrulama gerektirdiğinde SMTP Parolası
 MAIN_MAIL_EMAIL_TLS= TLS (SSL) şifreleme kullanın
+MAIN_MAIL_EMAIL_STARTTLS= TLS (STARTTLS) şifreleme kullanın
 MAIN_DISABLE_ALL_SMS=Bütün SMS gönderimlerini devre dışı bırak (test ya da demo amaçlı)
 MAIN_SMS_SENDMODE=SMS göndermek için kullanılacak yöntem
 MAIN_MAIL_SMS_FROM=SMS gönderimi için varsayılan gönderici telefon numarası

@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Metoda de a folosi pentru a trimite email-uri
 MAIN_MAIL_SMTPS_ID=SMTP ID-ul de autentificare necesare în cazul în
 MAIN_MAIL_SMTPS_PW=SMTP parola, dacă se cere autentificare
 MAIN_MAIL_EMAIL_TLS= Utilizaţi  criptare TLS (SSL)
+MAIN_MAIL_EMAIL_STARTTLS= Utilizaţi  criptare TLS (STARTTLS)
 MAIN_DISABLE_ALL_SMS=Dezactivaţi toate trimiteri SMS (în scopuri de testare sau demo-uri)
 MAIN_SMS_SENDMODE=Metoda de  utilizare  pentru  trimiterea SMS-urilor
 MAIN_MAIL_SMS_FROM=Numărul de telefon expeditor implicit   pentru trimiterea de SMS

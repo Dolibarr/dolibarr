@@ -122,6 +122,8 @@ if (! empty($conf->hrm->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLO
 */
 
 // Execute hook addSearchEntry
+$hookmanager->initHooks(array('searchform','leftblock'));
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('addSearchEntry',$parameters);
 if (empty($reshook))
@@ -129,12 +131,6 @@ if (empty($reshook))
 	$arrayresult=array_merge($arrayresult, $hookmanager->resArray);
 }
 else $arrayresult=$hookmanager->resArray;
-
-
-
-
-
-
 
 
 

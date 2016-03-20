@@ -166,7 +166,7 @@ class pdf_crabe extends ModelePDFFactures
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
-
+		
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
@@ -539,7 +539,7 @@ class pdf_crabe extends ModelePDFFactures
 					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
 
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress();
+					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					if ($prev_progress > 0) // Compute progress from previous situation
 					{
 						if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne = $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
@@ -548,6 +548,7 @@ class pdf_crabe extends ModelePDFFactures
 						if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 						else $tvaligne=$object->lines[$i]->total_tva;
 					}
+					
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 					$localtax1_rate=$object->lines[$i]->localtax1_tx;
@@ -1106,11 +1107,12 @@ class pdf_crabe extends ModelePDFFactures
 							}
 						}
 					}
-				//}
+
+                //}
 				// VAT
 				foreach($this->tva as $tvakey => $tvaval)
 				{
-					if ($tvakey > 0)    // On affiche pas taux 0
+					if ($tvakey != 0)    // On affiche pas taux 0
 					{
 						$this->atleastoneratenotnull++;
 

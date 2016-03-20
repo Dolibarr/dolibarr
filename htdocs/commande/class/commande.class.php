@@ -1719,7 +1719,7 @@ class Commande extends CommonOrder
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
         $sql.= ' WHERE l.fk_commande = '.$this->id;
         if ($only_product) $sql .= ' AND p.fk_product_type = 0';
-        $sql .= ' ORDER BY l.rang';
+        $sql .= ' ORDER BY l.rang, l.rowid';
 
         dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -1740,6 +1740,7 @@ class Commande extends CommonOrder
                 $line->commande_id      = $objp->fk_commande;
                 $line->label            = $objp->custom_label;
                 $line->desc             = $objp->description;
+                $line->description      = $objp->description;		// Description line
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
                 $line->tva_tx           = $objp->tva_tx;
@@ -2548,7 +2549,14 @@ class Commande extends CommonOrder
 			
             // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
             $price = $pu;
-            $subprice = $pu;
+			if ($price_base_type == 'TTC') 
+			{
+				$subprice = $tabprice[5];
+			} 
+			else 
+			{
+				$subprice = $pu;
+			}
             $remise = 0;
             if ($remise_percent > 0)
             {
@@ -3276,12 +3284,14 @@ class Commande extends CommonOrder
     }
 
     /**
-     * 	Return an array of order lines
-     *
-     * @return	array		Lines of order
+	 * 	Create an array of order lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
      */
     function getLinesArray()
     {
+        return $this->fetch_lines();
+        /*
         $lines = array();
 
         $sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx, ';
@@ -3360,7 +3370,7 @@ class Commande extends CommonOrder
         {
             $this->error=$this->db->error();
             return -1;
-        }
+        }*/
     }
 
 	/**

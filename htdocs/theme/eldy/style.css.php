@@ -209,6 +209,8 @@ print '$colortexttitlenotab='.$colortexttitlenotab."\n";
 print '$colortexttitle='.$colortexttitle."\n";
 print '$colortext='.$colortext."\n";
 print '$colortextlink='.$colortextlink."\n";
+print '$colortextbackhmenu='.$colortextbackhmenu."\n";
+print '$colortextbackvmenu='.$colortextbackvmenu."\n";
 print 'dol_hide_topmenu='.$dol_hide_topmenu."\n";
 print 'dol_hide_leftmenu='.$dol_hide_leftmenu."\n";
 print 'dol_optimize_smallscreen='.$dol_optimize_smallscreen."\n";
@@ -432,6 +434,9 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+.quatrevingtpercent, .inputsearch {
+	width: 80%;
 }
 textarea.centpercent {
 	width: 96%;
@@ -2154,11 +2159,11 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 
 	margin: 0px 0px 5px 0px;
 
-	-moz-box-shadow: 2px 2px 4px #CCC;
+/*	-moz-box-shadow: 2px 2px 4px #CCC;
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
 
-/*	-moz-border-radius: 0.2em;
+	-moz-border-radius: 0.2em;
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
@@ -2224,7 +2229,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #766;
+  	color: #866;
   	font-size: 160%;
 }
 div.refidno  {
@@ -2489,11 +2494,10 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	box-shadow: 2px 2px 4px #CCC;
+	box-shadow: none;
 	width: calc(100% - 1px);	/* 1px more, i don't know why */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
@@ -2604,7 +2608,7 @@ div.tabBar .noborder {
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
     margin-bottom: 8px !important;*/
-    border: 1px solid #AAA;
+    border: 1px solid #CCC;
     text-align: center;
     border-radius: 4px;
 }
@@ -2635,9 +2639,9 @@ span.dashboardlineko {
 	font-weight: bold;
 }
 .boxtable {
-    -moz-box-shadow: 3px 3px 4px #DDD;
+/*    -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
+    box-shadow: 3px 3px 4px #DDD; */
     margin-bottom: 8px !important;
 }
 
@@ -2645,7 +2649,7 @@ span.dashboardlineko {
 .box {
     padding-right: 0px;
     padding-left: 0px;
-    padding-bottom: 4px;
+    padding-bottom: 12px;
 }
 
 tr.box_titre {
@@ -2695,9 +2699,13 @@ tr.box_pair {
 
 tr.box_pair td, tr.box_impair td {
 	padding: 4px;
+}
+tr.box_pair:not(:last-child) td, tr.box_impair:not(:last-child) td {
     border-bottom: 1px solid #ddd;
 }
-
+.noborderbottom {
+	border-bottom: none !important;
+}
 .formboxfilter {
 	vertical-align: middle;
 	margin-bottom: 6px;
@@ -4030,11 +4038,53 @@ border-top-right-radius: 6px;
 
 
 
+/* ============================================================================== */
+/*  POS                                                                           */
+/* ============================================================================== */
+
+.menu_choix1 a {
+	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png',1) ?>') top left no-repeat;
+}
+
+.menu_choix2 a {
+	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png',1) ?>') top left no-repeat;
+}
+.menu_choix1,.menu_choix2 {
+	font-size: 1.4em;
+	text-align: left;
+	border: 1px solid #666;
+	margin-right: 20px;
+}
+.menu_choix1 a, .menu_choix2 a {
+	display: block;
+	color: #fff;
+	text-decoration: none;
+	padding-top: 18px;
+	padding-left: 54px;
+	font-size: 14px;
+	height: 40px;
+}
+.menu_choix1 a:hover,.menu_choix2 a:hover {
+	color: #6d3f6d;
+}
+
+
+
+/* ============================================================================== */
+/*  Demo                                                                          */
+/* ============================================================================== */
+
+
 /* For demo pages */
 img.demothumb {
     box-shadow: 2px 2px 8px #888;
 }
 
+
+
+/* ============================================================================== */
+/*  Public                                                                        */
+/* ============================================================================== */
 
 /* The theme for public pages */
 .public_body {
@@ -4047,9 +4097,9 @@ img.demothumb {
 
 
 
-
-
-/* CSS style used for small screen */
+/* ============================================================================== */
+/* CSS style used for small screen                                                */
+/* ============================================================================== */
 
 .imgopensurveywizard
 {
@@ -4067,25 +4117,52 @@ img.demothumb {
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 10; ?>px)
+/* rule to reduce top menu - 1st reduction */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 8; ?>px)
 {
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+    	white-space: nowrap;
+  		overflow: hidden;
+  		text-overflow: ellipsis;
+  		color: #<?php echo $colortextbackhmenu; ?>;
+	}
 	.mainmenuaspan {
-    	display: none;
+    	/*display: none;*/
+  		font-size: 10px;
     }
+    .topmenuimage {
+    	background-size: 26px auto;
+    	margin-top: 0px;
+	}
+
     li.tmenu, li.tmenusel {
     	min-width: 32px;
     }
     div.mainmenu {
     	min-width: auto;
     }
-    .topmenuimage {
-    	background-size: 26px auto;
-    	margin-top: 8px;
-	}
 	div.tmenuleft {
 		display: none;
 	}
 }
+/* rule to reduce top menu - 2nd reduction */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 8; ?>px)
+{
+	div.tmenucenter {
+	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
+  		text-overflow: clip;
+	}
+	.mainmenuaspan {
+    	/*display: none;*/
+  		font-size: 10px;
+    }
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px;
+	}
+}
+/* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
 	/* Reduce login top right info */
@@ -4103,12 +4180,19 @@ img.demothumb {
 		top: 4px;
 		max-width: 82px;
 	}
+    li.tmenu, li.tmenusel {
+        min-width: 30px;
+    }
 
+	div.tmenucenter {
+  		text-overflow: clip;
+	}
+    .topmenuimage {
+    	background-size: 20px auto;
+    	margin-top: 2px !important;
+	}
 	div.mainmenu {
     	min-width: 20px;
-    }
-	.topmenuimage {
-    	background-size: 20px auto;
     }
 
 	#tooltip {

@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Menetelmä käyttää lähettäessään Sähköpostit
 MAIN_MAIL_SMTPS_ID=SMTP tunnus, jos vaaditaan
 MAIN_MAIL_SMTPS_PW=SMTP Salasana jos vaaditaan
 MAIN_MAIL_EMAIL_TLS= TLS (SSL) salaa
+MAIN_MAIL_EMAIL_STARTTLS= TLS (STARTTLS) salaa
 MAIN_DISABLE_ALL_SMS=Poista kaikki SMS-lähetysten (testitarkoituksiin tai demot)
 MAIN_SMS_SENDMODE=Menetelmä käyttää lähettää tekstiviestejä
 MAIN_MAIL_SMS_FROM=Default lähettäjän puhelinnumeroon tekstiviestien lähetykseen
