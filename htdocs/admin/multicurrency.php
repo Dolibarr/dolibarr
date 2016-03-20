@@ -42,16 +42,10 @@ if (! $user->admin) {
 
 // Parameters
 $action = GETPOST('action', 'alpha');
-$sync_response = GETPOST('sync_response');
 /*
  * Actions
  */
-if (!empty($sync_response))
-{
-	$sync_response = json_decode($sync_response);
-	MultiCurrency::syncRates($sync_response);
-	exit;
-}
+
 
 if (preg_match('/set_(.*)/',$action,$reg))
 {
@@ -145,8 +139,9 @@ if ($resql)
  */
 
 $page_name = "MultiCurrency";
+$morejs = array('/multicurrency/js/currencylayer.js.php');
 
-llxHeader('', $langs->trans($page_name));
+llxHeader('', $langs->trans($page_name), '', '', '', '', $morejs);
 
 // Subheader
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
@@ -227,86 +222,6 @@ print '</td></tr>';
 
 print '</table>';
 print '<br />';
-
-print '<script type="text/javascript">
-
-	function getXMLHttpRequest() 
-	{
-	    var xhr = null;
-	    if (window.XMLHttpRequest || window.ActiveXObject) 
-	    {
-	        if (window.ActiveXObject) 
-	        {
-	            try 
-	            {
-	                xhr = new ActiveXObject("Msxml2.XMLHTTP");
-	            } 
-	            catch(e) 
-	            {
-	                xhr = new ActiveXObject("Microsoft.XMLHTTP");
-	            }
-	        } 
-	        else 
-	        {
-	            xhr = new XMLHttpRequest(); 
-	        }
-	    } 
-	    else 
-	    {
-	    	if (typeof $ !== "undefined") $.jnotify("'.$langs->transnoentitiesnoconv('multicurrency_error_browser_incompatible').'", "error");
-			else alert("'.$langs->transnoentitiesnoconv('multicurremulticurrency_error_browser_incompatiblency_syncronize_error').'");
-	       
-	        return null;
-	    }
-	    
-	    return xhr;
-	}
-
-	function request(url, callback) 
-	{
-	    var xhr = getXMLHttpRequest();
-	    xhr.onreadystatechange = function() 
-	    {
-	        if (xhr.readyState == 4 && (xhr.status == 200 || xhr.status == 0)) 
-	        {
-	            callback(xhr.responseText);
-	        }
-	
-	    };
-
-	    xhr.open("GET", url, true);
-	    xhr.send(null)
-	}
-
-	function syncronize_rates()
-	{
-		document.getElementById("bt_sync").disabled = true;
-		var url_sync = "http://apilayer.net/api/live?access_key='.$conf->global->MULTICURRENCY_APP_ID.'&format=1'.(!empty($conf->global->MULTICURRENCY_APP_SOURCE) ? '&source='.$conf->global->MULTICURRENCY_APP_SOURCE : '').'";
-		request(url_sync, update_rates);
-	}
-
-	function update_rates(responseText)
-	{
-		var response = JSON.parse(responseText);
-		if (response.success)
-		{
-			var url = "multicurrency.php?sync_response="+JSON.stringify(response);
-			request(url, reloadpage);
-		}
-		else
-		{
-			if (typeof $ !== "undefined") $.jnotify("'.$langs->transnoentitiesnoconv('multicurrency_syncronize_error').': "+response.error.info, "error");
-			else alert("'.$langs->transnoentitiesnoconv('multicurrency_syncronize_error').': "+response.error.info);
-		}
-	}
-	
-	function reloadpage(responseText)
-	{
-		document.getElementById("bt_sync").disabled = false;
-		window.location.href = window.location.pathname;
-	}
-	
-</script>';
 
 $var=false;
 print '<table class="noborder" width="100%">';
