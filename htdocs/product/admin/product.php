@@ -390,7 +390,7 @@ foreach ($dirproduct as $dirroot)
 
     			print '<td align="center">';
     			$s=$modCodeProduct->getToolTip($langs,null,-1);
-    			print $form->textwithpicto('',$s,1);
+    			print Form::textwithpicto('',$s,1);
     			print '</td>';
 
     			print '</tr>';
@@ -510,7 +510,7 @@ if ($resql)
         					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
         
         					print '<td align="center" class="nowrap">';
-        					print $form->textwithpicto('',$htmltooltip,1,0);
+        					print Form::textwithpicto('',$htmltooltip,1,0);
         					print '</td>';
         
         					// Preview
@@ -611,7 +611,7 @@ print '</tr>';
 // Utilisation formulaire Ajax sur choix produit
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
+print '<td>'.Form::textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
 	print '<td class="nowrap" align="right" colspan="2">';

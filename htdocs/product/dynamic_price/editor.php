@@ -197,7 +197,7 @@ foreach ($price_globals->listGlobalVariables() as $entry) {
 }
 
 //Price expression editor
-print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
+print '<tr><td class="fieldrequired">'.Form::textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,4,80);
 $doleditor->Create();

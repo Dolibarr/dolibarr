@@ -355,7 +355,7 @@ $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
 $boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-$boxwork.='<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
+$boxwork.='<th class="liste_titre" align="right">'.Form::textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
 $boxwork.='<th class="liste_titre">&nbsp;</th>';
 //print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) $boxwork.='<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';

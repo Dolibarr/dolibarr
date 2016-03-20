@@ -920,7 +920,7 @@ if ($id)
             if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
             if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
             if ($fieldlist[$field]=='type')            {
-				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=$form->textwithtooltip($langs->trans("Type"),$langs->trans("TypePaymentDesc"),2,1,img_help(1,''));
+				if ($tabname[$id] == MAIN_DB_PREFIX."c_paiement") $valuetoshow=Form::textwithtooltip($langs->trans("Type"),$langs->trans("TypePaymentDesc"),2,1,img_help(1,''));
 				else $valuetoshow=$langs->trans("Type");
             }
             if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
@@ -963,7 +963,7 @@ if ($id)
             {
                 print '<td align="'.$align.'">';
             	if (! empty($tabhelp[$id][$value]) && preg_match('/^http(s*):/i',$tabhelp[$id][$value])) print '<a href="'.$tabhelp[$id][$value].'" target="_blank">'.$valuetoshow.' '.img_help(1,$valuetoshow).'</a>';
-            	else if (! empty($tabhelp[$id][$value])) print $form->textwithpicto($valuetoshow,$tabhelp[$id][$value]);
+            	else if (! empty($tabhelp[$id][$value])) print Form::textwithpicto($valuetoshow,$tabhelp[$id][$value]);
             	else print $valuetoshow;
                 print '</td>';
              }

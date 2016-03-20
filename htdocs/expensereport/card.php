@@ -1135,7 +1135,7 @@ if ($action == 'create')
 	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;
 	if (GETPOST('fk_user_validator') > 0) $defaultselectuser=GETPOST('fk_user_validator');
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", 0, $include_users);
-	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+	print Form::textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	print '</td>';
 	print '</tr>';
 	if (! empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION))
@@ -1264,7 +1264,7 @@ else
 					print '<td>';
 					$include_users = $object->fetch_users_approver_expensereport();
 					$s=$form->select_dolusers($object->fk_user_validator,"fk_user_validator",1,"",0,$include_users);
-					print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+					print Form::textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 					print '</td>';
 					print '</tr>';
 				}

@@ -150,7 +150,7 @@ if ($savehandler == 'files')
 
 		// ID
 		print '<td align="left" class="nowrap">';
-		if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));
+		if ("$key" == session_id()) print Form::textwithpicto($key,$langs->trans("YourSession"));
 		else print $key;
 		print '</td>';
 

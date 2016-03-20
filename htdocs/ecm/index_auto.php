@@ -503,7 +503,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		print img_picto_common('','treemenu/base.gif');
 		print '</td><td align="left">';
 		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
+		print Form::textwithpicto($txt, $htmltooltip, 1, 0);
 		print '</td>';
 		print '</tr></table>';
 		print '</td>';
@@ -549,7 +549,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		    $htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
-		    print $form->textwithpicto('', $htmltooltip, 1, 'info');
+		    print Form::textwithpicto('', $htmltooltip, 1, 'info');
 		    print '</div>';
 		    print '</li>';
 

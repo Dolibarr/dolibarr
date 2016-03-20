@@ -342,7 +342,7 @@ if ($action == 'create')
 		print '<table class="border" width="100%">';
 		
 		// Frequency
-		print "<tr><td>".$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
+		print "<tr><td>".Form::textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='5' />&nbsp;".Form::selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
 		
@@ -449,7 +449,7 @@ if ($action == 'create')
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.(! empty($objp->custom_label)?$objp->custom_label:$objp->product_label);
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text,$description,3,'','',$i);
+					print Form::textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
@@ -471,7 +471,7 @@ if ($action == 'create')
 					if (! empty($objp->custom_label)) {
 
 						$text.= ' <strong>'.$objp->custom_label.'</strong>';
-						print $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i);
+						print Form::textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i);
 
 					} else {
 
@@ -897,7 +897,7 @@ else
 				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.(! empty($object->lines[$i]->label)?$object->lines[$i]->label:$object->lines[$i]->product_label);
 				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->desc));
-				print $form->textwithtooltip($text,$description,3,'','',$i);
+				print Form::textwithtooltip($text,$description,3,'','',$i);
 
 				// Show range
 				print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
@@ -918,7 +918,7 @@ else
 				if (! empty($object->lines[$i]->label)) {
 
 					$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
-					print $form->textwithtooltip($text,dol_htmlentitiesbr($object->lines[$i]->desc),3,'','',$i);
+					print Form::textwithtooltip($text,dol_htmlentitiesbr($object->lines[$i]->desc),3,'','',$i);
 
 				} else {
 

@@ -348,7 +348,7 @@ class FormMail extends Form
         		{
         			$help.=$key.' -> '.$langs->trans($val).'<br>';
         		}
-        		$out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help);
+        		$out.= Form::textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help);
         		$out.= "</td></tr>\n";
         	}
 
@@ -432,7 +432,7 @@ class FormMail extends Form
         	if (! empty($this->withto) || is_array($this->withto))
         	{
         		$out.= '<tr><td width="180">';
-        		if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+        		if ($this->withtofree) $out.= Form::textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		else $out.= $langs->trans("MailTo");
         		$out.= '</td><td>';
         		if ($this->withtoreadonly)
@@ -499,7 +499,7 @@ class FormMail extends Form
         	if (! empty($this->withtocc) || is_array($this->withtocc))
         	{
         		$out.= '<tr><td width="180">';
-        		$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+        		$out.= Form::textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if ($this->withtoccreadonly)
         		{
@@ -521,7 +521,7 @@ class FormMail extends Form
         	if (! empty($this->withtoccc) || is_array($this->withtoccc))
         	{
         		$out.= '<tr><td width="180">';
-        		$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+        		$out.= Form::textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if (! empty($this->withtocccreadonly))
         		{

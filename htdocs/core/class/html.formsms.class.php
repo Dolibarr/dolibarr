@@ -136,7 +136,7 @@ function limitChars(textarea, limit, infodiv)
             {
                 $help.=$key.' -> '.$langs->trans($val).'<br>';
             }
-            print $form->textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"),$help);
+            print Form::textwithpicto($langs->trans("SmsTestSubstitutionReplacedByGenericValues"),$help);
             print "</td></tr>\n";
         }
 
@@ -244,7 +244,7 @@ function limitChars(textarea, limit, infodiv)
             print '<tr><td width="180">';
             //$moretext=$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients");
             $moretext='';
-            print $form->textwithpicto($langs->trans("SmsTo"),$moretext);
+            print Form::textwithpicto($langs->trans("SmsTo"),$moretext);
             print '</td><td>';
             if ($this->withtoreadonly)
             {

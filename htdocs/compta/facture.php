@@ -2169,7 +2169,7 @@ if ($action == 'create')
 	// Standard invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp='<input type="radio" id="radio_standard" name="type" value="0"' . (GETPOST('type') == 0 ? ' checked' : '') . '> ';
-	$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
+	$desc = Form::textwithpicto($tmp.$langs->trans("InvoiceStandardAsk"), $langs->transnoentities("InvoiceStandardDesc"), 1, 'help', '', 0, 3);
 	print $desc;
 	print '</div></div>';
 
@@ -2186,7 +2186,7 @@ if ($action == 'create')
 		});
 		</script>';
 
-		$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceDeposit"), $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
+		$desc = Form::textwithpicto($tmp.$langs->trans("InvoiceDeposit"), $langs->transnoentities("InvoiceDepositDesc"), 1, 'help', '', 0, 3);
 		print '<table class="nobordernopadding"><tr><td>';
 		print $desc;
 		print '</td>';
@@ -2210,7 +2210,7 @@ if ($action == 'create')
 			// First situation invoice
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp='<input type="radio" name="type" value="5"' . (GETPOST('type') == 5 ? ' checked' : '') . '> ';
-			$desc = $form->textwithpicto($tmp.$langs->trans("InvoiceFirstSituationAsk"), $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
+			$desc = Form::textwithpicto($tmp.$langs->trans("InvoiceFirstSituationAsk"), $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 			print '</div></div>';
 
@@ -2224,7 +2224,7 @@ if ($action == 'create')
 			$text .= '<select class="flat" id="situations" name="situations">';
 			$text .= $opt;
 			$text .= '</select>';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
+			$desc = Form::textwithpicto($text, $langs->transnoentities("InvoiceSituationDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 			print '</div></div>';
 		}
@@ -2253,7 +2253,7 @@ if ($action == 'create')
 			$text .= '<option value="-1">' . $langs->trans("NoReplacableInvoice") . '</option>';
 		}
 		$text .= '</select>';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
+		$desc = Form::textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
 		print $desc;
 		print '</div></div>';
 	}
@@ -2263,7 +2263,7 @@ if ($action == 'create')
 		$tmp='<input type="radio" name="type" id="radio_replacement" value="0" disabled> ';
 		$text = $tmp.$langs->trans("InvoiceReplacement") . ' ';
 		$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-		$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
+		$desc = Form::textwithpicto($text, $langs->transnoentities("InvoiceReplacementDesc"), 1, 'help', '', 0, 3);
 		print $desc;
 		print '</div></div>';
 	}
@@ -2305,7 +2305,7 @@ if ($action == 'create')
 				$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
 			}
 			$text .= '</select>';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
+			$desc = Form::textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 
 			print '<div id="credit_note_options" class="clearboth">';
@@ -2321,7 +2321,7 @@ if ($action == 'create')
 			$tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
 			$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
 			$text.= '('.$langs->trans("YouMustCreateInvoiceFromThird").') ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
+			$desc = Form::textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 			print '</div></div>' . "\n";
 		}
@@ -2390,7 +2390,7 @@ if ($action == 'create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.Form::textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
         print '<td colspan="2" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
@@ -2817,9 +2817,9 @@ else if ($id > 0 || ! empty($ref))
 		$i ++;
 		// Texte
 		$i = 0;
-		$close [$i] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscountVat", $resteapayer, $langs->trans("Currency" . $conf->currency)), $close [$i] ['label'], 1);
+		$close [$i] ['reason'] = Form::textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonDiscountVat", $resteapayer, $langs->trans("Currency" . $conf->currency)), $close [$i] ['label'], 1);
 		$i ++;
-		$close [$i] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency" . $conf->currency)), $close [$i] ['label'], 1);
+		$close [$i] ['reason'] = Form::textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $resteapayer, $langs->trans("Currency" . $conf->currency)), $close [$i] ['label'], 1);
 		$i ++;
 		// arrayreasons[code]=reason
 		foreach ($close as $key => $val) {
@@ -2851,8 +2851,8 @@ else if ($id > 0 || ! empty($ref))
 			$close [1] ['label'] = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomerDesc");
 			$close [2] ['label'] = $langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
 			// Texte
-			$close [1] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close [1] ['label'], 1);
-			$close [2] ['reason'] = $form->textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close [2] ['label'], 1);
+			$close [1] ['reason'] = Form::textwithpicto($langs->transnoentities("ConfirmClassifyPaidPartiallyReasonBadCustomer", $object->ref), $close [1] ['label'], 1);
+			$close [2] ['reason'] = Form::textwithpicto($langs->transnoentities("ConfirmClassifyAbandonReasonOther"), $close [2] ['label'], 1);
 			// arrayreasons
 			$arrayreasons [$close [1] ['code']] = $close [1] ['reason'];
 			$arrayreasons [$close [2] ['code']] = $close [2] ['reason'];
@@ -3026,7 +3026,7 @@ else if ($id > 0 || ! empty($ref))
 				} else {
 					$text = $langs->trans("CompanyHasAbsoluteDiscount", price($absolute_discount), $langs->transnoentities("Currency" . $conf->currency));
 					$text2 = $langs->trans("AbsoluteDiscountUse");
-					print $form->textwithpicto($text, $text2);
+					print Form::textwithpicto($text, $text2);
 				}
 			}
 		} else {
@@ -3050,7 +3050,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($object->statut != 1 || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 			if ($object->statut == 0 && $object->type != Facture::TYPE_DEPOSIT) {
 				$text = $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency));
-				print $form->textwithpicto($text, $langs->trans("CreditNoteDepositUse"));
+				print Form::textwithpicto($text, $langs->trans("CreditNoteDepositUse"));
 			} else {
 				print $langs->trans("CompanyHasCreditNote", price($absolute_creditnote), $langs->transnoentities("Currency" . $conf->currency)) . '.';
 			}
@@ -3342,21 +3342,21 @@ else if ($id > 0 || ! empty($ref))
 		// Paye partiellement 'escompte'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat') {
 			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
-			print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
+			print Form::textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
 			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
 		// Paye partiellement ou Abandon 'badcustomer'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'badcustomer') {
 			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
-			print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
+			print Form::textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
 			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 			// $resteapayeraffiche=0;
 		}
 		// Paye partiellement ou Abandon 'product_returned'
 		if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'product_returned') {
 			print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
-			print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
+			print Form::textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
 			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
@@ -3366,7 +3366,7 @@ else if ($id > 0 || ! empty($ref))
 			$text = $langs->trans("HelpAbandonOther");
 			if ($object->close_note)
 				$text .= '<br><br><b>' . $langs->trans("Reason") . '</b>:' . $object->close_note;
-			print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
+			print Form::textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
 			print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
 		}
@@ -3701,7 +3701,7 @@ else if ($id > 0 || ! empty($ref))
         print '<td colspan="3">';
 		if ($action != 'editincoterm')
 		{
-			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 		}
 		else
 		{

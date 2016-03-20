@@ -177,7 +177,7 @@ if ($resql)
     }
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 

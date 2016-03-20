@@ -1612,7 +1612,7 @@ if ($action=='create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.Form::textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 		print '</td></tr>';
@@ -2099,7 +2099,7 @@ elseif (! empty($object->id))
         print '<td colspan="3">';
 		if ($action != 'editincoterm')
 		{
-			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 		}
 		else
 		{
@@ -2257,7 +2257,7 @@ elseif (! empty($object->id))
 				$text=$product_static->getNomUrl(1,'supplier');
 				$text.= ' - '.$product_static->libelle;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				print $form->textwithtooltip($text,$description,3,'','',$i);
+				print Form::textwithtooltip($text,$description,3,'','',$i);
 
 				// Show range
 				print_date_range($date_start,$date_end);
@@ -2337,7 +2337,7 @@ elseif (! empty($object->id))
 				$text=$product_static->getNomUrl(1,'supplier');
 				$text.= ' - '.$product_static->libelle;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				print $form->textwithtooltip($text,$description,3,'','',$i);
+				print Form::textwithtooltip($text,$description,3,'','',$i);
 
 				// Show range
 				print_date_range($date_start,$date_end);

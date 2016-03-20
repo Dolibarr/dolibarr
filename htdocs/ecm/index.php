@@ -509,7 +509,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print img_picto_common('','treemenu/base.gif');
 	print '</td><td align="left">';
 	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
-	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
+	print Form::textwithpicto($txt, $htmltooltip, 1, 'info');
 	print '</td>';
 	print '</tr></table></td>';
 	print '<td align="right">';
@@ -519,7 +519,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print '<td align="right">&nbsp;</td>';
 	print '<td align="right">&nbsp;</td>';
 	print '<td align="center">';
-	//print $form->textwithpicto('',$htmltooltip,1,"info");
+	//print Form::textwithpicto('',$htmltooltip,1,"info");
 	print '</td>';
 	print '</tr>';
 
@@ -670,7 +670,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
     			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
     			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
+    			print Form::textwithpicto('', $htmltooltip, 1, 'info');
     			print "</td>";
 
     			print '</tr></table>';

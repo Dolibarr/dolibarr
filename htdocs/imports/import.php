@@ -453,7 +453,7 @@ if ($step == 2 && $datatoimport)
 		print '<tr '.$bc[$var].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPictoForKey($key)).'</td>';
     	$text=$objmodelimport->getDriverDescForKey($key);
-    	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
+    	print '<td>'.Form::textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
 		print '<td align="right">';
@@ -522,7 +522,7 @@ if ($step == 3 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
     print '</td><td align="right" class="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
@@ -739,7 +739,7 @@ if ($step == 4 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// Separator and enclosure
@@ -940,7 +940,7 @@ if ($step == 4 && $datatoimport)
 		}
 		$htmltext.=$langs->trans("FieldTitle").": <b>".$langs->trans($newlabel)."</b><br>";
 		$htmltext.=$langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./','',$code)."</b><br>";
-		print $form->textwithpicto($more,$htmltext);
+		print Form::textwithpicto($more,$htmltext);
 		print '</td>';
 
 		print '</tr>';
@@ -1203,7 +1203,7 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// Separator and enclosure
@@ -1247,7 +1247,7 @@ if ($step == 5 && $datatoimport)
 	else
 	{
 	    print '<input type="text" size="4" name="excludefirstline" value="'.$excludefirstline.'">';
-	    print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
+	    print Form::textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print '</td></tr>';
 
@@ -1264,7 +1264,7 @@ if ($step == 5 && $datatoimport)
 	else
 	{
 	    print '<input type="text" size="4" name="endatlinenb" value="'.$endatlinenb.'">';
-	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
+	    print Form::textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
 	print '</td></tr>';
 	
@@ -1586,7 +1586,7 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// File to import

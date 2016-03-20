@@ -935,7 +935,7 @@ else
 	        $text.='&nbsp;';
 	        $text.= $langs->trans("Individual");
 	        $htmltext=$langs->trans("ToCreateContactWithSameName");
-	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
+	        print Form::textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
             print '</label>';
             print '</div>';
             print "<br>\n";
@@ -1009,7 +1009,7 @@ else
         print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
         $s=$modCodeClient->getToolTip($langs,$object,0);
-        print $form->textwithpicto('',$s,1);
+        print Form::textwithpicto('',$s,1);
         print '</td></tr></table>';
         print '</td></tr>';
 
@@ -1027,7 +1027,7 @@ else
             print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             print '</td><td>';
             $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-            print $form->textwithpicto('',$s,1);
+            print Form::textwithpicto('',$s,1);
             print '</td></tr></table>';
             print '</td></tr>';
         }
@@ -1141,7 +1141,7 @@ else
                 print '</script>';
                 print "\n";
                 $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+                $s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
             }
             else
             {
@@ -1550,7 +1550,7 @@ else
             }
             print '</td><td>';
             $s=$modCodeClient->getToolTip($langs,$object,0);
-            print $form->textwithpicto('',$s,1);
+            print Form::textwithpicto('',$s,1);
             print '</td></tr></table>';
 
             print '</td></tr>';
@@ -1583,7 +1583,7 @@ else
                 }
                 print '</td><td>';
                 $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-                print $form->textwithpicto('',$s,1);
+                print Form::textwithpicto('',$s,1);
                 print '</td></tr></table>';
 
                 print '</td></tr>';
@@ -1698,7 +1698,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+                    $s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
                 }
                 else
                 {
@@ -1860,7 +1860,7 @@ else
             print '<tr class="hideonsmartphone">';
             print '<td>'.fieldLabel('Logo','photoinput').'</td>';
             print '<td colspan="3">';
-            if ($object->logo) print $form->showphoto('societe',$object);
+            if ($object->logo) print Form::showphoto('societe',$object);
             $caneditfield=1;
             if ($caneditfield)
             {
@@ -2044,7 +2044,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+                    $s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
                 }
                 else
                 {
@@ -2227,7 +2227,7 @@ else
             print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 			}
 			else
 			{

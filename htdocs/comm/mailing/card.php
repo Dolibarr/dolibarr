@@ -826,12 +826,12 @@ else
 				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
 				{
 					$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print $form->textwithpicto($nbemail,$text,1,'warning');
+					print Form::textwithpicto($nbemail,$text,1,'warning');
 				}
 				else
 				{
 					$text=$langs->trans('NotEnoughPermissions');
-					print $form->textwithpicto($nbemail,$text,1,'warning');
+					print Form::textwithpicto($nbemail,$text,1,'warning');
 				}
 
 			}
@@ -1072,7 +1072,7 @@ else
 			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-				print $form->textwithpicto($nbemail,$text,1,'warning');
+				print Form::textwithpicto($nbemail,$text,1,'warning');
 			}
 			else
 			{
