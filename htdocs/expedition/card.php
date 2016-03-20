@@ -703,7 +703,7 @@ if ($action == 'create')
 			if (!empty($conf->incoterm->enabled))
 			{
 				print '<tr>';
-				print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+				print '<td><label for="incoterm_id">'.Form::textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
 		        print '<td colspan="3" class="maxwidthonsmartphone">';
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 				print '</td></tr>';
@@ -817,7 +817,7 @@ if ($action == 'create')
                     $text=$product_static->getNomUrl(1);
                     $text.= ' - '.(! empty($line->label)?$line->label:$line->product_label);
                     $description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->desc));
-                    print $form->textwithtooltip($text,$description,3,'','',$i);
+                    print Form::textwithtooltip($text,$description,3,'','',$i);
 
                     // Show range
                     print_date_range($db->jdate($line->date_start),$db->jdate($line->date_end));
@@ -838,7 +838,7 @@ if ($action == 'create')
 
                     if (! empty($line->label)) {
                     	$text.= ' <strong>'.$line->label.'</strong>';
-                    	print $form->textwithtooltip($text,$line->desc,3,'','',$i);
+                    	print Form::textwithtooltip($text,$line->desc,3,'','',$i);
                     } else {
                     	print $text.' '.nl2br($line->desc);
                     }
@@ -1491,7 +1491,7 @@ else if ($id || $ref)
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 			}
 			else
 			{
@@ -1589,7 +1589,7 @@ else if ($id || $ref)
 				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.$label;
 				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($lines[$i]->description));
-				print $form->textwithtooltip($text,$description,3,'','',$i);
+				print Form::textwithtooltip($text,$description,3,'','',$i);
 				print_date_range($lines[$i]->date_start,$lines[$i]->date_end);
 				if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 				{
@@ -1605,7 +1605,7 @@ else if ($id || $ref)
 
 				if (! empty($lines[$i]->label)) {
 					$text.= ' <strong>'.$lines[$i]->label.'</strong>';
-					print $form->textwithtooltip($text,$lines[$i]->description,3,'','',$i);
+					print Form::textwithtooltip($text,$lines[$i]->description,3,'','',$i);
 				} else {
 					print $text.' '.nl2br($lines[$i]->description);
 				}
@@ -1657,7 +1657,7 @@ else if ($id || $ref)
 							$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
 						}
 					}
-					print $form->textwithtooltip($langs->trans("DetailWarehouseNumber"),$detail);
+					print Form::textwithtooltip($langs->trans("DetailWarehouseNumber"),$detail);
 				}
 				print '</td>';
 			}
@@ -1675,7 +1675,7 @@ else if ($id || $ref)
 						{
 							$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
 						}
-						print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
+						print Form::textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
 					}
 					else 
 					{

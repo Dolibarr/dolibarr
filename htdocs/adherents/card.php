@@ -1059,7 +1059,7 @@ else
 
 		// Photo
 		print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-		print $form->showphoto('memberphoto',$object)."\n";
+		print Form::showphoto('memberphoto',$object)."\n";
 		if ($caneditfieldmember)
 		{
 			if ($object->photo) print "<br>\n";
@@ -1322,7 +1322,7 @@ else
 			$helpcontent.="<br>";
 			$helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
 			$helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
-			$label=$form->textwithpicto($tmp,$helpcontent,1,'help');
+			$label=Form::textwithpicto($tmp,$helpcontent,1,'help');
 
 			// Create form popup
 			$formquestion=array();
@@ -1364,7 +1364,7 @@ else
 			$helpcontent.="<br>";
 			$helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
 			$helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
-			$label=$form->textwithpicto($tmp,$helpcontent,1,'help');
+			$label=Form::textwithpicto($tmp,$helpcontent,1,'help');
 
 			// Cree un tableau formulaire
 			$formquestion=array();
@@ -1439,7 +1439,7 @@ else
 			{
 			    $langs->load("errors");
 			    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
-			    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
+			    print ' '.Form::textwithpicto('', $htmltext,1,'warning');
 			}
 			print '</td></tr>';
 		}

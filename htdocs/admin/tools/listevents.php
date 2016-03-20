@@ -270,7 +270,7 @@ if ($result)
 		// More informations
 		print '<td align="right">';
 		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent?$obj->user_agent:$langs->trans("Unknown"));
-		print $form->textwithpicto('',$htmltext);
+		print Form::textwithpicto('',$htmltext);
 		print '</td>';
 
 		print "</tr>\n";

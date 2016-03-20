@@ -337,7 +337,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
 	print "</td>";
 	print "<td>";
-	print $form->textwithpicto('',$langs->trans("CronModuleHelp"),1,'help');
+	print Form::textwithpicto('',$langs->trans("CronModuleHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -346,7 +346,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"classesname\" value=\"".$object->classesname."\" /> ";
 	print "</td>";
 	print "<td>";
-	print $form->textwithpicto('',$langs->trans("CronClassFileHelp"),1,'help');
+	print Form::textwithpicto('',$langs->trans("CronClassFileHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -355,7 +355,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"objectname\" value=\"".$object->objectname."\" /> ";
 	print "</td>";
 	print "<td>";
-	print $form->textwithpicto('',$langs->trans("CronObjectHelp"),1,'help');
+	print Form::textwithpicto('',$langs->trans("CronObjectHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -364,7 +364,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"methodename\" value=\"".$object->methodename."\" /> ";
 	print "</td>";
 	print "<td>";
-	print $form->textwithpicto('',$langs->trans("CronMethodHelp"),1,'help');
+	print Form::textwithpicto('',$langs->trans("CronMethodHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -373,7 +373,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"params\" value=\"".$object->params."\" /> ";
 	print "</td>";
 	print "<td>";
-	print $form->textwithpicto('',$langs->trans("CronArgsHelp"),1,'help');
+	print Form::textwithpicto('',$langs->trans("CronArgsHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -382,7 +382,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"50\" name=\"command\" value=\"".$object->command."\" /> ";
 	print "</td>";
 	print "<td>";
-	print $form->textwithpicto('',$langs->trans("CronCommandHelp"),1,'help');
+	print Form::textwithpicto('',$langs->trans("CronCommandHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 

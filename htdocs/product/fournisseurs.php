@@ -312,7 +312,7 @@ if ($id > 0 || $ref)
             print '<tr><td>';
 			$textdesc =$langs->trans("CostPriceDescription");
 			$textdesc.="<br>".$langs->trans("CostPriceUsage");
-			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
+			$text=Form::textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
             print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
             print '</td><td colspan="2">';
             print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');

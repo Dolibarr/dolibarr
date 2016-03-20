@@ -1402,7 +1402,7 @@ if ($action == 'create')
     print '<tr height="18"><td width="16px" valign="middle">';
     print '<input type="radio" name="type" value="0"'.($_POST['type']==0?' checked':'').'>';
     print '</td><td valign="middle">';
-    $desc=$form->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
+    $desc=Form::textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
     print $desc;
     print '</td></tr>'."\n";
 
@@ -1411,7 +1411,7 @@ if ($action == 'create')
     print '<tr height="18"><td width="16px" valign="middle">';
     print '<input type="radio" name="type" value="3"'.($_POST['type']==3?' checked':'').'>';
     print '</td><td valign="middle">';
-    $desc=$form->textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
+    $desc=Form::textwithpicto($langs->trans("InvoiceDeposit"),$langs->transnoentities("InvoiceDepositDesc"),1);
     print $desc;
     print '</td></tr>'."\n";
 
@@ -1421,7 +1421,7 @@ if ($action == 'create')
     print '<tr height="18"><td width="16px" valign="middle">';
     print '<input type="radio" name="type" value="4"'.($_POST['type']==4?' checked':'').'>';
     print '</td><td valign="middle">';
-    $desc=$form->textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
+    $desc=Form::textwithpicto($langs->trans("InvoiceProForma"),$langs->transnoentities("InvoiceProFormaDesc"),1);
     print $desc;
     print '</td></tr>'."\n";
     }
@@ -1446,7 +1446,7 @@ if ($action == 'create')
     $text.='<option value="-1">'.$langs->trans("NoReplacableInvoice").'</option>';
     }
     $text.='</select>';
-    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
+    $desc=Form::textwithpicto($text,$langs->transnoentities("InvoiceReplacementDesc"),1);
     print $desc;
     print '</td></tr>';
 
@@ -1471,7 +1471,7 @@ if ($action == 'create')
     $text.='<option value="-1">'.$langs->trans("NoInvoiceToCorrect").'</option>';
     }
     $text.='</select>';
-    $desc=$form->textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
+    $desc=Form::textwithpicto($text,$langs->transnoentities("InvoiceAvoirDesc"),1);
     print $desc;
     print '</td></tr>'."\n";
     */
@@ -1516,7 +1516,7 @@ if ($action == 'create')
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.Form::textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
 		print '</td></tr>';
@@ -2086,7 +2086,7 @@ else
         $s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=totalofround">'.$langs->trans("Mode1").'</a>';
         $s.=' / ';
         $s.='<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=calculate&calculationrule=roundoftotal">'.$langs->trans("Mode2").'</a>';
-        print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc",$calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('','help'));
+        print Form::textwithtooltip($s, $langs->trans("CalculationRuleDesc",$calculationrulenum).'<br>'.$langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('','help'));
         print '</td></tr>';
 
         // Amount Local Taxes
@@ -2168,7 +2168,7 @@ else
 	        print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 			}
 			else
 			{
