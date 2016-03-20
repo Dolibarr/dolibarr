@@ -4055,7 +4055,7 @@ class Form
     /**
      *	Load into the cache vat rates of a country
      *
-     *	@param	string	$country_code		Country code
+     *	@param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
      *	@return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
      */
     function load_cache_vatrates($country_code)

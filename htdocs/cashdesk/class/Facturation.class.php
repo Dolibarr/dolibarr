@@ -99,26 +99,17 @@ class Facturation
         $product = new Product($db);
         $product->fetch($this->id);
 
-        $sql = "SELECT taux";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_tva";
-        $sql.= " WHERE rowid = ".$this->tva();
-
-        dol_syslog("ajoutArticle", LOG_DEBUG);
-        $resql = $db->query($sql);
-
-        if ($resql)
-        {
-            $obj = $db->fetch_object($resql);
-            $vat_rate=$obj->taux;
-            //var_dump($vat_rate);exit;
-        }
-        else
-       {
-            dol_print_error($db);
-        }
-
+        
+        $vatrowid = $this->tva();
+        
+        $tmp = getTaxesFromId($vatrowid);
+        $vat_rate = $tmp['rate'];
+        $vat_npr = $tmp['npr'];
+        
+        $localtaxarray = getLocalTaxesFromRate($vatrowid, 0, $societe, $mysoc, 1);
+        
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte,$this->prix(),$this->remisePercent(),$vat_rate,0,0,0,'HT',0,$product->type,$mysoc);
+        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $vat_rate, 0, 0, 0, 'HT', $use_npr, $product->type, $mysoc, $locataxarray);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];
@@ -442,9 +433,8 @@ class Facturation
      * @param	int		$aTva		Vat
      * @return	int					Vat
      */
-    public function tva ( $aTva=null )
+    public function tva($aTva=null)
     {
-
         if ( !$aTva ) {
 
             return $this->tva;
@@ -467,9 +457,8 @@ class Facturation
      * @param string	$aNumFacture		Invoice ref
      * @return	string						Invoice ref
      */
-    public function numInvoice( $aNumFacture=null )
+    public function numInvoice($aNumFacture=null)
     {
-
         if ( !$aNumFacture ) {
 
             return $this->num_facture;

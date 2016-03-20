@@ -71,7 +71,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $tva->datev=$datev;
     $tva->datep=$datep;
 	
-	$amount = GETPOST("amount");
+	$amount = price2num(GETPOST("amount"));
 	if ($refund == 1) {
 		$amount= -$amount;
 	}
