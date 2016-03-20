@@ -1802,7 +1802,7 @@ else if ($id || $ref)
 		$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
+		$somethingshown = Form::showLinkedObjectBlock($object);
 
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);

@@ -4046,7 +4046,7 @@ else if ($id > 0 || ! empty($ref))
 		$somethingshown = $formfile->numoffiles;
 
 		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
+		$somethingshown = Form::showLinkedObjectBlock($object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
