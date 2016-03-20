@@ -3507,8 +3507,7 @@ function get_localtax_by_third($local)
  *  Get vat rate and npr from id.
  *  You can call getLocalTaxesFromRate after to get other fields 
  *
- *  @param	string  $vatrate			VAT Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
- *  @param	int		$usenpr             Use npr
+ *  @param	int      $vatrowid			Line ID into vat rate table.
  *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
 function getTaxesFromId($vatrowid)
