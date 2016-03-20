@@ -192,7 +192,7 @@ else
 	print '<td>'.$langs->trans("FTPPassiveMode").'</td>';
 	$defaultpassive=GETPOST("FTP_PASSIVE_" . ($lastftpentry+1));
 	if (! isset($_POST["FTP_PASSIVE_" . ($lastftpentry+1)])) $defaultpassive=empty($conf->global->FTP_SUGGEST_PASSIVE_BYDEFAULT)?0:1;
-	print '<td>'.$form->selectyesno('FTP_PASSIVE_'.($lastftpentry+1), $defaultpassive, 2).'</td>';
+	print '<td>'.Form::selectyesno('FTP_PASSIVE_'.($lastftpentry+1), $defaultpassive, 2).'</td>';
 	print '<td>'.$langs->trans("No").'</td>';
 	print '</tr>';
 	
@@ -273,7 +273,7 @@ else
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
 			print "<td width=\"100\">".$langs->trans("FTPPassiveMode")."</td>";
-			print '<td>'.$form->selectyesno('FTP_PASSIVE_'.$idrss, @constant("FTP_PASSIVE_" . $idrss), 1).'</td>';
+			print '<td>'.Form::selectyesno('FTP_PASSIVE_'.$idrss, @constant("FTP_PASSIVE_" . $idrss), 1).'</td>';
 			print "</tr>";
 
 			print "<tr>";

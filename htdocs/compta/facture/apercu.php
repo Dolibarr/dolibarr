@@ -93,7 +93,7 @@ if ($id > 0 || ! empty($ref))
     	if ($result < 0) {
     		dol_print_error('', $discount->error);
     	}
-    	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+    	print Form::showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
     	print '</td></tr>';
 
         // Ref customer

@@ -153,7 +153,7 @@ print '<td align="right">';
 print Form::selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
 print '</td>';
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
+$searchpitco=Form::showFilterAndCheckAddButtons();
 print $searchpitco;
 print '</td>';
 print '</tr>';

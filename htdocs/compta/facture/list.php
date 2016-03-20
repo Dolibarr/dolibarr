@@ -719,7 +719,7 @@ if ($resql)
     if ($show_files)         $param.='&show_files=' .$show_files;
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	
-	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+	$massactionbutton=Form::selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
     
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -924,7 +924,7 @@ if ($resql)
 	print Form::selectarray('search_status', $liststatus, $search_status, 1);
     print '</td>';
     print '<td class="liste_titre" align="center">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
+    $searchpitco=Form::showFilterAndCheckAddButtons(1, 'checkforselect', 1);
     print $searchpitco;
     print '</td>';
     print "</tr>\n";

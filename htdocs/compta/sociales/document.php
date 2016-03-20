@@ -107,7 +107,7 @@ if ($object->id)
 
     // Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-	print $form->showrefnav($object,'id');
+	print Form::showrefnav($object,'id');
 	print "</td></tr>";
 
     // Label
@@ -130,7 +130,7 @@ if ($object->id)
     print "<td>";
     if ($action == 'edit')
     {
-        print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+        print Form::select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
     }
     else
     {
@@ -143,7 +143,7 @@ if ($object->id)
     if ($action == 'edit')
     {
         print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-        print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+        print Form::select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
         print "</td></tr>";
     }
     else {

@@ -318,7 +318,7 @@ else if ($id)
              */
             if ($action == 'delete')
             {
-                print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
+                print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
 
             }
 

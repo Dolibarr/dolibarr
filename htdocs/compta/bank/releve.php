@@ -131,7 +131,7 @@ if (empty($num))
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
+		print Form::showrefnav($object, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label

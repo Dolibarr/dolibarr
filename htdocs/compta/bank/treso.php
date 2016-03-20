@@ -97,7 +97,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
+	print Form::showrefnav($acct, 'ref', $linkback, 1, 'ref');
 	print '</td></tr>';
 
 	// Label

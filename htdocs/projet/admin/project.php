@@ -344,7 +344,7 @@ print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes"),
 );
-print $form->selectyesno('PROJECT_USE_OPPORTUNITIES', $conf->global->PROJECT_USE_OPPORTUNITIES, 1);
+print Form::selectyesno('PROJECT_USE_OPPORTUNITIES', $conf->global->PROJECT_USE_OPPORTUNITIES, 1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" name="modifyPROJECT_USE_OPPORTUNITIES" value="'.$langs->trans("Modify").'">';
 print "</td>";
@@ -357,7 +357,7 @@ print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes"),
 );
-print $form->selectyesno('PROJECT_USE_TASKS', empty($conf->global->PROJECT_HIDE_TASKS)?1:0, 1);
+print Form::selectyesno('PROJECT_USE_TASKS', empty($conf->global->PROJECT_HIDE_TASKS)?1:0, 1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" name="modifyPROJECT_USE_TASKS" value="'.$langs->trans("Modify").'">';
 print "</td>";

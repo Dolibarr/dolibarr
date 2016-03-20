@@ -339,7 +339,7 @@ else
 	 */
 	if ($action == 'delete')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
+		print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("DeleteCheckReceipt"), $langs->trans("ConfirmDeleteCheckReceipt"), 'confirm_delete','','',1);
 
 	}
 
@@ -348,7 +348,7 @@ else
 	 */
 	if ($action == 'valide')
 	{
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
+		print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("ValidateCheckReceipt"), $langs->trans("ConfirmValidateCheckReceipt"), 'confirm_valide','','',1);
 
 	}
 
@@ -361,7 +361,7 @@ else
 			array('type' => 'hidden','name' => 'bankid','value' => GETPOST('lineid')),
 			array('type' => 'date','name' => 'rejectdate_','label' => $langs->trans("RejectCheckDate"),'value' => dol_now())
 		);
-		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check',$formquestion,'',1);
+		print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check',$formquestion,'',1);
 	}
 }
 
@@ -387,7 +387,7 @@ if ($action == 'new')
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td width="200">'.$langs->trans("DateChequeReceived").'</td><td>';
-	print $form->select_date($filterdate,'fd',0,0,1,'',1,1,1);
+	print Form::select_date($filterdate,'fd',0,0,1,'',1,1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
@@ -582,7 +582,7 @@ else
 	}
 	else
 	{
-	    print $form->showrefnav($object,'ref',$linkback, 1, 'number');
+	    print Form::showrefnav($object,'ref',$linkback, 1, 'number');
 	}
 
 	print '</td>';
@@ -601,7 +601,7 @@ else
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setdate">';
-        $form->select_date($object->date_bordereau,'datecreate_','','','',"setdate");
+        Form::select_date($object->date_bordereau,'datecreate_','','','',"setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         print '</form>';
     }

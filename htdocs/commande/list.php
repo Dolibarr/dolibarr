@@ -403,11 +403,11 @@ if ($resql)
 	if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 	{
 	    print '<td align="center">';
-    	print $form->selectyesno('billed', $billed, 1, 0, 1);
+    	print Form::selectyesno('billed', $billed, 1, 0, 1);
 	    print '</td>';
 	}
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    $searchpitco=Form::showFilterAndCheckAddButtons();
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";
