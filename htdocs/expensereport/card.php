@@ -2107,7 +2107,7 @@ if ($action != 'create' && $action != 'edit' && ($id || $ref))
         $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
     }
     // Linked object block
-    $somethingshown = $form->showLinkedObjectBlock($object);
+    $somethingshown = Form::showLinkedObjectBlock($object);
 
     // Show links to link elements
     $linktoelements=array();
