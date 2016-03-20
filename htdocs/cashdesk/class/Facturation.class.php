@@ -109,12 +109,14 @@ class Facturation
         $localtaxarray = getLocalTaxesFromRate($vatrowid, 0, $societe, $mysoc, 1);
         
         // Define part of HT, VAT, TTC
-        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $vat_rate, 0, 0, 0, 'HT', $use_npr, $product->type, $mysoc, $locataxarray);
+        $resultarray=calcul_price_total($this->qte, $this->prix(), $this->remisePercent(), $vat_rate, -1, -1, 0, 'HT', $use_npr, $product->type, $mysoc, $localtaxarray);
 
         // Calcul du total ht sans remise
         $total_ht = $resultarray[0];
         $total_vat = $resultarray[1];
         $total_ttc = $resultarray[2];
+        $total_localtax1 = $resultarray[9];
+        $total_localtax2 = $resultarray[10];
 
         // Calcul du montant de la remise
         if ($this->remisePercent())
@@ -134,7 +136,7 @@ class Facturation
         $newcartarray[$i]['label']=$product->label;
         $newcartarray[$i]['price']=$product->price;
         $newcartarray[$i]['price_ttc']=$product->price_ttc;
-
+        
         if (! empty($conf->global->PRODUIT_MULTIPRICES))
         {
             if (isset($product->multiprices[$societe->price_level]))
@@ -151,6 +153,9 @@ class Facturation
         $newcartarray[$i]['remise']=price2num($montant_remise_ht);
         $newcartarray[$i]['total_ht']=price2num($total_ht,'MT');
         $newcartarray[$i]['total_ttc']=price2num($total_ttc,'MT');
+        $newcartarray[$i]['total_vat']=price2num($total_vat, 'MT');
+        $newcartarray[$i]['total_localtax1']=price2num($total_localtax1, 'MT');
+        $newcartarray[$i]['total_localtax2']=price2num($total_localtax2, 'MT');
         $_SESSION['poscart']=$newcartarray;
 
         $this->raz();
@@ -204,12 +209,18 @@ class Facturation
             // Total HT
             $remise = $tab[$i]['remise'];
             $total_ht += ($tab[$i]['total_ht']);
+            $total_vat += ($tab[$i]['total_vat']);
             $total_ttc += ($tab[$i]['total_ttc']);
+            $total_localtax1 += ($tab[$i]['total_localtax1']);
+            $total_localtax2 += ($tab[$i]['total_localtax2']);
         }
 
         $this->prix_total_ttc = $total_ttc;
         $this->prix_total_ht = $total_ht;
-
+        $this->prix_total_vat = $total_vat;
+        $this->prix_total_localtax1 = $total_localtax1;
+        $this->prix_total_localtax2 = $total_localtax2;
+        
         $this->montant_tva = $total_ttc - $total_ht;
         //print $this->prix_total_ttc.'eeee'; exit;
     }

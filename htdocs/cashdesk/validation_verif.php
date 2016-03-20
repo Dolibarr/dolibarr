@@ -158,45 +158,30 @@ switch ($action)
 		// Get content of cart
 		$tab_liste = $_SESSION['poscart'];
 
-		// Loop on each product
+		// Loop on each line into cart
 		$tab_liste_size=count($tab_liste);
-		for ($i=0;$i < $tab_liste_size;$i++)
+		for ($i=0; $i < $tab_liste_size; $i++)
 		{
-			// Recuperation de l'article
-			$product = new Product($db);
-			$product->fetch($tab_liste[$i]['fk_article']);
-			$ret=array('label'=>$product->label,'tva_tx'=>$product->tva_tx,'price'=>$product->price);
-
-	        if (! empty($conf->global->PRODUIT_MULTIPRICES))
-	        {
-	            if (isset($product->multiprices[$societe->price_level]))
-	            {
-	                $ret['price'] = $product->multiprices[$societe->price_level];
-	            }
-	        }
-			$tab_article = $ret;
-
-			$res = $db->query('SELECT taux FROM '.MAIN_DB_PREFIX.'c_tva WHERE rowid = '.$tab_liste[$i]['fk_tva']);
-			$ret=array();
-			$tab = $db->fetch_array($res);
-			foreach ( $tab as $cle => $valeur )
-			{
-				$ret[$cle] = $valeur;
-			}
-			$tab_tva = $ret;
+			$tmp = getTaxesFromId($tab_liste[$i]['fk_tva']);
+			$vat_rate = $tmp['rate'];
+			$vat_npr = $tmp['npr'];
 
 			$invoiceline=new FactureLigne($db);
 			$invoiceline->fk_product=$tab_liste[$i]['fk_article'];
-			$invoiceline->desc=$tab_article['label'];
-			$invoiceline->tva_tx=empty($tab_tva['taux'])?0:$tab_tva['taux'];	// works even if vat_rate is ''
-			//$invoiceline->tva_tx=$tab_tva['taux'];
+			$invoiceline->desc=$tab_liste[$i]['label'];
 			$invoiceline->qty=$tab_liste[$i]['qte'];
 			$invoiceline->remise_percent=$tab_liste[$i]['remise_percent'];
-			$invoiceline->price=$tab_article['price'];
-			$invoiceline->subprice=$tab_article['price'];
+			$invoiceline->price=$tab_liste[$i]['price'];
+			$invoiceline->subprice=$tab_liste[$i]['price'];
+			
+			$invoiceline->tva_tx=empty($vat_rate)?0:$vat_rate;	// works even if vat_rate is ''
+			$invoiceline->info_bits=empty($vat_npr)?0:$vat_npr;
+				
 			$invoiceline->total_ht=$tab_liste[$i]['total_ht'];
 			$invoiceline->total_ttc=$tab_liste[$i]['total_ttc'];
-			$invoiceline->total_tva=($tab_liste[$i]['total_ttc']-$tab_liste[$i]['total_ht']);
+			$invoiceline->total_tva=$tab_liste[$i]['total_vat'];
+			$invoiceline->total_localtax1=$tab_liste[$i]['total_localtax1'];
+			$invoiceline->total_localtax2=$tab_liste[$i]['total_localtax2'];
 			$invoice->lines[]=$invoiceline;
 		}
 
