@@ -3159,27 +3159,6 @@ class Form
     }
 
     /**
-     *     Show a confirmation HTML form or AJAX popup
-     *
-     *     @param	string		$page        	   	Url of page to call if confirmation is OK
-     *     @param	string		$title       	   	Title
-     *     @param	string		$question    	   	Question
-     *     @param 	string		$action      	   	Action
-     *	   @param	array		$formquestion	   	An array with forms complementary inputs
-     * 	   @param	string		$selectedchoice		"" or "no" or "yes"
-     * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
-     *     @param	int			$height          	Force height of box
-     *     @param	int			$width				Force width of box
-     *     @return 	void
-     *     @deprecated
-     *     @see formconfirm()
-     */
-    function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
-    {
-        print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
-    }
-
-    /**
      *     Show a confirmation HTML form or AJAX popup.
      *     Easiest way to use this is with useajax=1.
      *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters)
@@ -3201,7 +3180,7 @@ class Form
      *     @param	int			$width				Force width of bow
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
      */
-    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
+    public static function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
         global $langs,$conf;
         global $useglobalvars;
