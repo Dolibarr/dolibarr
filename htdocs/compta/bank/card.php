@@ -365,7 +365,7 @@ if ($action == 'create')
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td colspan="3">';
-	$form->select_date('', 're', 0, 0, 0, 'formsoc');
+	Form::select_date('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -558,7 +558,7 @@ else
 		*/
 		if ($action == 'delete')
 		{
-			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+			print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
 
 		}
 
@@ -569,7 +569,7 @@ else
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
-		print $form->showrefnav($account, 'ref', $linkback, 1, 'ref');
+		print Form::showrefnav($account, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label

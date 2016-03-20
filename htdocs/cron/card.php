@@ -278,13 +278,13 @@ if ($conf->use_javascript_ajax)
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+	print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
 
 	$action='';
 }
 
 if ($action == 'execute'){
-	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 
 	$action='';
 }
@@ -460,11 +460,11 @@ if (($action=="create") || ($action=="edit"))
 	print $langs->trans('CronDtStart')."</td><td>";
 	if(!empty($object->datestart))
 	{
-	    $form->select_date($object->datestart,'datestart',1,1,'',"cronform");
+	    Form::select_date($object->datestart,'datestart',1,1,'',"cronform");
 	}
 	else
 	{
-	    $form->select_date('','datestart',1,1,'',"cronform");
+	    Form::select_date('','datestart',1,1,'',"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -474,10 +474,10 @@ if (($action=="create") || ($action=="edit"))
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if(!empty($object->dateend)){
-	    $form->select_date($object->dateend,'dateend',1,1,'',"cronform");
+	    Form::select_date($object->dateend,'dateend',1,1,'',"cronform");
 	}
 	else{
-	    $form->select_date(-1,'dateend',1,1,1,"cronform");
+	    Form::select_date(-1,'dateend',1,1,1,"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -514,11 +514,11 @@ if (($action=="create") || ($action=="edit"))
 	print "</td><td>";
 	if(!empty($object->datenextrun))
 	{
-	    $form->select_date($object->datenextrun,'datenextrun',1,1,'',"cronform");
+	    Form::select_date($object->datenextrun,'datenextrun',1,1,'',"cronform");
 	}
 	else
 	{
-	    $form->select_date(-1,'datenextrun',1,1,'',"cronform");
+	    Form::select_date(-1,'datenextrun',1,1,'',"cronform");
 	}	
 	print "</td>";
     print "<td>";
@@ -554,7 +554,7 @@ else
 
 	print '<tr><td width="30%">';
 	print $langs->trans('CronId')."</td>";
-	print "<td>".$form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'id', '', '', 0);
+	print "<td>".Form::showrefnav($object, 'id', $linkback, 1, 'rowid', 'id', '', '', 0);
 	print "</td></tr>\n";
 
 	print '<tr><td>';

@@ -507,7 +507,7 @@ else
     			print '</td>';
     		}
     		// To batch
-			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
+			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.Form::selectyesno($search_tobatch, '', '', '', 1).'</td>';
     		// Stock
 			if (! empty($arrayfields['p.stock']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
     	    // Accountancy code sell
@@ -551,7 +551,7 @@ else
 	            print '</td>';
     		}
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
+            $searchpitco=Form::showFilterAndCheckAddButtons();
             print $searchpitco;
             print '</td>';
 

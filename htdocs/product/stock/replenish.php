@@ -472,7 +472,7 @@ print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    $searchpitco=Form::showFilterAndCheckAddButtons();
     print $searchpitco;
     print '</td>';
 print '</tr>';

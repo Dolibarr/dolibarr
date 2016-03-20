@@ -149,7 +149,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td align="right">';
-print $form->selectyesno("MEMBER_ENABLE_PUBLIC",(! empty($conf->global->MEMBER_ENABLE_PUBLIC)?$conf->global->MEMBER_ENABLE_PUBLIC:0),1);
+print Form::selectyesno("MEMBER_ENABLE_PUBLIC",(! empty($conf->global->MEMBER_ENABLE_PUBLIC)?$conf->global->MEMBER_ENABLE_PUBLIC:0),1);
 print "</td></tr>\n";
 
 // Type
@@ -158,7 +158,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].' class="drag"><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("forcedate",$conf->global->MEMBER_NEWFORM_FORCETYPE,1);
+print Form::selectyesno("forcedate",$conf->global->MEMBER_NEWFORM_FORCETYPE,1);
 print "</td></tr>\n"; */
 
 // Amount
@@ -176,7 +176,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<tr '.$bc[$var].' id="tredit"><td>';
 print $langs->trans("CanEditAmount");
 print '</td><td align="right">';
-print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
+print Form::selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
 print "</td></tr>\n";
 
 if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))

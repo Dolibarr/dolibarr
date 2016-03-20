@@ -504,7 +504,7 @@ if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 }
 // Birthday
 print '<tr id="trbirth" class="trbirth"><td>'.$langs->trans("DateToBirth").'</td><td>';
-print $form->select_date($birthday,'birth',0,0,1,"newmember",1,0,1);
+print Form::select_date($birthday,'birth',0,0,1,"newmember",1,0,1);
 print '</td></tr>'."\n";
 // Photo
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" size="40" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";

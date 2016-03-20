@@ -157,7 +157,7 @@ if ($result)
 	print '</td>';
 
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    $searchpitco=Form::showFilterAndCheckAddButtons();
     print $searchpitco;
     print '</td>';
 

@@ -187,7 +187,7 @@ if ($id > 0 || ! empty($ref))
 		 */
 		if ($action == 'cloture')
 		{
-			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseShipment"),$langs->trans("ConfirmCloseShipment"),"confirm_cloture");
+			print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$id,$langs->trans("CloseShipment"),$langs->trans("ConfirmCloseShipment"),"confirm_cloture");
 
 		}
 
@@ -200,7 +200,7 @@ if ($id > 0 || ! empty($ref))
 		// Ref
 		print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="3">';
-		print $form->showrefnav($commande,'ref','',1,'ref','ref');
+		print Form::showrefnav($commande,'ref','',1,'ref','ref');
 		print '</td>';
 		print '</tr>';
 
@@ -287,7 +287,7 @@ if ($id > 0 || ! empty($ref))
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
-			$form->select_date($commande->date_livraison>0?$commande->date_livraison:-1,'liv_','','','',"setdatedelivery");
+			Form::select_date($commande->date_livraison>0?$commande->date_livraison:-1,'liv_','','','',"setdatedelivery");
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}

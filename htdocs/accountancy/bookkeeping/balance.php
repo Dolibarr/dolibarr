@@ -161,9 +161,9 @@ else {
 
 	print '<div class="liste_titre">';
 	print $langs->trans('DateStart') . ': ';
-	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
+	print Form::select_date($search_date_start, 'date_start', 0, 0, 1);
 	print $langs->trans('DateEnd') . ': ';
-	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
+	print Form::select_date($search_date_end, 'date_end', 0, 0, 1);
 	print '</div>';
 
 	print '<table class="noborder" width="100%">';

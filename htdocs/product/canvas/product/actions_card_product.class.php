@@ -140,7 +140,7 @@ class ActionsCardProduct
 		{
             $head = product_prepare_head($this->object);
 
-            $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
+            $this->tpl['showrefnav'] = Form::showrefnav($this->object,'ref','',1,'ref');
 
     		$titre=$langs->trans("CardProduct".$this->object->type);
     		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
@@ -148,12 +148,12 @@ class ActionsCardProduct
             $this->tpl['showend']=dol_get_fiche_end();
 
             // Accountancy buy code
-			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
-			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeKey'] = Form::editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = Form::editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
 
 			// Accountancy sell code
-			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
-			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeKey'] = Form::editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = Form::editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
 		}
 
 		$this->tpl['finished'] = $this->object->finished;

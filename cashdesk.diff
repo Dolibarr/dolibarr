@@ -1,0 +1,193 @@
+Index: htdocs/cashdesk/tpl/validation1.tpl.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- htdocs/cashdesk/tpl/validation1.tpl.php	(revision c4a6377af53759a954309a4702444d10a182d0be)
++++ htdocs/cashdesk/tpl/validation1.tpl.php	(revision )
+@@ -84,11 +84,12 @@
+ 
+ 				echo ('<tr><td class="resume_label">'.$langs->trans("DateEcheance").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
+ 
+-			} else {
++			}
++//			else {
+ 
+ 				echo ('<tr><td class="resume_label">'.$langs->trans("Received").'</td><td>'.price(price2num($obj_facturation->montantEncaisse(),'MT'),0,$langs,0,0,-1,$conf->currency).'</td></tr>');
+ 
+-			}
++//			}
+ 
+ 			// Affichage du montant rendu (reglement en especes)
+ 			if ( $obj_facturation->montantRendu() ) {
+Index: htdocs/cashdesk/validation_verif.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- htdocs/cashdesk/validation_verif.php	(revision c4a6377af53759a954309a4702444d10a182d0be)
++++ htdocs/cashdesk/validation_verif.php	(revision )
+@@ -62,15 +62,27 @@
+ 
+ 		// Si paiement autre qu'en especes, montant encaisse = prix total
+ 		$mode_reglement = $obj_facturation->getSetPaymentMode();
+-		if ( $mode_reglement != 'ESP' ) {
+-			$montant = $obj_facturation->prixTotalTtc();
+-		} else {
++
++		switch ($mode_reglement) {
++			case 'ESP':
++			case 'DIF':
+-			$montant = $_POST['txtEncaisse'];
++				$montant = $_POST['txtEncaisse'];
++				break;
++			default:
++				$montant = $obj_facturation->prixTotalTtc();
+ 		}
+ 
+-		if ( $mode_reglement != 'DIF') {
++//		if ( $mode_reglement != 'ESP' ) {
++//			$montant = $obj_facturation->prixTotalTtc();
++//		} else {
++//			$montant = $_POST['txtEncaisse'];
++//		}
++
+-			$obj_facturation->montantEncaisse($montant);
++		$obj_facturation->montantEncaisse($montant);
+ 
++		if ( $mode_reglement != 'DIF') {
++//			$obj_facturation->montantEncaisse($montant);
++//
+ 			//Determination de la somme rendue
+ 			$total = $obj_facturation->prixTotalTtc();
+ 			$encaisse = $obj_facturation->montantEncaisse();
+@@ -213,72 +225,60 @@
+ 		//print "c=".$invoice->cond_reglement_id." m=".$invoice->mode_reglement_id; exit;
+ 
+ 		// Si paiement differe ...
+-		if ( $obj_facturation->getSetPaymentMode() == 'DIF' )
+-		{
++		if ( $obj_facturation->getSetPaymentMode() == 'DIF' ) {
+-			$resultcreate=$invoice->create($user,0,dol_stringtotime($obj_facturation->paiementLe()));
++			$resultcreate = $invoice->create($user, 0, dol_stringtotime($obj_facturation->paiementLe()));
+-			if ($resultcreate > 0)
+-			{
+-				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
++		} else {
++			$resultcreate = $invoice->create($user, 0, 0);
+-			}
++		}
+-			else
+-			{
+-				$error++;
+-			}
+ 
+-			$id = $invoice->id;
+-		}
+-		else
+-		{
+-			$resultcreate=$invoice->create($user,0,0);
+-			if ($resultcreate > 0)
+-			{
+-				$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
++		if ($resultcreate > 0)
++		{
++			$resultvalid=$invoice->validate($user, $obj_facturation->numInvoice(), (isset($_SESSION["CASHDESK_ID_WAREHOUSE"])?$_SESSION["CASHDESK_ID_WAREHOUSE"]:0));
+ 
+-				$id = $invoice->id;
++			$id = $invoice->id;
+ 
+-				// Add the payment
+-				$payment=new Paiement($db);
+-				$payment->datepaye=$now;
+-				$payment->bank_account=$conf_fkaccount;
++			// Add the payment
++			$payment=new Paiement($db);
++			$payment->datepaye=$now;
++			$payment->bank_account=$conf_fkaccount;
+-				$payment->amounts[$invoice->id]=$obj_facturation->prixTotalTtc();
++			$payment->amounts[$invoice->id]=$obj_facturation->montantEncaisse();
+-				$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
+-				$payment->paiementid=$invoice->mode_reglement_id;
+-				$payment->num_paiement='';
++			$payment->note=$langs->trans("Payment").' '.$langs->trans("Invoice").' '.$obj_facturation->numInvoice();
++			$payment->paiementid=$invoice->mode_reglement_id;
++			$payment->num_paiement='';
+ 
+-				$paiement_id = $payment->create($user);
+-				if ($paiement_id > 0)
+-				{
+-                    if (! $error)
+-                    {
+-                        $result=$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
+-                        if (! $result > 0)
+-                        {
+-                            $errmsg=$paiement->error;
+-                            $error++;
+-                        }
+-                    }
++			$paiement_id = $payment->create($user);
++			if ($paiement_id > 0)
++			{
++                if (! $error)
++                {
++                    $result=$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccountid, '', '');
++                    if (! $result > 0)
++                    {
++                        $errmsg=$paiement->error;
++                        $error++;
++                    }
++                }
+ 
+-                    if (! $error)
+-                    {
+-                    	if ($invoice->total_ttc == $obj_facturation->prixTotalTtc()
+-                    		&& $obj_facturation->getSetPaymentMode() != 'DIFF')
+-                    	{
+-                    		// We set status to payed
+-                    		$result=$invoice->set_paid($user);
+-                  			//print 'eeeee';exit;
+-                    	}
++                if (! $error)
++                {
++                    if ($invoice->total_ttc == $obj_facturation->prixTotalTtc()
++                        && $obj_facturation->getSetPaymentMode() != 'DIFF')
++                    {
++                        // We set status to payed
++                        $result=$invoice->set_paid($user);
++                        //print 'eeeee';exit;
++                    }
+ 
+-                    }
+-				}
+-				else
+-				{
+-					$error++;
+-				}
+-			}
+-			else
+-			{
+-				$error++;
++                }
++			}
++			else
++			{
++				$error++;
++			}
++		}
++		else
++		{
++			$error++;
+-			}
+ 		}
+ 
+ 		if (! $error)
+@@ -291,7 +291,7 @@
+ 			$db->rollback();
+ 			$redirection = 'affIndex.php?facid='.$id.'&mesg=ErrorFailedToCreateInvoice';	// Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
+ 		}
+-		break;
++	break;
+ 
+ 		// End of case: valide_facture
+ }

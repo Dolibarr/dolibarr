@@ -1,0 +1,50 @@
+body, input[type=submit], button[type=submit] {
+    font-size: 15px;
+}
+
+button[type=submit] {
+    margin-left: 5px;
+}
+
+input[type=text], select.flat {
+    width: 90%;
+    font-size: 15px;
+}
+
+select.flat {
+    height: 25px;
+}
+
+/**
+    Página de seguimiento
+*/
+table.seguimiento {
+    width: 100%;
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: black;
+    border-right-width: 0px;
+    border-right-style: solid;
+    border-right-color: black;
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color: black;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: black;
+}
+
+table.seguimiento td, table.seguimiento th, table.seguimiento tr {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: black;
+    border-right-width: 0px;
+    border-right-style: solid;
+    border-right-color: black;
+    border-left-width: 1px;
+    border-left-style: solid;
+    border-left-color: black;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: black;
+}

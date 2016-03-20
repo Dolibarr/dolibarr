@@ -756,7 +756,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Employee
     print '<tr>';
     print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print $form->selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
+    print Form::selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
     print '</td></tr>';
 
     // Position/Job
@@ -847,7 +847,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     {
         print '<tr><td>'.$langs->trans("Administrator").'</td>';
         print '<td>';
-        print $form->selectyesno('admin',GETPOST('admin'),1);
+        print Form::selectyesno('admin',GETPOST('admin'),1);
 
         if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
@@ -1199,7 +1199,7 @@ else
          */
         if ($action == 'password')
         {
-            print $form->formconfirm("card.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
+            print Form::formconfirm("card.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
         }
 
         /*
@@ -1207,7 +1207,7 @@ else
          */
         if ($action == 'passwordsend')
         {
-            print $form->formconfirm("card.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
+            print Form::formconfirm("card.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
         }
 
         /*
@@ -1215,7 +1215,7 @@ else
          */
         if ($action == 'disable')
         {
-            print $form->formconfirm("card.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
+            print Form::formconfirm("card.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
         }
 
         /*
@@ -1223,7 +1223,7 @@ else
          */
         if ($action == 'enable')
         {
-            print $form->formconfirm("card.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
+            print Form::formconfirm("card.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
         }
 
         /*
@@ -1231,7 +1231,7 @@ else
          */
         if ($action == 'delete')
         {
-            print $form->formconfirm("card.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
+            print Form::formconfirm("card.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
         }
 
         /*
@@ -1828,7 +1828,7 @@ else
             // Employee
             print '<tr>';
             print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-            print $form->selectyesno("employee",$object->employee,1);
+            print Form::selectyesno("employee",$object->employee,1);
             print '</td></tr>';
 
             // Position/Job
@@ -1924,7 +1924,7 @@ else
                 	)
                 )
                 {
-                    print $form->selectyesno('admin',$object->admin,1);
+                    print Form::selectyesno('admin',$object->admin,1);
 
                     if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
                     {

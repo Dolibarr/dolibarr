@@ -1,0 +1,12 @@
+form#kchoose div.option {
+    display: inline-block;
+    min-width: 200px;
+}
+
+form#kchoose div input[type=checkbox] {
+    float: left;
+}
+
+form#kchoose div.option label.cb {
+    padding-left: 10px;
+}

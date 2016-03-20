@@ -1650,7 +1650,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td colspan="8">&nbsp;</td>';
     		// Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=$form->showFilterAndCheckAddButtons(0);
+            $searchpitco=Form::showFilterAndCheckAddButtons();
             print $searchpitco;
             print '</td>';
     		print '</tr>';

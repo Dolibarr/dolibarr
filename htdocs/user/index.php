@@ -332,7 +332,7 @@ if ($result)
     if (! empty($arrayfields['u.employee']['checked']))
     {
         print '<td>';
-        print $form->selectyesno('search_employee', $search_employee, 1, false, 1);
+        print Form::selectyesno('search_employee', $search_employee, 1, false, 1);
         print '</td>';
     }
     if (! empty($arrayfields['u.accountancy_code']['checked']))
@@ -396,7 +396,7 @@ if ($result)
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    $searchpitco=Form::showFilterAndCheckAddButtons();
     print $searchpitco;
     print '</td>';
 	
