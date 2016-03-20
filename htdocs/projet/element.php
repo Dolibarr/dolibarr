@@ -529,10 +529,10 @@ foreach ($listofreferent as $key => $value)
 				$addform.='<input type="hidden" name="action" value="addelement">';
 				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
 				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
-				$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform.='<div class="right"><table><tr><td>'.$langs->trans("SelectElement").'</td>';
 				$addform.='<td>'.$selectList.'</td>';
 				$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
-				$addform.='</tr></table>';
+				$addform.='</tr></table></div>';
 				$addform.='</form>';
 			}
 		}
