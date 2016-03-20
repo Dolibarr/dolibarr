@@ -1,0 +1,945 @@
+<?php
+
+require_once DOL_DOCUMENT_ROOT.'/enlacekeme/lib/functions.php';
+
+class EnlaceKeme {
+
+    /**
+     * Contador de los asientos
+     *
+     * @var int
+     */
+    public $asiento_counter = 1;
+
+    /**
+     * Contador de los apuntes
+     *
+     * @var int
+     */
+    public $apunte_counter = 1;
+
+    /**
+     * Resultado de la exportación del diario
+     *
+     * @var string
+     */
+    private $return_diario = "{diario}\n";
+
+    /**
+     * Resultado de la exportación del plan contable
+     *
+     * @var string
+     */
+    private $return_plancontable = "{plancontable}\n";
+
+    /**
+     * Resultado de la exportación de los datos auxiliares del plan contable
+     *
+     * @var string
+     */
+    private $return_datosauxiliares = "{datos_auxiliares}\n";
+
+    /**
+     * Resultado de la exportación de las facturas
+     *
+     * @var string
+     */
+    private $return_librofacturas = "{libro_facturas}\n";
+
+    /**
+     * Resultado de la exportación
+     *
+     * @var string
+     */
+    private $return = '';
+
+    const EXPORT_CUSTOMERS = 1;
+    const EXPORT_SUPPLIERS = 2;
+
+	/**
+	 * Realiza una exportación de las cuentas contables accesorias de terceros
+	 *
+	 * @param int $type Tipo de exportación. Mirar las constantes EXPORT_
+	 * @return void
+	 */
+	public function exportThirds($type) {
+
+        global $db, $langs;
+
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+        $sql = "SELECT s.nom as name, s.zip, s.town, s.code_client, s.code_compta, s.code_compta_fournisseur, s.siren, s.url, s.address, s.zip, s.phone, s.email, s.fax, p.code as country_code, d.nom as state";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+
+        if (versioncompare(versiondolibarrarray(), array(3,8,0)) <= 0) {
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON s.fk_pays = p.rowid";
+        } else {
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as p ON s.fk_pays = p.rowid";
+        }
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON s.fk_departement = d.rowid";
+
+        if ($type == self::EXPORT_CUSTOMERS) {
+            $sql.= " WHERE s.client IN (1,3)";
+        } elseif ($type == self::EXPORT_SUPPLIERS) {
+            $sql.= " WHERE s.fournisseur = 1";
+        }
+
+        $query = $db->query($sql);
+
+        while ($result = $db->fetch_object($query)) {
+
+            if ($type == self::EXPORT_CUSTOMERS) {
+                $code_compta = $result->code_compta;
+            } else {
+                $code_compta = $result->code_compta_fournisseur;
+            }
+
+            $code_compta_formatted = af_fill($code_compta, 30, ' ');
+            $third_name = af_fill($result->name, 80, ' ');
+
+            //Creación de la cuenta de tercero
+            $this->return_plancontable .= $code_compta_formatted;
+            $this->return_plancontable .= $third_name;
+            $this->return_plancontable .= "\n";
+
+            $country = $langs->trans('Country'.$result->country_code)!='Country'.$result->country_code?$langs->transnoentities('Country'.$result->country_code):$result->country_code;
+
+            //Anotamos los datos auxiliares
+            //Código contable
+            $this->return_datosauxiliares .= $code_compta_formatted;
+            //Razón/denominación social
+            $this->return_datosauxiliares .= $third_name;
+            //Nombre comercial
+            $this->return_datosauxiliares .= str_repeat(' ', 80);
+            //CIF/NIF
+            $this->return_datosauxiliares .= af_fill($result->siren, 40, ' ');
+            //Página web
+            $this->return_datosauxiliares .= af_fill($result->url, 80, ' ');
+            //Domicilio
+            $this->return_datosauxiliares .= af_fill(str_replace("\r\n", ", ", $result->address), 80, ' ');
+            //Población
+            $this->return_datosauxiliares .= af_fill($result->town, 80, ' ');
+            //Código postal
+            $this->return_datosauxiliares .= af_fill($result->zip, 40, ' ');
+            //Provincia
+            $this->return_datosauxiliares .= af_fill($result->state, 80, ' ');
+            //Teléfono
+            $this->return_datosauxiliares .= af_fill($result->phone, 80, ' ');
+            //País
+            $this->return_datosauxiliares .= af_fill($country, 80, ' ');
+            //Fax
+            $this->return_datosauxiliares .= af_fill($result->fax, 80, ' ');
+            //Email
+            $this->return_datosauxiliares .= af_fill($result->email, 80, ' ');
+            //Observaciones
+            $this->return_datosauxiliares .= str_repeat(' ', 166);
+            //CCC
+            $this->return_datosauxiliares .= af_fill('', 20, ' ');
+            //IBAN
+            $this->return_datosauxiliares .= af_fill('', 40, ' ');
+            //BIC
+            $this->return_datosauxiliares .= af_fill('', 20, ' ');
+
+            //Resto de datos
+            $this->return_datosauxiliares .= '   0'.str_repeat(' ' , 35)."\n";
+        }
+    }
+
+	/**
+	 * Realiza una exportación de los pagos de clientes
+	 *
+	 * @param DateTime $from Fecha de inicio
+	 * @param DateTime $to Fecha de fin
+	 * @return void
+	 */
+    public function exportCustomerPayments(DateTime $from, DateTime $to) {
+
+        global $db;
+
+        //Número de registros no importados
+        $fail = 0;
+
+        $sql = "SELECT p.datep, p.amount, ba.account_number, f.facnumber, s.code_compta FROM llx_paiement_facture pf
+LEFT JOIN llx_paiement p ON pf.fk_paiement = p.rowid
+LEFT JOIN llx_bank_account ba ON p.fk_bank
+LEFT JOIN llx_facture f ON f.rowid = pf.fk_facture
+LEFT JOIN llx_societe s ON s.rowid = f.fk_soc
+WHERE p.datep BETWEEN '".$from->format('Y-m-d')."' AND '".$to->format('Y-m-d')."'";
+
+        $query = $db->query($sql);
+
+        while ($result = $db->fetch_object($query)) {
+
+            $fecha = DateTime::createFromFormat('Y-m-d H:i:s', $result->datep);
+
+            $concepto = af_fill('Cobro de la factura '.$result->facnumber, 100, ' ');
+
+            $apuntes = array(
+                array(
+                    'debe' => $this->formatNumber($result->amount),
+                    'cuenta' => $result->account_number,
+                ),
+                array(
+                    'haber' => $this->formatNumber($result->amount),
+                    'cuenta' => $result->code_compta
+                )
+            );
+
+            $this->createAsiento($fecha, $concepto, '', '', $apuntes);
+        }
+    }
+
+	/**
+	 * Realiza una exportación de los pagos de proveedores
+	 *
+	 * @param DateTime $from Fecha de inicio
+	 * @param DateTime $to Fecha de fin
+	 * @return void
+	 */
+	public function exportSupplierPayments(DateTime $from, DateTime $to) {
+
+        global $db;
+
+        //Número de registros no importados
+        $fail = 0;
+
+        $sql = "SELECT p.datep, p.amount, ba.account_number, f.ref_supplier, s.code_compta_fournisseur FROM llx_paiementfourn_facturefourn pf
+LEFT JOIN llx_paiementfourn p ON pf.fk_paiementfourn = p.rowid
+LEFT JOIN llx_bank_account ba ON p.fk_bank
+LEFT JOIN llx_facture_fourn f ON f.rowid = pf.fk_facturefourn
+LEFT JOIN llx_societe s ON s.rowid = f.fk_soc
+WHERE p.datep BETWEEN '".$from->format('Y-m-d')."' AND '".$to->format('Y-m-d')."'";
+
+        $query = $db->query($sql);
+
+        while ($result = $db->fetch_object($query)) {
+
+            $fecha = DateTime::createFromFormat('Y-m-d H:i:s', $result->datep);
+
+            $concepto = af_fill('Pago de la factura '.$result->ref_supplier, 100, ' ');
+
+            $apuntes = array(
+                array(
+                    'haber' => $this->formatNumber($result->amount),
+                    'cuenta' => $result->account_number,
+                ),
+                array(
+                    'debe' => $this->formatNumber($result->amount),
+                    'cuenta' => $result->code_compta_fournisseur
+                )
+            );
+
+            $this->createAsiento($fecha, $concepto, '', '', $apuntes);
+        }
+    }
+
+	/**
+	 * Realiza una exportación de las facturas de proveedores
+	 *
+	 * @param DateTime $from Fecha de inicio
+	 * @param DateTime $to Fecha de fin
+	 * @return void
+	 */
+	public function exportSupplierInvoices(DateTime $from, DateTime $to) {
+
+        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
+
+        global $conf, $db, $langs, $mysoc;
+
+        $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+        $idpays = $p[0];
+
+        $sql = "SELECT f.rowid, f.ref_supplier, f.type, f.datef, f.libelle,";
+        $sql.= " fd.total_ttc, fd.tva_tx, fd.total_ht, fd.tva as total_tva, fd.product_type, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2,";
+        $sql.= " s.rowid as socid, s.nom as name, s.code_compta_fournisseur,";
+        $sql.= " p.rowid as pid, p.ref as ref, p.accountancy_code_buy,";
+        $sql.= " ct.accountancy_code_buy as account_tva, ct.recuperableonly";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det fd";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = '".$idpays."'";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
+        $sql.= " JOIN ".MAIN_DB_PREFIX."facture_fourn f ON f.rowid = fd.fk_facture_fourn";
+        $sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc" ;
+        $sql.= " WHERE f.fk_statut > 0 AND f.entity = ".$conf->entity;
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        else $sql.= " AND f.type IN (0,1,2,3)";
+        $sql .= " AND f.datef BETWEEN '".$from->format('Y-m-d')."' AND '".$to->format('Y-m-d')."'";
+
+        // TODO Find a better trick to avoid problem with some mysql installations
+        if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
+
+        dol_syslog("sql=".$sql);
+        $result = $db->query($sql);
+        if ($result)
+        {
+            // les variables
+            $cptfour = (! empty($conf->global->COMPTA_ACCOUNT_SUPPLIER)?$conf->global->COMPTA_ACCOUNT_SUPPLIER:$langs->trans("CodeNotDef"));
+            $cpttva = (! empty($conf->global->COMPTA_VAT_BUY_ACCOUNT)?$conf->global->COMPTA_VAT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+
+            $tabfac = array();
+            $tabht = array();
+            $tabtva = array();
+            $tabttc = array();
+            $tablocaltax1 = array();
+            $tablocaltax2 = array();
+            $tabcompany = array();
+
+            while ($obj = $db->fetch_object($result))
+            {
+                // contrôles
+                $compta_soc = (! empty($obj->code_compta_fournisseur)?$obj->code_compta_fournisseur:$cptfour);
+                $compta_prod = $obj->accountancy_code_buy;
+                if (empty($compta_prod))
+                {
+                    if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_BUY_ACCOUNT)?$conf->global->COMPTA_PRODUCT_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+                    else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_BUY_ACCOUNT)?$conf->global->COMPTA_SERVICE_BUY_ACCOUNT:$langs->trans("CodeNotDef"));
+                }
+                $compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
+
+                $sellerobj = new Societe($db);
+                if ($sellerobj->fetch($obj->socid) < 0) {
+                    dol_print_error($db, 'Error al recuperar el objeto del cliente');
+                }
+
+                if (versioncompare(versiondolibarrarray(), array('3', '8', '0')) <= 0) {
+                    $account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
+                    $account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
+                } else {
+                    $account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc, $sellerobj);
+                    $account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc, $sellerobj);
+                }
+
+                $compta_localtax1= (! empty($account_localtax1[2])?$account_localtax1[2]:$langs->trans("CodeNotDef"));
+                $compta_localtax2= (! empty($account_localtax2[2])?$account_localtax2[2]:$langs->trans("CodeNotDef"));
+
+                $tabfac[$obj->rowid]["date"] = $obj->datef;
+                $tabfac[$obj->rowid]["ref"] = $obj->ref_supplier;
+                $tabfac[$obj->rowid]["type"] = $obj->type;
+                $tabfac[$obj->rowid]["lib"] = $obj->libelle;
+                $tabfac[$obj->rowid]['tvatx'] = $obj->tva_tx;
+                $tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
+                $tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
+                if ($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+                $tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+                $tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+                $tabcompany[$obj->rowid]=array('id'=>$obj->socid,'name'=>$obj->name);
+            }
+        }
+        else {
+            dol_print_error($db);
+        }
+
+        foreach ($tabfac as $key => $val) {
+
+            $ref = $val['ref'];
+            $fecha = new DateTime($val['date']);
+
+            $concepto = af_fill('Factura '.$val['ref'].' de proveedor ', 100, ' ');
+
+            $cuenta_baseiva = null;
+            $cuenta_cuotaiva = null;
+            $cuenta_tercero = null;
+	        $base_imponible = 0.00;
+
+            $apuntes = array();
+
+            foreach ($tabht[$key] as $cuenta => $valor) {
+                $apuntes[] = array(
+                    'debe' => $this->formatNumber($valor),
+                    'cuenta' => $cuenta
+                );
+
+                if (!$cuenta_baseiva) {
+                    $cuenta_baseiva[$cuenta] = $valor;
+                }
+
+	            $base_imponible += $valor;
+            }
+
+            foreach ($tabtva[$key] as $cuenta => $valor) {
+                $apuntes[] = array(
+                    'debe' => $this->formatNumber($valor),
+                    'cuenta' => $cuenta
+                );
+
+                if (!$cuenta_cuotaiva) {
+                    $cuenta_cuotaiva[$cuenta] = $valor;
+                }
+            }
+
+            $apunte_iva = $this->apunte_counter + count($tabht[$key]);
+
+            if ($tablocaltax1[$key][key($tablocaltax1[$key])] != 0) {
+                $apuntes[] = array(
+                    'haber' => $this->formatNumber(abs(($tablocaltax1[$key][key($tablocaltax1[$key])]))),
+                    'cuenta' => key($tablocaltax1[$key])
+                );
+            }
+
+            //Si hay IRPF lo metemos "a pelo"
+            if ($tablocaltax2[$key][key($tablocaltax2[$key])] != 0) {
+                $apuntes[] = array(
+                    'haber' => $this->formatNumber(abs(($tablocaltax2[$key][key($tablocaltax2[$key])]))),
+                    'cuenta' => $conf->global->ENLACEKEME_CUENTA_IRPF
+                );
+            }
+
+            $apuntes[] = array(
+                'haber' => $this->formatNumber(($tabttc[$key][key($tabttc[$key])])),
+                'cuenta' => key($tabttc[$key])
+            );
+
+            $ref_keme = $this->obtenerRelacionIVAFromTx($val['tvatx']);
+
+            //Apunte en el diario de la compra
+            $this->return_librofacturas .= str_pad($apunte_iva, 15, '0', STR_PAD_LEFT);
+            //Cuenta base IVA
+            $this->return_librofacturas .= af_fill(key($cuenta_baseiva), 30, ' ');
+            //Base imponible
+            $this->return_librofacturas .= str_pad($this->formatNumber($base_imponible), 17, '0', STR_PAD_LEFT);
+            //Clave IVA
+            $this->return_librofacturas .= af_fill($ref_keme, 15, ' ');
+            //Tipo IVA (%)
+            $this->return_librofacturas .= str_pad($this->formatNumber($val['tvatx']), 5, '0', STR_PAD_LEFT);
+            //Tipo Recargo equiv. (%)
+            $this->return_librofacturas .= '00.00';
+            //Cuota IVA
+            $this->return_librofacturas .= str_pad($this->formatNumber($cuenta_cuotaiva[key($cuenta_cuotaiva)]), 17, '0', STR_PAD_LEFT);
+            //Cuota REC
+            $this->return_librofacturas .= str_pad($this->formatNumber(0.00), 17, '0', STR_PAD_LEFT);
+            //Cuenta de factura
+            $this->return_librofacturas .= af_fill(key($tabttc[$key]), 30, ' ');
+            //Fecha de factura
+            $this->return_librofacturas .= $fecha->format('d-m-Y');
+            //¿Es soportado?
+            $this->return_librofacturas .= '1';
+            //Campos no soportados
+            $this->return_librofacturas .= '0000000';
+            //Fecha operación
+            $this->return_librofacturas .= $fecha->format('d-m-Y');
+            //Campos no soportados
+            $this->return_librofacturas .= "0\n";
+
+            $this->createAsiento($fecha, $concepto, '', $ref, $apuntes);
+        }
+
+    }
+
+	/**
+	 * Realiza una exportación de las facturas de clientes
+	 *
+	 * @param DateTime $from Fecha de inicio
+	 * @param DateTime $to Fecha de fin
+	 * @return void
+	 */
+	public function exportCustomerInvoices(DateTime $from, DateTime $to) {
+
+        global $conf, $db, $langs, $mysoc;
+
+        $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+        $idpays = $p[0];
+
+        $sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
+        $sql.= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, ((fd.info_bits = 2) and fd.description = '(DEPOSIT)') deposit,";
+        $sql.= " s.rowid as socid, s.nom as name, s.code_compta, s.client, s.code_client,";
+        $sql.= " p.rowid as pid, p.ref as pref, p.accountancy_code_sell,";
+        $sql.= " ct.accountancy_code_sell as account_tva, ct.recuperableonly";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facturedet fd";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product p ON p.rowid = fd.fk_product";
+        $sql.= " JOIN ".MAIN_DB_PREFIX."facture f ON f.rowid = fd.fk_facture";
+        $sql.= " JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid = f.fk_soc";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '".$idpays."'";
+        $sql.= " WHERE f.entity = ".$conf->entity;
+        $sql.= " AND f.fk_statut > 0";
+        if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $sql.= " AND f.type IN (0,1,2)";
+        else $sql.= " AND f.type IN (0,1,2,3)";
+        $sql.= " AND fd.product_type IN (0,1)";
+        $sql .= " AND f.datef BETWEEN '".$from->format('Y-m-d')."' AND '".$to->format('Y-m-d')."'";
+        $sql.= " ORDER BY f.rowid";
+
+        // TODO Find a better trick to avoid problem with some mysql installations
+        if (in_array($db->type, array('mysql', 'mysqli'))) $db->query('SET SQL_BIG_SELECTS=1');
+
+        dol_syslog("sql=".$sql);
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $tabfac = array();
+            $tabht = array();
+            $tabtva = array();
+            $tablocaltax1 = array();
+            $tablocaltax2 = array();
+            $tabttc = array();
+            $tabcompany = array();
+            $account_localtax1=0;
+            $account_localtax2=0;
+
+            $num = $db->num_rows($result);
+            $i=0;
+            $resligne=array();
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($result);
+                // les variables
+                $cptcli = (! empty($conf->global->COMPTA_ACCOUNT_CUSTOMER)?$conf->global->COMPTA_ACCOUNT_CUSTOMER:$langs->trans("CodeNotDef"));
+                $compta_soc = (! empty($obj->code_compta)?$obj->code_compta:$cptcli);
+                $compta_prod = $obj->accountancy_code_sell;
+
+                if (empty($compta_prod))
+                {
+                    if($obj->product_type == 0) $compta_prod = (! empty($conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT)?$conf->global->COMPTA_PRODUCT_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
+                    else $compta_prod = (! empty($conf->global->COMPTA_SERVICE_SOLD_ACCOUNT)?$conf->global->COMPTA_SERVICE_SOLD_ACCOUNT:$langs->trans("CodeNotDef"));
+                }
+
+                //Si es una factura de anticipo la cuenta va a ser la definida en el módulo
+                if ($obj->type == 3) {
+                    $compta_prod = $conf->global->ENLACEKEME_PREFIJOCUENTA_ANTICIPOS.$obj->code_client;
+                }
+
+                //Si esta línea corresponde a un anticipo de cliente, vamos a imputarlo contra esa cuenta
+                if ($obj->deposit == 1) {
+                    $compta_soc = $conf->global->ENLACEKEME_PREFIJOCUENTA_ANTICIPOS.$obj->code_client;
+
+                    //Nos aseguramos de que la cuenta existe
+                    $code_compta_formatted = af_fill($compta_soc, 30, ' ');
+                    $third_name = af_fill($obj->name, 80, ' ');
+
+                    //Creación de la cuenta de tercero
+                    $this->return_plancontable .= $code_compta_formatted;
+                    $this->return_plancontable .= $third_name;
+                    $this->return_plancontable .= "\n";
+                }
+
+                $cpttva = (! empty($conf->global->COMPTA_VAT_ACCOUNT)?$conf->global->COMPTA_VAT_ACCOUNT:$langs->trans("CodeNotDef"));
+                $compta_tva = (! empty($obj->account_tva)?$obj->account_tva:$cpttva);
+
+                $buyerobj = new Societe($db);
+                if ($buyerobj->fetch($obj->socid) < 0) {
+                    dol_print_error($db, 'Error al recuperar el objeto del cliente');
+                }
+
+                if (versioncompare(versiondolibarrarray(), array('3', '8', '0')) <= 0) {
+                    $account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $mysoc);
+                    $account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $mysoc);
+                } else {
+                    $account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $buyerobj, $mysoc);
+                    $account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $buyerobj, $mysoc);
+                }
+
+                $compta_localtax1 = (!empty($account_localtax1[3]) ? $account_localtax1[3] : $langs->trans("CodeNotDef"));
+                $compta_localtax2 = (!empty($account_localtax2[3]) ? $account_localtax2[3] : $langs->trans("CodeNotDef"));
+
+                //la ligne facture
+                $tabfac[$obj->rowid]["date"] = $obj->datef;
+                $tabfac[$obj->rowid]["ref"] = $obj->facnumber;
+                $tabfac[$obj->rowid]["type"] = $obj->type;
+                $tabfac[$obj->rowid]['tvatx'] = $obj->tva_tx;
+                if (! isset($tabttc[$obj->rowid][$compta_soc])) $tabttc[$obj->rowid][$compta_soc]=0;
+                if (! isset($tabht[$obj->rowid][$compta_prod])) $tabht[$obj->rowid][$compta_prod]=0;
+                if (! isset($tabtva[$obj->rowid][$compta_tva])) $tabtva[$obj->rowid][$compta_tva]=0;
+                if (! isset($tablocaltax1[$obj->rowid][$compta_localtax1])) $tablocaltax1[$obj->rowid][$compta_localtax1]=0;
+                if (! isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2]=0;
+                if (! isset($tablocaltax2[$obj->rowid][$compta_localtax2])) $tablocaltax2[$obj->rowid][$compta_localtax2]=0;
+
+                //Si esta línea corresponde a un anticipo de cliente, no hay IVA de por medio
+                //Y el resto, debiera imputarse contra la cuenta del cliente
+                if ($obj->deposit == 1) {
+
+                    $compta_third = (! empty($obj->code_compta)?$obj->code_compta:$cptcli);
+
+                    $tabttc[$obj->rowid][$compta_soc] += abs($obj->total_ht);
+                    $tabttc[$obj->rowid][$compta_third] += $obj->total_ttc;
+                } else {
+                    $tabttc[$obj->rowid][$compta_soc] += $obj->total_ttc;
+                }
+
+                //Si la línea es de anticipo entonces no minora el importe de la venta
+                if ($obj->deposit != 1) {
+                    $tabht[$obj->rowid][$compta_prod] += $obj->total_ht;
+                }
+
+                if($obj->recuperableonly != 1) $tabtva[$obj->rowid][$compta_tva] += $obj->total_tva;
+                $tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
+                $tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
+                $tabcompany[$obj->rowid]=array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
+                $i++;
+            }
+        }
+        else {
+            dol_print_error($db);
+        }
+
+        foreach ($tabfac as $key => $val) {
+
+            $ref = $val['ref'];
+
+            $fecha = new DateTime($val['date']);
+
+            if ($val['type'] == 3) {
+                $concepto_txt = 'Factura de anticipo '.$ref;
+            } elseif ($val['type'] == 2) {
+                $concepto_txt = 'Factura rectificativa '.$ref;
+            } else {
+                $concepto_txt = 'Factura '.$ref;
+            }
+            $concepto = af_fill($concepto_txt, 100, ' ');
+
+            $cuenta_baseiva = null;
+            $cuenta_cuotaiva = null;
+            $cuenta_tercero = null;
+	        $base_imponible = 0.00;
+
+            $apuntes = array();
+
+            foreach ($tabht[$key] as $cuenta => $valor) {
+                $apuntes[] = array(
+                    'haber' => $this->formatNumber($valor),
+                    'cuenta' => $cuenta
+                );
+
+                if (!$cuenta_baseiva) {
+                    $cuenta_baseiva[$cuenta] = $valor;
+                }
+
+	            $base_imponible += $valor;
+            }
+
+            foreach ($tabtva[$key] as $cuenta => $valor) {
+                $apuntes[] = array(
+                    'haber' => $this->formatNumber($valor),
+                    'cuenta' => $cuenta
+                );
+
+                if (!$cuenta_cuotaiva) {
+                    $cuenta_cuotaiva[$cuenta] = $valor;
+                }
+            }
+
+            $apunte_iva = $this->apunte_counter + count($tabht[$key]);
+
+            if ($tablocaltax1[$key][key($tablocaltax1[$key])] != 0) {
+                $apuntes[] = array(
+                    'haber' => $this->formatNumber(abs(($tablocaltax1[$key][key($tablocaltax1[$key])]))),
+                    'cuenta' => key($tablocaltax1[$key])
+                );
+            }
+
+            //Si hay IRPF lo metemos "a pelo"
+            if ($tablocaltax2[$key][key($tablocaltax2[$key])] != 0) {
+                $apuntes[] = array(
+                    'debe' => $this->formatNumber(abs(($tablocaltax2[$key][key($tablocaltax2[$key])]))),
+                    'cuenta' => $conf->global->ENLACEKEME_CUENTA_IRPF
+                );
+            }
+
+            foreach ($tabttc[$key] as $cuenta => $valor) {
+                $apuntes[] = array(
+                    'debe' => $this->formatNumber($valor),
+                    'cuenta' => $cuenta
+                );
+            }
+
+            $cuenta_tercero[$cuenta] = $valor;
+
+            $cuota_iva = $cuenta_cuotaiva[key($cuenta_cuotaiva)];
+
+            if ($cuota_iva) {
+                $tipo_iva = $val['tvatx'];
+                $ref_keme = $this->obtenerRelacionIVAFromTx($tipo_iva);
+            } else {
+                $ref_keme = '';
+                $tipo_iva = 0.00;
+            }
+
+            //Apunte en el diario de la compra
+            $this->return_librofacturas .= str_pad($apunte_iva, 15, '0', STR_PAD_LEFT);
+            //Cuenta base IVA
+            $this->return_librofacturas .= af_fill(key($cuenta_baseiva), 30, ' ');
+            //Base imponible
+            $this->return_librofacturas .= str_pad($this->formatNumber($base_imponible), 17, '0', STR_PAD_LEFT);
+            //Clave IVA
+            $this->return_librofacturas .= af_fill($ref_keme, 15, ' ');
+            //Tipo IVA (%)
+            $this->return_librofacturas .= str_pad($this->formatNumber($tipo_iva), 5, '0', STR_PAD_LEFT);
+            //Tipo Recargo equiv. (%)
+            $this->return_librofacturas .= '00.00';
+            //Cuota IVA
+            $this->return_librofacturas .= str_pad($this->formatNumber($cuota_iva), 17, '0', STR_PAD_LEFT);
+            //Cuota REC
+            $this->return_librofacturas .= str_pad($this->formatNumber(0.00), 17, '0', STR_PAD_LEFT);
+            //Cuenta de factura
+            $this->return_librofacturas .= af_fill(key($cuenta_tercero), 30, ' ');
+            //Fecha de factura
+            $this->return_librofacturas .= $fecha->format('d-m-Y');
+            //¿Es soportado?
+            $this->return_librofacturas .= '0';
+            //Campos no soportados
+            $this->return_librofacturas .= '0000000';
+            //Fecha operación
+            $this->return_librofacturas .= $fecha->format('d-m-Y');
+            //Campos no soportados
+            $this->return_librofacturas .= "0\n";
+
+            $this->createAsiento($fecha, $concepto, $ref, '', $apuntes);
+        }
+
+    }
+
+	/**
+	 * Realiza una exportación de los pagos de impuestos
+	 *
+	 * @param DateTime $from Fecha de inicio
+	 * @param DateTime $to Fecha de fin
+	 * @return void
+	 */
+	public function exportTaxPayments(DateTime $from, DateTime $to) {
+
+        global $db, $conf;
+
+        $sql = "SELECT a.account_number, t.label, t.amount, t.datep FROM llx_tva t
+  LEFT JOIN llx_bank b ON b.rowid = t.fk_bank
+  LEFT JOIN llx_bank_account a ON a.rowid = b.fk_account
+  WHERE t.datep BETWEEN '".$from->format('Y-m-d')."' AND '".$to->format('Y-m-d')."'";
+
+        $query = $db->query($sql);
+
+        while ($result = $db->fetch_object($query)) {
+
+            $fecha = new DateTime($result->datep);
+            $concepto = af_fill($result->label, 100, ' ');
+
+            $apuntes = array(
+                array(
+                    'haber' => $result->amount,
+                    'cuenta' => $result->account_number
+                ),
+                array(
+                    'debe' => $result->amount,
+                    'cuenta' => $conf->global->ENLACEKEME_CUENTA_HAEAT_IVA
+                )
+            );
+
+            $this->createAsiento($fecha, $concepto, '', '', $apuntes);
+        }
+
+        $sql = "SELECT a.account_number, t.label, t.amount, t.datep FROM llx_localtax t
+  LEFT JOIN llx_bank b ON b.rowid = t.fk_bank
+  LEFT JOIN llx_bank_account a ON a.rowid = b.fk_account
+        WHERE t.datep BETWEEN '".$from->format('Y-m-d')."' AND '".$to->format('Y-m-d')."'";
+
+        $query = $db->query($sql);
+
+        while ($result = $db->fetch_object($query)) {
+
+            $fecha = new DateTime($result->datep);
+            $concepto = af_fill($result->label, 100, ' ');
+
+            $apuntes = array(
+                array(
+                    'haber' => $result->amount,
+                    'cuenta' => $result->account_number
+                ),
+                array(
+                    'debe' => $result->amount,
+                    'cuenta' => $conf->global->ENLACEKEME_CUENTA_IRPF
+                )
+            );
+
+            $this->createAsiento($fecha, $concepto, '', '', $apuntes);
+        }
+
+
+    }
+
+    /**
+     * Devuelve las relaciones IVA con los códigos de IVA de Keme.
+     *
+     * @return array
+     */
+    public static function obtenerRelacionesIVA() {
+
+        global $db;
+
+        $return = array();
+
+        $sql = 'SELECT t.rowid, t.note, t.taux, k.ref FROM llx_c_tva t LEFT OUTER JOIN llx_keme_relvat k ON t.rowid = k.fk_vat WHERE t.fk_pays = 4';
+
+        $result = $db->query($sql);
+
+        while ($obj = $db->fetch_object($result)) {
+            $return[$obj->rowid] = array(
+                'note' => $obj->note,
+                'rate' => $obj->taux,
+                'ref' => $obj->ref
+            );
+        }
+
+        return $return;
+
+    }
+
+    /**
+     * Actualiza una relación de IVA KEME - Dolibarr
+     *
+     * @param int $id Id del impuesto a relacionar
+     * @param string $ref Código de KEME
+     * @return bool
+     */
+    public static function actualizarRelacionIVA($id, $ref) {
+
+        global $db;
+
+        $sql = 'INSERT INTO
+                  llx_keme_relvat (id, ref, fk_vat)
+                VALUES
+                  (null, \''.$db->escape($ref).'\', '.$id.')
+                ON DUPLICATE KEY UPDATE ref = VALUES(ref);';
+
+        if (!$db->query($sql)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Devuelve el código de IVA de Keme para la tasa buscada
+     *
+     * @param int $tx Tasa
+     * @throws Exception Error en la DB
+     * @return string
+     */
+    private function obtenerRelacionIVAFromTx($tx) {
+        global $db;
+
+        $sql = "select ref from llx_keme_relvat v left join llx_c_tva t on v.fk_vat = t.rowid where t.fk_pays = 4 and t.taux = '".(float)$tx."'";
+
+        if ($query = $db->query($sql)) {
+            $result = $db->fetch_object($query);
+
+            return $result->ref;
+        } else {
+            throw new Exception('DB ERROR');
+        }
+
+    }
+
+	/**
+	 * Devuelve el resultado del contenido del archivo de exportación
+	 *
+	 * @return string
+	 */
+	public function getResult() {
+
+        $this->return .= $this->return_plancontable;
+        $this->return .= "\n".$this->return_datosauxiliares;
+        $this->return .= "\n".$this->return_diario;
+        $this->return .= "\n".$this->return_librofacturas;
+
+        return $this->return;
+    }
+
+    /**
+     * Función auxiliar de creación de asientos.
+     * Formato de los apuntes:
+     *
+     * array(
+     *      'debe' => float,
+     *      'haber' => float,
+     *      'cuenta' => string
+     * )
+     *
+     * Se debe elegir entre debe o haber
+     *
+     * @param DateTime $fecha Fecha del asiento
+     * @param string $concepto Concepto del asiento
+     * @param string $documento Documento del asiento
+     * @param string $codfactura Código de la factura (utilizado en documentos de proveedores)
+     * @param array $apuntes Apuntes según formato
+     * @return true
+     */
+    private function createAsiento(DateTime $fecha, $concepto, $documento, $codfactura, array $apuntes) {
+
+        $num_asiento = str_pad($this->asiento_counter, 15, '0', STR_PAD_LEFT);
+
+        $fecha_format = $fecha->format('d-m-Y');
+        $ref_diario = str_repeat(' ', 40);
+
+        foreach ($apuntes as $apunte) {
+
+            $debe = 0.00;
+            $haber = 0.00;
+
+            if (isset($apunte['debe'])) {
+                $debe = (float)$apunte['debe'];
+            }
+
+            if (isset($apunte['haber'])) {
+                $haber = (float)$apunte['haber'];
+            }
+
+//            if (!$debe && !$haber) {
+//                continue;
+//            }
+
+            //Número
+            $this->return_diario .= $num_asiento;
+            //Apunte
+            $this->return_diario .= str_pad($this->apunte_counter, 15, '0', STR_PAD_LEFT);
+            //Diario
+            $this->return_diario .= $ref_diario;
+            //Fecha
+            $this->return_diario .= $fecha_format;
+            //Código cuenta
+            $this->return_diario .= af_fill($apunte['cuenta'], 30, ' ');
+            //Concepto cargo/abono
+            $this->return_diario .= $concepto;
+            //Debe
+            $this->return_diario .= str_pad($this->formatNumber($debe), 17, '0', STR_PAD_LEFT);
+            //Haber
+            $this->return_diario .= str_pad($this->formatNumber($haber), 17, '0', STR_PAD_LEFT);
+            //Documento
+            $this->return_diario .= af_fill($documento, 80, ' ');
+            //Cód. Factura
+            $this->return_diario .= af_fill($codfactura, 80, ' ');
+
+            $this->return_diario .= "\n";
+
+            $this->apunte_counter++;
+        }
+
+        $this->asiento_counter++;
+    }
+
+    public function checkAccountancyCodes() {
+
+        global $db;
+
+        $queries = array(
+            "SELECT COUNT(*) count FROM llx_societe s WHERE s.client IN (1,3) AND (s.code_compta = '' OR s.code_compta IS NULL)",
+            "SELECT COUNT(*) count FROM llx_societe sf WHERE sf.fournisseur = 1 AND (sf.code_compta_fournisseur = '' OR sf.code_compta_fournisseur IS NULL)",
+            "SELECT COUNT(*) count FROM llx_bank_account b WHERE b.account_number = '' OR b.account_number IS NULL"
+        );
+
+        foreach ($queries as $sql) {
+            $query = $db->query($sql);
+            $result = $db->fetch_object($query);
+
+            if ($result->count > 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+	/**
+	 * Da formato a un número en función de la convención de Keme
+	 *
+	 * @param float $number Número a formatear
+	 * @return string Número formateado
+	 */
+	private function formatNumber($number) {
+        return number_format($number, 2, '.', '');
+    }
+} 

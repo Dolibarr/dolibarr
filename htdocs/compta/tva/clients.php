@@ -140,7 +140,7 @@ if ($modetax==1) {	// Calculate on invoice for goods and services
 	$calcmode=$langs->trans("CalcModeVATDebt");
 	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	//$name.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=Form::select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesVATDueServices");
 	$description.='<br>';
@@ -183,7 +183,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 	$calcmode=$langs->trans("CalcModeVATEngagement");
 	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	//$name.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=Form::select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesVATInServices");
 	$description.=' '.$langs->trans("DepositsAreIncluded");

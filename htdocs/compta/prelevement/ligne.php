@@ -193,25 +193,25 @@ if ($id)
 		//Select yes/no
 		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->name.' ?</td>';
 		print '<td colspan="2" class="valid">';
-		print $form->selectyesno("confirm",1,0);
+		print Form::selectyesno("confirm",1,0);
 		print '</td></tr>';
 
 		//Date
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedData").'</td>';
 		print '<td colspan="2" class="valid">';
-		print $form->select_date('','','','','',"confirm_rejet");
+		print Form::select_date('','','','','',"confirm_rejet");
 		print '</td></tr>';
 
 		//Reason
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
-		print $form->selectarray("motif", $rej->motifs);
+		print Form::selectarray("motif", $rej->motifs);
 		print '</td></tr>';
 
 		//Facturer
 		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
-		print $form->selectarray("facturer", $rej->facturer);
+		print Form::selectarray("facturer", $rej->facturer);
 		print '</td></tr>';
 		print '</table><br>';
 

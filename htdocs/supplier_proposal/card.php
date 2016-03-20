@@ -1138,9 +1138,9 @@ if ($action == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
-		$form->select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
+		Form::select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
 	} else {
-		$form->select_date(-1, 'liv_', '', '', '', "addask", 1, 1);
+		Form::select_date(-1, 'liv_', '', '', '', "addask", 1, 1);
 	}
 	print '</td></tr>';
 
@@ -1150,7 +1150,7 @@ if ($action == 'create')
 	print '<td>' . $langs->trans("DefaultModel") . '</td>';
 	print '<td colspan="2">';
 	$liste = ModelePDFSupplierProposal::liste_modeles($db);
-	print $form->selectarray('model', $liste, ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF));
+	print Form::selectarray('model', $liste, ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF));
 	print "</td></tr>";
 
 	// Project
@@ -1267,7 +1267,7 @@ if ($action == 'create')
 				$liste_ask [$row [0]] = $askPriceSupplierRefAndSocName;
 				$i ++;
 			}
-			print $form->selectarray("copie_supplier_proposal", $liste_ask, 0);
+			print Form::selectarray("copie_supplier_proposal", $liste_ask, 0);
 		} else {
 			dol_print_error($db);
 		}
@@ -1358,22 +1358,22 @@ if ($action == 'create')
 							// 1),
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', 's.fournisseur=1')));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneAsk'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneAsk'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
 	// Confirm delete
 	else if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteAsk'), $langs->trans('ConfirmDeleteAsk', $object->ref), 'confirm_delete', '', 0, 1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteAsk'), $langs->trans('ConfirmDeleteAsk', $object->ref), 'confirm_delete', '', 0, 1);
 	}
 
 	// Confirm reopen
 	else if ($action == 'reopen') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenAsk', $object->ref), 'confirm_reopen', '', 0, 1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenAsk', $object->ref), 'confirm_reopen', '', 0, 1);
 	}
 
 	// Confirmation delete product/service line
 	else if ($action == 'ask_deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	// Confirm validate askprice
@@ -1401,7 +1401,7 @@ if ($action == 'create')
 		}
 
 		if (! $error)
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
+			$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
 	}
 
 	if (! $formconfirm) {
@@ -1420,7 +1420,7 @@ if ($action == 'create')
 
 	// Ref
 	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 
 	// Company
@@ -1458,7 +1458,7 @@ if ($action == 'create')
 		print '<form name="editdate_livraison" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		$form->select_date($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
+		Form::select_date($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
 		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {
@@ -1832,7 +1832,7 @@ if ($action == 'create')
 		$somethingshown = $formfile->show_documents('supplier_proposal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
+		$somethingshown = Form::showLinkedObjectBlock($object);
 
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);

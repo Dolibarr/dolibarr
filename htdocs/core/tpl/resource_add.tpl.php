@@ -22,8 +22,8 @@ $events=array();
 $out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2);
 $out .= '</div>';
 
-$out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.$form->selectyesno('busy',(isset($_POST['busy'])?$_POST['busy']:1),1).'</div>';
-$out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.$form->selectyesno('mandatory',(isset($_POST['mandatory'])?$_POST['mandatory']:0),1).'</div>';
+$out .= '<div class="tagtd"><label>'.$langs->trans('Busy').'</label> '.Form::selectyesno('busy',(isset($_POST['busy'])?$_POST['busy']:1),1).'</div>';
+$out .= '<div class="tagtd"><label>'.$langs->trans('Mandatory').'</label> '.Form::selectyesno('mandatory',(isset($_POST['mandatory'])?$_POST['mandatory']:0),1).'</div>';
 
 $out .= '<div class="tagtd" align="right">';
 $out .='<input type="submit" id="add-resource-place" class="button" value="'.$langs->trans("Add").'"/>';

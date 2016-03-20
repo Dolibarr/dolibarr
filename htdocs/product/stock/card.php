@@ -255,7 +255,7 @@ else
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
+				print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
 			print '<table class="border" width="100%">';
@@ -264,7 +264,7 @@ else
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'libelle');
+			print Form::showrefnav($object, 'id', $linkback, 1, 'rowid', 'libelle');
 			print '</td>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
