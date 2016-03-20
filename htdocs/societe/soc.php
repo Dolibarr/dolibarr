@@ -1242,7 +1242,7 @@ else
 			if ($object->prospect || $object->client) {
 				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
+				print Form::multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
 					null, "90%");
 				print "</td></tr>";
 			}
@@ -1251,7 +1251,7 @@ else
 			if ($object->fournisseur) {
 				print '<tr><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-				print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
+				print Form::multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
 					null, "90%");
 				print "</td></tr>";
 			}
@@ -1800,7 +1800,7 @@ else
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print Form::multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 					print "</td></tr>";
 				}
 
@@ -1814,7 +1814,7 @@ else
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print Form::multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 					print "</td></tr>";
 				}
 			}

@@ -4846,7 +4846,7 @@ class Form
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
+    public static function multiselectarray($htmlname, array $array, array $selected = array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
     {
     	global $conf, $langs;
 
