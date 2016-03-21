@@ -175,7 +175,7 @@ else
 	// Confirmation suppression resource line
 	if ($action == 'delete_resource')
 	{
-		print $form->formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
+		print Form::formconfirm("element_resource.php?element=".$element."&element_id=".$element_id."&id=".$id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_linked_resource",'','',1);
 	}
 
 
@@ -201,7 +201,7 @@ else
 
 			// Ref
 			print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-			print $form->showrefnav($act, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
+			print Form::showrefnav($act, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
 			print '</td></tr>';
 
 			// Type

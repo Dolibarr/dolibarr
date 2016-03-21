@@ -126,11 +126,11 @@ print '<table class="border" width="100%">';
 // Start date
 print '<td>' . $langs->trans('StartDate') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td width="20%">';
-$form->select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+Form::select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td width="20%">' . $langs->trans('EndDate') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td width="20%">';
-$form->select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+Form::select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Launch')) . '" name="button_search" />';

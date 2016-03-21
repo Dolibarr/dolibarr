@@ -162,19 +162,19 @@ if ($action == 'create') {
 	
 	// Date start
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-	print $form->select_date(($date_start ? $date_start : ''), 'fiscalyear');
+	print Form::select_date(($date_start ? $date_start : ''), 'fiscalyear');
 	print '</td></tr>';
 	
 	// Date end
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
+	print Form::select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
 	print '</td></tr>';
 	
 	// Statut
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Statut") . '</td>';
 	print '<td class="valeur">';
-	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
+	print Form::selectarray('statut', $statut2label, GETPOST('statut'));
 	print '</td></tr>';
 	
 	print '</table>';
@@ -216,17 +216,17 @@ if ($action == 'create') {
 			
 			// Date start
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-			print $form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
+			print Form::select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
 			print '</td></tr>';
 			
 			// Date end
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-			print $form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
+			print Form::select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
 			print '</td></tr>';
 			
 			// Statut
 			print '<tr><td>' . $langs->trans("Statut") . '</td><td>';
-			print $form->selectarray('statut', $statut2label, $object->statut);
+			print Form::selectarray('statut', $statut2label, $object->statut);
 			print '</td></tr>';
 			
 			print '</table>';
@@ -245,7 +245,7 @@ if ($action == 'create') {
 			 * Confirm delete
 			 */
 			if ($action == 'delete') {
-				print $form->formconfirm($_SERVER["PHP_SELF"] . "?id=" . $id, $langs->trans("DeleteFiscalYear"), $langs->trans("ConfirmDeleteFiscalYear"), "confirm_delete");
+				print Form::formconfirm($_SERVER["PHP_SELF"] . "?id=" . $id, $langs->trans("DeleteFiscalYear"), $langs->trans("ConfirmDeleteFiscalYear"), "confirm_delete");
 			}
 			
 			dol_fiche_head($head, 'card', $langs->trans("FiscalYearCard"), 0, 'cron');
@@ -263,23 +263,23 @@ if ($action == 'create') {
 			
 			// Label
 			print '<tr><td valign="top">';
-			print $form->editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print Form::editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print Form::editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
 			print "</td></tr>";
 			
 			// Date start
 			print '<tr><td>';
-			print $form->editfieldkey("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print Form::editfieldkey("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print Form::editfieldval("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td></tr>';
 			
 			// Date end
 			print '<tr><td>';
-			print $form->editfieldkey("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print Form::editfieldkey("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print Form::editfieldval("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td></tr>';
 			
 			// Statut

@@ -1620,7 +1620,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    {
     	    if (! is_object($form)) $form=new Form($db);
     	    $selected=-1;
-            $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+            $searchform.=Form::selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 	    }
 	    else
 	    {

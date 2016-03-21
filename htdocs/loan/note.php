@@ -77,7 +77,7 @@ if ($id > 0)
     // Ref
     print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
     print '<td colspan="3">';
-    print $form->showrefnav($object,'id','','','rowid','ref');
+    print Form::showrefnav($object,'id','','','rowid','ref');
     print '</td></tr>';
     // Name
     print '<tr><td width="20%">'.$langs->trans("Name").'</td>';
