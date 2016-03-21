@@ -394,10 +394,10 @@ else {
 	print '<td><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
 	print '<td class="liste_titre">';
 	print $langs->trans('From') . ': ';
-	print Form::select_date($search_date_start, 'date_start', 0, 0, 1);
+	print Form::selectDate($search_date_start, 'date_start', 0, 0, 1);
 	print '<br>';
 	print $langs->trans('To') . ': ';
-	print Form::select_date($search_date_end, 'date_end', 0, 0, 1);
+	print Form::selectDate($search_date_end, 'date_end', 0, 0, 1);
 	print '</td>';
 	print '<td><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
 	print '<td>';

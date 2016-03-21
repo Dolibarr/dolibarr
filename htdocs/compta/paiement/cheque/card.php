@@ -387,7 +387,7 @@ if ($action == 'new')
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
 	print '<tr><td width="200">'.$langs->trans("DateChequeReceived").'</td><td>';
-	print Form::select_date($filterdate,'fd',0,0,1,'',1,1,1);
+	print Form::selectDate($filterdate,'fd',0,0,1,'',1,1,1);
 	print '</td></tr>';
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
@@ -601,7 +601,7 @@ else
         print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setdate">';
-        Form::select_date($object->date_bordereau,'datecreate_','','','',"setdate");
+        Form::selectDate($object->date_bordereau,'datecreate_','','','',"setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         print '</form>';
     }

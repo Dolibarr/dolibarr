@@ -431,7 +431,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="nowrap">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print Form::select_date($newdate,'time',1,1,2,"timespent_date",1,0,1);
+			print Form::selectDate($newdate,'time',1,1,2,"timespent_date",1,0,1);
 			print '</td>';
 
 			// Contributor
@@ -551,7 +551,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="nowrap">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print Form::select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
+				print Form::selectDate(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
 			}
 			else
 			{

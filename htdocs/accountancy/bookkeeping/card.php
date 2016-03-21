@@ -248,7 +248,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>' . $langs->trans("Docdate") . '</td>';
 	print '<td>';
-	print Form::select_date('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print Form::selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 	

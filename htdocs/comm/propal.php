@@ -1368,7 +1368,7 @@ if ($action == 'create')
 
 	// Date
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
-	Form::select_date('', '', '', '', '', "addprop", 1, 1);
+	Form::selectDate('', '', '', '', '', "addprop", 1, 1);
 	print '</td></tr>';
 
 	// Validaty duration
@@ -1416,9 +1416,9 @@ if ($action == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
-		Form::select_date($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
+		Form::selectDate($syear."-".$smonth."-".$sday, 'date_livraison', '', '', '', "addprop");
 	} else {
-		Form::select_date(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
+		Form::selectDate(-1, 'date_livraison', '', '', '', "addprop", 1, 1);
 	}
 	print '</td></tr>';
 
@@ -1804,7 +1804,7 @@ if ($action == 'create')
 		print '<form name="editdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setdate">';
-		Form::select_date($object->date, 're', '', '', 0, "editdate");
+		Form::selectDate($object->date, 're', '', '', 0, "editdate");
 		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {
@@ -1830,7 +1830,7 @@ if ($action == 'create')
 		print '<form name="editecheance" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setecheance">';
-		Form::select_date($object->fin_validite, 'ech', '', '', '', "editecheance");
+		Form::selectDate($object->fin_validite, 'ech', '', '', '', "editecheance");
 		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {

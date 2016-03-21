@@ -207,13 +207,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
-	Form::select_date($subscription->dateh,'datesub',1,1,0,'update',1);
+	Form::selectDate($subscription->dateh,'datesub',1,1,0,'update',1);
 	print '</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	Form::select_date($subscription->datef,'datesubend',0,0,0,'update',1);
+	Form::selectDate($subscription->datef,'datesubend',0,0,0,'update',1);
 	print '</td>';
     print '</tr>';
 

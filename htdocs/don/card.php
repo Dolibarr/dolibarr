@@ -308,7 +308,7 @@ if ($action == 'create')
 
     // Date
 	print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Date").'</td><td>';
-	Form::select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
+	Form::selectDate($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
     // Amount
@@ -430,7 +430,7 @@ if (! empty($id) && $action == 'edit')
 
 	// Date
 	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	Form::select_date($object->date,'','','','',"update");
+	Form::selectDate($object->date,'','','','',"update");
 	print '</td>';
 
 	// Amount

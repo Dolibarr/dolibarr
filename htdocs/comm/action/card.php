@@ -665,9 +665,9 @@ if ($action == 'create')
 	$datep=($datep?$datep:$object->datep);
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
 	print '<tr><td width="30%" class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if (GETPOST("afaire") == 1) Form::select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) Form::select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
-	else Form::select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+	if (GETPOST("afaire") == 1) Form::selectDate($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) Form::selectDate($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
+	else Form::selectDate($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 	print '</td></tr>';
 
 	// Date end
@@ -678,9 +678,9 @@ if ($action == 'create')
 		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
 	}
 	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
-	if (GETPOST("afaire") == 1) Form::select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) Form::select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else Form::select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	if (GETPOST("afaire") == 1) Form::selectDate($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) Form::selectDate($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else Form::selectDate($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	print '</td></tr>';
 
 	// Status
@@ -955,16 +955,16 @@ if ($id > 0)
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
-		if (GETPOST("afaire") == 1) Form::select_date($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
-		else if (GETPOST("afaire") == 2) Form::select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
-		else Form::select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		if (GETPOST("afaire") == 1) Form::selectDate($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
+		else if (GETPOST("afaire") == 2) Form::selectDate($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		else Form::selectDate($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) Form::select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else if (GETPOST("afaire") == 2) Form::select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		//else Form::select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend','ap');
-		else Form::select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		if (GETPOST("afaire") == 1) Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else if (GETPOST("afaire") == 2) Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		//else Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend','ap');
+		else Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
 		$userepeatevent=0;	// Dev in progress

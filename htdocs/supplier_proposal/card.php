@@ -1138,9 +1138,9 @@ if ($action == 'create')
 		$syear = date("Y", $tmpdte);
 		$smonth = date("m", $tmpdte);
 		$sday = date("d", $tmpdte);
-		Form::select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
+		Form::selectDate($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
 	} else {
-		Form::select_date(-1, 'liv_', '', '', '', "addask", 1, 1);
+		Form::selectDate(-1, 'liv_', '', '', '', "addask", 1, 1);
 	}
 	print '</td></tr>';
 
@@ -1458,7 +1458,7 @@ if ($action == 'create')
 		print '<form name="editdate_livraison" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setdate_livraison">';
-		Form::select_date($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
+		Form::selectDate($object->date_livraison, 'liv_', '', '', '', "editdate_livraison");
 		print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 		print '</form>';
 	} else {

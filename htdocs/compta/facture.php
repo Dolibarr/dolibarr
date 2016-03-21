@@ -2354,7 +2354,7 @@ if ($action == 'create')
 	// Date invoice
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
 	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-	print Form::select_date($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
+	print Form::selectDate($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
 	print '</td></tr>';
 
 	// Payment term
@@ -2548,12 +2548,12 @@ if ($action == 'create')
 					print '<td class="nobordernopadding nowrap">';
 					print $langs->trans('From') . ' ';
 					print '</td><td class="nobordernopadding nowrap">';
-					print Form::select_date('', 'date_start' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
+					print Form::selectDate('', 'date_start' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
 					print '</td></tr>';
 					print '<td class="nobordernopadding nowrap">';
 					print $langs->trans('to') . ' ';
 					print '</td><td class="nobordernopadding nowrap">';
-					print Form::select_date('', 'date_end' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
+					print Form::selectDate('', 'date_end' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
 					print '</td></tr></table>';
 					print '</td>';
 				}
@@ -3091,7 +3091,7 @@ else if ($id > 0 || ! empty($ref))
 
 	if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 		if ($action == 'editinvoicedate') {
-			Form::form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date, 'invoicedate');
+			Form::formDate($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date, 'invoicedate');
 		} else {
 			print dol_print_date($object->date, 'daytext');
 		}
@@ -3454,7 +3454,7 @@ else if ($id > 0 || ! empty($ref))
 	if ($object->type != Facture::TYPE_CREDIT_NOTE)
 	{
 		if ($action == 'editpaymentterm') {
-			Form::form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
+			Form::formDate($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
 		} else {
 			print dol_print_date($object->date_lim_reglement, 'daytext');
 			if ($object->hasDelay()) {

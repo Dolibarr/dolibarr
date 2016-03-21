@@ -737,10 +737,10 @@ if ($resql)
 			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
 			        print '<td align="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 			        print '<td align="center" width="10%">';
-			        Form::select_date($pdluo->eatby,'eatby','','',1,'',1,0,1);
+			        Form::selectDate($pdluo->eatby,'eatby','','',1,'',1,0,1);
 			        print '</td>';
 			        print '<td align="center" width="10%">';
-			        Form::select_date($pdluo->sellby,'sellby','','',1,'',1,0,1);
+			        Form::selectDate($pdluo->sellby,'sellby','','',1,'',1,0,1);
 			        print '</td>';
 			        print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
 			        print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
