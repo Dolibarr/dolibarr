@@ -98,7 +98,7 @@ class Notify
      * @param	Object	$object			Object the notification is about (need it to check threshold value of some notifications)
      * @return	array|int				<0 if KO, array of notifications to send if OK
      */
-	function getNotificationsArray($notifcode,$socid= 0,$userid= 0,$object=null)
+	function getNotificationsArray($notifcode,$socid= 0,$object=null,$userid= 0)
 	{
 		global $conf, $user;
 
