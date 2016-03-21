@@ -24,7 +24,9 @@ Dolibarr 4.0 should be compatible with PHP 7 but more feedbacks are still expect
 
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
-- Method select_type_comptes_financiers() has been renamed into selectTypeOfBankAccount() 
+- Method FormBank::select_type_comptes_financiers() has been renamed into FormBank::selectTypeOfBankAccount()
+- Method Form::form_date() has been renamed into Form::formDate()
+- Method Form::select_date() has been renamed into Form::select_date()
 
 
 
