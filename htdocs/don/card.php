@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -680,7 +680,7 @@ if (! empty($id) && $action != 'edit')
 			$projettmp=new Project($db);
 			$projettmp->id=$object->fk_projet;
 			$projettmp->ref=$object->project;
-			print $projettmp->getNomUrl(1);
+			if(! empty($object->fk_projet)) print $projettmp->getNomUrl(1);
 		print '</td>';
 		print '</tr>';
     }
