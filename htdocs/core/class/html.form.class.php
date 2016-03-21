@@ -64,7 +64,7 @@ class Form
      *
      * @param		DoliDB		$db      Database handler
      */
-    public function __construct($db)
+    public function __construct(DoliDB $db)
     {
         $this->db = $db;
     }
@@ -81,7 +81,7 @@ class Form
      * @param	string	$moreparam		More param to add on a href URL
      * @return	string					HTML edit field
      */
-    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='')
+    public static function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='')
     {
         global $conf,$langs;
 
@@ -129,7 +129,7 @@ class Form
      * @param	string	$moreparam		More param to add on a href URL
      * @return  string					HTML edit field
      */
-    function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='')
+    public static function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='')
     {
         global $conf,$langs,$db;
 
@@ -141,7 +141,7 @@ class Form
         // When option to edit inline is activated
         if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && ! preg_match('/^select;|datehourpicker/',$typeofdata)) // TODO add jquery timepicker
         {
-            $ret.=$this->editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
+            $ret.= self::editInPlace($object, $value, $htmlname, $perm, $typeofdata, $editvalue, $extObject, $custommsg);
         }
         else
         {
@@ -171,11 +171,11 @@ class Form
                 }
                 else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
                 {
-                    $ret.=$this->select_date($value,$htmlname,0,0,1,'form'.$htmlname,1,0,1);
+                    $ret.=self::select_date($value,$htmlname,0,0,1,'form'.$htmlname,1,0,1);
                 }
                 else if ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker')
                 {
-                    $ret.=$this->select_date($value,$htmlname,1,1,1,'form'.$htmlname,1,0,1);
+                    $ret.=self::select_date($value,$htmlname,1,1,1,'form'.$htmlname,1,0,1);
                 }
                 else if (preg_match('/^select;/',$typeofdata))
                 {
@@ -185,7 +185,7 @@ class Form
                          $tmp=explode(':',$val);
                          $arraylist[$tmp[0]]=$tmp[1];
                      }
-                     $ret.=$this->selectarray($htmlname,$arraylist,$value);
+                     $ret.= Form::selectarray($htmlname,$arraylist,$value);
                 }
                 else if (preg_match('/^ckeditor/',$typeofdata))
                 {
@@ -253,7 +253,7 @@ class Form
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
      * @return	string   		      	HTML edit in place
      */
-    private function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $editvalue=null, $extObject=null, $custommsg=null)
+    private static function editInPlace($object, $value, $htmlname, $condition, $inputType='textarea', $editvalue=null, $extObject=null, $custommsg=null)
     {
         global $conf;
 
@@ -370,7 +370,7 @@ class Form
 
     /**
      *	Show a text and picto with tooltip on text or picto.
-     *  Can be called by an instancied $form->textwithtooltip or by a static call Form::textwithtooltip
+     *  Can be called by an instancied Form::textwithtooltip or by a static call Form::textwithtooltip
      *
      *	@param	string		$text				Text to show
      *	@param	string		$htmltext			HTML content of tooltip. Must be HTML/UTF8 encoded.
@@ -384,7 +384,7 @@ class Form
      *	@return	string							Code html du tooltip (texte+picto)
      *	@see	Use function textwithpicto if you can.
      */
-    function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0)
+    public static function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0)
     {
         global $conf;
 
@@ -446,7 +446,7 @@ class Form
      *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
      * 	@return	string						HTML code of text, picto, tooltip
      */
-    function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2)
+    public static function textwithpicto($text, $htmltext, $direction = 1, $type = 'help', $extracss = '', $noencodehtmltext = 0, $notabs = 2)
     {
         global $conf;
 
@@ -479,17 +479,17 @@ class Form
         elseif ($type == 'admin') $img = img_picto($alt, 'star');
         elseif ($type == 'warning') $img = img_warning($alt);
 
-        return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
+        return self::textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
     }
 
     /**
      * Generate select HTML to choose massaction
      * 
      * @param	string	$selected		Selected value
-     * @param	int		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
+     * @param	array	$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
      * @return	string					Select list
      */
-    function selectMassAction($selected, $arrayofaction)
+    public static function selectMassAction($selected, array $arrayofaction)
     {
     	global $conf,$langs,$hookmanager;
     	
@@ -3098,7 +3098,7 @@ class Form
                 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
                 $bankstatic=new Account($this->db);
                 $bankstatic->fetch($selected);
-                print $this->textwithpicto($bankstatic->label,$langs->trans("AccountCurrency").'&nbsp;'.$bankstatic->currency_code);
+                print self::textwithpicto($bankstatic->label,$langs->trans("AccountCurrency").'&nbsp;'.$bankstatic->currency_code);
             } else {
                 print "&nbsp;";
             }
@@ -3159,27 +3159,6 @@ class Form
     }
 
     /**
-     *     Show a confirmation HTML form or AJAX popup
-     *
-     *     @param	string		$page        	   	Url of page to call if confirmation is OK
-     *     @param	string		$title       	   	Title
-     *     @param	string		$question    	   	Question
-     *     @param 	string		$action      	   	Action
-     *	   @param	array		$formquestion	   	An array with forms complementary inputs
-     * 	   @param	string		$selectedchoice		"" or "no" or "yes"
-     * 	   @param	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=preoutput confirm box with div id=dialog-confirm-xxx
-     *     @param	int			$height          	Force height of box
-     *     @param	int			$width				Force width of box
-     *     @return 	void
-     *     @deprecated
-     *     @see formconfirm()
-     */
-    function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
-    {
-        print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
-    }
-
-    /**
      *     Show a confirmation HTML form or AJAX popup.
      *     Easiest way to use this is with useajax=1.
      *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters)
@@ -3201,7 +3180,7 @@ class Form
      *     @param	int			$width				Force width of bow
      *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
      */
-    function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
+    public static function formconfirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
     {
         global $langs,$conf;
         global $useglobalvars;
@@ -3249,7 +3228,7 @@ class Form
                     {
                         $more.='<tr><td>';
                         if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
-                        $more.=$this->selectarray($input['name'],$input['values'],$input['default'],1);
+                        $more.= Form::selectarray($input['name'],$input['values'],$input['default'],1);
                         $more.='</td></tr>'."\n";
                     }
                     else if ($input['type'] == 'checkbox')
@@ -3285,7 +3264,7 @@ class Form
 					{
 						$more.='<tr><td>'.$input['label'].'</td>';
 						$more.='<td colspan="2" align="left">';
-						$more.=$this->select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
+						$more.=self::select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
 						$more.='</td></tr>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
 						$formquestion[] = array('name'=>$input['name'].'month');
@@ -3441,7 +3420,7 @@ class Form
             $formconfirm.= '<tr class="valid">';
             $formconfirm.= '<td class="valid">'.$question.'</td>';
             $formconfirm.= '<td class="valid">';
-            $formconfirm.= $this->selectyesno("confirm",$newselectedchoice);
+            $formconfirm.= self::selectyesno("confirm",$newselectedchoice);
             $formconfirm.= '</td>';
             $formconfirm.= '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
             $formconfirm.= '</tr>'."\n";
@@ -3637,7 +3616,7 @@ class Form
      *    @return	void
      *    @see		select_date
      */
-    function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
+    public static function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
     {
         global $langs;
 
@@ -3650,7 +3629,7 @@ class Form
             $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             $ret.='<tr><td>';
-            $ret.=$this->select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname,1,0,1);
+            $ret.=self::select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname,1,0,1);
             $ret.='</td>';
             $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             $ret.='</tr></table></form>';
@@ -3962,6 +3941,7 @@ class Form
      *    @param	string	$selected    preselected currency code
      *    @param    string	$htmlname    name of HTML select list
      *    @return	void
+     * @deprecated use Form::selectCurrency
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
@@ -4277,7 +4257,7 @@ class Form
      * 	@return	mixed						Nothing or string if nooutput is 1
      *  @see	form_date
      */
-    function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
+    public static function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
     {
         global $conf,$langs;
 
@@ -4650,7 +4630,7 @@ class Form
      * 	@return	string							HTML select string.
      *  @see multiselectarray
      */
-    static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='')
+    public static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='')
     {
         global $conf, $langs;
 
@@ -4744,7 +4724,7 @@ class Form
      *  @param  string  $acceptdelayedhtml      1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
      * 	@return	string   						HTML select string
      */
-    static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
+    public static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
     {
         global $langs;
         global $delayedhtmlcontent;      
@@ -4846,7 +4826,7 @@ class Form
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiselectarray($htmlname, $array, $selected=array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
+    public static function multiselectarray($htmlname, array $array, array $selected = array(), $key_in_label=0, $value_as_key=0, $morecss='', $translate=0, $width=0, $moreattrib='',$elemtype='')
     {
     	global $conf, $langs;
 
@@ -4935,7 +4915,7 @@ class Form
      *	@return	string					HTML multiselect string
      *  @see selectarray
      */
-    static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
+    public static function multiSelectArrayWithCheckbox($htmlname, array &$array, $varpage)
     {
         global $user;
         
@@ -5077,7 +5057,7 @@ class Form
      *  @param	CommonObject	$object		Object we want to show links to
      *  @return	int							<0 if KO, >0 if OK
      */
-    function showLinkedObjectBlock($object)
+    public static function showLinkedObjectBlock(CommonObject $object)
     {
         global $conf,$langs,$hookmanager;
         global $bc;
@@ -5381,7 +5361,7 @@ class Form
      *  @param	int      	$useempty		1=Add empty line
      *	@return	mixed						See option
      */
-    function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
+    public static function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
     {
         global $langs;
 
@@ -5479,7 +5459,7 @@ class Form
      *	  @param	string	$morehtmlright	More html code to show before navigation arrows
      * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlright='')
+    public static function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlright='')
     {
     	global $langs,$conf;
 
@@ -5545,11 +5525,11 @@ class Form
     /**
      *    	Return HTML code to output a barcode
      *
-     *     	@param	Object	$object		Object containing data to retrieve file name
+     *     	@param	object	$object		Object containing data to retrieve file name
      * 		@param	int		$width			Width of photo
      * 	  	@return string    				HTML code to output barcode
      */
-    function showbarcode(&$object,$width=100)
+    public static function showbarcode($object, $width = 100)
     {
         global $conf;
 
@@ -5585,7 +5565,7 @@ class Form
      *      @param  int         $cache              1=Accept to use image in cache
      * 	  	@return string    						HTML code to output photo
      */
-    static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1, $cache=0)
+    public static function showphoto($modulepart, $object, $width=100, $height=0, $caneditfield=0, $cssclass='photowithmargin', $imagesize='', $addlinktofullsize=1, $cache=0)
     {
         global $conf,$langs;
 
@@ -5824,7 +5804,7 @@ class Form
      *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
      *  @return	string                          
      */
-    function showFilterAndCheckAddButtons($addcheckuncheckall=0, $cssclass='checkforaction', $calljsfunction=0)
+    public static function showFilterAndCheckAddButtons($addcheckuncheckall=0, $cssclass='checkforaction', $calljsfunction=0)
     {   
         global $conf, $langs;
 

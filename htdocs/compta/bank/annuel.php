@@ -150,7 +150,7 @@ if ($_GET["account"])
 {
 	if (! preg_match('/,/', $id))
 	{
-		print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref');
+		print Form::showrefnav($acct, 'ref', $linkback, 1, 'ref');
 	}
 	else
 	{

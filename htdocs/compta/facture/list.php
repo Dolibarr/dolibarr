@@ -719,7 +719,7 @@ if ($resql)
     if ($show_files)         $param.='&show_files=' .$show_files;
 	$param.=(! empty($option)?"&amp;option=".$option:"");
 	
-	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+	$massactionbutton=Form::selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
     
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -860,7 +860,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=Form::selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
 		$moreforfilter.='</div>';
 	}
     $parameters=array();
@@ -921,10 +921,10 @@ if ($resql)
     print '<td class="liste_titre"></td>';
     print '<td class="liste_titre" align="right">';
 	$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
-	print $form->selectarray('search_status', $liststatus, $search_status, 1);
+	print Form::selectarray('search_status', $liststatus, $search_status, 1);
     print '</td>';
     print '<td class="liste_titre" align="center">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
+    $searchpitco=Form::showFilterAndCheckAddButtons(1, 'checkforselect', 1);
     print $searchpitco;
     print '</td>';
     print "</tr>\n";

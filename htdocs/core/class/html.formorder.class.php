@@ -138,7 +138,7 @@ class FormOrder
 			return -1;
 		}
 
-		print $form->selectarray($htmlname,$listofmethods,$selected,$addempty);
+		print Form::selectarray($htmlname,$listofmethods,$selected,$addempty);
 		return 1;
 	}
 

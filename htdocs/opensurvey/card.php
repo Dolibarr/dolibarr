@@ -198,7 +198,7 @@ $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).'">'.$langs->tra
 // Ref
 print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
+print Form::showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';
 print '</tr>';
 
@@ -282,7 +282,7 @@ print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
-if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
+if ($action == 'edit') print Form::select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
 else print dol_print_date($object->date_fin,'day');
 print '</td></tr>';
 
@@ -351,7 +351,7 @@ print '</div>';
 
 if ($action == 'delete')
 {
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondage, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
+	print Form::formconfirm($_SERVER["PHP_SELF"].'?&id='.$numsondage, $langs->trans("RemovePoll"), $langs->trans("ConfirmRemovalOfPoll",$id), 'delete_confirm', '', '', 1);
 }
 
 

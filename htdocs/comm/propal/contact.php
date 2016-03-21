@@ -161,7 +161,7 @@ if ($object->id > 0)
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
+	print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 
 	// Ref client
