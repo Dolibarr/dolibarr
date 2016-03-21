@@ -191,9 +191,9 @@ if ($resql)
 	$moreforfilter = '';
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('StartDate') . ' ';
-	$moreforfilter .= Form::select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= Form::selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
 	$moreforfilter .= ' - ';
-	$moreforfilter .= $langs->trans('EndDate') . ' ' . Form::select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= $langs->trans('EndDate') . ' ' . Form::selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
 	$moreforfilter .= '</div>';
 
 	if ($moreforfilter) 

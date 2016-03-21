@@ -355,7 +355,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            Form::select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
+            Form::selectDate($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
             print '</td>';
             print '<td>'.$langs->trans('Comments').'</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';

@@ -171,11 +171,11 @@ class Form
                 }
                 else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
                 {
-                    $ret.=self::select_date($value,$htmlname,0,0,1,'form'.$htmlname,1,0,1);
+                    $ret.=self::selectDate($value,$htmlname,0,0,1,'form'.$htmlname,1,0,1);
                 }
                 else if ($typeofdata == 'dayhour' || $typeofdata == 'datehourpicker')
                 {
-                    $ret.=self::select_date($value,$htmlname,1,1,1,'form'.$htmlname,1,0,1);
+                    $ret.=self::selectDate($value,$htmlname,1,1,1,'form'.$htmlname,1,0,1);
                 }
                 else if (preg_match('/^select;/',$typeofdata))
                 {
@@ -3264,7 +3264,7 @@ class Form
 					{
 						$more.='<tr><td>'.$input['label'].'</td>';
 						$more.='<td colspan="2" align="left">';
-						$more.=self::select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
+						$more.=self::selectDate($input['value'],$input['name'],0,0,0,'',1,0,1);
 						$more.='</td></tr>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
 						$formquestion[] = array('name'=>$input['name'].'month');
@@ -3614,9 +3614,9 @@ class Form
      *    @param    int			$displaymin		Display minutes selector
      *    @param	int			$nooutput		1=No print output, return string
      *    @return	void
-     *    @see		select_date
+     *    @see		selectDate
      */
-    public static function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
+    public static function formDate($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
     {
         global $langs;
 
@@ -3629,7 +3629,7 @@ class Form
             $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             $ret.='<tr><td>';
-            $ret.=self::select_date($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname,1,0,1);
+            $ret.=self::selectDate($selected,$htmlname,$displayhour,$displaymin,1,'form'.$htmlname,1,0,1);
             $ret.='</td>';
             $ret.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             $ret.='</tr></table></form>';
@@ -4252,12 +4252,12 @@ class Form
      * 	@param	int			$nooutput		Do not output html string but return it
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
-     *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
+     *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
      *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
      * 	@return	mixed						Nothing or string if nooutput is 1
-     *  @see	form_date
+     *  @see	formDate
      */
-    public static function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
+    public static function selectDate($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
     {
         global $conf,$langs;
 

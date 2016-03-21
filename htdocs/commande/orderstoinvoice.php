@@ -427,7 +427,7 @@ if ($action == 'create' && !$error)
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-	Form::select_date('','','','','',"add",1,1);
+	Form::selectDate('','','','','',"add",1,1);
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
@@ -575,8 +575,8 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		$num = $db->num_rows($resql);
 		print load_fiche_titre($title);
 		$i = 0;
-		$period=Form::select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.Form::select_date($date_end,'date_end',0,0,1,'',1,0,1);
-		$periodely=Form::select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.Form::select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
+		$period=Form::selectDate($date_start,'date_start',0,0,1,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,1,'',1,0,1);
+		$periodely=Form::selectDate($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.Form::selectDate($date_endy,'date_end_dely',0,0,1,'',1,0,1);
 
 		if (! empty($socid))
 		{

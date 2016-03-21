@@ -460,11 +460,11 @@ if (($action=="create") || ($action=="edit"))
 	print $langs->trans('CronDtStart')."</td><td>";
 	if(!empty($object->datestart))
 	{
-	    Form::select_date($object->datestart,'datestart',1,1,'',"cronform");
+	    Form::selectDate($object->datestart,'datestart',1,1,'',"cronform");
 	}
 	else
 	{
-	    Form::select_date('','datestart',1,1,'',"cronform");
+	    Form::selectDate('','datestart',1,1,'',"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -474,10 +474,10 @@ if (($action=="create") || ($action=="edit"))
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if(!empty($object->dateend)){
-	    Form::select_date($object->dateend,'dateend',1,1,'',"cronform");
+	    Form::selectDate($object->dateend,'dateend',1,1,'',"cronform");
 	}
 	else{
-	    Form::select_date(-1,'dateend',1,1,1,"cronform");
+	    Form::selectDate(-1,'dateend',1,1,1,"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -514,11 +514,11 @@ if (($action=="create") || ($action=="edit"))
 	print "</td><td>";
 	if(!empty($object->datenextrun))
 	{
-	    Form::select_date($object->datenextrun,'datenextrun',1,1,'',"cronform");
+	    Form::selectDate($object->datenextrun,'datenextrun',1,1,'',"cronform");
 	}
 	else
 	{
-	    Form::select_date(-1,'datenextrun',1,1,'',"cronform");
+	    Form::selectDate(-1,'datenextrun',1,1,'',"cronform");
 	}	
 	print "</td>";
     print "<td>";

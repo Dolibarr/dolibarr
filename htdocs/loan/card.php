@@ -218,13 +218,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-    print Form::select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
+    print Form::selectDate($datestart?$datestart:-1,'start','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Date End
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-    print Form::select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
+    print Form::selectDate($dateend?$dateend:-1,'end','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Number of terms
@@ -356,7 +356,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print Form::select_date($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
+			print Form::selectDate($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
 		}
 		else
 		{
@@ -369,7 +369,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print Form::select_date($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
+			print Form::selectDate($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
 		}
 		else
 		{

@@ -239,13 +239,13 @@ if ($action == 'create')
 	// Date payment
 	print '<tr><td>';
 	print fieldLabel('DatePayment','datep',1).'</td><td>';
-	print Form::select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
+	print Form::selectDate((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Date value for bank
 	print '<tr><td>';
 	print fieldLabel('DateValue','datev',0).'</td><td>';
-	print Form::select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
+	print Form::selectDate((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Employee
@@ -263,13 +263,13 @@ if ($action == 'create')
 	// Date start period
 	print '<tr><td>';
 	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
-	print Form::select_date($datesp,"datesp",'','','','add');
+	print Form::selectDate($datesp,"datesp",'','','','add');
 	print '</td></tr>';
 
 	// Date end period
 	print '<tr><td>';
 	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
-	print Form::select_date($dateep,"dateep",'','','','add');
+	print Form::selectDate($dateep,"dateep",'','','','add');
 	print '</td></tr>';
 
 	// Amount

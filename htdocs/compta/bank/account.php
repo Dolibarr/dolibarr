@@ -466,7 +466,7 @@ if ($id > 0 || ! empty($ref))
 
 		print '<tr '.$bc[false].'>';
 		print '<td class="nowrap" colspan="2">';
-		Form::select_date($dateop,'op',0,0,0,'transaction');
+		Form::selectDate($dateop,'op',0,0,0,'transaction');
 		print '</td>';
 		print '<td class="nowrap">';
 		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')),'operation','1,2',2,1);
@@ -521,9 +521,9 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	$period_filter .= $langs->trans('From').'&nbsp;'.Form::select_date($req_stdt,'req_stdt',0,0,1,null,1,1,1);
+	$period_filter .= $langs->trans('From').'&nbsp;'.Form::selectDate($req_stdt,'req_stdt',0,0,1,null,1,1,1);
 	$period_filter .= '&nbsp;';
-	$period_filter .= $langs->trans('to').'&nbsp;'.Form::select_date($req_enddt,'req_enddt',0,0,1,null,1,1,1);
+	$period_filter .= $langs->trans('to').'&nbsp;'.Form::selectDate($req_enddt,'req_enddt',0,0,1,null,1,1,1);
 	
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$period_filter.'</td>';
