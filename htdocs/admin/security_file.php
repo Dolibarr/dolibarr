@@ -151,7 +151,7 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
-print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
+print Form::textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';

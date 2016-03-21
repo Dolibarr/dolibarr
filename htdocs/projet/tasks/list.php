@@ -380,7 +380,7 @@ if ($resql)
     }
     
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'" id="tablelines3">';
 
@@ -442,7 +442,7 @@ if ($resql)
         print '<td class="liste_titre">';
         $listofstatus=array(-1=>'&nbsp;');
         foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
-        print $form->selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
+        print Form::selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
         print '</td>';
     }
     if (! empty($arrayfields['t.ref']['checked']))
@@ -505,7 +505,7 @@ if ($resql)
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    $searchpitco=Form::showFilterAndCheckAddButtons();
     print $searchpitco;
     print '</td>';
     print '</tr>';

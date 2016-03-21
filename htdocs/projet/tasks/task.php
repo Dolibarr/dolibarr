@@ -232,7 +232,7 @@ if ($id > 0 || ! empty($ref))
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
-			print $form->showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
+			print Form::showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
@@ -338,12 +338,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print $form->select_date($object->date_start,'dateo',1,1,0,'',1,0,1);
+			print Form::select_date($object->date_start,'dateo',1,1,0,'',1,0,1);
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print $form->select_date($object->date_end?$object->date_end:-1,'datee',1,1,0,'',1,0,1);
+			print Form::select_date($object->date_end?$object->date_end:-1,'datee',1,1,0,'',1,0,1);
 			print '</td></tr>';
 
 			// Planned workload
@@ -393,7 +393,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($action == 'delete')
 			{
-				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+				print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 			}
 
 			print '<table class="border" width="100%">';
@@ -408,7 +408,7 @@ if ($id > 0 || ! empty($ref))
 				$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			}
 			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
+			print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 			print '</td>';
 			print '</tr>';
 

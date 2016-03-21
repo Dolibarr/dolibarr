@@ -153,7 +153,7 @@ if ($result)
 		if (isset($objp->photo) && $objp->photo != '')
 		{
 			print '<td>';
-			print $form->showphoto('memberphoto', $objp, 64);
+			print Form::showphoto('memberphoto', $objp, 64);
 			print '</td>'."\n";
 		}
 		else

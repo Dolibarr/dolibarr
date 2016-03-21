@@ -203,7 +203,7 @@ if ($id > 0 || ! empty($ref))
     		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
     		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
     		}
-    		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
+    		print Form::showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
     		print '</td></tr>';
 
     		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
@@ -262,7 +262,7 @@ if ($id > 0 || ! empty($ref))
 		    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
+		print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label
