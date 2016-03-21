@@ -1465,10 +1465,10 @@ Fix: Dump using php not not include lock on tables that are deleted.
 Fix: Fixed a problem with bank accounts sharing across entities.
 Fix: fields into group by of sql requests for module margins must be
      same than fields into select.
-Fix: When selectDate is called with '' as preselected date,
+Fix: When select_date is called with '' as preselected date,
      automatic user date was not correctly et (We must set a date into PHP
      server timezone area)
-Fix: First param of selectDate must always be forged with a dolibarr
+Fix: First param of select_date must always be forged with a dolibarr
      date function and not time().
 Fix: fix can't add line with product in supplier order
 Fix: [bug #1309]   
