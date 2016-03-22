@@ -56,7 +56,7 @@ if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
 
 /**
- * pt
+ * print function
  *
  * @param 	DoliDB	$db		Database handler
  * @param 	string	$sql	SQL Request
