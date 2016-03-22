@@ -76,12 +76,15 @@ class Segment implements IteratorAggregate, Countable
     /**
      * Replace variables of the template in the XML code
      * All the children are also called
+     * Complete the current segment with new line
      *
      * @return string
      */
     public function merge()
     {
-        $this->xmlParsed .= str_replace(array_keys($this->vars), array_values($this->vars), $this->xml);
+        $this->xmlParsed .= str_replace(array_keys($this->vars), array_values($this->vars), $this->xml);    // We concat all file, later we will 
+        // Note: To change style of table-row, we should make a replace here to add attribute
+        // table:style-name="Table4.A2"
         if ($this->hasChildren()) {
             foreach ($this->children as $child) {
                 $this->xmlParsed = str_replace($child->xml, ($child->xmlParsed=="")?$child->merge():$child->xmlParsed, $this->xmlParsed);
