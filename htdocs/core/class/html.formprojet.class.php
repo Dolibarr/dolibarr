@@ -483,7 +483,7 @@ class FormProjets
 		if ($linkedtothirdparty) $sql.=", ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE ".$projectkey." is null";
 		if (! empty($socid) && $linkedtothirdparty) $sql.= " AND t.fk_soc=".$socid;
-		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity='.getEntity('project');
+		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity IN ('.getEntity('project',1).')';
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
 		if ($sqlfilter) $sql.= " AND ".$sqlfilter;
 		$sql.= " ORDER BY ref DESC";

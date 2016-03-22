@@ -68,7 +68,7 @@ if ($id > 0 || ! empty($ref))
 // Security check
 $socid=GETPOST('socid');
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $object->id);
+$result = restrictedArea($user, 'projet', $object->id,'projet&project');
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
