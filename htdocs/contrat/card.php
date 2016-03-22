@@ -1148,7 +1148,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
-    Form::select_date($datecontrat,'',0,0,'',"contrat");
+    Form::selectDate($datecontrat,'',0,0,'',"contrat");
     print "</td></tr>";
 
     // Project
@@ -1651,9 +1651,9 @@ else
                     print "<tr ".$bc[$var].">";
                     print '<td colspan="'.$colspan.'">';
                     print $langs->trans("DateStartPlanned").' ';
-                    Form::select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
+                    Form::selectDate($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
                     print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
-                    Form::select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
+                    Form::selectDate($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
                     print '</td>';
 
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
@@ -1824,11 +1824,11 @@ else
 
                 print '<tr '.$bc[$var].'>';
                 print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
-                print Form::select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
+                print Form::selectDate($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
                 print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
-                print Form::select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
+                print Form::selectDate($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
                 print '<td align="center nohover" rowspan="2" valign="middle" class="nohover">';
@@ -1881,7 +1881,7 @@ else
                     if ($objp->statut == 4)
                     {
                         print $langs->trans("DateEndReal").' ';
-                        print Form::select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1,1);
+                        print Form::selectDate($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1,1);
                     }
                 }
                 print '</td>';

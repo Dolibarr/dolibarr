@@ -823,10 +823,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_debut_')) {
-            Form::select_date(-1,'date_debut_');
+            Form::selectDate(-1,'date_debut_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-            Form::select_date($tmpdate,'date_debut_');
+            Form::selectDate($tmpdate,'date_debut_');
         }
         print ' &nbsp; &nbsp; ';
         print Form::selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
@@ -839,10 +839,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_fin_')) {
-            Form::select_date(-1,'date_fin_');
+            Form::selectDate(-1,'date_fin_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-            Form::select_date($tmpdate,'date_fin_');
+            Form::selectDate($tmpdate,'date_fin_');
         }
         print ' &nbsp; &nbsp; ';
         print Form::selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
@@ -1035,7 +1035,7 @@ else
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
-                    Form::select_date($cp->date_debut,'date_debut_');
+                    Form::selectDate($cp->date_debut,'date_debut_');
 			        print ' &nbsp; &nbsp; ';
         			print Form::selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
                     print '</td>';
@@ -1057,7 +1057,7 @@ else
                     print '<tr>';
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
-                    Form::select_date($cp->date_fin,'date_fin_');
+                    Form::selectDate($cp->date_fin,'date_fin_');
 			        print ' &nbsp; &nbsp; ';
         			print Form::selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
                     print '</td>';

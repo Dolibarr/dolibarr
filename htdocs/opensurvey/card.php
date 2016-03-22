@@ -282,7 +282,7 @@ print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
-if ($action == 'edit') print Form::select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
+if ($action == 'edit') print Form::selectDate($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
 else print dol_print_date($object->date_fin,'day');
 print '</td></tr>';
 

@@ -198,7 +198,7 @@ if ($result)
 	// Lignes des champs de filtres
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre" width="15%">'.Form::select_date($date_start,'date_start',0,0,0,'',1,0,1).Form::select_date($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
+	print '<td class="liste_titre" width="15%">'.Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
 
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';

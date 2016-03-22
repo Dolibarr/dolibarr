@@ -300,7 +300,7 @@ if ($object->id > 0)
 	{
 		if ($action == 'editinvoicedate')
 		{
-			Form::form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date,'invoicedate');
+			Form::formDate($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date,'invoicedate');
 		}
 		else
 		{
@@ -351,7 +351,7 @@ if ($object->id > 0)
 	{
 		if ($action == 'editpaymentterm')
 		{
-			Form::form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date_lim_reglement,'paymentterm');
+			Form::formDate($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date_lim_reglement,'paymentterm');
 		}
 		else
 		{

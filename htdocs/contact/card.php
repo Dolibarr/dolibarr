@@ -688,11 +688,11 @@ else
             $form=new Form($db);
             if ($object->birthday)
             {
-                print Form::select_date($object->birthday,'birthday',0,0,0,"perso", 1, 0, 1);
+                print Form::selectDate($object->birthday,'birthday',0,0,0,"perso", 1, 0, 1);
             }
             else
             {
-                print Form::select_date('','birthday',0,0,1,"perso", 1, 0, 1);
+                print Form::selectDate('','birthday',0,0,1,"perso", 1, 0, 1);
             }
             print '</td>';
 

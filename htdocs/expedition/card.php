@@ -638,7 +638,7 @@ if ($action == 'create')
             print '<td colspan="3">';
             //print dol_print_date($object->date_livraison,"day");	// date_livraison come from order and will be stored into date_delivery planed.
             $date_delivery = ($date_delivery?$date_delivery:$object->date_livraison); // $date_delivery comes from GETPOST
-            print Form::select_date($date_delivery?$date_delivery:-1,'date_delivery',1,1,1);
+            print Form::selectDate($date_delivery?$date_delivery:-1,'date_delivery',1,1,1);
             print "</td>\n";
             print '</tr>';
 
@@ -1321,7 +1321,7 @@ else if ($id || $ref)
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setdate_livraison">';
-			print Form::select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison",1,0,1);
+			print Form::selectDate($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison",1,0,1);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		}

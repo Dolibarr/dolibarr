@@ -349,7 +349,7 @@ if ($action == 'create')
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		print Form::select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
+		print Form::selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
 		print "</td></tr>";
 		
 		// Number max of generation

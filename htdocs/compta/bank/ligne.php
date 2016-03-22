@@ -451,7 +451,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print Form::select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
+            print Form::selectDate($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
             print '</td>';
         }
         else
@@ -467,7 +467,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print Form::select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
+            print Form::selectDate($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';

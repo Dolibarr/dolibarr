@@ -1549,7 +1549,7 @@ else if ($id > 0 || ! empty($ref))
 
 					// Date d'intervention
 					print '<td align="center" class="nowrap">';
-					Form::select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+					Form::selectDate($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 					print '</td>';
                         
                     // Duration
@@ -1616,7 +1616,7 @@ else if ($id > 0 || ! empty($ref))
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 				else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
-				Form::select_date($timewithnohour,'di',1,1,0,"addinter");
+				Form::selectDate($timewithnohour,'di',1,1,0,"addinter");
 				print '</td>';
 
                 // Duration

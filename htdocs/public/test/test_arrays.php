@@ -140,7 +140,7 @@ if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
 if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
 if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
 if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-$nav.=Form::select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=Form::selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
 

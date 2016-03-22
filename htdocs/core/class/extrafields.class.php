@@ -694,7 +694,7 @@ class ExtraFields
 
 			$showtime = in_array($type,array('datetime')) ? 1 : 0;
 
-			// Do not show current date when field not required (see select_date() method)
+			// Do not show current date when field not required (see selectDate() method)
 			if (!$required && $value == '') $value = '-1';
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -702,7 +702,7 @@ class ExtraFields
 			if (! is_object($form)) $form=new Form($this->db);
 
 			// TODO Must also support $moreparam
-			$out = Form::select_date($value, $keysuffix.'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
+			$out = Form::selectDate($value, $keysuffix.'options_'.$key.$keyprefix, $showtime, $showtime, $required, '', 1, 1, 1, 0, 1);
 		}
 		elseif (in_array($type,array('int')))
 		{

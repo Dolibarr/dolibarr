@@ -510,11 +510,11 @@ if ($id > 0 || ! empty($ref))
 								print '</td>';
 								print '<td>';
 								$dlcdatesuffix=dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-								Form::select_date($dlcdatesuffix,'dlc'.$suffix,'','',1,"");
+								Form::selectDate($dlcdatesuffix,'dlc'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td>';
 								$dluodatesuffix=dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-								Form::select_date($dluodatesuffix,'dluo'.$suffix,'','',1,"");
+								Form::selectDate($dluodatesuffix,'dluo'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td colspan="2">&nbsp</td>';		// Qty ordered + qty already dispatached
 							}

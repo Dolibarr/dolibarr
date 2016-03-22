@@ -214,7 +214,7 @@ if ($id > 0)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransData").'</td><td>';
-		print Form::select_date('','','','','',"userfile",1,1);
+		print Form::selectDate('','','','','',"userfile",1,1);
 		print '</td></tr>';
 		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
 		print Form::selectarray("methode",$bon->methodes_trans);
@@ -237,7 +237,7 @@ if ($id > 0)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
-		print Form::select_date('','','','','',"infocredit",1,1);
+		print Form::selectDate('','','','','',"infocredit",1,1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
