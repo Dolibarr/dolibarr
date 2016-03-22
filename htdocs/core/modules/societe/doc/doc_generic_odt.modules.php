@@ -87,8 +87,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$langs->load("companies");
 		$langs->load("errors");
 
-		$form = new Form($this->db);
-
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
