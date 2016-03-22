@@ -451,7 +451,7 @@ abstract class ActionsCardCommon
             if ((!$this->object->code_client || $this->object->code_client == -1) && $modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this->object,0);
             $this->tpl['ismodifiable_customercode'] = $this->object->codeclient_modifiable();
             $s=$modCodeClient->getToolTip($langs,$this->object,0);
-            $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
+            $this->tpl['help_customercode'] = Form::textwithpicto('',$s,1);
 
             if (! empty($conf->fournisseur->enabled))
             {
@@ -475,12 +475,12 @@ abstract class ActionsCardCommon
             	if ($modCodeFournisseur->code_auto) $this->tpl['prefix_suppliercode'] = $modCodeFournisseur->verif_prefixIsUsed();
 
             	// Supplier
-            	$this->tpl['yn_supplier'] = $form->selectyesno("fournisseur",$this->object->fournisseur,1);
+            	$this->tpl['yn_supplier'] = Form::selectyesno("fournisseur",$this->object->fournisseur,1);
             	$this->tpl['suppliercode'] = $this->object->code_fournisseur;
             	if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
             	$this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
             	$s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
-            	$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
+            	$this->tpl['help_suppliercode'] = Form::textwithpicto('',$s,1);
 
             	$this->object->LoadSupplierCateg();
             	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
@@ -508,7 +508,7 @@ abstract class ActionsCardCommon
             if (! empty($conf->global->MAIN_MULTILANGS)) $this->tpl['select_lang'] = $formadmin->select_language(($this->object->default_lang?$this->object->default_lang:$conf->global->MAIN_LANG_DEFAULT),'default_lang',0,0,1);
 
             // VAT
-            $this->tpl['yn_assujtva'] = $form->selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
+            $this->tpl['yn_assujtva'] = Form::selectyesno('assujtva_value',$this->tpl['tva_assuj'],1);	// Assujeti par defaut en creation
 
             // Select users
             $this->tpl['select_users'] = $form->select_dolusers($this->object->commercial_id, 'commercial_id', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
@@ -522,21 +522,21 @@ abstract class ActionsCardCommon
                 if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
                 {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= Form::selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= Form::selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td></tr>';
                 }
                 elseif($mysoc->localtax1_assuj=="1")
                 {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= Form::selectyesno('localtax1assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td><tr>';
                 }
                 elseif($mysoc->localtax2_assuj=="1")
                 {
                     $this->tpl['localtax'].= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
-                    $this->tpl['localtax'].= $form->selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
+                    $this->tpl['localtax'].= Form::selectyesno('localtax2assuj_value',$this->object->localtax1_assuj,1);
                     $this->tpl['localtax'].= '</td><tr>';
                 }
             }
@@ -549,14 +549,14 @@ abstract class ActionsCardCommon
             $this->tpl['showhead']=dol_get_fiche_head($head, 'card', '', 0, 'company');
             $this->tpl['showend']=dol_get_fiche_end();
 
-            $this->tpl['showrefnav'] 		= $form->showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
+            $this->tpl['showrefnav'] 		= Form::showrefnav($this->object,'socid','',($user->societe_id?0:1),'rowid','nom');
 
             $this->tpl['checkcustomercode'] = $this->object->check_codeclient();
             $this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
             $this->tpl['address'] 			= dol_nl2br($this->object->address);
 
             $img=picto_from_langcode($this->object->country_code);
-            if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
+            if ($this->object->isInEEC()) $this->tpl['country'] = Form::textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
             $this->tpl['phone'] 	= dol_print_phone($this->object->phone,$this->object->country_code,0,$this->object->id,'AC_TEL');

@@ -152,10 +152,10 @@ else
     <tr><td>
     	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
     </td><td>
-    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
-    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
-    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
-    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
+    <span id="helpselect"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
+    <span id="helpsellist"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
+    <span id="helpchkbxlst"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
+    <span id="helplink"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
     </td></tr>
     </table>
 </td>

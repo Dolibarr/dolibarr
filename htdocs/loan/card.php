@@ -218,13 +218,13 @@ if ($action == 'create')
 	// Date Start
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date($datestart?$datestart:-1,'start','','','','add',1,1,1);
+    print Form::selectDate($datestart?$datestart:-1,'start','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Date End
 	print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td><td>';
-    print $form->select_date($dateend?$dateend:-1,'end','','','','add',1,1,1);
+    print Form::selectDate($dateend?$dateend:-1,'end','','','','add',1,1,1);
     print '</td></tr>';
 
 	// Number of terms
@@ -312,13 +312,13 @@ if ($id > 0)
 		if ($action == 'paid')
 		{
 			$text=$langs->trans('ConfirmPayLoan');
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PayLoan'),$text,"confirm_paid",'','',2);
+			print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PayLoan'),$text,"confirm_paid",'','',2);
 		}
 
 		if ($action == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteLoan');
-			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteLoan'),$text,'confirm_delete','','',2);
+			print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteLoan'),$text,'confirm_delete','','',2);
 		}
 
 		if ($action == 'edit')
@@ -333,7 +333,7 @@ if ($id > 0)
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object,'id');
+		print Form::showrefnav($object,'id');
 		print "</td></tr>";
 
 		// Label
@@ -356,7 +356,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
+			print Form::selectDate($object->datestart, 'start', 0, 0, 0, 'update', 1, 0, 1);
 		}
 		else
 		{
@@ -369,7 +369,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print $form->select_date($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
+			print Form::selectDate($object->dateend, 'end', 0, 0, 0, 'update', 1, 0, 1);
 		}
 		else
 		{

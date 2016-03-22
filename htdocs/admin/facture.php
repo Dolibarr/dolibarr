@@ -444,7 +444,7 @@ foreach ($dirmodels as $reldir)
                             }
 
                             print '<td align="center">';
-                            print $form->textwithpicto('',$htmltooltip,1,0);
+                            print Form::textwithpicto('',$htmltooltip,1,0);
 
                             if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
                             {
@@ -600,7 +600,7 @@ foreach ($dirmodels as $reldir)
 
 
 	                            print '<td align="center">';
-	                            print $form->textwithpicto('',$htmltooltip,1,0);
+	                            print Form::textwithpicto('',$htmltooltip,1,0);
 	                            print '</td>';
 
 	                            // Preview
@@ -744,7 +744,7 @@ print '<input type="hidden" name="action" value="setforcedate" />';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ForceInvoiceDate");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
+print Form::selectyesno("forcedate",$conf->global->FAC_FORCE_DATE_VALIDATION,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";
@@ -758,7 +758,7 @@ print '<input type="hidden" name="action" value="set_FAC_AUTO_FILLJS" />';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("JSOnPaimentBill");
 print '</td><td width="60" align="center">';
-print $form->selectyesno("FAC_AUTO_FILLJS",$conf->global->FAC_AUTO_FILLJS,1);
+print Form::selectyesno("FAC_AUTO_FILLJS",$conf->global->FAC_AUTO_FILLJS,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" />';
 print "</td></tr>\n";

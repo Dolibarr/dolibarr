@@ -1107,7 +1107,7 @@ if ($action == 'create')
         print '<td>'.$langs->trans("DefaultModel").'</td>';
         print '<td colspan="2">';
         $liste=ModelePDFFicheinter::liste_modeles($db);
-        print $form->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
+        print Form::selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
 
         // Public note
@@ -1208,7 +1208,7 @@ else if ($id > 0 || ! empty($ref))
 	// Confirm deletion of intervention
 	if ($action == 'delete')
 	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteIntervention'), $langs->trans('ConfirmDeleteIntervention'), 'confirm_delete','',0,1);
 	}
 
 	// Confirm validation
@@ -1231,19 +1231,19 @@ else if ($id > 0 || ! empty($ref))
 		}
 		$text=$langs->trans('ConfirmValidateIntervention',$numref);
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',1,1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateIntervention'), $text, 'confirm_validate','',1,1);
 	}
 
 	// Confirm back to draft
 	if ($action == 'modify')
 	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ModifyIntervention'), $langs->trans('ConfirmModifyIntervention'), 'confirm_modify','',0,1);
 	}
 
 	// Confirm deletion of line
 	if ($action == 'ask_deleteline')
 	{
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
+		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
 	}
 
 	if (!$formconfirm)
@@ -1269,7 +1269,7 @@ else if ($id > 0 || ! empty($ref))
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Third party
@@ -1309,9 +1309,9 @@ else if ($id > 0 || ! empty($ref))
 
 	// Description (must be a textarea and not html must be allowed (used in list view)
 	print '<tr><td>';
-	print $form->editfieldkey("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea');
+	print Form::editfieldkey("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea');
 	print '</td><td colspan="3">';
-	print $form->editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');
+	print Form::editfieldval("Description",'description',$object->description,$object,$user->rights->ficheinter->creer,'textarea:8:80');
 	print '</td>';
 	print '</tr>';
 
@@ -1549,7 +1549,7 @@ else if ($id > 0 || ! empty($ref))
 
 					// Date d'intervention
 					print '<td align="center" class="nowrap">';
-					$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
+					Form::selectDate($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 					print '</td>';
                         
                     // Duration
@@ -1616,7 +1616,7 @@ else if ($id > 0 || ! empty($ref))
 				$timearray=dol_getdate($now);
 				if (! GETPOST('diday','int')) $timewithnohour=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
 				else $timewithnohour=dol_mktime(GETPOST('dihour','int'),GETPOST('dimin','int'), 0,GETPOST('dimonth','int'),GETPOST('diday','int'),GETPOST('diyear','int'));
-				$form->select_date($timewithnohour,'di',1,1,0,"addinter");
+				Form::selectDate($timewithnohour,'di',1,1,0,"addinter");
 				print '</td>';
 
                 // Duration
@@ -1783,7 +1783,7 @@ else if ($id > 0 || ! empty($ref))
 		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
 		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
+		$somethingshown = Form::showLinkedObjectBlock($object);
 
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);

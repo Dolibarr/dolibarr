@@ -206,7 +206,7 @@ if ( $object->fetch($id) > 0 )
 		// Confirm deleting resource line
 	    if ($action == 'delete')
 	    {
-	        print $form->formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
+	        print Form::formconfirm("card.php?&id=".$id,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResource"),"confirm_delete_resource",'','',1);
 	    }
 
 
@@ -217,7 +217,7 @@ if ( $object->fetch($id) > 0 )
 
 		print '<tr><td style="width:35%">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
 		$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
-		print $form->showrefnav($object, 'id', $linkback,1,"rowid");
+		print Form::showrefnav($object, 'id', $linkback,1,"rowid");
 		print '</td>';
 		print '</tr>';
 

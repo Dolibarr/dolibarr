@@ -164,11 +164,11 @@ if ($_GET["action"] == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add');
+    print Form::selectDate($datep,"datep",'','','','add');
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add');
+    print Form::selectDate($datev,"datev",'','','','add');
     print '</td></tr>';
 
 	// Label

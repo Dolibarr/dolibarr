@@ -128,7 +128,7 @@ if (! $user->rights->projet->all->lire)
     $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
     $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 }
-print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
@@ -324,10 +324,10 @@ if (! $showdatefilter)
 	print '<input type="hidden" name="action" value="view">';
 	print '<table><tr>';
 	print '<td>'.$langs->trans("From").' ';
-	print $form->select_date($dates,'dates',0,0,1,'',1,0,1);
+	print Form::selectDate($dates,'dates',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td>'.$langs->trans("to").' ';
-	print $form->select_date($datee,'datee',0,0,1,'',1,0,1);
+	print Form::selectDate($datee,'datee',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td>';
 	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button">';

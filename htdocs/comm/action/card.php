@@ -665,9 +665,9 @@ if ($action == 'create')
 	$datep=($datep?$datep:$object->datep);
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
 	print '<tr><td width="30%" class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $form->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+	if (GETPOST("afaire") == 1) Form::selectDate($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) Form::selectDate($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
+	else Form::selectDate($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 	print '</td></tr>';
 
 	// Date end
@@ -678,9 +678,9 @@ if ($action == 'create')
 		$datef=dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
 	}
 	print '<tr><td><span id="dateend"'.(GETPOST("actioncode") == 'AC_RDV'?' class="fieldrequired"':'').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
-	if (GETPOST("afaire") == 1) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else if (GETPOST("afaire") == 2) $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-	else $form->select_date($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	if (GETPOST("afaire") == 1) Form::selectDate($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else if (GETPOST("afaire") == 2) Form::selectDate($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+	else Form::selectDate($datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 	print '</td></tr>';
 
 	// Status
@@ -893,7 +893,7 @@ if ($id > 0)
 	// Confirmation suppression action
 	if ($action == 'delete')
 	{
-		print $form->formconfirm("card.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
+		print Form::formconfirm("card.php?id=".$id,$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete",'','',1);
 	}
 
 	if ($action == 'edit')
@@ -955,16 +955,16 @@ if ($id > 0)
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
-		else if (GETPOST("afaire") == 2) $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
-		else $form->select_date($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		if (GETPOST("afaire") == 1) Form::selectDate($datep?$datep:$object->datep,'ap',1,1,0,"action",1,1,0,0,'fulldaystart');
+		else if (GETPOST("afaire") == 2) Form::selectDate($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
+		else Form::selectDate($datep?$datep:$object->datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
 		print '</td></tr>';
 		// Date end
 		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
-		if (GETPOST("afaire") == 1) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		else if (GETPOST("afaire") == 2) $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
-		//else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend','ap');
-		else $form->select_date($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		if (GETPOST("afaire") == 1) Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		else if (GETPOST("afaire") == 2) Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
+		//else Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend','ap');
+		else Form::selectDate($datef?$datef:$object->datef,'p2',1,1,1,"action",1,1,0,0,'fulldayend');
 		print '</td></tr>';
 
 		$userepeatevent=0;	// Dev in progress
@@ -985,7 +985,7 @@ if ($id > 0)
 			if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i',$object->recurrule,$reg)) $selectedrecurrulefreq=$reg[1];
 			if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i',$object->recurrule,$reg)) $selectedrecurrulebymonthday=$reg[1];
 			if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i',$object->recurrule,$reg)) $selectedrecurrulebyday=$reg[1];
-			print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq);
+			print Form::selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq);
 			// If recurrulefreq is MONTHLY
 			print '<div class="repeateventBYMONTHDAY">';
 			print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
@@ -1168,7 +1168,7 @@ if ($id > 0)
 		// Clone event
 		if($action == 'clone')
 		{
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('CloneAction'), $langs->trans('ConfirmCloneAction', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
+			$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . GETPOST('id'), $langs->trans('CloneAction'), $langs->trans('ConfirmCloneAction', $object->label), 'confirm_clone', $formquestion, 'yes', 1);
 
 			print $formconfirm;
 		}
@@ -1180,7 +1180,7 @@ if ($id > 0)
 
 		// Ref
 		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
+		print Form::showrefnav($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
 		print '</td></tr>';
 
 		// Type

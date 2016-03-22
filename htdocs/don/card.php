@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -308,14 +308,14 @@ if ($action == 'create')
 
     // Date
 	print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Date").'</td><td>';
-	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
+	Form::selectDate($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
     // Amount
     print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.GETPOST("amount").'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
+	print Form::selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.GETPOST("societe").'" size="40"></td></tr>';
@@ -430,7 +430,7 @@ if (! empty($id) && $action == 'edit')
 
 	// Date
 	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	$form->select_date($object->date,'','','','',"update");
+	Form::selectDate($object->date,'','','','',"update");
 	print '</td>';
 
 	// Amount
@@ -446,7 +446,7 @@ if (! empty($id) && $action == 'edit')
 	}
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print $form->selectyesno("public",1,1);
+	print Form::selectyesno("public",1,1);
 	print "</td>";
 	print "</tr>\n";
 
@@ -523,7 +523,7 @@ if (! empty($id) && $action != 'edit')
     if ($action == 'delete')
     {
         $text=$langs->trans("ConfirmDeleteADonation");
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteADonation"),$text,"confirm_delete",'','',1);
+        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteADonation"),$text,"confirm_delete",'','',1);
     }
 
 	$result=$object->fetch($id);
@@ -551,7 +551,7 @@ if (! empty($id) && $action != 'edit')
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
-	print $form->showrefnav($object, 'rowid', $linkback, 1, 'rowid', 'ref', '');
+	print Form::showrefnav($object, 'rowid', $linkback, 1, 'rowid', 'ref', '');
 	print '</td>';
 	print '</tr>';
 
@@ -680,7 +680,7 @@ if (! empty($id) && $action != 'edit')
 			$projettmp=new Project($db);
 			$projettmp->id=$object->fk_projet;
 			$projettmp->ref=$object->project;
-			print $projettmp->getNomUrl(1);
+			if(! empty($object->fk_projet)) print $projettmp->getNomUrl(1);
 		print '</td>';
 		print '</tr>';
     }

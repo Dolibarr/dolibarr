@@ -1117,13 +1117,13 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("DateStart").'</td>';
 	print '<td>';
-	$form->select_date($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
+	Form::selectDate($date_start?$date_start:-1,'date_debut',0,0,0,'',1,1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("DateEnd").'</td>';
 	print '<td>';
-	$form->select_date($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
+	Form::selectDate($date_end?$date_end:-1,'date_fin',0,0,0,'',1,1);
 	print '</td>';
 	print '</tr>';
 	print '<tr>';
@@ -1135,7 +1135,7 @@ if ($action == 'create')
 	if (! empty($conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->EXPENSEREPORT_DEFAULT_VALIDATOR;
 	if (GETPOST('fk_user_validator') > 0) $defaultselectuser=GETPOST('fk_user_validator');
 	$s=$form->select_dolusers($defaultselectuser, "fk_user_validator", 1, "", 0, $include_users);
-	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+	print Form::textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 	print '</td>';
 	print '</tr>';
 	if (! empty($conf->global->EXPENSEREPORT_ASK_PAYMENTMODE_ON_CREATION))
@@ -1231,19 +1231,19 @@ else
 
             	// Ref
             	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-            	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+            	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
             	print '</td></tr>';
 
 				print '<tr>';
 				print '<td>'.$langs->trans("DateStart").'</td>';
 				print '<td>';
-				$form->select_date($object->date_debut,'date_debut');
+				Form::selectDate($object->date_debut,'date_debut');
 				print '</td>';
 				print '</tr>';
 				print '<tr>';
 				print '<td>'.$langs->trans("DateEnd").'</td>';
 				print '<td>';
-				$form->select_date($object->date_fin,'date_fin');
+				Form::selectDate($object->date_fin,'date_fin');
 				print '</td>';
 				print '</tr>';
 
@@ -1264,7 +1264,7 @@ else
 					print '<td>';
 					$include_users = $object->fetch_users_approver_expensereport();
 					$s=$form->select_dolusers($object->fk_user_validator,"fk_user_validator",1,"",0,$include_users);
-					print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+					print Form::textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 					print '</td>';
 					print '</tr>';
 				}
@@ -1335,56 +1335,56 @@ else
 
 				if ($action == 'save')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
+					$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_validate","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'save_from_refuse')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
+					$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("SaveTrip"),$langs->trans("ConfirmSaveTrip"),"confirm_save_from_refuse","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'delete')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
+					$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'validate')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
+					$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("ValideTrip"),$langs->trans("ConfirmValideTrip"),"confirm_approve","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'paid')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
+					$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("PaidTrip"),$langs->trans("ConfirmPaidTrip"),"confirm_paid","","",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'cancel')
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmCancelTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_cancel",'size'=>"50",'value'=>""));
-					$ret=$form->form_confirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
+					$ret=$formForm::formconfirm($_SEVER["PHP_SELF"]."?id=".$id,$langs->trans("Cancel"),"","confirm_cancel",$array_input,"",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'brouillonner'):
-				$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
+				$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("BrouillonnerTrip"),$langs->trans("ConfirmBrouillonnerTrip"),"confirm_brouillonner","","",1);
 				if ($ret == 'html') print '<br>';
 				endif;
 
 				if ($action == 'refuse')		// Deny
 				{
 					$array_input = array('text'=>$langs->trans("ConfirmRefuseTrip"), array('type'=>"text",'label'=>$langs->trans("Comment"),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
+					$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("Deny"),'',"confirm_refuse",$array_input,"yes",1);
 					if ($ret == 'html') print '<br>';
 				}
 
 				if ($action == 'delete_line')
 				{
-					$ret=$form->form_confirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
+					$ret=$formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$id."&rowid=".GETPOST('rowid'),$langs->trans("DeleteLine"),$langs->trans("ConfirmDeleteLine"),"confirm_delete_line",'','yes',1);
 					if ($ret == 'html') print '<br>';
 				}
 
@@ -1394,7 +1394,7 @@ else
 
             	// Ref
             	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
-            	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+            	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
             	print '</td></tr>';
 
 				print '<tr>';
@@ -1728,7 +1728,7 @@ else
 
 									// Select date
 									print '<td style="text-align:center;">';
-									$form->select_date($objp->date,'date');
+									Form::selectDate($objp->date,'date');
 									print '</td>';
 
 									// Select project
@@ -1812,7 +1812,7 @@ else
 						
 						// Select date
 						print '<td style="text-align:center;">';
-						$form->select_date($date?$date:-1,'date');
+						Form::selectDate($date?$date:-1,'date');
 						print '</td>';
 
 						// Select project
@@ -2107,7 +2107,7 @@ if ($action != 'create' && $action != 'edit' && ($id || $ref))
         $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
     }
     // Linked object block
-    $somethingshown = $form->showLinkedObjectBlock($object);
+    $somethingshown = Form::showLinkedObjectBlock($object);
 
     // Show links to link elements
     $linktoelements=array();

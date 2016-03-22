@@ -163,7 +163,7 @@ if ($action == 'create')
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	$liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
-	print $form->selectarray('target',$liste,1);
+	print Form::selectarray('target',$liste,1);
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
@@ -252,7 +252,7 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 	if ($action == 'edit')
 	{
 		$liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
-		print $form->selectarray('target',$liste,isset($_POST["target"])?$_POST["target"]:$bookmark->target);
+		print Form::selectarray('target',$liste,isset($_POST["target"])?$_POST["target"]:$bookmark->target);
 	}
 	else
 	{

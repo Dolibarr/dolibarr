@@ -541,7 +541,7 @@ else {
 	$nom = $langs->trans("FinanceJournal") . ' - ' . $bank_code_journal->getNomUrl(1);
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
-	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
+	$period = Form::selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . Form::selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
 	$varlink = 'id_account=' . $id_bank_account;
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (

@@ -355,7 +355,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            $form->select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
+            Form::selectDate($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
             print '</td>';
             print '<td>'.$langs->trans('Comments').'</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
@@ -537,7 +537,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 	                print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 	            }
-	            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+	            print Form::formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
 	        }
 
             print '</form>';
@@ -642,7 +642,7 @@ if (empty($action))
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
-        $searchpitco=$form->showFilterAndCheckAddButtons(0);
+        $searchpitco=Form::showFilterAndCheckAddButtons();
         print $searchpitco;
         print '</td>';
         print "</tr>\n";

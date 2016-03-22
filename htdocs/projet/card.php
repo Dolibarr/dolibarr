@@ -455,7 +455,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Ref
     $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
-    print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+    print ' '.Form::textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
     print '</td></tr>';
 
     // Label
@@ -469,7 +469,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
     {
     	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+    	print Form::textwithtooltip($text.' '.img_help(),$texthelp,1);
     }
     else print $text;
     print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
@@ -487,17 +487,17 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
     $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-    print $form->selectarray('public',$array,$object->public);
+    print Form::selectarray('public',$array,$object->public);
     print '</td></tr>';
 
     // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print $form->select_date(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
+    print Form::selectDate(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
     print '</td></tr>';
 
     // Date end
     print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-    print $form->select_date(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
+    print Form::selectDate(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
     print '</td></tr>';
 
     if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -590,17 +590,17 @@ else
     // Confirmation validation
     if ($action == 'validate')
     {
-        print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
+        print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
     }
     // Confirmation close
     if ($action == 'close')
     {
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
+        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
     }
     // Confirmation reopen
     if ($action == 'reopen')
     {
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
+        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
     }
     // Confirmation delete
     if ($action == 'delete')
@@ -610,7 +610,7 @@ else
         $taskarray=$task->getTasksArray(0,0,$object->id,0,0);
         $nboftask=count($taskarray);
         if ($nboftask) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks",$nboftask);
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
+        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
     }
 
     // Clone confirmation
@@ -626,7 +626,7 @@ else
         	array('type' => 'checkbox', 'name' => 'clone_task_files',	'label' => $langs->trans("CloneTaskFiles"),         'value' => false)
         );
 
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
+        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
     }
 
 
@@ -649,7 +649,7 @@ else
         $suggestedref=$object->ref;
         print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
         print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
-        print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+        print ' '.Form::textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
         print '</td></tr>';
 
         // Label
@@ -662,13 +662,13 @@ else
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
         $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 1, 1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-        print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
+        print Form::textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
         print '</td></tr>';
 
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
         $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-        print $form->selectarray('public',$array,$object->public);
+        print Form::selectarray('public',$array,$object->public);
         print '</td></tr>';
 
         // Status
@@ -676,7 +676,7 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
+        print Form::selectDate($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
         print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -684,7 +684,7 @@ else
 
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-        print $form->select_date($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
+        print Form::selectDate($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
         print '</td></tr>';
 
     	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -742,7 +742,7 @@ else
             $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
             $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+        print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td></tr>';
 
         // Label
