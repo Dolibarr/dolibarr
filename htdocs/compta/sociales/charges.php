@@ -270,7 +270,7 @@ if ($action == 'create')
     print $langs->trans("PeriodEndDate");
     print '</td>';
    	print '<td>';
-    print Form::select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+    print Form::selectDate(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print '</tr>';
     // Amount
@@ -286,7 +286,7 @@ if ($action == 'create')
     print $langs->trans("DateDue");
     print '</td>';
     print '<td>';
-    print Form::select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+    print Form::selectDate(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print "</tr>\n";
 
@@ -443,7 +443,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print Form::select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print Form::selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
@@ -455,7 +455,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print Form::select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print Form::selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
 		else {

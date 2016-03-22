@@ -338,12 +338,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print Form::select_date($object->date_start,'dateo',1,1,0,'',1,0,1);
+			print Form::selectDate($object->date_start,'dateo',1,1,0,'',1,0,1);
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print Form::select_date($object->date_end?$object->date_end:-1,'datee',1,1,0,'',1,0,1);
+			print Form::selectDate($object->date_end?$object->date_end:-1,'datee',1,1,0,'',1,0,1);
 			print '</td></tr>';
 
 			// Planned workload

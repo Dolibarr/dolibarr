@@ -262,7 +262,7 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-    print Form::select_date($datec?$datec:-1,'','','','','add',1,1,1);
+    print Form::selectDate($datec?$datec:-1,'','','','','add',1,1,1);
     print '</td></tr>';
 
     // Km
@@ -358,7 +358,7 @@ else if ($id)
 
             // Date
             print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-            print Form::select_date($object->date,'',0,0,0,'update',1,0,1);
+            print Form::selectDate($object->date,'',0,0,0,'update',1,0,1);
             print '</td></tr>';
 
             // Km

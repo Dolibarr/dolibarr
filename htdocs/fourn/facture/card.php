@@ -1483,12 +1483,12 @@ if ($action == 'create')
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
-    Form::select_date($dateinvoice,'','','','',"add",1,1);
+    Form::selectDate($dateinvoice,'','','','',"add",1,1);
     print '</td></tr>';
 
     // Due date
     print '<tr><td>'.$langs->trans('DateMaxPayment').'</td><td>';
-    Form::select_date($datedue,'ech','','','',"add",1,1);
+    Form::selectDate($datedue,'ech','','','',"add",1,1);
     print '</td></tr>';
 
 	// Payment term

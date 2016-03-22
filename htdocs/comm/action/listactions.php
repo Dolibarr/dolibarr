@@ -142,7 +142,7 @@ $form=new Form($db);
 $userstatic=new User($db);
 
 $nav='';
-$nav.=Form::select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=Form::selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 
 $now=dol_now();
@@ -320,10 +320,10 @@ if ($resql)
 	    //print '<td class="liste_titre"><input type="text" name="search_type" value="'.$search_type.'"></td>';
 	}
 	print '<td class="liste_titre" align="center">';
-	print Form::select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
+	print Form::selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	print Form::select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
+	print Form::selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';

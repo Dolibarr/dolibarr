@@ -219,14 +219,14 @@ if ($resql)
 	print Form::selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
 	print ' ';
 	$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
-	print Form::select_date($filter_date1,'op1',0,0,1,'',1,0,1);
+	print Form::selectDate($filter_date1,'op1',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print Form::selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
 	print ' ';
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
-	print Form::select_date($filter_date2,'op2',0,0,1,'',1,0,1);
+	print Form::selectDate($filter_date2,'op2',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td align="right">';
 	$arrayofstatus=array(
