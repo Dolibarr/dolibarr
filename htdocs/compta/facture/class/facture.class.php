@@ -1154,7 +1154,9 @@ class Facture extends CommonInvoice
 				$line->rowid	        = $objp->rowid;             // deprecated
 				$line->label            = $objp->custom_label;		// deprecated
 				$line->desc             = $objp->description;		// Description line
+				$line->description      = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
+				$line->ref              = $objp->product_ref;		// Ref product
 				$line->product_ref      = $objp->product_ref;		// Ref product
 				$line->libelle          = $objp->product_label;		// TODO deprecated
 				$line->product_label	= $objp->product_label;		// Label product

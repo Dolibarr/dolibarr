@@ -1723,6 +1723,7 @@ class Commande extends CommonOrder
                 $line->commande_id      = $objp->fk_commande;
                 $line->label            = $objp->custom_label;
                 $line->desc             = $objp->description;
+                $line->description      = $objp->description;		// Description line
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
                 $line->tva_tx           = $objp->tva_tx;
