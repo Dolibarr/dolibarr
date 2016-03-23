@@ -533,6 +533,23 @@ Dolibarr better:
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
 
+***** ChangeLog for 3.7.4 compared to 3.7.3 *****
+FIX: #3694
+FIX: #4239
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: #4341
+FIX: #4414 Supplier invoices use FAC_FORCE_DATE_VALIDATION client invoices property
+FIX: #4440 Wrong price is filled by Product::fetch into multiprices arrays
+FIX: add missing global def for ttc column
+FIX: Contrat card don't consider user permissions to show active/unactive service button
+FIX: CVE CVE-2015-8685
+FIX: Email templates not compatible with Multicompany
+Fix: for avoid division by 0
+FIX: ISSUE #4506 : make working the PROPAL_CLONE_ON_CREATE_PAGE hidden constant
+FIX: $outputlangs is not defined (dolibarr 3.7, 3.8, 3.9)
+FIX: sql injection even when code is on several lines
+FIX: The third dashboard don't consider user permissions
+
 ***** ChangeLog for 3.7.3 compared to 3.7.2 *****
 FIX: #3734 Do not show empty links of deleted source objects in stock movement list
 FIX: #3890 Expected transactions bank account page, shows negative numbers
