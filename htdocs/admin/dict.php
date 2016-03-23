@@ -78,7 +78,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,31,0);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,31,32,0);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -113,6 +113,7 @@ $tabname[28]= MAIN_DB_PREFIX."c_holiday_types";
 $tabname[29]= MAIN_DB_PREFIX."c_lead_status";
 $tabname[30]= MAIN_DB_PREFIX."c_format_cards";
 $tabname[31]= MAIN_DB_PREFIX."accounting_system";
+$tabname[32]= MAIN_DB_PREFIX."c_accountancy_category";
 
 // Dictionary labels
 $tablib=array();
@@ -147,6 +148,7 @@ $tablib[28]= "DictionaryHolidayTypes";
 $tablib[29]= "DictionaryOpportunityStatus";
 $tablib[30]= "DictionaryFormatCards";
 $tablib[31]= "DictionaryAccountancysystem";
+$tablib[32]= "DictionaryAccountancyCategory";
 
 // Requests to extract data
 $tabsql=array();
@@ -181,6 +183,7 @@ $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.new
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 $tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, c.code as country_code, c.label as country, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_pays=c.rowid and c.active=1";
+$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label AS label, a.range AS range, a.position, a.fk_country as country_id, a.active FROM ".MAIN_DB_PREFIX."c_accountancy_category AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -215,6 +218,7 @@ $tabsqlsort[28]="country ASC, code ASC";
 $tabsqlsort[29]="position ASC";
 $tabsqlsort[30]="code ASC";
 $tabsqlsort[31]="pcg_version ASC";
+$tabsqlsort[32]="code ASC, label ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -249,6 +253,7 @@ $tabfield[28]= "code,label,affect,delay,newByMonth,country_id,country";
 $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfield[31]= "pcg_version,country_id,country,label";
+$tabfield[32]= "code,label,range,position,country_id,country";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -283,6 +288,7 @@ $tabfieldvalue[28]= "code,label,affect,delay,newByMonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
 $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldvalue[31]= "pcg_version,country,label";
+$tabfieldvalue[32]= "code,label,range,position,country_id,country";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -317,6 +323,7 @@ $tabfieldinsert[28]= "code,label,affect,delay,newByMonth,fk_country";
 $tabfieldinsert[29]= "code,label,percent,position";
 $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldinsert[31]= "pcg_version,fk_pays,label";
+$tabfieldinsert[32]= "code,label,range,position,fk_country";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -353,6 +360,7 @@ $tabrowid[28]= "";
 $tabrowid[29]= "";
 $tabrowid[30]= "";
 $tabrowid[31]= "";
+$tabrowid[32]= "";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -387,6 +395,7 @@ $tabcond[28]= ! empty($conf->holiday->enabled);
 $tabcond[29]= ! empty($conf->projet->enabled);
 $tabcond[30]= ! empty($conf->label->enabled);
 $tabcond[31]= ! empty($conf->accounting->enabled);
+$tabcond[32]= ! empty($conf->accounting->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -420,6 +429,8 @@ $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"),'delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
+$tabhelp[31] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -454,6 +465,7 @@ $tabfieldcheck[28] = array();
 $tabfieldcheck[29] = array();
 $tabfieldcheck[30] = array();
 $tabfieldcheck[31] = array();
+$tabfieldcheck[32] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
