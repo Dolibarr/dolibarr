@@ -183,7 +183,7 @@ $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.new
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 $tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, c.code as country_code, c.label as country, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_pays=c.rowid and c.active=1";
-$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label AS label, a.range AS range, a.position, a.fk_country as country_id, a.active FROM ".MAIN_DB_PREFIX."c_accountancy_category AS a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid";
+$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range, a.position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accountancy_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -288,7 +288,7 @@ $tabfieldvalue[28]= "code,label,affect,delay,newByMonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
 $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldvalue[31]= "pcg_version,country,label";
-$tabfieldvalue[32]= "code,label,range,position,country_id,country";
+$tabfieldvalue[32]= "code,label,range,position,country";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -429,7 +429,7 @@ $tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"),'delay'=>$langs->trans("MinimumNoticePeriod"), 'newByMonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
-$tabhelp[31] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
 $tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
@@ -482,6 +482,7 @@ if ($id == 11)
 	$langs->load("propal");
 	$langs->load("bills");
 	$langs->load("interventions");
+	$langs->load("accountancy");
 	$elementList = array(
 			''				    => '',
             'societe'           => $langs->trans('ThirdParty'),
@@ -556,7 +557,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     $ok=1;
     foreach ($listfield as $f => $value)
     {
-        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes','DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
+        if ($value == 'country_id' && in_array($tablib[$id],array('DictionaryVAT','DictionaryRegion','DictionaryCompanyType','DictionaryHolidayTypes','DictionaryRevenueStamp','DictionaryAccountancysystem','DictionaryAccountancyCategory'))) continue;		// For some pages, country is not mandatory
     	if ($value == 'country' && in_array($tablib[$id],array('DictionaryCanton','DictionaryCompanyType','DictionaryRevenueStamp'))) continue;		// For some pages, country is not mandatory
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
@@ -974,6 +975,7 @@ if ($id)
             if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
 	        if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
             if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
+			if ($fieldlist[$field]=='range')   		   { $valuetoshow=$langs->trans("Range"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1141,6 +1143,7 @@ if ($id)
                 if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
 	            if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
             	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
+				if ($fieldlist[$field]=='range')   		   { $valuetoshow=$langs->trans("Range"); }
 
                 // Affiche nom du champ
                 if ($showfield)
