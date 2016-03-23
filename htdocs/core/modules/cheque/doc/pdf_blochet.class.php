@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2009-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,14 +19,14 @@
  */
 
 /**
- *	\file       htdocs/core/modules/cheque/pdf/pdf_blochet.class.php
+ *	\file       htdocs/core/modules/cheque/doc/pdf_blochet.class.php
  *	\ingroup    banque
  *	\brief      File to build cheque deposit receipts
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/pdf/modules_chequereceipts.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php';
 
 
 /**

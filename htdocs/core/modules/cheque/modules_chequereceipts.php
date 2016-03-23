@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/cheque/pdf/modules_chequereceipts.php
+ *	\file       htdocs/core/modules/cheque/modules_chequereceipts.php
  *	\ingroup    facture
  *	\brief      File with parent class of check receipt document generators
  */
@@ -78,7 +79,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 	global $conf,$langs;
 	$langs->load("bills");
 
-	$dir = DOL_DOCUMENT_ROOT . "/core/modules/cheque/pdf/";
+	$dir = DOL_DOCUMENT_ROOT . "/core/modules/cheque/doc/";
 
 	// Positionne modele sur le nom du modele a utiliser
 	if (! dol_strlen($modele))
