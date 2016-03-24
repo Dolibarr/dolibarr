@@ -100,8 +100,6 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$langs->load("companies");
 		$langs->load("errors");
 
-		$form = new Form($this->db);
-
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -149,10 +147,25 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texte.= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir))
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->PROPALE_ADDON_PDF_ODT_PATH))
 		{
-			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=count($listoffiles);
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
 
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+    			
 			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
 				// Model for creation

@@ -177,3 +177,6 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
