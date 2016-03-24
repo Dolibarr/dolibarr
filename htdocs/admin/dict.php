@@ -46,6 +46,8 @@ $langs->load("admin");
 $langs->load("companies");
 $langs->load("resource");
 $langs->load("holiday");
+$langs->load("accountancy");
+$langs->load("hrm");
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -78,7 +80,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,31,32,0);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,31,32,0);
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -114,6 +116,8 @@ $tabname[29]= MAIN_DB_PREFIX."c_lead_status";
 $tabname[30]= MAIN_DB_PREFIX."c_format_cards";
 $tabname[31]= MAIN_DB_PREFIX."accounting_system";
 $tabname[32]= MAIN_DB_PREFIX."c_accountancy_category";
+$tabname[33]= MAIN_DB_PREFIX."c_hrm_department";
+$tabname[34]= MAIN_DB_PREFIX."c_hrm_function";
 
 // Dictionary labels
 $tablib=array();
@@ -149,6 +153,8 @@ $tablib[29]= "DictionaryOpportunityStatus";
 $tablib[30]= "DictionaryFormatCards";
 $tablib[31]= "DictionaryAccountancysystem";
 $tablib[32]= "DictionaryAccountancyCategory";
+$tablib[33]= "DictionaryDepartment";
+$tablib[34]= "DictionaryFunction";
 
 // Requests to extract data
 $tabsql=array();
@@ -184,6 +190,8 @@ $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FR
 $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 $tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, c.code as country_code, c.label as country, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_pays=c.rowid and c.active=1";
 $tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range, a.position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accountancy_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
+$tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
+$tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -219,6 +227,8 @@ $tabsqlsort[29]="position ASC";
 $tabsqlsort[30]="code ASC";
 $tabsqlsort[31]="pcg_version ASC";
 $tabsqlsort[32]="code ASC, label ASC";
+$tabsqlsort[33]="code ASC";
+$tabsqlsort[34]="code ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
@@ -254,6 +264,8 @@ $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfield[31]= "pcg_version,country_id,country,label";
 $tabfield[32]= "code,label,range,position,country_id,country";
+$tabfield[33]= "code,label";
+$tabfield[34]= "code,label";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
@@ -289,6 +301,8 @@ $tabfieldvalue[29]= "code,label,percent,position";
 $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldvalue[31]= "pcg_version,country,label";
 $tabfieldvalue[32]= "code,label,range,position,country";
+$tabfieldvalue[33]= "code,label";
+$tabfieldvalue[34]= "code,label";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
@@ -324,6 +338,8 @@ $tabfieldinsert[29]= "code,label,percent,position";
 $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldinsert[31]= "pcg_version,fk_pays,label";
 $tabfieldinsert[32]= "code,label,range,position,fk_country";
+$tabfieldinsert[33]= "code,label";
+$tabfieldinsert[34]= "code,label";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -361,6 +377,8 @@ $tabrowid[29]= "";
 $tabrowid[30]= "";
 $tabrowid[31]= "";
 $tabrowid[32]= "";
+$tabrowid[33]= "rowid";
+$tabrowid[34]= "rowid";
 
 // Condition to show dictionary in setup page
 $tabcond=array();
@@ -396,6 +414,8 @@ $tabcond[29]= ! empty($conf->projet->enabled);
 $tabcond[30]= ! empty($conf->label->enabled);
 $tabcond[31]= ! empty($conf->accounting->enabled);
 $tabcond[32]= ! empty($conf->accounting->enabled);
+$tabcond[33]= ! empty($conf->hrm->enabled);
+$tabcond[34]= ! empty($conf->hrm->enabled);
 
 // List of help for fields
 $tabhelp=array();
@@ -431,6 +451,8 @@ $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->t
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
 $tabhelp[31] = array('pcg_version'=>$langs->trans("EnterAnyCode"));
 $tabhelp[32] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck=array();
@@ -466,6 +488,8 @@ $tabfieldcheck[29] = array();
 $tabfieldcheck[30] = array();
 $tabfieldcheck[31] = array();
 $tabfieldcheck[32] = array();
+$tabfieldcheck[33] = array();
+$tabfieldcheck[34] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder,$tabname,$tablib,$tabsql,$tabsqlsort,$tabfield,$tabfieldvalue,$tabfieldinsert,$tabrowid,$tabcond,$tabhelp,$tabfieldcheck);
@@ -482,7 +506,6 @@ if ($id == 11)
 	$langs->load("propal");
 	$langs->load("bills");
 	$langs->load("interventions");
-	$langs->load("accountancy");
 	$elementList = array(
 			''				    => '',
             'societe'           => $langs->trans('ThirdParty'),
