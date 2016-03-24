@@ -3953,6 +3953,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// Classify 'closed not completely paid' (possible si validee et pas encore classee payee)
+			
 			if ($object->statut == 1 && $object->paye == 0 && $resteapayer > 0 && $user->rights->facture->paiement)
 			{
 				if ($totalpaye > 0 || $totalcreditnotes > 0)
@@ -3962,10 +3963,16 @@ else if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					if ($objectidnext) {
-						print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('ClassifyCanceled') . '</span></div>';
-					} else {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=canceled">' . $langs->trans('ClassifyCanceled') . '</a></div>';
+					if ( empty($conf->global->BILL_NEVER_BE_CANCELED))
+					{
+						if ($objectidnext) 
+						{
+							print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('ClassifyCanceled') . '</span></div>';
+						}
+						else 
+						{
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=canceled">' . $langs->trans('ClassifyCanceled') . '</a></div>';
+						}
 					}
 				}
 			}
