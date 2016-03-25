@@ -3963,7 +3963,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					if ( empty($conf->global->BILL_NEVER_BE_CANCELED))
+					if ( empty($conf->global->INVOICE_CAN_NEVER_BE_CANCELED))
 					{
 						if ($objectidnext) 
 						{
