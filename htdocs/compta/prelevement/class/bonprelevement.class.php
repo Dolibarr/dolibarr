@@ -1262,25 +1262,23 @@ class BonPrelevement extends CommonObject
 			$fileDebiteurSection = '';
 			$fileEmetteurSection = '';
 			$i = 0;
-			$j = 0;
 			$this->total = 0;
 
 			/*
 			 * section Debiteur (sepa Debiteurs bloc lines)
 			 */
 
+			$tmp_invoices = array();
+
 			$sql = "SELECT f.facnumber as fac FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."prelevement_facture as pf, ".MAIN_DB_PREFIX."societe as soc, ".MAIN_DB_PREFIX."c_country as p, ".MAIN_DB_PREFIX."societe_rib as rib WHERE pl.fk_prelevement_bons = ".$this->id." AND pl.rowid = pf.fk_prelevement_lignes AND pf.fk_facture = f.rowid AND soc.fk_pays = p.rowid AND soc.rowid = f.fk_soc AND rib.fk_soc = f.fk_soc AND rib.default_rib = 1";
 			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$num = $this->db->num_rows($resql);
-				while ($j < $num)
-				{
-					$objfac = $this->db->fetch_object($resql);
-					$ListOfFactures = $ListOfFactures . $objfac->fac . ",";
-					$j++;
+			if ($resql) {
+				while ($objfac = $this->db->fetch_object($resql)) {
+					$tmp_invoices[] = $objfac->fac;
 				}
 			}
+
+	        $ListOfFactures = implode($tmp_invoices);
 
 			$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 			$sql.= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
