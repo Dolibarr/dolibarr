@@ -502,7 +502,7 @@ class RemiseCheque extends CommonObject
 
 		dol_syslog("RemiseCheque::generatePdf model=".$model." id=".$this->id, LOG_DEBUG);
 
-		$dir=DOL_DOCUMENT_ROOT ."/core/modules/cheque/pdf/";
+		$dir=DOL_DOCUMENT_ROOT ."/core/modules/cheque/doc/";
 
 		// Charge le modele
 		$file = "pdf_".$model.".class.php";
