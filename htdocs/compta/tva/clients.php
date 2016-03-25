@@ -335,7 +335,7 @@ $company_static=new Societe($db);
 $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 
 $parameters["direction"] = 'buy';
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if (is_array($coll_list)) {
 	$var=true;
 	$total = 0;  $totalamount = 0;
