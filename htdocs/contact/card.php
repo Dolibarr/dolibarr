@@ -655,7 +655,7 @@ else
             // Visibility
             print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-            print Form::selectarray('priv',$selectarray,(GETPOST("priv",'alpha')?GETPOST("priv",'alpha'):$object->priv),0);
+            print $form->selectarray('priv',$selectarray,(GETPOST("priv",'alpha')?GETPOST("priv",'alpha'):$object->priv),0);
             print '</td></tr>';
 
 			// Categories
@@ -891,7 +891,7 @@ else
             // Visibility
             print '<tr><td><label for="priv">'.$langs->trans("ContactVisibility").'</label></td><td colspan="3">';
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-            print Form::selectarray('priv',$selectarray,$object->priv,0);
+            print $form->selectarray('priv',$selectarray,$object->priv,0);
             print '</td></tr>';
 
              // Note Public

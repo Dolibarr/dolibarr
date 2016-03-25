@@ -1452,7 +1452,7 @@ if ($action == 'create')
 	print '<td>' . $langs->trans("DefaultModel") . '</td>';
 	print '<td colspan="2">';
 	$liste = ModelePDFPropales::liste_modeles($db);
-	print Form::selectarray('model', $liste, ($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : $conf->global->PROPALE_ADDON_PDF));
+	print $form->selectarray('model', $liste, ($conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT ? $conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT : $conf->global->PROPALE_ADDON_PDF));
 	print "</td></tr>";
 
 	// Multicurrency
@@ -1579,7 +1579,7 @@ if ($action == 'create')
 				$liste_propal [$row [0]] = $propalRefAndSocName;
 				$i ++;
 			}
-			print Form::selectarray("copie_propal", $liste_propal, 0);
+			print $form->selectarray("copie_propal", $liste_propal, 0);
 		} else {
 			dol_print_error($db);
 		}

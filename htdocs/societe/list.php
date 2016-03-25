@@ -673,7 +673,7 @@ if ($resql)
     if (! empty($arrayfields['typent.code']['checked']))
     {
         print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-    	print Form::selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+    	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
     	print '</td>';
     }
 	if (! empty($arrayfields['s.siren']['checked']))
@@ -768,7 +768,7 @@ if ($resql)
 		{
 	        $arraystcomm[$val['id']]=($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
 		}
-	    print Form::selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
+	    print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2);
 	    print '</td>';
     }
 	// Extra fields
@@ -811,7 +811,7 @@ if ($resql)
     if (! empty($arrayfields['s.status']['checked']))
     {
         print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-        print Form::selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+        print $form->selectarray('search_status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
         print '</td>';
     }
     // Action column

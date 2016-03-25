@@ -254,7 +254,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
-	print Form::selectarray('year',$arrayyears,$year,0);
+	print $form->selectarray('year',$arrayyears,$year,0);
 	print '</td></tr>';
 	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';

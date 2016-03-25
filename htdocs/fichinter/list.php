@@ -198,7 +198,7 @@ if ($result)
 	}
 	print '<td class="liste_titre" align="right">';
 	$liststatus=$interventionstatic->statuts_short;
-	print Form::selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
 	$searchpitco=Form::showFilterAndCheckAddButtons();

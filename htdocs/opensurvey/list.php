@@ -106,7 +106,7 @@ print '<td></td>';
 print '<td></td>';
 print '<td></td>';
 $arraystatus=array(''=>'&nbsp;','expired'=>$langs->trans("Expired"),'opened'=>$langs->trans("Opened"));
-print '<td align="center">'. Form::selectarray('status', $arraystatus, $status).'</td>';
+print '<td align="center">'. $form->selectarray('status', $arraystatus, $status).'</td>';
 print '<td class="liste_titre" align="right">';
 $searchpitco=Form::showFilterAndCheckAddButtons();
 print $searchpitco;

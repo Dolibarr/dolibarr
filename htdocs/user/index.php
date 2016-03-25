@@ -326,7 +326,7 @@ if ($result)
     {
         print '<td>';
         $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-        print Form::selectarray('search_gender', $arraygender, $search_gender, 1);        
+        print $form->selectarray('search_gender', $arraygender, $search_gender, 1);        
         print '</td>';
     }
     if (! empty($arrayfields['u.employee']['checked']))
@@ -391,7 +391,7 @@ if ($result)
     {
         // Status
         print '<td class="liste_titre" align="center">';
-        print Form::selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+        print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
         print '</td>';
     }
     // Action column

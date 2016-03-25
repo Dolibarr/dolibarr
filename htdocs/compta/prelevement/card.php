@@ -217,7 +217,7 @@ if ($id > 0)
 		print Form::selectDate('','','','','',"userfile",1,1);
 		print '</td></tr>';
 		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
-		print Form::selectarray("methode",$bon->methodes_trans);
+		print $form->selectarray("methode",$bon->methodes_trans);
 		print '</td></tr>';
 /*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';

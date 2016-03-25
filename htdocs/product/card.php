@@ -876,13 +876,13 @@ else
         // On sell
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-        print Form::selectarray('statut',$statutarray,GETPOST('statut'));
+        print $form->selectarray('statut',$statutarray,GETPOST('statut'));
         print '</td></tr>';
 
         // To buy
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
         $statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-        print Form::selectarray('statut_buy',$statutarray,GETPOST('statut_buy'));
+        print $form->selectarray('statut_buy',$statutarray,GETPOST('statut_buy'));
         print '</td></tr>';
 
 	    // Batch number management
@@ -890,7 +890,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 			$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
-			print Form::selectarray('status_batch',$statutarray,GETPOST('status_batch'));
+			print $form->selectarray('status_batch',$statutarray,GETPOST('status_batch'));
 			print '</td></tr>';
 		}
 
@@ -953,7 +953,7 @@ else
         {
             print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
             $statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-            print Form::selectarray('finished',$statutarray,GETPOST('finished'),1);
+            print $form->selectarray('finished',$statutarray,GETPOST('finished'),1);
             print '</td></tr>';
         }
 
@@ -1187,7 +1187,7 @@ else
 			if ($conf->productbatch->enabled) {
 				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
 				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
-				print Form::selectarray('status_batch',$statutarray,$object->status_batch);
+				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
 				print '</td></tr>';
 			}
 
@@ -1255,7 +1255,7 @@ else
             {
                 print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
                 $statutarray=array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-                print Form::selectarray('finished',$statutarray,$object->finished);
+                print $form->selectarray('finished',$statutarray,$object->finished);
                 print '</td></tr>';
             }
 
@@ -1802,7 +1802,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
-        	$html .= Form::selectarray("propalid", $otherprop, 0, 1);
+        	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
         	$html .= '</td></tr>';
         }
         else
@@ -1828,7 +1828,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
         	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
-        	$html .= Form::selectarray("commandeid", $othercom, 0, 1);
+        	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
         	$html .= '</td></tr>';
         }
         else
@@ -1854,7 +1854,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     		$var=!$var;
     		$html .= '<tr><td style="width: 200px;">';
     		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
-    		$html .= Form::selectarray("factureid", $otherinvoice, 0, 1);
+    		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
     		$html .= '</td></tr>';
     	}
     	else

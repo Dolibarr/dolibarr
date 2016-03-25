@@ -216,7 +216,7 @@ if ($resql)
 	}
 	// Status
 	print '<td align="right">';
-	print Form::selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
+	print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
 	print '</td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=Form::showFilterAndCheckAddButtons();

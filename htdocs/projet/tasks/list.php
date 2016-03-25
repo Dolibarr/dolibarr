@@ -442,7 +442,7 @@ if ($resql)
         print '<td class="liste_titre">';
         $listofstatus=array(-1=>'&nbsp;');
         foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
-        print Form::selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
+        print $form->selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
         print '</td>';
     }
     if (! empty($arrayfields['t.ref']['checked']))

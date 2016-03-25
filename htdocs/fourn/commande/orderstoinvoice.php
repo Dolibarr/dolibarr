@@ -364,7 +364,7 @@ if ($action == 'create' && !$error) {
 	print '<tr><td>' . $langs->trans('Model') . '</td>';
 	print '<td>';
 	$liste = ModelePDFSuppliersInvoices::liste_modeles($db);
-	print Form::selectarray('model', $liste, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
+	print $html->selectarray('model', $liste, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
 	print "</td></tr>";
 
 	// Public note

@@ -1150,7 +1150,7 @@ if ($action == 'create')
 	print '<td>' . $langs->trans("DefaultModel") . '</td>';
 	print '<td colspan="2">';
 	$liste = ModelePDFSupplierProposal::liste_modeles($db);
-	print Form::selectarray('model', $liste, ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF));
+	print $form->selectarray('model', $liste, ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF));
 	print "</td></tr>";
 
 	// Project
@@ -1267,7 +1267,7 @@ if ($action == 'create')
 				$liste_ask [$row [0]] = $askPriceSupplierRefAndSocName;
 				$i ++;
 			}
-			print Form::selectarray("copie_supplier_proposal", $liste_ask, 0);
+			print $form->selectarray("copie_supplier_proposal", $liste_ask, 0);
 		} else {
 			dol_print_error($db);
 		}

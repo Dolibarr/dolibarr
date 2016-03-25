@@ -1034,7 +1034,7 @@ else
 
         // Status
         print '<tr><td>'.fieldLabel('Status','status').'</td><td colspan="3">';
-        print Form::selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),1);
+        print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),1);
         print '</td></tr>';
 
         // Barcode
@@ -1155,11 +1155,11 @@ else
         // Type - Size
         print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>'."\n";
         $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
-        print Form::selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
+        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
-        print Form::selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
+        print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
@@ -1599,7 +1599,7 @@ else
 
             // Status
             print '<tr><td>'.fieldLabel('Status','status').'</td><td colspan="3">';
-            print Form::selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$object->status);
+            print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$object->status);
             print '</td></tr>';
 
             // Address
@@ -1761,11 +1761,11 @@ else
 
             // Type - Size
             print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>';
-            print Form::selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+            print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
             print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
-            print Form::selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
+            print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 

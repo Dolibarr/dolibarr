@@ -30,8 +30,7 @@
 /**
  *  Class to stock current configuration
  */
-class 
-Conf
+class Conf
 {
 	/** \public */
 	//! To store properties found in conf file
@@ -582,16 +581,6 @@ Conf
 
         	if (empty($conf->loghandlers[$handler])) $this->loghandlers[$handler]=$loghandlerinstance;
         }
-	}
-
-	public function setConstant()
-	{
-		
-	}
-
-	public function getConstant()
-	{
-		
 	}
 }
 

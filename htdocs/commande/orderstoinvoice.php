@@ -469,7 +469,7 @@ if ($action == 'create' && !$error)
 	print '<td>';
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 	$liste=ModelePDFFactures::liste_modeles($db);
-	print Form::selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
+	print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";
 
 	// Public note
