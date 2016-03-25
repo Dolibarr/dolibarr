@@ -33,7 +33,7 @@ $langs->load("suppliers");
 $langs->load("banks");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe','','');
 
@@ -43,7 +43,7 @@ $hookmanager->initHooks(array('salesrepresentativescard','globalcard'));
  *	Actions
  */
 
-if($_GET["socid"] && $_GET["commid"])
+if (! empty($socid) && $_GET["commid"])
 {
 	$action = 'add';
 
@@ -51,8 +51,8 @@ if($_GET["socid"] && $_GET["commid"])
 	{
 
 		$soc = new Societe($db);
-		$soc->id = $_GET["socid"];
-		$soc->fetch($_GET["socid"]);
+		$soc->id = $socid;
+		$soc->fetch($socid);
 
 
 		$parameters=array('id'=>$_GET["commid"]);
@@ -61,17 +61,17 @@ if($_GET["socid"] && $_GET["commid"])
 
 		if (empty($reshook)) $soc->add_commercial($user, $_GET["commid"]);
 
-		header("Location: commerciaux.php?socid=".$soc->id);
+		header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soc->id);
 		exit;
 	}
 	else
 	{
-		header("Location: commerciaux.php?socid=".$_GET["socid"]);
+		header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
 		exit;
 	}
 }
 
-if($_GET["socid"] && $_GET["delcommid"])
+if (! empty($socid) && $_GET["delcommid"])
 {
 	$action = 'delete';
 
@@ -87,12 +87,12 @@ if($_GET["socid"] && $_GET["delcommid"])
 
 		if (empty($reshook)) $soc->del_commercial($user, $_GET["delcommid"]);
 
-		header("Location: commerciaux.php?socid=".$soc->id);
+		header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$soc->id);
 		exit;
 	}
 	else
 	{
-		header("Location: commerciaux.php?socid=".$_GET["socid"]);
+		header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
 		exit;
 	}
 }
@@ -107,11 +107,11 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $form = new Form($db);
 
-if ($_GET["socid"])
+if (! empty($socid))
 {
 	$soc = new Societe($db);
-	$soc->id = $_GET["socid"];
-	$result=$soc->fetch($_GET["socid"]);
+	$soc->id = $socid;
+	$result=$soc->fetch($socid);
 
 	$action='view';
 
@@ -160,12 +160,24 @@ if ($_GET["socid"])
 	print '<tr><td valign="top">'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
-	$sql = "SELECT u.rowid, u.lastname, u.firstname";
+	$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE sc.fk_soc =".$soc->id;
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+		$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+	$sql .= " WHERE sc.fk_soc = ".$soc->id;
 	$sql .= " AND sc.fk_user = u.rowid";
+	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+	{
+		$sql.= " AND ((ug.fk_user = sc.fk_user";
+		$sql.= " AND ug.entity = ".$conf->entity.")";
+		$sql.= " OR u.admin = 1)";
+	}
+	else
+		$sql.= " AND u.entity IN (0,".$conf->entity.")";
+
 	$sql .= " ORDER BY u.lastname ASC ";
+
 	dol_syslog('societe/commerciaux.php::list salesman sql = '.$sql,LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
@@ -190,7 +202,7 @@ if ($_GET["socid"])
 			print '</a>&nbsp;';
 			if ($user->rights->societe->creer)
 			{
-			    print '<a href="commerciaux.php?socid='.$_GET["socid"].'&amp;delcommid='.$obj->rowid.'">';
+			    print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;delcommid='.$obj->rowid.'">';
 			    print img_delete();
 			    print '</a>';
 			}
@@ -222,9 +234,17 @@ if ($_GET["socid"])
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
 
-		$sql = "SELECT u.rowid, u.lastname, u.firstname, u.login";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+		{
+			$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+			$sql.= " WHERE ((ug.fk_user = u.rowid";
+			$sql.= " AND ug.entity = ".$conf->entity.")";
+			$sql.= " OR u.admin = 1)";
+		}
+		else
+			$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND u.statut<>0 ";
 		$sql.= " ORDER BY u.lastname ASC ";
 
@@ -256,7 +276,7 @@ if ($_GET["socid"])
 				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
 				print '</a>';
 				print '</td><td>'.$obj->login.'</td>';
-				print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
+				print '<td><a href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
 
 				print '</tr>'."\n";
 				$i++;
