@@ -45,6 +45,8 @@ class mod_contract_magre extends ModelNumRefContracts
 
 		$langs->load("bills");
 
+		$form = new Form($this->db);
+
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

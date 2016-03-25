@@ -184,7 +184,7 @@ if ($object->fetch($id) >= 0)
 
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print Form::showrefnav($object,'id', $linkback);
+	print $form->showrefnav($object,'id', $linkback);
 	print '</td></tr>';
 
 	print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';

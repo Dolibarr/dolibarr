@@ -179,7 +179,7 @@ if ($id > 0 || !empty($ref)) {
         // Ref
         print '<tr><td valign="top" width="25%">' . $langs->trans("Ref") . '</td>';
         print '<td colspan="3">';
-        print Form::showrefnav($object, 'ref', '', 1, 'ref');
+        print $form->showrefnav($object, 'ref', '', 1, 'ref');
         print '</td></tr>';
 
         // Label
@@ -200,7 +200,7 @@ if ($id > 0 || !empty($ref)) {
          * Confirmation suppression fichier
          */
         if ($action == 'delete') {
-            $ret = $formForm::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode($_GET["urlfile"]),
+            $ret = $form->form_confirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&urlfile=' . urlencode($_GET["urlfile"]),
                     $langs->trans('DeleteFile'),
                     $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile',
                     '', 0, 1);

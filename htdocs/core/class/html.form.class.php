@@ -74,15 +74,14 @@ class Form
      *
      * @param   string	$text			Text of label or key to translate
      * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
-     * @param   string	$value          Value to show/edit (not used in this function)
+     * @param   string	$preselected	Name of Value to show/edit (not used in this function)
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-     * @param	string	$moreparam		More param to add on a href URL*
-     * @param   int     $fieldrequired  1 if we want to show field as mandatory using the fieldrequired CSS.
+     * @param	string	$moreparam		More param to add on a href URL
      * @return	string					HTML edit field
      */
-    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0)
+    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='')
     {
         global $conf,$langs;
 
@@ -95,24 +94,18 @@ class Form
             {
                 $tmp=explode(':',$typeofdata);
                 $ret.= '<div class="editkey_'.$tmp[0].(! empty($tmp[1]) ? ' '.$tmp[1] : '').'" id="'.$htmlname.'">';
-	            if ($fieldrequired) $ret.='<span class="fieldrequired">';
                 $ret.= $langs->trans($text);
-	            if ($fieldrequired) $ret.='</span>';
                 $ret.= '</div>'."\n";
             }
             else
             {
-	            if ($fieldrequired) $ret.='<span class="fieldrequired">';
                 $ret.= $langs->trans($text);
-	            if ($fieldrequired) $ret.='</span>';
             }
         }
         else
 		{
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
-	        if ($fieldrequired) $ret.='<span class="fieldrequired">';
             $ret.=$langs->trans($text);
-	        if ($fieldrequired) $ret.='</span>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
@@ -202,14 +195,15 @@ class Form
                     $ret.=$doleditor->Create(1);
                 }
                 $ret.='</td>';
-               	
-                $ret.='<td align="left">';
-               	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-               	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
-               	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-               	$ret.='</td>';
-
-               	$ret.='</tr></table>'."\n";
+                //if ($typeofdata != 'day' && $typeofdata != 'dayhour' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
+                //{
+                	$ret.='<td align="left">';
+                	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
+                	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
+                	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+                	$ret.='</td>';
+                //}
+                $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
             else
@@ -3641,7 +3635,7 @@ class Form
      *    @param    int			$displaymin		Display minutes selector
      *    @param	int			$nooutput		1=No print output, return string
      *    @return	void
-     *    @see		selectDate
+     *    @see		select_date
      */
     function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
     {
@@ -3968,7 +3962,6 @@ class Form
      *    @param	string	$selected    preselected currency code
      *    @param    string	$htmlname    name of HTML select list
      *    @return	void
-     * @deprecated use Form::selectCurrency
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
@@ -4279,10 +4272,10 @@ class Form
      * 	@param	int			$nooutput		Do not output html string but return it
      * 	@param 	int			$disabled		Disable input fields
      *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
-     *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
+     *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another select_date field.
      *  @param  datetime    $adddateof      Add a link "Date of invoice" using the following date.
      * 	@return	mixed						Nothing or string if nooutput is 1
-     *  @see	formDate
+     *  @see	form_date
      */
     function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
     {

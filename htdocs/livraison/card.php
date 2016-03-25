@@ -556,7 +556,7 @@ else
 			if ($action == 'delete')
 			{
 				$expedition_id = GETPOST("expid");
-				print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
 
 			}
 
@@ -565,7 +565,7 @@ else
 			 */
 			if ($action == 'valid')
 			{
-				print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
 
 			}
 
@@ -585,8 +585,8 @@ else
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';
 				print '<td colspan="3">';
 				// Nav is hidden because on a delivery receipt of a shipment, if we go on next shipment, we may find no tab (a shipment may not have delivery receipt yet)
-				//print Form::showrefnav($expedition, 'refshipment', $linkback, 1, 'ref', 'ref');
-				print Form::showrefnav($expedition, 'refshipment', $linkback, 0, 'ref', 'ref');
+				//print $form->showrefnav($expedition, 'refshipment', $linkback, 1, 'ref', 'ref');
+				print $form->showrefnav($expedition, 'refshipment', $linkback, 0, 'ref', 'ref');
 				print '</td></tr>';
 			}
 
@@ -647,7 +647,7 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				Form::selectDate($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+				$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}

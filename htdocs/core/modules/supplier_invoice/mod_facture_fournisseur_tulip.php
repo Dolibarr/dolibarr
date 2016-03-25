@@ -52,6 +52,8 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$langs->load("bills");
 		$langs->load("admin");
 
+		$form = new Form($this->db);
+
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';

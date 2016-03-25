@@ -270,7 +270,7 @@ if ($action == 'create')
     print $langs->trans("PeriodEndDate");
     print '</td>';
    	print '<td>';
-    print Form::selectDate(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+    print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print '</tr>';
     // Amount
@@ -286,7 +286,7 @@ if ($action == 'create')
     print $langs->trans("DateDue");
     print '</td>';
     print '<td>';
-    print Form::selectDate(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+    print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print "</tr>\n";
 
@@ -325,20 +325,20 @@ if ($id > 0)
 
 			);
 
-		    print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneTax'),$langs->trans('ConfirmCloneTax',$object->ref),'confirm_clone',$formclone,'yes');
+		    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneTax'),$langs->trans('ConfirmCloneTax',$object->ref),'confirm_clone',$formclone,'yes');
 		}
 
 		// Confirmation de la suppression de la charge
 		if ($action == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
 		}
 
 		if ($action == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
-			print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
 		}
 
 		if ($action == 'edit')
@@ -351,7 +351,7 @@ if ($id > 0)
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
-		print Form::showrefnav($object,'id');
+		print $form->showrefnav($object,'id');
 		print "</td></tr>";
 
 		// Label
@@ -443,7 +443,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print Form::selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
@@ -455,7 +455,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print Form::selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
 		else {

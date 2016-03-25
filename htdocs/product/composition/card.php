@@ -200,7 +200,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Reference
 			print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
-			print Form::showrefnav($object,'ref','',1,'ref');
+			print $form->showrefnav($object,'ref','',1,'ref');
 			print '</td>';
 
 		print '</tr>';

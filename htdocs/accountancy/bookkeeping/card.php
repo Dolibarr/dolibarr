@@ -203,7 +203,7 @@ $formventilation = new FormVentilation($db);
  *  Confirmation to delete the command
  */
 if ($action == 'delete') {
-	$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'confirm_delete', '', 0, 1);
+	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id, $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 
@@ -248,7 +248,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>' . $langs->trans("Docdate") . '</td>';
 	print '<td>';
-	print Form::selectDate('', 'doc_date', '', '', '', "create_mvt", 1, 1);
+	print $html->select_date('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
 	print '</tr>';
 	

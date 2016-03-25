@@ -269,10 +269,10 @@ if ($resql)
 	$formorder->selectSupplierOrderStatus((strstr($search_status, ',')?-1:$search_status),1,'search_status');
 	print '</td>';
 	print '<td align="center">';
-	print Form::selectyesno('billed', $billed, 1, 0, 1);
+	print $form->selectyesno('billed', $billed, 1, 0, 1);
 	print '</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";

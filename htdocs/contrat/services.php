@@ -219,14 +219,14 @@ if ($resql)
 	print $form->selectarray('filter_op1',$arrayofoperators,$filter_op1,1);
 	print ' ';
 	$filter_date1=dol_mktime(0,0,0,$op1month,$op1day,$op1year);
-	print Form::selectDate($filter_date1,'op1',0,0,1,'',1,0,1);
+	print $form->select_date($filter_date1,'op1',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
 	$arrayofoperators=array('<'=>'<','>'=>'>');
 	print $form->selectarray('filter_op2',$arrayofoperators,$filter_op2,1);
 	print ' ';
 	$filter_date2=dol_mktime(0,0,0,$op2month,$op2day,$op2year);
-	print Form::selectDate($filter_date2,'op2',0,0,1,'',1,0,1);
+	print $form->select_date($filter_date2,'op2',0,0,1,'',1,0,1);
 	print '</td>';
 	print '<td align="right">';
 	$arrayofstatus=array(
@@ -239,7 +239,7 @@ if ($resql)
 	print $form->selectarray('search_status',$arrayofstatus,(strstr($search_status, ',')?-1:$search_status),1);
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$searchpitco=Form::showFilterAndCheckAddButtons();
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
 	print $searchpitco;
 	print '</td>';
     print "</tr>\n";

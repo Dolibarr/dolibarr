@@ -201,7 +201,7 @@ if ($result)
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$searchpitco=Form::showFilterAndCheckAddButtons();
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
 	print $searchpitco;
 	print '</td>';
     print "</tr>\n";

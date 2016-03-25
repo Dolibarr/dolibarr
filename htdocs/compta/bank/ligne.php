@@ -259,7 +259,7 @@ if ($result)
         // Confirmations
         if ($action == 'delete_categ')
         {
-            print Form::formconfirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
+            print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$rowid."&cat1=".GETPOST("fk_categ")."&orig_account=".$orig_account, $langs->trans("RemoveFromRubrique"), $langs->trans("RemoveFromRubriqueConfirm"), "confirm_delete_categ", '', 'yes', 1);
 
         }
 
@@ -276,7 +276,7 @@ if ($result)
         // Ref
         print '<tr><td width="20%">'.$langs->trans("Ref")."</td>";
         print '<td colspan="4">';
-        print Form::showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
+        print $form->showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
         print '</td>';
         print '</tr>';
 
@@ -451,7 +451,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print Form::selectDate($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
+            print $form->select_date($db->jdate($objp->do),'dateo','','','','update',1,0,1,$objp->rappro);
             print '</td>';
         }
         else
@@ -467,7 +467,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td colspan="3">';
-            print Form::selectDate($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
+            print $form->select_date($db->jdate($objp->dv),'datev','','','','update',1,0,1,$objp->rappro);
             if (! $objp->rappro)
             {
                 print ' &nbsp; ';

@@ -52,9 +52,8 @@ require_once DOL_DOCUMENT_ROOT . '/societe/class/client.class.php';
 $langs->load("companies");
 $langs->load("other");
 $langs->load("compta");
-$langs->load("banks");
+$langs->load("bank");
 $langs->load('bills');
-$langs->load('donations');
 $langs->load("accountancy");
 
 $id_bank_account = GETPOST('id_account', 'int');
@@ -131,12 +130,11 @@ if ($result) {
 
 	$num = $db->num_rows($result);
 	// Variables
-	$account_supplier = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
-	$account_customer = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-	$account_employee = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : $langs->trans("CodeNotDef"));
-	$account_pay_vat = (! empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : $langs->trans("CodeNotDef"));
-	$account_pay_donation = (! empty($conf->global->DONATION_ACCOUNTINGACCOUNT) ? $conf->global->DONATION_ACCOUNTINGACCOUNT : $langs->trans("CodeNotDef"));
-	$account_transfer = (! empty($conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH) ? $conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH : $langs->trans("CodeNotDef"));
+	$cptfour = (! empty($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) ? $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER : $langs->trans("CodeNotDef"));
+	$cptcli = (! empty($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+	$accountancy_account_salary = (! empty($conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT) ? $conf->global->SALARIES_ACCOUNTING_ACCOUNT_PAYMENT : $langs->trans("CodeNotDef"));
+	$accountancy_account_pay_vat = (! empty($conf->global->ACCOUNTING_VAT_PAY_ACCOUNT) ? $conf->global->ACCOUNTING_VAT_PAY_ACCOUNT : $langs->trans("CodeNotDef"));
+	$accountancy_account_pay_donation = (! empty($conf->global->DONATION_ACCOUNTINGACCOUNT) ? $conf->global->DONATION_ACCOUNTINGACCOUNT : $langs->trans("CodeNotDef"));
 
 	$tabpay = array ();
 	$tabbq = array ();
@@ -156,9 +154,11 @@ if ($result) {
 		// Controls
 		$compta_bank = $obj->account_number;
 		if ($obj->label == '(SupplierInvoicePayment)')
-			$compta_soc = (! empty($obj->code_compta_fournisseur) ? $obj->code_compta_fournisseur : $account_supplier);
+			$compta_soc = (! empty($obj->code_compta_fournisseur) ? $obj->code_compta_fournisseur : $cptfour);
 		if ($obj->label == '(CustomerInvoicePayment)')
-			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $account_customer);
+			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $cptcli);
+		if ($obj->typeop == '(BankTransfert)')
+			$compta_soc = $conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH;
 
 		// Variable bookkeeping
 		$tabpay[$obj->rowid]["date"] = $obj->do;
@@ -226,23 +226,25 @@ if ($result) {
 					$paymentdonstatic->id = $links[$key]['url_id'];
 					$paymentdonstatic->fk_donation = $links[$key]['url_id'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentDonation");
-					$tabtp[$obj->rowid][$account_pay_donation] += $obj->amount;
+					$tabtp[$obj->rowid][$accountancy_account_pay_donation] += $obj->amount;
 				} else if ($links[$key]['type'] == 'payment_vat') {
 					$paymentvatstatic->id = $links[$key]['url_id'];
 					$paymentvatstatic->ref = $links[$key]['url_id'];
-					$paymentvatstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("PaymentVat");
-					$tabtp[$obj->rowid][$account_pay_vat] += $obj->amount;
+					$tabtp[$obj->rowid][$accountancy_account_pay_vat] += $obj->amount;
 				} else if ($links[$key]['type'] == 'payment_salary') {
 					$paymentsalstatic->id = $links[$key]['url_id'];
 					$paymentsalstatic->ref = $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
-					$tabtp[$obj->rowid][$account_employee ] += $obj->amount;
+					$tabtp[$obj->rowid][$accountancy_account_salary] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
-					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentvatstatic->getNomUrl(2);
+					$tabtp[$obj->rowid][$cpttva] += $obj->amount;
 				}
+				/*else {
+				 $tabtp [$obj->rowid] [$accountancy_account_salary] += $obj->amount;
+				 }*/
 			}
 		}
 
@@ -539,7 +541,7 @@ else {
 	$nom = $langs->trans("FinanceJournal") . ' - ' . $bank_code_journal->getNomUrl(1);
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
-	$period = Form::selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . Form::selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
+	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 
 	$varlink = 'id_account=' . $id_bank_account;
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
@@ -586,30 +588,24 @@ else {
 	foreach ( $tabpay as $key => $val ) {
 		$date = dol_print_date($db->jdate($val["date"]), 'day');
 
-		$reflabel = $val["ref"];
-		if ($reflabel == '(SupplierInvoicePayment)') {
-			$reflabel = $langs->trans('Supplier');
+		if ($val["lib"] == '(SupplierInvoicePayment)') {
+			$reflabel = $langs->trans('SupplierInvoicePayment');
 		}
-		if ($reflabel == '(CustomerInvoicePayment)') {
-			$reflabel = $langs->trans('Customer');
-		}		
-		if ($reflabel == '(SocialContributionPayment)') {
-			$reflabel = $langs->trans('SocialContribution');
-		}
-		if ($reflabel == '(DonationPayment)') {
-			$reflabel = $langs->trans('Donation');
+		if ($val["lib"] == '(CustomerInvoicePayment)') {
+			$reflabel = $langs->trans('CustomerInvoicePayment');
 		}
 
 		// Bank
 		foreach ( $tabbq[$key] as $k => $mt ) {
 			print "<tr " . $bc[$var] . ">";
 			print "<td>" . $date . "</td>";
-			print "<td>" . $ref . "</td>";
+			print "<td>" . $reflabel . "</td>";
 			print "<td>" . length_accountg($k) . "</td>";
+			// print "<td>" . $langs->trans('Bank') . "</td>";
 			if ($val['soclib'] == '') {
-				print "<td>" . $bank_code_journal->label . " - " . $val["ref"] . "</td>";
+				print "<td>" . $langs->trans('Bank') . " - " . $val["ref"] . "</td>";
 			} else {
-				print "<td>" . $bank_code_journal->label . " - " . $val['soclib'] . "</td>";
+				print "<td>" . $langs->trans("Bank") . " - " . $val['soclib'] . "</td>";
 			}
 			print "<td>" . $val["type_payment"] . "</td>";
 			print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
@@ -623,9 +619,19 @@ else {
 				if ($k != 'type') {
 					print "<tr " . $bc[$var] . ">";
 					print "<td>" . $date . "</td>";
-					print "<td>" . $ref . "</td>";
+					print "<td>" . $val["soclib"] . "</td>";
+					// print "<td>" . length_accounta($k) . "</td>";
+					if (length_accounta($k) == '') {
+						print "<td>" . length_accounta($conf->global->ACCOUNTING_ACCOUNT_TRANSFER_CASH) . "</td>";
+					} else {
 					print "<td>" . length_accounta($k) . "</td>";
-					print "<td>" . $reflabel . ' ' . $val['soclib'] . "</td>";
+					}
+					// print "<td>" . $langs->trans('ThirdParty') . " (" . $val['soclib'] . ")</td>";
+					if ($val['soclib'] == '') {
+						print "<td>" . $langs->trans('ThirdParty') . " - " . $val["ref"] . "</td>";
+					} else {
+						print "<td>" . $langs->trans("ThirdParty") . ' - ' . $val['soclib'] . "</td>";
+					}
 					print "<td>" . $val["type_payment"] . "</td>";
 					print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 					print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
@@ -636,9 +642,14 @@ else {
 			foreach ( $tabbq[$key] as $k => $mt ) {
 				print "<tr " . $bc[$var] . ">";
 				print "<td>" . $date . "</td>";
-				print "<td>" . $ref . "</td>";
-				print "<td>" . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . "</td>";
 				print "<td>" . $reflabel . "</td>";
+				print "<td>" . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . "</td>";
+				// print "<td>" . $langs->trans('ThirdParty') . "</td>";
+				if ($val['soclib'] == '') {
+					print "<td>" . $langs->trans('ThirdParty') . " - " . $val["ref"] . "</td>";
+				} else {
+					print "<td>" . $langs->trans("ThirdParty") . ' - ' . $val['soclib'] . "</td>";
+				}
 				print "<td>&nbsp;</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";

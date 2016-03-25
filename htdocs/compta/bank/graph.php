@@ -770,7 +770,7 @@ if ($account)
 		if ($_GET["option"]!='all')
 		{
 			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
-			print Form::showrefnav($acct, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam);
+			print $form->showrefnav($acct, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam);
 		}
 		else
 		{

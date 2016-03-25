@@ -167,7 +167,7 @@ if ($object->id > 0)
 	{
 		dol_print_error('',$discount->error);
 	}
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
 	print "</td></tr>";
 
 	// Ref customer
@@ -300,7 +300,7 @@ if ($object->id > 0)
 	{
 		if ($action == 'editinvoicedate')
 		{
-			Form::formDate($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date,'invoicedate');
+			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date,'invoicedate');
 		}
 		else
 		{
@@ -351,7 +351,7 @@ if ($object->id > 0)
 	{
 		if ($action == 'editpaymentterm')
 		{
-			Form::formDate($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date_lim_reglement,'paymentterm');
+			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date_lim_reglement,'paymentterm');
 		}
 		else
 		{

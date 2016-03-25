@@ -176,9 +176,9 @@ print_barre_liste($langs->trans("Bookkeeping") . ' ' . dol_print_date($search_da
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="liste_titre">';
 print $langs->trans('DateStart') . ': ';
-print Form::selectDate($search_date_start, 'date_start');
+print $form->select_date($search_date_start, 'date_start');
 print $langs->trans('DateEnd') . ': ';
-print Form::selectDate($search_date_end, 'date_end');
+print $form->select_date($search_date_end, 'date_end');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
@@ -220,7 +220,7 @@ print '<input type="text" size=7 class="flat" name="search_doc_type" value="' . 
 print '</td>';
 
 print '<td class="liste_titre">';
-print Form::selectDate($search_doc_date, 'doc_date', 0, 0, 1);
+print $form->select_date($search_doc_date, 'doc_date', 0, 0, 1);
 print '</td>';
 
 print '<td class="liste_titre">';

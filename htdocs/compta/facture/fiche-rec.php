@@ -349,7 +349,7 @@ if ($action == 'create')
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		print Form::selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
+		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
 		print "</td></tr>";
 		
 		// Number max of generation
@@ -609,7 +609,7 @@ else
 		if ($result < 0) {
 		    dol_print_error('', $discount->error);
 		}*/
-		print Form::showrefnav($object, 'ref', $linkback, 1, 'titre', 'titre', $morehtmlref);
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'titre', 'titre', $morehtmlref);
 		print '</td></tr>';
 		
 		
@@ -669,9 +669,9 @@ else
 
 		
 		print '<tr><td>';
-		print Form::editfieldkey($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
+		print $form->editfieldkey($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
 		print '</td><td colspan="5">';
-		print Form::editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
+		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
 		print '</tr>';
 		
@@ -771,7 +771,7 @@ else
 		print '<tr><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
-		    print Form::editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		    print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 		}
 		else
 		{
@@ -780,7 +780,7 @@ else
 		print '</td><td colspan="5">';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
-		    print Form::editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 		}
 		print '</td>';
 		print '</tr>';
@@ -789,7 +789,7 @@ else
 		print '<tr><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0)
 		{
-		    print Form::editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+		    print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
 		}
 		else
 		{
@@ -798,7 +798,7 @@ else
 		print '</td><td colspan="5">';
 		if ($action == 'nb_gen_max' || $object->frequency > 0)
 		{
-		      print Form::editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
+		      print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
 		}
 		else
 		{
@@ -810,14 +810,14 @@ else
 		// Status of generated invoices
 		print '<tr><td>';
 		if ($action == 'auto_validate' || $object->frequency > 0)
-		    print Form::editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+		    print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
 		else
 		    print $langs->trans("StatusOfGeneratedInvoices");
 		print '</td><td colspan="5">';
     	$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
 		if ($action == 'auto_validate' || $object->frequency > 0)
 		{
-    		print Form::editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+    		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
 		}
 		print '</td>';
 		print '</tr>';

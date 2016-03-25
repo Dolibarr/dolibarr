@@ -112,7 +112,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 			// Confirm delete third party
 			if ($action == 'delete' || $conf->use_javascript_ajax)
 			{
-				$this->tpl['action_delete'] = Form::formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,"1,action-delete");
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteAnIndividual"),$langs->trans("ConfirmDeleteIndividual"),"confirm_delete",'',0,"1,action-delete");
 			}
 		}
 	}

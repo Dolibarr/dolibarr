@@ -42,7 +42,7 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-$object = new Tva($db);
+$tva = new Tva($db);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('taxvatcard','globalcard'));
@@ -52,20 +52,10 @@ $hookmanager->initHooks(array('taxvatcard','globalcard'));
  * Actions
  */
 
-if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
+if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
 	header("Location: reglement.php");
 	exit;
-}
-
-if ($action == 'setdatev' && $user->rights->tax->charges->creer)
-{
-    $object->fetch($id);
-    $object->datev=dol_mktime(12,0,0,$_POST['datevmonth'],$_POST['datevday'],$_POST['datevyear']);
-    $result=$object->update($user);
-    if ($result < 0) dol_print_error($db,$object->error);
-    
-    $action='';
 }
 
 if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
@@ -75,36 +65,36 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
     $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
 
-    $object->accountid=GETPOST("accountid");
-    $object->type_payment=GETPOST("type_payment");
-	$object->num_payment=GETPOST("num_payment");
-    $object->datev=$datev;
-    $object->datep=$datep;
+    $tva->accountid=GETPOST("accountid");
+    $tva->type_payment=GETPOST("type_payment");
+	$tva->num_payment=GETPOST("num_payment");
+    $tva->datev=$datev;
+    $tva->datep=$datep;
 	
 	$amount = price2num(GETPOST("amount"));
 	if ($refund == 1) {
 		$amount= -$amount;
 	}
-    $object->amount= $amount;
-	$object->label=GETPOST("label");
-	$object->note=GETPOST("note");
+    $tva->amount= $amount;
+	$tva->label=GETPOST("label");
+	$tva->note=GETPOST("note");
 	
-	if (empty($object->datev))
+	if (empty($tva->datev))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateValue")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->datep))
+	if (empty($tva->datep))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DatePayment")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->type_payment) || $object->type_payment < 0)
+	if (empty($tva->type_payment) || $tva->type_payment < 0)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->amount))
+	if (empty($tva->amount))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
@@ -114,7 +104,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	{
 		$db->begin();
 
-    	$ret=$object->addPayment($user);
+    	$ret=$tva->addPayment($user);
 		if ($ret > 0)
 		{
 			$db->commit();
@@ -124,7 +114,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		else
 		{
 			$db->rollback();
-			setEventMessages($object->error, $object->errors, 'errors');
+			setEventMessages($tva->error, $tva->errors, 'errors');
 			$action="create";
 		}
 	}
@@ -134,19 +124,19 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 if ($action == 'delete')
 {
-    $result=$object->fetch($id);
+    $result=$tva->fetch($id);
 
-	if ($object->rappro == 0)
+	if ($tva->rappro == 0)
 	{
 	    $db->begin();
 
-	    $ret=$object->delete($user);
+	    $ret=$tva->delete($user);
 	    if ($ret > 0)
 	    {
-			if ($object->fk_bank)
+			if ($tva->fk_bank)
 			{
 				$accountline=new AccountLine($db);
-				$result=$accountline->fetch($object->fk_bank);
+				$result=$accountline->fetch($tva->fk_bank);
 				if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 			}
 
@@ -158,15 +148,15 @@ if ($action == 'delete')
 			}
 			else
 			{
-				$object->error=$accountline->error;
+				$tva->error=$accountline->error;
 				$db->rollback();
-				setEventMessages($object->error, $object->errors, 'errors');
+				setEventMessages($tva->error, $tva->errors, 'errors');
 			}
 	    }
 	    else
 	    {
 	        $db->rollback();
-	        setEventMessages($object->error, $object->errors, 'errors');
+	        setEventMessages($tva->error, $tva->errors, 'errors');
 	    }
 	}
 	else
@@ -186,7 +176,8 @@ $form = new Form($db);
 
 if ($id)
 {
-	$result = $object->fetch($id);
+    $vatpayment = new Tva($db);
+	$result = $vatpayment->fetch($id);
 	if ($result <= 0)
 	{
 		dol_print_error($db);
@@ -243,11 +234,11 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print Form::selectDate($datep,"datep",'','','','add',1,1);
+    print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print Form::selectDate($datev,"datev",'','','','add',1,1);
+    print $form->select_date($datev,"datev",'','','','add',1,1);
     print '</td></tr>';
 
 	// Label
@@ -306,7 +297,7 @@ if ($action == 'create')
 if ($id)
 {
 	$h = 0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/tva/card.php?id='.$vatpayment->id;
 	$head[$h][1] = $langs->trans('Card');
 	$head[$h][2] = 'card';
 	$h++;
@@ -318,33 +309,29 @@ if ($id)
 
 	print "<tr>";
 	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $object->ref;
+	print $vatpayment->ref;
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$vatpayment->label.'</td></tr>';
 
 	print "<tr>";
 	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
-	print dol_print_date($object->datep,'day');
+	print dol_print_date($vatpayment->datep,'day');
 	print '</td></tr>';
 
-
-	print '<tr><td>';
-	print $form->editfieldkey("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
-	print '</td><td colspan="3">';
-	print $form->editfieldval("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
-	//print dol_print_date($object->datev,'day');
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+	print dol_print_date($vatpayment->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($object->amount).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
-		if ($object->fk_account > 0)
+		if ($vatpayment->fk_account > 0)
 		{
  		   	$bankline=new AccountLine($db);
-    		$bankline->fetch($object->fk_bank);
+    		$bankline->fetch($vatpayment->fk_bank);
 
 	    	print '<tr>';
 	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
@@ -357,22 +344,21 @@ if ($id)
 
         // Other attributes
         $parameters=array('colspan' => ' colspan="3"');
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$vatpayment,$action);    // Note that $action and $object may have been modified by hook
 
 	print '</table>';
 
-	dol_fiche_end();
+	print '</div>';
 
-	
 	/*
 	* Boutons d'actions
 	*/
 	print "<div class=\"tabsAction\">\n";
-	if ($object->rappro == 0)
+	if ($vatpayment->rappro == 0)
 	{
 		if (! empty($user->rights->tax->charges->supprimer))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="card.php?id='.$vatpayment->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
 		else
 		{

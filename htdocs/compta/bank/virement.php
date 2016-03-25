@@ -177,7 +177,7 @@ $form->select_comptes($account_to,'account_to',0,'',1);
 print "</td>\n";
 
 print "<td>";
-Form::selectDate((! empty($dateo)?$dateo:''),'','','','','add');
+$form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
 print "</td>\n";
 print '<td><input name="label" class="flat" type="text" size="40" value="'.$label.'"></td>';
 print '<td><input name="amount" class="flat" type="text" size="8" value="'.$amount.'"></td>';

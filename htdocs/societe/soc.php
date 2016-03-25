@@ -1018,7 +1018,7 @@ else
             // Supplier
             print '<tr>';
             print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
-            print Form::selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? -1 : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
+            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? -1 : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
             print '</td>';
             print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';
@@ -1121,7 +1121,7 @@ else
         // Assujeti TVA
         print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td>';
         print '<td>';
-        print Form::selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
+        print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
         print '</td>';
         print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
@@ -1186,22 +1186,22 @@ else
         if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
-            print Form::selectyesno('localtax1assuj_value',0,1);
+            print $form->selectyesno('localtax1assuj_value',0,1);
             print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
-            print Form::selectyesno('localtax2assuj_value',0,1);
+            print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td></tr>';
 
         }
         elseif($mysoc->localtax1_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print Form::selectyesno('localtax1assuj_value',0,1);
+            print $form->selectyesno('localtax1assuj_value',0,1);
             print '</td><tr>';
         }
         elseif($mysoc->localtax2_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print Form::selectyesno('localtax2assuj_value',0,1);
+            print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td><tr>';
         }
 
@@ -1560,7 +1560,7 @@ else
             {
                 print '<tr>';
                 print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
-                print Form::selectyesno("fournisseur",$object->fournisseur,1);
+                print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
                 print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
 
@@ -1676,7 +1676,7 @@ else
 
             // VAT payers
             print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td>';
-            print Form::selectyesno('assujtva_value',$object->tva_assuj,1);
+            print $form->selectyesno('assujtva_value',$object->tva_assuj,1);
             print '</td>';
 
             // VAT Code
@@ -1714,7 +1714,7 @@ else
         	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
                 print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td>';
-                print Form::selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
                 	print '<span class="cblt1">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1723,7 +1723,7 @@ else
                 }
 
                 print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
-                print Form::selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
 	            if  (! isOnlyOneLocalTax(2))
 	            {
 	            		print '<span class="cblt2">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1736,7 +1736,7 @@ else
             elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
             {
                 print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td colspan="3">';
-                print Form::selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
                 	print '<span class="cblt1">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1749,7 +1749,7 @@ else
             elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
             {
                 print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td colspan="3">';
-                print Form::selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if(! isOnlyOneLocalTax(2))
                 {
                 	print '<span class="cblt2">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1903,7 +1903,7 @@ else
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
         {
-            print Form::formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
         }
 
 	    if ($action == 'merge')
@@ -1917,7 +1917,7 @@ else
 			    )
 		    );
 
-		    print Form::formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 190);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 190);
 	    }
 
         dol_htmloutput_errors($error,$errors);
@@ -1981,7 +1981,7 @@ else
             print '<tr><td>';
             print $langs->trans('Gencod').'</td><td>'.$object->barcode;
             print '</td>';
-			if ($htmllogobar) $htmllogobar.=Form::showbarcode($object);
+			if ($htmllogobar) $htmllogobar.=$form->showbarcode($object);
             print $htmllogobar;
 			$htmllogobar='';
             print '</tr>';

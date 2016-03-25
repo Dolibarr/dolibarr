@@ -87,6 +87,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$langs->load("companies");
 		$langs->load("errors");
 
+		$form = new Form($this->db);
+
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -129,26 +131,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
         $texte.= '</table>';
 
 		// Scan directories
-		$nbofiles=count($listoffiles);
-		if (! empty($conf->global->COMPANY_ADDON_PDF_ODT_PATH))
-		{
-			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
-			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
-			$texte.=$nbofiles;
-			//$texte.=$nbofiles?'</a>':'';
-			$texte.='</b>';
-		}
+		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
 
-		if ($nbofiles)
-		{
-   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
-   			foreach($listoffiles as $file)
-   			{
-                $texte.=$file['name'].'<br>';
-   			}
-   			$texte.='<div id="div_'.get_class($this).'">';
-		}
-		
 		$texte.= '</td>';
 
 		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';

@@ -52,8 +52,8 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
 			print '<div class="tagtd">'.$object_resource->type_label.'</div>';
-			print '<div class="tagtd" align="center">'.Form::selectyesno('busy',$linked_resource['busy']?1:0,1).'</div>';
-			print '<div class="tagtd" align="center">'.Form::selectyesno('mandatory',$linked_resource['mandatory']?1:0,1).'</div>';
+			print '<div class="tagtd" align="center">'.$form->selectyesno('busy',$linked_resource['busy']?1:0,1).'</div>';
+			print '<div class="tagtd" align="center">'.$form->selectyesno('mandatory',$linked_resource['mandatory']?1:0,1).'</div>';
 			print '<div class="tagtd" align="right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</form>';
 
