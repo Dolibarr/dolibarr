@@ -127,7 +127,7 @@ $fieldstosearchall = array(
 // Definition of fields for list
 $arrayfields=array(
     'p.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-    'p.firstname'=>array('label'=>$langs->trans("Firsname"), 'checked'=>1),
+    'p.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
     'p.poste'=>array('label'=>$langs->trans("Post"), 'checked'=>1),
     'p.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
     'p.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
@@ -212,7 +212,7 @@ $sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.zip, 
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.code as country_code";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook

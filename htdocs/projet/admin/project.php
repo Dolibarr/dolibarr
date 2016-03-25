@@ -508,7 +508,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 						$file = $reg[1];
 						$classname = substr($file,4);
 
-						require_once DOL_DOCUMENT_ROOT ."/core/modules/project/task/".$file.'.php';
+						require_once $dir.$file.'.php';
 
 						$module = new $file;
 
