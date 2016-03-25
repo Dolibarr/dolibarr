@@ -250,9 +250,11 @@ $parameters["mode"] = $modetax;
 $parameters["start"] = $date_start;
 $parameters["end"] = $date_end;
 $parameters["direction"] = 'sell';
+$parameters["type"] = 'vat';
+
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if (is_array($coll_list)) {
 	$var=true;
