@@ -74,14 +74,15 @@ class Form
      *
      * @param   string	$text			Text of label or key to translate
      * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
-     * @param   string	$preselected	Name of Value to show/edit (not used in this function)
+     * @param   string	$value          Value to show/edit (not used in this function)
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-     * @param	string	$moreparam		More param to add on a href URL
+     * @param	string	$moreparam		More param to add on a href URL*
+     * @param   int     $fieldrequired  1 if we want to show field as mandatory using the fieldrequired CSS.
      * @return	string					HTML edit field
      */
-    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='')
+    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0)
     {
         global $conf,$langs;
 
@@ -94,18 +95,24 @@ class Form
             {
                 $tmp=explode(':',$typeofdata);
                 $ret.= '<div class="editkey_'.$tmp[0].(! empty($tmp[1]) ? ' '.$tmp[1] : '').'" id="'.$htmlname.'">';
+	            if ($fieldrequired) $ret.='<span class="fieldrequired">';
                 $ret.= $langs->trans($text);
+	            if ($fieldrequired) $ret.='</span>';
                 $ret.= '</div>'."\n";
             }
             else
             {
+	            if ($fieldrequired) $ret.='<span class="fieldrequired">';
                 $ret.= $langs->trans($text);
+	            if ($fieldrequired) $ret.='</span>';
             }
         }
         else
 		{
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+	        if ($fieldrequired) $ret.='<span class="fieldrequired">';
             $ret.=$langs->trans($text);
+	        if ($fieldrequired) $ret.='</span>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
             if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
@@ -195,15 +202,14 @@ class Form
                     $ret.=$doleditor->Create(1);
                 }
                 $ret.='</td>';
-                //if ($typeofdata != 'day' && $typeofdata != 'dayhour' && $typeofdata != 'datepicker' && $typeofdata != 'datehourpicker')
-                //{
-                	$ret.='<td align="left">';
-                	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
-                	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
-                	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-                	$ret.='</td>';
-                //}
-                $ret.='</tr></table>'."\n";
+               	
+                $ret.='<td align="left">';
+               	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
+               	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
+               	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+               	$ret.='</td>';
+
+               	$ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
             else
