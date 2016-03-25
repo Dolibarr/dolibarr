@@ -913,7 +913,7 @@ else
 		{
 			print '<tr><td>' . fieldLabel('Categories', 'memcars') . '</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
-			print Form::multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
+			print $form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
 			print "</td></tr>";
 		}
 
@@ -1173,7 +1173,7 @@ else
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print Form::multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
 		}
 

@@ -273,7 +273,7 @@ class FormActions
 		if (! empty($multiselect)) 
 		{
 	        if(!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			print Form::multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
 		else 
 		{

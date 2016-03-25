@@ -1087,7 +1087,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, 'parent', null, null, 1 );
-		print Form::multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
+		print $form->multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
 			null, '90%' );
 		print "</td></tr>";
 	}
@@ -2231,7 +2231,7 @@ else
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print Form::multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+			print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
 			print "</td></tr>";
 		}
 
