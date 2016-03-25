@@ -1295,8 +1295,7 @@ a.vsmenu.addbookmarkpicto {
 }
 .vmenu div.blockvmenuend
 {
-	padding-top: 0px;
-	padding-bottom: 0px;
+	padding-bottom: 5px;
 }
 .vmenu div.blockvmenulogo
 {
@@ -1323,8 +1322,8 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
 
     border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
-/*    border-top: 1px solid #BBB;
+/*    border-bottom: 1px solid #BBB;
+    border-top: 1px solid #BBB;
     border-radius: 4px;
 	-moz-border-radius: 4px;
     -moz-box-shadow: 3px 3px 4px #DDD;
