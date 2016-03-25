@@ -5084,7 +5084,7 @@ class Form
      *  @param	CommonObject	$object		Object we want to show links to
      *  @return	int							<0 if KO, >0 if OK
      */
-    function showLinkedObjectBlock(CommonObject $object)
+    function showLinkedObjectBlock($object)
     {
         global $conf,$langs,$hookmanager;
         global $bc;
