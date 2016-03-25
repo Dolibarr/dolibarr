@@ -152,7 +152,8 @@ if (empty($user->societe_id))
     $parameters=array();
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
+    $boxstat.=$hookmanager->resPrint;
+    
     if (empty($reshook))
     {
 	    // Condition to be checked for each display line dashboard
