@@ -462,19 +462,22 @@ if ($action == 'create' && $user->rights->projet->creer)
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
     // Thirdparty
-    print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    $filteronlist='';
-    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-   	$text=$form->select_thirdparty_list(GETPOST('socid','int'),'socid',$filteronlist,'SelectThirdParty',1);
-    if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+    if ($conf->societe->enabled)
     {
-    	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+        $filteronlist='';
+        if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+       	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
+        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+        {
+        	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+        	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+        }
+        else print $text;
+        print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print '</td></tr>';
     }
-    else print $text;
-    print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
-    print '</td></tr>';
-
+    
     // Status
     if ($status != '')
     {
@@ -657,14 +660,17 @@ else
         print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
 
         // Thirdparty
-        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	    $filteronlist='';
-	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-        $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 1, 1);
-        $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-        print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-        print '</td></tr>';
-
+        if ($conf->societe->enabled)
+        {
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+    	    $filteronlist='';
+    	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+            $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
+            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
+            print '</td></tr>';
+        }
+        
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
         $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
