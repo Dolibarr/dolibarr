@@ -459,7 +459,7 @@ foreach ($dirmodels as $reldir)
 						}
 
 						print '<td align="center">';
-						print Form::textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -563,7 +563,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 							}
 
 							print '<td align="center">';
-							print Form::textwithpicto('',$htmltooltip,1,0);
+							print $form->textwithpicto('',$htmltooltip,1,0);
 							print '</td>';
 
 							print '</tr>';
@@ -707,7 +707,7 @@ foreach ($dirmodels as $reldir)
 								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 
 								print '<td align="center">';
-								print Form::textwithpicto('',$htmltooltip,1,0);
+								print $form->textwithpicto('',$htmltooltip,1,0);
 								print '</td>';
 
 								// Preview
@@ -866,7 +866,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 
 									print '<td align="center">';
-									print Form::textwithpicto('',$htmltooltip,1,0);
+									print $form->textwithpicto('',$htmltooltip,1,0);
 									print '</td>';
 
 									// Preview

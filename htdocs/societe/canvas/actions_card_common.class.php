@@ -451,7 +451,7 @@ abstract class ActionsCardCommon
             if ((!$this->object->code_client || $this->object->code_client == -1) && $modCodeClient->code_auto) $this->tpl['customercode'] = $modCodeClient->getNextValue($this->object,0);
             $this->tpl['ismodifiable_customercode'] = $this->object->codeclient_modifiable();
             $s=$modCodeClient->getToolTip($langs,$this->object,0);
-            $this->tpl['help_customercode'] = Form::textwithpicto('',$s,1);
+            $this->tpl['help_customercode'] = $form->textwithpicto('',$s,1);
 
             if (! empty($conf->fournisseur->enabled))
             {
@@ -480,7 +480,7 @@ abstract class ActionsCardCommon
             	if ((!$this->object->code_fournisseur || $this->object->code_fournisseur == -1) && $modCodeFournisseur->code_auto) $this->tpl['suppliercode'] = $modCodeFournisseur->getNextValue($this->object,1);
             	$this->tpl['ismodifiable_suppliercode'] = $this->object->codefournisseur_modifiable();
             	$s=$modCodeFournisseur->getToolTip($langs,$this->object,1);
-            	$this->tpl['help_suppliercode'] = Form::textwithpicto('',$s,1);
+            	$this->tpl['help_suppliercode'] = $form->textwithpicto('',$s,1);
 
             	$this->object->LoadSupplierCateg();
             	$this->tpl['suppliercategory'] = $this->object->SupplierCategories;
@@ -556,7 +556,7 @@ abstract class ActionsCardCommon
             $this->tpl['address'] 			= dol_nl2br($this->object->address);
 
             $img=picto_from_langcode($this->object->country_code);
-            if ($this->object->isInEEC()) $this->tpl['country'] = Form::textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
+            if ($this->object->isInEEC()) $this->tpl['country'] = $form->textwithpicto(($img?$img.' ':'').$this->object->country,$langs->trans("CountryIsInEEC"),1,0);
             $this->tpl['country'] = ($img?$img.' ':'').$this->object->country;
 
             $this->tpl['phone'] 	= dol_print_phone($this->object->phone,$this->object->country_code,0,$this->object->id,'AC_TEL');

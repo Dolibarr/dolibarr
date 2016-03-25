@@ -40,14 +40,14 @@ function ecm_prepare_dasboard_head($object)
     $helptext.=$langs->trans("ECMAreaDesc2");
 
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php';
-	$head[$h][1] = $langs->trans("ECMSectionsManual").Form::textwithpicto('', $helptext, 1, 'info', '', 0, 3);
+	$head[$h][1] = $langs->trans("ECMSectionsManual").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 	$head[$h][2] = 'index';
 	$h++;
 
 	if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
-		$head[$h][1] = $langs->trans("ECMSectionsAuto").Form::textwithpicto('', $helptext, 1, 'info', '', 0, 3);
+		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_auto';
 		$h++;
 	}

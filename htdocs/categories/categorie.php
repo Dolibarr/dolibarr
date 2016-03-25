@@ -430,7 +430,7 @@ else if ($id || $ref)
         // Morphy
         print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
         /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-        print Form::showphoto('memberphoto',$member);
+        print $form->showphoto('memberphoto',$member);
         print '</td>';*/
         print '</tr>';
 

@@ -288,7 +288,7 @@ if ($num > 0)
 			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $line->params;
 			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($line->note);
 		}
-		print Form::textwithpicto($text, $texttoshow, 1);
+		print $form->textwithpicto($text, $texttoshow, 1);
 		print '</td>';
 
 		print '<td>';

@@ -444,7 +444,7 @@ foreach ($dirmodels as $reldir)
                             }
 
                             print '<td align="center">';
-                            print Form::textwithpicto('',$htmltooltip,1,0);
+                            print $form->textwithpicto('',$htmltooltip,1,0);
 
                             if ($conf->global->FACTURE_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
                             {
@@ -600,7 +600,7 @@ foreach ($dirmodels as $reldir)
 
 
 	                            print '<td align="center">';
-	                            print Form::textwithpicto('',$htmltooltip,1,0);
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
 	                            print '</td>';
 
 	                            // Preview

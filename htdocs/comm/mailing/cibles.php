@@ -208,7 +208,7 @@ if ($object->fetch($id) >= 0)
 	if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 	{
 		$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-		print Form::textwithpicto($nbemail,$text,1,'warning');
+		print $form->textwithpicto($nbemail,$text,1,'warning');
 	}
 	else
 	{

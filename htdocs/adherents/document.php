@@ -131,7 +131,7 @@ if ($id > 0)
         // Morphy
         print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
         /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-        print Form::showphoto('memberphoto',$object);
+        print $form->showphoto('memberphoto',$object);
         print '</td>';*/
         print '</tr>';
 

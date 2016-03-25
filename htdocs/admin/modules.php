@@ -267,7 +267,7 @@ if (! empty($categ[$categidx]))
 {
 	$categidx='expdev';
     $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-    $head[$h][1] = Form::textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
+    $head[$h][1] = $form->textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
     $head[$h][2] = 'expdev';
     $h++;
 }
@@ -451,7 +451,7 @@ if ($mode != 'marketplace')
         	$text=$langs->trans("ExternalModule",$dirofmodule);
         	if (! empty($objMod->editor_name) && $objMod->editor_name != 'dolibarr') $text.=' - '.$objMod->editor_name;
         	if (! empty($objMod->editor_web) && $objMod->editor_web != 'www.dolibarr.org') $text.=' - '.$objMod->editor_web;
-        	print Form::textwithpicto($version, $text, 1, 'help');
+        	print $form->textwithpicto($version, $text, 1, 'help');
         }
         else print $version;
         print "</td>\n";

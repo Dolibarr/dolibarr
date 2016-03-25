@@ -121,7 +121,7 @@ if ($id > 0)
             }
             else
            {
-            	print ' &nbsp; &nbsp; '.Form::textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
+            	print ' &nbsp; &nbsp; '.$form->textwithpicto($langs->trans("KeepEmptyToUseDefault").': '.$conf->global->CLICKTODIAL_URL,$langs->trans("ClickToDialUrlDesc"));
            }
             print '</td>';
         	print '</tr>';
@@ -162,7 +162,7 @@ if ($id > 0)
         	}
         	else
         	{
-        		print Form::textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url,$langs->trans("ClickToDialUrlDesc"));
+        		print $form->textwithpicto((empty($object->clicktodial_url)?$langs->trans("DefaultLink").': ':'').$url,$langs->trans("ClickToDialUrlDesc"));
         	}
         	print '</td>';
         	print '</tr>';

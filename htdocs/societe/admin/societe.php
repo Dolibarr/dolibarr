@@ -364,7 +364,7 @@ foreach ($dirsociete as $dirroot)
 
     			print '<td align="center">';
     			$s=$modCodeTiers->getToolTip($langs,null,-1);
-    			print Form::textwithpicto('',$s,1);
+    			print $form->textwithpicto('',$s,1);
     			print '</td>';
 
     			print '</tr>';
@@ -437,7 +437,7 @@ foreach ($dirsociete as $dirroot)
     			}
     			print '<td align="center">';
     			$s=$modCodeCompta->getToolTip($langs,null,-1);
-    			print Form::textwithpicto('',$s,1);
+    			print $form->textwithpicto('',$s,1);
     			print '</td>';
     			print "</tr>\n";
     		}
@@ -570,7 +570,7 @@ foreach ($dirsociete as $dirroot)
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
 
 					print '<td align="center" class="nowrap">';
-					print Form::textwithpicto('',$htmltooltip,1,0);
+					print $form->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
 
 					// Preview
@@ -710,7 +710,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.Form::textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -734,7 +734,7 @@ print '</tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.Form::textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';

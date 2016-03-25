@@ -582,7 +582,7 @@ if ($step == 2 && $datatoexport)
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left('default', 0, 'style="max-width: 20px"').'</a></td>';
             print '<td>';
             //print $text.'-'.$htmltext."<br>";
-            print Form::textwithpicto($text,$htmltext);
+            print $form->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
         }
@@ -591,7 +591,7 @@ if ($step == 2 && $datatoexport)
         	// Fields not selected
             print '<td>';
 			//print $text.'-'.$htmltext."<br>";
-			print Form::textwithpicto($text,$htmltext);
+			print $form->textwithpicto($text,$htmltext);
 			//print ' ('.$code.')';
             print '</td>';
             print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right('default', 0, 'style="max-width: 20px"').'</a></td>';
@@ -749,7 +749,7 @@ if ($step == 3 && $datatoexport)
 		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
 		}
 		print '<td>';
-		print Form::textwithpicto($text,$htmltext);
+		print $form->textwithpicto($text,$htmltext);
 		print '</td>';
 
 		// Filter value
@@ -760,7 +760,7 @@ if ($step == 3 && $datatoexport)
 			if ($szInfoFiltre)	// Is there an info help for this filter ?
 			{
 				$tmp=$objexport->build_filterField($Typefieldsarray[$code], $code, $ValueFilter);
-				print Form::textwithpicto($tmp, $szInfoFiltre);
+				print $form->textwithpicto($tmp, $szInfoFiltre);
 			}
 			else
 			{
@@ -918,7 +918,7 @@ if ($step == 4 && $datatoexport)
 		{
 		    $htmltext.=$langs->trans("SourceExample").': <b>'.$objexport->array_export_examplevalues[0][$code].'</b><br>';
 		}
-        print Form::textwithpicto($text,$htmltext);
+        print $form->textwithpicto($text,$htmltext);
 		//print ' ('.$code.')';
         print '</td>';
 
@@ -1137,7 +1137,7 @@ if ($step == 5 && $datatoexport)
         print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).'</td>';
 	    $text=$objmodelexport->getDriverDescForKey($key);
 	    $label=$listeall[$key];
-	    print '<td>'.Form::textwithpicto($label,$text).'</td>';
+	    print '<td>'.$form->textwithpicto($label,$text).'</td>';
         print '<td>'.$objmodelexport->getLibLabelForKey($key).'</td><td align="right">'.$objmodelexport->getLibVersionForKey($key).'</td></tr>'."\n";
     }
     print '</table>';

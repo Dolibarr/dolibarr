@@ -190,7 +190,7 @@ if ($result)
             else
 			{
 				$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
-            	print Form::textwithtooltip($langs->trans("Variable"),$htmltext);
+            	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
 			}
             print '</td>';
             // Status
@@ -215,7 +215,7 @@ if ($result)
             else
     		{
     			$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
-               	print Form::textwithtooltip($langs->trans("Variable"),$htmltext);
+               	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
     		}
             print '</td>';
             print '<td></td>';

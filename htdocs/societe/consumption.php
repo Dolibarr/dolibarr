@@ -489,7 +489,7 @@ if ($sql_select)
 		{
 			if ($objp->fk_product > 0) {
 
-				echo Form::textwithtooltip($text,$description,3,'','',$i,0,'');
+				echo $form->textwithtooltip($text,$description,3,'','',$i,0,'');
 
 				// Show range
 				echo get_date_range($objp->date_start, $objp->date_end);
@@ -509,7 +509,7 @@ if ($sql_select)
 
 					if (! empty($objp->label)) {
 						$text.= ' <strong>'.$objp->label.'</strong>';
-						echo Form::textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
+						echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
 					} else {
 						echo $text.' '.dol_htmlentitiesbr($objp->description);
 					}

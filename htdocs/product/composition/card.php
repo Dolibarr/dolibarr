@@ -258,7 +258,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		// Number of parent virtual products
-		//print Form::textwithpicto($langs->trans("ParentProductsNumber").': '.count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
+		//print $form->textwithpicto($langs->trans("ParentProductsNumber").': '.count($prodsfather), $langs->trans('IfZeroItIsNotUsedByVirtualProduct'));
 
 		//if (count($prodsfather) > 0)
 		//{
@@ -305,7 +305,7 @@ if ($id > 0 || ! empty($ref))
 
 
 		// Number of subproducts
-		//print Form::textwithpicto($langs->trans("AssociatedProductsNumber").': '.(empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)?$nbofsubproducts:$nbofsubsubproducts), $langs->trans('IfZeroItIsNotAVirtualProduct'));
+		//print $form->textwithpicto($langs->trans("AssociatedProductsNumber").': '.(empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)?$nbofsubproducts:$nbofsubsubproducts), $langs->trans('IfZeroItIsNotAVirtualProduct'));
 
 		// List of subproducts
 		//if (count($prods_arbo) > 0)

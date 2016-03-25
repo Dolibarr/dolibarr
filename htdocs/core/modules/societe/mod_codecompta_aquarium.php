@@ -72,8 +72,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte.= '<input type="hidden" name="param1" value="COMPANY_AQUARIUM_MASK_SUPPLIER">';
 		$texte.= '<input type="hidden" name="param2" value="COMPANY_AQUARIUM_MASK_CUSTOMER">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
-		$s1= Form::textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">',$tooltip,1,1);
-		$s2= Form::textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">',$tooltip,1,1);
+		$s1= $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">',$tooltip,1,1);
+		$s2= $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">',$tooltip,1,1);
 		$texte.= '<tr><td>'.$langs->trans("ModuleCompanyCode".$this->name,$s1,$s2)."<br>\n";
 		$texte.= '</td>';
 		$texte.= '<td align="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';

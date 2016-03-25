@@ -980,7 +980,7 @@ else
             print '<td>'.fieldLabel('Photo','photoinput').'</td>';
             print '<td colspan="3">';
             if ($object->photo) {
-                print Form::showphoto('contact',$object);
+                print $form->showphoto('contact',$object);
                 print "<br>\n";
             }
             print '<table class="nobordernopadding">';
@@ -1036,7 +1036,7 @@ else
             $formquestion=array(
             array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
             array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password),
-            //array('label' => Form::textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
+            //array('label' => $form->textwithpicto($langs->trans("Type"),$langs->trans("InternalExternalDesc")), 'type' => 'select', 'name' => 'intern', 'default' => 1, 'values' => array(0=>$langs->trans('Internal'),1=>$langs->trans('External')))
             );
             $text=$langs->trans("ConfirmCreateContact").'<br>';
             if (! empty($conf->societe->enabled))

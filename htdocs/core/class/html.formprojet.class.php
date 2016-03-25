@@ -91,7 +91,7 @@ class FormProjets
 			    if (class_exists('Form'))
 			    {
     			    if (empty($form)) $form=new Form($this->db);
-                    print Form::textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
+                    print $form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
 			    }
 			}
 		}

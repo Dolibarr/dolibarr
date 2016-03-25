@@ -252,7 +252,7 @@ if ($object->id > 0)
 				{
 					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
 					$text2=$langs->trans("AbsoluteDiscountUse");
-					print Form::textwithpicto($text,$text2);
+					print $form->textwithpicto($text,$text2);
 				}
 			}
 		}
@@ -272,7 +272,7 @@ if ($object->id > 0)
 			if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
 			{
 				$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
-				print Form::textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
+				print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
 			}
 			else print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
 		}

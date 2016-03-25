@@ -127,7 +127,7 @@ if (empty($conf->global->PRODUIT_MULTIPRICES))
 	$titlesellprice=$langs->trans("SellingPrice");
 	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	{
-		$titlesellprice=Form::textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
+		$titlesellprice=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
 	}
 }
 
@@ -414,7 +414,7 @@ else
     		}
 
 			$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-            $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+            $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     		
             print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		print '<tr class="liste_titre">';
@@ -663,7 +663,7 @@ else
     							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
     							{
     								$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-    								print Form::textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    								print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
     							}
     							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
     						}

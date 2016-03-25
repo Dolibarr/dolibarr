@@ -404,7 +404,7 @@ else	// Show
 	print "<tr ".$bc[$var].">";
 	print '<td>';
 	$text = $langs->trans("ProtectAndEncryptPdfFiles");
-	$desc = Form::textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
+	$desc = $form->textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
 	print $desc;
 	print '</td>';
 	print '<td width="60">';

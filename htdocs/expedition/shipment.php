@@ -554,7 +554,7 @@ if ($id > 0 || ! empty($ref))
 					$text.= ' - '.$label;
 					$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($objp->description)).'<br>';
                     $description.= $product_static->show_photos($conf->product->multidir_output[$product_static->entity],1,1,0,0,0,80);
-					print Form::textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($db->jdate($objp->date_start),$db->jdate($objp->date_end));
@@ -575,7 +575,7 @@ if ($id > 0 || ! empty($ref))
 
 					if (! empty($objp->label)) {
 						$text.= ' <strong>'.$objp->label.'</strong>';
-						print Form::textwithtooltip($text,$objp->description,3,'','',$i);
+						print $form->textwithtooltip($text,$objp->description,3,'','',$i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}

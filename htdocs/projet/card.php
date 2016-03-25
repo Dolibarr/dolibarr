@@ -455,7 +455,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Ref
     $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
-    print ' '.Form::textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+    print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
     print '</td></tr>';
 
     // Label
@@ -469,7 +469,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
     {
     	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    	print Form::textwithtooltip($text.' '.img_help(),$texthelp,1);
+    	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
     }
     else print $text;
     print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
@@ -649,7 +649,7 @@ else
         $suggestedref=$object->ref;
         print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
         print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
-        print ' '.Form::textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+        print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
         print '</td></tr>';
 
         // Label
@@ -662,7 +662,7 @@ else
 	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
         $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 1, 1);
         $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-        print Form::textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
+        print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
         print '</td></tr>';
 
         // Visibility

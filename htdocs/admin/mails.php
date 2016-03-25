@@ -364,7 +364,7 @@ if ($action == 'edit')
 		$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 		if (empty($text)) $text = $langs->trans("Undefined");
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
-		print Form::textwithpicto($text,$htmltext,1,'superadmin');
+		print $form->textwithpicto($text,$htmltext,1,'superadmin');
 		print '<input type="hidden" name="MAIN_MAIL_SENDMODE" value="'.$conf->global->MAIN_MAIL_SENDMODE.'">';
 	}
 	print '</td></tr>';
@@ -396,7 +396,7 @@ if ($action == 'edit')
 		{
 			$text = ! empty($mainserver) ? $mainserver : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($text,$htmltext,1,'superadmin');
+			print $form->textwithpicto($text,$htmltext,1,'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" value="'.$mainserver.'">';
 		}
 	}
@@ -429,7 +429,7 @@ if ($action == 'edit')
 		{
 			$text = (! empty($mainport) ? $mainport : $smtpport);
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($text,$htmltext,1,'superadmin');
+			print $form->textwithpicto($text,$htmltext,1,'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" value="'.$mainport.'">';
 		}
 	}
@@ -449,7 +449,7 @@ if ($action == 'edit')
 		else
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,'superadmin');
+			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_ID" value="'.$mainstmpid.'">';
 		}
 		print '</td></tr>';
@@ -469,7 +469,7 @@ if ($action == 'edit')
 		else
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
+			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$mainsmtppw.'">';
 		}
 		print '</td></tr>';

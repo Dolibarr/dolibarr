@@ -114,8 +114,8 @@ else
 				$show=1;
 			}
 			if ($show==0) print $paramval;
-			if ($show==1) print Form::textwithpicto($paramval,$text);
-			if ($show==2) print Form::textwithpicto($paramval,$text,1,'warning');
+			if ($show==1) print $form->textwithpicto($paramval,$text);
+			if ($show==2) print $form->textwithpicto($paramval,$text,1,'warning');
 			print '</td>';
 			print '</tr>'."\n";
 		}

@@ -490,7 +490,7 @@ if ($id > 0 || $ref)
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)?$langs->trans("ReStockOnValidateOrder").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)?$langs->trans("ReStockOnDispatchOrder").'<br>':'');
         print '<tr><td>';
-        print Form::textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
+        print $form->textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
         print '</td>';
 		print '<td>'.$object->stock_reel;
 		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));

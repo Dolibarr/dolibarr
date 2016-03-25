@@ -438,7 +438,7 @@ if ($action == 'create')    // Seems to no be used
 
 				if (! empty($line->label)) {
 					$text.= ' <strong>'.$line->label.'</strong>';
-					print Form::textwithtooltip($text,$line->description,3,'','',$i);
+					print $form->textwithtooltip($text,$line->description,3,'','',$i);
 				} else {
 					print $text.' '.nl2br($line->description);
 				}
@@ -672,7 +672,7 @@ else
 		        print '<td colspan="3">';
 				if ($action != 'editincoterm')
 				{
-					print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+					print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 				}
 				else
 				{
@@ -777,7 +777,7 @@ else
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->description));
 					//print $description;
-					print Form::textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 					print_date_range($object->lines[$i]->date_start,$object->lines[$i]->date_end);
 					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 					{
@@ -792,7 +792,7 @@ else
 
 					if (! empty($object->lines[$i]->label)) {
 						$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
-						print Form::textwithtooltip($text,$object->lines[$i]->description,3,'','',$i);
+						print $form->textwithtooltip($text,$object->lines[$i]->description,3,'','',$i);
 					} else {
 						print $text.' '.nl2br($object->lines[$i]->description);
 					}

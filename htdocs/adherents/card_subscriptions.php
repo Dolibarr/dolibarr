@@ -605,7 +605,7 @@ if ($rowid > 0)
 		{
 		    $langs->load("errors");
 		    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
-		    print ' '.Form::textwithpicto('', $htmltext,1,'warning');
+		    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
 		}
 		print '</td></tr>';
 	}
@@ -1134,7 +1134,7 @@ if ($rowid > 0)
             $helpcontent.='<b>'.$langs->trans("MailText").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-            print Form::textwithpicto($tmp,$helpcontent,1,'help');
+            print $form->textwithpicto($tmp,$helpcontent,1,'help');
         }
         print '</td></tr>';
         print '</tbody>';

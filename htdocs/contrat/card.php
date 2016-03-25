@@ -1491,7 +1491,7 @@ else
 							$description = '';	// Already added into main visible desc
 						}
 
-                        echo Form::textwithtooltip($text,$description,3,'','',$cursorline,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+                        echo $form->textwithtooltip($text,$description,3,'','',$cursorline,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 
                         print '</td>';
                     }

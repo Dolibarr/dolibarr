@@ -543,10 +543,10 @@ if ($resql)
             print '<td>';
             if ($nbprod)
             {
-                print Form::textwithtooltip('',$text_info,2,1,$text_icon,'',2);
+                print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
             }
             if ($warning) {
-                print Form::textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'),'',2);
+                print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'),'',2);
             }
             print '</td>';
         }

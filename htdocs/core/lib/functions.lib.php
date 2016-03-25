@@ -908,7 +908,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else 
 	{
-        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.Form::showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
+        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.Form::showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {

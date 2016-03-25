@@ -82,7 +82,7 @@ print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("SessionId").'</td><td 
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentSessionTimeOut").'</td><td>'.ini_get('session.gc_maxlifetime').' '.$langs->trans("seconds");
 print '</td><td align="right">';
-print Form::textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print "</td></tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">'.$langs->trans("CurrentTheme").'</td><td colspan="2">'.$conf->theme.'</td></tr>'."\n";
@@ -182,7 +182,7 @@ $val=($a>=0?'+':'').$a;
 $val.=' ('.($a=='unknown'?'unknown':($a>=0?'+':'').($a*3600)).')';
 $val.=' &nbsp; &nbsp; &nbsp; '.getServerTimeZoneString();
 $val.=' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': '.($daylight==='unknown'?'unknown':($a==$c?yn($daylight):yn(0).($daylight?'  &nbsp; &nbsp; ('.$langs->trans('YesInSummer').')':'')));
-print Form::textwithtooltip($val,$txt,2,1,img_info(''));
+print $form->textwithtooltip($val,$txt,2,1,img_info(''));
 print '</td></tr>'."\n";	// value defined in http://fr3.php.net/manual/en/timezones.europe.php
 $var=!$var;
 print '<tr '.$bc[$var].'><td width="300">&nbsp; => '.$langs->trans("CurrentHour").'</td><td>'.dol_print_date(dol_now(),'dayhour','tzserver').'</td></tr>'."\n";
@@ -202,7 +202,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 	if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
-		print Form::textwithtooltip($obj->Value,$langs->trans('TZHasNoEffect'),2,1,img_info(''));
+		print $form->textwithtooltip($obj->Value,$langs->trans('TZHasNoEffect'),2,1,img_info(''));
 	}
 	print '</td></tr>'."\n";
 }
