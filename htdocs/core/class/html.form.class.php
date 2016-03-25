@@ -3447,7 +3447,7 @@ class Form
             $formconfirm.= '<tr class="valid">';
             $formconfirm.= '<td class="valid">'.$question.'</td>';
             $formconfirm.= '<td class="valid">';
-            $formconfirm.= self::selectyesno("confirm",$newselectedchoice);
+            $formconfirm.= $this->selectyesno("confirm",$newselectedchoice);
             $formconfirm.= '</td>';
             $formconfirm.= '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
             $formconfirm.= '</tr>'."\n";
@@ -5388,7 +5388,7 @@ class Form
      *  @param	int      	$useempty		1=Add empty line
      *	@return	mixed						See option
      */
-    public static function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
+    function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
     {
         global $langs;
 
