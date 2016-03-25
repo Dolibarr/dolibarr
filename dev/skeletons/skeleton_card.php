@@ -322,7 +322,7 @@ if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
 
 
 	// Example 2 : Adding links to objects
-	//$somethingshown=Form::showLinkedObjectBlock($object);
+	//$somethingshown=$form->showLinkedObjectBlock($object);
 	//$linktoelem = $form->showLinkToObjectBlock($object);
 	//if ($linktoelem) print '<br>'.$linktoelem;
 

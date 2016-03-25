@@ -887,7 +887,7 @@ else
 				$shipment->fetch($object->origin_id);
 
 				// Linked object block
-				$somethingshown = Form::showLinkedObjectBlock($shipment);
+				$somethingshown = $form->showLinkedObjectBlock($shipment);
 
 				// Show links to link elements
 				//$linktoelem = $form->showLinkToObjectBlock($shipment);

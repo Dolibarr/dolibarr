@@ -3115,13 +3115,13 @@ abstract class CommonObject
      * Show linked object block.
      *
      * @return int <0 if KO, >0 if OK
-     * @deprecated 3.8 Use instead Form::showLinkedObjectBlock($object)
+     * @deprecated 3.8 Use instead $form->showLinkedObjectBlock($object)
      * @see Form::showLinkedObjectBlock
      */
     function showLinkedObjectBlock()
     {
     	global $form;
-    	return Form::showLinkedObjectBlock($this);
+    	return $form->showLinkedObjectBlock($this);
     }
 
 

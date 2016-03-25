@@ -983,7 +983,7 @@ else
 		print '<a name="builddoc"></a>'; // ancre
 		
 		// Linked object block
-		$somethingshown = Form::showLinkedObjectBlock($object);
+		$somethingshown = $form->showLinkedObjectBlock($object);
 		
         print '</div></div>';
 

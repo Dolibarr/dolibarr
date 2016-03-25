@@ -2954,7 +2954,7 @@ elseif (! empty($object->id))
 		$somethingshown=$formfile->numoffiles;
 
 		// Linked object block
-		$somethingshown = Form::showLinkedObjectBlock($object);
+		$somethingshown = $form->showLinkedObjectBlock($object);
 		
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);
