@@ -896,7 +896,19 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 //$titre = $this->boxes[$key][0];
                 $file  = $this->boxes[$key]['file'];
                 //$note  = $this->boxes[$key][2];
-
+                
+                // TODO If the box is also included by another module and the other module is still on, we should not remove it.
+                // For the moment, we manage this with hard coded exception
+                //print "Remove box ".$file.'<br>';
+                if ($file == 'box_graph_product_distribution.php')
+                {
+                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) 
+                    {
+                        dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
+                        continue;
+                    }
+                }
+                
                 if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
 
                 if ($this->db->type == 'sqlite3') {
