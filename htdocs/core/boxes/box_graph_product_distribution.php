@@ -34,6 +34,8 @@ class box_graph_product_distribution extends ModeleBoxes
 	var $depends = array("product|service");
 
 	var $db;
+	var $param;
+	var $enabled=1;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
@@ -50,6 +52,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		global $conf;
 
 		$this->db=$db;
+		$this->enabled=($conf->facture->enabled || $conf->propal->enabled || $conf->commande->enabled);
 	}
 
 	/**
