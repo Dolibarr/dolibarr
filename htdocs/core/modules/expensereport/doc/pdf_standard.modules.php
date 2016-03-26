@@ -696,13 +696,15 @@ class pdf_standard extends ModeleExpenseReport
    	}
 
 	/**
-	 *   Affiche la grille des lignes de factures
+	 *   Show table for lines
 	 *
 	 *   @param     PDF			$pdf     		Object PDF
 	 *   @param		int			$tab_top		Tab top
 	 *   @param		int			$tab_height		Tab height
 	 *   @param		int			$nexY			next y
 	 *   @param		Translate	$outputlangs	Output langs
+	 *   @param		int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @return	void
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0)
