@@ -4838,7 +4838,10 @@ class Form
         
         foreach($array as $key => $val)
         {
-           if (isset($val['enabled']) && ! $val['enabled']) 
+           /* var_dump($val);
+            var_dump(array_key_exists('enabled', $val));
+            var_dump(!$val['enabled']);*/
+           if (array_key_exists('enabled', $val) && ! $val['enabled']) 
            {
                unset($array[$key]);     // We don't want this field
                continue; 
