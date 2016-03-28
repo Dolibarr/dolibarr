@@ -59,10 +59,10 @@ class AccountingAccount extends CommonObject
 	/**
 	 * Load record in memory
 	 *
-	 * @param int $rowid Id
-	 * @param string $account_number Account number
-	 * @param int $limittocurentchart 1=Do not load record if it is into another accounting system
-	 * @return int <0 if KO, >0 if OK
+	 * @param 	int 	$rowid 				Id
+	 * @param 	string 	$account_number 	Account number
+	 * @param 	int 	$limittocurrentchart 1=Do not load record if it is into another accounting system
+	 * @return 	int <0 if KO, >0 if OK
 	 */
 	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0) {
 		global $conf;
