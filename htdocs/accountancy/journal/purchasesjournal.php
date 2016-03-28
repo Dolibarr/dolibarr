@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
@@ -90,7 +90,7 @@ $sql .= " s.code_compta_fournisseur, p.accountancy_code_buy , ct.accountancy_cod
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_tva as ct ON fd.tva_tx = ct.taux AND ct.fk_pays = '" . $idpays . "'";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accountingaccount as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 ";
@@ -164,6 +164,19 @@ if ($action == 'writebookkeeping') {
 	$error = 0;
 
 	foreach ( $tabfac as $key => $val ) {
+	
+	$invoicestatic->id = $key;
+			$invoicestatic->ref = $val["ref"];
+			$invoicestatic->ref = $val["refsologest"];
+			$invoicestatic->refsupplier = $val["refsuppliersologest"];
+			$invoicestatic->type = $val["type"];
+			$invoicestatic->description = html_entity_decode(dol_trunc($val["description"], 32));
+	
+	$companystatic->id = $tabcompany[$key]['id'];
+			$companystatic->name = $tabcompany[$key]['name'];
+			$companystatic->client = $tabcompany[$key]['code_client'];
+	
+	
 		foreach ( $tabttc[$key] as $k => $mt ) {
 			// get compte id and label
 
@@ -175,7 +188,7 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->fk_doc = $key;
 			$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 			$bookkeeping->code_tiers = $tabcompany[$key]['code_fournisseur'];
-			$bookkeeping->label_compte = $tabcompany[$key]['name'];
+			$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name,16)).' - ' . $invoicestatic->refsupplier . ' - ' . $langs->trans("Code_tiers");
 			$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER;
 			$bookkeeping->montant = $mt;
 			$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
@@ -193,6 +206,8 @@ if ($action == 'writebookkeeping') {
 
 		// Product / Service
 		foreach ( $tabht[$key] as $k => $mt ) {
+		$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch(null, $k);
 			if ($mt) {
 				// get compte id and label
 				$accountingaccount = new AccountingAccount($db);
@@ -205,7 +220,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->code_tiers = '';
-					$bookkeeping->label_compte = $accountingaccount->label;
+					$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name,16)). ' - ' . $invoicestatic->refsupplier  . ' - ' . utf8_decode ( utf8_decode ( $accountingaccount->label));
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -236,7 +251,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->fk_doc = $key;
 				$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 				$bookkeeping->code_tiers = '';
-				$bookkeeping->label_compte = $langs->trans("VAT");
+				$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name,16)).' - ' . $invoicestatic->refsupplier .' - '. $langs->trans("VAT");
 				$bookkeeping->numero_compte = $k;
 				$bookkeeping->montant = $mt;
 				$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
@@ -248,7 +263,7 @@ if ($action == 'writebookkeeping') {
 				$result = $bookkeeping->create($user);
 				if ($result < 0) {
 					$error ++;
-					setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -517,5 +532,4 @@ if ($action == 'export_csv') {
 	// End of page
 	llxFooter();
 }
-
 $db->close();
