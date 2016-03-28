@@ -62,7 +62,7 @@ if (! $sortorder)
 	$sortorder = "ASC";
 
 if ($action == 'delete') {
-	$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
+	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
 	print $formconfirm;
 }
 

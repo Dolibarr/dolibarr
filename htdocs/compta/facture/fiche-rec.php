@@ -342,14 +342,14 @@ if ($action == 'create')
 		print '<table class="border" width="100%">';
 		
 		// Frequency
-		print "<tr><td>".Form::textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
-		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='5' />&nbsp;".Form::selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
+		print "<tr><td>".$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
+		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
 		
 		// First date of execution for cron
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
-		print Form::selectDate($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
+		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
 		print "</td></tr>";
 		
 		// Number max of generation
@@ -360,7 +360,7 @@ if ($action == 'create')
 		// Auto validate the invoice
 		print "<tr><td>".$langs->trans("StatusOfGeneratedInvoices")."</td><td>";
         $select = array('0'=>$langs->trans('BillStatusDraft'),'1'=>$langs->trans('BillStatusValidated'));
-        print Form::selectarray('auto_validate', $select, GETPOST('auto_validate'));
+        print $form->selectarray('auto_validate', $select, GETPOST('auto_validate'));
 		print "</td></tr>";
 
 		print "</table>";
@@ -449,7 +449,7 @@ if ($action == 'create')
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.(! empty($objp->custom_label)?$objp->custom_label:$objp->product_label);
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
-					print Form::textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
@@ -471,7 +471,7 @@ if ($action == 'create')
 					if (! empty($objp->custom_label)) {
 
 						$text.= ' <strong>'.$objp->custom_label.'</strong>';
-						print Form::textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i);
+						print $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i);
 
 					} else {
 
@@ -609,7 +609,7 @@ else
 		if ($result < 0) {
 		    dol_print_error('', $discount->error);
 		}*/
-		print Form::showrefnav($object, 'ref', $linkback, 1, 'titre', 'titre', $morehtmlref);
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'titre', 'titre', $morehtmlref);
 		print '</td></tr>';
 		
 		
@@ -669,9 +669,9 @@ else
 
 		
 		print '<tr><td>';
-		print Form::editfieldkey($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
+		print $form->editfieldkey($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
 		print '</td><td colspan="5">';
-		print Form::editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
+		print $form->editfieldval($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
 		print '</td>';
 		print '</tr>';
 		
@@ -749,7 +749,7 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".Form::selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
+            print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -771,7 +771,7 @@ else
 		print '<tr><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
-		    print Form::editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		    print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 		}
 		else
 		{
@@ -780,7 +780,7 @@ else
 		print '</td><td colspan="5">';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
-		    print Form::editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
+		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
 		}
 		print '</td>';
 		print '</tr>';
@@ -789,7 +789,7 @@ else
 		print '<tr><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0)
 		{
-		    print Form::editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
+		    print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max, $object, $user->rights->facture->creer);
 		}
 		else
 		{
@@ -798,7 +798,7 @@ else
 		print '</td><td colspan="5">';
 		if ($action == 'nb_gen_max' || $object->frequency > 0)
 		{
-		      print Form::editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
+		      print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
 		}
 		else
 		{
@@ -810,14 +810,14 @@ else
 		// Status of generated invoices
 		print '<tr><td>';
 		if ($action == 'auto_validate' || $object->frequency > 0)
-		    print Form::editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
+		    print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
 		else
 		    print $langs->trans("StatusOfGeneratedInvoices");
 		print '</td><td colspan="5">';
     	$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
 		if ($action == 'auto_validate' || $object->frequency > 0)
 		{
-    		print Form::editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
+    		print $form->editfieldval($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer, $select);
 		}
 		print '</td>';
 		print '</tr>';
@@ -897,7 +897,7 @@ else
 				$text=$product_static->getNomUrl(1);
 				$text.= ' - '.(! empty($object->lines[$i]->label)?$object->lines[$i]->label:$object->lines[$i]->product_label);
 				$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->desc));
-				print Form::textwithtooltip($text,$description,3,'','',$i);
+				print $form->textwithtooltip($text,$description,3,'','',$i);
 
 				// Show range
 				print_date_range($object->lines[$i]->date_start, $object->lines[$i]->date_end);
@@ -918,7 +918,7 @@ else
 				if (! empty($object->lines[$i]->label)) {
 
 					$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
-					print Form::textwithtooltip($text,dol_htmlentitiesbr($object->lines[$i]->desc),3,'','',$i);
+					print $form->textwithtooltip($text,dol_htmlentitiesbr($object->lines[$i]->desc),3,'','',$i);
 
 				} else {
 
@@ -983,7 +983,7 @@ else
 		print '<a name="builddoc"></a>'; // ancre
 		
 		// Linked object block
-		$somethingshown = Form::showLinkedObjectBlock($object);
+		$somethingshown = $form->showLinkedObjectBlock($object);
 		
         print '</div></div>';
 

@@ -113,7 +113,7 @@ if($_GET["id"])
 
 	  if($objp->fk_code_ventilation == 0)
 	    {
-	      print Form::selectarray("codeventil",$cgs, $objp->fk_code_ventilation);
+	      print $form->selectarray("codeventil",$cgs, $objp->fk_code_ventilation);
 	    }
 	  else
 	    {

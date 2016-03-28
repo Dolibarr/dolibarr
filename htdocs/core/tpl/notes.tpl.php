@@ -69,13 +69,13 @@ else $typeofdata='textarea:12:100';
 <!-- BEGIN PHP TEMPLATE NOTES -->
 <div class="border table-border centpercent">
 	<div class="table-border-row">
-		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo Form::editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="table-val-border-col"><?php echo Form::editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php if (empty($user->societe_id)) { ?>
 	<div class="table-border-row">
-		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo Form::editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="table-val-border-col"><?php echo Form::editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php } ?>
 </div>

@@ -259,7 +259,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
-			print Form::showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
+			print $form->showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';
 
 			// Label
@@ -328,7 +328,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		if ($action == 'deleteline')
 		{
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
 
 		print '<table class="border" width="100%">';
@@ -346,7 +346,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 		}
 		else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-		print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
+		print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 		print '</td></tr>';
 
 		// Label
@@ -431,7 +431,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="nowrap">';
 			//$newdate=dol_mktime(12,0,0,$_POST["timemonth"],$_POST["timeday"],$_POST["timeyear"]);
 			$newdate='';
-			print Form::selectDate($newdate,'time',1,1,2,"timespent_date",1,0,1);
+			print $form->select_date($newdate,'time',1,1,2,"timespent_date",1,0,1);
 			print '</td>';
 
 			// Contributor
@@ -551,7 +551,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<td class="nowrap">';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
-				print Form::selectDate(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
+				print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
 			}
 			else
 			{

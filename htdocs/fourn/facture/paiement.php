@@ -355,7 +355,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print $supplierstatic->getNomUrl(1,'supplier');
             print '</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
-            Form::selectDate($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
+            $form->select_date($dateinvoice,'','','','',"addpaiement",1,1,0,0,'','',$object->date);
             print '</td>';
             print '<td>'.$langs->trans('Comments').'</td></tr>';
             print '<tr><td class="fieldrequired">'.$langs->trans('PaymentMode').'</td><td>';
@@ -403,7 +403,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    $i = 0;
 	                    print '<br>';
 
-						if(!empty($conf->global->FAC_AUTO_FILLJS)){
+						if(!empty($conf->global->INVOICE_AUTO_FILLJS)){
 							//Add js for AutoFill
 							print "\n".'<script type="text/javascript" language="javascript">';
 							print ' $(document).ready(function () {';
@@ -469,7 +469,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							
 	                        print '<td align="center">';
 	                        $namef = 'amount_'.$objp->facid;
-							if(!empty($conf->global->FAC_AUTO_FILLJS))
+							if(!empty($conf->global->INVOICE_AUTO_FILLJS))
 								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->total_ttc - $objp->am)."'");
 	                        print '<input type="text" size="8" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print "</td>";
@@ -479,7 +479,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							{
 								print '<td align="center">';
 			                    $namef = 'multicurrency_amount_'.$objp->facid;
-								if(!empty($conf->global->FAC_AUTO_FILLJS))
+								if(!empty($conf->global->INVOICE_AUTO_FILLJS))
 									print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($objp->multicurrency_total_ttc - $objp->multicurrency_am)."'");
 		                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 			                    print "</td>";
@@ -537,7 +537,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
 	                print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
 	            }
-	            print Form::formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+	            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('PayedSuppliersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
 	        }
 
             print '</form>';
@@ -642,7 +642,7 @@ if (empty($action))
         print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
-        $searchpitco=Form::showFilterAndCheckAddButtons();
+        $searchpitco=$form->showFilterAndCheckAddButtons(0);
         print $searchpitco;
         print '</td>';
         print "</tr>\n";

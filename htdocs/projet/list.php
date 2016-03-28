@@ -113,7 +113,7 @@ if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 $arrayfields=array(
     'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'p.title'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>$conf->societe->enabled),
     'commercial'=>array('label'=>$langs->trans("SalesRepresentative"), 'checked'=>1),
 	'p.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
     'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
@@ -223,7 +223,7 @@ if ($search_user > 0)
 	$sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 }
 
-$sql.= " WHERE p.entity IN (".getEntity('project').')';
+$sql.= " WHERE p.entity IN (".getEntity('project',1).')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -380,7 +380,7 @@ if ($resql)
     }
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	$selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		
@@ -463,7 +463,7 @@ if ($resql)
 	{
     	print '<td class="liste_titre">';
     	$array=array(''=>'',0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-        print Form::selectarray('search_public',$array,$search_public);
+        print $form->selectarray('search_public',$array,$search_public);
         print '</td>';
 	}
 	if (! empty($arrayfields['p.opp_amount']['checked']))
@@ -511,12 +511,12 @@ if ($resql)
     if (! empty($arrayfields['p.fk_statut']['checked']))
     {
     	print '<td class="liste_titre nowrap" align="right">';
-    	print Form::selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
+    	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
         print '</td>';
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 

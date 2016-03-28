@@ -155,7 +155,7 @@ if ($result > 0)
 	 */
 	if ($action == 'delete')
 	{
-		print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
 
 	}
 
@@ -164,7 +164,7 @@ if ($result > 0)
 	 */
 	if ($action == 'valide')
 	{
-		print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 
 	}
 
@@ -172,12 +172,12 @@ if ($result > 0)
 
 	print '<tr>';
 	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
-    print Form::showrefnav($object,'id','',1,'rowid','ref');
+    print $form->showrefnav($object,'id','',1,'rowid','ref');
 	print '</td></tr>';
 
 	// Date payment
-    print '<tr><td colspan="2">'.Form::editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print Form::editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+    print '<tr><td colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
     print '</td></tr>';
 
 	// Payment mode
@@ -185,8 +185,8 @@ if ($result > 0)
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 	// Payment numero
-    print '<tr><td colspan="2">'.Form::editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print Form::editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+    print '<tr><td colspan="2">'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
     print '</td></tr>';
 
 	// Amount
@@ -198,8 +198,8 @@ if ($result > 0)
 	}
 
 	// Note
-    print '<tr><td colspan="2">'.Form::editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-    print Form::editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
+    print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
     print '</td></tr>';
 
 	$allow_delete = 1 ;

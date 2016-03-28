@@ -123,7 +123,7 @@ foreach($liste as $key)
 	print '<tr '.$bc[$var].'>';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
-	print '<td>'.Form::textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
+	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap" align="right">'.$model->getLibVersionForKey($key).'</td>';
 	print '</tr>';

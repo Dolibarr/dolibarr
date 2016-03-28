@@ -262,7 +262,7 @@ if ($action == 'create')
 
     print "<tr>";
     print '<td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-    print Form::selectDate($datec?$datec:-1,'','','','','add',1,1,1);
+    print $form->select_date($datec?$datec:-1,'','','','','add',1,1,1);
     print '</td></tr>';
 
     // Km
@@ -358,7 +358,7 @@ else if ($id)
 
             // Date
             print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-            print Form::selectDate($object->date,'',0,0,0,'update',1,0,1);
+            print $form->select_date($object->date,'',0,0,0,'update',1,0,1);
             print '</td></tr>';
 
             // Km
@@ -416,7 +416,7 @@ else if ($id)
             */
             if ($action == 'delete')
             {
-                print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
+                print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteTrip"),$langs->trans("ConfirmDeleteTrip"),"confirm_delete");
 
             }
 
@@ -429,16 +429,16 @@ else if ($id)
 
             // Ref
             print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-            print Form::showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+            print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
             print '</td></tr>';
 
 	        $form->load_cache_types_fees();
 
 	        // Type
             print '<tr><td>';
-            print Form::editfieldkey("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
+            print $form->editfieldkey("Type",'type',$langs->trans($object->type),$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
             print '</td><td>';
-            print Form::editfieldval("Type",'type',$form->cache_types_fees[$object->type],$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
+            print $form->editfieldval("Type",'type',$form->cache_types_fees[$object->type],$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'select:types_fees');
             print '</td></tr>';
 
             // Who
@@ -450,16 +450,16 @@ else if ($id)
 
             // Date
             print '<tr><td>';
-            print Form::editfieldkey("Date",'dated',$object->date,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'datepicker');
+            print $form->editfieldkey("Date",'dated',$object->date,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'datepicker');
             print '</td><td>';
-            print Form::editfieldval("Date",'dated',$object->date,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'datepicker');
+            print $form->editfieldval("Date",'dated',$object->date,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'datepicker');
             print '</td></tr>';
 
             // Km/Price
             print '<tr><td valign="top">';
-            print Form::editfieldkey("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
+            print $form->editfieldkey("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
             print '</td><td>';
-            print Form::editfieldval("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
+            print $form->editfieldval("FeesKilometersOrAmout",'km',$object->km,$object,$conf->global->MAIN_EDIT_ALSO_INLINE && $user->rights->deplacement->creer,'numeric:6');
             print "</td></tr>";
 
             // Where

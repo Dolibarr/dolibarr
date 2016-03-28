@@ -313,7 +313,7 @@ abstract class ActionsAdherentCardCommon
 
             // Physical or Moral
             $selectarray=array('0'=>$langs->trans("Physical"),'1'=>$langs->trans("Moral"));
-            $this->tpl['select_morphy'] = Form::selectarray('morphy',$selectarray,$this->object->morphy,0);
+            $this->tpl['select_morphy'] = $form->selectarray('morphy',$selectarray,$this->object->morphy,0);
         }
 
         if ($action == 'view' || $action == 'edit' || $action == 'delete')
@@ -338,7 +338,7 @@ abstract class ActionsAdherentCardCommon
 
         if ($action == 'view' || $action == 'delete')
         {
-        	$this->tpl['showrefnav'] = Form::showrefnav($this->object,'id');
+        	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
 
         	if ($this->object->socid > 0)
         	{
@@ -385,7 +385,7 @@ abstract class ActionsAdherentCardCommon
         	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
         	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
-        	$this->tpl['action_create_user'] = Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateAdherent"),"confirm_create_user",$formquestion,'no');
+        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateAdherent"),"confirm_create_user",$formquestion,'no');
         }
     }
 

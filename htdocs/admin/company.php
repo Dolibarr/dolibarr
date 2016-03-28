@@ -608,7 +608,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		$opcions=array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"),$langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"),$langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
 		print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
-		print Form::selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
+		print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
 		print '</td></tr>';
 		print "</table>";
 		print "</td></tr>\n";
@@ -650,7 +650,7 @@ if ($action == 'edit' || $action == 'updateedit')
 			print '</td></tr>';
 		}
 		print '<tr><td align="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
-		print Form::selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
+		print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
 		print '</td></tr>';
 		print "</table>";
 		print "</td></tr>\n";
@@ -914,7 +914,7 @@ else
 				print '</script>';
 				print "\n";
 				$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				$s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				$s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 			}
 			else
 			{

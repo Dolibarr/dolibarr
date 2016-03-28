@@ -125,11 +125,11 @@ class ActionsCardService
 		{
 			// Status
 			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-			$this->tpl['status'] = Form::selectarray('statut',$statutarray,$this->status);
+			$this->tpl['status'] = $form->selectarray('statut',$statutarray,$this->status);
 
 			//To Buy
 			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
-			$this->tpl['tobuy'] = Form::selectarray('tobuy',$statutarray,$this->status_buy);
+			$this->tpl['tobuy'] = $form->selectarray('tobuy',$statutarray,$this->status_buy);
 
             $this->tpl['description'] = $this->description;
             $this->tpl['note'] = $this->note;
@@ -139,7 +139,7 @@ class ActionsCardService
 		{
             $head = product_prepare_head($this->object);
 
-            $this->tpl['showrefnav'] = Form::showrefnav($this->object,'ref','',1,'ref');
+            $this->tpl['showrefnav'] = $form->showrefnav($this->object,'ref','',1,'ref');
 
     		$titre=$langs->trans("CardProduct".$this->object->type);
     		$picto=($this->object->type==Product::TYPE_SERVICE?'service':'product');
@@ -147,12 +147,12 @@ class ActionsCardService
             $this->tpl['showend']=dol_get_fiche_end();
 
 			// Accountancy buy code
-			$this->tpl['accountancyBuyCodeKey'] = Form::editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
-			$this->tpl['accountancyBuyCodeVal'] = Form::editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeKey'] = $form->editfieldkey("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
+			$this->tpl['accountancyBuyCodeVal'] = $form->editfieldval("ProductAccountancyBuyCode",'productaccountancycodesell',$this->accountancy_code_sell,$this,$user->rights->produit->creer);
 
 			// Accountancy sell code
-			$this->tpl['accountancySellCodeKey'] = Form::editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
-			$this->tpl['accountancySellCodeVal'] = Form::editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeKey'] = $form->editfieldkey("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
+			$this->tpl['accountancySellCodeVal'] = $form->editfieldval("ProductAccountancySellCode",'productaccountancycodebuy',$this->accountancy_code_buy,$this,$user->rights->produit->creer);
 		}
 
 		$this->tpl['finished'] = $this->object->finished;
@@ -181,10 +181,10 @@ class ActionsCardService
 		{
     		// Status
     		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-    		$this->tpl['status'] = Form::selectarray('statut',$statutarray,$_POST["statut"]);
+    		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$_POST["statut"]);
 
     		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-    		$this->tpl['status_buy'] = Form::selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
+    		$this->tpl['status_buy'] = $form->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
 
 		    // Duration unit
 			// TODO creer fonction

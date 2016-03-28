@@ -131,7 +131,7 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
     $nom=$langs->trans($local==1?"LT1ReportByQuartersInDueDebtMode":"LT2ReportByQuartersInDueDebtMode");
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }
@@ -163,7 +163,7 @@ if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
     $nom=$langs->trans($local==1?"LT1ReportByQuartersInInputOutputMode":"LT2ReportByQuartersInInputOutputMode");
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     $prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) $prevquarter--;
 	else { $prevquarter=4; $prevyear--; }
@@ -210,9 +210,8 @@ $total = 0;
 $i=0;
 
 // Load arrays of datas
-$x_coll= local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell', $local);
-//$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
-$x_paye = local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy', $local);
+$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 
 echo '<table class="noborder" width="100%">';
@@ -235,9 +234,9 @@ else
 	{
 		//foreach($x_coll[$my_coll_rate][localtax1_list]){
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
-		$x_both[$my_coll_rate]['coll']['vat']     = $x_coll[$my_coll_rate]['vat'];
+		$x_both[$my_coll_rate]['coll']['localtax'.$local]     = $x_coll[$my_coll_rate]['localtax'.$local];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
-		$x_both[$my_coll_rate]['paye']['vat'] = 0;
+		$x_both[$my_coll_rate]['paye']['localtax'.$local] = 0;
 		$x_both[$my_coll_rate]['coll']['links'] = '';
 		$x_both[$my_coll_rate]['coll']['detail'] = array();
 		foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy)

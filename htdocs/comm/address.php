@@ -413,7 +413,7 @@ else
     // Confirmation delete
     if ($action == 'delete')
     {
-        print Form::formconfirm($_SERVER['PHP_SELF']."?socid=".$object->socid."&amp;id=".$id,$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
+        print $form->formconfirm($_SERVER['PHP_SELF']."?socid=".$object->socid."&amp;id=".$id,$langs->trans("DeleteAddress"),$langs->trans("ConfirmDeleteAddress"),"confirm_delete");
     }
 
     $nblines = count($object->lines);

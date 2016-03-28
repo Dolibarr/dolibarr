@@ -85,7 +85,7 @@
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname'); ?>"> (<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print Form::selectarray('type',$type2label,GETPOST('type')); ?>
+<?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
 </td></tr>
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size')?GETPOST('size'):''); ?>"></td></tr>
@@ -101,10 +101,10 @@
     <tr><td>
     	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo GETPOST('param'); ?></textarea>
     </td><td>
-    <span id="helpselect"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
-    <span id="helpsellist"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
-    <span id="helpchkbxlst"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
-    <span id="helplink"><?php print Form::textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
+    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
+    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
+    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
+    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
     </td></tr>
     </table>
 </td>

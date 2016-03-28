@@ -270,7 +270,7 @@ if ($result)
     $moreforfilter='';
     
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	$selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
@@ -326,13 +326,13 @@ if ($result)
     {
         print '<td>';
         $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-        print Form::selectarray('search_gender', $arraygender, $search_gender, 1);        
+        print $form->selectarray('search_gender', $arraygender, $search_gender, 1);        
         print '</td>';
     }
     if (! empty($arrayfields['u.employee']['checked']))
     {
         print '<td>';
-        print Form::selectyesno('search_employee', $search_employee, 1, false, 1);
+        print $form->selectyesno('search_employee', $search_employee, 1, false, 1);
         print '</td>';
     }
     if (! empty($arrayfields['u.accountancy_code']['checked']))
@@ -391,12 +391,12 @@ if ($result)
     {
         // Status
         print '<td class="liste_titre" align="center">';
-        print Form::selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+        print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
         print '</td>';
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	

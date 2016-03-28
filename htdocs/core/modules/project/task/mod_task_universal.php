@@ -48,6 +48,8 @@ class mod_task_universal extends ModeleNumRefTask
 		$langs->load("projects");
 		$langs->load("admin");
 
+		$form = new Form($this->db);
+
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -63,7 +65,7 @@ class mod_task_universal extends ModeleNumRefTask
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.Form::textwithpicto('<input type="text" class="flat" size="24" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="masktask" value="'.$conf->global->PROJECT_TASK_UNIVERSAL_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 

@@ -43,7 +43,10 @@ function versiontostring($versionarray)
 
 /**
  *	Compare 2 versions (stored into 2 arrays).
- *  For example, to check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  To check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 beta or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,0)) >= 0) is true if version is 4.0 final or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -1156,7 +1159,7 @@ function form_constantes($tableau,$strictw3c=0)
                 {
                     $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
                 }
-                print Form::selectarray('constvalue'.(empty($strictw3c)?'':'[]'),$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
+                print $form->selectarray('constvalue'.(empty($strictw3c)?'':'[]'),$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
                 print '<input type="hidden" name="consttype" value="yesno">';
                 print '</td>';
             }
@@ -1179,7 +1182,7 @@ function form_constantes($tableau,$strictw3c=0)
                 }
                 else if ($obj->type == 'yesno')
                 {
-                    print Form::selectyesno('constvalue'.(empty($strictw3c)?'':'[]'),$obj->value,1);
+                    print $form->selectyesno('constvalue'.(empty($strictw3c)?'':'[]'),$obj->value,1);
                     print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="yesno">';
                 }
                 else

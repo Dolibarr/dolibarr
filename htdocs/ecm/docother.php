@@ -110,7 +110,7 @@ print load_fiche_titre($langs->trans("ECMAutoOrg"));
  */
 if ($_GET['action'] == 'delete_file')
 {
-	print Form::formconfirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
 
 }
 

@@ -374,7 +374,7 @@ if ($result)
 	        	if ($caneditperms)
 	        	{
 	        		print '<td align="center">';
-	        		print Form::textwithtooltip($langs->trans("Inherited"),$langs->trans("PermissionInheritedFromAGroup"));
+	        		print $form->textwithtooltip($langs->trans("Inherited"),$langs->trans("PermissionInheritedFromAGroup"));
 	        		print '</td>';
 	        	}
 	        	print '<td align="center" class="nowrap">';

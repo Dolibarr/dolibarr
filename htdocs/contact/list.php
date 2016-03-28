@@ -434,7 +434,7 @@ if ($result)
     }
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
@@ -553,7 +553,7 @@ if ($result)
     {
         print '<td class="liste_titre" align="center">';
 	   $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-	   print Form::selectarray('search_priv',$selectarray,$search_priv,1);
+	   print $form->selectarray('search_priv',$selectarray,$search_priv,1);
 	   print '</td>';
     }
 	// Extra fields
@@ -587,7 +587,7 @@ if ($result)
     if (! empty($arrayfields['p.statut']['checked']))
     {
         print '<td class="liste_titre" align="center">';
-        print Form::selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+        print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
         print '</td>';
     }
     print '<td class="liste_titre" align="right">';

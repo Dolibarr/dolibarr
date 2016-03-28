@@ -433,7 +433,7 @@ print '</div>';
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
-	print Form::formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 
 }
 
@@ -475,7 +475,7 @@ print '</div>';
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_section')
 {
-    print Form::formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
 }
 // End confirm
 
@@ -503,7 +503,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		print img_picto_common('','treemenu/base.gif');
 		print '</td><td align="left">';
 		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print Form::textwithpicto($txt, $htmltooltip, 1, 0);
+		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
 		print '</td>';
 		print '</tr></table>';
 		print '</td>';
@@ -549,7 +549,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 		    $htmltooltip='<b>'.$langs->trans("Type").'</b>: '.$langs->trans("ECMSectionAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("ECMCreationUser").'</b>: '.$langs->trans("ECMTypeAuto").'<br>';
 		    $htmltooltip.='<b>'.$langs->trans("Description").'</b>: '.$val['desc'];
-		    print Form::textwithpicto('', $htmltooltip, 1, 'info');
+		    print $form->textwithpicto('', $htmltooltip, 1, 'info');
 		    print '</div>';
 		    print '</li>';
 

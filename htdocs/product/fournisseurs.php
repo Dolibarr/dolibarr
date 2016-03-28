@@ -312,10 +312,10 @@ if ($id > 0 || $ref)
             print '<tr><td>';
 			$textdesc =$langs->trans("CostPriceDescription");
 			$textdesc.="<br>".$langs->trans("CostPriceUsage");
-			$text=Form::textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-            print Form::editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+			$text=$form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
+            print $form->editfieldkey($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
             print '</td><td colspan="2">';
-            print Form::editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
+            print $form->editfieldval($text,'cost_price',$object->cost_price,$object,$user->rights->produit->creer||$user->rights->service->creer,'amount:6');
             print '</td></tr>';
             
 			print '</table>';
@@ -459,7 +459,7 @@ if ($id > 0 || $ref)
 						$price_expression_list[$entry->id] = $entry->title;
 					}
 					$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_supplier_price_expression ? $object->fk_supplier_price_expression : '0');
-					print Form::selectarray('eid', $price_expression_list, $price_expression_preselection);
+					print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
 					print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
 					print '</td></tr>';
 					// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed

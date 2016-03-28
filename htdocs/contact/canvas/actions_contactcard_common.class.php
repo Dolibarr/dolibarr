@@ -309,7 +309,7 @@ abstract class ActionsContactCardCommon
 
             // Public or private
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-            $this->tpl['select_visibility'] = Form::selectarray('priv',$selectarray,$this->object->priv,0);
+            $this->tpl['select_visibility'] = $form->selectarray('priv',$selectarray,$this->object->priv,0);
         }
 
         if ($action == 'view' || $action == 'edit' || $action == 'delete')
@@ -364,7 +364,7 @@ abstract class ActionsContactCardCommon
 
         if ($action == 'view' || $action == 'delete')
         {
-        	$this->tpl['showrefnav'] = Form::showrefnav($this->object,'id');
+        	$this->tpl['showrefnav'] = $form->showrefnav($this->object,'id');
 
         	if ($this->object->socid > 0)
         	{
@@ -413,7 +413,7 @@ abstract class ActionsContactCardCommon
         	array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
         	array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
-        	$this->tpl['action_create_user'] = Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
+        	$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("CreateDolibarrLogin"),$langs->trans("ConfirmCreateContact"),"confirm_create_user",$formquestion,'no');
         }
     }
 

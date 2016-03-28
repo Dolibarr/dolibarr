@@ -93,7 +93,7 @@ if ($id > 0 || ! empty($ref))
     	if ($result < 0) {
     		dol_print_error('', $discount->error);
     	}
-    	print Form::showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+    	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
     	print '</td></tr>';
 
         // Ref customer
@@ -177,7 +177,7 @@ if ($id > 0 || ! empty($ref))
                     {
                         $text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
                         $text2=$langs->trans("AbsoluteDiscountUse");
-                        print Form::textwithpicto($text,$text2);
+                        print $form->textwithpicto($text,$text2);
                     }
                 }
             }
@@ -206,7 +206,7 @@ if ($id > 0 || ! empty($ref))
                 if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
                 {
                     $text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
-                    print Form::textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
+                    print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
                 }
                 else
                 {

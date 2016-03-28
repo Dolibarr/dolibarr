@@ -150,10 +150,10 @@ print '<td>&nbsp;</td>';
 print '<td>&nbsp;</td>';
 // Status
 print '<td align="right">';
-print Form::selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
+print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
 print '</td>';
 print '<td class="liste_titre" align="right">';
-$searchpitco=Form::showFilterAndCheckAddButtons();
+$searchpitco=$form->showFilterAndCheckAddButtons(0);
 print $searchpitco;
 print '</td>';
 print '</tr>';

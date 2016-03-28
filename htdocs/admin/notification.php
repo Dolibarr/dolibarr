@@ -239,12 +239,12 @@ foreach($listofnotifiedevents as $notifiedevent)
 			if (! empty($valuedet) && ! isValidEmail($valuedet,1)) $showwarning++;
 		}
 	    if ((! empty($conf->global->$param)) && $showwarning) $s.=' '.img_warning($langs->trans("ErrorBadEMail"));
-	    print Form::textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
+	    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
 		print '<br>';
     }
     // New entry input fields
     $s='<input type="text" size="32" name="NOTIF_'.$notifiedevent['code'].'_new_key" value="">';		// Do not use type="email" here, we must be able to enter a list of email with , separator.
-    print Form::textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
+    print $form->textwithpicto($s,$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients").'<br>'.$langs->trans("YouCanAlsoUseSupervisorKeyword"),1,'help','',0,2);
     print '</td>';
 
     print '<td>';

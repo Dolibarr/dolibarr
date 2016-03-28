@@ -991,7 +991,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 				$price_expression_list[$entry->id] = $entry->title;
 			}
 			$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_price_expression ? $object->fk_price_expression : '0');
-			print Form::selectarray('eid', $price_expression_list, $price_expression_preselection);
+			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
 			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
 			print '</td></tr>';
 
@@ -1022,7 +1022,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		$product->fetch($id, $ref, '', 1); //Ignore the math expression when getting the price
 		print '<tr id="price_numeric"><td width="20%">';
 		$text = $langs->trans('SellingPrice');
-		print Form::textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td colspan="2">';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="' . price($product->price_ttc) . '">';
@@ -1034,7 +1034,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print Form::textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td';
 		if (empty($conf->global->PRODUCT_MINIMUM_RECOMMENDED_PRICE)) {
 			print ' colspan="2"';
@@ -1121,7 +1121,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 
 			print '<tr '.$bc[$var].'>';
 			print '<td>';
-			print Form::textwithpicto($langs->trans('SellingPrice') . ' ' . $i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+			print $form->textwithpicto($langs->trans('SellingPrice') . ' ' . $i, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 			print '</td>';
 
 			// VAT
@@ -1395,7 +1395,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Price
 		print '<tr><td class="fieldrequired">';
 		$text = $langs->trans('SellingPrice');
-		print Form::textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
 		if ($object->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="' . price($object->price_ttc) . '">';
@@ -1407,7 +1407,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print Form::textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		if ($object->price_base_type == 'TTC') {
 			print '<td><input name="price_min" size="10" value="' . price($object->price_min_ttc) . '">';
 		} else {
@@ -1481,7 +1481,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Price
 		print '<tr><td width="20%">';
 		$text = $langs->trans('SellingPrice');
-		print Form::textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price" size="10" value="' . price($prodcustprice->price_ttc) . '">';
@@ -1493,7 +1493,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		// Price minimum
 		print '<tr><td>';
 		$text = $langs->trans('MinPrice');
-		print Form::textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
+		print $form->textwithpicto($text, $langs->trans("PrecisionUnitIsLimitedToXDecimals", $conf->global->MAIN_MAX_DECIMALS_UNIT), 1, 1);
 		print '</td><td>';
 		if ($prodcustprice->price_base_type == 'TTC') {
 			print '<input name="price_min" size="10" value="' . price($prodcustprice->price_min_ttc) . '">';
@@ -1650,7 +1650,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
     		print '<td colspan="8">&nbsp;</td>';
     		// Print the search button
             print '<td class="liste_titre" align="right">';
-            $searchpitco=Form::showFilterAndCheckAddButtons();
+            $searchpitco=$form->showFilterAndCheckAddButtons(0);
             print $searchpitco;
             print '</td>';
     		print '</tr>';

@@ -108,7 +108,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 			// Confirm delete contact
         	if ($action == 'delete' && $user->rights->adherent->supprimer)
         	{
-        		$this->tpl['action_delete'] = Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteAdherent"),$langs->trans("ConfirmDeleteAdherent"),"confirm_delete",'',0,1);
+        		$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id,$langs->trans("DeleteAdherent"),$langs->trans("ConfirmDeleteAdherent"),"confirm_delete",'',0,1);
         	}
 		}
 

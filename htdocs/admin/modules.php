@@ -267,7 +267,7 @@ if (! empty($categ[$categidx]))
 {
 	$categidx='expdev';
     $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-    $head[$h][1] = Form::textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
+    $head[$h][1] = $form->textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
     $head[$h][2] = 'expdev';
     $h++;
 }
@@ -299,10 +299,10 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Status') . ': '.Form::selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
+    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Nature') . ': '.Form::selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Standard"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
+    $moreforfilter.= $langs->trans('Nature') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Standard"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.=' ';
     $moreforfilter.='<div class="divsearchfield">';
@@ -451,7 +451,7 @@ if ($mode != 'marketplace')
         	$text=$langs->trans("ExternalModule",$dirofmodule);
         	if (! empty($objMod->editor_name) && $objMod->editor_name != 'dolibarr') $text.=' - '.$objMod->editor_name;
         	if (! empty($objMod->editor_web) && $objMod->editor_web != 'www.dolibarr.org') $text.=' - '.$objMod->editor_web;
-        	print Form::textwithpicto($version, $text, 1, 'help');
+        	print $form->textwithpicto($version, $text, 1, 'help');
         }
         else print $version;
         print "</td>\n";

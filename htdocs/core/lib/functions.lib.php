@@ -908,9 +908,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else 
 	{
-        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.Form::showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
+        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
 	}
-	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.Form::showbarcode($object).'</div>';
+	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 	} 
@@ -947,7 +947,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref.='</div>';
 	}
-	print Form::showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
+	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';
 }
@@ -958,6 +958,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
  * @param	string	$langkey		Translation key
  * @param 	string	$fieldkey		Key of the html select field the text refers to
  * @param	int		$fieldrequired	1=Field is mandatory
+ * @deprecated Form::editfieldkey
  */
 function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
 {

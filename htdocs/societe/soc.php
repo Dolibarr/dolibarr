@@ -935,7 +935,7 @@ else
 	        $text.='&nbsp;';
 	        $text.= $langs->trans("Individual");
 	        $htmltext=$langs->trans("ToCreateContactWithSameName");
-	        print Form::textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
+	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
             print '</label>';
             print '</div>';
             print "<br>\n";
@@ -1009,7 +1009,7 @@ else
         print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
         $s=$modCodeClient->getToolTip($langs,$object,0);
-        print Form::textwithpicto('',$s,1);
+        print $form->textwithpicto('',$s,1);
         print '</td></tr></table>';
         print '</td></tr>';
 
@@ -1018,7 +1018,7 @@ else
             // Supplier
             print '<tr>';
             print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
-            print Form::selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? -1 : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
+            print $form->selectyesno("fournisseur", (isset($_POST['fournisseur'])?GETPOST('fournisseur'):(GETPOST("type") == '' ? -1 : $object->fournisseur)), 1, 0, (GETPOST("type") == '' ? 1 : 0));
             print '</td>';
             print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
             print '<table class="nobordernopadding"><tr><td>';
@@ -1027,14 +1027,14 @@ else
             print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
             print '</td><td>';
             $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-            print Form::textwithpicto('',$s,1);
+            print $form->textwithpicto('',$s,1);
             print '</td></tr></table>';
             print '</td></tr>';
         }
 
         // Status
         print '<tr><td>'.fieldLabel('Status','status').'</td><td colspan="3">';
-        print Form::selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),1);
+        print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),1);
         print '</td></tr>';
 
         // Barcode
@@ -1121,7 +1121,7 @@ else
         // Assujeti TVA
         print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td>';
         print '<td>';
-        print Form::selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
+        print $form->selectyesno('assujtva_value',1,1);     // Assujeti par defaut en creation
         print '</td>';
         print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
@@ -1141,7 +1141,7 @@ else
                 print '</script>';
                 print "\n";
                 $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                $s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+                $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
             }
             else
             {
@@ -1155,11 +1155,11 @@ else
         // Type - Size
         print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>'."\n";
         $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
-        print Form::selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
+        print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
-        print Form::selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
+        print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
 
@@ -1186,22 +1186,22 @@ else
         if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td>';
-            print Form::selectyesno('localtax1assuj_value',0,1);
+            print $form->selectyesno('localtax1assuj_value',0,1);
             print '</td><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td>';
-            print Form::selectyesno('localtax2assuj_value',0,1);
+            print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td></tr>';
 
         }
         elseif($mysoc->localtax1_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print Form::selectyesno('localtax1assuj_value',0,1);
+            print $form->selectyesno('localtax1assuj_value',0,1);
             print '</td><tr>';
         }
         elseif($mysoc->localtax2_assuj=="1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed",$mysoc->country_code).'</td><td colspan="3">';
-            print Form::selectyesno('localtax2assuj_value',0,1);
+            print $form->selectyesno('localtax2assuj_value',0,1);
             print '</td><tr>';
         }
 
@@ -1242,7 +1242,7 @@ else
 			if ($object->prospect || $object->client) {
 				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
-				print Form::multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
+				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
 					null, "90%");
 				print "</td></tr>";
 			}
@@ -1251,7 +1251,7 @@ else
 			if ($object->fournisseur) {
 				print '<tr><td class="toptd">' . fieldLabel('SuppliersCategoriesShort', 'suppcats') . '</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, null, 'parent', null, null, 1);
-				print Form::multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
+				print $form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), null, null, null,
 					null, "90%");
 				print "</td></tr>";
 			}
@@ -1550,7 +1550,7 @@ else
             }
             print '</td><td>';
             $s=$modCodeClient->getToolTip($langs,$object,0);
-            print Form::textwithpicto('',$s,1);
+            print $form->textwithpicto('',$s,1);
             print '</td></tr></table>';
 
             print '</td></tr>';
@@ -1560,7 +1560,7 @@ else
             {
                 print '<tr>';
                 print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
-                print Form::selectyesno("fournisseur",$object->fournisseur,1);
+                print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
                 print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
 
@@ -1583,7 +1583,7 @@ else
                 }
                 print '</td><td>';
                 $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-                print Form::textwithpicto('',$s,1);
+                print $form->textwithpicto('',$s,1);
                 print '</td></tr></table>';
 
                 print '</td></tr>';
@@ -1599,7 +1599,7 @@ else
 
             // Status
             print '<tr><td>'.fieldLabel('Status','status').'</td><td colspan="3">';
-            print Form::selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$object->status);
+            print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$object->status);
             print '</td></tr>';
 
             // Address
@@ -1676,7 +1676,7 @@ else
 
             // VAT payers
             print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td><td>';
-            print Form::selectyesno('assujtva_value',$object->tva_assuj,1);
+            print $form->selectyesno('assujtva_value',$object->tva_assuj,1);
             print '</td>';
 
             // VAT Code
@@ -1698,7 +1698,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+                    $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
                 }
                 else
                 {
@@ -1714,7 +1714,7 @@ else
         	if($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj=="1")
             {
                 print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td>';
-                print Form::selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
                 	print '<span class="cblt1">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1723,7 +1723,7 @@ else
                 }
 
                 print '</td><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td>';
-                print Form::selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
 	            if  (! isOnlyOneLocalTax(2))
 	            {
 	            		print '<span class="cblt2">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1736,7 +1736,7 @@ else
             elseif($mysoc->localtax1_assuj=="1" && $mysoc->localtax2_assuj!="1")
             {
                 print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax1IsUsed",$mysoc->country_code),'localtax1assuj_value').'</td><td colspan="3">';
-                print Form::selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
+                print $form->selectyesno('localtax1assuj_value',$object->localtax1_assuj,1);
                 if(! isOnlyOneLocalTax(1))
                 {
                 	print '<span class="cblt1">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1749,7 +1749,7 @@ else
             elseif($mysoc->localtax2_assuj=="1" && $mysoc->localtax1_assuj!="1")
             {
                 print '<tr><td>'.fieldLabel($langs->transcountry("LocalTax2IsUsed",$mysoc->country_code),'localtax2assuj_value').'</td><td colspan="3">';
-                print Form::selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
+                print $form->selectyesno('localtax2assuj_value',$object->localtax2_assuj,1);
                 if(! isOnlyOneLocalTax(2))
                 {
                 	print '<span class="cblt2">     '.$langs->transcountry("Type",$mysoc->country_code).': ';
@@ -1761,11 +1761,11 @@ else
 
             // Type - Size
             print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>';
-            print Form::selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+            print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
             print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
-            print Form::selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
+            print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
@@ -1800,7 +1800,7 @@ else
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print Form::multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 					print "</td></tr>";
 				}
 
@@ -1814,7 +1814,7 @@ else
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print Form::multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
+					print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 					print "</td></tr>";
 				}
 			}
@@ -1860,7 +1860,7 @@ else
             print '<tr class="hideonsmartphone">';
             print '<td>'.fieldLabel('Logo','photoinput').'</td>';
             print '<td colspan="3">';
-            if ($object->logo) print Form::showphoto('societe',$object);
+            if ($object->logo) print $form->showphoto('societe',$object);
             $caneditfield=1;
             if ($caneditfield)
             {
@@ -1903,7 +1903,7 @@ else
         // Confirm delete third party
         if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile)))
         {
-            print Form::formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
+            print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("DeleteACompany"), $langs->trans("ConfirmDeleteCompany"), "confirm_delete", '', 0, "action-delete");
         }
 
 	    if ($action == 'merge')
@@ -1917,7 +1917,7 @@ else
 			    )
 		    );
 
-		    print Form::formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 190);
+		    print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 190);
 	    }
 
         dol_htmloutput_errors($error,$errors);
@@ -1981,7 +1981,7 @@ else
             print '<tr><td>';
             print $langs->trans('Gencod').'</td><td>'.$object->barcode;
             print '</td>';
-			if ($htmllogobar) $htmllogobar.=Form::showbarcode($object);
+			if ($htmllogobar) $htmllogobar.=$form->showbarcode($object);
             print $htmllogobar;
 			$htmllogobar='';
             print '</tr>';
@@ -2044,7 +2044,7 @@ else
                     print '</script>';
                     print "\n";
                     $s.='<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
-                    $s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+                    $s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
                 }
                 else
                 {
@@ -2227,7 +2227,7 @@ else
             print '<td colspan="3">';
 			if ($action != 'editincoterm')
 			{
-				print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+				print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 			}
 			else
 			{

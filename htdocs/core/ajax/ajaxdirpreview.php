@@ -241,7 +241,7 @@ if ($section)
 		$useglobalvars=1;
 		$form = new Form($db);
 		$formquestion=array('urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'));
-		print Form::formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
+		print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
 	}
 
 	if ($useajax)

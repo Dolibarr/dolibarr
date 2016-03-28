@@ -1289,7 +1289,11 @@ a.vsmenu.addbookmarkpicto {
 {
 	margin: 0 0 8px 2px;
 }
-.vmenu div.blockvmenuend, div.blockvmenusearch
+.vmenu  div.blockvmenusearch
+{
+	padding-bottom: 5px;
+}
+.vmenu div.blockvmenuend
 {
 	padding-bottom: 5px;
 }

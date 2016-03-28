@@ -53,8 +53,23 @@ if (empty($usedolheader))
 }
 else
 {
-	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css');
-	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js');
+	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+	);
+	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+			'/includes/jszip/jszip.min.js',
+			'/includes/pdfmake/pdfmake.min.js',
+			'/includes/pdfmake/vfs_fonts.js'
+	);
+
+
 	llxHeader('','','','',0,0,$arrayjs,$arraycss);
 }
 
@@ -140,7 +155,7 @@ if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
 if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
 if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
 if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-$nav.=Form::selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
 
@@ -151,25 +166,25 @@ print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Tex
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter A'). ': ';
 $cate_arbo = array('field1'=>'value1a into the select list A','field2'=>'value2a');
-$moreforfilter.=Form::selectarray('search_aaa', $cate_arbo, '', 1);		// List without js combo
+$moreforfilter.=$form->selectarray('search_aaa', $cate_arbo, '', 1);		// List without js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter B'). ': ';
 $cate_arbo = array('field1'=>'value1b into the select list B','field2'=>'value2b');
-$moreforfilter.=Form::selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=$form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter C'). ': ';
 $cate_arbo = array('field1'=>'value1c into the select list C','field2'=>'value2c');
-$moreforfilter.=Form::selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=$form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter D'). ': ';
 $cate_arbo = array('field1'=>'value1d into the select list D','field2'=>'value2d');
-$moreforfilter.=Form::selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=$form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
 $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))
@@ -204,34 +219,45 @@ if (! empty($moreforfilter))
 <script type="text/javascript">
 $(document).ready(function(){
     $('#idtableexample2').dataTable( {
+    	<?php
+    	if ($optioncss=='print') {
+    	 	print '\'dom\': \'lfrtip\',';
+    	} else {
+    		print '\'dom\': \'Blfrtip\',';
+    	}
+    	?>
+    	"colReorder": true,
+		'buttons': [
+		          'colvis','copy', 'csv', 'excel', 'pdf', 'print'
+		      ],
 		"sPaginationType": "full_numbers",
-		"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+		"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?php echo $langs->trans('All'); ?>"]],
 		"oLanguage": {
-			"sLengthMenu": "Voir _MENU_ lignes",
-			"sSearch": "Recherche:",
-			"sZeroRecords": "Aucune ligne &agrave; afficher",
-			"sInfoEmpty": "Aucune ligne &agrave; afficher",
-			"sInfoFiltered": "(Filtrer sur _MAX_ Total de lignes)",
-			"sInfo": "Afficher _START_ &agrave; _END_ sur les _TOTAL_ lignes &agrave; afficher",
+			"sLengthMenu": "<?php echo $langs->trans('Show'); ?> _MENU_ <?php echo $langs->trans('Entries'); ?>",
+			"sSearch": "<?php echo $langs->trans('Search'); ?>:",
+			"sZeroRecords": "<?php echo $langs->trans('NoRecordsToDisplay'); ?>",
+			"sInfoEmpty": "<?php echo $langs->trans('NoEntriesToShow'); ?>",
+			"sInfoFiltered": "(<?php echo $langs->trans('FilteredFrom'); ?> _MAX_ <?php echo $langs->trans('TotalEntries'); ?>)",
+			"sInfo": "<?php echo $langs->trans('Showing'); ?> _START_ <?php echo $langs->trans('To'); ?> _END_ <?php echo $langs->trans('WTOf'); ?> _TOTAL_ <?php echo $langs->trans('Entries'); ?>",
 			"oPaginate": {
-				"sFirst": "Début",
-				"sLast": "Fin",
-				"sPrevious": "Précédent",
-				"sNext": "Suivant"
+				"sFirst": "<?php echo $langs->transnoentities('First'); ?>",
+				"sLast": "<?php echo $langs->transnoentities('Last'); ?>",
+				"sPrevious": "<?php echo $langs->transnoentities('Previous'); ?>",
+				"sNext": "<?php echo $langs->transnoentities('Next'); ?>"
 			}
 		},
 		"aaSorting": [[0,'desc']],
-		"sDom": 'CT<"clear">lfrtip',
-//To get flash tools
- 		"oTableTools": {
-			"sSwfPath": "<?php echo dol_buildpath('/includes/jquery/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf',1); ?>"
-		},
+
+
 
 /* To use in ajax mode
-		"bProcessing": true,	// Show	"processing message"
+			"bProcessing": true,
+		"stateSave": true,
 		"bServerSide": true,
-		"bJQueryUI": true,
-		"sAjaxSource": "../ajaxlist.php"
+		"sAjaxSource": "../ajax.php",
+		"aoColumnDefs": [
+		                 { "bSortable": false, "aTargets": [ 2,3,4 ] }
+		               ],
 */
     })
 });

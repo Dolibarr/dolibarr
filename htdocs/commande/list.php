@@ -334,7 +334,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=Form::selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
 		$moreforfilter.='</div>';
 	}
     	$parameters=array();
@@ -398,16 +398,16 @@ if ($resql)
 	    '3'=>$langs->trans("StatusOrderDelivered"), 
 	    '-1'=>$langs->trans("StatusOrderCanceledShort")
 	);
-	print Form::selectarray('viewstatut', $liststatus, $viewstatut, -4);
+	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
 	print '</td>';
 	if (empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
 	{
 	    print '<td align="center">';
-    	print Form::selectyesno('billed', $billed, 1, 0, 1);
+    	print $form->selectyesno('billed', $billed, 1, 0, 1);
 	    print '</td>';
 	}
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";
@@ -543,10 +543,10 @@ if ($resql)
             print '<td>';
             if ($nbprod)
             {
-                print Form::textwithtooltip('',$text_info,2,1,$text_icon,'',2);
+                print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
             }
             if ($warning) {
-                print Form::textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'),'',2);
+                print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'),'',2);
             }
             print '</td>';
         }

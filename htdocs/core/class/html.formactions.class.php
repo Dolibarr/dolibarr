@@ -273,11 +273,11 @@ class FormActions
 		if (! empty($multiselect)) 
 		{
 	        if(!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
-			print Form::multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
+			print $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
 		else 
 		{
-			print Form::selectarray($htmlname, $arraylist, $selected);
+			print $form->selectarray($htmlname, $arraylist, $selected);
 		}
 		
         if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 

@@ -291,7 +291,7 @@ foreach ($dirmodels as $reldir)
                         }
 
                         print '<td align="center">';
-                        print Form::textwithpicto('',$htmltooltip,1,0);
+                        print $form->textwithpicto('',$htmltooltip,1,0);
                         print '</td>';
 
                         print '</tr>';
@@ -431,7 +431,7 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg,1,1);
                     $htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg,1,1);
                     print '<td align="center">';
-                    print Form::textwithpicto('',$htmltooltip,1,0);
+                    print $form->textwithpicto('',$htmltooltip,1,0);
                     print '</td>';
                     print '<td align="center">';
                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';

@@ -320,7 +320,7 @@ $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
 // Define type of elements
-$typeElementString = Form::selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
+$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 $param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
 
@@ -367,7 +367,7 @@ if ($sql_select)
     print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
     print '</tr>';
@@ -489,7 +489,7 @@ if ($sql_select)
 		{
 			if ($objp->fk_product > 0) {
 
-				echo Form::textwithtooltip($text,$description,3,'','',$i,0,'');
+				echo $form->textwithtooltip($text,$description,3,'','',$i,0,'');
 
 				// Show range
 				echo get_date_range($objp->date_start, $objp->date_end);
@@ -509,7 +509,7 @@ if ($sql_select)
 
 					if (! empty($objp->label)) {
 						$text.= ' <strong>'.$objp->label.'</strong>';
-						echo Form::textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
+						echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
 					} else {
 						echo $text.' '.dol_htmlentitiesbr($objp->description);
 					}

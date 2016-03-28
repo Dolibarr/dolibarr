@@ -131,7 +131,7 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SANDBOX").'</td><td>';
-print Form::selectyesno("PAYPAL_API_SANDBOX",$conf->global->PAYPAL_API_SANDBOX,1);
+print $form->selectyesno("PAYPAL_API_SANDBOX",$conf->global->PAYPAL_API_SANDBOX,1);
 print '</td></tr>';
 
 $var=!$var;
@@ -157,7 +157,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_SSLVERSION").'</td><td>';
-print Form::selectarray("PAYPAL_SSLVERSION",array('1'=> $langs->trans('TLSv1'),'6'=> $langs->trans('TLSv1.2')),$conf->global->PAYPAL_SSLVERSION);
+print $form->selectarray("PAYPAL_SSLVERSION",array('1'=> $langs->trans('TLSv1'),'6'=> $langs->trans('TLSv1.2')),$conf->global->PAYPAL_SSLVERSION);
 print '</td></tr>';
 
 // Usage Parameters
@@ -170,13 +170,13 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_INTEGRAL_OR_PAYPALONLY").'</td><td>';
-print Form::selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",array('integral'=> $langs->trans('PaypalModeIntegral'),'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')),$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
+print $form->selectarray("PAYPAL_API_INTEGRAL_OR_PAYPALONLY",array('integral'=> $langs->trans('PaypalModeIntegral'),'paypalonly'=> $langs->trans('PaypalModeOnlyPaypal')),$conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY);
 print '</td></tr>';
 
 /*$var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print '<span class="fieldrequired">'.$langs->trans("PAYPAL_API_EXPRESS").'</span></td><td>';
-print Form::selectyesno("PAYPAL_API_EXPRESS",$conf->global->PAYPAL_API_EXPRESS);
+print $form->selectyesno("PAYPAL_API_EXPRESS",$conf->global->PAYPAL_API_EXPRESS);
 print '</td></tr>';
 */
 
@@ -197,7 +197,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PAYPAL_ADD_PAYMENT_URL").'</td><td>';
-print Form::selectyesno("PAYPAL_ADD_PAYMENT_URL",$conf->global->PAYPAL_ADD_PAYMENT_URL,1);
+print $form->selectyesno("PAYPAL_ADD_PAYMENT_URL",$conf->global->PAYPAL_ADD_PAYMENT_URL,1);
 print '</td></tr>';
 
 $var=!$var;
@@ -238,7 +238,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("SecurityTokenIsUnique").'</td><td>';
-print Form::selectyesno("PAYPAL_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYPAL_SECURITY_TOKEN)?0:$conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE),1);
+print $form->selectyesno("PAYPAL_SECURITY_TOKEN_UNIQUE",(empty($conf->global->PAYPAL_SECURITY_TOKEN)?0:$conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE),1);
 print '</td></tr>';
 
 print '</table>';

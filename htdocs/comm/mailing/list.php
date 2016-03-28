@@ -150,7 +150,7 @@ if ($result)
 			if ($obj->statut != 3 && !empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-				print Form::textwithpicto($nbemail,$text,1,'warning');
+				print $form->textwithpicto($nbemail,$text,1,'warning');
 			}
 			else
 			{

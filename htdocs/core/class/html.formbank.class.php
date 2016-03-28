@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,5 +57,19 @@ class FormBank
         print Form::selectarray($htmlname, $account->type_lib, $selected);
     }
 
+	/**
+	 * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
+	 *
+	 * @param Account $account Account object
+	 * @return string
+	 */
+	public static function getIBANLabel(Account $account)
+	{
+		if ($account->getCountryCode() == 'IN') {
+			return 'IFSC';
+		}
+
+		return 'IBANNumber';
+	}
 }
 

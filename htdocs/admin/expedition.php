@@ -316,7 +316,7 @@ foreach ($dirmodels as $reldir)
                         }
 
 						print '<td align="center">';
-						print Form::textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -463,7 +463,7 @@ foreach ($dirmodels as $reldir)
 					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark,1,1);
 
 	                            print '<td align="center">';
-	                            print Form::textwithpicto('',$htmltooltip,1,0);
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
 	                            print '</td>';
 
 	                            // Preview

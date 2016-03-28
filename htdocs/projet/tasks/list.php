@@ -235,7 +235,7 @@ if ($search_task_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 }
 $sql.= " WHERE t.fk_projet = p.rowid";
-$sql.= " AND p.entity IN (".getEntity('project').')';
+$sql.= " AND p.entity IN (".getEntity('project',1).')';
 if (! $user->rights->projet->all->lire) $sql.=" p.rowid IN (".join(',',$projectsListId).")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -380,7 +380,7 @@ if ($resql)
     }
     
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'" id="tablelines3">';
 
@@ -442,7 +442,7 @@ if ($resql)
         print '<td class="liste_titre">';
         $listofstatus=array(-1=>'&nbsp;');
         foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
-        print Form::selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
+        print $form->selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
         print '</td>';
     }
     if (! empty($arrayfields['t.ref']['checked']))
@@ -505,7 +505,7 @@ if ($resql)
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
     print '</tr>';

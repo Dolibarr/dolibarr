@@ -31,9 +31,10 @@ class box_graph_product_distribution extends ModeleBoxes
 	var $boxcode="productdistribution";
 	var $boximg="object_product";
 	var $boxlabel="BoxProductDistribution";
-	var $depends = array("product|service");
+	var $depends = array("product|service","facture|propal|commande");
 
 	var $db;
+	var $param;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();

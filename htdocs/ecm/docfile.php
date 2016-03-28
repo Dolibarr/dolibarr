@@ -253,7 +253,7 @@ print '</div>';
 // Confirmation de la suppression d'une ligne categorie
 if ($_GET['action'] == 'delete_file')
 {
-    print Form::formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.urlencode($_GET["section"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile',$urlfile), 'confirm_deletefile', '', 1, 1);
 
 }
 

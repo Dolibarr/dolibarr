@@ -288,7 +288,7 @@ if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
 	dol_fiche_head();
 
 	if ($action == 'delete') {
-		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyOjbect'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyOjbect'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
 		print $formconfirm;
 	}
 	
@@ -322,7 +322,7 @@ if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
 
 
 	// Example 2 : Adding links to objects
-	//$somethingshown=Form::showLinkedObjectBlock($object);
+	//$somethingshown=$form->showLinkedObjectBlock($object);
 	//$linktoelem = $form->showLinkToObjectBlock($object);
 	//if ($linktoelem) print '<br>'.$linktoelem;
 

@@ -93,12 +93,12 @@
 			print '</tr><tr>';
 			print '<td colspan="2">'.$langs->trans("l_eatby").'</td><td>';
 			$eatbyselected=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
-			Form::selectDate($eatbyselected,'eatby','','',1,"");
+			$form->select_date($eatbyselected,'eatby','','',1,"");
 			print '</td>';
 			print '<td></td>';
 			print '<td>'.$langs->trans("l_sellby").'</td><td>';
 			$sellbyselected=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
-			Form::selectDate($sellbyselected,'sellby','','',1,"");
+			$form->select_date($sellbyselected,'sellby','','',1,"");
 			print '</td>';
 			print '</tr>';
 		}

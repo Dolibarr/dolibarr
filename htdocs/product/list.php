@@ -127,7 +127,7 @@ if (empty($conf->global->PRODUIT_MULTIPRICES))
 	$titlesellprice=$langs->trans("SellingPrice");
 	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	{
-		$titlesellprice=Form::textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
+		$titlesellprice=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
 	}
 }
 
@@ -414,7 +414,7 @@ else
     		}
 
 			$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-            $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+            $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     		
             print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		print '<tr class="liste_titre">';
@@ -507,7 +507,7 @@ else
     			print '</td>';
     		}
     		// To batch
-			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.Form::selectyesno($search_tobatch, '', '', '', 1).'</td>';
+			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
     		// Stock
 			if (! empty($arrayfields['p.stock']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
     	    // Accountancy code sell
@@ -541,17 +541,17 @@ else
     		if (! empty($arrayfields['p.tosell']['checked']))
     		{
 	    		print '<td class="liste_titre" align="center">';
-	            print Form::selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
+	            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
 	            print '</td >';
     		}
 			if (! empty($arrayfields['p.tobuy']['checked']))
     		{
 	            print '<td class="liste_titre" align="center">';
-	            print Form::selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
+	            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
 	            print '</td>';
     		}
             print '<td class="liste_titre" align="right">';
-            $searchpitco=Form::showFilterAndCheckAddButtons();
+            $searchpitco=$form->showFilterAndCheckAddButtons(0);
             print $searchpitco;
             print '</td>';
 
@@ -663,7 +663,7 @@ else
     							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
     							{
     								$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-    								print Form::textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    								print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
     							}
     							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
     						}

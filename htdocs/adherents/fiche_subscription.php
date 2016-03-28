@@ -196,7 +196,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
-	print Form::showrefnav($subscription, 'rowid', $linkback, 1);
+	print $form->showrefnav($subscription, 'rowid', $linkback, 1);
 	print '</td></tr>';	
 
     // Member
@@ -207,13 +207,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
-	Form::selectDate($subscription->dateh,'datesub',1,1,0,'update',1);
+	$form->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
 	print '</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	Form::selectDate($subscription->datef,'datesubend',0,0,0,'update',1);
+	$form->select_date($subscription->datef,'datesubend',0,0,0,'update',1);
 	print '</td>';
     print '</tr>';
 
@@ -295,7 +295,7 @@ if ($rowid && $action != 'edit')
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text=$langs->trans("ConfirmDeleteSubscription");
 		if (! empty($conf->banque->enabled) && ! empty($conf->global->ADHERENT_BANK_USE)) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		print Form::formconfirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
     }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -307,7 +307,7 @@ if ($rowid && $action != 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
-	print Form::showrefnav($subscription, 'rowid', $linkback, 1);
+	print $form->showrefnav($subscription, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
     // Member

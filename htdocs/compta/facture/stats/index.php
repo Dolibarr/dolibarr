@@ -240,7 +240,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print Form::selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
+	print $form->selectarray('socid', $companies, $socid, 1, 0, 0, 'style="width: 95%"', 0, 0, 0, '', '', 1);
 	print '</td></tr>';
 	// User
 	print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
@@ -251,7 +251,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 	if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 	arsort($arrayyears);
-	print Form::selectarray('year',$arrayyears,$year,0);
+	print $form->selectarray('year',$arrayyears,$year,0);
 	print '</td></tr>';
 	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';

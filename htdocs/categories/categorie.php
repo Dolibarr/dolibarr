@@ -248,7 +248,7 @@ if ($socid)
 	print '<table class="border" width="100%">';
 
 	print '<tr><td width="25%">'.$langs->trans("ThirdPartyName").'</td><td colspan="3">';
-	print Form::showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom','','&type='.$type);
+	print $form->showrefnav($soc,'socid','',($user->societe_id?0:1),'rowid','nom','','&type='.$type);
 	print '</td></tr>';
 
 	// Alias names (commercial, trademark or alias names)
@@ -358,7 +358,7 @@ else if ($id || $ref)
 		// Ref
 		print "<tr>";
 		print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-		print Form::showrefnav($product,'ref','',1,'ref');
+		print $form->showrefnav($product,'ref','',1,'ref');
 		print '</td>';
 		print '</tr>';
 
@@ -418,7 +418,7 @@ else if ($id || $ref)
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td class="valeur">';
-		print Form::showrefnav($member,'id','','1','rowid','ref','','&type='.$type);
+		print $form->showrefnav($member,'id','','1','rowid','ref','','&type='.$type);
 		print '</td></tr>';
 
         // Login
@@ -430,7 +430,7 @@ else if ($id || $ref)
         // Morphy
         print '<tr><td>'.$langs->trans("Nature").'</td><td class="valeur" >'.$member->getmorphylib().'</td>';
         /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-        print Form::showphoto('memberphoto',$member);
+        print $form->showphoto('memberphoto',$member);
         print '</td>';*/
         print '</tr>';
 
@@ -492,7 +492,7 @@ else if ($id || $ref)
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td class="valeur">';
-		print Form::showrefnav($object,'rowid');
+		print $form->showrefnav($object,'rowid');
 		print '</td></tr>';
 
 	  // Name

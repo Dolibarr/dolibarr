@@ -432,7 +432,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			';
 
 			print '	});'."\n";
-			if(!empty($conf->global->FAC_AUTO_FILLJS)){
+			if(!empty($conf->global->INVOICE_AUTO_FILLJS)){
 				//Add js for AutoFill
 				print ' $(document).ready(function () {';
 				print ' 	$(".AutoFillAmout").on(\'click touchstart\', function(){
@@ -462,7 +462,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
         $datepayment = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
         $datepayment= ($datepayment == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'') : $datepayment);
-        Form::selectDate($datepayment,'','','',0,"add_paiement",1,1,0,0,'','',$facture->date);
+        $form->select_date($datepayment,'','','',0,"add_paiement",1,1,0,0,'','',$facture->date);
         print '</td>';
         print '<td>'.$langs->trans('Comments').'</td></tr>';
 
@@ -650,7 +650,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     if ($action != 'add_paiement')
                     {
-						if(!empty($conf->global->FAC_AUTO_FILLJS))
+						if(!empty($conf->global->INVOICE_AUTO_FILLJS))
 							print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
                         print '<input type=hidden class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
                         print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
@@ -673,7 +673,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	
 	                    if ($action != 'add_paiement')
 	                    {
-							if(!empty($conf->global->FAC_AUTO_FILLJS))
+							if(!empty($conf->global->INVOICE_AUTO_FILLJS))
 								print img_picto("Auto fill",'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 	                        print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 	                        print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
@@ -773,7 +773,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
                 print '<input type="hidden" name="closepaidinvoices" value="'.GETPOST('closepaidinvoices').'">';
             }
-            print Form::formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
+            print $form->formconfirm($_SERVER['PHP_SELF'].'?facid='.$facture->id.'&socid='.$facture->socid.'&type='.$facture->type,$langs->trans('ReceivedCustomersPayments'),$text,'confirm_paiement',$formquestion,$preselectedchoice);
         }
 
         print "</form>\n";

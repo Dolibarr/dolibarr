@@ -49,12 +49,12 @@ dol_htmloutput_errors($object->error,$object->errors);
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo Form::selectarray('statut',$statutarray,$object->status); ?></td>
+<td><?php echo $form->selectarray('statut',$statutarray,$object->status); ?></td>
 </tr>
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo Form::selectarray('statut_buy',$statutarray,$object->status_tobuy); ?></td>
+<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_tobuy); ?></td>
 </tr>
 
 <tr><td><?php echo $langs->trans("Duration"); ?></td>

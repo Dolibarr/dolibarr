@@ -340,7 +340,7 @@ else {
 	}
 
 	if ($action == 'delmouv') {
-		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?mvt_num=' . GETPOST('mvt_num'), $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delmouvconfirm', '', 0, 1);
 		print $formconfirm;
 	}
 	if ($action == 'delbookkeepingyear') {
@@ -361,7 +361,7 @@ else {
 				'default' => $delyear
 		);
 
-		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1);
 		print $formconfirm;
 	}
 
@@ -394,10 +394,10 @@ else {
 	print '<td><input type="text" name="search_mvt_num" size="6" value="' . $search_mvt_num . '"></td>';
 	print '<td class="liste_titre">';
 	print $langs->trans('From') . ': ';
-	print Form::selectDate($search_date_start, 'date_start', 0, 0, 1);
+	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 	print '<br>';
 	print $langs->trans('To') . ': ';
-	print Form::selectDate($search_date_end, 'date_end', 0, 0, 1);
+	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 	print '</td>';
 	print '<td><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
 	print '<td>';

@@ -290,7 +290,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     foreach ($price_globals->listGlobalVariables() as $entry) {
         $globals_list[$entry->id]=$entry->code;
     }
-    print Form::selectarray('fk_variable', $globals_list, (empty($price_updaters->fk_variable)?0:$price_updaters->fk_variable));
+    print $form->selectarray('fk_variable', $globals_list, (empty($price_updaters->fk_variable)?0:$price_updaters->fk_variable));
     print '</td></tr>';
     //Description
     print '<tr>';
@@ -305,7 +305,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     foreach ($price_updaters->types as $val) {
         $type_list[$val] = $langs->trans("GlobalVariableUpdaterType".$val);
     }
-    print Form::selectarray('type', $type_list, $type);
+    print $form->selectarray('type', $type_list, $type);
     // This code submits form when type is changed
     print '<script type="text/javascript">
         jQuery(document).ready(run);
@@ -320,7 +320,7 @@ if ($action == 'create_updater' || $action == 'edit_updater') {
     //Parameters
     print '<tr>';
     $help = $langs->trans("GlobalVariableUpdaterHelp".$type).'<br><b>'.$langs->trans("GlobalVariableUpdaterHelpFormat".$type).'</b>';
-    print '<td class="fieldrequired">'.Form::textwithpicto($langs->trans("Parameters"),$help,1).'</td><td>';
+    print '<td class="fieldrequired">'.$form->textwithpicto($langs->trans("Parameters"),$help,1).'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('parameters',empty($price_updaters->parameters)?'':$price_updaters->parameters,'',300,'','',false,false,false,10,80);
     $doleditor->Create();

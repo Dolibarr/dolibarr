@@ -111,7 +111,7 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
     $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
@@ -129,7 +129,7 @@ if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
     $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$langs->trans("CalcModeLT2Debt");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
-    $period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
     $description.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
@@ -168,9 +168,11 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 2)
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
 	$parameters["direction"] = 'sell';
+	$parameters["type"] = 'localtax'.$local;
+	
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 	if (is_array($coll_list))
 	{
@@ -244,7 +246,9 @@ if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 
 	$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 	$parameters["direction"] = 'buy';
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$parameters["type"] = 'localtax'.$local;
+	
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if (is_array($coll_list))
 	{
 		$var=true;

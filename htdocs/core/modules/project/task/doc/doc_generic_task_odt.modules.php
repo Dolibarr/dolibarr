@@ -315,6 +315,8 @@ class doc_generic_task_odt extends ModelePDFTask
 		$langs->load("companies");
 		$langs->load("errors");
 
+		$form = new Form($this->db);
+
 		$texte = $this->description.".<br>\n";
 		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -346,7 +348,7 @@ class doc_generic_task_odt extends ModelePDFTask
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
-		$texte.= Form::textwithpicto($texttitle,$texthelp,1,'help','',1);
+		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
 		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->PROJECT_TASK_ADDON_PDF_ODT_PATH;

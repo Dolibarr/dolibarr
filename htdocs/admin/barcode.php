@@ -431,7 +431,7 @@ if ($conf->produit->enabled)
 	    			}
 	    			print '<td align="center">';
 	    			$s=$modBarCode->getToolTip($langs,null,-1);
-	    			print Form::textwithpicto('',$s,1);
+	    			print $form->textwithpicto('',$s,1);
 	    			print '</td>';
 	    			print "</tr>\n";
 	    		}

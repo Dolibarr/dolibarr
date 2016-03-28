@@ -84,7 +84,7 @@ if ($object->id > 0)
 
 	// Ref
 	print '<tr><td width="20%" class="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 	print '</td>';
 	print "</tr>\n";
 
@@ -135,8 +135,8 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.Form::editfieldkey("Label",'label',$object->label,$object,0).'</td><td colspan="3">';
-	print Form::editfieldval("Label",'label',$object->label,$object,0);
+	print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td colspan="3">';
+	print $form->editfieldval("Label",'label',$object->label,$object,0);
 	print '</td></tr>';
 
 	// Status

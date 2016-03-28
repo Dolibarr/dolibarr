@@ -180,7 +180,7 @@ if ($result)
 	if ($action == 'purge')
 	{
 		$formquestion=array();
-		print Form::formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
 	}
 	
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -198,7 +198,7 @@ if ($result)
 	// Lignes des champs de filtres
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre" width="15%">'.Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
+	print '<td class="liste_titre" width="15%">'.$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).$form->select_date($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
 
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';
@@ -270,7 +270,7 @@ if ($result)
 		// More informations
 		print '<td align="right">';
 		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent?$obj->user_agent:$langs->trans("Unknown"));
-		print Form::textwithpicto('',$htmltext);
+		print $form->textwithpicto('',$htmltext);
 		print '</td>';
 
 		print "</tr>\n";

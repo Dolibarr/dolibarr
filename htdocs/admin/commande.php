@@ -376,7 +376,7 @@ foreach ($dirmodels as $reldir)
                         }
 
 						print '<td align="center">';
-						print Form::textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print "</tr>\n";
@@ -524,7 +524,7 @@ foreach ($dirmodels as $reldir)
 
 
 	                            print '<td align="center">';
-	                            print Form::textwithpicto('',$htmltooltip,1,0);
+	                            print $form->textwithpicto('',$htmltooltip,1,0);
 	                            print '</td>';
 
 	                            // Preview

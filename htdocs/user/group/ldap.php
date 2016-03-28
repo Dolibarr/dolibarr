@@ -102,7 +102,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
-print Form::showrefnav($fgroup,'id','',$canreadperms);
+print $form->showrefnav($fgroup,'id','',$canreadperms);
 print '</td>';
 print '</tr>';
 

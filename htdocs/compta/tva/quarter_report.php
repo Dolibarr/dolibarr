@@ -149,7 +149,7 @@ if ($modetax==1) { // Calculate on invoice for goods and services
 	$nom=$langs->trans("VATReportByQuartersInDueDebtMode");
 	$calcmode=$langs->trans("CalcModeVATDebt");
 	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-	$period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) {
 		$prevquarter--;
@@ -198,7 +198,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 	$nom=$langs->trans("VATReportByQuartersInInputOutputMode");
 	$calcmode=$langs->trans("CalcModeVATEngagement");
 	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-	$period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$prevyear=$year_start; $prevquarter=$q;
 	if ($prevquarter > 1) {
 		$prevquarter--;
@@ -378,10 +378,12 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
+	$parameters["type"] = 'vat';
+	
 	$object = array(&$x_coll, &$x_paye, &$x_both);
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	
 	foreach (array_keys($x_coll) as $rate) {
 		$subtot_coll_total_ht = 0;

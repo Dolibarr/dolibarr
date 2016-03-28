@@ -344,7 +344,7 @@ print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes"),
 );
-print Form::selectyesno('PROJECT_USE_OPPORTUNITIES', $conf->global->PROJECT_USE_OPPORTUNITIES, 1);
+print $form->selectyesno('PROJECT_USE_OPPORTUNITIES', $conf->global->PROJECT_USE_OPPORTUNITIES, 1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" name="modifyPROJECT_USE_OPPORTUNITIES" value="'.$langs->trans("Modify").'">';
 print "</td>";
@@ -357,7 +357,7 @@ print '<td width="60" align="right">';
 $arrval=array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes"),
 );
-print Form::selectyesno('PROJECT_USE_TASKS', empty($conf->global->PROJECT_HIDE_TASKS)?1:0, 1);
+print $form->selectyesno('PROJECT_USE_TASKS', empty($conf->global->PROJECT_HIDE_TASKS)?1:0, 1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" name="modifyPROJECT_USE_TASKS" value="'.$langs->trans("Modify").'">';
 print "</td>";
@@ -459,7 +459,7 @@ foreach ($dirmodels as $reldir)
 						}
 
 						print '<td align="center">';
-						print Form::textwithpicto('',$htmltooltip,1,0);
+						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
 						print '</tr>';
@@ -563,7 +563,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 							}
 
 							print '<td align="center">';
-							print Form::textwithpicto('',$htmltooltip,1,0);
+							print $form->textwithpicto('',$htmltooltip,1,0);
 							print '</td>';
 
 							print '</tr>';
@@ -707,7 +707,7 @@ foreach ($dirmodels as $reldir)
 								$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 
 								print '<td align="center">';
-								print Form::textwithpicto('',$htmltooltip,1,0);
+								print $form->textwithpicto('',$htmltooltip,1,0);
 								print '</td>';
 
 								// Preview
@@ -866,7 +866,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
 
 									print '<td align="center">';
-									print Form::textwithpicto('',$htmltooltip,1,0);
+									print $form->textwithpicto('',$htmltooltip,1,0);
 									print '</td>';
 
 									// Preview
@@ -928,7 +928,7 @@ else
 		'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 		'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print Form::selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT",$arrval,$conf->global->PROJECT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_PROJECT_USE_SEARCH_TO_SELECT",$arrval,$conf->global->PROJECT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";

@@ -286,7 +286,7 @@ if ($action == 'create')
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">';
-	$formbank->selectTypeOfBankAccount(isset($_POST["type"])?$_POST["type"]:1,"type");
+	$formbank->selectTypeOfBankAccount(isset($_POST["type"])?$_POST["type"]: Account::TYPE_CURRENT,"type");
 	print '</td></tr>';
 
 	// Currency
@@ -302,7 +302,7 @@ if ($action == 'create')
 	// Status
     print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
     print '<td colspan="3">';
-    print Form::selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+    print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
     print '</td></tr>';
 
     // Country
@@ -365,7 +365,7 @@ if ($action == 'create')
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td colspan="3">';
-	Form::selectDate('', 're', 0, 0, 0, 'formsoc');
+	$form->select_date('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -377,7 +377,7 @@ if ($action == 'create')
 	print '</table>';
 	print '<br>';
 
-	if ($_POST["type"] == 0 || $_POST["type"] == 1)
+	if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT)
 	{
 		print '<table class="border" width="100%">';
 
@@ -447,9 +447,8 @@ if ($action == 'create')
 				}
 			}
 		}
-		$ibankey="IBANNumber";
+		$ibankey = FormBank::getIBANLabel($account);
 		$bickey="BICNumber";
-		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 		// IBAN
@@ -558,7 +557,7 @@ else
 		*/
 		if ($action == 'delete')
 		{
-			print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
 
 		}
 
@@ -569,7 +568,7 @@ else
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
-		print Form::showrefnav($account, 'ref', $linkback, 1, 'ref');
+		print $form->showrefnav($account, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label
@@ -711,9 +710,8 @@ else
 				}
 			}
 
-			$ibankey="IBANNumber";
+			$ibankey = FormBank::getIBANLabel($account);
 			$bickey="BICNumber";
-			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
@@ -861,7 +859,7 @@ else
 		// Status
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
         print '<td colspan="3">';
-        print Form::selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+        print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
         print '</td></tr>';
 
 		// Country
@@ -929,7 +927,7 @@ else
 		print '</table>';
 		print '<br>';
 
-		if ($_POST["type"] == 0 || $_POST["type"] == 1)
+		if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT)
 		{
 			print '<table class="border" width="100%">';
 
@@ -1000,9 +998,8 @@ else
 				}
 			}
 
-			$ibankey="IBANNumber";
+			$ibankey = FormBank::getIBANLabel($account);
 			$bickey="BICNumber";
-			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			// IBAN
@@ -1033,36 +1030,20 @@ else
 		print '<table class="border" width="100%">';
 
 		// Accountancy code
-		if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
-		{
-			if (! empty($conf->accounting->enabled))
-			{
-				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>';
-				print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
-				print '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST("account_number"):$account->account_number).'"></td></tr>';
-			}
+		$tdextra = '';
+
+		if (!empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+			$tdextra = ' class="fieldrequired"';
 		}
-		else
-		{
-			if (! empty($conf->accounting->enabled))
-			{
-				print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>';
-				print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
-				print '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST("account_number"):$account->account_number).'"></td></tr>';
-			}
+
+		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3"'.$tdextra.'>';
+		if (!empty($conf->accounting->enabled)) {
+			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+		} else {
+			print '<input type="text" name="account_number" value="'.(GETPOST("account_number") ? GETPOST("account_number") : $account->account_number).'">';
 		}
+		print '</td></tr>';
 
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))

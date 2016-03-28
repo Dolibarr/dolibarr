@@ -221,7 +221,7 @@ if ($result) {
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";
