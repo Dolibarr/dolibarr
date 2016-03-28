@@ -68,18 +68,19 @@ class AccountingAccount extends CommonObject
 		global $conf;
 		
 		if ($rowid || $account_number) {
-			$sql  = "SELECT a.rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
 			$sql .= ", ac.rowid, ac.label as category_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a, " . MAIN_DB_PREFIX . "c_accounting_category as ac";
-			$sql .= " WHERE ";
+			$sql .= " WHERE a.fk_accounting_category = ac.rowid";
 			if ($rowid) {
-				$sql .= " a.rowid = '" . $rowid . "'";
+				$sql .= " AND a.rowid = '" . $rowid . "'";
 			} elseif ($account_number) {
-				$sql .= " a.account_number = '" . $account_number . "'";
+				$sql .= " AND a.account_number = '" . $account_number . "'";
 			}
 			if (! empty($limittocurentchart)) {
 				$sql .= ' AND a.fk_pcg_version IN (SELECT a.pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system as as WHERE as.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
 			}
+
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {

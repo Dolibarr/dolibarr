@@ -52,7 +52,7 @@ class FormAccounting
      * 	@param	int		$help			Add or not the admin help picto
      * 	@return	void
      */
-    function select_accounting_category($selected='',$htmlname='actioncode', $useempty=0, $maxlen=64, $help=1)
+    function select_accounting_category($selected='',$htmlname='account_category', $useempty=0, $maxlen=64, $help=1)
     {
         global $db,$langs,$user,$mysoc;
 
