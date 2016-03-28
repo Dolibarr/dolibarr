@@ -1,6 +1,6 @@
-<?PHP
+<?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/card.php
- * \ingroup Accounting Expert
- * \brief Card accounting account
+ * \file 		htdocs/accountancy/admin/card.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Card of accounting account
  */
 require '../../main.inc.php';
 
@@ -55,11 +55,14 @@ if ($action == 'add') {
 		dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 		$result = $db->query($sql);
 		$obj = $db->fetch_object($result);
+
+		// Clean code
+		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
 		
 		$accounting->fk_pcg_version = $obj->pcg_version;
 		$accounting->pcg_type = GETPOST('pcg_type');
 		$accounting->pcg_subtype = GETPOST('pcg_subtype');
-		$accounting->account_number = GETPOST('account_number');
+		$accounting->account_number = $account_number;
 		$accounting->account_parent = GETPOST('account_parent', 'int');
 		$accounting->label = GETPOST('label', 'alpha');
 		$accounting->active = 1;
@@ -89,10 +92,13 @@ if ($action == 'add') {
 		$result2 = $db->query($sql);
 		$obj = $db->fetch_object($result2);
 		
+		// Clean code
+		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
+		
 		$accounting->fk_pcg_version = $obj->pcg_version;
 		$accounting->pcg_type = GETPOST('pcg_type');
 		$accounting->pcg_subtype = GETPOST('pcg_subtype');
-		$accounting->account_number = GETPOST('account_number');
+		$accounting->account_number = $account_number;
 		$accounting->account_parent = GETPOST('account_parent', 'int');
 		$accounting->label = GETPOST('label', 'alpha');
 		
