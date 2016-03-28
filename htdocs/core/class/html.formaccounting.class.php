@@ -17,7 +17,7 @@
 
 /**
  *	\file       htdocs/core/class/html.formaccounting.class.php
- *  \ingroup    core
+ *  \ingroup    Advanced accountancy
  *	\brief      File of class with all html predefined components
  */
 
@@ -93,8 +93,8 @@ class FormAccounting
                 while ($i < $num)
                 {
                     $obj = $db->fetch_object($resql);
-                    print '<option value="'.$obj->id.'"';
-                    if ($obj->id == $selected) print ' selected';
+                    print '<option value="'.$obj->rowid.'"';
+                    if ($obj->rowid == $selected) print ' selected';
                     print '>'.dol_trunc($obj->type,$maxlen);
 					print ' ('.$obj->range.')';
                     $i++;
