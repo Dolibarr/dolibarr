@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014 	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
@@ -41,6 +41,7 @@ class AccountingAccount extends CommonObject
 	var $pcg_subtype;
 	var $account_number;
 	var $account_parent;
+	var $account_category;
 	var $label;
 	var $fk_user_author;
 	var $fk_user_modif;
@@ -67,16 +68,19 @@ class AccountingAccount extends CommonObject
 		global $conf;
 		
 		if ($rowid || $account_number) {
-			$sql = "SELECT rowid, datec, tms, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, fk_user_author, fk_user_modif, active";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account WHERE";
+			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.pcg_subtype, a.account_number, a.account_parent, a.label, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active";
+			$sql .= ", ac.rowid, ac.label as category_label";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as a, " . MAIN_DB_PREFIX . "c_accounting_category as ac";
+			$sql .= " WHERE a.fk_accounting_category = ac.rowid";
 			if ($rowid) {
-				$sql .= " rowid = '" . $rowid . "'";
+				$sql .= " AND a.rowid = '" . $rowid . "'";
 			} elseif ($account_number) {
-				$sql .= " account_number = '" . $account_number . "'";
+				$sql .= " AND a.account_number = '" . $account_number . "'";
 			}
 			if (! empty($limittocurentchart)) {
-				$sql .= ' AND fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+				$sql .= ' AND a.fk_pcg_version IN (SELECT a.pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system as as WHERE as.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
 			}
+
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
@@ -93,6 +97,8 @@ class AccountingAccount extends CommonObject
 					$this->account_number = $obj->account_number;
 					$this->account_parent = $obj->account_parent;
 					$this->label = $obj->label;
+					$this->fk_accounting_category = $obj->fk_accounting_category;
+					$this->accounting_category_label = $obj->category_label;
 					$this->fk_user_author = $obj->fk_user_author;
 					$this->fk_user_modif = $obj->fk_user_modif;
 					$this->active = $obj->active;
@@ -153,6 +159,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", account_number";
 		$sql .= ", account_parent";
 		$sql .= ", label";
+		$sql .= ", fk_accounting_account";
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
 		
@@ -166,6 +173,7 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (! isset($this->account_number) ? 'NULL' : "'" . $this->account_number . "'");
 		$sql .= ", " . (! isset($this->account_parent) ? 'NULL' : "'" . $this->db->escape($this->account_parent) . "'");
 		$sql .= ", " . (! isset($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
+		$sql .= ", " . (! isset($this->account_category) ? 'NULL' : "'" . $this->db->escape($this->account_category) . "'");
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : "'" . $this->db->escape($this->active) . "'");
 		
@@ -226,6 +234,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , account_number = '" . $this->account_number . "'";
 		$sql .= " , account_parent = '" . $this->account_parent . "'";
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
+		$sql .= " , fk_accounting_category = '" . $this->account_category . "'";
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = '" . $this->active . "'";
 		

@@ -1,6 +1,6 @@
-<?PHP
+<?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
@@ -61,6 +62,7 @@ if ($action == 'add') {
 		$accounting->pcg_subtype = GETPOST('pcg_subtype');
 		$accounting->account_number = GETPOST('account_number');
 		$accounting->account_parent = GETPOST('account_parent', 'int');
+		$accounting->account_category = GETPOST('account_category', 'int');
 		$accounting->label = GETPOST('label', 'alpha');
 		$accounting->active = 1;
 		
@@ -94,6 +96,7 @@ if ($action == 'add') {
 		$accounting->pcg_subtype = GETPOST('pcg_subtype');
 		$accounting->account_number = GETPOST('account_number');
 		$accounting->account_parent = GETPOST('account_parent', 'int');
+		$accounting->account_category = GETPOST('account_category', 'int');
 		$accounting->label = GETPOST('label', 'alpha');
 		
 		$result = $accounting->update($user);
@@ -131,7 +134,9 @@ llxheader('', $langs->trans('AccountAccounting'));
 
 $form = new Form($db);
 $htmlacc = new FormVentilation($db);
+$formaccounting = new FormAccounting($db);
 
+// Create mode
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans('NewAccount'));
 	
@@ -142,19 +147,34 @@ if ($action == 'create') {
 	dol_fiche_head();
 	
 	print '<table class="border" width="100%">';
-	
+
+	// Account number
 	print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 	print '<td><input name="account_number" size="30" value="' . $accounting->account_number . '"</td></tr>';
+
+	// Label
 	print '<tr><td><span class="fieldrequired">' . $langs->trans("Label") . '</span></td>';
 	print '<td><input name="label" size="70" value="' . $accounting->label . '"</td></tr>';
+
+	// Account parent
 	print '<tr><td>' . $langs->trans("Accountparent") . '</td>';
 	print '<td>';
 	print $htmlacc->select_account($accounting->account_parent, 'account_parent', 1);
 	print '</td></tr>';
+
+	// Category
+	print '<tr><td>' . $langs->trans("AccountingCategory") . '</td>';
+	print '<td>';
+	$formaccounting->select_accounting_category($accounting->fk_accounting_category, 'account_category', 1);
+	print '</td></tr>';
+
+	// Chart of accounts type
 	print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 	print '<td>';
 	print $htmlacc->select_pcgtype($accounting->pcg_type, 'pcg_type');
 	print '</td></tr>';
+
+	// Chart of acounts subtype
 	print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 	print '<td>';
 	print $htmlacc->select_pcgsubtype($accounting->pcg_subtype, 'pcg_subtype');
@@ -180,6 +200,7 @@ if ($action == 'create') {
 		
 		$head = accounting_prepare_head($accounting);
 		
+		// Edit mode
 		if ($action == 'update') {
 			$soc = new Societe($db);
 			if ($object->socid) {
@@ -195,18 +216,33 @@ if ($action == 'create') {
 			
 			print '<table class="border" width="100%">';
 			
+			// Account number
 			print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 			print '<td><input name="account_number" size="30" value="' . $accounting->account_number . '"</td></tr>';
+			
+			// Label
 			print '<tr><td><span class="fieldrequired">' . $langs->trans("Label") . '</span></td>';
 			print '<td><input name="label" size="70" value="' . $accounting->label . '"</td></tr>';
+			
+			// Account parent
 			print '<tr><td>' . $langs->trans("Accountparent") . '</td>';
 			print '<td>';
 			print $htmlacc->select_account($accounting->account_parent, 'account_parent', 1);
 			print '</td></tr>';
+
+			// Category
+            print '<tr><td>'.$langs->trans("AccountingCategory").'</td>';
+			print '<td>';
+            $formaccounting->select_accounting_category($accounting->fk_accounting_category, 'account_category', 1);
+            print '</td></tr>';
+
+			// Chart of accounts type
 			print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 			print '<td>';
 			print $htmlacc->select_pcgtype($accounting->pcg_type, 'pcg_type');
 			print '</td></tr>';
+
+			// Chart of accounts subtype
 			print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 			print '<td>';
 			print $htmlacc->select_pcgsubtype($accounting->pcg_subtype, 'pcg_subtype');
@@ -224,6 +260,8 @@ if ($action == 'create') {
 			
 			print '</form>';
 		} else {
+			
+			// View mode
 			$linkback = '<a href="../admin/account.php">' . $langs->trans("BackToChartofaccounts") . '</a>';
 			
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
@@ -234,23 +272,31 @@ if ($action == 'create') {
 			print '<tr><td width="25%">' . $langs->trans("AccountNumber") . '</td>';
 			print '<td>' . $accounting->account_number . '</td>';
 			print '<td align="right" width="25%">' . $linkback . '</td></tr>';
-			
+
+			// Label
 			print '<tr><td>' . $langs->trans("Label") . '</td>';
 			print '<td colspan="2">' . $accounting->label . '</td></tr>';
-			
+
+			// Account parent
 			$accp = new AccountingAccount($db);
 			if (! empty($accounting->account_parent)) {
 				$accp->fetch($accounting->account_parent, '');
 			}
 			print '<tr><td>' . $langs->trans("Accountparent") . '</td>';
 			print '<td colspan="2">' . $accp->account_number . ' - ' . $accp->label . '</td></tr>';
-			
+
+			// Category
+			print "<tr><td>".$langs->trans("AccountingCategory")."</td><td colspan='2'>".$accounting->accounting_category_label."</td>";
+
+			// Chart of accounts type
 			print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 			print '<td colspan="2">' . $accounting->pcg_type . '</td></tr>';
-			
+
+			// Chart of accounts subtype
 			print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 			print '<td colspan="2">' . $accounting->pcg_subtype . '</td></tr>';
-			
+
+			// Active
 			print '<tr><td>' . $langs->trans("Activated") . '</td>';
 			print '<td colspan="2">';
 			
@@ -267,7 +313,7 @@ if ($action == 'create') {
 			dol_fiche_end();
 			
 			/*
-			 * Barre d'actions
+			 * Actions buttons
 			 */
 			
 			print '<div class="tabsAction">';
