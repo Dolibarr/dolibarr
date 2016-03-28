@@ -326,7 +326,7 @@ ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
 
 DELETE FROM llx_menu where module='expensereport';
 
-CREATE TABLE llx_c_accountancy_category (
+CREATE TABLE llx_c_accounting_category (
   rowid 		integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   code 			varchar(16) NOT NULL,
   label 		varchar(255) NOT NULL,
@@ -336,4 +336,4 @@ CREATE TABLE llx_c_accountancy_category (
   active 		integer DEFAULT 1
 ) ENGINE=innodb;
 
-ALTER TABLE llx_c_accountancy_category ADD UNIQUE INDEX uk_c_accountancy_category(code);
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);

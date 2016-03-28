@@ -14,8 +14,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table with templates of emails
+-- Table with category for accounting account
 -- ===================================================================
 
-ALTER TABLE llx_c_accountancy_category ADD UNIQUE INDEX uk_c_accountancy_category(code);
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
 

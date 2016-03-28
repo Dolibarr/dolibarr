@@ -14,10 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table with templates of emails
+-- Table with category for accounting account
 -- ===================================================================
 
-CREATE TABLE llx_c_accountancy_category (
+CREATE TABLE llx_c_accounting_category (
   rowid 		integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   code 			varchar(16) NOT NULL,
   label 		varchar(255) NOT NULL,
