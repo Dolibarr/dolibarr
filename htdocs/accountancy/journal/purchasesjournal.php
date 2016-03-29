@@ -220,7 +220,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_doc = $key;
 					$bookkeeping->fk_docdet = $val["fk_facturefourndet"];
 					$bookkeeping->code_tiers = '';
-					$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name,16)). ' - ' . $invoicestatic->refsupplier  . ' - ' . utf8_decode ( utf8_decode ( $accountingaccount->label));
+					$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name,16)). ' - ' . $invoicestatic->refsupplier  . ' - ' . utf8_decode($accountingaccount->label);
 					$bookkeeping->numero_compte = $k;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
