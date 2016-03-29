@@ -323,3 +323,17 @@ ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ttc double(24,8
 ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
+
+DELETE FROM llx_menu where module='expensereport';
+
+CREATE TABLE llx_c_accounting_category (
+  rowid 		integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code 			varchar(16) NOT NULL,
+  label 		varchar(255) NOT NULL,
+  range 		varchar(255) NOT NULL,
+  position    	integer DEFAULT 0,
+  fk_country 	integer DEFAULT NULL,			-- This category is dedicated to a country
+  active 		integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);

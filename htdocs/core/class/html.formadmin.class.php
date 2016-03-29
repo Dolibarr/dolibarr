@@ -47,17 +47,18 @@ class FormAdmin
 	/**
 	 *    	Return html select list with available languages (key='en_US', value='United States' for example)
 	 *
-	 *    	@param      string		$selected       Langue pre-selectionnee
-	 *    	@param      string		$htmlname       Nom de la zone select
-	 *    	@param      int			$showauto       Affiche choix auto
+	 *    	@param      string		$selected       Language pre-selected
+	 *    	@param      string		$htmlname       Name of HTML select
+	 *    	@param      int			$showauto       Show 'auto' choice
 	 * 		@param		array		$filter			Array of keys to exclude in list
 	 * 		@param		int			$showempty		Add empty value
 	 *      @param      int			$showwarning    Show a warning if language is not complete
 	 *      @param		int			$disabled		Disable edit of select
 	 *      @param		string		$morecss		Add more css styles
+	 *      @param      int         $showcode       Add language code into label
 	 *      @return		string						Return HTML select string with list of languages
 	 */
-	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=0,$showempty=0,$showwarning=0,$disabled=0,$morecss='')
+	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=null,$showempty=0,$showwarning=0,$disabled=0,$morecss='',$showcode=0)
 	{
 		global $langs;
 
@@ -84,6 +85,9 @@ class FormAdmin
 		$uncompletelanguages=array('da_DA','fi_FI','hu_HU','is_IS','pl_PL','ro_RO','ru_RU','sv_SV','tr_TR','zh_CN');
 		foreach ($langs_available as $key => $value)
 		{
+		    $valuetoshow=$value;
+		    if ($showcode) $valuetoshow=$key.' - '.$value;
+		    
 		    if ($showwarning && in_array($key,$uncompletelanguages))
 		    {
 		        //$value.=' - '.$langs->trans("TranslationUncomplete",$key);
@@ -92,16 +96,16 @@ class FormAdmin
 			{
 				if ( ! array_key_exists($key, $filter))
 				{
-					$out.= '<option value="'.$key.'">'.$value.'</option>';
+					$out.= '<option value="'.$key.'">'.$valuetoshow.'</option>';
 				}
 			}
 			else if ($selected == $key)
 			{
-				$out.= '<option value="'.$key.'" selected>'.$value.'</option>';
+				$out.= '<option value="'.$key.'" selected>'.$valuetoshow.'</option>';
 			}
 			else
 			{
-				$out.= '<option value="'.$key.'">'.$value.'</option>';
+				$out.= '<option value="'.$key.'">'.$valuetoshow.'</option>';
 			}
 		}
 		$out.= '</select>';

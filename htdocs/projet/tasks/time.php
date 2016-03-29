@@ -299,25 +299,28 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			/*
 			 * Actions
 			 */
-			print '<div class="tabsAction">';
-			
-			if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+			if (empty($id))
 			{
-			    if ($object->public || $userWrite > 0)
-			    {
-			        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
-			    }
-			    else
-			    {
-			        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-			    }
+    			print '<div class="tabsAction">';
+    			
+    			if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+    			{
+    			    if ($object->public || $userWrite > 0)
+    			    {
+    			        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
+    			    }
+    			    else
+    			    {
+    			        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
+    			    }
+    			}
+    			else
+    			{
+    			    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
+    			}
+    			
+    			print '</div>';
 			}
-			else
-			{
-			    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
-			}
-			
-			print '</div>';			
 		}
 	}
 	
