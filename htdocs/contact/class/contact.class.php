@@ -443,6 +443,7 @@ class Contact extends CommonObject
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
+		$sql.= ", photo = ".($this->photo? "'".$this->photo."'" : "null");
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql.= " WHERE rowid=".$this->db->escape($id);
 
