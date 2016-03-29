@@ -438,6 +438,9 @@ th .button {
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
 }
+.soixantepercent {
+	width: 60%;
+}
 textarea.centpercent {
 	width: 96%;
 }
@@ -3832,7 +3835,7 @@ dl.dropdown {
     position:absolute;
     top:2px;
     list-style:none;
-    max-height: 200px;
+    max-height: 300px;
     overflow: auto;
 }
 .dropdown span.value {
