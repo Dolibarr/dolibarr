@@ -23,6 +23,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 $langs->load("companies");
 $langs->load("products");
@@ -107,6 +108,8 @@ if ($action == 'delete')
  * View
  */
 
+$formadmin = new FormAdmin($db);
+
 $wikihelp='EN:Setup|FR:Paramétrage|ES:Configuración';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
@@ -146,7 +149,10 @@ print "</tr>\n";
 $var=false;
 print "\n";
 
-print '<tr '.$bc[$var].'><td><input type="text" class="flat" size="24" name="langcode" value="'.GETPOST('langcode').'"></td>'."\n";
+print '<tr '.$bc[$var].'><td>';
+print $formadmin->select_language(GETPOST('langcode'),'langcode',0,null,1,0,0,'',1);
+//print '<input type="text" class="flat" size="24" name="langcode" value="'.GETPOST('langcode').'">';
+print '</td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="30" name="transkey" value="">';
 print '</td><td>';
