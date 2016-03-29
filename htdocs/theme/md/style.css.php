@@ -2134,7 +2134,9 @@ div.pagination li.pagination span {
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
+  color: #ccc;
 }
+
 div.pagination li.litext a {
 border: none;
   padding-right: 10px;
