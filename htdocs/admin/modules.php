@@ -302,7 +302,7 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Nature') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Standard"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
+    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.=' ';
     $moreforfilter.='<div class="divsearchfield">';
