@@ -33,19 +33,8 @@ global $user;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
-echo '<br>';
-print load_fiche_titre($langs->trans('RelatedCommercialProposals'), '', '');
-?>
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td><?php echo $langs->trans('RefCustomer'); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
-	<td></td>
-</tr>
-<?php
+$langs->load("propal");
+
 $var=true;
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
@@ -53,6 +42,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> >
+    <td><?php echo $langs->trans("Proposal"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td><?php echo $objectlink->ref_client; ?></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
@@ -66,17 +56,6 @@ foreach($linkedObjectBlock as $key => $objectlink)
 </tr>
 <?php
 }
-
 ?>
-<tr class="liste_total">
-	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php
-		if ($user->rights->propale->lire) {
-			echo price($total);
-		} ?></td>
-	<td></td>
-	<td></td>
-</tr>
-</table>
 
 <!-- END PHP TEMPLATE -->

@@ -746,6 +746,7 @@ TooManyRecordForMassAction=Too many records selected for mass action. Such actio
 MassFilesArea=Area for files built by mass actions
 HideTempMassFilesArea=Hide area of files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
+RelatedObjects=Related Objects
 # Week day
 Monday=Monday
 Tuesday=Tuesday

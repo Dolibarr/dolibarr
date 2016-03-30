@@ -5101,7 +5101,8 @@ class Form
         if (empty($reshook))
         {
         	$num = count($object->linkedObjects);
-
+            $numoutput=0;
+            
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
         		$tplpath = $element = $subelement = $objecttype;
@@ -5152,6 +5153,26 @@ class Form
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
+        		if (empty($numoutput))
+        		{
+        		    $numoutput++;
+        		    
+        		    echo '<br>';
+        		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
+        		    
+        		    print '<table class="noborder allwidth">';
+
+        		    print '<tr class="liste_titre">';
+        			print '<td>'.$langs->trans("Type").'</td>';
+        			print '<td>'.$langs->trans("Ref").'</td>';
+        			print '<td align="center"></td>';
+        			print '<td align="center">'.$langs->trans("Date").'</td>';
+        			print '<td align="right">'.$langs->trans("AmountHTShort").'</td>';
+        			print '<td align="right">'.$langs->trans("Status").'</td>';
+        			print '<td></td>';
+        		    print '</tr>';
+        		}
+        		        		
         		// Output template part (modules that overwrite templates must declare this into descriptor)
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
@@ -5161,6 +5182,11 @@ class Form
         		}
         	}
 
+        	if ($numoutput) 
+        	{
+        	    print '</table>';
+        	}
+        	    
         	return $num;
         }
     }
