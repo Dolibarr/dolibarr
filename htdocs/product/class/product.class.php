@@ -4124,8 +4124,8 @@ class Product extends CommonObject
 			}
 
 			//Little check to make sure the price is modified before triggering generation
-			$check_amount = $price == $this->multiprices[$i] && ($price_min == $this->multiprices_min[$i]);
-			$check_type = $baseprice == $this->multiprices_base_type[$i];
+			$check_amount = (($price == $this->multiprices[$i]) && ($price_min == $this->multiprices_min[$i]));
+			$check_type = ($baseprice == $this->multiprices_base_type[$i]);
 
 			if ($check_amount && $check_type) {
 				continue;
