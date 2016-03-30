@@ -64,8 +64,9 @@ $object_statut=GETPOST('propal_statut');
 
 $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
-$year=GETPOST("year");
-$month=GETPOST("month");
+$day=GETPOST("day","int");
+$year=GETPOST("year","int");
+$month=GETPOST("month","int");
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -109,6 +110,7 @@ if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both 
     $search_town='';
     $year='';
     $month='';
+    $day='';
 	$viewstatut='';
 	$object_statut='';
 }
@@ -349,6 +351,7 @@ if ($result)
 	// Date
 	print '<td class="liste_titre" colspan="1" align="center">';
 	//print $langs->trans('Month').': ';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
