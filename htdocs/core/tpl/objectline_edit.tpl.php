@@ -274,6 +274,10 @@ if (! empty($conf->margin->enabled))
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
+		jQuery("#qty").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
 		jQuery("#remise_percent").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
@@ -322,7 +326,7 @@ if (! empty($conf->margin->enabled))
 
 		/* Add rules to reset price_ht from margin info */
 		<?php
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
 		{
 		?>
 			$('#savelinebutton').click(function (e) {
@@ -334,7 +338,7 @@ if (! empty($conf->margin->enabled))
 			});*/
 		<?php
 		}
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
+		if (! empty($conf->global->DISPLAY_MARK_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
 		{
 		?>
 			$('#savelinebutton').click(function (e) {
