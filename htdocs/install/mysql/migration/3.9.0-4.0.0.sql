@@ -326,6 +326,8 @@ ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
 
 DELETE FROM llx_menu where module='expensereport';
 
+ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
+
 CREATE TABLE llx_c_accounting_category (
   rowid 		integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   code 			varchar(16) NOT NULL,
