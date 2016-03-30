@@ -303,6 +303,12 @@ select.flat, form.flat select {
 .optiongrey {
 	opacity: 0.5;
 }
+.opacityhigh {
+	opacity: 0.2;
+}
+.opacitytransp {
+	opacity: 0;
+}
 select:invalid { color: gray; }
 input:disabled {
 	background:#ddd;

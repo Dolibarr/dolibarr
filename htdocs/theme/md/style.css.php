@@ -293,6 +293,15 @@ select.flat, form.flat select {
 input:disabled {
 	background:#f4f4f4;
 }
+.optiongrey {
+	opacity: 0.5;
+}
+.opacityhigh {
+	opacity: 0.2;
+}
+.opacitytransp {
+	opacity: 0;
+}
 
 input.liste_titre {
 	box-shadow: none !important;
