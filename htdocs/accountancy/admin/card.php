@@ -63,7 +63,7 @@ if ($action == 'add') {
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
-		$object->account_number = $account_number';
+		$object->account_number = $account_number;
 		$object->account_parent = GETPOST('account_parent', 'int');
 		$object->account_category = GETPOST('account_category');
 		$object->label = GETPOST('label', 'alpha');
