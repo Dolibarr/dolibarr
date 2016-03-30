@@ -18,9 +18,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/card.php
- * \ingroup Accounting Expert
- * \brief Card accounting account
+ * \file 		htdocs/accountancy/admin/card.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Card of accounting account
  */
 require '../../main.inc.php';
 
@@ -56,11 +56,14 @@ if ($action == 'add') {
 		dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 		$result = $db->query($sql);
 		$obj = $db->fetch_object($result);
+
+		// Clean code
+		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
 		
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
-		$object->account_number = GETPOST('account_number');
+		$object->account_number = $account_number';
 		$object->account_parent = GETPOST('account_parent', 'int');
 		$object->account_category = GETPOST('account_category');
 		$object->label = GETPOST('label', 'alpha');
@@ -90,11 +93,14 @@ if ($action == 'add') {
 		dol_syslog('accountancy/admin/card.php:: $sql=' . $sql);
 		$result2 = $db->query($sql);
 		$obj = $db->fetch_object($result2);
+
+		// Clean code
+		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
 		
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
-		$object->account_number = GETPOST('account_number');
+		$object->account_number = $account_number;
 		$object->account_parent = GETPOST('account_parent', 'int');
 		$object->account_category = GETPOST('account_category');
 		$object->label = GETPOST('label', 'alpha');

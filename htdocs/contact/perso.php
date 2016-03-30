@@ -59,7 +59,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact
 		$object->old_name='';
 		$object->old_firstname='';
 		// Logo/Photo save
-		$dir= $conf->societe->dir_output.'/contact/' . get_exdir($object->id,2,0,1,$object,'contact').'/photos';
+		$dir= $conf->societe->dir_output.'/contact/' . get_exdir($object->id,0,0,1,$object,'contact').'/photos';
 		
 		$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 		if ($file_OK)
@@ -68,8 +68,8 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact
 			if (GETPOST('deletephoto'))
 			{
 				require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-				$fileimg=$conf->societe->dir_output.'/contact/'.get_exdir($object->id,2,0,1,$object,'contact').'/photos/'.$object->photo;
-				$dirthumbs=$conf->societe->dir_output.'/contact/'.get_exdir($object->id,2,0,1,$object,'contact').'/photos/thumbs';
+				$fileimg=$conf->societe->dir_output.'/contact/'.get_exdir($object->id,0,0,1,$object,'contact').'/photos/'.$object->photo;
+				$dirthumbs=$conf->societe->dir_output.'/contact/'.get_exdir($object->id,0,0,1,$object,'contact').'/photos/thumbs';
 				dol_delete_file($fileimg);
 				dol_delete_dir_recursive($dirthumbs);
 			}
