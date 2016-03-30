@@ -21,6 +21,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- Drop old table not used (Informations are already presents in llx_accounting_bookkeeping)
+DROP TABLE llx_accountingtransaction;
+DROP TABLE llx_accountingdebcred;
 
 -- Already into 3.9 but we do it again to be sure
 ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
