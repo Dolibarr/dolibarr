@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /* Copyright (C) 2007-2010	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2007-2010	Jean Heimburger		<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
@@ -123,7 +123,7 @@ if ($result) {
 	$i = 0;
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
-		// contrôles
+		// contr�les
 		$compta_soc = (! empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
