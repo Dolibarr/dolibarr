@@ -2,6 +2,8 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Charlie Benke			<charlie@patas-monkey.com>
+
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,7 +293,7 @@ if ($id > 0 || ! empty($ref))
 		 * Lignes de contacts
 		 */
 		print '<br>';
-/*
+
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/core/tpl'));
 		foreach($dirtpls as $reldir)
@@ -299,191 +301,6 @@ if ($id > 0 || ! empty($ref))
 		    $res=@include dol_buildpath($reldir.'/contacts.tpl.php');
 		    if ($res) break;
 		}
-*/
-
-		/*
-		 * Add a new contact line
-		 * Non affiche en mode modification de ligne
-		 */
-		print '<table class="noborder" width="100%">';
-
-		if ($action != 'editline' && $user->rights->projet->creer)
-		{
-			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans("Source").'</td>';
-			print '<td>'.$langs->trans("ThirdParty").'</td>';
-			print '<td>'.$langs->trans("ProjectContact").'</td>';
-			print '<td>'.$langs->trans("ContactType").'</td>';
-			print '<td colspan="3">&nbsp;</td>';
-			print "</tr>\n";
-
-			$var = false;
-
-			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">';
-			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-			print '<input type="hidden" name="action" value="addcontact">';
-			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-			if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-
-			// Ligne ajout pour contact interne
-			print "<tr ".$bc[$var].">";
-
-			print '<td class="nowrap">';
-			print img_object('','user').' '.$langs->trans("Users");
-			print '</td>';
-
-			print '<td colspan="1">';
-			print $conf->global->MAIN_INFO_SOCIETE_NOM;
-			print '</td>';
-
-			print '<td colspan="1">';
-			// On recupere les id des users deja selectionnes
-			if ($object->project->public) $contactsofproject='';	// Everybody
-			else $contactsofproject=$projectstatic->getListContactId('internal');
-			print $form->select_dolusers((GETPOST('contactid')?GETPOST('contactid'):$user->id), 'contactid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 1, $langs->trans("ResourceNotAssignedToProject"));
-			print '</td>';
-			print '<td>';
-			$formcompany->selectTypeContact($object, '', 'type','internal','rowid');
-			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-			print '</tr>';
-
-			print '</form>';
-
-			// Line to add an external contact. Only if project linked to a third party.
-			if ($projectstatic->socid)
-			{
-				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-				print '<input type="hidden" name="action" value="addcontact">';
-				print '<input type="hidden" name="source" value="external">';
-				print '<input type="hidden" name="id" value="'.$object->id.'">';
-				if ($withproject) print '<input type="hidden" name="withproject" value="'.$withproject.'">';
-
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
-
-				print '<td class="nowrap">';
-				print img_object('','contact').' '.$langs->trans("ThirdPartyContacts");
-				print '</td>';
-
-				print '<td colspan="1">';
-				$thirdpartyofproject=$projectstatic->getListContactId('thirdparty');
-				$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$projectstatic->societe->id;
-				$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $thirdpartyofproject, 0, '&withproject='.$withproject);
-				print '</td>';
-
-				print '<td colspan="1">';
-				$contactofproject=$projectstatic->getListContactId('external');
-				$nbofcontacts=$form->select_contacts($selectedCompany,'','contactid',0,'',$contactofproject);
-				print '</td>';
-				print '<td>';
-				$formcompany->selectTypeContact($object, '', 'type','external','rowid');
-				print '</td>';
-				print '<td align="right" colspan="3" ><input type="submit" class="button" id="add-customer-contact" value="'.$langs->trans("Add").'"';
-				if (! $nbofcontacts) print ' disabled';
-				print '></td>';
-				print '</tr>';
-
-				print "</form>";
-			}
-		}
-
-		// Liste des contacts lies
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Source").'</td>';
-		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		print '<td>'.$langs->trans("ProjectContact").'</td>';
-		print '<td>'.$langs->trans("ContactType").'</td>';
-		print '<td align="center">'.$langs->trans("Status").'</td>';
-		print '<td colspan="2">&nbsp;</td>';
-		print "</tr>\n";
-
-		$companystatic = new Societe($db);
-		$var = true;
-
-		foreach(array('internal','external') as $source)
-		{
-			$tab = $object->liste_contact(-1,$source);
-			$num=count($tab);
-
-			$i = 0;
-			while ($i < $num)
-			{
-				$var = !$var;
-
-				print '<tr '.$bc[$var].' valign="top">';
-
-				// Source
-				print '<td align="left">';
-				if ($tab[$i]['source']=='internal') print $langs->trans("User");
-				if ($tab[$i]['source']=='external') print $langs->trans("ThirdPartyContact");
-				print '</td>';
-
-				// Societe
-				print '<td align="left">';
-				if ($tab[$i]['socid'] > 0)
-				{
-					$companystatic->fetch($tab[$i]['socid']);
-					print $companystatic->getNomUrl(1);
-				}
-				if ($tab[$i]['socid'] < 0)
-				{
-					print $conf->global->MAIN_INFO_SOCIETE_NOM;
-				}
-				if (! $tab[$i]['socid'])
-				{
-					print '&nbsp;';
-				}
-				print '</td>';
-
-				// Contact
-				print '<td>';
-                if ($tab[$i]['source']=='internal')
-                {
-                    $userstatic->id=$tab[$i]['id'];
-                    $userstatic->lastname=$tab[$i]['lastname'];
-                    $userstatic->firstname=$tab[$i]['firstname'];
-                    print $userstatic->getNomUrl(1);
-                }
-                if ($tab[$i]['source']=='external')
-                {
-                    $contactstatic->id=$tab[$i]['id'];
-                    $contactstatic->lastname=$tab[$i]['lastname'];
-                    $contactstatic->firstname=$tab[$i]['firstname'];
-                    print $contactstatic->getNomUrl(1);
-                }
-				print '</td>';
-
-				// Type de contact
-				print '<td>'.$tab[$i]['libelle'].'</td>';
-
-				// Statut
-				print '<td align="center">';
-				// Activation desativation du contact
-				if ($object->statut >= 0) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=swapstatut&ligne='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
-				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($object->statut >= 0) print '</a>';
-				print '</td>';
-
-				// Icon update et delete
-				print '<td align="center" class="nowrap">';
-				if ($user->rights->projet->creer)
-				{
-					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&lineid='.$tab[$i]['rowid'].($withproject?'&withproject=1':'').'">';
-					print img_delete();
-					print '</a>';
-				}
-				print '</td>';
-
-				print "</tr>\n";
-
-				$i ++;
-			}
-		}
-		print "</table>";
 
 	}
 	else
@@ -492,7 +309,5 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
 llxFooter();
-
 $db->close();
