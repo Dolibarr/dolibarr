@@ -21,6 +21,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- Drop old table not used (Informations are already presents in llx_accounting_bookkeeping)
+DROP TABLE llx_accountingtransaction;
+DROP TABLE llx_accountingdebcred;
 
 -- Already into 3.9 but we do it again to be sure
 ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
@@ -325,6 +328,8 @@ ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
 
 DELETE FROM llx_menu where module='expensereport';
+
+ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
 
 CREATE TABLE llx_c_accounting_category (
   rowid 		integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
