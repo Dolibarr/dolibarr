@@ -47,3 +47,4 @@ AgentContactTypeDetails=Define what contact type (linked on invoices) will be us
 rateMustBeNumeric=Rate must be a numeric value
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Show margin infos
+CheckMargins=Margins detail
