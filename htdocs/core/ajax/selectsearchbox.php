@@ -71,32 +71,34 @@ if (! empty($conf->user->enabled) && empty($conf->global->MAIN_SEARCHFORM_PROJEC
 	$arrayresult['searchintouser']=array('text'=>img_picto('','object_user').' '.$langs->trans("SearchIntoUsers", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/user/index.php?sall='.urlencode($search_boxvalue));
 }
 
-if (! empty($conf->facture->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire)
+if (! empty($conf->propal->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_PROPAL_DISABLED) && $user->rights->propal->lire)
 {
-	$arrayresult['searchintoinvoice']=array('text'=>img_picto('','object_bill').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php?sall='.urlencode($search_boxvalue));
+    $arrayresult['searchintopropal']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/comm/propal/list.php?sall='.urlencode($search_boxvalue));
 }
-
 if (! empty($conf->commande->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_ORDER_DISABLED) && $user->rights->commande->lire)
 {
 	$arrayresult['searchintoorder']=array('text'=>img_picto('','object_order').' '.$langs->trans("SearchIntoCustomerOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/commande/list.php?sall='.urlencode($search_boxvalue));
 }
-
-if (! empty($conf->propal->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_PROPAL_DISABLED) && $user->rights->propal->lire)
+if (! empty($conf->facture->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire)
 {
-	$arrayresult['searchintopropal']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoCustomerProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/comm/propal/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintoinvoice']=array('text'=>img_picto('','object_bill').' '.$langs->trans("SearchIntoCustomerInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/compta/facture/list.php?sall='.urlencode($search_boxvalue));
+}
+if (! empty($conf->expedition->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED) && $user->rights->expedition->lire)
+{
+    $arrayresult['searchintoshipment']=array('text'=>img_picto('','object_sending').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php?sall='.urlencode($search_boxvalue));
 }
 
-if (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED) && $user->rights->fournisseur->facture->lire)
+if (! empty($conf->supplier_proposal->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->rights->supplier_proposal->lire)
 {
-	$arrayresult['searchintosupplierinvoice']=array('text'=>img_picto('','object_bill').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintosupplierpropal']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/supplier_proposal/list.php?sall='.urlencode($search_boxvalue));
 }
 if (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_ORDER_DISABLED) && $user->rights->fournisseur->commande->lire)
 {
 	$arrayresult['searchintosupplierorder']=array('text'=>img_picto('','object_order').' '.$langs->trans("SearchIntoSupplierOrders", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/commande/list.php?search_all='.urlencode($search_boxvalue));
 }
-if (! empty($conf->supplier_proposal->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_PROPAL_DISABLED) && $user->rights->supplier_proposal->lire)
+if (! empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_SEARCHFORM_SUPPLIER_INVOICE_DISABLED) && $user->rights->fournisseur->facture->lire)
 {
-	$arrayresult['searchintosupplierpropal']=array('text'=>img_picto('','object_propal').' '.$langs->trans("SearchIntoSupplierProposals", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/supplier_proposal/list.php?sall='.urlencode($search_boxvalue));
+	$arrayresult['searchintosupplierinvoice']=array('text'=>img_picto('','object_bill').' '.$langs->trans("SearchIntoSupplierInvoices", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fourn/facture/list.php?sall='.urlencode($search_boxvalue));
 }
 
 if (! empty($conf->contrat->enabled) && empty($conf->global->MAIN_SEARCHFORM_CONTRACT_DISABLED) && $user->rights->contrat->lire)
