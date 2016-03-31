@@ -126,13 +126,13 @@ $fieldstosearchall = array(
 if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 
 
-$checkedtypetiers=1;
+$checkedtypetiers=0;
 $arrayfields=array(
     'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'p.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
-    's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
+    's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
     'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
     'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
