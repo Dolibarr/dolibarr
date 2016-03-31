@@ -586,7 +586,7 @@ class Task extends CommonObject
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
                 $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
             }
-            $sql.= " WHERE p.entity = ".$conf->entity;
+            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
             $sql.= " AND t.fk_projet = p.rowid";
         }
         elseif ($mode == 1)
@@ -607,7 +607,7 @@ class Task extends CommonObject
             {
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
             }
-            $sql.= " WHERE p.entity = ".$conf->entity;
+            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
         }
         else return 'BadValueForParameterMode';
 
