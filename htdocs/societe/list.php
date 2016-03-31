@@ -202,6 +202,7 @@ if (empty($reshook))
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
+    $search_nom='';
     $search_categ='';
     $search_sale='';
 	$search_barcode="";
