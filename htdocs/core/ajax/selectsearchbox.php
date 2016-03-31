@@ -113,7 +113,7 @@ if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFO
 }
 
 
-/* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag 
+/* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag
 if (! empty($conf->hrm->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->hrm->employee->read)
 {
     $langs->load("hrm");
@@ -122,7 +122,7 @@ if (! empty($conf->hrm->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLO
 */
 
 // Execute hook addSearchEntry
-$parameters=array();
+$parameters=array('search_boxvalue'=>$search_boxvalue);
 $reshook=$hookmanager->executeHooks('addSearchEntry',$parameters);
 if (empty($reshook))
 {
