@@ -344,6 +344,7 @@ TotalHTShortCurrency=Total (net in currency)
 TotalTTCShort=Total (inc. tax)
 TotalHT=Total (net of tax)
 TotalHTforthispage=Total (net of tax) for this page
+Totalforthispage=Total for this page
 TotalTTC=Total (inc. tax)
 TotalTTCToYourCredit=Total (inc. tax) to your credit
 TotalVAT=Total tax
