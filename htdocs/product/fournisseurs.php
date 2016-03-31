@@ -102,6 +102,8 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				$object->cost_price = price2num($cost_price);
+                                // Call trigger
+                                $object->call_trigger('PRODUCT_MODIFY',$user);
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			}
 			else
