@@ -913,53 +913,53 @@ else
             if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
             {
                 $langs->load("propal");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddProp").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
             }
             if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
             {
                 $langs->load("orders");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("CreateOrder").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateOrder").'</a></div>';
             }
             if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
             {
                 $langs->load("bills");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
             }
             if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
             {
                 $langs->load("supplier_proposal");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddSupplierProposal").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a></div>';
             }
             if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->creer)
             {
                 $langs->load("suppliers");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddSupplierOrder").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a></div>';
             }
             if (! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->creer)
             {
                 $langs->load("suppliers");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddSupplierInvoice").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a></div>';
             }
             if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
             {
                 $langs->load("interventions");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddIntervention").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a></div>';
             }
             if (! empty($conf->contrat->enabled) && $user->rights->contrat->creer)
             {
                 $langs->load("contracts");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddContract").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddContract").'</a></div>';
             }
             if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
             {
                 $langs->load("expensereports");
                 $langs->load("trips");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddTrip").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
             }
             if (! empty($conf->don->enabled) && $user->rights->don->creer)
             {
                 $langs->load("donations");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$object->id.'">'.$langs->trans("AddDonation").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddDonation").'</a></div>';
             }
         }
         

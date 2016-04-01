@@ -1388,7 +1388,7 @@ if ($action == 'create')
     }
     else
     {
-        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1',1);
+        print $form->select_company(GETPOST('socid','int'), 'socid', 's.fournisseur = 1', 'SelectThirdParty');
     }
     print '</td></tr>';
 
@@ -1502,6 +1502,21 @@ if ($action == 'create')
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id, 'mode_reglement_id', 'DBIT');
 	print '</td></tr>';
 
+    // Bank Account
+    print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
+
+	// Multicurrency
+	if (! empty($conf->multicurrency->enabled))
+	{
+		print '<tr>';
+		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+        print '<td colspan="2" class="maxwidthonsmartphone">';
+	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print '</td></tr>';
+	}
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -1520,21 +1535,6 @@ if ($action == 'create')
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
-		print '</td></tr>';
-	}
-
-    // Bank Account
-    print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
-    print '</td></tr>';
-
-	// Multicurrency
-	if (! empty($conf->multicurrency->enabled))
-	{
-		print '<tr>';
-		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
-        print '<td colspan="2" class="maxwidthonsmartphone">';
-	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
 

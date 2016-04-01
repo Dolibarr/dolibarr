@@ -2381,7 +2381,7 @@ if ($action == 'create')
 	{
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
-		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
+		$numprojet = $formproject->select_projects($socid, $projectid, 'projectid', 0);
 		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td></tr>';
 	}
