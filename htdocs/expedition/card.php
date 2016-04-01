@@ -150,6 +150,7 @@ if (empty($reshook))
 	        $action = 'edit_extras';
 	}
 	
+	// Create shipment
 	if ($action == 'add' && $user->rights->expedition->creer)
 	{
 	    $error=0;
@@ -251,7 +252,7 @@ if (empty($reshook))
 			}
 			else
 			{
-			    //var_dump($_POST); var_dump($batch);
+			    //var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
@@ -283,7 +284,8 @@ if (empty($reshook))
 					if (isset($stockLine[$i]))
 					{
     					//shipment from multiple stock locations
-    					for($j = 0; $j < count($stockLine[$i]); $j++)
+					    $nbstockline = count($stockLine[$i]);
+    					for($j = 0; $j < $nbstockline; $j++)
     					{
     					    if ($stockLine[$i][$j]['qty']>0)
     					    {
@@ -721,6 +723,7 @@ if ($action == 'create')
 
             dol_fiche_end();
 
+            
             // Shipment lines
 
             $numAsked = count($object->lines);
@@ -873,8 +876,9 @@ if ($action == 'create')
                 $warehouse_id = GETPOST('entrepot_id','int');
 			
 				$warehouseObject = null;
-				if ($warehouse_id > 0 || ! ($line->fk_product > 0))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if ($warehouse_id > 0 || ! ($line->fk_product > 0) || empty($conf->stock->enabled))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 				{
+				    print '<!-- Case warehouse already known or product not a predefined product -->';
 					//ship from preselected location
 					$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
 					$deliverableQty=min($quantityToBeDelivered, $stock);
@@ -984,7 +988,8 @@ if ($action == 'create')
 						}
 						else
 						{
-							print '<tr><td colspan="3"></td><td align="center">';
+						    print '<!-- Case -->';
+						    print '<tr><td colspan="3"></td><td align="center">';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							print '</td>';
 							
@@ -1000,10 +1005,11 @@ if ($action == 'create')
 					if (empty($conf->productbatch->enabled) || ! $product->hasbatch())
 					{
 					    print '<td></td><td></td></tr>';	// end line and start a new one for each warehouse
-						
+					    print '<!-- Case warehouse not already known and product does not need lot -->';
+					    	
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						$subj=0;
-						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) 
+						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse)    // $stock_warehouse is product_stock
 						{
 							$warehouseObject=new Entrepot($db);
 							$warehouseObject->fetch($warehouse_id);
@@ -1049,7 +1055,7 @@ if ($action == 'create')
 								print "</tr>\n";
 							}
 						}
-						// Show subproducts of product
+						// Show subproducts of product (not recommanded)
 						if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
 						{
 							$product->get_sousproduits_arbo();
@@ -1116,7 +1122,8 @@ if ($action == 'create')
 					}
 					if ($subj == 0) // Line not shown yet, we show it
 					{
-						print '<tr><td colspan="3" ></td><td align="center"><!-- line not shown yet, we show it -->';
+					    print '<!-- line not shown yet, we show it -->';
+						print '<tr><td colspan="3" ></td><td align="center">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
     						//$disabled='disabled="disabled"';
@@ -1152,7 +1159,8 @@ if ($action == 'create')
 				
 				
 				//Display lines extrafields
-				if (is_array($extralabelslines) && count($extralabelslines)>0) {
+				if (is_array($extralabelslines) && count($extralabelslines)>0) 
+				{
 					$colspan=5;
 					$line = new ExpeditionLigne($db);
 					$line->fetch_optionals($object->id,$extralabelslines);
