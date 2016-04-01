@@ -147,3 +147,4 @@ MailSendSetupIs2=You must first go, with an admin account, into menu %sHome - Se
 MailSendSetupIs3=If you have any questions on how to setup your SMTP server, you can ask to %s.
 YouCanAlsoUseSupervisorKeyword=You can also add the keyword <strong>__SUPERVISOREMAIL__</strong> to have email being sent to the supervisor of user (works only if an email is defined for this supervisor) 
 NbOfTargetedContacts=Current number of targeted contact emails
+MailAdvTargetRecipients=Advance recipients targeting
