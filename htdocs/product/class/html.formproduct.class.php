@@ -165,7 +165,7 @@ class FormProduct
 			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
 			$out.='>';
 			$out.=$arraytypes['label'];
-			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0)) $out.='('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
+			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0))) $out.=' ('.$langs->trans("Stock").':'.$arraytypes['stock'].')';
 			$out.='</option>';
 		}
 		$out.='</select>';

@@ -64,7 +64,7 @@ class FormAccounting
 
         if (! empty($mysoc->country_id))
         {
-            $sql = "SELECT c.rowid, c.label as type, c.range";
+            $sql = "SELECT c.rowid, c.label as type, c.ranges";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
             $sql.= " WHERE c.active = 1";
             $sql.= " AND c.fk_country = ".$mysoc->country_id;
@@ -72,14 +72,14 @@ class FormAccounting
         }
         else
         {
-            $sql = "SELECT c.rowid, c.label as type, c.range";
+            $sql = "SELECT c.rowid, c.label as type, c.ranges";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql.= " WHERE c.active = 1 AND c.fk_country = co.rowid";
             $sql.= " AND co.code = '".$mysoc->country_code."'";
             $sql.= " ORDER BY c.label ASC";
         }
 
-        dol_syslog("Form::select_accounting_category", LOG_DEBUG);
+        dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -96,7 +96,7 @@ class FormAccounting
                     print '<option value="'.$obj->rowid.'"';
                     if ($obj->rowid == $selected) print ' selected';
                     print '>'.dol_trunc($obj->type,$maxlen);
-					print ' ('.$obj->range.')';
+					print ' ('.$obj->ranges.')';
                     $i++;
                 }
                 print '</select>';

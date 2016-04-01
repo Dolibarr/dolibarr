@@ -131,7 +131,10 @@ print '</tr>';
 // Bon de livraison activation/desactivation
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("DeliveriesOrderAbility").'</td>';
+print '<td>';
+print $langs->trans("DeliveriesOrderAbility");
+print '<br>'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1);
+print '</td>';
 print '<td align="center" width="20">';
 print '</td>';
 print '<td align="center" width="100">';
@@ -150,8 +153,6 @@ print '</tr>';
 print '</table>';
 
 print '</div>';
-
-print info_admin($langs->trans("NoNeedForDeliveryReceipts"));
 
 llxFooter();
 $db->close();
