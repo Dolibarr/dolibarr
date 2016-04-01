@@ -2939,6 +2939,68 @@ abstract class CommonObject
         return price2num($total_discount);
     }
 
+    
+    /**
+     * Return into unit=0, the calculated total of weight and volume of all lines * qty
+     * Calculate by adding weight and volume of each product line, so properties ->volume/volume_units/weight/weight_units must be loaded on line.
+     *
+     * @return  array                           array('weight'=>...,'volume'=>...)
+     */
+    function getTotalWeightVolume()
+    {
+        $weightUnit=0;
+        $volumeUnit=0;
+        $totalWeight = '';
+        $totalVolume = '';
+        $totalOrdered = '';     // defined for shipment only
+        $totalToShip = '';      // defined for shipment only
+        
+        foreach ($this->lines as $line)
+        {
+        
+            $totalOrdered+=$line->qty_asked;    // defined for shipment only
+            $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            
+            // Define qty, weight, volume, weight_units, volume_units
+            if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
+            else $qty=$line->qty;
+            $weight=$line->weight;
+            $volume=$line->volume;
+            $weight_units=$line->weight_units;
+            $volume_units=$line->volume_units;
+                        
+            $weightUnit=0;
+            $volumeUnit=0;
+            if (! empty($weight_units)) $weightUnit = $weight_units;
+            if (! empty($volume_units)) $volumeUnit = $volume_units;
+    
+            //var_dump($line->volume_units);
+            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                $trueWeightUnit=pow(10, $weightUnit);
+                $totalWeight += $weight * $qty * $trueWeightUnit;
+            }
+            else
+            {
+                $totalWeight += $weight * $qty;   // This may be wrong if we mix different units
+            }
+            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
+                $trueVolumeUnit=pow(10, $volumeUnit);
+                //print $line->volume;
+                $totalVolume += $volume * $qty * $trueVolumeUnit;
+            }
+            else
+            {
+                $totalVolume += $volume * $qty;   // This may be wrong if we mix different units
+            }
+        }
+        
+        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
+    }    
+    
+    
     /**
      *	Set extra parameters
      *

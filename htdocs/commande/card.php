@@ -1997,6 +1997,19 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
 		print '</tr>';
 
+		if ($soc->outstanding_limit)
+		{
+		    // Outstanding Bill
+		    print '<tr><td>';
+		    print $langs->trans('OutstandingBill');
+		    print '</td><td colspan="3">';
+		    print price($soc->get_OutstandingBill()) . ' / ';
+		    print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
+		    print '</td>';
+		    print '</tr>';
+		}
+		
+		// Relative and absolute discounts
 		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final
 			                                                     // invoice
@@ -2006,7 +2019,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND description <> '(DEPOSIT)'";
 		}
 
-		// Relative and absolute discounts
 		$addrelativediscount = '<a href="' . DOL_URL_ROOT . '/comm/remise.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditRelativeDiscounts") . '</a>';
 		$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
 		$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
@@ -2236,6 +2248,19 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// print '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=22&origin=order&originid='.$object->id.'">'.$langs->trans("DictionarySource").'</a>';
 		print '</td></tr>';
 
+		$tmparray=$object->getTotalWeightVolume();
+		$totalWeight=$tmparray['weight'];
+		$totalVolume=$tmparray['volume'];
+		if ($totalWeight || $totalVolume)
+		{
+    		print '<tr><td>'.$langs->trans("CalculatedWeight").' / '.$langs->trans("CalculatedVolume").'</td>';
+    		print '<td colspan="3">';
+    		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
+        	print ' / ';
+    		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
+    		print '</td></tr>';
+		}		
+		
     	// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Project
@@ -2257,18 +2282,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
 			}
 			print '</td></tr>';
-		}
-
-		if ($soc->outstanding_limit)
-		{
-			// Outstanding Bill
-			print '<tr><td>';
-			print $langs->trans('OutstandingBill');
-			print '</td><td align=right colspan=3>';
-			print price($soc->get_OutstandingBill()) . ' / ';
-			print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
-			print '</td>';
-			print '</tr>';
 		}
 
 		// Incoterms

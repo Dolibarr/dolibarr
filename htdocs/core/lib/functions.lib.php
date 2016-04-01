@@ -3420,28 +3420,29 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
  * @param   int         $round          -1 = non rounding, x = number of decimal
+ * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit
  * @return  string                      String to show dimensions
  */
-function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1)
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitouput='no')
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
     
-    if ($dimension < 1/10000) 
+    if (($forceunitouput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitouput) && $forceunitouput == -6)) 
     {
         $dimension = $dimension * 1000000;
         $unit = $unit - 6; 
     }
-    elseif ($dimension < 1/10) 
+    elseif (($forceunitouput == 'no' && $dimension < 1/10) || (is_numeric($forceunitouput) && $forceunitouput == -3))
     {
         $dimension = $dimension * 1000;
         $unit = $unit - 3; 
     }
-    elseif ($dimension > 100000000)
+    elseif (($forceunitouput == 'no' && $dimension > 100000000) || (is_numeric($forceunitouput) && $forceunitouput == 6))
     {
         $dimension = $dimension / 1000000;
         $unit = $unit + 6;
     }
-    elseif ($dimension > 100000)
+    elseif (($forceunitouput == 'no' && $dimension > 100000) || (is_numeric($forceunitouput) && $forceunitouput == 3))
     {
         $dimension = $dimension / 1000;
         $unit = $unit + 3;

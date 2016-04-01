@@ -1758,56 +1758,6 @@ class Expedition extends CommonObject
 
     }
 
-    /**
-     * Return into unit=0, the calculated total of weight and volume of all lines * qty
-	 * Calculate by adding weight and volume of each product line.
-     * 
-     * @return  array           array('weight'=>...,'volume'=>...)
-     */
-    function getTotalWeightVolume()
-    {
-        $weightUnit=0;
-        $volumeUnit=0;
-        $totalWeight = '';
-        $totalVolume = '';
-        $totalOrdered = '';
-        $totalToShip = '';
-        foreach ($this->lines as $line)
-        {
-            $totalOrdered+=$line->qty_asked;
-            $totalToShip+=$line->qty_shipped;
-            
-            $weightUnit=0;
-            $volumeUnit=0;
-            if (! empty($line->weight_units)) $weightUnit = $line->weight_units;
-            if (! empty($line->volume_units)) $volumeUnit = $line->volume_units;
-        
-            //var_dump($line->volume_units);
-            if ($line->weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
-            {
-                $trueWeightUnit=pow(10,$weightUnit);
-                $totalWeight += $line->weight*$line->qty_shipped*$trueWeightUnit;
-            }
-            else
-            {
-                $totalWeight += $line->weight*$line->qty_shipped;   // This may be wrong if we mix different units
-            }
-            if ($line->volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
-            {
-                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
-                $trueVolumeUnit=pow(10,$volumeUnit);
-                //print $line->volume;
-                $totalVolume += $line->volume*$line->qty_shipped*$trueVolumeUnit;
-            }
-            else
-            {
-                $totalVolume += $line->volume*$line->qty_shipped;   // This may be wrong if we mix different units
-            }
-        }
-        
-        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
-    }
-
     
 	/**
 	 * Forge an set tracking url
