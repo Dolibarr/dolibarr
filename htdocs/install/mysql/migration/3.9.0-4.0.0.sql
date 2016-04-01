@@ -332,13 +332,13 @@ DELETE FROM llx_menu where module='expensereport';
 ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
 
 CREATE TABLE llx_c_accounting_category (
-  rowid 		integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  code 			varchar(16) NOT NULL,
-  label 		varchar(255) NOT NULL,
-  range_account	varchar(255) NOT NULL,
-  position    	integer DEFAULT 0,
-  fk_country 	integer DEFAULT NULL,			-- This category is dedicated to a country
-  active 		integer DEFAULT 1
+  rowid 			integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code 				varchar(16) NOT NULL,
+  label 			varchar(255) NOT NULL,
+  range_account		varchar(255) NOT NULL,
+  position    		integer DEFAULT 0,
+  fk_country 		integer DEFAULT NULL,			-- This category is dedicated to a country
+  active 			integer DEFAULT 1
 ) ENGINE=innodb;
 
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
