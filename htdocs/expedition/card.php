@@ -608,7 +608,7 @@ if ($action == 'create')
             print '<table class="border centpercent">';
 
             // Ref
-            print '<tr><td width="30%" class="fieldrequired">';
+            print '<tr><td class="fieldrequired">';
             if ($origin == 'commande' && ! empty($conf->commande->enabled))
             {
                 print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
