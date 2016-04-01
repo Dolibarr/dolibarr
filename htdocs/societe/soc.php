@@ -959,7 +959,7 @@ else
         print '<table class="border" width="100%">';
 
         // Name, firstname
-	    print '<tr><td>';
+	    print '<tr><td class="titlefieldcreate">';
         if ($object->particulier || $private)
         {
 	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('LastName','name').'</span>';
@@ -1934,7 +1934,7 @@ else
         print '<table class="border tableforfield" width="100%">';
 
     	// Prospect/Customer
-    	print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td>';
+    	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
 	    

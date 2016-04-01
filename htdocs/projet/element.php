@@ -189,6 +189,7 @@ $listofreferent=array(
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
+    'urlnew'=>DOL_URL_ROOT.'/comm/propal.php?action=create&project_id='.$id,
 	'test'=>$conf->propal->enabled && $user->rights->propale->lire),
 'order'=>array(
 	'name'=>"CustomersOrders",
@@ -196,6 +197,7 @@ $listofreferent=array(
 	'class'=>'Commande',
 	'table'=>'commande',
 	'datefieldname'=>'date_commande',
+    'urlnew'=>DOL_URL_ROOT.'/commande/card.php?action=create&project_id='.$id,
 	'test'=>$conf->commande->enabled && $user->rights->commande->lire),
 'invoice'=>array(
 	'name'=>"CustomersInvoices",
@@ -204,6 +206,7 @@ $listofreferent=array(
 	'margin'=>'add',
 	'table'=>'facture',
 	'datefieldname'=>'datef',
+    'urlnew'=>DOL_URL_ROOT.'/compta/facture/card.php?action=create&project_id='.$id,
 	'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'invoice_predefined'=>array(
 	'name'=>"PredefinedInvoices",
@@ -218,7 +221,8 @@ $listofreferent=array(
 	'class'=>'CommandeFournisseur',
 	'table'=>'commande_fournisseur',
 	'datefieldname'=>'date_commande',
-	'test'=>$conf->supplier_order->enabled && $user->rights->fournisseur->commande->lire),
+    'urlnew'=>DOL_URL_ROOT.'/fourn/commande/card.php?action=create&project_id='.$id,
+    'test'=>$conf->supplier_order->enabled && $user->rights->fournisseur->commande->lire),
 'invoice_supplier'=>array(
 	'name'=>"BillsSuppliers",
 	'title'=>"ListSupplierInvoicesAssociatedProject",
@@ -226,7 +230,8 @@ $listofreferent=array(
 	'margin'=>'minus',
 	'table'=>'facture_fourn',
 	'datefieldname'=>'datef',
-	'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
+    'urlnew'=>DOL_URL_ROOT.'/fourn/facture/card.php?action=create&project_id='.$id,
+    'test'=>$conf->supplier_invoice->enabled && $user->rights->fournisseur->facture->lire),
 'contract'=>array(
 	'name'=>"Contracts",
 	'title'=>"ListContractAssociatedProject",
@@ -241,6 +246,7 @@ $listofreferent=array(
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
 	'disableamount'=>1,
+    'urlnew'=>DOL_URL_ROOT.'/contract/card.php?action=create&project_id='.$id,
 	'test'=>$conf->ficheinter->enabled && $user->rights->ficheinter->lire),
 'trip'=>array(
 	'name'=>"TripsAndExpenses",
@@ -250,7 +256,8 @@ $listofreferent=array(
 	'datefieldname'=>'dated',
 	'margin'=>'minus',
 	'disableamount'=>1,
-	'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
+    'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&project_id='.$id,
+    'test'=>$conf->deplacement->enabled && $user->rights->deplacement->lire),
 'expensereport'=>array(
 	'name'=>"ExpenseReports",
 	'title'=>"ListExpenseReportsAssociatedProject",
@@ -259,7 +266,8 @@ $listofreferent=array(
 	'datefieldname'=>'date',
 	'margin'=>'minus',
 	'disableamount'=>0,
-	'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire),
+    'urlnew'=>DOL_URL_ROOT.'/expensereport/card.php?action=create&project_id='.$id,
+    'test'=>$conf->expensereport->enabled && $user->rights->expensereport->lire),
 'agenda'=>array(
 	'name'=>"Agenda",
 	'title'=>"ListActionsAssociatedProject",
@@ -267,7 +275,8 @@ $listofreferent=array(
 	'table'=>'actioncomm',
 	'datefieldname'=>'datep',
 	'disableamount'=>1,
-	'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire),
+    'urlnew'=>DOL_URL_ROOT.'/action/comm/card.php?action=create&project_id='.$id,
+    'test'=>$conf->agenda->enabled && $user->rights->agenda->allactions->lire),
 'donation'=>array(
 	'name'=>"Donation",
 	'title'=>"ListDonationsAssociatedProject",
@@ -276,7 +285,8 @@ $listofreferent=array(
 	'table'=>'don',
 	'datefieldname'=>'datedon',
 	'disableamount'=>0,
-	'test'=>$conf->don->enabled && $user->rights->don->lire),
+    'urlnew'=>DOL_URL_ROOT.'/donation/card.php?action=create&project_id='.$id,
+    'test'=>$conf->don->enabled && $user->rights->don->lire),
 'project_task'=>array(
 	'name'=>"TaskTimeValorised",
 	'title'=>"ListTaskTimeUserProject",
@@ -501,7 +511,8 @@ foreach ($listofreferent as $key => $value)
 	$tablename=$value['table'];
 	$datefieldname=$value['datefieldname'];
 	$qualified=$value['test'];
-
+    $urlnew=$value['urlnew'];
+    
 	if ($qualified)
 	{
 		// If we want the project task array to have details of users
@@ -524,7 +535,7 @@ foreach ($listofreferent as $key => $value)
 			elseif($selectList)
 			{
 				// Define form with the combo list of elements to link
-				$addform.='<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+				$addform.='<form class="inline-block" action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 				$addform.='<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform.='<input type="hidden" name="action" value="addelement">';
 				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
@@ -536,7 +547,13 @@ foreach ($listofreferent as $key => $value)
 				$addform.='</form>';
 			}
 		}
-
+		/*if (empty($conf->global->PROJECT_CREATE_ELEM_DISABLE) && $urlnew) // Not yet ready. Use instead button on project card
+		{
+			$addform.='<div class="inline-block">';
+		    $addform.='<a class="button" href="'.$urlnew.'">'.$langs->trans("Create").'</a>';
+            $addform.='<div>';
+		}*/
+		
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print '<table class="noborder" width="100%">';

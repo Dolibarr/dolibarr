@@ -122,7 +122,7 @@ if (! empty($socid))
 	print '<table class="border centpercent">';
 
 	print '<tr>';
-    print '<td class="titlefield" width="25%">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
+    print '<td class="titlefield">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
     print $object->code_client;
     if ($object->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
     print '</td>';

@@ -1442,7 +1442,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '<table class="border" width="100%">';
 
 	// Reference
-	print '<tr><td width="25%" class="fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">' . $langs->trans('Ref') . '</td><td colspan="2">' . $langs->trans("Draft") . '</td></tr>';
 
 	// Reference client
 	print '<tr><td>' . $langs->trans('RefCustomer') . '</td><td colspan="2">';
@@ -1732,8 +1732,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 	dol_fiche_end();
 
 	// Button "Create Draft"
-	print '<div class="center"><input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '"></div>';
-
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="bouton" value="' . $langs->trans('CreateDraft') . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
+	
 	print '</form>';
 
 	// Show origin lines

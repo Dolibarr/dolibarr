@@ -60,6 +60,7 @@ $confirm	= GETPOST("confirm");
 $ref		= GETPOST('ref','alpha');
 $cancel     = GETPOST('cancel','alpha');
 $lineid     = GETPOST('lineid', 'int');
+$projectid  = GETPOST('projectid','int');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -865,7 +866,7 @@ if (empty($reshook))
 	elseif ($action == 'classin')
 	{
 	    $object->fetch($id);
-	    $result=$object->setProject($_POST['projectid']);
+	    $result=$object->setProject($projectid);
 	}
 
 
@@ -1374,7 +1375,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
+    print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
     // Third party
     print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
@@ -1649,7 +1650,11 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
+    print '<div class="center">';
+    print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+    print '</div>';
 
     print "</form>\n";
 
