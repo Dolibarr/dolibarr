@@ -907,7 +907,8 @@ if ($action == 'create')
 								$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
 								if ($line->fk_product > 0)
 								{
-									print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+								    print '<!-- Show warehouse selection -->';
+									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1);
 									if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
 									{
 										//print $stock.' '.$quantityToBeDelivered;
