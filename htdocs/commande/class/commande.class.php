@@ -166,9 +166,13 @@ class Commande extends CommonOrder
 	 */
 	const STATUS_VALIDATED = 1;
 	/**
-	 * Accepted/On process not managed for customer orders
+	 * Accepted (supplier orders)
 	 */
 	const STATUS_ACCEPTED = 2;
+	/**
+	 * Shipment on process (customer orders)
+	 */
+	const STATUS_SHIPMENTONPROCESS = 2;
 	/**
 	 * Closed (Sent/Received, billed or not)
 	 */
@@ -1833,7 +1837,7 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Load array this->expeditions of nb of products sent by line in order
+     *	Load array this->expeditions of lines of shipments with nb of products sent for each order line
      *
      *	@param      int		$filtre_statut      Filter on status
      * 	@return     int                			<0 if KO, Nb of lines found if OK

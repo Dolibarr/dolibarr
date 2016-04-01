@@ -1204,6 +1204,22 @@ class Expedition extends CommonObject
 						if ($result < 0) { $error++; }
 						// End call triggers
 
+						if (! empty($this->origin) && $this->origin_id > 0)
+						{
+						    $this->fetch_origin();
+						    $origin=$this->origin;
+						    if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS)     // If order source of shipment is "shipment in progress"
+						    {
+                                // Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+						        $this->$origin->loadExpeditions();
+						        //var_dump($this->$origin->expeditions);exit;
+						        if (count($this->$origin->expeditions) <= 0)
+						        {
+                                    $this->$origin->setStatut(Commande::STATUS_VALIDATED);
+						        }
+						    }
+						}
+						
 						if (! $error)
 						{
 							$this->db->commit();
