@@ -712,13 +712,16 @@ if ($action == 'create')
 			}
 
             // Document model
-            print "<tr><td>".$langs->trans("Model")."</td>";
-            print '<td colspan="3">';
 			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 			$liste = ModelePdfExpedition::liste_modeles($db);
-			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
-            print "</td></tr>\n";
-            
+			if (count($liste) > 1)
+			{
+    			print "<tr><td>".$langs->trans("Model")."</td>";
+                print '<td colspan="3">';
+    			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
+                print "</td></tr>\n";
+			}
+			
             print "</table>";
 
             dol_fiche_end();
