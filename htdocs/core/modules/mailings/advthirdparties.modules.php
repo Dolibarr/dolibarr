@@ -61,7 +61,7 @@ class mailing_advthirdparties extends MailingTargets
 		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::add_to_target socid=".var_export($socid,true).' contactid='.var_export($contactid,true));
-		
+
 		$cibles = array();
 
 		if (($type_of_target==1) || ($type_of_target==3)) {
@@ -74,8 +74,8 @@ class mailing_advthirdparties extends MailingTargets
 				$sql.= " AND s.rowid IN (".implode(',',$socid).")";
 				$sql.= " ORDER BY email";
 			}
-			
-			
+
+
 			dol_syslog(get_class($this)."::add_to_target societe sql=".$sql, LOG_DEBUG);
 			// Stock recipients emails into targets table
 			$result=$this->db->query($sql);
@@ -83,14 +83,14 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$num = $this->db->num_rows($result);
 				$i = 0;
-	
+
 				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
-	
+
 				$old = '';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-					
+
 					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
 						if (!array_key_exists($obj->email, $cibles)) {
 							$cibles[$obj->email] = array(
@@ -105,7 +105,7 @@ class mailing_advthirdparties extends MailingTargets
 						);
 						}
 					}
-					
+
 					$i++;
 				}
 			}
@@ -116,7 +116,7 @@ class mailing_advthirdparties extends MailingTargets
 				return -1;
 			}
 		}
-		
+
 		if  (($type_of_target==1) || ($type_of_target==2)) {
 			// Select the third parties from category
 			if (count($socid)>0 || count($contactid)>0)
@@ -126,14 +126,14 @@ class mailing_advthirdparties extends MailingTargets
 				$sql.= " WHERE socp.entity IN (".getEntity('societe', 1).")";
 				if (count($contactid)>0) {
 					$sql.= " AND socp.rowid IN (".implode(',',$contactid).")";
-				} 
+				}
 				if (count($socid)>0) {
 					$sql.= " AND socp.fk_soc IN (".implode(',',$socid).")";
 				}
 				$sql.= " ORDER BY email";
 			}
-			
-			
+
+
 			dol_syslog(get_class($this)."::add_to_target contact sql=".$sql);
 			// Stock recipients emails into targets table
 			$result=$this->db->query($sql);
@@ -141,14 +141,14 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$num = $this->db->num_rows($result);
 				$i = 0;
-			
+
 				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
-			
+
 				$old = '';
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($result);
-			
+
 					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
 						if (!array_key_exists($obj->email, $cibles)) {
 							$cibles[$obj->email] = array(
@@ -163,7 +163,7 @@ class mailing_advthirdparties extends MailingTargets
 							);
 						}
 					}
-			
+
 					$i++;
 				}
 			}
@@ -175,7 +175,7 @@ class mailing_advthirdparties extends MailingTargets
 			}
 		}
 
-		
+
 		dol_syslog(get_class($this)."::add_to_target mailing cibles=".var_export($cibles,true), LOG_DEBUG);
 		return parent::add_to_target($mailing_id, $cibles);
 	}
@@ -283,6 +283,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *  Can include an URL link on each record provided by selector shown on target page.
 	 *
 	 *  @param	int		$id		ID
+	 *  @param	string		$type	type
 	 *  @return string      	Url link
 	 */
 	function url($id,$type)
@@ -299,5 +300,3 @@ class mailing_advthirdparties extends MailingTargets
 	}
 
 }
-
-?>
