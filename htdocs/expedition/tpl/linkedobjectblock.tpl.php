@@ -38,6 +38,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
     <td><?php echo $langs->trans("Shipment"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
+    <td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
 	<td align="right"><?php
 		/*if ($user->rights->expedition->lire) {
