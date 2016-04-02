@@ -3231,6 +3231,10 @@ a.cke_dialog_ui_button
 	line-height: 1.4 !important;
 	margin: 6px !important;
 }
+a.cke_dialog_ui_button_ok span {
+    text-shadow: none !important;
+    color: #333 !important;
+}
 
 
 /* ============================================================================== */
