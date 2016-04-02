@@ -59,12 +59,17 @@ if ($action == 'add') {
 
 		// Clean code
 		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
+		if (GETPOST('account_category') <= 0) {
+			$account_parent = '';
+		} else {
+			$account_parent = GETPOST('account_category','int');
+		}
 		
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
 		$object->account_number = $account_number;
-		$object->account_parent = GETPOST('account_parent', 'int');
+		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category');
 		$object->label = GETPOST('label', 'alpha');
 		$object->active = 1;
@@ -96,12 +101,17 @@ if ($action == 'add') {
 
 		// Clean code
 		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		
+		if (GETPOST('account_category') <= 0) {
+			$account_parent = '';
+		} else {
+			$account_parent = GETPOST('account_category','int');
+		}
+
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
 		$object->account_number = $account_number;
-		$object->account_parent = GETPOST('account_parent', 'int');
+		$object->account_parent = account_parent;
 		$object->account_category = GETPOST('account_category');
 		$object->label = GETPOST('label', 'alpha');
 		
