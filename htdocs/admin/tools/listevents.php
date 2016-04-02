@@ -167,12 +167,12 @@ $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql.= " WHERE e.entity IN (".getEntity('actioncomm', 1).")";
 if ($date_start > 0) $sql.= " AND e.dateevent >= '".$db->idate($date_start)."'";
-if ($date_end > 0) $sql.= " AND e.dateevent <= '".$db->idate($date_end)."'";
-if ($search_code) { $usefilter++; $sql.=" AND e.type LIKE '%".$db->escape($search_code)."%'"; }
-if ($search_ip)   { $usefilter++; $sql.=" AND e.ip LIKE '%".$db->escape($search_ip)."%'"; }
-if ($search_user) { $usefilter++; $sql.=" AND u.login LIKE '%".$db->escape($search_user)."%'"; }
-if ($search_desc) { $usefilter++; $sql.=" AND e.description LIKE '%".$db->escape($search_desc)."%'"; }
-if ($search_ua)   { $usefilter++; $sql.=" AND e.user_agent LIKE '%".$db->escape($search_ua)."%'"; }
+if ($date_end > 0)   $sql.= " AND e.dateevent <= '".$db->idate($date_end)."'";
+if ($search_code) { $usefilter++; $sql.=natural_search("e.type", $search_code, 0); }
+if ($search_ip)   { $usefilter++; $sql.=natural_search("e.ip", $search_ip, 0); }
+if ($search_user) { $usefilter++; $sql.=natural_search("u.login", $search_user, 0); }
+if ($search_desc) { $usefilter++; $sql.=natural_search("e.description", $search_desc, 0); }
+if ($search_ua)   { $usefilter++; $sql.=natural_search("e.user_agent", $search_ua, 0); }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
