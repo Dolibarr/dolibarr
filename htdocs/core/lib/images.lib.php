@@ -473,6 +473,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 
 	// Initialisation des variables selon l'extension de l'image
+	// $targetformat is 0 by default, in such case, we keep original extension
 	switch($targetformat)
 	{
 		case IMAGETYPE_GIF:	    // 1

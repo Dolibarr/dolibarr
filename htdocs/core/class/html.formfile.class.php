@@ -859,11 +859,15 @@ class FormFile
 					{
 						$fileinfo = pathinfo($file['name']);
 						print '<td align="center">';
-						$minifile=$fileinfo['filename'].'_mini.'.strtolower($fileinfo['extension']);	// Thumbs are created with filename in lower case
 						if (image_format_supported($file['name']) > 0)
 						{
-							print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
-							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+						    $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // Thumbs are created with filename in lower case and with .png extension
+						    //print $relativepath.'<br>';
+						    //print $file['path'].'/'.$minifile.'<br>';
+						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.'.$fileinfo['extension']); // For old thumbs
+						    //print $file['path'].'/'.$minifile.'<br>';
+						    print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
+							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
