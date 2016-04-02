@@ -1469,7 +1469,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 				// lowercase extension
 				$info = pathinfo($destpath);
 				$destpath = $info['dirname'].'/'.$info['filename'].'.'.strtolower($info['extension']);
-
+				$info = pathinfo($destfile);
+				$destfile = $info['filename'].'.'.strtolower($info['extension']);
+				    
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 				if (is_numeric($resupload) && $resupload > 0)
 				{
