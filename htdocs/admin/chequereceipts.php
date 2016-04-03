@@ -183,7 +183,6 @@ foreach ($dirmodels as $reldir)
 							print '</td>'."\n";
 
 							print '<td align="center">';
-							//print "> ".$conf->global->PAYMENT_ADDON." - ".$file;
 							if ($conf->global->CHEQUERECEIPTS_ADDON == $file || $conf->global->CHEQUERECEIPTS_ADDON.'.php' == $file)
 							{
 								print img_picto($langs->trans("Activated"),'switch_on');

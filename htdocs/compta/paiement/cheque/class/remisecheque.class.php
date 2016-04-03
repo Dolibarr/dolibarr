@@ -345,7 +345,8 @@ class RemiseCheque extends CommonObject
 
 		$this->db->begin();
 
-		$numref=$this->getNextNumber();
+		//$numref=$this->getNextNumber();
+		$numref = $this->getNextNumRef();
 
 		if ($this->errno == 0 && $numref)
 		{
