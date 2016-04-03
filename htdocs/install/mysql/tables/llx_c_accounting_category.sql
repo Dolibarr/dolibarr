@@ -18,11 +18,11 @@
 -- ===================================================================
 
 CREATE TABLE llx_c_accounting_category (
-  rowid 		integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  code 			varchar(16) NOT NULL,
-  label 		varchar(255) NOT NULL,
-  range 		varchar(255) NOT NULL,
-  position    	integer DEFAULT 0,
-  fk_country 	integer DEFAULT NULL,			-- This category is dedicated to a country
-  active 		integer DEFAULT 1
+  rowid 			integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code 				varchar(16) NOT NULL,
+  label 			varchar(255) NOT NULL,
+  range_account		varchar(255) NOT NULL,
+  position    		integer DEFAULT 0,
+  fk_country 		integer DEFAULT NULL,			-- This category is dedicated to a country
+  active 			integer DEFAULT 1
 ) ENGINE=innodb;
