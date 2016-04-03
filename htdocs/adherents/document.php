@@ -76,7 +76,7 @@ $upload_dir = $conf->adherent->dir_output . "/" . get_exdir($object->id,2,0,1,$o
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
