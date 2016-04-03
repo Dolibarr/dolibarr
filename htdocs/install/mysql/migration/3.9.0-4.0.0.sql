@@ -344,3 +344,8 @@ CREATE TABLE llx_c_accounting_category (
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
+
+
+DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
+ALTER TABLE llx_bordereau_cheque CHANGE number ref VARCHAR(30) NOT NULL;
+CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);

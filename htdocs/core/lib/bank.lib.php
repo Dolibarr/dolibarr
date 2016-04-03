@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +111,11 @@ function bank_admin_prepare_head($object)
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
+
+    $head[$h][0] = DOL_URL_ROOT . '/admin/chequereceipts.php';
+    $head[$h][1] = $langs->trans("CheckReceiptShort");
+    $head[$h][2] = 'checkreceipts';
+    $h++;
 
 
 	// Show more tabs from modules
