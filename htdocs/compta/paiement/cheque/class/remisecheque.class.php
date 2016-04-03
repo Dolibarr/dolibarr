@@ -438,7 +438,6 @@ class RemiseCheque extends CommonObject
 	 *      Return next reference of cheque receipts not already used (or last reference)
 	 *      according to numbering module defined into constant FACTURE_ADDON
 	 *
-	 *      @param	   Societe		$soc		object company
 	 *      @param     string		$mode		'next' for next value or 'last' for last value
 	 *      @return    string					free ref or last ref
 	 */
