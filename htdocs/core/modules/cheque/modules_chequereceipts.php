@@ -30,10 +30,92 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
 
+/**
+ *  \class      ModeleNumRefChequeReceipts
+ *  \brief      Cheque Receipts numbering references mother class
+ */
+abstract class ModeleNumRefChequeReceipts
+{
+	var $error='';
+
+	/**
+	 *	Return if a module can be used or not
+	 *
+	 *	@return		boolean     true if module can be used
+	 */
+	function isEnabled()
+	{
+		return true;
+	}
+
+	/**
+	 *	Return the default description of numbering module
+	 *
+	 *	@return     string      Texte descripif
+	 */
+	function info()
+	{
+		global $langs;
+		$langs->load("bills");
+		return $langs->trans("NoDescription");
+	}
+
+	/**
+	 *	Return numbering example
+	 *
+	 *	@return     string      Example
+	 */
+	function getExample()
+	{
+		global $langs;
+		$langs->load("bills");
+		return $langs->trans("NoExample");
+	}
+
+	/**
+	 *  Test if the existing numbers in the database do not cause conflicts that would prevent this numbering run.
+	 *
+	 *	@return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		return true;
+	}
+
+	/**
+	 *	Returns the next value
+	 *
+	 *	@param	Societe		$objsoc     Object thirdparty
+	 *	@param	Object		$object		Object we need next value for
+	 *	@return	string      Valeur
+	 */
+	function getNextValue($objsoc,$object)
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
+
+	/**
+	 *	Returns the module numbering version
+	 *
+	 *	@return     string      Value
+	 */
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
+		return $langs->trans("NotAvailable");
+	}
+}
 
 /**
  *	\class      ModeleChequeReceipts
- *	\brief      Classe mere des modeles de facture
+ *	\brief      Classe mere des modeles de 
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {

@@ -2,7 +2,7 @@
 /* Copyright (C) 2006		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013 		Philippe Grand      	<philippe.grand@atoo-net.com>
  * Copyright (C) 2015	    Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
@@ -44,7 +44,7 @@ $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 
 // Security check
-$fieldname = (! empty($ref)?'number':'rowid');
+$fieldname = (! empty($ref)?'ref':'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque','','',$fieldname);
 
@@ -112,9 +112,9 @@ if ($action == 'setref' && $user->rights->banque->cheque)
 	$result = $object->fetch(GETPOST('id','int'));
 	if ($result > 0)
 	{
-		$number=GETPOST('number');
+		$ref=GETPOST('ref');
 
-		$result=$object->set_number($user,$number);
+		$result=$object->set_number($user,$ref);
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -280,7 +280,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 
 		$langs->load("other");
 
-		$file=$dir.get_exdir($object->number,0,1,0,$object,'cheque') . GETPOST('file');
+		$file=$dir.get_exdir($object->ref,0,1,0,$object,'cheque') . GETPOST('file');
 		$ret=dol_delete_file($file,0,0,0,$object);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
@@ -576,13 +576,13 @@ else
 		print '<form name="setdate" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="setref">';
-		print '<input type="text" name="number" value="'.$object->number.'">';
+		print '<input type="text" name="ref" value="'.$object->ref.'">';
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
 	else
 	{
-	    print $form->showrefnav($object,'ref',$linkback, 1, 'number');
+	    print $form->showrefnav($object,'ref',$linkback, 1, 'ref');
 	}
 
 	print '</td>';
@@ -796,7 +796,7 @@ if ($action != 'new')
 	if ($object->statut == 1)
 	{
 		$filename=dol_sanitizeFileName($object->ref);
-		$filedir=$dir.get_exdir($object->number,0,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
+		$filedir=$dir.get_exdir($object->ref,0,1,0,$object,'cheque') . dol_sanitizeFileName($object->ref);
 		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
 		$formfile->show_documents('remisecheque', $filename, $filedir, $urlsource, 1, 1);

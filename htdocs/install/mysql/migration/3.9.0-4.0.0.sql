@@ -342,3 +342,8 @@ CREATE TABLE llx_c_accounting_category (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
+
+
+DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
+ALTER TABLE llx_bordereau_cheque CHANGE number ref VARCHAR(30) NOT NULL;
+CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
