@@ -3423,26 +3423,26 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit
  * @return  string                      String to show dimensions
  */
-function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitouput='no')
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitoutput='no')
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
     
-    if (($forceunitouput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitouput) && $forceunitouput == -6)) 
+    if (($forceunitoutput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitoutput) && $forceunitoutput == -6)) 
     {
         $dimension = $dimension * 1000000;
         $unit = $unit - 6; 
     }
-    elseif (($forceunitouput == 'no' && $dimension < 1/10) || (is_numeric($forceunitouput) && $forceunitouput == -3))
+    elseif (($forceunitoutput == 'no' && $dimension < 1/10) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
     {
         $dimension = $dimension * 1000;
         $unit = $unit - 3; 
     }
-    elseif (($forceunitouput == 'no' && $dimension > 100000000) || (is_numeric($forceunitouput) && $forceunitouput == 6))
+    elseif (($forceunitoutput == 'no' && $dimension > 100000000) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
     {
         $dimension = $dimension / 1000000;
         $unit = $unit + 6;
     }
-    elseif (($forceunitouput == 'no' && $dimension > 100000) || (is_numeric($forceunitouput) && $forceunitouput == 3))
+    elseif (($forceunitoutput == 'no' && $dimension > 100000) || (is_numeric($forceunitoutput) && $forceunitoutput == 3))
     {
         $dimension = $dimension / 1000;
         $unit = $unit + 3;
