@@ -189,7 +189,7 @@ $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.new
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
 $tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, c.code as country_code, c.label as country, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_pays=c.rowid and c.active=1";
-$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range, a.position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
+$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
 $tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
 $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 
@@ -300,7 +300,7 @@ $tabfieldvalue[28]= "code,label,affect,delay,newbymonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
 $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldvalue[31]= "pcg_version,country,label";
-$tabfieldvalue[32]= "code,label,range,position,country";
+$tabfieldvalue[32]= "code,label,range_account,position,country";
 $tabfieldvalue[33]= "code,label";
 $tabfieldvalue[34]= "code,label";
 
@@ -337,7 +337,7 @@ $tabfieldinsert[28]= "code,label,affect,delay,newbymonth,fk_country";
 $tabfieldinsert[29]= "code,label,percent,position";
 $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
 $tabfieldinsert[31]= "pcg_version,fk_pays,label";
-$tabfieldinsert[32]= "code,label,range,position,fk_country";
+$tabfieldinsert[32]= "code,label,range_account,position,fk_country";
 $tabfieldinsert[33]= "code,label";
 $tabfieldinsert[34]= "code,label";
 
@@ -998,7 +998,7 @@ if ($id)
             if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
 	        if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
             if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
-			if ($fieldlist[$field]=='range')   		   { $valuetoshow=$langs->trans("Range"); }
+			if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1166,7 +1166,7 @@ if ($id)
                 if ($fieldlist[$field]=='sortorder')       { $valuetoshow=$langs->trans("SortOrder"); }
 	            if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
             	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
-				if ($fieldlist[$field]=='range')   		   { $valuetoshow=$langs->trans("Range"); }
+				if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
 
                 // Affiche nom du champ
                 if ($showfield)
