@@ -111,7 +111,7 @@ if ($action == 'add') {
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
 		$object->account_number = $account_number;
-		$object->account_parent = account_parent;
+		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category');
 		$object->label = GETPOST('label', 'alpha');
 		
