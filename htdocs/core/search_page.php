@@ -111,7 +111,7 @@ else
 	if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
     {
         $langs->load("users");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/index.php', DOL_URL_ROOT.'/user/index.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
     }
 }
 
