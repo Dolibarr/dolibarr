@@ -55,10 +55,10 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 		$texte.= '<input type="hidden" name="maskconstchequereceipts" value="CHEQUERECEIPTS_THYME_MASK">';
 		$texte.= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("CheckReceiptShort"),$langs->transnoentities("CheckReceiptShort"));
 		$tooltip.=$langs->trans("GenericMaskCodes2");
 		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Order"),$langs->transnoentities("Order"));
+		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("CheckReceiptShort"),$langs->transnoentities("CheckReceiptShort"));
 		$tooltip.=$langs->trans("GenericMaskCodes5");
 
 		// Parametrage du prefix
