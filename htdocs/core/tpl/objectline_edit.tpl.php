@@ -247,9 +247,6 @@ if (! empty($conf->margin->enabled))
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
 		{
 		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_marginRate");
-			});
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_marginRate");
 			});
@@ -258,9 +255,6 @@ if (! empty($conf->margin->enabled))
 		if (! empty($conf->global->DISPLAY_MARK_RATES))
 		{
 		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_markRate");
-			});
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_markRate");
 			});
