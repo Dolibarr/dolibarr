@@ -344,8 +344,7 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 
 		$this->db->begin();
-
-		//$numref=$this->getNextNumber();
+		
 		$numref = $this->getNextNumRef();
 
 		if ($this->errno == 0 && $numref)
@@ -392,46 +391,6 @@ class RemiseCheque extends CommonObject
 			dol_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
             return $this->errno;
 		}
-	}
-
-
-	/**
-	 * Old module for cheque receipt numbering
-	 *
-	 * @return 	int		Next ref of cheque
-	 */
-	function getNextNumber()
-	{
-		global $conf;
-
-		$num=0;
-
-		// We use +0 to convert varchar to ref for mysql, use ::integer for postgres.
-		// We must found a generic solution (Use a $db->toint function ?)
-		$sql = "SELECT ";
-		if ($this->db->type == 'pgsql') $sql.="MAX(ref::integer)";
-		else $sql.="MAX(ref+0)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND ref not like '(%'";
-
-		dol_syslog("Remisecheque::getNextNumber", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$row = $this->db->fetch_row($resql);
-			$num = $row[0];
-			$this->db->free($resql);
-		}
-		else
-		{
-			$this->errno = -1034;
-			dol_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)", LOG_ERR);
-		}
-
-		$num++;
-
-		return $num;
 	}
 
 	/**
