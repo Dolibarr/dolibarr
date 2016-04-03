@@ -560,15 +560,20 @@ div.myavailability {
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
 .titlefield { width: 30%; }
-<?php if (! empty($dol_optimize_smallscreen)) { ?>
-.hideonsmartphone { display: none; }
-.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
-.maxwidthonsmartphone { max-width: 100px; }
-.maxwidth100onsmartphone { max-width: 100px; }
-.maxwidth200onsmartphone { max-width: 200px; }
-.maxwidth300onsmartphone { max-width: 300px; }
-.titlefield { width: auto; }
-<?php } ?>
+.titlefieldcreate { width: 20%; }
+
+/* Force values for small screen */
+@media only screen and (max-width: 570px)
+{
+    .hideonsmartphone { display: none; }
+    .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth100onsmartphone { max-width: 100px; }
+    .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth300onsmartphone { max-width: 300px; }
+    .titlefield { width: auto; }
+    .titlefieldcreate { width: auto; }
+}
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .hideonprint { display: none; }
@@ -3225,6 +3230,10 @@ a.cke_dialog_ui_button
 {
 	line-height: 1.4 !important;
 	margin: 6px !important;
+}
+a.cke_dialog_ui_button_ok span {
+    text-shadow: none !important;
+    color: #333 !important;
 }
 
 
