@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2013-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -4123,7 +4123,11 @@ class Product extends CommonObject
 				$price_min = $price * (1 - ($rules[$i]->var_min_percent/100));
 			}
 
-			if ($price == $this->multiprices[$i] && ($price_min == $this->multiprices_min[$i])) {
+			//Little check to make sure the price is modified before triggering generation
+			$check_amount = (($price == $this->multiprices[$i]) && ($price_min == $this->multiprices_min[$i]));
+			$check_type = ($baseprice == $this->multiprices_base_type[$i]);
+
+			if ($check_amount && $check_type) {
 				continue;
 			}
 

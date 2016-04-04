@@ -136,7 +136,7 @@ class FormActions
             if (empty($onlyselect))
             {
 	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected>=0?$selected:'').'" size="2"'.($canedit&&($selected>=0)?'':' disabled').'>';
-    	        print '<span class="hideifna">%</span>';
+    	        print '<span class="hideonsmartphone hideifna">%</span>';
             }
         }
         else

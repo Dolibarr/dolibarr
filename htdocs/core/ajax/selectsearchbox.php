@@ -34,6 +34,8 @@ if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
 $res=@include '../../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
 
+//global $hookmanager;
+$hookmanager->initHooks(array('searchform'));
 
 $search_boxvalue=GETPOST('q');
 
@@ -113,29 +115,21 @@ if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFO
 }
 
 
-/* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag 
+/* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag
 if (! empty($conf->hrm->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->hrm->employee->read)
 {
     $langs->load("hrm");
     $searchform.=printSearchForm(DOL_URL_ROOT.'/hrm/employee/list.php', DOL_URL_ROOT.'/hrm/employee/list.php', $langs->trans("Employees"), 'employee', 'search_all', 'M', 'searchleftemployee', img_object('','user'));
 }
 */
-
 // Execute hook addSearchEntry
-$parameters=array();
+$parameters=array('search_boxvalue'=>$search_boxvalue);
 $reshook=$hookmanager->executeHooks('addSearchEntry',$parameters);
 if (empty($reshook))
 {
 	$arrayresult=array_merge($arrayresult, $hookmanager->resArray);
 }
 else $arrayresult=$hookmanager->resArray;
-
-
-
-
-
-
-
 
 
 print json_encode($arrayresult);
