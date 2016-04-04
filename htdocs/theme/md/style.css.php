@@ -422,6 +422,9 @@ th .button {
 	width: 54px;
 }
 
+.valigntop {
+	vertical-align: top;
+}
 .valignmiddle {
 	vertical-align: middle;
 }
@@ -1828,7 +1831,8 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
-	color: #333333;
+	color: #333333 !important;
+	text-decoration: none !important;
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);

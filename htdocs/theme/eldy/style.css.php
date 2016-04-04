@@ -355,7 +355,8 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 	margin-top: 0;
 	text-align: center;
 	cursor: pointer;
-	color: #333333;
+	color: #333333 !important;
+	text-decoration: none !important;
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
@@ -431,6 +432,9 @@ th .button {
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
+}
+.valigntop {
+	vertical-align: top;
 }
 .valignmiddle {
 	vertical-align: middle;

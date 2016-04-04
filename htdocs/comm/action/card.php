@@ -649,14 +649,14 @@ if ($action == 'create')
 	// Type of event
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
-		print '<tr><td width="30%"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
+		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
 		$default=(empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)?'':$conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
 		$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):($object->type_code?$object->type_code:$default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 
 	// Title
-	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
@@ -664,7 +664,7 @@ if ($action == 'create')
 	// Date start
 	$datep=($datep?$datep:$object->datep);
 	if (GETPOST('datep','int',1)) $datep=dol_stringtotime(GETPOST('datep','int',1),0);
-	print '<tr><td width="30%" class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
+	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
 	if (GETPOST("afaire") == 1) $form->select_date($datep,'ap',1,1,0,"action",1,1,0,0,'fulldayend');
 	else if (GETPOST("afaire") == 2) $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldayend');
 	else $form->select_date($datep,'ap',1,1,1,"action",1,1,0,0,'fulldaystart');
@@ -684,7 +684,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
 	print '<td>';
 	$percent=-1;
 	if (isset($_GET['status']) || isset($_POST['status'])) $percent=GETPOST('status');
@@ -743,7 +743,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Societe, contact
-	print '<tr><td width="30%" class="nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
+	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if (GETPOST('socid','int') > 0)
 	{
 		$societe = new Societe($db);
@@ -834,7 +834,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="button" class="button" name="cancel" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print "</form>";

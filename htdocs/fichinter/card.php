@@ -1054,7 +1054,7 @@ if ($action == 'create')
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
-		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 
 		print '<input type="hidden" name="action" value="add">';
 
@@ -1159,6 +1159,8 @@ if ($action == 'create')
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
+    	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
