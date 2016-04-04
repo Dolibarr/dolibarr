@@ -98,7 +98,7 @@ $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('project');
+$extralabels = $extrafields->fetch_name_optionals_label('projet');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
@@ -213,16 +213,15 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_user > 0)
 {
 	$sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 }
-
 $sql.= " WHERE p.entity IN (".getEntity('project',1).')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -271,6 +270,19 @@ if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_user; 
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
+}
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -484,15 +496,30 @@ if ($resql)
     	print '<input type="text" class="flat" name="search_opp_percent" size="2" value="'.$search_opp_percent.'">';
 		print '</td>';
 	}
-    // Extra fields
-    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-    {
-        foreach($extrafields->attribute_label as $key => $val)
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+        foreach($extrafields->attribute_label as $key => $val) 
         {
-            if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+            if (! empty($arrayfields["ef.".$key]['checked']))
+            {
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+            	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
+                print '</td>';
+            }
         }
-    }
-    // Fields from hook
+	}
+	// Fields from hook
     $parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
