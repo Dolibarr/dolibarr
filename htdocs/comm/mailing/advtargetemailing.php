@@ -503,7 +503,7 @@ if ($object->fetch($id) >= 0) {
 		} else {
 			$default_template = $advTarget->id;
 		}
-		print $formadvtargetemaling->select_advtargetemailing_template('template_id', $default_template);
+		print $formadvtargetemaling->selectAdvtargetemailingTemplate('template_id', $default_template);
 		print '<input type="button" name="loadfilter" id="loadfilter" value="' . $langs->trans('AdvTgtLoadFilter') . '" class="butAction"/>';
 		print '<input type="button" name="deletefilter" id="deletefilter" value="' . $langs->trans('AdvTgtDeleteFilter') . '" class="butAction"/>';
 		print '<input type="button" name="savefilter" id="savefilter" value="' . $langs->trans('AdvTgtSaveFilter') . '" class="butAction"/>';

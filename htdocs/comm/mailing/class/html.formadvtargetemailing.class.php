@@ -144,7 +144,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param User $user User action
 	 * @return string combo list code
 	 */
-	function multiselectselect_salesrepresentatives($htmlname, $selected_array=array(), $user) {
+	function multiselectselect_salesrepresentatives($htmlname, $selected_array, $user) {
 
 		global $conf;
 
@@ -251,7 +251,7 @@ class FormAdvTargetEmailing extends Form
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog ( get_class ( $this ) . '::advMultiselectarray_selllist sql=' . $sql );
+			dol_syslog ( get_class ( $this ) . "::".__METHOD__,LOG_DEBUG);
 			$resql = $this->db->query ( $sql );
 			if ($resql) {
 
@@ -276,8 +276,7 @@ class FormAdvTargetEmailing extends Form
 	 *  Return combo list with people title
 	 *
 	 * 	@param	string	$htmlname	Name of HTML select combo field
-	 *  @param  string	$selected   Title preselected
-	 *
+	 *  @param  array $selected_array array
 	 *  @return	string HTML combo
 	 */
 	function multiselect_civility($htmlname='civilite_id',$selected_array = array())
@@ -291,7 +290,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, code, label as civilite, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql.= " WHERE active = 1";
 
-		dol_syslog("Form::select_civility sql=".$sql);
+		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -409,6 +408,7 @@ class FormAdvTargetEmailing extends Form
 	 *
 	 *  @param  string	$htmlname   Name of categorie
 	 * 	@param	array	$selected_array	value selected
+	 * 	@param	int	$type	type
 	 *  @return	string HTML combo
 	 */
 	public function multiselect_categories($htmlname='',$selected_array = array(), $type=0)
@@ -421,7 +421,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE type=".$type;
 
-		dol_syslog(get_class($this)."::multiselectselect_customercategories sql=".$sql);
+		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -450,14 +450,15 @@ class FormAdvTargetEmailing extends Form
 	}
 
 	/**
+	 * selectAdvtargetemailingTemplate
 	 *
-	 * @param string $htmlname
-	 * @param number $selected
-	 * @param number $showempty
+	 * @param string $htmlname control name
+	 * @param number $selected  defaut selected
+	 * @param number $showempty empty lines
 	 *
 	 * @return	string HTML combo
 	 */
-	public function select_advtargetemailing_template($htmlname='template_id',$selected=0,$showempty=0) {
+	public function selectAdvtargetemailingTemplate($htmlname='template_id',$selected=0,$showempty=0) {
 		global $conf, $user, $langs;
 
 		$out = '';
@@ -466,7 +467,7 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " FROM " . MAIN_DB_PREFIX . "advtargetemailing as c";
 		$sql .= " ORDER BY c.name";
 
-		dol_syslog ( get_class ( $this ) . "::select_advtargetemailing_template sql=" . $sql, LOG_DEBUG );
+		dol_syslog ( get_class ( $this ) . "::".__METHOD__, LOG_DEBUG );
 		$resql = $this->db->query ( $sql );
 		if ($resql) {
 
