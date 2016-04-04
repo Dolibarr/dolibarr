@@ -492,6 +492,13 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
+if (is_object($hookmanager))
+{
+	$hookmanager->initHooks(array('contacttpl'));
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
+}
+
 
 llxFooter();
 

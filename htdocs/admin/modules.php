@@ -38,6 +38,9 @@ $mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):(isset($_SESSION['mode']
 $action=GETPOST('action','alpha');
 $value=GETPOST('value', 'alpha');
 $page_y=GETPOST('page_y','int');
+$search_keyword=GETPOST('search_keyword','alpha');
+$search_status=GETPOST('search_status','alpha');
+$search_nature=GETPOST('search_nature','alpha');
 
 if (! $user->admin)
 	accessforbidden();
@@ -59,6 +62,11 @@ $familyinfo=array(
 	'other'=>array('position'=>'100', 'label'=>$langs->trans("ModuleFamilyOther")),
 );
 
+$param='';
+if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
+if ($search_status) $param.='&search_status='.urlencode($search_status);
+if ($search_nature) $param.='&search_nature='.urlencode($search_nature);
+
 
 
 /*
@@ -69,7 +77,7 @@ if ($action == 'set' && $user->admin)
 {
     $result=activateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
-    header("Location: modules.php?mode=".$mode.($page_y?'&page_y='.$page_y:''));
+    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
 
@@ -77,9 +85,17 @@ if ($action == 'reset' && $user->admin)
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
-    header("Location: modules.php?mode=".$mode.($page_y?'&page_y='.$page_y:''));
+    header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
+
+if (GETPOST('buttonreset'))
+{
+    $search_keyword='';
+    $search_status='';
+    $search_nature='';
+}
+
 
 
 /*
@@ -231,14 +247,8 @@ print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
 // Start to show page
 if (empty($mode)) $mode='common';
 if ($mode==='common')      print $langs->trans("ModulesDesc")."<br>\n";
-//if ($mode==='other')       print $langs->trans("ModulesSpecialDesc")."<br>\n";
-//if ($mode==='interfaces')  print $langs->trans("ModulesInterfaceDesc")."<br>\n";
-//if ($mode==='functional')  print $langs->trans("ModulesJobDesc")."<br>\n";
 if ($mode==='marketplace') print $langs->trans("ModulesMarketPlaceDesc")."<br>\n";
 if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>\n";
-
-
-//print '<br>'."\n";
 
 
 $h = 0;
@@ -251,35 +261,6 @@ if (! empty($categ[$categidx]))
 	$head[$h][2] = 'common';
 	$h++;
 }
-
-/*
-$categidx='other';    // Other
-if (! empty($categ[$categidx]))
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-	$head[$h][1] = $langs->trans("ModulesOther");
-	$head[$h][2] = 'other';
-	$h++;
-}
-
-$categidx='interfaces';    // Interfaces
-if (! empty($categ[$categidx]))
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-	$head[$h][1] = $langs->trans("ModulesInterfaces");
-	$head[$h][2] = 'interfaces';
-	$h++;
-}
-
-$categidx='functional';    // Not used
-if (! empty($categ[$categidx]))
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
-	$head[$h][1] = $langs->trans("ModulesSpecial");
-	$head[$h][2] = 'functional';
-	$h++;
-}
-*/
 
 $categidx='expdev';
 if (! empty($categ[$categidx]))
@@ -307,19 +288,45 @@ $var=true;
 
 if ($mode != 'marketplace')
 {
-    print "<table summary=\"list_of_modules\" class=\"noborder\" width=\"100%\">\n";
-
-    /*
-    print '<tr class="liste_titre">'."\n";
-    print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
-    print "  <td>".$langs->trans("Description")."</td>\n";
-    print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
-    print '  <td align="center">'.$langs->trans("Status").'</td>'."\n";
-    print '  <td align="right">'.$langs->trans("SetupShort").'</td>'."\n";
-    print "</tr>\n";
-	*/
-
+    print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    
+    $moreforfilter = '';
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
+    $moreforfilter.= '</div>';
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
+    $moreforfilter.= '</div>';
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
+    $moreforfilter.= '</div>';
+    $moreforfilter.=' ';
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.='<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
+    $moreforfilter.=' ';
+    $moreforfilter.='<input type="submit" name="buttonreset" class="button" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+    $moreforfilter.= '</div>';
+    
+    if (! empty($moreforfilter))
+    {
+        //print '<div class="liste_titre liste_titre_bydiv centpercent">';
+        print $moreforfilter;
+        $parameters=array();
+        $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+        //print '</div>';
+    }    
+    
+    print '<br><br><br>';
+    
+    
     // Show list of modules
+
+    print '<table summary="list_of_modules" id="list_of_modules" class="liste" width="100%">'."\n";
 
     $oldfamily='';
 
@@ -343,8 +350,34 @@ if ($mode != 'marketplace')
         	dol_syslog("Error for module ".$key." - Property name of module looks empty", LOG_WARNING);
       		continue;
         }
-
+        
         $const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
+        
+        // Check filters
+        $modulename=$objMod->getName();
+        $moduledesc=$objMod->getDesc();
+        $moduledesclong=$objMod->getDescLong();
+        $moduleauthor=$objMod->getPublisher();
+        if ($search_keyword)
+        {
+            $qualified=0;
+            if (preg_match('/'.preg_quote($search_keyword).'/i', $modulename) 
+                || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesc)
+                || preg_match('/'.preg_quote($search_keyword).'/i', $moduledesclong)
+                || preg_match('/'.preg_quote($search_keyword).'/i', $moduleauthor)
+                ) $qualified=1;
+            if (! $qualified) continue;
+        }
+        if ($search_status)
+        {
+            if ($search_status == 'active' && empty($conf->global->$const_name)) continue;
+            if ($search_status == 'disabled' && ! empty($conf->global->$const_name)) continue;
+        }
+        if ($search_nature)
+        {
+            if ($search_nature == 'external' && $objMod->isCoreOrExternalModule() != 'external') continue;
+            if ($search_nature == 'standard' && $objMod->isCoreOrExternalModule() == 'external') continue;
+        }
 
         // Load all lang files of module
         if (isset($objMod->langfiles) && is_array($objMod->langfiles))
@@ -440,7 +473,7 @@ if ($mode != 'marketplace')
         	}
         	else
         	{
-        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+        		print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
         		print img_picto($langs->trans("Activated"),'switch_on');
         		print '</a>';
         	}
@@ -451,25 +484,25 @@ if ($mode != 'marketplace')
         	{
         		if (is_array($objMod->config_page_url))
         		{
-        			print '  <td align="right" valign="top">';
+        			print '<td class="tdsetuppicto" align="right" valign="top">';
         			$i=0;
         			foreach ($objMod->config_page_url as $page)
         			{
         				$urlpage=$page;
         				if ($i++)
         				{
-        					print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>&nbsp;';
+        					print '<a href="'.$urlpage.'" title="'.$langs->trans($page).'">'.img_picto(ucfirst($page),"setup").'</a>';
         					//    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;';
         				}
         				else
         				{
         					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
         					{
-        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>';
         					}
         					else
         					{
-        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>&nbsp;';
+        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>';
         					}
         				}
         			}
@@ -477,16 +510,16 @@ if ($mode != 'marketplace')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
         		}
         		else
         		{
-        			print '<td align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
         		}
         	}
         	else
         	{
-        		print "<td>&nbsp;</td>";
+        		print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp"').'</td>';
         	}
 
         }
@@ -504,12 +537,12 @@ if ($mode != 'marketplace')
         	else
         	{
 	        	// Module non actif
-	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . '">';
+	        	print '<a class="reposition" href="modules.php?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=set&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
 	        	print img_picto($langs->trans("Disabled"),'switch_off');
 	        	print "</a>\n";
         	}
         	print "</td>\n";
-        	print "<td>&nbsp;</td>";
+        	print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp"').'</td>';
         }
 
         print "</tr>\n";
@@ -529,7 +562,7 @@ else
 
     $var=!$var;
     print "<tr ".$bc[$var].">\n";
-    $url='http://www.dolistore.com';
+    $url='https://www.dolistore.com';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
     print '<td>'.$langs->trans("DoliStoreDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
@@ -537,7 +570,7 @@ else
 
     $var=!$var;
     print "<tr ".$bc[$var].">\n";
-    $url='http://partners.dolibarr.org';
+    $url='https://partners.dolibarr.org';
     print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" width="180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
     print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
     print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';

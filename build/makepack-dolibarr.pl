@@ -148,9 +148,9 @@ $FILENAMEEXEDOLIWAMP = "DoliWamp-$MAJOR.$MINOR.$BUILD";
 $ARCH='noarch';
 $newbuild = $BUILD;
 $newbuild =~ s/(dev|alpha)/0.1.a/gi;			# dev (fedora)
-$newbuild =~ s/beta/0.2.beta1/gi;				# beta (fedora)
-$newbuild =~ s/rc./0.3.rc1/gi;					# rc (fedora)
-if ($newbuild !~ /-/) { $newbuild.='-0.3'; }	# finale (fedora)
+$newbuild =~ s/beta(.?)/0.2.beta/gi;			# beta (fedora)    (we want beta1, beta2, betax to be same package name)
+$newbuild =~ s/rc(.?)/0.3.rc/gi;				# rc (fedora)      (we want rc1, rc2, rcx to be same package name)
+if ($newbuild !~ /-/) { $newbuild.='-0.4'; }	# finale (fedora)
 #$newbuild =~ s/(dev|alpha)/0/gi;				# dev
 #$newbuild =~ s/beta/1/gi;						# beta
 #$newbuild =~ s/rc./2/gi;						# rc
@@ -162,10 +162,10 @@ $FILENAMERPM=$FILENAMETGZ2."-".$RPMSUBVERSION.".".$ARCH.".rpm";
 # For Deb
 $newbuild = $BUILD;
 $newbuild =~ s/(dev|alpha)/1/gi;                # dev
-$newbuild =~ s/beta/2/gi;                       # beta
-$newbuild =~ s/rc./3/gi;                        # rc
-if ($newbuild !~ /-/) { $newbuild.='-3'; }      # finale is same than rc. 
-# now newbuild is 0-1 or 0-3 for example. Note that for native package (see debian/source/format), we should not use a dash part but to get a better version management
+$newbuild =~ s/beta(.?)/2/gi;                   # beta    			(we want beta1, beta2, betax to be same package name)
+$newbuild =~ s/rc(.?)/3/gi;                     # rc				(we want rc1, rc2, rcx to be same package name)
+if ($newbuild !~ /-/) { $newbuild.='-4'; }      # finale is same than rc. 
+# now newbuild is 0-1 or 0-4 for example. Note that for native package (see debian/source/format), we should not use a dash part but to get a better version management
 $build = $newbuild;
 $build =~ s/-.*$//g;
 # now build is 0 for example
@@ -355,7 +355,7 @@ if ($nboftargetok) {
 		
 		# Test that the ChangeLog is ok
 		$TMPBUILDTOCHECKCHANGELOG=$BUILD;
-		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc//;
+		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc\d*//;
 		print "Check if ChangeLog is ok for version $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret=`grep "ChangeLog for $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG" "$SOURCE/ChangeLog" 2>&1`;
 		if (! $ret)
@@ -1108,6 +1108,14 @@ if ($nboftargetok) {
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
 		);
+		%filestoscanstableasso=(
+			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'package_rpm_generic',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
+			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
+			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',
+			"$DESTI/standard/$FILENAMETGZ.zip"=>'standard'
+		);
+
 		use POSIX qw/strftime/;
 		foreach my $file (sort keys %filestoscansf)
 		{
@@ -1150,17 +1158,22 @@ if ($nboftargetok) {
 	    		
 	    		if ($target eq 'SF') { 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
-		    		print "Publish file ".$file." to $NEWPUBLISH/".$filestoscan{$file}."/".$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	    		}
-	    		else
+	    		elsif ($target eq 'ASSO' and $NEWPUBLISH =~ /stable/) {
+	    			$destFolder="$NEWPUBLISH/$filestoscanstableasso{$file}";
+	    		} 
+	    		elsif ($target eq 'ASSO' and $NEWPUBLISH !~ /stable/) {
+	    			$destFolder="$NEWPUBLISH";
+	    		} 
+	    		else	# No more used
 	    		{
 	    			$dirnameonly=$file;
 	    			$dirnameonly =~ s/.*\/([^\/]+)\/[^\/]+$/$1/;  
 	    			$filenameonly=$file;
 	    			$filenameonly =~ s/.*\/[^\/]+\/([^\/])+$/$1/;  
 	    			$destFolder="$NEWPUBLISH/$dirnameonly";
-		    		print "Publish file ".$file." to $NEWPUBLISH/".$dirnameonly."\n";
 	    		}
+	    		print "Publish file ".$file." to ".$destFolder."\n";
 
 				# mkdir	   
 				#my $ssh = Net::SSH::Perl->new("frs.sourceforge.net");

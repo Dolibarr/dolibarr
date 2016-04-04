@@ -58,3 +58,5 @@ DefaultModelSupplierProposalCreate=إنشاء نموذج افتراضي
 DefaultModelSupplierProposalToBill=القالب الافتراضي عند إغلاق طلب السعر (مقبول)
 DefaultModelSupplierProposalClosed=القالب الافتراضي عند إغلاق طلب السعر (رفض)
 ListOfSupplierProposal=قائمة الطلبات اقتراح المورد
+SupplierProposalsToClose=Supplier proposals to close
+SupplierProposalsToProcess=Supplier proposals to process

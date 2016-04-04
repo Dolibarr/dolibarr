@@ -105,6 +105,7 @@ Labelcompte=Label account
 Sens=Sens
 Codejournal=Journal
 NumPiece=Piece number
+AccountingCategory=Accounting category
 
 DelBookKeeping=Delete the records of the general ledger
 
@@ -177,3 +178,9 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country

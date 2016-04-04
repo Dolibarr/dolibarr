@@ -56,7 +56,7 @@ if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
 
 /**
- * pt
+ * print function
  *
  * @param 	DoliDB	$db		Database handler
  * @param 	string	$sql	SQL Request
@@ -161,9 +161,11 @@ for ($m = 1 ; $m < 13 ; $m++ )
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
+    $parameters["type"] = 'vat';
+    
     // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
     $hookmanager->initHooks(array('externalbalance'));
-    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
     if (! is_array($coll_listbuy) && $coll_listbuy == -1)
     {

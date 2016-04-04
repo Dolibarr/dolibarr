@@ -431,10 +431,10 @@ if (! $error && $db->connected && $action == "set")
     $main_db_prefix = (! empty($db_prefix) ? $db_prefix : 'llx_');
 
     // Force https
-    $main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == 1)) ? '1' : '0');
+    $main_force_https = ((GETPOST("main_force_https") && (GETPOST("main_force_https") == "on" || GETPOST("main_force_https") == '1')) ? '1' : '0');
 
     // Use alternative directory
-    $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir") == "on" || GETPOST("main_use_alt_dir") == 1)) ? '' : '//');
+    $main_use_alt_dir = ((GETPOST("main_use_alt_dir") && (GETPOST("main_use_alt_dir") == "off" || GETPOST("main_use_alt_dir") == '0')) ? '//' : '');
 
     // Alternative root directory name
     $main_alt_dir_name = ((GETPOST("main_alt_dir_name") && GETPOST("main_alt_dir_name") != '') ? GETPOST("main_alt_dir_name") : 'custom');
@@ -455,8 +455,8 @@ if (! $error && $db->connected && $action == "set")
     }
 
     // Write main.inc.php and master.inc.php into documents/custom dir
-    $error+=write_main_file($main_data_dir.'/custom/main.inc.php',$main_dir);
-    $error+=write_master_file($main_data_dir.'/custom/master.inc.php',$main_dir);
+    //$error+=write_main_file($main_data_dir.'/custom/main.inc.php',$main_dir);
+    //$error+=write_master_file($main_data_dir.'/custom/master.inc.php',$main_dir);
 
     // Create database and admin user database
     if (! $error)
@@ -857,6 +857,9 @@ function write_conf_file($conffile)
 		fputs($fp,"\n\n");
 
 		fputs($fp, '// Specific settings');
+        fputs($fp,"\n");
+
+        fputs($fp, '//$dolibarr_main_demo=\'autologin,autopass\';');
         fputs($fp,"\n");
 
         fputs($fp, '$dolibarr_main_prod=\'0\';');

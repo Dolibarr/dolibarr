@@ -121,15 +121,60 @@ if ($action == 'add')
 		
 		$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 		$object->date_when = $date_next_execution;
-		
-		if ($object->create($user, $id) > 0)
+
+		// Get first contract linked to invoice used to generate template
+		if ($id > 0)
 		{
-			$id = $object->id;
-			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $id);
-			exit;
+            $srcObject = new Facture($db);
+            $srcObject->fetch(GETPOST('facid','int'));
+            
+            $srcObject->fetchObjectLinked();
+            
+            if (! empty($srcObject->linkedObjectsIds['contrat']))
+            {
+                $contractidid = reset($srcObject->linkedObjectsIds['contrat']);
+
+                $object->origin = 'contrat';
+                $object->origin_id = $contractidid;
+                $object->linked_objects[$object->origin] = $object->origin_id;
+            }
+		}
+		
+		$db->begin();
+
+		$oldinvoice = new Facture($db);
+		$oldinvoice->fetch($id);
+		
+		$result = $object->create($user, $oldinvoice->id);
+		if ($result > 0)
+		{
+			$result=$oldinvoice->delete(0, 1);
+			if ($result < 0)
+			{
+			    $error++;
+    		    setEventMessages($oldinvoice->error, $oldinvoice->errors, 'errors');
+    		    $action = "create";
+			}
 		}
 		else
 		{
+		    $error++;
+		    setEventMessages($object->error, $object->errors, 'errors');
+		    $action = "create";
+		}
+			
+		if (! $error)
+		{
+			$db->commit();
+			
+			header("Location: " . $_SERVER['PHP_SELF'] . '?facid=' . $object->id);
+   			exit;
+		}
+		else
+		{
+		    $db->rollback();
+		    
+		    $error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
 		}
@@ -309,7 +354,7 @@ if ($action == 'create')
 		
 		// Number max of generation
 		print "<tr><td>".$langs->trans("MaxPeriodNumber")."</td><td>";
-		print "<input type='text' name='nb_gen_max' value='' size='5' />";
+		print '<input type="text" name="nb_gen_max" value="'.GETPOST('nb_gen_max').'" size="5" />';
 		print "</td></tr>";
 
 		// Auto validate the invoice
@@ -574,7 +619,7 @@ else
 		print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-		print '<td colspan="3"><b>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</b></td>';
+		print '<td colspan="3">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
 
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';
@@ -905,8 +950,8 @@ else
 		 */
 		print '<div class="tabsAction">';
 
-		if ($object->statut == Facture::STATUS_DRAFT)
-		{
+		//if ($object->statut == Facture::STATUS_DRAFT)   // there is no draft status on templates.
+		//{
 		    if ($user->rights->facture->creer)
 		    {
     		    if (empty($object->frequency) || $object->date_when <= $today)
@@ -922,15 +967,26 @@ else
     	    {
     		    print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CreateBill").'</a></div>';
     		}
-		}
+		//}
 
-		if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
+		//if ($object->statut == Facture::STATUS_DRAFT && $user->rights->facture->supprimer)
+		if ($user->rights->facture->supprimer)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 		}
 
 		print '</div>';
 		
+		
+
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
+		
+		// Linked object block
+		$somethingshown = $form->showLinkedObjectBlock($object);
+		
+        print '</div></div>';
+
 	}
 	else
 	{
@@ -969,9 +1025,9 @@ else
         	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
         	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
             
-	       print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
+	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
 
-			print $langs->trans("ToCreateAPredefinedInvoice").'<br><br>';
+			print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 
 			$i = 0;
 			print '<table class="noborder" width="100%">';
@@ -1014,7 +1070,7 @@ else
 					print '<td align="center">';
 					if ($user->rights->facture->creer)
 					{
-				        if (empty($objp->frequency) || $objp->date_when <= $today)
+				        if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				        {
                             print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
                             print $langs->trans("CreateBill").'</a>';

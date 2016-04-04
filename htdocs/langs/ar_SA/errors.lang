@@ -172,6 +172,8 @@ ErrorMandatoryParametersNotProvided=معيار إلزامي (ق) لم تقدم
 ErrorOppStatusRequiredIfAmount=قمت بتعيين المبلغ المقدر لهذه الفرصة / الرصاص. لذلك يجب عليك أيضا إدخال مكانتها
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=سيئة تعريف القائمة صفيف في الوحدة واصف (القيمة سيئة لfk_menu مفتاح)
 ErrorSavingChanges=وقد ocurred لخطأ عند حفظ التغييرات
+ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
+ErrorFileMustHaveFormat=File must have format %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=تم تعيين كلمة مرور لهذا العضو. ومع ذلك، تم إنشاء أي حساب المستخدم. لذلك يتم تخزين كلمة المرور هذه ولكن لا يمكن استخدامها للدخول إلى Dolibarr. ويمكن استخدامه من قبل وحدة / واجهة خارجية ولكن إذا كنت لا تحتاج إلى تعريف أي تسجيل دخول أو كلمة المرور لأحد أفراد، يمكنك تعطيل خيار "إدارة تسجيل دخول لكل عضو" من إعداد وحدة الأعضاء. إذا كنت بحاجة إلى إدارة تسجيل الدخول ولكن لا تحتاج إلى أي كلمة المرور، يمكنك الحفاظ على هذا الحقل فارغا لتجنب هذا التحذير. ملاحظة: يمكن أيضا أن تستخدم البريد الإلكتروني لتسجيل الدخول إذا تم ربط عضو إلى المستخدم.

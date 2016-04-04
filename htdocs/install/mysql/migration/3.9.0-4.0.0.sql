@@ -21,6 +21,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- Drop old table not used (Informations are already presents in llx_accounting_bookkeeping)
+DROP TABLE llx_accountingtransaction;
+DROP TABLE llx_accountingdebcred;
 
 -- Already into 3.9 but we do it again to be sure
 ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
@@ -306,5 +309,43 @@ ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_ht double(24
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_expensereport ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_tx double(24,8) DEFAULT 1;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_multicurrency integer;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_subprice double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ht double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
+
 ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
+ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
+
+DELETE FROM llx_menu where module='expensereport';
+
+ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
+
+CREATE TABLE llx_c_accounting_category (
+  rowid 			integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code 				varchar(16) NOT NULL,
+  label 			varchar(255) NOT NULL,
+  range_account		varchar(255) NOT NULL,
+  position    		integer DEFAULT 0,
+  fk_country 		integer DEFAULT NULL,			-- This category is dedicated to a country
+  active 			integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
+
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
+
+
+DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
+ALTER TABLE llx_bordereau_cheque CHANGE number ref VARCHAR(30) NOT NULL;
+CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);

@@ -1692,7 +1692,7 @@ class FactureFournisseur extends CommonInvoice
     			$line->remise_percent=0;
 			}
 
-			$prodid = rand(1, $num_prods);
+			$prodid = mt_rand(1, $num_prods);
             $line->fk_product=$prodids[$prodid];
             $line->product_type=0;
 

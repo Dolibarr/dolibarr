@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Količina proizvoda u otvorenim dobavljačevi
 ProductQtyInShipmentAlreadySent=Količina proizvoda u već poslatim otvorenim narudžbinama klijenta
 ProductQtyInSuppliersShipmentAlreadyRecevied=Količina proizvoda u već primljenim otvorenim dobavljačevim narudžbinama
 NoProductToShipFoundIntoStock=Nema proizvoda za isporuku u magacin <b>%s</b>. Ispravite zalihu ili izaberite drugi magacin.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Klijent preuzima

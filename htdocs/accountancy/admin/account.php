@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/account.php
- * \ingroup Accounting Expert
- * \brief List accounting account
+ * \file 		htdocs/accountancy/admin/account.php
+ * \ingroup		Advanced accountancy
+ * \brief		List accounting account
  */
 require '../../main.inc.php';
 
@@ -104,10 +104,12 @@ llxHeader('', $langs->trans("ListAccounts"));
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
-$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active ";
-$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa, " . MAIN_DB_PREFIX . "accounting_system as asy";
-$sql .= " WHERE aa.fk_pcg_version = asy.pcg_version";
-$sql .= " AND asy.rowid = " . $pcgver;
+$sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
+$sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
+$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON aa.account_parent = a2.rowid";
+$sql .= " WHERE asy.rowid = " . $pcgver;
 
 if (strlen(trim($search_account))) {
 	$sql .= " AND aa.account_number like '%" . $search_account . "%'";
@@ -159,11 +161,11 @@ if ($result) {
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_accountparent" value="' . $search_accountparent . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_pcgtype" value="' . $search_pcgtype . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_accountparent" value="' . $search_accountparent . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="' . $search_pcgtype . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
@@ -175,6 +177,7 @@ if ($result) {
 	$var = false;
 	
 	$accountstatic = new AccountingAccount($db);
+	$accountparent = new AccountingAccount($db);
 	
 	while ( $i < min($num, $limit) ) {
 		$obj = $db->fetch_object($resql);
@@ -186,7 +189,19 @@ if ($result) {
 		print '<tr ' . $bc[$var] . '>';
 		print '<td>' . $accountstatic->getNomUrl(1) . '</td>';
 		print '<td>' . $obj->label . '</td>';
-		print '<td>' . $obj->account_parent . '</td>';
+
+		if (! empty($obj->account_parent))
+        {
+			$accountparent->id = $obj->rowid2;
+			$accountparent->label = $obj->label2;
+			$accountparent->account_number = $obj->account_number2;
+		
+			print '<td>' . $accountparent->getNomUrl(1) . '</td>';
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
 		print '<td>' . $obj->pcg_type . '</td>';
 		print '<td>' . $obj->pcg_subtype . '</td>';
 		print '<td>';

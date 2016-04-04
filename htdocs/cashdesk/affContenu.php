@@ -59,7 +59,7 @@ exit;*/
 print '<div class="inline-block" style="vertical-align: top">';
 print '<div class="principal">';
 
-$page=GETPOST('menu','alpha');
+$page=GETPOST('menutpl','alpha');
 if (empty($page)) $page='facturation';
 
 if (in_array(

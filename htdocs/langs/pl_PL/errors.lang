@@ -172,6 +172,8 @@ ErrorMandatoryParametersNotProvided=Obowiązkowe parametr (y) nie przewidziane
 ErrorOppStatusRequiredIfAmount=Możesz ustawić szacunkową kwotę za możliwość / ołowiu. Więc należy także wprowadzić swój status
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad definicja tablicy w menu modułu deskryptora (zły stosunek jakości do kluczowego fk_menu)
 ErrorSavingChanges=Wystąpił błąd podczas zapisywania zmian
+ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
+ErrorFileMustHaveFormat=File must have format %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=Hasło zostało ustawione dla tego użytkownika. Jednakże nie Konto użytkownika zostało utworzone. Więc to hasło jest przechowywane, ale nie mogą być używane do logowania do Dolibarr. Może być stosowany przez zewnętrzny moduł / interfejsu, ale jeśli nie trzeba definiować dowolną logowania ani hasła do członka, można wyłączyć opcję "Zarządzaj login dla każdego członka" od konfiguracji modułu użytkownika. Jeśli potrzebujesz zarządzać logowanie, ale nie wymagają hasła, możesz zachować to pole puste, aby uniknąć tego ostrzeżenia. Uwaga: E może być również stosowany jako login, jeśli element jest połączony do użytkownika.

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012		Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,33 +50,26 @@ class FormBank
      *  @param  string	$htmlname        Nom champ formulaire
      *  @return	void
      */
-    function select_type_comptes_financiers($selected=1,$htmlname='type')
+    public function selectTypeOfBankAccount($selected = Account::TYPE_CURRENT, $htmlname = 'type')
     {
-        global $langs;
-        $langs->load("banks");
+        $account = new Account($this->db);
 
-        $type_available=array(0,1,2);
-
-        print '<select id="select'.$htmlname.'" class="flat" name="'.$htmlname.'">';
-        $num = count($type_available);
-        $i = 0;
-        if ($num)
-        {
-            while ($i < $num)
-            {
-                if ($selected == $type_available[$i])
-                {
-                    print '<option value="'.$type_available[$i].'" selected>'.$langs->trans("BankType".$type_available[$i]).'</option>';
-                }
-                else
-                {
-                    print '<option value="'.$type_available[$i].'">'.$langs->trans("BankType".$type_available[$i]).'</option>';
-                }
-                $i++;
-            }
-        }
-        print '</select>';
+        print Form::selectarray($htmlname, $account->type_lib, $selected);
     }
 
+	/**
+	 * Returns the name of the Iban label. India uses 'IFSC' and the rest of the world 'IBAN' name.
+	 *
+	 * @param Account $account Account object
+	 * @return string
+	 */
+	public static function getIBANLabel(Account $account)
+	{
+		if ($account->getCountryCode() == 'IN') {
+			return 'IFSC';
+		}
+
+		return 'IBANNumber';
+	}
 }
 

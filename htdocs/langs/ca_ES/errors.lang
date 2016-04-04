@@ -166,12 +166,14 @@ ErrorGlobalVariableUpdater2=Falta el paràmetre '%s'
 ErrorGlobalVariableUpdater3=No s'han trobat les dades sol·licitades
 ErrorGlobalVariableUpdater4=El client SOAP ha fallat amb l'error '%s'
 ErrorGlobalVariableUpdater5=Sense variable global seleccionada
-ErrorFieldMustBeANumeric=El camp <b>%s</b> ha de contenir un valor numèric
+ErrorFieldMustBeANumeric=El camp <b>%s</b> ha de ser un valor numèric
 ErrorFieldMustBeAnInteger=El camp <b>%s</b> ha de ser un enter
 ErrorMandatoryParametersNotProvided=Paràmetre/s obligatori/s no definits
 ErrorOppStatusRequiredIfAmount=S'estableix una quantitat estimada per aquesta oportunitat/prospecte. Així que també has d'introduir el seu estat
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definició incorrecta del menú Array en el descriptor del mòdul (valor incorrecte per a la clau fk_menu)
 ErrorSavingChanges=Hi ha hagut un error al salvar els canvis
+ErrorWarehouseRequiredIntoShipmentLine=El magatzem és obligatori en la línia a enviar
+ErrorFileMustHaveFormat=El fitxer té format %s
 
 # Warnings
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí

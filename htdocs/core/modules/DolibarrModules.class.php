@@ -45,6 +45,16 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $numero;
 
     /**
+     * @var string  Publisher name
+     */
+    public $editor_name;
+    
+    /**
+     * @var string  URL of module at publisher site
+     */
+    public $editor_web;    
+    
+    /**
      * @var string Family
      */
     public $family;
@@ -153,10 +163,15 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $version;
 
     /**
-     * @var string Module description
+     * @var string Module description (short text)
      */
     public $description;
 
+    /**
+     * @var string Module description (long text)
+     */
+    public $descriptionlong;
+    
     /**
      * @var string[] Module language files
      */
@@ -444,7 +459,47 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
     }
 
-
+    /**
+     * Gives the translated module description if translation exists in admin.lang or the default module description
+     *
+     * @return  string  Translated module description
+     */
+    function getDescLong()
+    {
+        global $langs;
+        $langs->load("admin");
+        
+        // If module description translation does not exist using its unique id, we can use its name to find translation
+        if (is_array($this->langfiles))
+        {
+            foreach($this->langfiles as $val)
+            {
+                if ($val) $langs->load($val);
+            }
+        }
+        return $langs->trans($this->descriptionlong);
+    }
+    
+    /**
+     * Gives the publisher name
+     *
+     * @return  string  Publisher name
+     */
+    function getPublisher()
+    {
+        return $this->editor_name;
+    }
+    
+    /**
+     * Gives the publisher url
+     *
+     * @return  string  Publisher url
+     */
+    function getPublisherUrl()
+    {
+        return $this->editor_url;
+    }
+    
     /**
      * Gives module version
      * For 'experimental' modules, gives 'experimental' translation
@@ -841,7 +896,19 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 //$titre = $this->boxes[$key][0];
                 $file  = $this->boxes[$key]['file'];
                 //$note  = $this->boxes[$key][2];
-
+                
+                // TODO If the box is also included by another module and the other module is still on, we should not remove it.
+                // For the moment, we manage this with hard coded exception
+                //print "Remove box ".$file.'<br>';
+                if ($file == 'box_graph_product_distribution.php')
+                {
+                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) 
+                    {
+                        dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
+                        continue;
+                    }
+                }
+                
                 if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
 
                 if ($this->db->type == 'sqlite3') {
@@ -915,7 +982,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 $unitfrequency = isset($this->cronjobs[$key]['unitfrequency'])?$this->cronjobs[$key]['unitfrequency']:'';
                 $status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
                 $priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
-                $test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';
+                $test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';                              // Line must be visible
                 
                 // Search if boxes def already present
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";

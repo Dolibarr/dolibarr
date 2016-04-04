@@ -229,6 +229,24 @@ $coldisplay=-1; // We remove first td
 	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,$line->date_start?0:1,"updateligne",1,0,1);
 	echo ' '.$langs->trans('to').' ';
 	echo $form->select_date($line->date_end,'date_end',$hourmin,$hourmin,$line->date_end?0:1,"updateligne",1,0,1);
+	print '<script type="text/javascript">';
+	if (!$line->date_start) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+		}
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+		}
+	}
+	if (!$line->date_end) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+		}
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+		}
+	}
+	print '</script>'
 	?>
 	</td>
 </tr>
@@ -253,6 +271,10 @@ if (! empty($conf->margin->enabled))
 			jQuery("input[name='np_markRate']:first").val('');
 		});
 		jQuery("#price_ht").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#qty").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
@@ -304,7 +326,7 @@ if (! empty($conf->margin->enabled))
 
 		/* Add rules to reset price_ht from margin info */
 		<?php
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+		if (! empty($conf->global->DISPLAY_MARGIN_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
 		{
 		?>
 			$('#savelinebutton').click(function (e) {
@@ -316,7 +338,7 @@ if (! empty($conf->margin->enabled))
 			});*/
 		<?php
 		}
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
+		if (! empty($conf->global->DISPLAY_MARK_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
 		{
 		?>
 			$('#savelinebutton').click(function (e) {

@@ -5,13 +5,13 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2007-2011	Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2013-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Ion agorria			<ion@agorria.com>
+ * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -3943,7 +3943,7 @@ class Product extends CommonObject
     }
 
 	/**
-	 *	Returns the text label from units dictionnary
+	 *	Returns the text label from units dictionary
 	 *
 	 * 	@param	string $type Label type (long or short)
 	 *	@return	string|int <0 if ko, label if ok
@@ -4124,13 +4124,12 @@ class Product extends CommonObject
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 
 			$price = $baseprice;
-			$price_min = 0;
+			$price_min = $baseprice;
 
-			if ($i > 1) {
-				//We have to make sure it does exist and it is > 0
-				if (isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
-					$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
-				}
+			//We have to make sure it does exist and it is > 0
+			//First price level only allows changing min_price
+			if ($i > 1 && isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
+				$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
 			}
 
 			$prices[$i] = $price;
@@ -4140,7 +4139,11 @@ class Product extends CommonObject
 				$price_min = $price * (1 - ($rules[$i]->var_min_percent/100));
 			}
 
-			if ($price == $this->multiprices[$i] && ($price_min == $this->multiprices_min[$i])) {
+			//Little check to make sure the price is modified before triggering generation
+			$check_amount = (($price == $this->multiprices[$i]) && ($price_min == $this->multiprices_min[$i]));
+			$check_type = ($baseprice == $this->multiprices_base_type[$i]);
+
+			if ($check_amount && $check_type) {
 				continue;
 			}
 
