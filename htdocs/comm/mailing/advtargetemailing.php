@@ -570,7 +570,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>' . "\n";
-		print $formadvtargetemaling->multiselect_country('cust_country', $array_query['cust_country']);
+		print $formadvtargetemaling->multiselectCountry('cust_country', $array_query['cust_country']);
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
 
@@ -621,7 +621,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->multiselect_prospection_status($array_query['cust_prospect_status'], 'cust_prospect_status', 1);
+		print $formadvtargetemaling->multiselectProspectionStatus($array_query['cust_prospect_status'], 'cust_prospect_status', 1);
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
 
@@ -661,7 +661,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>' . "\n";
-		print $formadvtargetemaling->multiselectselect_salesrepresentatives('cust_saleman', $array_query['cust_saleman'], $user);
+		print $formadvtargetemaling->multiselectselectSalesRepresentatives('cust_saleman', $array_query['cust_saleman'], $user);
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
 
@@ -673,7 +673,7 @@ if ($object->fetch($id) >= 0) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 			}
 			print '</td><td>' . "\n";
-			print $formadvtargetemaling->multiselectselect_language('cust_language', $array_query['cust_language']);
+			print $formadvtargetemaling->multiselectselectLanguage('cust_language', $array_query['cust_language']);
 			print '</td><td>' . "\n";
 			print '</td></tr>' . "\n";
 		}
@@ -685,7 +685,7 @@ if ($object->fetch($id) >= 0) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 			}
 			print '</td><td>' . "\n";
-			print $formadvtargetemaling->multiselect_customercategories('cust_categ', $array_query['cust_categ']);
+			print $formadvtargetemaling->multiselectCustomerCategories('cust_categ', $array_query['cust_categ']);
 			print '</td><td>' . "\n";
 			print '</td></tr>' . "\n";
 		}
@@ -733,7 +733,7 @@ if ($object->fetch($id) >= 0) {
 						print $formadvtargetemaling->advMultiselectarray('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
 						print '</td><td>' . "\n";
 					} elseif (($extrafields->attribute_type[$key] == 'sellist')) {
-						print $formadvtargetemaling->advMultiselectarray_selllist('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
+						print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key, $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key]);
 						print '</td><td>' . "\n";
 					} else {
 
@@ -789,7 +789,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>';
-		print $formadvtargetemaling->multiselect_civility('contact_civility', $array_query['contact_civility']);
+		print $formadvtargetemaling->multiselectCivility('contact_civility', $array_query['contact_civility']);
 		print '</td></tr>';
 
 		// contact name
@@ -814,7 +814,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>' . "\n";
-		print $formadvtargetemaling->multiselect_country('contact_country', $array_query['contact_country']);
+		print $formadvtargetemaling->multiselectCountry('contact_country', $array_query['contact_country']);
 		print '</td><td>' . "\n";
 		print '</td></tr>' . "\n";
 
@@ -869,7 +869,7 @@ if ($object->fetch($id) >= 0) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 			}
 			print '</td><td>' . "\n";
-			print $formadvtargetemaling->multiselect_contactcategories('contact_categ', $array_query['contact_categ']);
+			print $formadvtargetemaling->multiselectContactCategories('contact_categ', $array_query['contact_categ']);
 			print '</td><td>' . "\n";
 			print '</td></tr>' . "\n";
 		}
@@ -917,7 +917,7 @@ if ($object->fetch($id) >= 0) {
 					print $formadvtargetemaling->advMultiselectarray('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
 					print '</td><td>' . "\n";
 				} elseif (($extrafields->attribute_type[$key] == 'sellist')) {
-					print $formadvtargetemaling->advMultiselectarray_selllist('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
+					print $formadvtargetemaling->advMultiselectarraySelllist('options_' . $key . '_cnct', $extrafields->attribute_param[$key]['options'], $array_query['options_' . $key . '_cnct']);
 					print '</td><td>' . "\n";
 				} else {
 

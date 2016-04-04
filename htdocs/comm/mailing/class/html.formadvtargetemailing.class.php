@@ -49,7 +49,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param string $htmlname select field
 	 * @return string select field
 	 */
-	function multiselect_prospection_status($selected_array = array(), $htmlname = 'cust_prospect_status') {
+	function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status') {
 		global $conf, $langs;
 		$options_array = array ();
 
@@ -57,7 +57,7 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
-		dol_syslog ( get_class ( $this ) . '::multiselect_prospection_status sql=' . $sql, LOG_DEBUG );
+		dol_syslog ( get_class ( $this ) . '::multiselectProspectionStatus sql=' . $sql, LOG_DEBUG );
 		$resql = $this->db->query ( $sql );
 		if ($resql) {
 			$num = $this->db->num_rows ( $resql );
@@ -85,7 +85,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array or Code or Label of preselected country
 	 * @return string HTML string with select
 	 */
-	function multiselect_country($htmlname = 'country_id', $selected_array=array()) {
+	function multiselectCountry($htmlname = 'country_id', $selected_array=array()) {
 		global $conf, $langs;
 
 		$langs->load ( "dict" );
@@ -144,7 +144,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param User $user User action
 	 * @return string combo list code
 	 */
-	function multiselectselect_salesrepresentatives($htmlname, $selected_array, $user) {
+	function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user) {
 
 		global $conf;
 
@@ -185,7 +185,7 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array selected array
 	 * @return string combo list code
 	 */
-	function multiselectselect_language($htmlname='', $selected_array=array()) {
+	function multiselectselectLanguage($htmlname='', $selected_array=array()) {
 
 		global $conf,$langs;
 
@@ -211,7 +211,7 @@ class FormAdvTargetEmailing extends Form
 	 *
 	 *  @return	string HTML combo
 	 */
-	function advMultiselectarray_selllist($htmlname, $sqlqueryparam = array(), $selected_array = array()) {
+	function advMultiselectarraySelllist($htmlname, $sqlqueryparam = array(), $selected_array = array()) {
 
 		if (is_array ( $sqlqueryparam )) {
 			$options_array=array();
@@ -279,7 +279,7 @@ class FormAdvTargetEmailing extends Form
 	 *  @param  array $selected_array array
 	 *  @return	string HTML combo
 	 */
-	function multiselect_civility($htmlname='civilite_id',$selected_array = array())
+	function multiselectCivility($htmlname='civilite_id',$selected_array = array())
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
@@ -386,9 +386,9 @@ class FormAdvTargetEmailing extends Form
 	 * 	@param	array	$selected_array	value selected
 	 *  @return	string HTML combo
 	 */
-	function multiselect_customercategories($htmlname='cust_cat',$selected_array = array())
+	function multiselectCustomerCategories($htmlname='cust_cat',$selected_array = array())
 	{
-		return $this->multiselect_categories($htmlname,$selected_array,2);
+		return $this->multiselectCategories($htmlname,$selected_array,2);
 	}
 
 	/**
@@ -398,9 +398,9 @@ class FormAdvTargetEmailing extends Form
 	 * 	@param	array	$selected_array	value selected
 	 *  @return	string HTML combo
 	 */
-	function multiselect_contactcategories($htmlname='contact_cat',$selected_array = array())
+	function multiselectContactCategories($htmlname='contact_cat',$selected_array = array())
 	{
-		return $this->multiselect_categories($htmlname,$selected_array,4);
+		return $this->multiselectCategories($htmlname,$selected_array,4);
 	}
 
 	/**
@@ -411,7 +411,7 @@ class FormAdvTargetEmailing extends Form
 	 * 	@param	int	$type	type
 	 *  @return	string HTML combo
 	 */
-	public function multiselect_categories($htmlname='',$selected_array = array(), $type=0)
+	public function multiselectCategories($htmlname='',$selected_array = array(), $type=0)
 	{
 		global $conf,$langs,$user;
 		$langs->load("dict");
