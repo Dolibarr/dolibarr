@@ -124,7 +124,7 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-    // mode de reglement
+    // customer preferred shipping method
     if ($action == 'setshippingmethod' && $user->rights->societe->creer)
     {
         $object->fetch($id);
