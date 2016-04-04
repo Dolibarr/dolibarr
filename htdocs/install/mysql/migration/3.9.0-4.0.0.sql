@@ -177,6 +177,7 @@ CREATE TABLE llx_multicurrency_rate
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_societe ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_societe ADD COLUMN fk_shipping_method integer AFTER cond_reglement_supplier;
 
 ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_code varchar(255);

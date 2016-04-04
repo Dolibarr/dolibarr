@@ -1304,6 +1304,9 @@ if ($action == 'create')
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="' . $soc->id . '">';
 		print '</td>';
+        if (! empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD) && ! empty($soc->shipping_method_id)) {
+            $shipping_method_id = $soc->shipping_method_id;
+        }
 	} else {
 		print '<td colspan="2">';
 		print $form->select_company('', 'socid', '(s.client = 1 OR s.client = 2 OR s.client = 3) AND status=1', 1);
