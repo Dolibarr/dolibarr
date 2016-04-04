@@ -61,7 +61,7 @@ $extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->tab
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
+$result = restrictedArea($user, 'projet', $id,'projet&project');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));

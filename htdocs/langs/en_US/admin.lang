@@ -1610,6 +1610,8 @@ BankOrderGlobal=General
 BankOrderGlobalDesc=General display order
 BankOrderES=Spanish
 BankOrderESDesc=Spanish display order
+ChequeReceiptsNumberingModule=Cheque Receipts Numbering module
+
 ##### Multicompany #####
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####
