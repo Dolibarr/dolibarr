@@ -24,7 +24,8 @@
 /**
  * Class to manage building of HTML components
  */
-class FormAdvTargetEmailing extends Form {
+class FormAdvTargetEmailing extends Form
+{
 	var $db;
 	var $error;
 
@@ -81,7 +82,7 @@ class FormAdvTargetEmailing extends Form {
 	 * Return combo list of activated countries, into language of user
 	 *
 	 * @param string $htmlname of html select object
-	 * @param array $selected or Code or Label of preselected country
+	 * @param array $selected_array or Code or Label of preselected country
 	 * @return string HTML string with select
 	 */
 	function multiselect_country($htmlname = 'country_id', $selected_array=array()) {
@@ -138,9 +139,9 @@ class FormAdvTargetEmailing extends Form {
 	/**
 	 * Return select list for categories (to use in form search selectors)
 	 *
-	 * @param unknown $htmlname
-	 * @param array $selected_array
-	 * @param unknown $user
+	 * @param string $htmlname control name
+	 * @param array $selected_array array of data
+	 * @param User $user User action
 	 * @return string combo list code
 	 */
 	function multiselectselect_salesrepresentatives($htmlname, $selected_array=array(), $user) {
@@ -181,7 +182,7 @@ class FormAdvTargetEmailing extends Form {
 	 * Return select list for categories (to use in form search selectors)
 	 *
 	 * @param string $htmlname of combo list (example: 'search_sale')
-	 * @param array $selected_array
+	 * @param array $selected_array selected array
 	 * @return string combo list code
 	 */
 	function multiselectselect_language($htmlname='', $selected_array=array()) {
@@ -204,9 +205,9 @@ class FormAdvTargetEmailing extends Form {
 	/**
 	 * Return multiselect list of entities for extrafeild type sellist
 	 *
-	 * @param unknown $htmlname
-	 * @param array $sqlqueryparam
-	 * @param array $selected_array
+	 * @param string $htmlname control name
+	 * @param array $sqlqueryparam array
+	 * @param array $selected_array array
 	 *
 	 *  @return	string HTML combo
 	 */
@@ -274,8 +275,9 @@ class FormAdvTargetEmailing extends Form {
 	/**
 	 *  Return combo list with people title
 	 *
-	 *  @param  string	$selected   Title preselected
 	 * 	@param	string	$htmlname	Name of HTML select combo field
+	 *  @param  string	$selected   Title preselected
+	 *
 	 *  @return	string HTML combo
 	 */
 	function multiselect_civility($htmlname='civilite_id',$selected_array = array())
