@@ -9,6 +9,7 @@
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Bahfir Abbes            <bafbes@gmail.com>
+ * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1269,7 +1270,7 @@ class FactureFournisseur extends CommonInvoice
         // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
         $localtaxes_type=getLocalTaxesFromRate($vatrate,0,$mysoc, $this->thirdparty);
-        $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
+        $vatrate = preg_replace('/\s*\(.*\)/','',$vatrate);  // Remove code into vatrate.
         
         $tabprice = calcul_price_total($qty, $pu, $remise_percent, $vatrate, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type);
         $total_ht  = $tabprice[0];
