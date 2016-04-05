@@ -185,18 +185,21 @@ class CategoryApi extends DolibarrApi
          if(! DolibarrApiAccess::$user->rights->categorie->lire) {
 			    throw new RestException(401);
          }
+        //if ($type == "") {
+          //$type="product";
+        //}
         $sub_type = $type;
-        $subocl_name = "fk_".$type;
+        $subcol_name = "fk_".$type;
         if ($type=="customer" || $type=="supplier") {
           $sub_type="societe";
           $subcol_name="fk_soc";
         }
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
-        $sql.= " , ".MAIN_DB_PREFIX."categorie_".$col_type." as sub ";
+        $sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
         $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
         $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
-        $sql.= ' AND s.rowid = sub.fk_icategorie';
+        $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
 
         $nbtotalofrecords = 0;
