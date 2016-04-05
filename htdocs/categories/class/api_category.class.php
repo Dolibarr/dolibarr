@@ -172,6 +172,7 @@ class CategoryApi extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param int		$item		Id of the item to get categories for
      * @return array Array of category objects
      *
      * @url	GET /product/{item}/categories
