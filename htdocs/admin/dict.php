@@ -1389,8 +1389,10 @@ if ($id)
                                 $valuetoshow = length_accountg($valuetoshow);
                             }
 
+                            $class='tddict';
+                            if ($fieldlist[$field] == 'tracking') $class.=' tdoverflowauto';
 							// Show value for field
-							if ($showfield) print '<td align="'.$align.'">'.$valuetoshow.'</td>';
+							if ($showfield) print '<!-- '.$fieldlist[$field].' --><td align="'.$align.'" class="'.$class.'">'.$valuetoshow.'</td>';
                         }
                     }
 
@@ -1690,13 +1692,13 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		else
 		{
 			print '<td>';
-			$size='';
+			$size=''; $class='';
 			if ($fieldlist[$field]=='code') $size='size="8" ';
 			if ($fieldlist[$field]=='position') $size='size="4" ';
-			if ($fieldlist[$field]=='libelle') $size='size="32" ';
-			if ($fieldlist[$field]=='tracking') $size='size="92" ';
+			if ($fieldlist[$field]=='libelle') $size='centpercent';
+			if ($fieldlist[$field]=='tracking') $class='centpercent';
 			if ($fieldlist[$field]=='sortorder') $size='size="2" ';
-			print '<input type="text" '.$size.' class="flat" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
+			print '<input type="text" '.$size.' class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}
 	}

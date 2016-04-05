@@ -553,6 +553,10 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowauto {
+    max-width: 0;
+    overflow: auto;
+}
 
 
 /* ============================================================================== */
