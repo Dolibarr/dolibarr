@@ -433,7 +433,7 @@ if ($action == 'export_csv') {
 				print ($mt < 0 ? 'C' : 'D') . $sep;
 				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 				print $val["type_payment"] . $sep;
-				print $val["ref"] . $sep;
+				print utf8_decode($val["ref"]) . $sep;
 				print "\n";
 			}
 
@@ -452,7 +452,7 @@ if ($action == 'export_csv') {
 						print ($mt < 0 ? 'D' : 'C') . $sep;
 						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 						print $val["type_payment"] . $sep;
-						print $val["ref"] . $sep;
+						print utf8_decode($val["ref"]) . $sep;
 						print "\n";
 					}
 				}
@@ -465,7 +465,7 @@ if ($action == 'export_csv') {
 						print ($mt < 0 ? 'D' : 'C') . $sep;
 						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
 						print $val["type_payment"] . $sep;
-						print $val["ref"] . $sep;
+						print utf8_decode($val["ref"]) . $sep;
 						print "\n";
 					}
 				}
@@ -483,7 +483,12 @@ if ($action == 'export_csv') {
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["type_payment"] . '"' . $sep;
 				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-				print '"' . $langs->trans("Bank") . '"' . $sep;
+				if ($companystatic->name == '') {
+					print '"' . $langs->trans('Bank') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
+				} else {
+					print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
+				}
+				// print '"' . $langs->trans("Bank") . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
 				print "\n";
@@ -496,7 +501,12 @@ if ($action == 'export_csv') {
 						print '"' . $date . '"' . $sep;
 						print '"' . $val["type_payment"] . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-						print '"' . $companystatic->name . '"' . $sep;
+						// print '"' . $companystatic->name . '"' . $sep;
+						if ($companystatic->name == '') {
+							print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($val["ref"]) . '"' . $sep;
+						} else {
+							print '"' . $langs->trans('ThirdParty') . " - " . utf8_decode($companystatic->name) . '"' . $sep;
+						}
 						print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 						print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 						print "\n";
@@ -507,7 +517,12 @@ if ($action == 'export_csv') {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
-					print '"' . $langs->trans("Bank") . '"' . $sep;
+					// print '"' . $langs->trans("Bank") . '"' . $sep;
+					if ($companystatic->name == '') {
+						print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($val["ref"]) . '"' . $sep;
+					} else {
+						print '"' . $langs->trans("Bank") . ' - ' . utf8_decode($companystatic->name) . '"' . $sep;
+					}
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 					print "\n";
@@ -520,7 +535,7 @@ if ($action == 'export_csv') {
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' - ' . $journal;
+	$nom = $langs->trans("FinanceJournal") . ' - ' . $bank_code_journal->getNomUrl(1);
 	$builddate = time();
 	$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
