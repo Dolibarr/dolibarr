@@ -349,3 +349,7 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
 DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
 ALTER TABLE llx_bordereau_cheque CHANGE number ref VARCHAR(30) NOT NULL;
 CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
+
+
+ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
+
