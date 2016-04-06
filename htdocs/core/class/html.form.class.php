@@ -2240,7 +2240,7 @@ class Form
 			//TODO dictionnary
 			$reputations=array(''=>$langs->trans('Standard'),'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 
-                        $opt .= " - ".$reputations[$objp->supplier_reputation]
+                        $opt .= " - ".$reputations[$objp->supplier_reputation];
                         $outval.=" - ".$reputations[$objp->supplier_reputation];
                     }
 
