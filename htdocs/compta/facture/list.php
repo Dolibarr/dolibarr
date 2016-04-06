@@ -1074,7 +1074,7 @@ if ($resql)
         $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
         $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
         
-        $formfile->show_documents('massfilesarea','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+        print $formfile->showdocuments('massfilesarea','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }
     else
     {

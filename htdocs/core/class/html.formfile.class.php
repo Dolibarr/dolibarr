@@ -237,6 +237,7 @@ class FormFile
      * 		@param		string				$buttonlabel		Label on submit button
      * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
      * 		@return		int										<0 if KO, number of shown files if OK
+     *      @deprecated                                         Use print xxx->showdocuments() instead.
      */
     function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
     {
@@ -274,7 +275,7 @@ class FormFile
 		if (0 !== $iconPDF) {
 			dol_syslog(__METHOD__ . ": passing iconPDF parameter is deprecated", LOG_WARNING);
 		}
-
+		
         global $langs, $conf, $user, $hookmanager;
         global $form, $bc;
 
@@ -286,7 +287,7 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-
+        
         $printer=0;
         if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur')))	// The direct print feature is implemented only for such elements
         {
@@ -579,8 +580,8 @@ class FormFile
         {
             $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
 
-            // Affiche en-tete tableau si non deja affiche
-            if (! empty($file_list) && ! $headershown)
+            // Show title of array if not already shown
+            if ((! empty($file_list) || $modulepart == 'massfilesarea') && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
