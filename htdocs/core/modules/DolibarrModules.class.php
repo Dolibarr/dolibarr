@@ -469,6 +469,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         global $langs;
         $langs->load("admin");
         
+        if (empty($this->descriptionlong)) return '';
+        
         // If module description translation does not exist using its unique id, we can use its name to find translation
         if (is_array($this->langfiles))
         {

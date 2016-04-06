@@ -112,6 +112,7 @@ $_SESSION["mode"]=$mode;
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url);
 
+$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
@@ -166,26 +167,37 @@ foreach ($modulesdir as $dir)
     		            		}
 								$j = $objMod->numero;
 
-    							$modulequalified=true;
+    							$modulequalified=1;
 
 		    					// We discard modules according to features level (PS: if module is activated we always show it)
 		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=false;
-		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=false;
-								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=false;
-		    					if ($search_version)
+		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
+		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
+								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
+
+		    					// We discard modules according to property disabled
+		    					if (! empty($objMod->hidden)) $modulequalified=0;
+
+		    					if ($modulequalified > 0)
 		    					{
-		    					    if (($objMod->version == 'development' || $objMod->version == 'experimental' || preg_match('/deprecated/', $objMod->version)) && $search_version == 'stable') $modulequalified=false;
-    		    					if ($objMod->version != 'development'  && ($search_version == 'development')) $modulequalified=false;
-    		    					if ($objMod->version != 'experimental' && ($search_version == 'experimental')) $modulequalified=false;
-    		    					if (! preg_match('/deprecated/', $objMod->version) && ($search_version == 'deprecated')) $modulequalified=false;
+		    					    $publisher=dol_escape_htmltag($objMod->getPublisher());
+		    					    $external=($objMod->isCoreOrExternalModule() == 'external');
+		    					    if ($external)
+		    					    {
+		    					        if ($publisher)
+		    					        {
+		    					            $arrayofnatures['external_'.$publisher]=$langs->trans("External").' - '.$publisher;
+		    					        }
+		    					        else
+		    					        {
+		    					            $arrayofnatures['external_']=$langs->trans("External").' - '.$langs->trans("UnknownPublishers");
+		    					        }
+		    					    }
+		    					    ksort($arrayofnatures);
 		    					}
 		    					
-		    					// We discard modules according to property disabled
-		    					if (! empty($objMod->hidden)) $modulequalified=false;
-
 		    					// Define array $categ with categ with at least one qualified module
-		    					if ($modulequalified)
+		    					if ($modulequalified > 0)
 		    					{
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
@@ -313,7 +325,7 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
+    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, $search_nature, 1);
     $moreforfilter.= '</div>';
     if (! empty($conf->global->MAIN_FEATURES_LEVEL))
     {
@@ -379,6 +391,8 @@ if ($mode != 'marketplace')
         $moduledesc=$objMod->getDesc();
         $moduledesclong=$objMod->getDescLong();
         $moduleauthor=$objMod->getPublisher();
+
+        // We discard showing according to filters
         if ($search_keyword)
         {
             $qualified=0;
@@ -396,8 +410,22 @@ if ($mode != 'marketplace')
         }
         if ($search_nature)
         {
-            if ($search_nature == 'external' && $objMod->isCoreOrExternalModule() != 'external') continue;
-            if ($search_nature == 'standard' && $objMod->isCoreOrExternalModule() == 'external') continue;
+            if (preg_match('/^external/',$search_nature) && $objMod->isCoreOrExternalModule() != 'external') continue;
+            if (preg_match('/^external_(.*)$/',$search_nature, $reg))
+            {
+                //print $reg[1].'-'.dol_escape_htmltag($objMod->getPublisher());
+                $publisher=dol_escape_htmltag($objMod->getPublisher());
+                if ($reg[1] && $reg[1] != $publisher) continue;
+                if (! $reg[1] && ! empty($publisher)) continue;
+            }
+            if ($search_nature == 'core' && $objMod->isCoreOrExternalModule() == 'external') continue;
+        }
+        if ($search_version)
+        {
+            if (($objMod->version == 'development' || $objMod->version == 'experimental' || preg_match('/deprecated/', $objMod->version)) && $search_version == 'stable') continue;
+            if ($objMod->version != 'development'  && ($search_version == 'development')) continue;
+            if ($objMod->version != 'experimental' && ($search_version == 'experimental')) continue;
+            if (! preg_match('/deprecated/', $objMod->version) && ($search_version == 'deprecated')) continue;
         }
 
         // Load all lang files of module
@@ -415,7 +443,7 @@ if ($mode != 'marketplace')
         if ($familykey!=$oldfamily)
         {
             print '<tr class="liste_titre">'."\n";
-            print '<td colspan="5">';
+            print '<td colspan="6">';
             $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
             print $familytext;
             print "</td>\n";
@@ -463,18 +491,159 @@ if ($mode != 'marketplace')
         print nl2br($objMod->getDesc());
         print "</td>\n";
 
+        // Help
+        print '<td align="center" valign="top" class="nowrap">';
+        $text='';
+        if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
+        else $text.=$objMod->getDesc().'<br>';
+        
+        if ($objMod->isCoreOrExternalModule() == 'external')
+        {
+            $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
+            if (! empty($objMod->editor_name) && $objMod->editor_name != 'dolibarr') $text.='<br><strong>'.$langs->trans("Author").':</strong> '.$objMod->editor_name;
+            if (! empty($objMod->editor_url) && $objMod->editor_url != 'www.dolibarr.org') $text.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
+            $text.='<br>';
+        }
+        else
+        {
+            $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
+        }
+        $text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
+        if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
+        {
+            $i=0;
+            foreach($objMod->tabs as $val)
+            {
+                $tmp=explode(':',$val,3);
+                $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
+        if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
+        {
+            $i=0;
+            foreach($objMod->dictionaries['tablib'] as $val)
+            {
+                $text.=($i?', ':'').$val;
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
+        if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
+        {
+            $i=0;
+            foreach($objMod->boxes as $val)
+            {
+                $text.=($i?', ':'').($val['file']?$val['file']:$val[0]);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+
+        $text.='<br><strong>'.$langs->trans("AddModels").':</strong> ';
+        if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
+        if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
+        if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
+        {
+            $i=0;
+            foreach($objMod->cronjobs as $val)
+            {
+                $text.=($i?', ':'').($val['label']);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
+        if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
+        if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
+        {
+            $i=0;
+            foreach($objMod->module_parts['hooks'] as $val)
+            {
+                $text.=($i?', ':'').($val);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+
+        $text.='<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
+        if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
+        {
+            $i=0;
+            foreach($objMod->rights as $val)
+            {
+                $text.=($i?', ':'').($val[1]);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
+        if (isset($objMod->menu) && is_array($objMod->menu) && $objMod->menu)
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
+        if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
+        {
+            $i=0;
+            foreach($objMod->export_label as $val)
+            {
+                $text.=($i?', ':'').($val);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
+        if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
+        {
+            $i=0;
+            foreach($objMod->import_label as $val)
+            {
+                $text.=($i?', ':'').($val);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
+        $text.=$langs->trans("DetectionNotPossible");
+        
+        print $form->textwithpicto('', $text, 1, 'help');
+        print '</td>';
+        
         // Version
         print '<td align="center" valign="top" class="nowrap">';
         $version=$objMod->getVersion();
         $dirofmodule=$dirmod[$key];
-        if ($objMod->isCoreOrExternalModule() == 'external')
-        {
-        	$text=$langs->trans("ExternalModule",$dirofmodule);
-        	if (! empty($objMod->editor_name) && $objMod->editor_name != 'dolibarr') $text.=' - '.$objMod->editor_name;
-        	if (! empty($objMod->editor_web) && $objMod->editor_web != 'www.dolibarr.org') $text.=' - '.$objMod->editor_web;
-        	print $form->textwithpicto($version, $text, 1, 'help');
-        }
-        else print $version;
+        print $version;
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
