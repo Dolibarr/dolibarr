@@ -41,6 +41,7 @@ $page_y=GETPOST('page_y','int');
 $search_keyword=GETPOST('search_keyword','alpha');
 $search_status=GETPOST('search_status','alpha');
 $search_nature=GETPOST('search_nature','alpha');
+$search_version=GETPOST('search_version','alpha');
 
 if (! $user->admin)
 	accessforbidden();
@@ -64,8 +65,9 @@ $familyinfo=array(
 
 $param='';
 if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status) $param.='&search_status='.urlencode($search_status);
-if ($search_nature) $param.='&search_nature='.urlencode($search_nature);
+if ($search_status)  $param.='&search_status='.urlencode($search_status);
+if ($search_nature)  $param.='&search_nature='.urlencode($search_nature);
+if ($search_version) $param.='&search_version='.urlencode($search_version);
 
 
 
@@ -94,6 +96,7 @@ if (GETPOST('buttonreset'))
     $search_keyword='';
     $search_status='';
     $search_nature='';
+    $search_version='';
 }
 
 
@@ -163,13 +166,21 @@ foreach ($modulesdir as $dir)
     		            		}
 								$j = $objMod->numero;
 
-    							$modulequalified=1;
+    							$modulequalified=true;
 
 		    					// We discard modules according to features level (PS: if module is activated we always show it)
 		    					$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',get_class($objMod)));
-		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
-		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
-								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
+		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=false;
+		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=false;
+								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=false;
+		    					if ($search_version)
+		    					{
+		    					    if (($objMod->version == 'development' || $objMod->version == 'experimental' || preg_match('/deprecated/', $objMod->version)) && $search_version == 'stable') $modulequalified=false;
+    		    					if ($objMod->version != 'development'  && ($search_version == 'development')) $modulequalified=false;
+    		    					if ($objMod->version != 'experimental' && ($search_version == 'experimental')) $modulequalified=false;
+    		    					if (! preg_match('/deprecated/', $objMod->version) && ($search_version == 'deprecated')) $modulequalified=false;
+		    					}
+		    					
 		    					// We discard modules according to property disabled
 		    					if (! empty($objMod->hidden)) $modulequalified=false;
 
@@ -254,15 +265,15 @@ if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>
 $h = 0;
 
 $categidx='common';    // Main
-if (! empty($categ[$categidx]))
-{
+//if (! empty($categ[$categidx]))
+//{
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
 	$head[$h][1] = $langs->trans("AvailableModules");
 	$head[$h][2] = 'common';
 	$h++;
-}
+//}
 
-$categidx='expdev';
+/*$categidx='expdev';
 if (! empty($categ[$categidx]))
 {
 	$categidx='expdev';
@@ -270,7 +281,7 @@ if (! empty($categ[$categidx]))
     $head[$h][1] = $form->textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
     $head[$h][2] = 'expdev';
     $h++;
-}
+}*/
 
 $categidx='marketplace';
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -304,6 +315,16 @@ if ($mode != 'marketplace')
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
     $moreforfilter.= '</div>';
+    if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+    {
+        $array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
+        if ($conf->global->MAIN_FEATURES_LEVEL < 0) $array_version['deprecated']=$langs->trans("Deprecated");
+        if ($conf->global->MAIN_FEATURES_LEVEL > 0) $array_version['experimental']=$langs->trans("Experimental");
+        if ($conf->global->MAIN_FEATURES_LEVEL > 1) $array_version['development']=$langs->trans("Development");
+        $moreforfilter.='<div class="divsearchfield">';
+        $moreforfilter.= $langs->trans('Version') . ': '.$form->selectarray('search_version', $array_version, $search_version, 1);
+        $moreforfilter.= '</div>';
+    }
     $moreforfilter.=' ';
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.='<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
