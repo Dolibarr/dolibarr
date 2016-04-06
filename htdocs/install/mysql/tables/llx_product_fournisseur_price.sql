@@ -41,5 +41,6 @@ create table llx_product_fournisseur_price
   fk_user				integer,
   fk_supplier_price_expression	integer,            -- Link to the rule for dynamic price calculation
   import_key			varchar(14),                -- Import key
-  delivery_time_days    integer
+  delivery_time_days    integer,
+  supplier_reputation varchar(10)
 )ENGINE=innodb;

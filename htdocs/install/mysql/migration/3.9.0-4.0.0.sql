@@ -353,3 +353,4 @@ CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 
 ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
 
+ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NULL;
