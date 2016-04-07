@@ -566,6 +566,7 @@ div.myavailability {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.minheight20 { min-height: 20px; }
 .titlefield { width: 30%; }
 .titlefieldcreate { width: 20%; }
 

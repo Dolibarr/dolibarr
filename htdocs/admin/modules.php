@@ -222,6 +222,7 @@ foreach ($modulesdir as $dir)
 
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
+		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
 		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
@@ -322,9 +323,6 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
-    $moreforfilter.= '</div>';
-    $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, $search_nature, 1);
     $moreforfilter.= '</div>';
     if (! empty($conf->global->MAIN_FEATURES_LEVEL))
@@ -337,6 +335,9 @@ if ($mode != 'marketplace')
         $moreforfilter.= $langs->trans('Version') . ': '.$form->selectarray('search_version', $array_version, $search_version, 1);
         $moreforfilter.= '</div>';
     }
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
+    $moreforfilter.= '</div>';
     $moreforfilter.=' ';
     $moreforfilter.='<div class="divsearchfield">';
     $moreforfilter.='<input type="submit" name="buttonsubmit" class="button" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
@@ -370,7 +371,8 @@ if ($mode != 'marketplace')
 
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
-
+    	$dirofmodule = $dirmod[$key];
+    	 
     	$special = $objMod->special;
 
     	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
@@ -497,11 +499,13 @@ if ($mode != 'marketplace')
         if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
         else $text.=$objMod->getDesc().'<br>';
         
+        $textexternal='';
         if ($objMod->isCoreOrExternalModule() == 'external')
         {
-            $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
-            if (! empty($objMod->editor_name) && $objMod->editor_name != 'dolibarr') $text.='<br><strong>'.$langs->trans("Author").':</strong> '.$objMod->editor_name;
-            if (! empty($objMod->editor_url) && $objMod->editor_url != 'www.dolibarr.org') $text.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
+            $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
+            if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
+            if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
+            $text.=$textexternal;
             $text.='<br>';
         }
         else
@@ -636,13 +640,22 @@ if ($mode != 'marketplace')
         $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
         $text.=$langs->trans("DetectionNotPossible");
         
-        print $form->textwithpicto('', $text, 1, 'help');
+        print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
+
+        // Picto warning 
+        $version=$objMod->getVersion();
+        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
+        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
+        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
+        
+        // Picto external
+        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
+        
+        
         print '</td>';
         
         // Version
         print '<td align="center" valign="top" class="nowrap">';
-        $version=$objMod->getVersion();
-        $dirofmodule=$dirmod[$key];
         print $version;
         print "</td>\n";
 
@@ -688,11 +701,11 @@ if ($mode != 'marketplace')
         				{
         					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
         					{
-        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>';
+        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         					else
         					{
-        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>';
+        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         				}
         			}
@@ -700,16 +713,16 @@ if ($mode != 'marketplace')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else
         	{
-        		print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp"').'</td>';
+        		print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         	}
 
         }
@@ -732,7 +745,7 @@ if ($mode != 'marketplace')
 	        	print "</a>\n";
         	}
         	print "</td>\n";
-        	print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp"').'</td>';
+        	print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         }
 
         print "</tr>\n";
