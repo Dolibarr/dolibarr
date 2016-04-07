@@ -3272,18 +3272,18 @@ abstract class CommonObject
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td class="linecolqty" align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty" align="right">'.$langs->trans('Qty').'</td>';
 
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			print '<td class="linecoluseunit" align="left" width="50">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit" align="left">'.$langs->trans('Unit').'</td>';
 		}
 
 		// Reduction short
-		print '<td class="linecoldiscount" align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount" align="right">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td class="linecolcycleref" align="right" width="50">' . $langs->trans('Progress') . '</td>';
+			print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
 		}
 
 		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
@@ -3300,10 +3300,10 @@ abstract class CommonObject
 		}
 
 		// Total HT
-		print '<td class="linecolht" align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+		print '<td class="linecolht" align="right">'.$langs->trans('TotalHTShort').'</td>';
 
 		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right" width="50">'.$langs->trans('TotalHTShortCurrency').'</td>';
+		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency').'</td>';
 
 		print '<td class="linecoledit"></td>';  // No width to allow autodim
 

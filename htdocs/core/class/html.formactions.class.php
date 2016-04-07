@@ -153,9 +153,10 @@ class FormActions
      *  @param  string	$typeelement	'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
      *	@param	int		$socid			socid of user
      *  @param	int		$forceshowtitle	Show title even if there is no actions to show
+     *  @param  string  $morecss        More css on table
      *	@return	int						<0 if KO, >=0 if OK
      */
-    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0)
+    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0,$morecss='listactions')
     {
         global $langs,$conf,$user;
         global $bc;
@@ -182,7 +183,7 @@ class FormActions
         	print load_fiche_titre($title,'','');
 
         	$total = 0;	$var=true;
-        	print '<table class="noborder" width="100%">';
+        	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
         	print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
         	print '<th class="liste_titre">'.$langs->trans('Action').'</th>';
