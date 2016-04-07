@@ -4525,7 +4525,7 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *  Concat 2 descriptions (second one after first one with a new line separator if required)
+ *  Concat 2 descriptions with a new line between them (second operand after first one with appropriate new line separator)
  *  text1 html + text2 html => text1 + '<br>' + text2
  *  text1 html + text2 txt  => text1 + '<br>' + dol_nl2br(text2)
  *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2

@@ -683,7 +683,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$attachs=$_SESSION['listofnames'];
 			if ($attachs && strpos($action,'SENTBYMAIL'))
 			{
-				 $object->actionmsg.="\n".$langs->transnoentities("AttachedFiles").': '.$attachs;
+                $object->actionmsg=dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
 			}
 		}
 
