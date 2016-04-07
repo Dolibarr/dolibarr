@@ -859,13 +859,13 @@ class FormMail extends Form
 	{
 		$ret=array();
 
-		$sql = "SELECT rowid, label, topic, content, lang";
+		$sql = "SELECT rowid, label, topic, content, lang, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
-		$sql.= $this->db->order("lang,label","ASC");
+		$sql.= $this->db->order("position,lang,label","ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);
