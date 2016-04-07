@@ -81,7 +81,6 @@ $(document).ready(function(){
 			{
 				if (next_element.is('tr'))
 				{
-					console.log($(next_element).hasClass('liste_titre'));
 					var id = $(next_element).attr('id');
 					if (typeof id != 'undefined' && id.indexOf('row-') !== -1) break;
 					else if ($(next_element).hasClass('liste_titre')) break;
