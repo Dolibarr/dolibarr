@@ -1873,7 +1873,8 @@ else
         $nbrows=9; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) { $nbrows++; $nbcols++; }
-
+        if (! empty($conf->incoterm->enabled)) $nbrows++;
+        
         // Local taxes
         if ($societe->localtax1_assuj=="1") $nbrows++;
         if ($societe->localtax2_assuj=="1") $nbrows++;
