@@ -77,13 +77,14 @@ $(document).ready(function(){
 		onDragStart: function(table, row) {
 			TExtrafields = [];
 			var current_element = $(row).parent();
-			var i =0;
 			while (next_element = $(current_element).next())
 			{
 				if (next_element.is('tr'))
 				{
+					console.log($(next_element).hasClass('liste_titre'));
 					var id = $(next_element).attr('id');
 					if (typeof id != 'undefined' && id.indexOf('row-') !== -1) break;
+					else if ($(next_element).hasClass('liste_titre')) break;
 					else TExtrafields.push(next_element);
 				}
 				
