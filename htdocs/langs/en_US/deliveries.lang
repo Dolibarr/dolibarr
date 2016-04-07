@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Delivery
+DeliveryRef=Ref Delivery
 Deliveries=Deliveries
 DeliveryCard=Delivery card
 DeliveryOrder=Delivery order
