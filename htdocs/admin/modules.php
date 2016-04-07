@@ -494,7 +494,7 @@ if ($mode != 'marketplace')
         print "</td>\n";
 
         // Help
-        print '<td align="center" valign="top" class="nowrap">';
+        print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
         $text='';
         if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
         else $text.=$objMod->getDesc().'<br>';
@@ -643,7 +643,8 @@ if ($mode != 'marketplace')
         print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
 
         // Picto warning 
-        $version=$objMod->getVersion();
+        $version=$objMod->getVersion(0);
+        $versiontrans=$objMod->getVersion(1);
         if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
         if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
         if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
@@ -656,7 +657,7 @@ if ($mode != 'marketplace')
         
         // Version
         print '<td align="center" valign="top" class="nowrap">';
-        print $version;
+        print $versiontrans;
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)

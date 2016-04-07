@@ -503,13 +503,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     }
     
     /**
-     * Gives module version
+     * Gives module version (translated if param $translated is on)
      * For 'experimental' modules, gives 'experimental' translation
      * For 'dolibarr' modules, gives Dolibarr version
      *
-     * @return  string  Module version
+     * @param   int     $translated     1=Special version keys are translated, 0=Special version keys are not translated
+     * @return  string                  Module version
      */
-    function getVersion()
+    function getVersion($translated=1)
     {
         global $langs;
         $langs->load("admin");
@@ -517,13 +518,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $ret='';
 
         $newversion=preg_replace('/_deprecated/','',$this->version);
-        if ($newversion == 'experimental') $ret=$langs->trans("VersionExperimental");
-        elseif ($newversion == 'development') $ret=$langs->trans("VersionDevelopment");
+        if ($newversion == 'experimental') $ret=($translated?$langs->trans("VersionExperimental"):$newversion);
+        elseif ($newversion == 'development') $ret=($translated?$langs->trans("VersionDevelopment"):$newversion);
         elseif ($newversion == 'dolibarr') $ret=DOL_VERSION;
         elseif ($newversion) $ret=$newversion;
-        else $ret=$langs->trans("VersionUnknown");
+        else $ret=($translated?$langs->trans("VersionUnknown"):'unknown');
 
-        if (preg_match('/_deprecated/',$this->version)) $ret.=' ('.$langs->trans("Deprecated").')';
+        if (preg_match('/_deprecated/',$this->version)) $ret.=($translated?' ('.$langs->trans("Deprecated").')':$this->version);
         return $ret;
     }
 
