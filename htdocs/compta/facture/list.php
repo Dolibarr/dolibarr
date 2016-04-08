@@ -45,10 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (! empty($conf->projet->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load('bills');
 $langs->load('companies');
@@ -115,8 +112,7 @@ $fieldid = (! empty($ref)?'facnumber':'rowid');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'facture', $id,'','','fk_soc',$fieldid);
 
-$diroutputpdf=$conf->facture->dir_output . '/unpaid/temp';
-if (! $user->rights->societe->client->voir || $socid) $diroutputpdf.='/private/'.$user->id;	// If user has no permission to see all, output dir is specific to user
+$diroutputmassaction=$conf->facture->dir_output . '/temp/massgeneration/'.$user->id;
 
 $object=new Facture($db);
 
@@ -577,7 +573,7 @@ if (empty($reshook))
         }
 
         // Create output dir if not exists
-        dol_mkdir($diroutputpdf);
+        dol_mkdir($diroutputmassaction);
 
         // Save merged file
         $filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Invoices")));
@@ -591,7 +587,7 @@ if (empty($reshook))
         if ($pagecount)
         {
             $now=dol_now();
-            $file=$diroutputpdf.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+            $file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
             $pdf->Output($file,'F');
             if (! empty($conf->global->MAIN_UMASK))
                 @chmod($file, octdec($conf->global->MAIN_UMASK));
@@ -611,7 +607,7 @@ if (empty($reshook))
 	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	
 	    $langs->load("other");
-	    $upload_dir = $diroutputpdf;
+	    $upload_dir = $diroutputmassaction;
 	    $file = $upload_dir . '/' . GETPOST('file');
 	    $ret=dol_delete_file($file);
 	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
@@ -1446,7 +1442,7 @@ if ($resql)
         $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
         $urlsource.=str_replace('&amp;','&',$param);
         
-        $filedir=$diroutputpdf;
+        $filedir=$diroutputmassaction;
         $genallowed=$user->rights->facture->lire;
         $delallowed=$user->rights->facture->lire;
     

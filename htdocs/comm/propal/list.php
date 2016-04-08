@@ -103,6 +103,7 @@ if (! empty($socid))
 }
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
+$diroutputmassaction=$conf->propal->dir_output . '/temp/massgeneration/'.$user->id;
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('propallist'));

@@ -76,6 +76,8 @@ $id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $id,'');
 
+$diroutputmassaction=$conf->commande->dir_output . '/temp/massgeneration/'.$user->id;
+
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
