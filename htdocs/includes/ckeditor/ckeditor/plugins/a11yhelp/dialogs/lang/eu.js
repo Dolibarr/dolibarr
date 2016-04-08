@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
+ Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
  For licensing, see LICENSE.md or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang("a11yhelp","eu",{title:"Erabilerraztasunaren argibideak",contents:"Laguntzaren edukiak. Elkarrizketa-koadro hau ixteko sakatu ESC.",legend:[{name:"Orokorra",items:[{name:"Editorearen tresna-barra",legend:"Sakatu ${toolbarFocus} tresna-barrara nabigatzeko. Tresna-barrako aurreko eta hurrengo taldera joateko erabili TAB eta MAIUS+TAB. Tresna-barrako aurreko eta hurrengo botoira joateko erabili ESKUIN-GEZIA eta EZKER-GEZIA. Sakatu ZURIUNEA edo SARTU tresna-barrako botoia aktibatzeko."},
