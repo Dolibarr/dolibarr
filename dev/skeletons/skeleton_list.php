@@ -43,7 +43,9 @@ if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@includ
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
@@ -396,7 +398,9 @@ if ($resql)
 	print '</tr>'."\n";
         
     
-    $i = 0;
+	$i=0;
+	$var=true;
+	$totalarray=array();
     while ($i < min($num, $limit))
     {
         $obj = $db->fetch_object($resql);
@@ -404,8 +408,16 @@ if ($resql)
         {
             // You can use here results
             print '<tr>';
-            if (! empty($arrayfields['t.field1']['checked'])) print '<td>'.$obj->field1.'</td>';
-            if (! empty($arrayfields['t.field2']['checked'])) print '<td>'.$obj->field2.'</td>';
+            if (! empty($arrayfields['t.field1']['checked'])) 
+            {
+                print '<td>'.$obj->field1.'</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.field2']['checked'])) 
+            {
+                print '<td>'.$obj->field2.'</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+            }
         	// Extra fields
     		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     		{
@@ -420,6 +432,7 @@ if ($resql)
     					$tmpkey='options_'.$key;
     					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
     					print '</td>';
+    		            if (! $i) $totalarray['nbfield']++;
     				}
     		   }
     		}
@@ -433,6 +446,7 @@ if ($resql)
                 print '<td align="center">';
                 print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
                 print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
             }
             // Date modification
             if (! empty($arrayfields['t.tms']['checked']))
@@ -440,6 +454,7 @@ if ($resql)
                 print '<td align="center">';
                 print dol_print_date($db->jdate($obj->date_update), 'dayhour');
                 print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
             }
             // Status
             /*
@@ -448,9 +463,12 @@ if ($resql)
     		  $userstatic->statut=$obj->statut;
               print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
             }*/
+
             // Action column
             print '<td></td>';
-    		print '</tr>';
+            if (! $i) $totalarray['nbfield']++;
+
+            print '</tr>';
         }
         $i++;
     }

@@ -607,20 +607,20 @@ if ($result)
 	    print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);
 	print $searchpitco;
 	print '</td>';
 	
 	print "</tr>\n";
 
+	$now = dol_now();
 	$i=0;
 	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
-		$now = dol_now();
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 		
@@ -669,11 +669,12 @@ if ($result)
 		
 		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$obj->rowid;
 
-		// Company
 		$companystatic->id=$obj->rowid;
 		$companystatic->name=$obj->name;
 		$companystatic->client=$obj->client;
 		$companystatic->code_client=$obj->code_client;
+		
+		// Thirdparty
 		if (! empty($arrayfields['s.nom']['checked']))
 		{
     		print '<td>';
@@ -774,6 +775,7 @@ if ($result)
         
         $userstatic->id=$obj->fk_user_author;
 		$userstatic->login=$obj->login;
+
         // Author
         if (! empty($arrayfields['u.login']['checked']))
         {

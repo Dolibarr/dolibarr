@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->projet->enabled))
 {
@@ -126,7 +127,7 @@ $hookmanager->initHooks(array('invoicelist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('invoice');
+$extralabels = $extrafields->fetch_name_optionals_label('facture');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
@@ -155,6 +156,7 @@ $arrayfields=array(
     'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
     'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
     'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+    'am'=>array('label'=>$langs->trans("Received"), 'checked'=>0),
     'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'f.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -211,6 +213,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $day_lim='';
     $year_lim='';
     $month_lim='';
+    $search_array_options=array();
 }
 
 if (empty($reshook))
@@ -635,10 +638,13 @@ $formcompany=new FormCompany($db);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_tva, f.total_ttc,';
+$sql.= ' f.rowid as facid, f.facnumber, f.ref_client, f.type, f.note_private, f.note_public, f.increment, f.fk_mode_reglement, f.total as total_ht, f.tva as total_vat, f.total_ttc,';
 $sql.= ' f.datef as df, f.date_lim_reglement as datelimite,';
 $sql.= ' f.paye as paye, f.fk_statut,';
-$sql.= ' s.nom as name, s.rowid as socid, s.code_client, s.client ';
+$sql.= ' f.datec as date_creation, f.tms as date_update,';
+$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql.= " typent.code as typent_code,";
+$sql.= " state.code_departement as state_code, state.nom as state_name";
 if (! $sall) $sql.= ', SUM(pf.amount) as am';   // To be able to sort on status
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
@@ -722,22 +728,6 @@ if ($search_user > 0)
 {
     $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".$search_user;
 }
-if (! $sall)
-{
-    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, f.total, f.tva, f.total_ttc,';
-    $sql.= ' f.datef, f.date_lim_reglement,';
-    $sql.= ' f.paye, f.fk_statut,';
-    $sql.= ' s.nom, s.rowid, s.code_client, s.client';
-}
-else
-{
-    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-}
-$sql.= ' ORDER BY ';
-$listfield=explode(',',$sortfield);
-foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
-$sql.= ' f.rowid DESC ';
-
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -755,6 +745,24 @@ foreach ($search_array_options as $key => $val)
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+
+if (! $sall)
+{
+    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, f.total, f.tva, f.total_ttc,';
+    $sql.= ' f.datef, f.date_lim_reglement,';
+    $sql.= ' f.paye, f.fk_statut,';
+    $sql.= ' f.datec, f.tms,';
+    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client';
+}
+else
+{
+    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
+}
+
+$sql.= ' ORDER BY ';
+$listfield=explode(',',$sortfield);
+foreach ($listfield as $key => $value) $sql.= $listfield[$key].' '.$sortorder.',';
+$sql.= ' f.rowid DESC ';
 
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -1100,7 +1108,12 @@ if ($resql)
     	print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
     	print '</td>';
 	}
-	// Extra fields
+    if (! empty($arrayfields['am']['checked']))
+    {
+        print '<td class="liste_titre" align="right">';
+        print '</td>';
+    }
+    // Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
 	    foreach($extrafields->attribute_label as $key => $val)
@@ -1147,15 +1160,8 @@ if ($resql)
     	print $form->selectarray('search_status', $liststatus, $search_status, 1);
 	    print '</td>';
 	}
-	// Status
-	if (! empty($arrayfields['c.facture']['checked']))
-	{
-	    print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-	    print $form->selectyesno('billed', $billed, 1, 0, 1);
-	    print '</td>';
-	}
 	// Action column
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
 	print $searchpitco;
     print '</td>';
@@ -1163,132 +1169,274 @@ if ($resql)
 
     if ($num > 0)
     {
+        $i=0;
         $var=true;
-        $total_ht=0;
-        $total_tva=0;
-        $total_ttc=0;
-        $totalrecu=0;
-
+        $totalarray=array();
         while ($i < min($num,$limit))
         {
-            $objp = $db->fetch_object($resql);
+            $obj = $db->fetch_object($resql);
             $var=!$var;
 
-            $datelimit=$db->jdate($objp->datelimite);
+            $datelimit=$db->jdate($obj->datelimite);
 
             print '<tr '.$bc[$var].'>';
-            print '<td class="nowrap">';
-
-            $facturestatic->id=$objp->facid;
-            $facturestatic->ref=$objp->facnumber;
-            $facturestatic->type=$objp->type;
-            $facturestatic->statut=$objp->fk_statut;
-            $facturestatic->date_lim_reglement=$db->jdate($objp->datelimite);
-            $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$objp->note_public:$objp->note_private),1);
-            $paiement = $facturestatic->getSommePaiement();
-
-            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-
-            print '<td class="nobordernopadding nowrap">';
-            print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
-            print $objp->increment;
-            print '</td>';
-
-            print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-            if (! empty($objp->note_private))
-            {
-				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$objp->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-				print '</span>';
-			}
-            $filename=dol_sanitizeFileName($objp->facnumber);
-            $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($objp->facnumber);
-            $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->facid;
-            print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
-			print '</td>';
-            print '</tr>';
-            print '</table>';
-
-            print "</td>\n";
-
+    		if (! empty($arrayfields['f.facnumber']['checked']))
+    		{
+                print '<td class="nowrap">';
+    
+                $facturestatic->id=$obj->facid;
+                $facturestatic->ref=$obj->facnumber;
+                $facturestatic->type=$obj->type;
+                $facturestatic->statut=$obj->fk_statut;
+                $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
+                $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$obj->note_public:$obj->note_private),1);
+                $paiement = $facturestatic->getSommePaiement();
+    
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+    
+                print '<td class="nobordernopadding nowrap">';
+                print $facturestatic->getNomUrl(1,'',200,0,$notetoshow);
+                print $obj->increment;
+                print '</td>';
+    
+                print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+                if (! empty($obj->note_private))
+                {
+    				print ' <span class="note">';
+    				print '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$obj->facid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+    				print '</span>';
+    			}
+                $filename=dol_sanitizeFileName($obj->facnumber);
+                $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->facnumber);
+                $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->facid;
+                print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
+    			print '</td>';
+                print '</tr>';
+                print '</table>';
+    
+                print "</td>\n";
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
 			// Customer ref
-			print '<td class="nowrap">';
-			print $objp->ref_client;
-			print '</td>';
-
+    		if (! empty($arrayfields['f.ref_client']['checked']))
+    		{
+        		print '<td class="nowrap">';
+    			print $obj->ref_client;
+    			print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
 			// Date
-            print '<td align="center" class="nowrap">';
-            print dol_print_date($db->jdate($objp->df),'day');
-            print '</td>';
-
+    		if (! empty($arrayfields['f.date']['checked']))
+    		{
+        		print '<td align="center" class="nowrap">';
+                print dol_print_date($db->jdate($obj->df),'day');
+                print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
             // Date limit
-            print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
-            if ($facturestatic->hasDelay())
-            {
-                print img_warning($langs->trans('Late'));
-            }
-            print '</td>';
-
-            print '<td>';
-            $thirdparty=new Societe($db);
-            $thirdparty->id=$objp->socid;
-            $thirdparty->name=$objp->name;
-            $thirdparty->client=$objp->client;
-            $thirdparty->code_client=$objp->code_client;
-            print $thirdparty->getNomUrl(1,'customer');
-            print '</td>';
-
+    		if (! empty($arrayfields['f.date_lim_reglement']['checked']))
+    		{
+        		print '<td align="center" class="nowrap">'.dol_print_date($datelimit,'day');
+                if ($facturestatic->hasDelay())
+                {
+                    print img_warning($langs->trans('Late'));
+                }
+                print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
+    		// Third party
+    		if (! empty($arrayfields['s.nom']['checked']))
+    		{
+                print '<td>';
+                $thirdparty=new Societe($db);
+                $thirdparty->id=$obj->socid;
+                $thirdparty->name=$obj->name;
+                $thirdparty->client=$obj->client;
+                $thirdparty->code_client=$obj->code_client;
+                print $thirdparty->getNomUrl(1,'customer');
+                print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+    		}
+    		// Town
+    		if (! empty($arrayfields['s.town']['checked']))
+    		{
+    		    print '<td class="nocellnopadd">';
+    		    print $obj->town;
+    		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		// Zip
+    		if (! empty($arrayfields['s.zip']['checked']))
+    		{
+    		    print '<td class="nocellnopadd">';
+    		    print $obj->zip;
+    		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		// State
+    		if (! empty($arrayfields['state.nom']['checked']))
+    		{
+    		    print "<td>".$obj->state_name."</td>\n";
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		// Country
+    		if (! empty($arrayfields['country.code_iso']['checked']))
+    		{
+    		    print '<td align="center">';
+    		    $tmparray=getCountry($obj->fk_pays,'all');
+    		    print $tmparray['label'];
+    		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		// Type ent
+    		if (! empty($arrayfields['typent.code']['checked']))
+    		{
+    		    print '<td align="center">';
+    		    if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+    		    print $typenArray[$obj->typent_code];
+    		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
             // Payment mode
-            print '<td>';
-            $form->form_modes_reglement($_SERVER['PHP_SELF'], $objp->fk_mode_reglement, 'none', '', -1);
-            print '</td>';
+    		if (! empty($arrayfields['f.fk_mode_reglement']['checked']))
+    		{
+        		print '<td>';
+                $form->form_modes_reglement($_SERVER['PHP_SELF'], $obj->fk_mode_reglement, 'none', '', -1);
+                print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		}
+    		
+            // Amount HT
+            if (! empty($arrayfields['f.total_ht']['checked']))
+            {
+    		      print '<td align="right">'.price($obj->total_ht)."</td>\n";
+    		      if (! $i) $totalarray['nbfield']++;
+    		      if (! $i) $totalarray['totalhtfield']=$totalarray['nbfield'];
+    		      $totalarray['totalht'] += $obj->total_ht;
+            }
+            // Amount VAT
+            if (! empty($arrayfields['f.total_vat']['checked']))
+            {
+                print '<td align="right">'.price($obj->total_vat)."</td>\n";
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
+    		    $totalarray['totalvat'] += $obj->total_vat;
+            }
+            // Amount TTC
+            if (! empty($arrayfields['f.total_ttc']['checked']))
+            {
+                print '<td align="right">'.price($obj->total_ttc)."</td>\n";
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
+    		    $totalarray['totalttc'] += $obj->total_ttc;
+            }
+
+            if (! empty($arrayfields['am']['checked']))
+            {
+                print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>';
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totalamfield']=$totalarray['nbfield'];
+    		    $totalarray['totalam'] += $paiement;
+            }
             
-            print '<td align="right">'.price($objp->total_ht,0,$langs).'</td>';
-
-            print '<td align="right">'.price($objp->total_tva,0,$langs).'</td>';
-
-            print '<td align="right">'.price($objp->total_ttc,0,$langs).'</td>';
-
-            print '<td align="right">'.(! empty($paiement)?price($paiement,0,$langs):'&nbsp;').'</td>';
-
+            // Extra fields
+            if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+            {
+                foreach($extrafields->attribute_label as $key => $val)
+                {
+                    if (! empty($arrayfields["ef.".$key]['checked']))
+                    {
+                        print '<td';
+                        $align=$extrafields->getAlignFlag($key);
+                        if ($align) print ' align="'.$align.'"';
+                        print '>';
+                        $tmpkey='options_'.$key;
+                        print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+                        print '</td>';
+                        if (! $i) $totalarray['nbfield']++;
+                    }
+                }
+            }
+            // Fields from hook
+            $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+            $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+            print $hookmanager->resPrint;
+            // Date creation
+            if (! empty($arrayfields['f.datec']['checked']))
+            {
+                print '<td align="center" class="nowrap">';
+                print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+                print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
+            // Date modification
+            if (! empty($arrayfields['f.tms']['checked']))
+            {
+                print '<td align="center" class="nowrap">';
+                print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+                print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+            }
             // Status
-            print '<td align="right" class="nowrap">';
-            print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$paiement,$objp->type);
-            print "</td>";
-
-			// Checkbox
+            if (! empty($arrayfields['f.fk_statut']['checked']))
+            {
+                print '<td align="right" class="nowrap">';
+                print $facturestatic->LibStatut($obj->paye,$obj->fk_statut,5,$paiement,$obj->type);
+                print "</td>";
+                if (! $i) $totalarray['nbfield']++;
+            }
+            
+    		// Action column
             print '<td class="nowrap" align="center">';
             $selected=0;
-			if (in_array($objp->facid, $arrayofselected)) $selected=1;
-			print '<input id="cb'.$objp->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$objp->facid.'"'.($selected?' checked="checked"':'').'>';
-			print '</td>' ;
-
+    		if (in_array($obj->facid, $arrayofselected)) $selected=1;
+    		print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected?' checked="checked"':'').'>';
+    		print '</td>' ;
+    		if (! $i) $totalarray['nbfield']++;
+				
             print "</tr>\n";
-            $total_ht+=$objp->total_ht;
-            $total_tva+=$objp->total_tva;
-            $total_ttc+=$objp->total_ttc;
-            $totalrecu+=$paiement;
+
             $i++;
         }
 
-        if (($offset + $num) <= $limit)
-        {
-            // Print total
-            print '<tr class="liste_total">';
-            print '<td class="liste_total" colspan="6" align="left">'.$langs->trans('Total').'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ht,0,$langs).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_tva,0,$langs).'</td>';
-            print '<td class="liste_total" align="right">'.price($total_ttc,0,$langs).'</td>';
-            print '<td class="liste_total" align="right">'.price($totalrecu,0,$langs).'</td>';
-            print '<td class="liste_total"></td>';
-            print '<td class="liste_total"></td>';
-            print '</tr>';
-        }
+    	// Show total line
+    	if (isset($totalarray['totalhtfield']))
+    	{
+    		print '<tr class="liste_total">';
+    		$i=0;
+    		while ($i < $totalarray['nbfield'])
+    		{
+    		   $i++;
+    		   if ($i == 1)
+    	       {
+            		if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            		else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+    	       }
+    		   elseif ($totalarray['totalhtfield'] == $i)  print '<td align="right">'.price($totalarray['totalht']).'</td>';
+    		   elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+    		   elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+    		   elseif ($totalarray['totalamfield'] == $i)  print '<td align="right">'.price($totalarray['totalam']).'</td>';
+    		   else print '<td></td>';
+    		}
+    		print '</tr>';
+    		
+    	}
     }
 
-    print "</table>\n";
-    print "</form>\n";
     $db->free($resql);
+	
+	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+    
+	print "</table>\n";
+    
+    print "</form>\n";
     
     if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
     {

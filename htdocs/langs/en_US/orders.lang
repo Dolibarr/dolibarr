@@ -8,6 +8,7 @@ Orders=Orders
 OrderLine=Order line
 OrderFollow=Follow up
 OrderDate=Order date
+OrderDateShort=Order date
 OrderToProcess=Order to process
 NewOrder=New order
 ToOrder=Make order

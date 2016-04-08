@@ -26,6 +26,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->load("sendings");
 $langs->load("deliveries");
@@ -69,7 +71,7 @@ $hookmanager->initHooks(array('shipmentlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('shipment');
+$extralabels = $extrafields->fetch_name_optionals_label('expedition');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
@@ -169,27 +171,29 @@ $formcompany=new FormCompany($db);
 $helpurl='EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('',$langs->trans('ListOfSendings'),$helpurl);
 
-$sql = "SELECT e.rowid, e.ref, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut";
-$sql.= ", s.nom as socname, s.rowid as socid";
+$sql = "SELECT e.rowid, e.ref, e.date_expedition as date_expedition, e.date_delivery as date_livraison, l.date_delivery as date_reception, e.fk_statut,";
+$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql.= " typent.code as typent_code,";
+$sql.= " state.code_departement as state_code, state.nom as state_name,";
+$sql.= ' e.date_creation as date_creation, e.tms as date_update';
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
-$sql.= " FROM (".MAIN_DB_PREFIX."expedition as e";
+$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expedition_extrafields as ef on (e.rowid = ef.fk_object)";
-if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
-{
-	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-$sql.= ")";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as ee ON e.rowid = ee.fk_source AND ee.sourcetype = 'shipping' AND ee.targettype = 'delivery'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."livraison as l ON l.rowid = ee.fk_target";
+if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
+{
+	$sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
 $sql.= " WHERE e.entity IN (".getEntity('expedition', 1).")";
 if (!$user->rights->societe->client->voir && !$socid)	// Internal user with no permission to see all
 {
@@ -203,6 +207,11 @@ if ($socid)
 if ($viewstatut <> '' && $viewstatut >= 0) {
 	$sql.= " AND e.fk_statut = ".$viewstatut;
 }
+if ($search_town)  $sql.= natural_search('s.town', $search_town);
+if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
+if ($search_state) $sql.= natural_search("state.nom",$search_state);
+if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
+if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_ref_exp) $sql .= natural_search('e.ref', $search_ref_exp);
 if ($search_ref_liv) $sql .= natural_search('l.ref', $search_ref_liv);
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
@@ -321,7 +330,7 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'],$_SERVER["PHP_SELF"],"e.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'],$_SERVER["PHP_SELF"],"e.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['e.tms']['checked']))    print_liste_field_titre($arrayfields['e.tms']['label'],$_SERVER["PHP_SELF"],"e.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['e.fk_statut']['checked'])) print_liste_field_titre($arrayfields['e.fk_statut']['label'],$_SERVER["PHP_SELF"],"e.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['l.fk_statut']['checked'])) print_liste_field_titre($arrayfields['l.fk_statut']['label'], $_SERVER["PHP_SELF"],"l.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
@@ -376,7 +385,7 @@ if ($resql)
 	}
 	if (! empty($arrayfields['l.ref']['checked']))            
 	{
-    	// Delivery order
+    	// Delivery ref
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="10" type="text" name="search_ref_liv" value="'.$search_ref_liv.'"';
 		print '</td>';
@@ -433,66 +442,171 @@ if ($resql)
 	    print '</td>';
 	}
 	// Action column
-	print '<td class="liste_titre" align="right">';
+	print '<td class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);
 	print $searchpitco;
     print '</td>';
 	print "</tr>\n";
 
-	$var=True;
-
+	$i=0;
+	$var=true;
+	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
-		$objp = $db->fetch_object($resql);
+		$obj = $db->fetch_object($resql);
 
 		$var=!$var;
 
 		print "<tr ".$bc[$var].">";
 
+    	$shipment->id=$obj->rowid;
+    	$shipment->ref=$obj->ref;
+    	
 		// Ref
-		print "<td>";
-		$shipment->id=$objp->rowid;
-		$shipment->ref=$objp->ref;
-		print $shipment->getNomUrl(1);
-		print "</td>\n";
-
-		// Third party
-		print '<td>';
-		$companystatic->id=$objp->socid;
-		$companystatic->ref=$objp->socname;
-		$companystatic->name=$objp->socname;
-		print $companystatic->getNomUrl(1);
-		print '</td>';
-
-		// Date delivery planed
-		print "<td align=\"center\">";
-		print dol_print_date($db->jdate($objp->date_livraison),"day");
-		/*$now = time();
-		if ( ($now - $db->jdate($objp->date_expedition)) > $conf->warnings->lim && $objp->statutid == 1 )
+		if (! empty($arrayfields['e.ref']['checked']))
 		{
-		}*/
-		print "</td>\n";
-
-        if ($conf->livraison_bon->enabled)
+    		print "<td>";
+    		print $shipment->getNomUrl(1);
+    		print "</td>\n";
+    		if (! $i) $totalarray['nbfield']++;
+		}
+		
+		$companystatic->id=$obj->socid;
+		$companystatic->ref=$obj->name;
+		$companystatic->name=$obj->name;
+		
+		// Third party
+		if (! empty($arrayfields['s.nom']['checked']))
+		{
+    		print '<td>';
+    		print $companystatic->getNomUrl(1);
+    		print '</td>';
+    		if (! $i) $totalarray['nbfield']++;
+		}
+		// Town
+		if (! empty($arrayfields['s.town']['checked']))
+		{
+		    print '<td class="nocellnopadd">';
+		    print $obj->town;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Zip
+		if (! empty($arrayfields['s.zip']['checked']))
+		{
+		    print '<td class="nocellnopadd">';
+		    print $obj->zip;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// State
+		if (! empty($arrayfields['state.nom']['checked']))
+		{
+		    print "<td>".$obj->state_name."</td>\n";
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Country
+		if (! empty($arrayfields['country.code_iso']['checked']))
+		{
+		    print '<td align="center">';
+		    $tmparray=getCountry($obj->fk_pays,'all');
+		    print $tmparray['label'];
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Type ent
+		if (! empty($arrayfields['typent.code']['checked']))
+		{
+		    print '<td align="center">';
+		    if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+		    print $typenArray[$obj->typent_code];
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		
+		// Date delivery planed
+		if (! empty($arrayfields['e.date_delivery']['checked']))
+		{
+    		print '<td align="center">';
+    		print dol_print_date($db->jdate($obj->date_livraison),"day");
+    		/*$now = time();
+    		if ( ($now - $db->jdate($obj->date_expedition)) > $conf->warnings->lim && $obj->statutid == 1 )
+    		{
+    		}*/
+    		print "</td>\n";
+		}
+		
+		if (! empty($arrayfields['l.ref']['checked']) || ! empty($arrayfields['l.date_delivery']['checked']))
         {
 		    $shipment->fetchObjectLinked($shipment->id,$shipment->element);
             $receiving='';
             if (count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
 
-        	// Ref
-            print '<td>';
-            print !empty($receiving) ? $receiving->getNomUrl($db) : '';
-            print '</td>';
-			// Date received
-        	print '<td align="center">';
-			print dol_print_date($db->jdate($objp->date_reception),"day");
-			print '</td>'."\n";
+    		if (! empty($arrayfields['l.ref']['checked']))
+            {
+                // Ref
+                print '<td>';
+                print !empty($receiving) ? $receiving->getNomUrl($db) : '';
+                print '</td>';
+            }
+            
+    		if (! empty($arrayfields['l.date_delivery']['checked']))
+            {
+                // Date received
+            	print '<td align="center">';
+    			print dol_print_date($db->jdate($obj->date_reception),"day");
+    			print '</td>'."\n";
+            }
 		}
 
-		print '<td align="right">'.$expedition->LibStatut($objp->fk_statut,5).'</td>';
-
+		// Extra fields
+		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+		{
+		    foreach($extrafields->attribute_label as $key => $val)
+		    {
+		        if (! empty($arrayfields["ef.".$key]['checked']))
+		        {
+		            print '<td class="tdofextrafield"';
+		            $align=$extrafields->getAlignFlag($key);
+		            if ($align) print ' align="'.$align.'"';
+		            print '>';
+		            $tmpkey='options_'.$key;
+		            print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+		            print '</td>';
+		            if (! $i) $totalarray['nbfield']++;
+		        }
+		    }
+		}
+		// Fields from hook
+		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
+		// Date creation
+		if (! empty($arrayfields['e.datec']['checked']))
+		{
+		    print '<td align="center" class="nowrap">';
+		    print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Date modification
+		if (! empty($arrayfields['e.tms']['checked']))
+		{
+		    print '<td align="center" class="nowrap">';
+		    print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Status
+		if (! empty($arrayfields['e.fk_statut']['checked']))
+		{
+		    print '<td align="right" class="nowrap">'.$shipment->LibStatut($obj->fk_statut,5).'</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Action column
 		print '<td></td>';
-
+		if (! $i) $totalarray['nbfield']++;
+		
 		print "</tr>\n";
 
 		$i++;
