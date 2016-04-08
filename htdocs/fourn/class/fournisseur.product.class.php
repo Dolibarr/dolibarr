@@ -192,7 +192,7 @@ class ProductFournisseur extends Product
         if (empty($charges)) $charges=0;
         if (empty($availability)) $availability=0;
         if (empty($remise_percent)) $remise_percent=0;
-	if (empty($supplier_reputation)) $supplier_reputation='';
+	    if (empty($supplier_reputation) || $supplier_reputation == -1) $supplier_reputation='';
         if ($delivery_time_days != '' && ! is_numeric($delivery_time_days)) $delivery_time_days = '';
         if ($price_base_type == 'TTC')
 		{
