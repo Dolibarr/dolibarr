@@ -53,7 +53,7 @@ class modAgenda extends DolibarrModules
 		$this->module_position = 15;
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
-		$this->description = "Gestion de l'agenda et des actions";
+		$this->description = "Follow events or rendez-vous. Record manual events into Agendas or let application record automatic events for log tracking.";
 		$this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);

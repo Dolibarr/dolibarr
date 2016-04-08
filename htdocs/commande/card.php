@@ -1953,7 +1953,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		// Ref
-		print '<tr><td width="18%">' . $langs->trans('Ref') . '</td>';
+		print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 		print '</td>';
@@ -1993,7 +1993,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         if ($action == 'editthirdparty') {
             $form->form_thirdparty($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, 'socid','client>0');
         } else {
-            print ' &nbsp;' . $soc->getNomUrl(1, 'compta');
+            print $soc->getNomUrl(1, 'compta');
         }
 		print '</tr>';
 

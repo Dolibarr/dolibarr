@@ -203,9 +203,10 @@ function dol_print_file($langs,$filename,$searchalt=0)
  *  TODO Move this into html.formother
  *
  *	@param	object	$object			Objet to show
+ *  @param  int     $usetable       Output into a table
  *	@return	void
  */
-function dol_print_object_info($object)
+function dol_print_object_info($object, $usetable=0)
 {
     global $langs,$db;
     $langs->load("other");
@@ -219,14 +220,27 @@ function dol_print_object_info($object)
     $deltadateforuser=round($deltadateforclient-$deltadateforserver);
     //print "x".$deltadateforserver." - ".$deltadateforclient." - ".$deltadateforuser;
 
+    if ($usetable) print '<table class="border centpercent">';
+    
     // Import key
     if (! empty($object->import_key))
-    print $langs->trans("ImportedWithSet").': '.$object->import_key.'<br>';
+    {
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ImportedWithSet");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print $object->import_key;
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
+    }
 
     // User creation
     if (! empty($object->user_creation))
     {
-        print $langs->trans("CreatedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("CreatedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_creation))
         {
         	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1);
@@ -239,21 +253,30 @@ function dol_print_object_info($object)
             if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date creation
     if (! empty($object->date_creation))
     {
-        print $langs->trans("DateCreation").': '.dol_print_date($object->date_creation, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateCreation");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_creation, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_creation+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // User change
     if (! empty($object->user_modification))
     {
-        print $langs->trans("ModifiedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ModifiedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_modification))
         {
         	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1);
@@ -266,21 +289,30 @@ function dol_print_object_info($object)
             if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date change
     if (! empty($object->date_modification))
     {
-        print $langs->trans("DateLastModification").': '.dol_print_date($object->date_modification, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateLastModification");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_modification, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_modification+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // User validation
     if (! empty($object->user_validation))
     {
-        print $langs->trans("ValidatedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ValidatedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_validation))
         {
             if ($object->user_validation->id) print $object->user_validation->getNomUrl(1);
@@ -293,21 +325,30 @@ function dol_print_object_info($object)
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date validation
     if (! empty($object->date_validation))
     {
-        print $langs->trans("DateValidation").': '.dol_print_date($object->date_validation, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateValidation");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_validation, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_validation+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // User approve
     if (! empty($object->user_approve))
     {
-        print $langs->trans("ApprovedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ApprovedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_approve))
         {
             if ($object->user_approve->id) print $object->user_approve->getNomUrl(1);
@@ -320,21 +361,30 @@ function dol_print_object_info($object)
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date approve
     if (! empty($object->date_approve))
     {
-        print $langs->trans("DateApprove").': '.dol_print_date($object->date_approve, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateApprove");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_approve, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // User close
     if (! empty($object->user_cloture))
     {
-        print $langs->trans("ClosedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ClosedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_cloture))
         {
 			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1);
@@ -347,21 +397,30 @@ function dol_print_object_info($object)
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date close
     if (! empty($object->date_cloture))
     {
-        print $langs->trans("DateClosing").': '.dol_print_date($object->date_cloture, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateClosing");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_cloture, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_cloture+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // User conciliate
     if (! empty($object->user_rappro))
     {
-        print $langs->trans("ConciliatedBy").': ';
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ConciliatedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
         if (is_object($object->user_rappro))
         {
 			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1);
@@ -374,24 +433,37 @@ function dol_print_object_info($object)
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date conciliate
     if (! empty($object->date_rappro))
     {
-        print $langs->trans("DateConciliating").': '.dol_print_date($object->date_rappro, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateConciliating");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_rappro, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_rappro+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
 
     // Date send
     if (! empty($object->date_envoi))
     {
-        print $langs->trans("DateLastSend").': '.dol_print_date($object->date_envoi, 'dayhour');
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateLastSend");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_envoi, 'dayhour');
         if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_envoi+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
-        print '<br>';
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
     }
+    
+    if ($usetable) print '</table>';
 }
 
 
