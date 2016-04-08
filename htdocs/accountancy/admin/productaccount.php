@@ -234,8 +234,9 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
+	
+	print_barre_liste($langs->trans("ProductAccountingAccountSelect"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 
-	print load_fiche_titre($langs->trans("InitAccountancy"),'','title_setup');
 	print '<br>';
 	print $langs->trans("InitAccountancyDesc").'<br>';
 	print '<br>';
@@ -342,7 +343,7 @@ if ($result) {
 		$trunclengh = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 64;
 		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
 		
-		// Accounting account
+		// Accounting account buy
 		if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
 			// print '<td align="left">' . $obj->accountancy_code_buy . '</td>';
 			// TODO: replace by select

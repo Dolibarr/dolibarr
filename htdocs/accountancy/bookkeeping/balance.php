@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
+/* Copyright (C) 2016		Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2016		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/bookkeeping/balance.php
- * \ingroup Accounting Expert
- * \brief Balance of book keeping
+ *  \file 		htdocs/accountancy/bookkeeping/balance.php
+ *  \ingroup 	Advanced accountancy
+ *  \brief 		Balance of book keeping
  */
 require '../../main.inc.php';
 
