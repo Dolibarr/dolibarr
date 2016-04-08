@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Florian Henry	    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@
 
 /**
  *	    \file       htdocs/compta/bank/account.php
- *		\ingroup    banque
+ *		\ingroup    Bank
  *		\brief      List of details of bank transactions for an account
  */
 
@@ -218,7 +218,7 @@ if ($id > 0 || ! empty($ref))
 		$options[$bankcategory->id] = $bankcategory->label;
 	}
 
-	// Definition de sql_rech et param
+	// Define sql_rech and param
 	$param='';
 	$sql_rech='';
 	$mode_search = 0;
@@ -308,7 +308,7 @@ if ($id > 0 || ! empty($ref))
 		dol_print_error($db);
 	}
 
-	//Total pages
+	// Total pages
 	$totalPages = ceil($total_lines/$viewline);
 
 	if ($totalPages == 0) {
@@ -329,7 +329,7 @@ if ($id > 0 || ! empty($ref))
 
 	//print $limitsql.'-'.$page.'-'.$viewline;
 
-	// Onglets
+	// Tabs
 	$head=bank_prepare_head($object);
 	dol_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0,'account');
 
@@ -364,21 +364,14 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action != 'addline') 
 		{
-			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) 
+			if (! empty($conf->global->BANK_ENABLE_DIRECT_INPUT)) 
 			{
-                if (empty($conf->accounting->enabled))
-                {
-                    if ($user->rights->banque->modifier) {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
-                    } else {
-                        print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-                    }
+                if ($user->rights->banque->modifier) {
+                    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
                 } else {
-                    print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+                    print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
                 }
-			} else {
-                print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-            }
+			}
         }
 
 		if ($object->canBeConciliated() > 0) {
