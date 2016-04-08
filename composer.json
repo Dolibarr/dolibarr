@@ -23,6 +23,12 @@
         "restler/framework": "^3.0",
         "tecnickcom/tcpdf": "6.2.12"
     },
+    "require-dev": {
+        "jakub-onderka/php-parallel-lint": "^0",
+        "jakub-onderka/php-console-highlighter": "^0",
+        "phpunit/phpunit": "^4",
+        "squizlabs/php_codesniffer": "^2"
+    },
     "suggest": {
         "ext-mysqlnd": "To use with MySQL or MariaDB",
         "ext-mysqli": "To use with MySQL or MariaDB",
