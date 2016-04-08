@@ -431,6 +431,18 @@ class InterfaceActionsAuto extends DolibarrTriggers
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
 		}
+		elseif ($action == 'ORDER_SUPPLIER_CREATE')
+        {
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("OrderCreatedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
 		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
         {
             $langs->load("other");
@@ -467,7 +479,31 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			$object->sendtoid=0;
 		}
-        elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
+		elseif ($action == 'ORDER_SUPPLIER_SUBMIT')
+        {
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("OrderSubmitedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_RECEIVE')
+        {
+            $langs->load("other");
+        	$langs->load("orders");
+
+			$object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("OrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg=$langs->transnoentities("OrderReceivedInDolibarr",($object->newref?$object->newref:$object->ref));
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+
+            $object->sendtoid=0;
+		}
+		elseif ($action == 'ORDER_SUPPLIER_SENTBYMAIL')
         {
             $langs->load("other");
             $langs->load("bills");
