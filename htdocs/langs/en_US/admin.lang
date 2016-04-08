@@ -1494,7 +1494,7 @@ FCKeditorForProduct=WYSIWIG creation/edition of products/services description an
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formating when building PDF files.</font>
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailing)
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
-FCKeditorForMail=WYSIWIG creation/edition for all mail (except Outils->eMailing)
+FCKeditorForMail=WYSIWIG creation/edition for all mail (except Tools->eMailing)
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be an OSCommerce database (Key %s not found in table %s).
 OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
