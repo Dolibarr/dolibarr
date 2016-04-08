@@ -2363,6 +2363,70 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
+     *	Charge les informations d'ordre info dans l'objet facture
+     *
+     *	@param  int		$id       	Id de la facture a charger
+     *	@return	void
+     */
+    function info($id)
+    {
+        $sql = 'SELECT c.rowid, date_creation as datec, tms as datem, date_valid as date_validation, date_approve as datea, date_approve2 as datea2,';
+        $sql.= ' fk_user_author, fk_user_modif, fk_user_valid, fk_user_approve, fk_user_approve2';
+        $sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseur as c';
+        $sql.= ' WHERE c.rowid = '.$id;
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+                $this->id = $obj->rowid;
+                if ($obj->fk_user_author)
+                {
+                    $cuser = new User($this->db);
+                    $cuser->fetch($obj->fk_user_author);
+                    $this->user_creation     = $cuser;
+                }
+                if ($obj->fk_user_valid)
+                {
+                    $vuser = new User($this->db);
+                    $vuser->fetch($obj->fk_user_valid);
+                    $this->user_validation = $vuser;
+                }
+                if ($obj->fk_user_modif)
+                {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
+                }
+                if ($obj->fk_user_approve)
+                {
+                    $auser = new User($this->db);
+                    $auser->fetch($obj->fk_user_approve);
+                    $this->user_approve = $auser;
+                }
+                if ($obj->fk_user_approve2)
+                {
+                    $a2user = new User($this->db);
+                    $a2user->fetch($obj->fk_user_approve2);
+                    $this->user_approve2 = $a2user;
+                }
+                $this->date_creation     = $this->db->idate($obj->datec);
+                $this->date_modification = $this->db->idate($obj->datem);
+                $this->date_approve      = $this->db->idate($obj->datea);
+                $this->date_approve2     = $this->db->idate($obj->datea2);
+                $this->date_validation   = $this->db->idate($obj->date_validation);
+            }
+            $this->db->free($result);
+        }
+        else
+        {
+            dol_print_error($this->db);
+        }
+    }
+    
+    /**
      *	Charge indicateurs this->nb de tableau de bord
      *
      *	@return     int         <0 si ko, >0 si ok

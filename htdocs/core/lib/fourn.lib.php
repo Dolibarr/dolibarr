@@ -158,8 +158,8 @@ function ordersupplier_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("OrderFollow");
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order', 'remove');

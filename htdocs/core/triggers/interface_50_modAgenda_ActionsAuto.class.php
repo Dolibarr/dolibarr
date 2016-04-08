@@ -660,7 +660,33 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
         	$object->sendtoid=0;
         }
-
+        elseif($action == 'PROJECT_CREATE') {
+            $langs->load("other");
+            $langs->load("projects");
+        
+            $object->actiontypecode='AC_OTH_AUTO';
+        
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectCreatedInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+        
+            $object->sendtoid=0;
+        }
+        
+        elseif($action == 'PROJECT_MODIFY') {
+            $langs->load("other");
+            $langs->load("projects");
+        
+            $object->actiontypecode='AC_OTH_AUTO';
+            if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectModifieddInDolibarr",$object->ref);
+            $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
+            $object->actionmsg.="\n".$langs->transnoentities("Author").': '.$user->login;
+        
+            $object->sendtoid=0;
+        }
+        
 		// Project tasks
 		elseif($action == 'TASK_CREATE') {
 			$langs->load("other");

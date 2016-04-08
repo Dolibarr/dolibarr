@@ -1428,7 +1428,7 @@ class FactureFournisseur extends CommonInvoice
     function info($id)
     {
         $sql = 'SELECT c.rowid, datec, tms as datem, ';
-        $sql.= ' fk_user_author, fk_user_valid';
+        $sql.= ' fk_user_author, fk_user_modif, fk_user_valid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as c';
         $sql.= ' WHERE c.rowid = '.$id;
 
@@ -1451,8 +1451,14 @@ class FactureFournisseur extends CommonInvoice
                     $vuser->fetch($obj->fk_user_valid);
                     $this->user_validation = $vuser;
                 }
-                $this->date_creation     = $obj->datec;
-                $this->date_modification = $obj->datem;
+                if ($obj->fk_user_modif)
+                {
+                    $muser = new User($this->db);
+                    $muser->fetch($obj->fk_user_modif);
+                    $this->user_modification = $muser;
+                }
+                $this->date_creation     = $this->db->idate($obj->datec);
+                $this->date_modification = $this->db->idate($obj->datem);
                 //$this->date_validation   = $obj->datev; // This field is not available. Should be store into log table and using this function should be replaced with showing content of log (like for supplier orders)
             }
             $this->db->free($result);
