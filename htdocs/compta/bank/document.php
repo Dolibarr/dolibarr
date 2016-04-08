@@ -172,14 +172,14 @@ if ($id > 0 || !empty($ref)) {
             $totalsize+=$file['size'];
         }
 
-
+        $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+        
         print '<table class="border"width="100%">';
 
         // Ref
-        // Ref
         print '<tr><td valign="top" width="25%">' . $langs->trans("Ref") . '</td>';
         print '<td colspan="3">';
-        print $form->showrefnav($object, 'ref', '', 1, 'ref');
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
         print '</td></tr>';
 
         // Label
