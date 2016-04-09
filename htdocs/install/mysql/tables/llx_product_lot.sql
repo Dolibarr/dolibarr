@@ -21,11 +21,11 @@ CREATE TABLE llx_product_lot (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
   fk_product integer NOT NULL,
-  batch varchar(30) NOT NULL,
-  eatby datetime DEFAULT NULL,
-  sellby datetime DEFAULT NULL,
+  fk_furnish integer NOT NULL,
+  reflot varchar(30) NOT NULL,
+  datebestbefore datetime DEFAULT NULL,
+  dateusedbefore datetime DEFAULT NULL,
   note_public  text,
   note_private text,
-  qty double NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=InnoDB;
