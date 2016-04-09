@@ -234,8 +234,8 @@ function dol_print_object_info($object, $usetable=0)
         else print '<br>';
     }
 
-    // User creation
-    if (! empty($object->user_creation))
+    // User creation (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_creation) || ! empty($object->user_creation_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("CreatedBy");
@@ -249,7 +249,7 @@ function dol_print_object_info($object, $usetable=0)
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_creation);
+            $userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
             if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
@@ -270,8 +270,8 @@ function dol_print_object_info($object, $usetable=0)
         else print '<br>';
     }
 
-    // User change
-    if (! empty($object->user_modification))
+    // User change (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_modification) || ! empty($object->user_modification_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ModifiedBy");
@@ -285,7 +285,7 @@ function dol_print_object_info($object, $usetable=0)
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_modification);
+            $userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
             if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
@@ -306,8 +306,8 @@ function dol_print_object_info($object, $usetable=0)
         else print '<br>';
     }
 
-    // User validation
-    if (! empty($object->user_validation))
+    // User validation (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_validation) || ! empty($object->user_validation_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ValidatedBy");
@@ -321,7 +321,7 @@ function dol_print_object_info($object, $usetable=0)
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_validation);
+            $userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
@@ -342,8 +342,8 @@ function dol_print_object_info($object, $usetable=0)
         else print '<br>';
     }
 
-    // User approve
-    if (! empty($object->user_approve))
+    // User approve (old method using already loaded object and not id is kept for backward compatibility)
+    if (! empty($object->user_approve) || ! empty($object->user_approve_id))
     {
         if ($usetable) print '<tr><td class="titlefield">';
         print $langs->trans("ApprovedBy");
@@ -357,7 +357,7 @@ function dol_print_object_info($object, $usetable=0)
         else
         {
             $userstatic=new User($db);
-            $userstatic->fetch($object->user_approve);
+            $userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
 			if ($userstatic->id) print $userstatic->getNomUrl(1);
         	else print $langs->trans("Unknown");
         }
@@ -378,6 +378,34 @@ function dol_print_object_info($object, $usetable=0)
         else print '<br>';
     }
 
+    // User approve
+    if (! empty($object->user_approve_id2))
+    {
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("ApprovedBy");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        $userstatic=new User($db);
+        $userstatic->fetch($object->user_approve_id2);
+        if ($userstatic->id) print $userstatic->getNomUrl(1);
+        else print $langs->trans("Unknown");
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
+    }
+    
+    // Date approve
+    if (! empty($object->date_approve2))
+    {
+        if ($usetable) print '<tr><td class="titlefield">';
+        print $langs->trans("DateApprove2");
+        if ($usetable) print '</td><td>';
+        else print ': ';
+        print dol_print_date($object->date_approve2, 'dayhour');
+        if ($deltadateforuser) print ' '.$langs->trans("CurrentHour").' &nbsp; / &nbsp; '.dol_print_date($object->date_approve2+($deltadateforuser*3600),"dayhour").' &nbsp;'.$langs->trans("ClientHour");
+        if ($usetable) print '</td></tr>';
+        else print '<br>';
+    }
+    
     // User close
     if (! empty($object->user_cloture))
     {

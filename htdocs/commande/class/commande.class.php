@@ -2420,9 +2420,10 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as invoiced
 	 *
-	 * @return     int     <0 if ko, >0 if ok
+	 * @param      User    $user       Object user making the change
+	 * @return     int                 <0 if KO, >0 if OK
 	 */
-	function classifyBilled()
+	function classifyBilled(User $user)
 	{
 		global $conf, $user, $langs;
         $error = 0;
@@ -2476,9 +2477,10 @@ class Commande extends CommonOrder
 	 */
 	function classer_facturee()
 	{
+	    global $user;
 		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
-		return $this->classifyBilled();
+		return $this->classifyBilled($user);
 	}
 
 

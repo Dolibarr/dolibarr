@@ -120,13 +120,12 @@ if ($id > 0 || ! empty($ref))
 		dol_print_object_info($object, 1);
 		print '</td></tr></table>';
 		
-		
 		print '</div>';
 	}
 	else
 	{
-		/* Commande non trouvee */
-		print "Commande inexistante ou acces refuse";
+		/* Order not found */
+		print "OrderNotFound";
 	}
 }
 

@@ -2037,9 +2037,10 @@ class Propal extends CommonObject
      */
     function classer_facturee()
     {
+        global $user;
 		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
-    	return $this->classifyBilled();
+    	return $this->classifyBilled($user);
     }
 
     /**

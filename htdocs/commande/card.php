@@ -466,7 +466,7 @@ if (empty($reshook))
 
 	else if ($action == 'classifybilled' && $user->rights->commande->creer)
 	{
-		$ret=$object->classifyBilled();
+		$ret=$object->classifyBilled($user);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');

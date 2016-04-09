@@ -492,7 +492,6 @@ class CommandeFournisseur extends CommonOrder
             if (! $error)
             {
                 $result = 1;
-                $this->log($user, 1, time());	// Statut 1
                 $this->statut = 1;
                 $this->ref = $num;
             }
@@ -701,20 +700,43 @@ class CommandeFournisseur extends CommonOrder
 	/**
      *	Class invoiced the supplier order
      *
-     *	@return     int     	<0 si ko, >0 si ok
+     *  @param      User        $user       Object user making the change
+     *	@return     int     	            <0 if KO, >0 if KO
      */
-    function classifyBilled()
+    function classifyBilled(User $user)
     {
+        $this->db->begin();
+        
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ';
-        if ($this->db->query($sql) )
+        if ($this->db->query($sql))
         {
-        	$this->billed=1;
-            return 1;
+        	if (! $error)
+        	{
+        	    // Call trigger
+        	    $result=$this->call_trigger('ORDER_SUPPLIER_CLASSIFY_BILLED',$user);
+        	    if ($result < 0) $error++;
+        	    // End call triggers
+        	}
+        	
+        	if (! $error)
+        	{
+        	    $this->billed=1;
+        	     
+        	    $this->db->commit();
+        	    return 1;
+        	}
+        	else
+        	{
+        	    $this->db->rollback();
+                return -1;
+        	}
         }
         else
         {
         	dol_print_error($this->db);
+        	
+        	$this->db->rollback();
 			return -1;
         }
     }
@@ -791,8 +813,6 @@ class CommandeFournisseur extends CommonOrder
 
             if ($this->db->query($sql))
             {
-                $this->log($user, 2, time(), $comment);	// Statut 2
-
             	if (! empty($conf->global->SUPPLIER_ORDER_AUTOADD_USER_CONTACT))
 	            {
 					$result=$this->add_contact($user->id, 'SALESREPFOLL', 'internal', 1);
@@ -897,7 +917,6 @@ class CommandeFournisseur extends CommonOrder
             if ($this->db->query($sql))
             {
                 $result = 0;
-                $this->log($user, 9, time());
 
                 if ($error == 0)
                 {
@@ -956,7 +975,6 @@ class CommandeFournisseur extends CommonOrder
             if ($this->db->query($sql))
             {
                 $result = 0;
-                $this->log($user, $statut, time());
 
 				// Call trigger
 				$result=$this->call_trigger('ORDER_SUPPLIER_CANCEL',$user);
@@ -991,21 +1009,23 @@ class CommandeFournisseur extends CommonOrder
 
 
     /**
-     * 	Send a supplier order to supplier
+     * 	Submit a supplier order to supplier
      *
      * 	@param		User	$user		User making change
      * 	@param		date	$date		Date
      * 	@param		int		$methode	Method
      * 	@param		string	$comment	Comment
-     * 	@return		int			<0 if KO, >0 if OK
+     * 	@return		int			        <0 if KO, >0 if OK
      */
     function commande($user, $date, $methode, $comment='')
     {
         global $langs;
         dol_syslog(get_class($this)."::commande");
-        $result = 0;
+        $error = 0;
         if ($user->rights->fournisseur->commande->commander)
         {
+            $this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET fk_statut = 3, fk_input_method=".$methode.", date_commande='".$this->db->idate($date)."'";
             $sql .= " WHERE rowid = ".$this->id;
 
@@ -1015,24 +1035,37 @@ class CommandeFournisseur extends CommonOrder
                 $this->statut = 3;
                 $this->methode_commande_id = $methode;
                 $this->date_commande = $this->db->idate($date);
-                $result = 1;
-                $this->log($user, 3, $date, $comment);
+                
+                // Call trigger
+                $result=$this->call_trigger('ORDER_SUPPLIER_SUBMIT',$user);
+                if ($result < 0) $error++;
+                // End call triggers
             }
             else
             {
+                $error++;
                 $this->error = $this->db->lasterror();
                 $this->errors[] = $this->db->lasterror();
-                $result = -1;
+            }
+            
+            if (! $error)
+            {
+                $this->db->commit();
+            }
+            else
+            {
+                $this->db->rollback();
             }
         }
         else
         {
-            $result = -1;
+            $error++;
             $this->error = $langs->trans('NotAuthorized');
             $this->errors[] = $langs->trans('NotAuthorized');
             dol_syslog(get_class($this)."::commande User not Authorized", LOG_ERR);
         }
-        return $result ;
+
+        return ($error ? -1 : 1);
     }
 
     /**
@@ -1933,9 +1966,22 @@ class CommandeFournisseur extends CommonOrder
                 {
                     $result = 0;
                     $this->statut = $statut;
-                    $result=$this->log($user, $statut, $date, $comment);
 
-                    $this->db->commit();
+                    // Call trigger
+                    $result=$this->call_trigger('ORDER_SUPPLIER_RECEIVE',$user);
+                    if ($result < 0) $error++;
+                    // End call triggers
+                    
+                    if (! $error)
+                    {
+                        $this->db->commit();
+                    }
+                    else
+                    {
+                        $this->db->rollback();
+                        $this->error=$this->db->lasterror();
+                        $result = -1;
+                    }
                 }
                 else
                 {
@@ -2382,36 +2428,12 @@ class CommandeFournisseur extends CommonOrder
             {
                 $obj = $this->db->fetch_object($result);
                 $this->id = $obj->rowid;
-                if ($obj->fk_user_author)
-                {
-                    $cuser = new User($this->db);
-                    $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation     = $cuser;
-                }
-                if ($obj->fk_user_valid)
-                {
-                    $vuser = new User($this->db);
-                    $vuser->fetch($obj->fk_user_valid);
-                    $this->user_validation = $vuser;
-                }
-                if ($obj->fk_user_modif)
-                {
-                    $muser = new User($this->db);
-                    $muser->fetch($obj->fk_user_modif);
-                    $this->user_modification = $muser;
-                }
-                if ($obj->fk_user_approve)
-                {
-                    $auser = new User($this->db);
-                    $auser->fetch($obj->fk_user_approve);
-                    $this->user_approve = $auser;
-                }
-                if ($obj->fk_user_approve2)
-                {
-                    $a2user = new User($this->db);
-                    $a2user->fetch($obj->fk_user_approve2);
-                    $this->user_approve2 = $a2user;
-                }
+                if ($obj->fk_user_author)   $this->user_creation_id = $obj->fk_user_author; 
+                if ($obj->fk_user_valid)    $this->user_validation_id = $obj->fk_user_valid;
+                if ($obj->fk_user_modif)    $this->user_modification_id =$obj->fk_user_modif;
+                if ($obj->fk_user_approve)  $this->user_approve_id = $obj->fk_user_approve;
+                if ($obj->fk_user_approve2) $this->user_approve_id2 = $obj->fk_user_approve2;
+
                 $this->date_creation     = $this->db->idate($obj->datec);
                 $this->date_modification = $this->db->idate($obj->datem);
                 $this->date_approve      = $this->db->idate($obj->datea);
