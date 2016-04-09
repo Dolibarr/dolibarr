@@ -375,7 +375,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
+	 * trimFileName
 	 *
 	 * @param 	string $name		Filename
 	 * @param 	string $type		???
@@ -404,43 +404,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
-	 *
-	 * @param 	unknown_type 	$file_path		???
-	 * @return	boolean				Success or not
-	 */
-	protected function orientImage($file_path)
-	{
-		$exif = @exif_read_data($file_path);
-		if ($exif === false) {
-			return false;
-		}
-		$orientation = intval(@$exif['Orientation']);
-		if (!in_array($orientation, array(3, 6, 8))) {
-			return false;
-		}
-		$image = @imagecreatefromjpeg($file_path);
-		switch ($orientation) {
-			case 3:
-				$image = @imagerotate($image, 180, 0);
-				break;
-			case 6:
-				$image = @imagerotate($image, 270, 0);
-				break;
-			case 8:
-				$image = @imagerotate($image, 90, 0);
-				break;
-			default:
-				return false;
-		}
-		$success = imagejpeg($image, $file_path);
-		// Free up memory (imagedestroy does not delete files):
-		@imagedestroy($image);
-		return $success;
-	}
-
-	/**
-	 * Enter description here ...
+	 * handleFileUpload
 	 *
 	 * @param 	string		$uploaded_file		Uploade file
 	 * @param 	string		$name				Name
