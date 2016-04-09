@@ -72,7 +72,7 @@ class InfoBox
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
            	$sql.= " WHERE d.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
         }
-
+        
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
@@ -145,7 +145,7 @@ class InfoBox
     	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1;
                             		//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
                             	}
-                            	if (empty($tmpenabled))	// We found at least one module required that disabled
+                            	if (empty($tmpenabled))	// We found at least one module required that is disabled
         	                    {
         	                    	$enabled=0;
         	                    	break;

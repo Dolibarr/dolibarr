@@ -1451,8 +1451,8 @@ class Categorie extends CommonObject
 
 			if (file_exists($originImage))
 			{
-				// Cree fichier en taille vignette
-				$this->add_thumb($originImage);
+			    // Create thumbs
+				$this->addThumbs($originImage);
 			}
 		}
 	}
@@ -1478,7 +1478,7 @@ class Categorie extends CommonObject
 			$handle=opendir($dir);
             if (is_resource($handle))
             {
-    			while (($file = readdir($handle)) != false)
+    			while (($file = readdir($handle)) !== false)
     			{
     				if (dol_is_file($dir.$file) && preg_match('/(\.jpg|\.bmp|\.gif|\.png|\.tiff)$/i',$dir.$file))
     				{

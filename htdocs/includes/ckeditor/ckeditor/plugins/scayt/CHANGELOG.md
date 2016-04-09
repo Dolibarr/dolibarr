@@ -3,8 +3,8 @@ SCAYT plugin for CKEditor 4 Changelog
 ### CKEditor 4.5.6
 
 New Features:
-* CKEditor [language adddon](http://ckeditor.com/addon/language) support
-* CKEditor [placeholder adddon](http://ckeditor.com/addon/placeholder) support
+* CKEditor [language addon](http://ckeditor.com/addon/language) support
+* CKEditor [placeholder addon](http://ckeditor.com/addon/placeholder) support
 * Drag and Drop support
 * *Experimental* GRAYT functionality http://www.webspellchecker.net/samples/scayt-ckeditor-plugin.html#25
 
@@ -17,4 +17,4 @@ Fixed issues:
 * [#108](https://github.com/WebSpellChecker/ckeditor-plugin-scayt/issues/108) Latest SCAYT copies id of editor element to the iframe
 * SCAYT stops working when CKEditor Undo plug-in not enabled
 * Issue with pasting SCAYT markup in CKEditor
-* SCAYT stops working after pressing Cancel button in WSC dialog
+* [#32](https://github.com/WebSpellChecker/ckeditor-plugin-wsc/issues/32) SCAYT stops working after pressing Cancel button in WSC dialog

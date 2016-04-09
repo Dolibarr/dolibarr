@@ -304,15 +304,12 @@ class MouvementStock extends CommonObject
 			{
 				if ($num > 0)
 				{
-					//$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".$newpmpwarehouse.", reel = reel + ".$qty;
 					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".$qty;
 					$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
 				}
 				else
 				{
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
-					//$sql.= " (pmp, reel, fk_entrepot, fk_product) VALUES ";
-					//$sql.= " (".$newpmpwarehouse.", ".$qty.", ".$entrepot_id.", ".$fk_product.")";
 					$sql.= " (reel, fk_entrepot, fk_product) VALUES ";
 					$sql.= " (".$qty.", ".$entrepot_id.", ".$fk_product.")";
 				}

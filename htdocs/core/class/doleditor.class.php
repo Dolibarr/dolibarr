@@ -138,7 +138,7 @@ class DolEditor
 
     /**
      *	Output edit area inside the HTML stream.
-     *	Output depends on this->tool (fckeditor, ckeditor, texatrea, ...)
+     *	Output depends on this->tool (fckeditor, ckeditor, textarea, ...)
      *
      *  @param	int		$noprint    1=Return HTML string instead of printing it to output
      *  @param	string	$morejs		Add more js. For example: ".on( \'saveSnapshot\', function(e) { alert(\'ee\'); });"

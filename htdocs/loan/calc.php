@@ -149,7 +149,7 @@ print '<td><input type="text" size="5" name="down_percent" value="'.$down_percen
 print '</tr>';
 print '<tr>';
 print '<td align="right">'.$langs->trans('LengthOfMortgage').':</td>';
-print '<td><input type="text" size="3" name="year_term" value="'.$year_term.'">years</td>';
+print '<td><input type="text" size="3" name="year_term" value="'.$year_term.'"> '.$langs->trans("years").'</td>';
 print '</tr>';
 print '<tr>';
 print '<td align="right">'.$langs->trans('AnnualInterestRate').':</td>';
@@ -201,7 +201,7 @@ if ($form_complete && $monthly_payment)
 	{
         $pmi_per_month = 55 * ($financing_price / 100000);
 
-		print '<tr valign="top" bgcolor="#FFFFCC">';
+		/*print '<tr valign="top" bgcolor="#FFFFCC">';
 		print '<td align="right">&nbsp;</td>';
 		print '<td>';
 		print '<br>';
@@ -210,7 +210,7 @@ if ($form_complete && $monthly_payment)
                        to be about $55 per month for every $100,000 financed (until you have paid off 20% of your loan). This could add
                         '."\$" . number_format($pmi_per_month, "2", ".", ",").' to your monthly payment.';
 		print '</td>';
-		print '</tr>';
+		print '</tr>';*/
 		print '<tr valign="top" bgcolor="#FFFF99">';
 		print '<td align="right">'.$langs->trans('MonthlyPayment').':</td>';
 		print '<td><b>' . number_format(($monthly_payment + $pmi_per_month), "2", ".", ",") . $langs->trans("Currency".$conf->currency) . '</b><br><font>';
@@ -218,10 +218,10 @@ if ($form_complete && $monthly_payment)
 		print '</tr>';
 	}
 
-	print '<tr valign="top" bgcolor="#CCCCFF">';
+	/*print '<tr valign="top" bgcolor="#CCCCFF">';
 	print '<td align="right">&nbsp;</td>';
 	print '<td>';
-	print '<br>';
+	print '<br>';*/
 
 	$assessed_price          = ($sale_price * .85);
 	$residential_yearly_tax  = ($assessed_price / 1000) * 14;
@@ -229,23 +229,23 @@ if ($form_complete && $monthly_payment)
 
 	if ($pmi_per_month)
 	{
-		$pmi_text = "PMI and ";
+		$pmi_text = "PMI";
 	}
-
-	echo "Residential (or Property) Taxes are a little harder to figure out... In Massachusetts, the average resedential tax rate seems
-          to be around $14 per year for every $1,000 of your property's assessed value.";
-
-	print '<br><br>';
-	print "Let's say that your property's <i>assessed value</i> is 85% of what you actually paid for it - ";
-	print number_format($assessed_price, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . 'This would mean that your yearly residential taxes will be around';
+	/*echo "Residential (or Property) Taxes are a little harder to figure out... In Massachusetts, the average resedential tax rate seems
+          to be around $14 per year for every $1,000 of your property's assessed value.";*/
+	//print '<br><br>';
+	//print "Let's say that your property's <i>assessed value</i> is 85% of what you actually paid for it - ";
+	/*print number_format($assessed_price, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . 'This would mean that your yearly residential taxes will be around';
 	print number_format($residential_yearly_tax, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency);
 	print 'This could add ' . number_format($residential_monthly_tax, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . 'to your monthly payment';
 	print '</td>';
 	print '</tr>';
+	*/
+	
 	print '<tr valign="top" bgcolor="#9999FF">';
 	print '<td align="right">TOTAL Monthly Payment:</td>';
 	print '<td><b>' . number_format(($monthly_payment + $pmi_per_month + $residential_monthly_tax), "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</b><br><font>';
-	print '(including '.$pmi_text.' residential tax)</font></td>';
+	print '(including '.$pmi_text.')</font></td>';
     print '</tr>';
 }
 

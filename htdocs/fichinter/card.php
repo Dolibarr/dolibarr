@@ -1054,7 +1054,7 @@ if ($action == 'create')
 		print '<table class="border" width="100%">';
 
 		print '<input type="hidden" name="socid" value='.$soc->id.'>';
-		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("ThirdParty").'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 
 		print '<input type="hidden" name="action" value="add">';
 
@@ -1159,6 +1159,8 @@ if ($action == 'create')
 
 		print '<div class="center">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
+    	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1179,6 +1181,8 @@ if ($action == 'create')
 		print '<div class="center">';
 		print '<input type="hidden" name="action" value="create">';
 		print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
+    	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 		print '</div>';
 
 		print '</form>';
@@ -1856,10 +1860,7 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-		{
-			$formmail->trackid='int'.$object->id;
-		}
+		$formmail->trackid='int'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

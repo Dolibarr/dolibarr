@@ -37,7 +37,7 @@ switch ( $_GET['action'] )
 	default:
 		if ( $_POST['hdnSource'] != 'NULL' )
 		{
-			$sql = "SELECT p.rowid, p.ref, p.price, p.tva_tx";
+			$sql = "SELECT p.rowid, p.ref, p.price, p.tva_tx, p.recuperableonly";
 			if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= ", ps.reel";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			if (! empty($conf->stock->enabled) && !empty($conf_fkentrepot)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = ".$conf_fkentrepot;
@@ -66,19 +66,23 @@ switch ( $_GET['action'] )
 					{
 						$ret[$key] = $value;
 					}
+                    // Here $ret['tva_tx'] is vat rate of product but we want to not use the one into table but found by function
+                    
+					$productid = $ret['rowid'];
+					$product = new Product($db);
+                    $product->fetch($productid);
 
-					/** add Ditto for MultiPrix*/
-					if (! empty($conf->global->PRODUIT_MULTIPRICES))
+					$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
+                    $societe = new Societe($db);
+					$societe->fetch($thirdpartyid);
+
+					$tva_tx = get_default_tva($mysoc,$societe,$productid);
+					$tva_npr = get_default_npr($mysoc,$societe,$productid);
+					if (empty($tva_tx)) $tva_npr=0;
+					dol_syslog('tva_tx='.$tva_tx.'-tva_npr='.$tva_npr);
+					
+					if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($societe->price_level))
 					{
-						$thirdpartyid = $_SESSION['CASHDESK_ID_THIRDPARTY'];
-						$productid = $ret['rowid'];
-
-						$societe = new Societe($db);
-						$societe->fetch($thirdpartyid);
-
-						$product = new Product($db);
-                        $product->fetch($productid);
-
 						if(isset($product->multiprices[$societe->price_level]))
 						{
 							$ret['price'] = $product->multiprices[$societe->price_level];
@@ -86,16 +90,39 @@ switch ( $_GET['action'] )
 							// $product->multiprices_min[$societe->price_level];
 							// $product->multiprices_min_ttc[$societe->price_level];
 							// $product->multiprices_base_type[$societe->price_level];
-							$ret['tva_tx'] = $product->multiprices_tva_tx[$societe->price_level];
+							if (! empty($conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL))  // using this option is a bug. kept for backward compatibility
+							{
+							    if (isset($prod->multiprices_tva_tx[$societe->price_level])) $tva_tx=$prod->multiprices_tva_tx[$societe->price_level];
+							    if (isset($prod->multiprices_recuperableonly[$societe->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$societe->price_level];
+							    if (empty($tva_tx)) $tva_npr=0;
+							}
 						}
 					}
-					/** end add Ditto */
 
+					$ret['tva_tx'] = $tva_tx;
+					$ret['tva_npr'] = $tva_npr;
+                    //var_dump('tva_tx='.$ret['tva_tx'].'-tva_npr='.$ret['tva_npr'].'-'.$conf->global->PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL);exit;
+                    
 					$obj_facturation->id($ret['rowid']);
 					$obj_facturation->ref($ret['ref']);
 					$obj_facturation->stock($ret['reel']);
 					$obj_facturation->prix($ret['price']);
-					$obj_facturation->tva($ret['tva_tx']);
+					
+					// Use $ret['tva_tx'] / ret['tva_npr'] to find vat id
+					$vatrowid = null;
+					$sqlfindvatid = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'c_tva';
+					$sqlfindvatid.= ' WHERE taux = '.$ret['tva_tx'].' AND recuperableonly = '.(int) $ret['tva_npr'];
+					$sqlfindvatid.= ' AND fk_pays = '.$mysoc->country_id;
+					$resqlfindvatid=$db->query($sqlfindvatid);
+					if ($resqlfindvatid)
+					{
+					    $obj = $db->fetch_object($resqlfindvatid);
+					    if ($obj) $vatrowid = $obj->rowid;
+					}
+					else dol_print_error($db);
+					
+					dol_syslog("save vatrowid=".$vatrowid);
+					$obj_facturation->tva($vatrowid);     // Save vat it for next use
 
 					// Definition du filtre pour n'afficher que le produit concerne
 					if ( $_POST['hdnSource'] == 'LISTE' )
@@ -107,7 +134,7 @@ switch ( $_GET['action'] )
 						$filtre = $_POST['txtRef'];
 					}
 
-					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$filtre;
+					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$filtre;
 				}
 				else
 				{
@@ -115,11 +142,11 @@ switch ( $_GET['action'] )
 
 					if ( $_POST['hdnSource'] == 'REF' )
 					{
-						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation&filtre='.$_POST['txtRef'];
+						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$_POST['txtRef'];
 					}
 					else
 					{
-						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 					}
 				}
 			}
@@ -130,40 +157,38 @@ switch ( $_GET['action'] )
 		}
 		else
 		{
-			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		}
 
 		break;
 
 	case 'ajout_article':	// We have clicked on button "Add product"
 
-		//var_dump('ajout_article');
-		//exit;
-
 		if (! empty($obj_facturation->id))	// A product was previously selected and stored in session, so we can add it
 		{
+		    dol_syslog("facturation_verif save vat ".$_POST['selTva']);
 			$obj_facturation->qte($_POST['txtQte']);
-			$obj_facturation->tva($_POST['selTva']);
+			$obj_facturation->tva($_POST['selTva']);                 // Save VAT selected so we can use it for next product
 			$obj_facturation->remisePercent($_POST['txtRemise']);
 			$obj_facturation->ajoutArticle();	// This add an entry into $_SESSION['poscart']
 			// We update prixTotalTtc
 			 
 		}
 
-		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		break;
 
 	case 'suppr_article':
 		$obj_facturation->supprArticle($_GET['suppr_id']);
 
-		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menu=facturation';
+		$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		break;
 
 }
 
 // We saved object obj_facturation
 $_SESSION['serObjFacturation'] = serialize($obj_facturation);
-
+//var_dump($_SESSION['serObjFacturation']);
 header('Location: '.$redirection);
 exit;
 

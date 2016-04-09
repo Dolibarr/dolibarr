@@ -619,7 +619,7 @@ else
 		print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-		print '<td colspan="3"><b>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</b></td>';
+		print '<td colspan="3">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
 		print '</tr>';
 
 		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td colspan="3">'.price($object->total_tva,'',$langs,1,-1,-1,$conf->currency).'</td>';

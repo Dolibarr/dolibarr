@@ -285,6 +285,15 @@ input.smallpadd {
 	padding-left: 1px !important;
 	padding-right: 1px !important;
 }
+input.buttongen {
+	vertical-align: middle;
+}
+span.timesheetalreadyrecorded input {
+    /*font-size: smaller;*/
+    border: none;
+    /*background:	transparent;*/
+}
+
 <?php } ?>
 
 select.flat, form.flat select {
@@ -293,9 +302,21 @@ select.flat, form.flat select {
 input:disabled {
 	background:#f4f4f4;
 }
+.optiongrey {
+	opacity: 0.5;
+}
+.opacityhigh {
+	opacity: 0.2;
+}
+.opacitytransp {
+	opacity: 0;
+}
 
 input.liste_titre {
 	box-shadow: none !important;
+}
+.listactionlargetitle .liste_titre {
+	line-height: 24px;
 }
 input.removedfile {
 	padding: 0px !important;
@@ -413,6 +434,9 @@ th .button {
 	width: 54px;
 }
 
+.valigntop {
+	vertical-align: top;
+}
 .valignmiddle {
 	vertical-align: middle;
 }
@@ -424,6 +448,9 @@ th .button {
 }
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
+}
+.soixantepercent {
+	width: 60%;
 }
 textarea.centpercent {
 	width: 96%;
@@ -528,6 +555,10 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowauto {
+    max-width: 0;
+    overflow: auto;
+}
 
 
 /* ============================================================================== */
@@ -547,16 +578,22 @@ div.myavailability {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.minheight20 { min-height: 20px; }
 .titlefield { width: 30%; }
-<?php if (! empty($dol_optimize_smallscreen)) { ?>
-.hideonsmartphone { display: none; }
-.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
-.maxwidthonsmartphone { max-width: 100px; }
-.maxwidth100onsmartphone { max-width: 100px; }
-.maxwidth200onsmartphone { max-width: 200px; }
-.maxwidth300onsmartphone { max-width: 300px; }
-.titlefield { width: auto; }
-<?php } ?>
+.titlefieldcreate { width: 20%; }
+
+/* Force values for small screen */
+@media only screen and (max-width: 570px)
+{
+    .hideonsmartphone { display: none; }
+    .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth100onsmartphone { max-width: 100px; }
+    .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth300onsmartphone { max-width: 300px; }
+    .titlefield { width: auto; }
+    .titlefieldcreate { width: auto; }
+}
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .hideonprint { display: none; }
@@ -697,7 +734,7 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 /* Force values for small screen */
-@media only screen and (max-width: 850px)
+@media only screen and (max-width: 900px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
@@ -1811,7 +1848,8 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
-	color: #333333;
+	color: #333333 !important;
+	text-decoration: none !important;
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
@@ -2134,7 +2172,9 @@ div.pagination li.pagination span {
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
+  color: #ccc;
 }
+
 div.pagination li.litext a {
 border: none;
   padding-right: 10px;
@@ -3212,6 +3252,10 @@ a.cke_dialog_ui_button
 	line-height: 1.4 !important;
 	margin: 6px !important;
 }
+a.cke_dialog_ui_button_ok span {
+    text-shadow: none !important;
+    color: #333 !important;
+}
 
 
 /* ============================================================================== */
@@ -3611,7 +3655,7 @@ span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
 }
 span.noborderoncategories {
-	padding: 5px 5px 0px 5px;
+	padding: 3px 5px 0px 5px;
 }
 .categtextwhite, .treeview .categtextwhite.hover {
 	color: #fff !important;
@@ -3662,7 +3706,7 @@ dl.dropdown {
     position:absolute;
     top:2px;
     list-style:none;
-    max-height: 200px;
+    max-height: 300px;
     overflow: auto;
 }
 .dropdown span.value {

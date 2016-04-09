@@ -43,7 +43,7 @@ $mine 		= (GETPOST('mode','alpha') == 'mine' ? 1 : 0);
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result=restrictedArea($user,'projet',$id,'');
+$result=restrictedArea($user,'projet',$id,'projet&project');
 
 $object = new Project($db);
 
@@ -70,7 +70,7 @@ if (! $sortfield) $sortfield="name";
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*

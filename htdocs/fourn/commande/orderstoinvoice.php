@@ -239,10 +239,10 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 			
 			foreach($orders_id as $fk_supplier_order) {
 				$supplier_order = new CommandeFournisseur($db);
-				if($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) {
-					
-					if($supplier_order->classifyBilled()<0) {
-							
+				if ($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) 
+				{
+					if ($supplier_order->classifyBilled($user) < 0)
+					{
 						$db->rollback();
 						$action = 'create';
 						$_GET["origin"] = $_POST["origin"];

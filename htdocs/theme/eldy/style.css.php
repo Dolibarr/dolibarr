@@ -290,6 +290,9 @@ input.smallpadd {	/* Used for timesheet input */
 	padding-left: 0px !important;
 	padding-right: 0px !important;
 }
+input.buttongen {
+	vertical-align: middle;
+}
 span.timesheetalreadyrecorded input {
     /*font-size: smaller;*/
     border: none;
@@ -302,6 +305,12 @@ select.flat, form.flat select {
 }
 .optiongrey {
 	opacity: 0.5;
+}
+.opacityhigh {
+	opacity: 0.2;
+}
+.opacitytransp {
+	opacity: 0;
 }
 select:invalid { color: gray; }
 input:disabled {
@@ -349,7 +358,8 @@ fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
 	margin-top: 0;
 	text-align: center;
 	cursor: pointer;
-	color: #333333;
+	color: #333333 !important;
+	text-decoration: none !important;
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
@@ -426,6 +436,9 @@ th .button {
 .maxwidthsearch {		/* Max width of column with the search picto */
 	width: 54px;
 }
+.valigntop {
+	vertical-align: top;
+}
 .valignmiddle {
 	vertical-align: middle;
 }
@@ -437,6 +450,9 @@ th .button {
 }
 .quatrevingtpercent, .inputsearch {
 	width: 80%;
+}
+.soixantepercent {
+	width: 60%;
 }
 textarea.centpercent {
 	width: 96%;
@@ -540,6 +556,10 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowauto {
+    max-width: 0;
+    overflow: auto;
+}
 
 
 /* ============================================================================== */
@@ -559,16 +579,22 @@ div.myavailability {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
-.titlefield { width: 30%; }
-<?php if (! empty($dol_optimize_smallscreen)) { ?>
-.hideonsmartphone { display: none; }
-.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
-.maxwidthonsmartphone { max-width: 100px; }
-.maxwidth100onsmartphone { max-width: 100px; }
-.maxwidth200onsmartphone { max-width: 200px; }
-.maxwidth300onsmartphone { max-width: 300px; }
-.titlefield { width: auto; }
-<?php } ?>
+.minheight20 { min-height: 20px; }
+.titlefield { width: 25%; }
+.titlefieldcreate { width: 20%; }
+
+/* Force values for small screen */
+@media only screen and (max-width: 570px)
+{
+    .hideonsmartphone { display: none; }
+    .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth100onsmartphone { max-width: 100px; }
+    .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth300onsmartphone { max-width: 300px; }
+    .titlefield { width: auto; }
+    .titlefieldcreate { width: auto; }
+}
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .hideonprint { display: none; }
@@ -654,7 +680,7 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 /* Force values for small screen */
-@media only screen and (max-width: 850px)
+@media only screen and (max-width: 900px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'6':'20'):'24')); ?>px;
@@ -1289,7 +1315,11 @@ a.vsmenu.addbookmarkpicto {
 {
 	margin: 0 0 8px 2px;
 }
-.vmenu div.blockvmenuend, div.blockvmenusearch
+.vmenu  div.blockvmenusearch
+{
+	padding-bottom: 5px;
+}
+.vmenu div.blockvmenuend
 {
 	padding-bottom: 5px;
 }
@@ -2167,7 +2197,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
-
 table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2288,6 +2317,16 @@ div.pagination li.pagination span {
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
+  color: #ccc;
+}
+div.pagination li a.inactive:hover,
+div.pagination li span.inactive:hover {
+	background-color: #f5f5f5;
+	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 }
 /*div.pagination li.litext {
 	padding-top: 8px;
@@ -2553,6 +2592,9 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
 input.liste_titre {
     background: transparent;
     border: 0px;
+}
+.listactionlargetitle .liste_titre {
+	line-height: 24px;
 }
 
 .noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {
@@ -2941,12 +2983,10 @@ table.valid {
 	border-radius: 4px;
 }
 #tiptip_content {
--moz-border-radius:0px;
--webkit-border-radius: 0px;
-border-radius: 0px;
-background-color: rgb(255,255,255);
-/*	background-color: rgb(255,255,255);
-	background-color: rgba(255,255,255,0.95);*/
+    -moz-border-radius:0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    background-color: rgb(255,255,255);
 	line-height: 1.4em;
 	min-width: 200px;
 }
@@ -3367,6 +3407,10 @@ a.cke_dialog_ui_button
 {
 	line-height: 1.4 !important;
 	margin: 6px !important;
+}
+a.cke_dialog_ui_button_ok span {
+    text-shadow: none !important;
+    color: #333 !important;
 }
 
 
@@ -3818,7 +3862,7 @@ dl.dropdown {
     position:absolute;
     top:2px;
     list-style:none;
-    max-height: 200px;
+    max-height: 300px;
     overflow: auto;
 }
 .dropdown span.value {
@@ -3849,6 +3893,9 @@ li.ui-li-divider .ui-link {
 }
 a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-inner:hover {
 	text-decoration: none !important;
+}
+.ui-body-c {
+	background: #fff;
 }
 
 .ui-btn-inner {

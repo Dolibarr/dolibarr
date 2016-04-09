@@ -50,7 +50,7 @@ $langs->load('users');
 
 $cp = new Holiday($db);
 
-llxHeader(array(),$langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
+llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
 
 // Recent changes are more important than old changes
 $log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year,1,1))."' AND '".$db->idate(dol_get_last_day($year,12,1))."'");	// Load $cp->logs

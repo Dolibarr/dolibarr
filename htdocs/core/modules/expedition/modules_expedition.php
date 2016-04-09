@@ -146,7 +146,7 @@ abstract class ModelNumRefExpedition
  * 	Create a document onto disk according to template module.
  *
  * 	@param		DoliDB		$db  			Objet base de donnee
- * 	@param		Object		$object			Object expedition
+ * 	@param		Expedition		$object			Object expedition
  * 	@param		string		$modele			Force le modele a utiliser ('' to not force)
  * 	@param		Translate	$outputlangs	Objet lang a utiliser pour traduction
  *  @param      int			$hidedetails    Hide details of lines

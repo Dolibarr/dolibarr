@@ -50,11 +50,66 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->societe->contact
 	$object->birthday = dol_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
 	$object->birthday_alert = $_POST["birthday_alert"];
 
+	if (GETPOST('deletephoto')) $object->photo='';
+	elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
+
 	$result = $object->update_perso($id, $user);
 	if ($result > 0)
 	{
 		$object->old_name='';
 		$object->old_firstname='';
+		// Logo/Photo save
+		$dir= $conf->societe->dir_output.'/contact/' . get_exdir($object->id,0,0,1,$object,'contact').'/photos';
+		
+		$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
+		if ($file_OK)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (GETPOST('deletephoto'))
+			{
+				require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+				$fileimg=$conf->societe->dir_output.'/contact/'.get_exdir($object->id,0,0,1,$object,'contact').'/photos/'.$object->photo;
+				$dirthumbs=$conf->societe->dir_output.'/contact/'.get_exdir($object->id,0,0,1,$object,'contact').'/photos/thumbs';
+				dol_delete_file($fileimg);
+				dol_delete_dir_recursive($dirthumbs);
+			}
+
+			if (image_format_supported($_FILES['photo']['name']) > 0)
+			{
+				dol_mkdir($dir);
+
+				if (@is_dir($dir))
+				{
+					$newfile=$dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+					if (! dol_move_uploaded_file($_FILES['photo']['tmp_name'],$newfile,1,0,$_FILES['photo']['error']) > 0)
+					{
+						setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+					}
+					else
+					{
+					    // Create thumbs
+					    $object->addThumbs($newfile);					    
+					}
+				}
+			}
+			else
+			{
+				setEventMessages("ErrorBadImageFormat", null, 'errors');
+			}
+		}
+		else
+		{
+			switch($_FILES['photo']['error'])
+			{
+				case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
+				case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+					$errors[] = "ErrorFileSizeTooLarge";
+					break;
+				case 3: //uploaded file was only partially uploaded
+					$errors[] = "ErrorFilePartiallyUploaded";
+					break;
+			}
+		}
 	}
 	else
 	{
@@ -98,6 +153,20 @@ if ($action == 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
     print $object->id;
+    print '</td>';
+    
+    // Photo
+    print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="5">';
+    print $form->showphoto('contact',$object)."\n";
+    if ($object->photo) print "<br>\n";
+    
+    print '<table class="nobordernopadding">';
+    
+    if ($object->photo) print '<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
+    print '<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+    print '<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';
+    print '</table>';
+    
     print '</td></tr>';
 
     // Name

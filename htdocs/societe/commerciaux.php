@@ -122,7 +122,7 @@ if (! empty($socid))
 	print '<table class="border centpercent">';
 
 	print '<tr>';
-    print '<td class="titlefield" width="25%">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
+    print '<td class="titlefield">'.$langs->trans('CustomerCode').'</td><td'.(empty($conf->global->SOCIETE_USEPREFIX)?' colspan="3"':'').'>';
     print $object->code_client;
     if ($object->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
     print '</td>';
@@ -227,7 +227,7 @@ if (! empty($socid))
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
 
-		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login, u.statut";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login, u.email, u.statut, u.fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
 		{
@@ -259,17 +259,21 @@ if (! empty($socid))
 			print "</tr>\n";
 
 			$var=True;
-
+			$tmpuser=new User($db);
+				
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print "<tr ".$bc[$var]."><td>";
-				print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
-				print img_object($langs->trans("ShowUser"),"user").' ';
-				print dolGetFirstLastname($obj->firstname, $obj->lastname)."\n";
-				print '</a>';
-
+				$tmpuser->id=$obj->rowid;
+				$tmpuser->firstname=$obj->firstname;
+				$tmpuser->lastname=$obj->lastname;
+				$tmpuser->statut=$obj->statut;
+				$tmpuser->login=$obj->login;
+				$tmpuser->email=$obj->email;
+				$tmpuser->societe_id=$obj->fk_soc;
+				print $tmpuser->getNomUrl(1);
 				print '</td>';
 				print '<td>'.$obj->login.'</td>';
 				print '<td>'.User::LibStatut($obj->statut,0).'</td>';

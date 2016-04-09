@@ -186,7 +186,7 @@ class CommandeApi extends DolibarrApi
      * 
      * @url     POST    order/
      * 
-     * @return  int     ID of commande
+     * @return  string     ID of commande
      */
     function post($request_data = NULL)
     {

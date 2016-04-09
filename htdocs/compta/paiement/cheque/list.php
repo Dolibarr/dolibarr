@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 llxHeader('',$langs->trans("ChequesReceipts"));
 
-$sql = "SELECT bc.rowid, bc.number as ref, bc.date_bordereau as dp,";
+$sql = "SELECT bc.rowid, bc.ref as ref, bc.date_bordereau as dp,";
 $sql.= " bc.nbcheque, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
@@ -86,7 +87,7 @@ $sql.= " WHERE bc.fk_bank_account = ba.rowid";
 $sql.= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)			$sql.=" AND bc.number=".$search_ref;
+if ($search_ref)			$sql.=" AND bc.ref=".$search_ref;
 if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
 if ($search_amount)			$sql.=" AND bc.amount='".$db->escape(price2num(trim($search_amount)))."'";
 if ($month > 0)
@@ -134,7 +135,7 @@ if ($resql)
 	
 	print '<table class="liste">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.number","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bc.ref","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("NbOfCheques"),$_SERVER["PHP_SELF"],"bc.nbcheque","",$param,'align="right"',$sortfield,$sortorder);
@@ -212,7 +213,6 @@ if ($resql)
     }
     else
     {
-   		$var=!$var;
    		print "<tr ".$bc[$var].">";
    		print '<td colspan="7">'.$langs->trans("None")."</td>";
    		print '</tr>';

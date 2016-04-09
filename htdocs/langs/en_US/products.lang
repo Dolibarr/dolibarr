@@ -171,6 +171,7 @@ PredefinedProductsAndServicesToSell=Predefined products/services to sell
 PredefinedProductsToPurchase=Predefined product to purchase
 PredefinedServicesToPurchase=Predefined services to purchase
 PredefinedProductsAndServicesToPurchase=Predefined products/services to puchase
+NotPredefinedProducts=Not predefined products/services
 GenerateThumb=Generate thumb
 ProductCanvasAbility=Use special "canvas" addons
 ServiceNb=Service #%s

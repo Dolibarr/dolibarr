@@ -30,6 +30,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("companies");
 
@@ -117,6 +118,12 @@ if ($socid)
 
 	print '</table>';
 
+
+	print '<br>';
+ 
+	$object->info($socid);
+	print dol_print_object_info($object, 1);
+	
 	print '</div>';
 
 	dol_fiche_end();
@@ -158,16 +165,18 @@ if ($socid)
 
     print '</div>';
 
-    print '<br>';
-
-
-    print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-
-    // List of todo actions
-    show_actions_todo($conf,$langs,$db,$object,null,0,1);
-
-    // List of done actions
-    show_actions_done($conf,$langs,$db,$object);
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        print '<br>';
+    
+        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+    
+        // List of todo actions
+        show_actions_todo($conf,$langs,$db,$object,null,0,1);
+    
+        // List of done actions
+        show_actions_done($conf,$langs,$db,$object);
+    }
 }
 
 

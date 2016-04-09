@@ -162,7 +162,7 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
 	{
-		global $langs, $conf, $user;
+		global $conf, $user;
 
 		// Clean parameters
 		$login=trim($login);
@@ -256,7 +256,7 @@ class User extends CommonObject
 
                 $this->country_id   = $obj->country_id;
                 $this->country_code = $obj->country_id?$obj->country_code:'';
-                $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+                //$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
                 $this->state_id     = $obj->state_id;
                 $this->state_code   = $obj->state_code;
