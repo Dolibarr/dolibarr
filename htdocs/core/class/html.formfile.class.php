@@ -64,9 +64,9 @@ class FormFile
      *  @param  int		$size           Length of input file area
      *  @param	Object	$object			Object to use (when attachment is done on an element)
      *  @param	string	$options		Add an option column
-     *  @param	boolean	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
+     *  @param	integer	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
      *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
-     *  @param	string	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
+     *  @param	integer	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
      *  @param	string	$htmlname		Name and id of HTML form
      * 	@return	int						<0 if KO, >0 if OK
      */
@@ -227,11 +227,11 @@ class FormFile
      *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
      *      @param      int					$delallowed         Remove is allowed (1/0)
      *      @param      string				$modelselected      Model to preselect by default
-     *      @param      string				$allowgenifempty	Show warning if no model activated
-     *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+     *      @param      integer				$allowgenifempty	Show warning if no model activated
+     *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
      *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
      * 		@param		int					$maxfilenamelength	Max length for filename shown
-     * 		@param		string				$noform				Do not output html form tags
+     * 		@param		integer				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
      * 		@param		string				$title				Title to show on top of form
      * 		@param		string				$buttonlabel		Label on submit button
@@ -257,11 +257,11 @@ class FormFile
      *      @param      int					$genallowed         Generation is allowed (1/0 or array list of templates)
      *      @param      int					$delallowed         Remove is allowed (1/0)
      *      @param      string				$modelselected      Model to preselect by default
-     *      @param      string				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
-     *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+     *      @param      integer				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
+     *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
      *      @param      int					$iconPDF            Deprecated, see getDocumentsLink
      * 		@param		int					$maxfilenamelength	Max length for filename shown
-     * 		@param		string				$noform				Do not output html form tags
+     * 		@param		integer				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
      * 		@param		string				$title				Title to show on top of form
      * 		@param		string				$buttonlabel		Label on submit button
