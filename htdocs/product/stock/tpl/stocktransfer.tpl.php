@@ -63,7 +63,7 @@
 		{
 		    print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 		    print '<td width="15%">';
-		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
+		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot_source','',1);
 		    print '</td>';
 		}
 		if ($object->element == 'stock')
