@@ -3507,8 +3507,8 @@ class Product extends CommonObject
 
 			if (file_exists(dol_osencode($originImage)))
 			{
-				// Cree fichier en taille vignette
-				$this->add_thumb($originImage);
+				// Create thumbs
+				$this->addThumbs($originImage);
 			}
 		}
 

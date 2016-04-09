@@ -3910,7 +3910,7 @@ abstract class CommonObject
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
 	 *	@return		void
 	 */
-	function add_thumb($file)
+	function addThumbs($file)
 	{
 		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
 

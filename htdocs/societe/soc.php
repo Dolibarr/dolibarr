@@ -481,13 +481,8 @@ if (empty($reshook))
                                 }
                                 else
                                 {
-                                    // Create small thumbs for company (Ratio is near 16/9)
-                                    // Used on logon for example
-                                    $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-                                    // Create mini thumbs for company (Ratio is near 16/9)
-                                    // Used on menu or for setup page for example
-                                    $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+                                    // Create thumbs
+                                    $object->addThumbs($newfile);
                                 }
                             }
                         }
@@ -859,13 +854,8 @@ else
                     }
                     else
                     {
-                        // Create small thumbs for company (Ratio is near 16/9)
-                        // Used on logon for example
-                        $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-                        // Create mini thumbs for company (Ratio is near 16/9)
-                        // Used on menu or for setup page for example
-                        $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+                        // Create thumbs
+                        $object->addThumbs($newfile);
                     }
                 }
             }

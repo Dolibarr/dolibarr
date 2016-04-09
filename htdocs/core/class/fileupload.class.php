@@ -257,7 +257,7 @@ class FileUpload
 	}
 
 	/**
-	 *  Create thumbs
+	 *  Create thumbs of a file uploaded. Only the "mini" thumb is generated.
 	 *
 	 *  @param	string	$file_name		Filename
 	 *  @param	string	$options 		is array('max_width', 'max_height')
@@ -277,9 +277,8 @@ class FileUpload
 				return false;
 			}
 
-			$res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');
+			$res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');  // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
 
-			//return $success;
 			if (preg_match('/error/i',$res)) return false;
 			return true;
 		}

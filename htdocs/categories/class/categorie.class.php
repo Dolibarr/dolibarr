@@ -1451,8 +1451,8 @@ class Categorie extends CommonObject
 
 			if (file_exists($originImage))
 			{
-				// Cree fichier en taille vignette
-				$this->add_thumb($originImage);
+			    // Create thumbs
+				$this->addThumbs($originImage);
 			}
 		}
 	}
