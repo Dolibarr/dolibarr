@@ -52,8 +52,8 @@ class FormActions
      * 	@param	string	$selected		Preselected value (-1..100)
      * 	@param	int		$canedit		1=can edit, 0=read only
      *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
-     *  @param	string	$showempty		Show an empty line if select is used
-     *  @param	string	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+     *  @param	integer	$showempty		Show an empty line if select is used
+     *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
      * 	@return	void
      */
     function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
@@ -246,7 +246,7 @@ class FormActions
      *  @param	string		$selected       Type pre-selected (can be 'manual', 'auto' or 'AC_xxx')
      *  @param  string		$htmlname       Name of select field
      *  @param	string		$excludetype	A type to exclude ('systemauto', 'system', '')
-     *  @param	string		$onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
+     *  @param	integer		$onlyautoornot	1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type
      *  @param	int		    $hideinfohelp	1=Do not show info help, 0=Show, -1=Show+Add info to tell how to set default value
      *  @param  int		    $multiselect    1=Allow multiselect of action type
      * 	@return	void
