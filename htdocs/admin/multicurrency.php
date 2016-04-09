@@ -119,6 +119,21 @@ elseif ($action == 'update_currency')
 		}
 	}
 }
+elseif ($action == 'synchronize') 
+{
+	$response = GETPOST('response');
+	$response = json_decode($response);
+	
+	if ($response->success)
+	{
+		MultiCurrency::syncRates($response);	
+	}
+	else
+	{
+		setEventMessages($langs->trans('multicurrency_syncronize_error', $reponse->error->info), null, 'errors');
+	}
+}
+
 
 $TCurrency = array();
 $sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE entity = '.$conf->entity;
@@ -139,9 +154,7 @@ if ($resql)
  */
 
 $page_name = "MultiCurrency";
-$morejs = array('/multicurrency/js/currencylayer.js.php');
-
-llxHeader('', $langs->trans($page_name), '', '', '', '', $morejs);
+llxHeader('', $langs->trans($page_name));
 
 // Subheader
 $linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
@@ -228,7 +241,14 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("CurrencyLayerAccount").'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="100">'.$langs->trans("Value").'&nbsp;<input type="button" id="bt_sync" class="button" onclick="javascript:syncronize_rates();" value="'.$langs->trans('Synchronize').'" /></td>'."\n";
+print '<td align="right" width="100">';
+print '<form id="form_sync" action="" method="POST">';
+print '<input type="hidden" name="action" value="synchronize" />';
+print '<textarea id="response" class="hideobject" name="response"></textarea>';
+print $langs->trans("Value").'&nbsp;<input type="button" id="bt_sync" class="button" onclick="javascript:getRates();" value="'.$langs->trans('Synchronize').'" />';
+print '</form>';
+print '</td></tr>';
+
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
@@ -310,6 +330,26 @@ foreach ($TCurrency as &$currency)
 }
 
 print '</table>';
+
+
+
+print '
+	<script type="text/javascript">
+ 		function getRates()
+		{
+			$("#bt_sync").attr("disabled", true);
+			var url_sync = "http://apilayer.net/api/live?access_key='.$conf->global->MULTICURRENCY_APP_ID.'&format=1'.(!empty($conf->global->MULTICURRENCY_APP_SOURCE) ? '&source='.$conf->global->MULTICURRENCY_APP_SOURCE : '').'";
+			
+			$.ajax({
+				url: url_sync,
+				dataType: "jsonp"
+			}).done(function(response) {
+				$("#response").val(JSON.stringify(response));
+				$("#form_sync").submit();
+			});
+		}
+	</script>
+';
 
 llxFooter();
 
