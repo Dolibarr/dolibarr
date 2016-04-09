@@ -640,7 +640,8 @@ function dolObfuscateEmail($mail, $replace="*", $nbreplace=8, $nbdisplaymail=4, 
 	$mail_domaine = $tab2[0];
 	$mail_tld = '';
 
-	for($i=1; $i < count($tab2) && $displaytld ;$i++)
+	$nbofelem = count($tab2);
+	for($i=1; $i < $nbofelem && $displaytld; $i++)
 	{
 		$mail_tld .= '.'.$tab2[$i];
 	}
