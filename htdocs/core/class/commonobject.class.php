@@ -1733,10 +1733,10 @@ abstract class CommonObject
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
      *
-     * 	@param		boolean		$renum				true to renum all already ordered lines, false to renum only not already ordered lines.
-     * 	@param		string		$rowidorder			ASC or DESC
-     * 	@param		boolean		$fk_parent_line		Table with fk_parent_line field or not
-     * 	@return		void
+     * 	@param		boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
+     * 	@param		string		$rowidorder		   ASC or DESC
+     * 	@param		boolean		$fk_parent_line    Table with fk_parent_line field or not
+     * 	@return		int                            <0 if KO, >0 if OK
      */
     function line_order($renum=false, $rowidorder='ASC', $fk_parent_line=true)
     {
@@ -1813,6 +1813,7 @@ abstract class CommonObject
 				dol_print_error($this->db);
 			}
 		}
+		return 1;
 	}
 
 	/**
@@ -3004,7 +3005,7 @@ abstract class CommonObject
     /**
      *	Set extra parameters
      *
-     *	@return	void
+     *	@return	int      <0 if KO, >0 if OK
      */
     function setExtraParameters()
     {

@@ -219,7 +219,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
+	 * getFileObject
 	 *
 	 * @param	string		$file_name		Filename
 	 * @return 	stdClass|NULL
@@ -247,7 +247,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
+	 * getFileObjects
 	 *
 	 * @return	void
 	 */
@@ -295,7 +295,7 @@ class FileUpload
 	 * @param 	string	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
-	 * @return unknown|string
+	 * @return  boolean                     True if OK, False if KO
 	 */
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
