@@ -14,18 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- This table is dedicated to store lots with detail of each lot. Key is fk_product-batch is unique.
 -- ============================================================================
 
-CREATE TABLE llx_product_lot (
-  rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
-  fk_product integer NOT NULL,
-  batch varchar(30) NOT NULL,
-  eatby datetime DEFAULT NULL,
-  sellby datetime DEFAULT NULL,
-  note_public  text,
-  note_private text,
-  qty double NOT NULL DEFAULT 0,
-  import_key varchar(14) DEFAULT NULL
-) ENGINE=InnoDB;
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);

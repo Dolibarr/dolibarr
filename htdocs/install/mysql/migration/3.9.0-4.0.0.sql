@@ -39,6 +39,7 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)
 CREATE TABLE llx_product_lot (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
+  fk_product integer NOT NULL,
   batch varchar(30) NOT NULL,
   eatby datetime DEFAULT NULL,
   sellby datetime DEFAULT NULL,
