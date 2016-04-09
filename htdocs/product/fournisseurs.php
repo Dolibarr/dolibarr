@@ -100,11 +100,12 @@ if (empty($reshook))
 		if ($id)
 		{
 			$result=$object->fetch($id);
-			$result=$object->setValueFrom('cost_price', price2num($cost_price));
+			$object->cost_price = price2num($cost_price); 
+			$result=$object->update($object->id, $user);
 			if ($result > 0)
 			{
-				$object->cost_price = price2num($cost_price);
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
+		        $action='';
 			}
 			else
 			{
@@ -112,7 +113,6 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-		$action='';
 	}
 	
 	if ($action == 'remove_pf')
