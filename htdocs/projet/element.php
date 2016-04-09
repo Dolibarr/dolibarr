@@ -121,7 +121,7 @@ print '<table class="border" width="100%">';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
-print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
@@ -408,7 +408,7 @@ $langs->load("proposals");
 $langs->load("margins");
 
 //print load_fiche_titre($langs->trans("Profit"),'','title_accountancy');
-print '<div class="center">'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
+print '<br><div>'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -595,10 +595,10 @@ foreach ($listofreferent as $key => $value)
 				$addform.='<input type="hidden" name="action" value="addelement">';
 				$addform.='<input type="hidden" name="datesrfc" value="'.dol_print_date($dates,'dayhourrfc').'">';
 				$addform.='<input type="hidden" name="dateerfc" value="'.dol_print_date($datee,'dayhourrfc').'">';
-				$addform.='<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform.='<div class="right"><table><tr><td>'.$langs->trans("SelectElement").'</td>';
 				$addform.='<td>'.$selectList.'</td>';
 				$addform.='<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
-				$addform.='</tr></table>';
+				$addform.='</tr></table></div>';
 				$addform.='</form>';
 				$addform.='</div>';
 			}
