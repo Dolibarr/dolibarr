@@ -366,35 +366,6 @@ class CommandeFournisseur extends CommonOrder
     }
 
     /**
-     *   Add a line in log table
-     *
-     *   @param      User	$user       User making action
-     *   @param      int	$statut     Status of order
-     *   @param      date	$datelog    Date of change
-     * 	 @param		 string $comment	Comment
-     *   @return     int         		<0 if KO, >0 if OK
-     */
-    function log($user, $statut, $datelog, $comment='')
-    {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseur_log (datelog, fk_commande, fk_statut, fk_user, comment)";
-        $sql.= " VALUES ('".$this->db->idate($datelog)."',".$this->id.", ".$statut.", ";
-        $sql.= $user->id.", ";
-        $sql.= ($comment?"'".$this->db->escape($comment)."'":'null');
-        $sql.= ")";
-
-        dol_syslog("FournisseurCommande::log", LOG_DEBUG);
-        if ( $this->db->query($sql) )
-        {
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->lasterror();
-            return -1;
-        }
-    }
-
-    /**
      *	Validate an order
      *
      *	@param	User	$user			Validator User
