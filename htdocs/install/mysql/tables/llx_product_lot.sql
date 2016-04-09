@@ -1,7 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2003      Rodolphe Quiedeville	<rodolphe@quiedeville.org>
--- Copyright (C) 2009-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2014      Cédric GROSS         <c.gross@kreiz-it.fr>
+-- Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,15 +15,16 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+-- This table is dedicated to store lots with detail of each lot
 -- ============================================================================
-
-create table llx_product_stock
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
-  fk_product      integer NOT NULL,
-  fk_entrepot     integer NOT NULL,
-  reel            real,           			-- physical stock
-  import_key      varchar(14)               -- Import key
-)ENGINE=innodb;
-
+CREATE TABLE llx_product_lot (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  batch varchar(30) NOT NULL,
+  eatby datetime DEFAULT NULL,
+  sellby datetime DEFAULT NULL,
+  note_public  text,
+  note_private text,
+  qty double NOT NULL DEFAULT 0,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=InnoDB;

@@ -3338,7 +3338,7 @@ class Product extends CommonObject
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
 
-		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
+		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('stock', 1).")";
@@ -3358,7 +3358,6 @@ class Product extends CommonObject
 					$row = $this->db->fetch_object($result);
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
-					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
 					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
 					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;

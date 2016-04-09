@@ -36,6 +36,21 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 
 
+CREATE TABLE llx_product_lot (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  batch varchar(30) NOT NULL,
+  eatby datetime DEFAULT NULL,
+  sellby datetime DEFAULT NULL,
+  note_public  text,
+  note_private text,
+  qty double NOT NULL DEFAULT 0,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_product ADD COLUMN note_public text;
+ALTER TABLE llx_user ADD COLUMN note_public text;
+
 ALTER TABLE llx_c_type_contact ADD COLUMN position integer NOT NULL DEFAULT 0;
 
 
@@ -362,3 +377,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_RECEIVE','Supplier order request received','Executed when a supplier order is received','order_supplier',12);
 
 ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NULL;
+
+-- Delete old deprecated field
+ALTER TABLE llx_product_stock DROP COLUMN pmp;
+
