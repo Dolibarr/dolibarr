@@ -178,7 +178,7 @@ if (! $mesg)
     $px2->draw($filenameamount,$fileurlamount);
 }
 
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, $filter);
+$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg='';
 if (!$user->rights->societe->client->voir || $user->societe_id)

@@ -65,7 +65,7 @@ $holidaystatic=new Holiday($db);
 $childids = $user->getAllChildIds();
 $childids[]=$user->id;
 
-llxHeader(array(),$langs->trans('HRMArea'));
+llxHeader('', $langs->trans('HRMArea'));
 
 print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
 

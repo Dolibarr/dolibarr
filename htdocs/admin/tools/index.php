@@ -40,7 +40,7 @@ $form = new Form($db);
 $title=$langs->trans("SystemToolsArea");
 if (GETPOST('leftmenu') == 'admintools') $title=$langs->trans("ModulesSystemTools");
 
-llxHeader(array(),$title);
+llxHeader('', $title);
 
 print load_fiche_titre($title,'','title_setup');
 

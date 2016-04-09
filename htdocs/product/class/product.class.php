@@ -3540,7 +3540,7 @@ class Product extends CommonObject
 			$handle=opendir($dir_osencoded);
 			if (is_resource($handle))
 			{
-			    while (($file = readdir($handle)) != false)
+			    while (($file = readdir($handle)) !== false)
     			{
     				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
     				if (dol_is_file($dir.$file)) return true;
@@ -3598,7 +3598,7 @@ class Product extends CommonObject
 			$handle=opendir($dir_osencoded);
             if (is_resource($handle))
             {
-    			while (($file = readdir($handle)) != false)
+    			while (($file = readdir($handle)) !== false)
     			{
     				$photo='';
 
@@ -3744,7 +3744,7 @@ class Product extends CommonObject
 		$handle=@opendir($dir_osencoded);
 		if (is_resource($handle))
 		{
-			while (($file = readdir($handle)) != false)
+			while (($file = readdir($handle)) !== false)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
 				if (dol_is_file($dir.$file) && preg_match('/('.$this->regeximgext.')$/i', $dir.$file))
