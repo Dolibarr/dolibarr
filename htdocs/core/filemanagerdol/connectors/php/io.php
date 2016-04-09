@@ -21,9 +21,13 @@
  *
  * This is the File Manager Connector for PHP.
  */
+
 /**
- * @param string $sBasePath
- * @param string $sFolder
+ * CombinePaths
+ * 
+ * @param   string $sBasePath     sBasePath
+ * @param   string $sFolder       sFolder
+ * @return  string                Combined path
  */
 function CombinePaths( $sBasePath, $sFolder )
 {
@@ -385,8 +389,12 @@ EOF;
 
 // This is the function that sends the results of the uploading process to CKE.
 /**
- * @param string $callback
- * @param string $sFileUrl
+ * SendCKEditorResults
+ * 
+ * @param   string  $callback       callback
+ * @param   string  $sFileUrl       sFileUrl
+ * @param   string  $customMsg      customMsg
+ * @return  void
  */
 function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
 {

@@ -110,11 +110,14 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
 }
 
 /**
- * @param integer $hundreds
- * @param integer $tens
- * @param integer $units
+ * hundreds2text
+ * 
+ * @param integer $hundreds     Hundreds
+ * @param integer $tens         Tens
+ * @param integer $units        Units
  */
-function hundreds2text ($hundreds, $tens, $units){
+function hundreds2text($hundreds, $tens, $units)
+{
 	if ($hundreds==1 && $tens==0 && $units==0){
 		return "CIEN";
 	}
