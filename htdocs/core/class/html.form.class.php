@@ -169,7 +169,8 @@ class Form
                 else if (preg_match('/^(numeric|amount)/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
-                    $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.price(price2num($editvalue?$editvalue:$value)).'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
+                    $valuetoshow=price2num($editvalue?$editvalue:$value);
+                    $ret.='<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow!=''?price($valuetoshow):'').'"'.($tmp[1]?' size="'.$tmp[1].'"':'').'>';
                 }
                 else if (preg_match('/^text/',$typeofdata) || preg_match('/^note/',$typeofdata))
                 {
