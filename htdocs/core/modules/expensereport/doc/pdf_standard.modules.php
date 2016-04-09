@@ -771,42 +771,23 @@ class pdf_standard extends ModeleExpenseReport
 
 		// Type
 		$pdf->line($this->posxtype-1, $tab_top, $this->posxtype-1, $tab_top + $tab_height);
-<<<<<<< HEAD
-		$pdf->SetXY($this->posxtype - 1, $tab_top + 1);
-        $pdf->MultiCell($this->posxprojet - $this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
-=======
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxtype-1, $tab_top+1);
-			$pdf->MultiCell($this->posxprojet-$this->posxtype-1,2, $outputlangs->transnoentities("Type"),'','C');
+			$pdf->MultiCell($this->posxprojet-$this->posxtype - 1, 2, $outputlangs->transnoentities("Type"), '', 'C');
 		}
->>>>>>> refs/remotes/origin/3.9
 
-<<<<<<< HEAD
-        if (!empty($conf->projet->enabled)) {
+        if (!empty($conf->projet->enabled)) 
+        {
             // Project
             $pdf->line($this->posxprojet - 1, $tab_top, $this->posxprojet - 1, $tab_top + $tab_height);
-            $pdf->SetXY($this->posxprojet - 1, $tab_top + 1);
-            $pdf->MultiCell($this->posxtva - $this->posxprojet - 1, 2, $outputlangs->transnoentities("Project"), '', 'C');
+    		if (empty($hidetop))
+    		{
+                $pdf->SetXY($this->posxprojet - 1, $tab_top + 1);
+                $pdf->MultiCell($this->posxtva - $this->posxprojet - 1, 2, $outputlangs->transnoentities("Project"), '', 'C');
+    		}
         }
-=======
-		// Project
-		$pdf->line($this->posxprojet-1, $tab_top, $this->posxprojet-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxprojet-1, $tab_top+1);
-			$pdf->MultiCell($this->posxtva-$this->posxprojet-1,2, $outputlangs->transnoentities("Project"),'','C');
-		}
->>>>>>> refs/remotes/origin/3.9
 
-<<<<<<< HEAD
-        // VAT
-        if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT)) {
-            $pdf->line($this->posxtva - 1, $tab_top, $this->posxtva - 1, $tab_top + $tab_height);
-            $pdf->SetXY($this->posxtva - 1, $tab_top + 1);
-            $pdf->MultiCell($this->posxup - $this->posxtva - 1, 2, $outputlangs->transnoentities("VAT"), '', 'C');
-        }
-=======
 		// VAT
 		if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 		{
@@ -814,10 +795,9 @@ class pdf_standard extends ModeleExpenseReport
 			if (empty($hidetop))
 			{
 				$pdf->SetXY($this->posxtva-1, $tab_top+1);
-				$pdf->MultiCell($this->posxup-$this->posxtva-1,2, $outputlangs->transnoentities("VAT"),'','C');
+				$pdf->MultiCell($this->posxup-$this->posxtva - 1, 2, $outputlangs->transnoentities("VAT"), '', 'C');
 			}
 		}
->>>>>>> refs/remotes/origin/3.9
 
         // Unit price
 		$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);

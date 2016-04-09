@@ -216,12 +216,8 @@ if ($action == 'create') {
 		$head = accounting_prepare_head($object);
 		
 		// Edit mode
-		if ($action == 'update') {
-			$soc = new Societe($db);
-			if ($object->socid) {
-				$soc->fetch($object->socid);
-			}
-			
+		if ($action == 'update') 
+		{
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 			
 			print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";

@@ -3943,15 +3943,15 @@ abstract class CommonObject
      * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
      * 4) Return value found into database (TODO No yet implemented)
      * 
-     * @param   string      $fieldname          Name of field
-     * @param   string      $alternatevalue     Alternate value to use
-     * @return  string                          Default value
+     * @param   string              $fieldname          Name of field
+     * @param   string              $alternatevalue     Alternate value to use
+     * @return  string|string[]                         Default value (can be an array if the GETPOST return an array)
      **/
 	function getDefaultCreateValueFor($fieldname, $alternatevalue=null)
     {
         global $conf, $_POST;
 
-        // If param is has been posted with use this value first.
+        // If param here has been posted, we use this value first.
         if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
         
         if (isset($alternatevalue)) return $alternatevalue;

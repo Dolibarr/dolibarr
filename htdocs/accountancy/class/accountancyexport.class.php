@@ -69,7 +69,6 @@ class AccountancyExport
 		$this->db = &$db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 		$this->end_line = "\n";
-		return 1;
 	}
 
 	/**
