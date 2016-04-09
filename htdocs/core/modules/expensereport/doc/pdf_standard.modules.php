@@ -322,7 +322,7 @@ class pdf_standard extends ModeleExpenseReport
 
 					// Date
 					$pdf->SetXY($this->posxdate, $curY);
-					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4,dol_print_date($object->lines[$i]->date,"day",false,$outpulangs), 0, 'C');
+					$pdf->MultiCell($this->posxtype-$this->posxdate-0.8, 4,dol_print_date($object->lines[$i]->date,"day",false,$outputlangs), 0, 'C');
 
 					// Type
 					$pdf->SetXY($this->posxtype, $curY);
@@ -561,13 +561,13 @@ class pdf_standard extends ModeleExpenseReport
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outpulangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outputlangs):''), '', 'L');
 
    		// Date end period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outpulangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outputlangs):''), '', 'L');
 
    		// Status Expense Report
    		$posy+=6;
@@ -639,7 +639,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->MultiCell(96,4,$outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
 				$posy+=5;
 				$pdf->SetXY($posx+2,$posy);
-				$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create,"day",false,$outpulangs),0,'L');
+				$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create,"day",false,$outputlangs),0,'L');
 			}
 
 			if ($object->fk_statut==99)
@@ -655,7 +655,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell(96,4,$outputlangs->transnoentities("MOTIF_REFUS")." : ".$outputlangs->convToOutputCharset($object->detail_refuse),0,'L');
 					$posy+=5;
 					$pdf->SetXY($posx+2,$posy);
-					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse,"day",false,$outpulangs),0,'L');
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse,"day",false,$outputlangs),0,'L');
 				}
 			}
 			else if($object->fk_statut==4)
@@ -671,7 +671,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell(96,4,$outputlangs->transnoentities("MOTIF_CANCEL")." : ".$outputlangs->convToOutputCharset($object->detail_cancel),0,'L');
 					$posy+=5;
 					$pdf->SetXY($posx+2,$posy);
-					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_CANCEL")." : ".dol_print_date($object->date_cancel,"day",false,$outpulangs),0,'L');
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_CANCEL")." : ".dol_print_date($object->date_cancel,"day",false,$outputlangs),0,'L');
 				}
 			}
 			else
@@ -684,7 +684,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell(96,4,$outputlangs->transnoentities("VALIDOR")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
 					$posy+=5;
 					$pdf->SetXY($posx+2,$posy);
-					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateApprove")." : ".dol_print_date($object->date_approve,"day",false,$outpulangs),0,'L');
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DateApprove")." : ".dol_print_date($object->date_approve,"day",false,$outputlangs),0,'L');
 				}
 			}
 
@@ -698,7 +698,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->MultiCell(96,4,$outputlangs->transnoentities("AUTHORPAIEMENT")." : ".dolGetFirstLastname($userfee->firstname,$userfee->lastname),0,'L');
 					$posy+=5;
 					$pdf->SetXY($posx+2,$posy);
-					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_PAIEMENT")." : ".dol_print_date($object->date_paiement,"day",false,$outpulangs),0,'L');
+					$pdf->MultiCell(96,4,$outputlangs->transnoentities("DATE_PAIEMENT")." : ".dol_print_date($object->date_paiement,"day",false,$outputlangs),0,'L');
 				}
 			}
 		}
