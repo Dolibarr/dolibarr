@@ -277,7 +277,7 @@ class AccountancyExport
 	/**
 	 *
 	 * @param unknown $str data
-	 * @param unknown $size data
+	 * @param integer $size data
 	 */
 	public static function trunc($str, $size)
 	{

@@ -63,7 +63,7 @@ class mailing_fraise extends MailingTargets
      *    array of SQL request that returns two field:
      *    One called "label", One called "nb".
      *
-     *    @return        array        Array with SQL requests
+     *    @return        string[]        Array with SQL requests
      */
     function getSqlArrayForStats()
     {
