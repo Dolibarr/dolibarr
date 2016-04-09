@@ -21,7 +21,7 @@ CREATE TABLE llx_product_lot (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
   fk_product integer NOT NULL,
-  fk_furnish integer NOT NULL,
+  fk_furnisher integer NOT NULL default 0,
   reflot varchar(30) NOT NULL,
   datebestbefore datetime DEFAULT NULL,
   dateusedbefore datetime DEFAULT NULL,
