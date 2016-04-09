@@ -4392,7 +4392,7 @@ abstract class CommonObject
 	 * @param DoliDB 	$db 			Database handler
 	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
 	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
-	 * @param array 	$tables 		Tables that need to be changed
+	 * @param string[] 	$tables 		Tables that need to be changed
 	 * @return bool
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
