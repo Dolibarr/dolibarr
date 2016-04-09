@@ -362,7 +362,7 @@ class pdf_standard extends ModeleExpenseReport
 						//on recupere la description du produit suivant
 						$follow_comment = $object->lines[$i+1]->comments;
 						//on compte le nombre de ligne afin de verifier la place disponible (largeur de ligne 52 caracteres)
-						$nblineFollowComment = dol_nboflines_bis($follow_descproduitservice,52,$outputlangs->charset_output)*4;
+						$nblineFollowComment = dol_nboflines_bis($follow_comment,52,$outputlangs->charset_output)*4;
 					}
 					else	// If it's last line
 					{
