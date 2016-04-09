@@ -64,7 +64,12 @@ class ProductFournisseur extends Product
     var $product_fourn_id;        // supplier id
     var $fk_availability;         // availability delay - visible/used if option FOURN_PRODUCT_AVAILABILITY is on (duplicate information compared to delivery delay)
     var $fourn_unitprice;
+    var $fourn_tva_tx;
     var $fourn_tva_npr;
+    /**
+     * @deprecated
+     */
+    var $fourn_unitcharges;       // old version used a buggy system to calculate margin of a charge field on supplier price. Now margin is on pmp, best supplier price or cost price.
 
     var $fk_supplier_price_expression;
 
@@ -376,7 +381,10 @@ class ProductFournisseur extends Product
             if ($obj)
             {
             	$this->product_fourn_price_id	= $rowid;
-                $this->fourn_id					= $obj->fk_soc;
+            	$this->id						= $obj->fk_product;
+            	$this->fk_product				= $obj->fk_product;
+            	$this->product_id				= $obj->fk_product;	// deprecated
+            	$this->fourn_id					= $obj->fk_soc;
             	$this->fourn_ref				= $obj->ref_fourn; // deprecated
 	            $this->ref_supplier             = $obj->ref_fourn;
             	$this->fourn_price				= $obj->price;
@@ -386,15 +394,12 @@ class ProductFournisseur extends Product
             	$this->fourn_remise             = $obj->remise;
             	$this->fourn_unitprice          = $obj->unitprice;
             	$this->fourn_unitcharges        = $obj->unitcharges;	// deprecated
-            	$this->fourn_tva_tx					= $obj->tva_tx;
-            	$this->product_id				= $obj->fk_product;	// deprecated
-            	$this->fk_product				= $obj->fk_product;
-            	$this->id						= $obj->fk_product;
+            	$this->fourn_tva_tx				= $obj->tva_tx;
+            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
             	$this->fk_availability			= $obj->fk_availability;
 				$this->delivery_time_days		= $obj->delivery_time_days;
-            	//$this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
                 $this->fk_supplier_price_expression      = $obj->fk_supplier_price_expression;
-  		$this->supplier_reputation      = $obj->supplier_reputation;
+  		        $this->supplier_reputation      = $obj->supplier_reputation;
 
                 if (empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) 
                 {
