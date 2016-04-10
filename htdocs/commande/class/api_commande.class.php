@@ -106,12 +106,12 @@ class CommandeApi extends DolibarrApi
      * @url     GET     /order/list
      * @return  array   Array of order objects
      */
-    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($mode=0, $societe = "", $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
-        
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+        // case of external user, $societe param is ignored and replaced by user's socid
+        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
             
         // If the internal user must only see his customers, force searching by him
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
@@ -178,6 +178,22 @@ class CommandeApi extends DolibarrApi
         }
 		return $obj_ret;
     }
+
+    /**
+     * List orders for specific thirdparty
+     * 
+     * Get a list of orders
+     * 
+     * @param int	$socid Id of customer
+     *
+     * @url     GET     /customer/{socid}/order/list
+     * @url     GET     /thirdparty/{socid}/order/list
+     * @return  array   Array of order objects
+     */
+    function getListForSoc($socid = "") {
+      return getList(0,$socid);
+    }
+
     
     /**
      * Create order object
