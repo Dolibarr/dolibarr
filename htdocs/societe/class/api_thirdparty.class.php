@@ -147,6 +147,7 @@ class ThirdpartyApi extends DolibarrApi
      * @param   int     $mode       Set to 1 to show only customers 
      *                              Set to 2 to show only prospects
      *                              Set to 3 to show only those are not customer neither prospect
+     * @param   Text  $email      Search by email filter
      * @param   string  $sortfield  Sort field
      * @param   string  $sortorder  Sort order
      * @param   int     $limit      Limit for list
@@ -369,7 +370,7 @@ class ThirdpartyApi extends DolibarrApi
      * Delete thirdparty
      *
      * @param int $id   Thirparty ID
-     * @return integer
+     * @return type
      * 
      * @url	DELETE thirdparty/{id}
      * @url	DELETE customer/{id}

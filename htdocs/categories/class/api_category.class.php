@@ -18,6 +18,7 @@
  use Luracast\Restler\RestException;
 
  require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 /**
  * API class for category object
@@ -276,6 +277,7 @@ class CategoryApi extends DolibarrApi
     /**
      * Get categories for a customer
      * 
+     * @param int		$cusid  Customer id filter
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -285,8 +287,43 @@ class CategoryApi extends DolibarrApi
      * 
      * @url GET /customer/{cusid}/categories
      */
-    function getListCustomerCategories($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $cusid) {
+    function getListCustomerCategories($cusid, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         return $this->getListForItem('customer', $sortfield, $sortorder, $limit, $page, $cusid);  
+    }
+
+    /**
+     * Add category to customer
+     * 
+     * @param int		$cusid	Id of customer
+     * @param int		$catid  Id of category
+     * 
+     * @return mixed
+     * 
+     * @url GET /customer/{cusid}/addCategory/{catid}
+     */
+
+    function addCustomerCategory($cusid,$catid) {
+      if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			  throw new RestException(401);
+      }
+      $customer = new Client($this->db);
+      $customer->fetch($cusid);
+      if( ! $customer ) {
+        throw new RestException(404, 'customer not found');
+      }
+      $result = $this->category->fetch($catid);
+      if( ! $result ) {
+        throw new RestException(404, 'category not found');
+      }
+      
+      if( ! DolibarrApi::_checkAccessToResource('societe',$customer->id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+      if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+      $this->category->add_type($customer,'customer');
+      return $customer;
     }
     
     /**

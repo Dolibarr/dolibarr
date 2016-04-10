@@ -98,6 +98,7 @@ class CommandeApi extends DolibarrApi
      * Get a list of orders
      * 
      * @param int		$mode		Use this param to filter list
+     * @param string	$societe	Societe filter field
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -202,7 +203,7 @@ class CommandeApi extends DolibarrApi
      * 
      * @url     POST    order/
      * 
-     * @return  string     ID of commande
+     * @return  int     ID of commande
      */
     function post($request_data = NULL)
     {
