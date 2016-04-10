@@ -285,6 +285,15 @@ input.smallpadd {
 	padding-left: 1px !important;
 	padding-right: 1px !important;
 }
+input.buttongen {
+	vertical-align: middle;
+}
+span.timesheetalreadyrecorded input {
+    /*font-size: smaller;*/
+    border: none;
+    /*background:	transparent;*/
+}
+
 <?php } ?>
 
 select.flat, form.flat select {
@@ -305,6 +314,9 @@ input:disabled {
 
 input.liste_titre {
 	box-shadow: none !important;
+}
+.listactionlargetitle .liste_titre {
+	line-height: 24px;
 }
 input.removedfile {
 	padding: 0px !important;
@@ -566,6 +578,7 @@ div.myavailability {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.minheight20 { min-height: 20px; }
 .titlefield { width: 30%; }
 .titlefieldcreate { width: 20%; }
 
@@ -721,7 +734,7 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 /* Force values for small screen */
-@media only screen and (max-width: 850px)
+@media only screen and (max-width: 900px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;

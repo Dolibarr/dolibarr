@@ -466,7 +466,7 @@ if (empty($reshook))
 
 	else if ($action == 'classifybilled' && $user->rights->commande->creer)
 	{
-		$ret=$object->classifyBilled();
+		$ret=$object->classifyBilled($user);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -1953,7 +1953,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		// Ref
-		print '<tr><td width="18%">' . $langs->trans('Ref') . '</td>';
+		print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 		print '</td>';
@@ -1993,7 +1993,7 @@ if ($action == 'create' && $user->rights->commande->creer)
         if ($action == 'editthirdparty') {
             $form->form_thirdparty($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, 'socid','client>0');
         } else {
-            print ' &nbsp;' . $soc->getNomUrl(1, 'compta');
+            print $soc->getNomUrl(1, 'compta');
         }
 		print '</tr>';
 
@@ -2672,10 +2672,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$formmail->fromid = $user->id;
 			$formmail->fromname = $user->getFullName($langs);
 			$formmail->frommail = $user->email;
-			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-			{
-				$formmail->trackid='ord'.$object->id;
-			}
+			$formmail->trackid='ord'.$object->id;
 			if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 			{
 				include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

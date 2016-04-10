@@ -36,6 +36,22 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 
 
+CREATE TABLE llx_product_lot (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_product integer NOT NULL,
+  batch varchar(30) NOT NULL,
+  eatby datetime DEFAULT NULL,
+  sellby datetime DEFAULT NULL,
+  note_public  text,
+  note_private text,
+  qty double NOT NULL DEFAULT 0,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_product ADD COLUMN note_public text;
+ALTER TABLE llx_user ADD COLUMN note_public text;
+
 ALTER TABLE llx_c_type_contact ADD COLUMN position integer NOT NULL DEFAULT 0;
 
 
@@ -180,6 +196,7 @@ CREATE TABLE llx_multicurrency_rate
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_societe ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_societe ADD COLUMN fk_shipping_method integer AFTER cond_reglement_supplier;
 
 ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_code varchar(255);
@@ -352,4 +369,17 @@ CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 
 
 ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
+
+-- Add more action to log
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_MODIFY','Project modified','Executed when a project is modified','project',141);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_DELETE','Project deleted','Executed when a project is deleted','project',142);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CREATE','Supplier order validated','Executed when a supplier order is validated','order_supplier',11);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_SUBMIT','Supplier order request submited','Executed when a supplier order is approved','order_supplier',12);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_RECEIVE','Supplier order request received','Executed when a supplier order is received','order_supplier',12);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CLASSIFY_BILLED','Supplier order set billed','Executed when a supplier order is set as billed','order_supplier',14);
+
+ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NULL;
+
+-- Delete old deprecated field
+ALTER TABLE llx_product_stock DROP COLUMN pmp;
 

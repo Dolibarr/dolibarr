@@ -2587,7 +2587,7 @@ class Product extends CommonObject
     		$sql = "SELECT rowid, fk_product";
     		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
     		$sql.= " WHERE fk_soc = ".$id_fourn;
-    		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+    		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
     		$sql.= " AND fk_product != ".$this->id;
     		$sql.= " AND entity = ".$conf->entity;
 
@@ -2609,7 +2609,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
-		if ($ref_fourn) $sql.= " AND ref_fourn = '".$ref_fourn."'";
+		if ($ref_fourn) $sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
@@ -2638,7 +2638,7 @@ class Product extends CommonObject
 				$sql.= ", ".$conf->entity;
 				$sql.= ", ".$this->id;
 				$sql.= ", ".$id_fourn;
-				$sql.= ", '".$ref_fourn."'";
+				$sql.= ", '".$this->db->escape($ref_fourn)."'";
 				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
 				$sql.= ", 0";
@@ -3338,7 +3338,7 @@ class Product extends CommonObject
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
 
-		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
+		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('stock', 1).")";
@@ -3358,7 +3358,6 @@ class Product extends CommonObject
 					$row = $this->db->fetch_object($result);
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
-					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
 					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
 					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
@@ -3508,8 +3507,8 @@ class Product extends CommonObject
 
 			if (file_exists(dol_osencode($originImage)))
 			{
-				// Cree fichier en taille vignette
-				$this->add_thumb($originImage);
+				// Create thumbs
+				$this->addThumbs($originImage);
 			}
 		}
 
@@ -3541,7 +3540,7 @@ class Product extends CommonObject
 			$handle=opendir($dir_osencoded);
 			if (is_resource($handle))
 			{
-			    while (($file = readdir($handle)) != false)
+			    while (($file = readdir($handle)) !== false)
     			{
     				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
     				if (dol_is_file($dir.$file)) return true;
@@ -3599,7 +3598,7 @@ class Product extends CommonObject
 			$handle=opendir($dir_osencoded);
             if (is_resource($handle))
             {
-    			while (($file = readdir($handle)) != false)
+    			while (($file = readdir($handle)) !== false)
     			{
     				$photo='';
 
@@ -3745,7 +3744,7 @@ class Product extends CommonObject
 		$handle=@opendir($dir_osencoded);
 		if (is_resource($handle))
 		{
-			while (($file = readdir($handle)) != false)
+			while (($file = readdir($handle)) !== false)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
 				if (dol_is_file($dir.$file) && preg_match('/('.$this->regeximgext.')$/i', $dir.$file))

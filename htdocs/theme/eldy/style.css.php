@@ -290,6 +290,9 @@ input.smallpadd {	/* Used for timesheet input */
 	padding-left: 0px !important;
 	padding-right: 0px !important;
 }
+input.buttongen {
+	vertical-align: middle;
+}
 span.timesheetalreadyrecorded input {
     /*font-size: smaller;*/
     border: none;
@@ -576,6 +579,7 @@ div.myavailability {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.minheight20 { min-height: 20px; }
 .titlefield { width: 25%; }
 .titlefieldcreate { width: 20%; }
 
@@ -676,7 +680,7 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 /* Force values for small screen */
-@media only screen and (max-width: 850px)
+@media only screen and (max-width: 900px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'6':'20'):'24')); ?>px;
@@ -2193,7 +2197,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
-
 table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2589,6 +2592,9 @@ tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre
 input.liste_titre {
     background: transparent;
     border: 0px;
+}
+.listactionlargetitle .liste_titre {
+	line-height: 24px;
 }
 
 .noborder tr.liste_total, .noborder tr.liste_total td, tr.liste_total, form.liste_total {

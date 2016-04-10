@@ -66,7 +66,7 @@ if ($id > 0)
 
     $head = loan_prepare_head($object);
 
-    dol_fiche_head($head, 'note', $langs->trans("Loan"),0,'loan');
+    dol_fiche_head($head, 'note', $langs->trans("Loan"), 0, 'bill');
 
 
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -75,19 +75,20 @@ if ($id > 0)
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
     print '<td colspan="3">';
-    print $form->showrefnav($object,'id','','','rowid','ref');
+    print $form->showrefnav($object,'id','',1,'rowid','ref');
     print '</td></tr>';
     // Name
-    print '<tr><td width="20%">'.$langs->trans("Name").'</td>';
+    print '<tr><td>'.$langs->trans("Name").'</td>';
     print '<td colspan="3">'.$object->label.'</td></tr>';
 
     print "</table>";
 
     print '<br>';
 
-    $colwidth='25';
+    //$colwidth='25';
+    $cssclass='titlefield';
     $permission = $user->rights->loan->write;  // Used by the include of notes.tpl.php
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

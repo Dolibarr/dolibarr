@@ -70,7 +70,7 @@ class mod_syslog_sentry extends LogHandler implements LogHandlerInterface
 	/**
 	 * Is the module active ?
 	 *
-	 * @return int
+	 * @return boolean
 	 */
 	public function isActive()
 	{

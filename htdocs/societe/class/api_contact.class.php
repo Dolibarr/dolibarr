@@ -250,7 +250,7 @@ class ContactApi extends DolibarrApi
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  array
+	 * @return  integer
      * 
 	 * @url	DELETE contact/{id}
 	 */

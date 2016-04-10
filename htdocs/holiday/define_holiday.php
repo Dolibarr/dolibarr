@@ -155,7 +155,7 @@ elseif($action == 'add_event')
 $form = new Form($db);
 $userstatic=new User($db);
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader('', $langs->trans('CPTitreMenu'));
 
 print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 

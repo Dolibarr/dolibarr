@@ -1873,7 +1873,8 @@ else
         $nbrows=9; $nbcols=2;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) { $nbrows++; $nbcols++; }
-
+        if (! empty($conf->incoterm->enabled)) $nbrows++;
+        
         // Local taxes
         if ($societe->localtax1_assuj=="1") $nbrows++;
         if ($societe->localtax2_assuj=="1") $nbrows++;
@@ -2390,7 +2391,7 @@ else
 	                // List of actions on element
 	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	                $formactions=new FormActions($db);
-	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
+	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
 	
 					print '</div></div></div>';
 	                //print '</td></tr></table>';
@@ -2453,10 +2454,7 @@ else
             $formmail->fromid   = $user->id;
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
-            if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-            {
-            	$formmail->trackid='sin'.$object->id;
-            }
+           	$formmail->trackid='sin'.$object->id;
             if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
             {
             	include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

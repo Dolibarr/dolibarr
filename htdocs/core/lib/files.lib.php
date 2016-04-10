@@ -1486,7 +1486,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					}
 					if (image_format_supported($destpath) == 1)
 					{
-						// Create small thumbs for image (Ratio is near 16/9)
+						// Create thumbs
+						// We can't use $object->addThumbs here because there is no $object known
+						
 						// Used on logon for example
 						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
 						// Create mini thumbs for image (Ratio is near 16/9)

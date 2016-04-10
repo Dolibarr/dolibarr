@@ -7,7 +7,7 @@
 	"license": [ "GPL-2.0+", "LGPL-2.1+", "MPL-1.1+" ],
 	"authors": [
 		{
-			"name":  "CKSource - Frederico Knabben",
+			"name":  "CKSource",
 			"homepage": "http://cksource.com"
 		}
 	],
