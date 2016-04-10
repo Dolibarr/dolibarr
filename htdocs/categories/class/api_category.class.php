@@ -301,7 +301,6 @@ class CategoryApi extends DolibarrApi
      * 
      * @url GET /customer/{cusid}/addCategory/{catid}
      */
-
     function addCustomerCategory($cusid,$catid) {
       if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			  throw new RestException(401);
