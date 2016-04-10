@@ -344,8 +344,7 @@ $langs->load("orders");
 $langs->load("proposals");
 $langs->load("margins");
 
-//print load_fiche_titre($langs->trans("Profit"),'','title_accountancy');
-print '<div class="center">'.img_picto("", "title_accountancy").' '.$langs->trans("Profit").'</div><br>';
+print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
