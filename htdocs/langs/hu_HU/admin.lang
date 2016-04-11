@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Módszer használata küldjön e-mailt
 MAIN_MAIL_SMTPS_ID=SMTP hitelesítés szükséges, ha ID
 MAIN_MAIL_SMTPS_PW=SMTP jelszó hitelesítés szükséges, ha
 MAIN_MAIL_EMAIL_TLS= Használja a TLS (SSL) titkosítja
+MAIN_MAIL_EMAIL_STARTTLS= Használja a TLS (STARTTLS) titkosítja
 MAIN_DISABLE_ALL_SMS=Tiltsa le az összes SMS-küldések (vizsgálati célokra, vagy demo)
 MAIN_SMS_SENDMODE=Módszer használatát, hogy küldjön SMS-
 MAIN_MAIL_SMS_FROM=Alapértelmezett küldő telefonszámát az SMS-küldés

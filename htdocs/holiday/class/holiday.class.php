@@ -1584,7 +1584,7 @@ class Holiday extends CommonObject
     /**
      * Select event
      *
-     * @return string|boolean		Select Html to select type of holiday
+     * @return string|false		Select Html to select type of holiday
      */
     function selectEventCP()
     {
@@ -1641,7 +1641,7 @@ class Holiday extends CommonObject
      * getValueEventCp
      *
      * @param 	int		$rowid		Row id
-     * @return string|boolean
+     * @return string|false
      */
     function getValueEventCp($rowid) {
 

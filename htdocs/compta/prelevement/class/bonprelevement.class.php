@@ -245,16 +245,18 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *	Read errors
+     *	Return error string
      *
-     *  @param	int		$error 		id of error
-     *	@return	array 				Array of errors
+     *  @param	int		$error 		 Id of error
+     *	@return	string               Error string
      */
-    function ReadError($error)
+    function getErrorString($error)
     {
+        global $langs;
+        
         $errors = array();
 
-        $errors[1027] = "Date invalide";
+        $errors[1027] = $langs->trans("DateInvalid");
 
         return $errors[abs($error)];
     }

@@ -1733,10 +1733,10 @@ abstract class CommonObject
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
      *
-     * 	@param		boolean		$renum				true to renum all already ordered lines, false to renum only not already ordered lines.
-     * 	@param		string		$rowidorder			ASC or DESC
-     * 	@param		boolean		$fk_parent_line		Table with fk_parent_line field or not
-     * 	@return		void
+     * 	@param		boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
+     * 	@param		string		$rowidorder		   ASC or DESC
+     * 	@param		boolean		$fk_parent_line    Table with fk_parent_line field or not
+     * 	@return		int                            <0 if KO, >0 if OK
      */
     function line_order($renum=false, $rowidorder='ASC', $fk_parent_line=true)
     {
@@ -1813,6 +1813,7 @@ abstract class CommonObject
 				dol_print_error($this->db);
 			}
 		}
+		return 1;
 	}
 
 	/**
@@ -2154,9 +2155,9 @@ abstract class CommonObject
      *  Must be called at end of methods addline or updateline.
      *
      *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-     *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force use total of rounding, '1'=Force use rounding of total
+     *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode total of rounding, '1'=Force mode rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
+     *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
     function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
@@ -2939,10 +2940,72 @@ abstract class CommonObject
         return price2num($total_discount);
     }
 
+    
+    /**
+     * Return into unit=0, the calculated total of weight and volume of all lines * qty
+     * Calculate by adding weight and volume of each product line, so properties ->volume/volume_units/weight/weight_units must be loaded on line.
+     *
+     * @return  array                           array('weight'=>...,'volume'=>...)
+     */
+    function getTotalWeightVolume()
+    {
+        $weightUnit=0;
+        $volumeUnit=0;
+        $totalWeight = '';
+        $totalVolume = '';
+        $totalOrdered = '';     // defined for shipment only
+        $totalToShip = '';      // defined for shipment only
+        
+        foreach ($this->lines as $line)
+        {
+        
+            $totalOrdered+=$line->qty_asked;    // defined for shipment only
+            $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            
+            // Define qty, weight, volume, weight_units, volume_units
+            if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
+            else $qty=$line->qty;
+            $weight=$line->weight;
+            $volume=$line->volume;
+            $weight_units=$line->weight_units;
+            $volume_units=$line->volume_units;
+                        
+            $weightUnit=0;
+            $volumeUnit=0;
+            if (! empty($weight_units)) $weightUnit = $weight_units;
+            if (! empty($volume_units)) $volumeUnit = $volume_units;
+    
+            //var_dump($line->volume_units);
+            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                $trueWeightUnit=pow(10, $weightUnit);
+                $totalWeight += $weight * $qty * $trueWeightUnit;
+            }
+            else
+            {
+                $totalWeight += $weight * $qty;   // This may be wrong if we mix different units
+            }
+            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
+                $trueVolumeUnit=pow(10, $volumeUnit);
+                //print $line->volume;
+                $totalVolume += $volume * $qty * $trueVolumeUnit;
+            }
+            else
+            {
+                $totalVolume += $volume * $qty;   // This may be wrong if we mix different units
+            }
+        }
+        
+        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
+    }    
+    
+    
     /**
      *	Set extra parameters
      *
-     *	@return	void
+     *	@return	int      <0 if KO, >0 if OK
      */
     function setExtraParameters()
     {
@@ -3029,7 +3092,7 @@ abstract class CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
-			$sql.= ", location_incoterms = '".($id_incoterm > 0 ? $this->db->escape($location) : "null")."'";
+			$sql.= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
             $sql.= " WHERE rowid = " . $this->id;
 			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
             $resql=$this->db->query($sql);
@@ -3210,18 +3273,18 @@ abstract class CommonObject
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td class="linecolqty" align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty" align="right">'.$langs->trans('Qty').'</td>';
 
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			print '<td class="linecoluseunit" align="left" width="50">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit" align="left">'.$langs->trans('Unit').'</td>';
 		}
 
 		// Reduction short
-		print '<td class="linecoldiscount" align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount" align="right">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td class="linecolcycleref" align="right" width="50">' . $langs->trans('Progress') . '</td>';
+			print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
 		}
 
 		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
@@ -3238,10 +3301,10 @@ abstract class CommonObject
 		}
 
 		// Total HT
-		print '<td class="linecolht" align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+		print '<td class="linecolht" align="right">'.$langs->trans('TotalHTShort').'</td>';
 
 		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right" width="50">'.$langs->trans('TotalHTShortCurrency').'</td>';
+		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency').'</td>';
 
 		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
@@ -3848,7 +3911,7 @@ abstract class CommonObject
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
 	 *	@return		void
 	 */
-	function add_thumb($file)
+	function addThumbs($file)
 	{
 		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
 
@@ -3880,15 +3943,15 @@ abstract class CommonObject
      * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
      * 4) Return value found into database (TODO No yet implemented)
      * 
-     * @param   string      $fieldname          Name of field
-     * @param   string      $alternatevalue     Alternate value to use
-     * @return  string                          Default value
+     * @param   string              $fieldname          Name of field
+     * @param   string              $alternatevalue     Alternate value to use
+     * @return  string|string[]                         Default value (can be an array if the GETPOST return an array)
      **/
 	function getDefaultCreateValueFor($fieldname, $alternatevalue=null)
     {
         global $conf, $_POST;
 
-        // If param is has been posted with use this value first.
+        // If param here has been posted, we use this value first.
         if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
         
         if (isset($alternatevalue)) return $alternatevalue;
@@ -4329,7 +4392,7 @@ abstract class CommonObject
 	 * @param DoliDB 	$db 			Database handler
 	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
 	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
-	 * @param array 	$tables 		Tables that need to be changed
+	 * @param string[] 	$tables 		Tables that need to be changed
 	 * @return bool
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)

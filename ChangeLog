@@ -24,7 +24,12 @@ Dolibarr 4.0 should be compatible with PHP 7 but more feedbacks are still expect
 
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
+- Function log() of class CommandeFournisseur has been removed. Using it is no more required.
 - Method select_type_comptes_financiers() has been renamed into selectTypeOfBankAccount() 
+- File '/core/tpl/document_actions_pre_headers.tpl.php' were renamed into '/core/actions_linkedfiles.inc.php'.
+So if you included it into your module, change your code like this to be compatible with all version:
+  $res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+  if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 
@@ -711,6 +716,23 @@ Dolibarr better:
   to make difference between creation from contact or not.
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
+
+***** ChangeLog for 3.7.4 compared to 3.7.3 *****
+FIX: #3694
+FIX: #4239
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: #4341
+FIX: #4414 Supplier invoices use FAC_FORCE_DATE_VALIDATION client invoices property
+FIX: #4440 Wrong price is filled by Product::fetch into multiprices arrays
+FIX: add missing global def for ttc column
+FIX: Contrat card don't consider user permissions to show active/unactive service button
+FIX: CVE CVE-2015-8685
+FIX: Email templates not compatible with Multicompany
+Fix: for avoid division by 0
+FIX: ISSUE #4506 : make working the PROPAL_CLONE_ON_CREATE_PAGE hidden constant
+FIX: $outputlangs is not defined (dolibarr 3.7, 3.8, 3.9)
+FIX: sql injection even when code is on several lines
+FIX: The third dashboard don't consider user permissions
 
 ***** ChangeLog for 3.7.3 compared to 3.7.2 *****
 FIX: #3734 Do not show empty links of deleted source objects in stock movement list
@@ -1861,7 +1883,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: [ bug #810 ] Cannot update ODT template path
 - Fix: [ bug #816 ] Sales journal does not reflect localtaxes
 - Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
-- Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionnary
+- Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionary
 - Fix: [ bug #828 ] Error when code_region is not a number in llx_c_regions (with postgres)
 - Fix: [ bug #855 ] Holiday approval email in French
 - Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
@@ -1880,7 +1902,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
 - Fix: Localtax2 for Spain must be based into buyer
 - Fix: [ bug #762 ] Bad profit calculation in Reporting
-- Fix: bug dictionnary with wrong prefix table
+- Fix: bug dictionary with wrong prefix table
 
 ***** ChangeLog for 3.3 compared to 3.2.* *****
 For users:
@@ -1968,7 +1990,7 @@ New experimental module:
 For developers:
 - New: Add webservice for thirdparty creation and list.
 - New: A module can overwrite templates parts.
-- New: Can add a link on title field of added dictionnary.
+- New: Can add a link on title field of added dictionary.
 - New: Uniformize code.
 - New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
        WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER.

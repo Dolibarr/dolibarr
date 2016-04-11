@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Method to use to send EMails
 MAIN_MAIL_SMTPS_ID=SMTP ID-a autentifikazio behar bada
 MAIN_MAIL_SMTPS_PW=SMTP parahitza autentifikazioa behar bada
 MAIN_MAIL_EMAIL_TLS= TLS (SSL) enkriptazioa erabili
+MAIN_MAIL_EMAIL_STARTTLS= TLS (STARTTLS) enkriptazioa erabili
 MAIN_DISABLE_ALL_SMS=Disable all SMS sendings (for test purposes or demos)
 MAIN_SMS_SENDMODE=SMS-ak bidaltzeko erabiliko den modua
 MAIN_MAIL_SMS_FROM=Default sender phone number for Sms sending

@@ -110,7 +110,7 @@ function member_prepare_head(Adherent $object)
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Adherent	$object         Member
+ *  @param	AdherentType	$object         Member
  *  @return array           		head
  */
 function member_type_prepare_head(AdherentType $object)

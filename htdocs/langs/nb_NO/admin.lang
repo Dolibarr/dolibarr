@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Metode for å sende e-post
 MAIN_MAIL_SMTPS_ID=SMTP-ID hvis godkjenning kreves
 MAIN_MAIL_SMTPS_PW=SMTP-passord hvis godkjenning kreves
 MAIN_MAIL_EMAIL_TLS= Bruk TLS (SSL) kryptering
+MAIN_MAIL_EMAIL_STARTTLS= Bruk TLS (STARTTLS) kryptering
 MAIN_DISABLE_ALL_SMS=Deaktiver alle SMS sendings (for testformål eller demoer)
 MAIN_SMS_SENDMODE=Metode for å sende SMS
 MAIN_MAIL_SMS_FROM=Standard avsender telefonnummer for sending av SMS

@@ -29,20 +29,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
-echo '<br>';
-print load_fiche_titre($langs->trans("RelatedSupplierInvoices"), '', '');
-?>
 
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td align="left"><?php echo $langs->trans("RefSupplier"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
-	<td></td>
-</tr>
-<?php
 $total=0;
 $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
@@ -50,6 +37,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	$var=!$var;
 ?>
 <tr <?php echo $bc[$var]; ?> >
+    <td><?php echo $langs->trans("SupplierInvoice"); ?></td>
 	<td><a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowBill"),"bill").' '.$objectlink->ref; ?></a></td>
 	<td align="left"><?php echo $objectlink->ref_supplier; ?></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
@@ -64,15 +52,5 @@ foreach($linkedObjectBlock as $key => $objectlink)
 <?php
 }
 ?>
-<tr class="liste_total">
-	<td align="left" colspan="3"><?php echo $langs->trans("TotalHT"); ?></td>
-	<td align="right"><?php
-		if ($user->rights->fournisseur->facture->lire) {
-			echo price($total);
-		} ?></td>
-	<td></td>
-	<td></td>
-</tr>
-</table>
 
 <!-- END PHP TEMPLATE -->

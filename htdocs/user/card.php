@@ -1,18 +1,18 @@
 <?php
-/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2005       Lionel Cousteix         <etm_ltd@tiscali.co.uk>
- * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2012       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
- * Copyright (C) 2015       Charlie Benke           <charlie@patas-monkey.com>
- * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
+ * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
+ * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +207,7 @@ if (empty($reshook)) {
 			$object->ldap_sid = GETPOST("ldap_sid");
 			$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
             $object->employee = GETPOST('employee');
-            
+
 			$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
 			$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
 			$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
@@ -257,15 +257,15 @@ if (empty($reshook)) {
 
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 				exit;
-			} 
+			}
 			else
 			{
 				$langs->load("errors");
 				$db->rollback();
-				if (is_array($object->errors) && count($object->errors)) 
+				if (is_array($object->errors) && count($object->errors))
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
-				} 
+				}
 				$action = "create";       // Go back to create page
 			}
 		}
@@ -291,8 +291,8 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 				exit;
-			} 
-			else 
+			}
+			else
 			{
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -306,226 +306,207 @@ if (empty($reshook)) {
 		{
 			$error = 0;
 
-            if (!$_POST["lastname"]) {
-                setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
-                $action = "edit";       // Go back to create page
-                $error ++;
+			if (!$_POST["lastname"]) {
+				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
+				$action = "edit";       // Go back to create page
+				$error ++;
+			}
+			if (!$_POST["login"]) {
+				setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
+				$action = "edit";       // Go back to create page
+				$error ++;
+			}
+
+			if (!$error) {
+				$object->fetch($id);
+
+				$object->oldcopy = clone $object;
+
+				if (!$error) {
+					$db->begin();
+
+					$object->oldcopy =  clone $object;
+
+					$object->lastname = GETPOST("lastname", 'alpha');
+					$object->firstname = GETPOST("firstname", 'alpha');
+					$object->login = GETPOST("login", 'alpha');
+					$object->gender = GETPOST("gender", 'alpha');
+					$object->pass = GETPOST("password");
+					$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
+					$object->admin = empty($user->admin) ? 0 : GETPOST("admin"); // A user can only be set admin by an admin
+					$object->address = GETPOST('address', 'alpha');
+					$object->zip = GETPOST('zipcode', 'alpha');
+					$object->town = GETPOST('town', 'alpha');
+					$object->country_id = GETPOST('country_id', 'int');
+					$object->state_id = GETPOST('state_id', 'int');
+					$object->office_phone = GETPOST("office_phone", 'alpha');
+					$object->office_fax = GETPOST("office_fax", 'alpha');
+					$object->user_mobile = GETPOST("user_mobile");
+					$object->skype = GETPOST("skype", 'alpha');
+					$object->email = GETPOST("email", 'alpha');
+					$object->job = GETPOST("job", 'alpha');
+					$object->signature = GETPOST("signature");
+					$object->accountancy_code = GETPOST("accountancy_code");
+					$object->openid = GETPOST("openid");
+					$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
+					$object->employee = GETPOST('employee');
+
+					$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
+					$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
+					$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
+					$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
+					$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
+
+					$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+
+					if (! empty($conf->multicompany->enabled))
+					{
+						if (! empty($_POST["superadmin"]))
+						{
+							$object->entity = 0;
+						}
+						else if ($conf->multicompany->transverse_mode)
+						{
+							$object->entity = 1; // all users in master entity
+						}
+						else
+						{
+							$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+						}
+					}
+					else
+					{
+						$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
+					}
+
+					// Fill array 'array_options' with data from add form
+					$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
+					if ($ret < 0) {
+						$error ++;
+					}
+
+					if (GETPOST('deletephoto')) {
+						$object->photo = '';
+					}
+					if (!empty($_FILES['photo']['name'])) {
+						$object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
+					}
+
+					if (!$error) {
+						$ret = $object->update($user);
+						if ($ret < 0) {
+							$error ++;
+							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
+							}
+							else
+							{
+								setEventMessages($object->error, $object->errors, 'errors');
+							}
+						}
+					}
+
+					if (!$error && isset($_POST['contactid'])) {
+						$contactid = GETPOST('contactid', 'int');
+
+						if ($contactid > 0) {
+							$contact = new Contact($db);
+							$contact->fetch($contactid);
+
+							$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+							$sql .= " SET fk_socpeople=".$db->escape($contactid);
+							if (!empty($contact->socid)) {
+								$sql .= ", fk_soc=".$db->escape($contact->socid);
+							}
+							$sql .= " WHERE rowid=".$object->id;
+						} else {
+							$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+							$sql .= " SET fk_socpeople=NULL, fk_soc=NULL";
+							$sql .= " WHERE rowid=".$object->id;
+						}
+						dol_syslog("usercard::update", LOG_DEBUG);
+						$resql = $db->query($sql);
+						if (!$resql) {
+							$error ++;
+							setEventMessages($db->lasterror(), null, 'errors');
+						}
+					}
+
+					if (!$error && !count($object->errors)) {
+						if (GETPOST('deletephoto') && $object->photo) {
+							$fileimg = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/'.$object->photo;
+							$dirthumbs = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/thumbs';
+							dol_delete_file($fileimg);
+							dol_delete_dir_recursive($dirthumbs);
+						}
+
+						if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name'])) {
+							$dir = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user');
+
+							dol_mkdir($dir);
+
+							if (@is_dir($dir)) {
+								$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+								$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
+
+								if (!$result > 0) {
+									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
+								} else {
+            					    // Create thumbs
+            					    $object->addThumbs($newfile);					    
+								}
+							} else {
+								$error ++;
+								$langs->load("errors");
+								setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
+							}
+						}
+					}
+					
+                	if (! $error && ! count($object->errors))
+                	{
+                		// Then we add the associated categories
+                		$categories = GETPOST( 'usercats', 'array' );
+                		$object->setCategories($categories);
+                	}
+
+					if (!$error && !count($object->errors)) {
+						setEventMessages($langs->trans("UserModified"), null, 'mesgs');
+						$db->commit();
+						
+						$login = $_SESSION["dol_login"];
+						if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)    // Current user has changed its login
+						{
+							$error++;
+							$langs->load("errors");
+							setEventMessages($langs->transnoentitiesnoconv("WarningYourLoginWasModifiedPleaseLogin"), null, 'warnings');
+						}
+					}
+					else {
+					    $db->rollback();
+					}
+                }
             }
-            if (!$_POST["login"]) {
-                setEventMessages($langs->trans("LoginNotDefined"), null, 'errors');
-                $action = "edit";       // Go back to create page
-                $error ++;
-            }
-
-            if (!$error) {
-                $object->fetch($id);
-
-			$object->oldcopy = clone $object;
-
-            if (!$error) {
-                $db->begin();
-
-                $object->oldcopy = clone $object;
-
-                $object->lastname = GETPOST("lastname", 'alpha');
-                $object->firstname = GETPOST("firstname", 'alpha');
-                $object->login = GETPOST("login", 'alpha');
-                $object->gender = GETPOST("gender", 'alpha');
-                $object->pass = GETPOST("password");
-                $object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-                $object->admin = empty($user->admin) ? 0 : GETPOST("admin"); // A user can only be set admin by an admin
-                $object->address = GETPOST('address', 'alpha');
-				$object->zip = GETPOST('zipcode', 'alpha');
-				$object->town = GETPOST('town', 'alpha');
-				$object->country_id = GETPOST('country_id', 'int');
-				$object->state_id = GETPOST('state_id', 'int');
-				$object->office_phone = GETPOST("office_phone", 'alpha');
-                $object->office_fax = GETPOST("office_fax", 'alpha');
-                $object->user_mobile = GETPOST("user_mobile");
-                $object->skype = GETPOST("skype", 'alpha');
-                $object->email = GETPOST("email", 'alpha');
-                $object->job = GETPOST("job", 'alpha');
-                $object->signature = GETPOST("signature");
-                $object->accountancy_code = GETPOST("accountancy_code");
-                $object->openid = GETPOST("openid");
-                $object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
-                $object->employee = GETPOST('employee');
-                
-                $object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
-                $object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
-                $object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
-                $object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
-                $object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
-
-            if (! empty($conf->multicompany->enabled))
-            {
-            	if (! empty($_POST["superadmin"]))
-            	{
-            		$object->entity = 0;
-            	}
-            	else if ($conf->multicompany->transverse_mode)
-            	{
-            		$object->entity = 1; // all users in master entity
-            	}
-            	else
-            	{
-            		$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
-            	}
-            }
-            else
-            {
-            	$object->entity = (! GETPOST('entity', 'int') ? 0 : GETPOST('entity', 'int'));
-            }
-
-                // Fill array 'array_options' with data from add form
-                $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-                if ($ret < 0) {
-                    $error ++;
-                }
-
-                if (!empty($conf->multicompany->enabled)) {
-                    if (!empty($_POST["superadmin"])) {
-                        $object->entity = 0;
-                    } else {
-                        if ($conf->multicompany->transverse_mode) {
-                            $object->entity = 1; // all users in master entity
-                        } else {
-                            $object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
-                        }
-                    }
-                } else {
-                    $object->entity = (empty($_POST["entity"]) ? 0 : $_POST["entity"]);
-                }
-
-                if (GETPOST('deletephoto')) {
-                    $object->photo = '';
-                }
-                if (!empty($_FILES['photo']['name'])) {
-                    $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
-                }
-
-                if (!$error) {
-                    $ret = $object->update($user);
-                    if ($ret < 0) {
-                        $error ++;
-                        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-                            $langs->load("errors");
-                            setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
-                        } 
-                        else 
-                        {
-                            setEventMessages($object->error, $object->errors, 'errors');
-                        }
-                    }
-                }
-
-                if (!$error && isset($_POST['contactid'])) {
-                    $contactid = GETPOST('contactid');
-
-                    if ($contactid > 0) {
-                        $contact = new Contact($db);
-                        $contact->fetch($contactid);
-
-                        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-                        $sql .= " SET fk_socpeople=".$db->escape($contactid);
-                        if ($contact->socid) {
-                            $sql .= ", fk_soc=".$db->escape($contact->socid);
-                        }
-                        $sql .= " WHERE rowid=".$object->id;
-                    } else {
-                        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-                        $sql .= " SET fk_socpeople=NULL, fk_soc=NULL";
-                        $sql .= " WHERE rowid=".$object->id;
-                    }
-                    dol_syslog("fiche::update", LOG_DEBUG);
-                    $resql = $db->query($sql);
-                    if (!$resql) {
-                        $error ++;
-                        setEventMessages($db->lasterror(), null, 'errors');
-                    }
-                }
-
-                if (!$error && !count($object->errors)) {
-                    if (GETPOST('deletephoto') && $object->photo) {
-                        $fileimg = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/'.$object->photo;
-                        $dirthumbs = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user').'/logos/thumbs';
-                        dol_delete_file($fileimg);
-                        dol_delete_dir_recursive($dirthumbs);
-                    }
-
-                    if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name'])) {
-                        $dir = $conf->user->dir_output.'/'.get_exdir($object->id, 2, 0, 1, $object, 'user');
-
-                        dol_mkdir($dir);
-
-                        if (@is_dir($dir)) {
-                            $newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-                            $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1, 0, $_FILES['photo']['error']);
-
-                            if (!$result > 0) {
-                                setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
-                            } else {
-                                // Create small thumbs for company (Ratio is near 16/9)
-                                // Used on logon for example
-                                $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-                                // Create mini thumbs for company (Ratio is near 16/9)
-                                // Used on menu or for setup page for example
-                                $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
-                            }
-                        } else {
-                            $error ++;
-                            $langs->load("errors");
-                            setEventMessages($langs->trans("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
-                        }
-                    }
-                }
-            	if (! $error && ! count($object->errors))
-            	{
-			// Then we add the associated categories
-			$categories = GETPOST( 'usercats', 'array' );
-			$object->setCategories($categories);
+        }
+		else
+		{
+		    if ($caneditpassword)    // Case we can edit only password
+		    {
+		        dol_syslog("Not allowed to change fields, only password");
+		        
+		        $object->fetch($id);
+		    
+		        $object->oldcopy = clone $object;
+		    
+		        $ret = $object->setPassword($user, GETPOST("password"));
+		        if ($ret < 0)
+		        {
+		            setEventMessages($object->error, $object->errors, 'errors');
+		        }
+		    }
 		}
-			
-                if (!$error && !count($object->errors)) {
-                    setEventMessages($langs->trans("UserModified"), null, 'mesgs');
-                    $db->commit();
-
-                    $login = $_SESSION["dol_login"];
-                    if ($login && $login == $object->oldcopy->login && $object->oldcopy->login != $object->login)    // Current user has changed its login
-                    {
-                    	$error++;
-                    	$langs->load("errors");
-                    	setEventMessages($langs->transnoentitiesnoconv("ErrorFailedToCreateDir", $dir), $mesgs, 'errors');
-                    }
-                } else {
-                    $db->rollback();
-                }
-            }
-        } else {
-            if ($caneditpassword)    // Case we can edit only password
-            {
-                $object->fetch($id);
-
-                $object->oldcopy = clone $object;
-
-                $ret = $object->setPassword($user, $_POST["password"]);
-                if ($ret < 0) 
-                {
-                    setEventMessages($object->error, $object->errors, 'errors');
-                }
-            }
-        }
-    }
-
-		$object->oldcopy = clone $object;
-
-        $ret=$object->setPassword($user,$_POST["password"]);
-        if ($ret < 0)
-        {
-	        setEventMessages($object->error, $object->errors, 'errors');
-        }
-    }
+	}
 
 	// Change password with a new generated one
     if ((($action == 'confirm_password' && $confirm == 'yes')
@@ -540,18 +521,18 @@ if (empty($reshook)) {
         } else {
             // Succes
             if ($action == 'confirm_passwordsend' && $confirm == 'yes') {
-                if ($object->send_password($user, $newpassword) > 0) 
+                if ($object->send_password($user, $newpassword) > 0)
                 {
                     setEventMessages($langs->trans("PasswordChangedAndSentTo", $object->email), null, 'mesgs');
-                } 
-                else 
+                }
+                else
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
                 }
-            } 
-            else 
+            }
+            else
             {
-                setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'errors');
+                setEventMessages($langs->trans("PasswordChangedTo", $newpassword), null, 'warnings');
             }
         }
     }
@@ -603,8 +584,8 @@ if (empty($reshook)) {
                     $ldap_sid = $attribute[$conf->global->LDAP_FIELD_SID];
                 }
             }
-        } 
-        else 
+        }
+        else
         {
             setEventMessages($ldap->error, $ldap->errors, 'errors');
         }
@@ -740,7 +721,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr>';
 
     // Lastname
-    print '<td class="titlefield"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
+    print '<td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
     {
@@ -935,7 +916,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
         print $formcompany->select_state($object->state_id,$object->country_code, 'state_id');
         print '</td></tr>';
     }
-		
+
     // Tel
     print '<tr><td>'.$langs->trans("PhonePro").'</td>';
     print '<td>';
@@ -1111,7 +1092,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print $langs->trans("Note");
     print '</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note','','',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,90);
+    $doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,90);
     $doleditor->Create();
     print "</td></tr>\n";
 
@@ -1782,13 +1763,14 @@ else
 
             dol_fiche_head($head, 'user', $title, 0, 'user');
 
-        	$rowspan=17;
+        	$rowspan=22;
             if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER)) $rowspan++;
             if (! empty($conf->societe->enabled)) $rowspan++;
             if (! empty($conf->adherent->enabled)) $rowspan++;
 			if (! empty($conf->skype->enabled)) $rowspan++;
 			if (! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read)) $rowspan = $rowspan+3;
 			if (! empty($conf->agenda->enabled)) $rowspan++;
+			if (! empty($conf->accounting->enabled)) $rowspan++;
 
             print '<table width="100%" class="border">';
 

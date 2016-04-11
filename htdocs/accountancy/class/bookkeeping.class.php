@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015-2016 Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2016  Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ class BookKeeping extends CommonObject
 		$this->piece_num = 0;
 		
 		// first check if line not yet in bookkeeping
-		$sql = "SELECT count(*)";
+		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE doc_type = '" . $this->doc_type . "'";
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;
@@ -180,8 +180,8 @@ class BookKeeping extends CommonObject
 		$resql = $this->db->query($sql);
 		
 		if ($resql) {
-			$row = $this->db->fetch_array($resql);
-			if ($row[0] == 0) {
+			$row = $this->db->fetch_object($resql);
+			if ($row->nb == 0) {
 				
 				// Determine piece_num
 				$sqlnum = "SELECT piece_num";
@@ -1207,6 +1207,48 @@ class BookKeeping extends CommonObject
 			return - 1;
 		}
 	}
+	
+	/**
+	* Description of accounting account
+	*
+	* @param 	string 	$account	Accounting account
+	* @return 	string 	
+	*/
+	function get_compte_desc($account = null)
+	{	
+		global $conf;
+		$pcgver = $conf->global->CHARTOFACCOUNTS;
+
+		$sql  = "SELECT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version, cat.label as category";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa ";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " AND aa.account_number = '" . $account . "'";
+		$sql .= " AND asy.rowid = " . $pcgver;
+		$sql .= " AND aa.active = 1";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
+
+		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = '';
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);	
+			}
+			
+			if(empty($obj->category)){				
+				return $obj->label;
+			}else{
+				return $obj->label.' ('.$obj->category.')';
+				
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
+
+			return -1;
+		}
+	}
+	
 }
 
 /**

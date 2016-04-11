@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Metode ko izmantot sūtot e-pastus
 MAIN_MAIL_SMTPS_ID=SMTP ID ja autentificēšana nepieciešama
 MAIN_MAIL_SMTPS_PW=SMTP parole ja autentificēšanās nepieciešama
 MAIN_MAIL_EMAIL_TLS= Izmantot TLS (SSL) šifrēšanu
+MAIN_MAIL_EMAIL_STARTTLS= Izmantot TLS (STARTTLS) šifrēšanu
 MAIN_DISABLE_ALL_SMS=Atslēgt visas SMS sūtīšanas (izmēģinājuma nolūkā vai demo)
 MAIN_SMS_SENDMODE=Izmantojamā metode SMS sūtīšanai
 MAIN_MAIL_SMS_FROM=Noklusētais sūtītāja tālruņa numurs SMS sūtīšanai

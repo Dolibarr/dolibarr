@@ -150,6 +150,7 @@ if (empty($reshook))
 	        $action = 'edit_extras';
 	}
 	
+	// Create shipment
 	if ($action == 'add' && $user->rights->expedition->creer)
 	{
 	    $error=0;
@@ -251,7 +252,7 @@ if (empty($reshook))
 			}
 			else
 			{
-			    //var_dump($_POST); var_dump($batch);
+			    //var_dump(GETPOST($qty,'int')); var_dump($_POST); var_dump($batch);exit;
 				//shipment line for product with no batch management and no multiple stock location
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
@@ -283,7 +284,8 @@ if (empty($reshook))
 					if (isset($stockLine[$i]))
 					{
     					//shipment from multiple stock locations
-    					for($j = 0; $j < count($stockLine[$i]); $j++)
+					    $nbstockline = count($stockLine[$i]);
+    					for($j = 0; $j < $nbstockline; $j++)
     					{
     					    if ($stockLine[$i][$j]['qty']>0)
     					    {
@@ -606,7 +608,7 @@ if ($action == 'create')
             print '<table class="border centpercent">';
 
             // Ref
-            print '<tr><td width="30%" class="fieldrequired">';
+            print '<tr><td class="fieldrequired">';
             if ($origin == 'commande' && ! empty($conf->commande->enabled))
             {
                 print $langs->trans("RefOrder").'</td><td colspan="3"><a href="'.DOL_URL_ROOT.'/commande/card.php?id='.$object->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$object->ref;
@@ -710,17 +712,21 @@ if ($action == 'create')
 			}
 
             // Document model
-            print "<tr><td>".$langs->trans("Model")."</td>";
-            print '<td colspan="3">';
 			include_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 			$liste = ModelePdfExpedition::liste_modeles($db);
-			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
-            print "</td></tr>\n";
-            
+			if (count($liste) > 1)
+			{
+    			print "<tr><td>".$langs->trans("Model")."</td>";
+                print '<td colspan="3">';
+    			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
+                print "</td></tr>\n";
+			}
+			
             print "</table>";
 
             dol_fiche_end();
 
+            
             // Shipment lines
 
             $numAsked = count($object->lines);
@@ -873,8 +879,9 @@ if ($action == 'create')
                 $warehouse_id = GETPOST('entrepot_id','int');
 			
 				$warehouseObject = null;
-				if ($warehouse_id > 0 || ! ($line->fk_product > 0))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
+				if ($warehouse_id > 0 || ! ($line->fk_product > 0) || empty($conf->stock->enabled))     // If warehouse was already selected or if product is not a predefined, we go into this part with no multiwarehouse selection
 				{
+				    print '<!-- Case warehouse already known or product not a predefined product -->';
 					//ship from preselected location
 					$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
 					$deliverableQty=min($quantityToBeDelivered, $stock);
@@ -903,7 +910,8 @@ if ($action == 'create')
 								$tmpentrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):$warehouse_id;
 								if ($line->fk_product > 0)
 								{
-									print $formproduct->selectWarehouses($tmpentrepot_id,'entl'.$indiceAsked,'',1,0,$line->fk_product);
+								    print '<!-- Show warehouse selection -->';
+									print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1);
 									if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id)
 									{
 										//print $stock.' '.$quantityToBeDelivered;
@@ -984,7 +992,8 @@ if ($action == 'create')
 						}
 						else
 						{
-							print '<tr><td colspan="3"></td><td align="center">';
+						    print '<!-- Case -->';
+						    print '<tr><td colspan="3"></td><td align="center">';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 							print '</td>';
 							
@@ -1000,10 +1009,11 @@ if ($action == 'create')
 					if (empty($conf->productbatch->enabled) || ! $product->hasbatch())
 					{
 					    print '<td></td><td></td></tr>';	// end line and start a new one for each warehouse
-						
+					    print '<!-- Case warehouse not already known and product does not need lot -->';
+					    	
 						print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						$subj=0;
-						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse) 
+						foreach ($product->stock_warehouse as $warehouse_id=>$stock_warehouse)    // $stock_warehouse is product_stock
 						{
 							$warehouseObject=new Entrepot($db);
 							$warehouseObject->fetch($warehouse_id);
@@ -1049,7 +1059,7 @@ if ($action == 'create')
 								print "</tr>\n";
 							}
 						}
-						// Show subproducts of product
+						// Show subproducts of product (not recommanded)
 						if (! empty($conf->global->PRODUIT_SOUSPRODUITS) && $line->fk_product > 0)
 						{
 							$product->get_sousproduits_arbo();
@@ -1116,7 +1126,8 @@ if ($action == 'create')
 					}
 					if ($subj == 0) // Line not shown yet, we show it
 					{
-						print '<tr><td colspan="3" ></td><td align="center"><!-- line not shown yet, we show it -->';
+					    print '<!-- line not shown yet, we show it -->';
+						print '<tr><td colspan="3" ></td><td align="center">';
 						if ($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
     						//$disabled='disabled="disabled"';
@@ -1152,7 +1163,8 @@ if ($action == 'create')
 				
 				
 				//Display lines extrafields
-				if (is_array($extralabelslines) && count($extralabelslines)>0) {
+				if (is_array($extralabelslines) && count($extralabelslines)>0) 
+				{
 					$colspan=5;
 					$line = new ExpeditionLigne($db);
 					$line->fetch_optionals($object->id,$extralabelslines);
@@ -1361,7 +1373,7 @@ else if ($id || $ref)
 		{
 			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
 			//print $totalWeight.' '.measuring_units_string(0,"weight");
-			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs);
+			print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
 			//if (empty($object->trueWeight)) print ' ('.$langs->trans("Calculated").')'; 
 			if (!empty($object->trueWeight)) print ')';
 		}
@@ -1420,7 +1432,7 @@ else if ($id || $ref)
 			if ($volumeUnit < 50) 
 			{
 			    //print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
-			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs);
+			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			}
 			else print $calculatedVolume.' '.measuring_units_string($volumeUnit,"volume");
 		}
@@ -1428,7 +1440,7 @@ else if ($id || $ref)
 		{
 			if ($calculatedVolume) print ' ('.$langs->trans("SumOfProductVolumes").': ';
 			//print $totalVolume.' '.measuring_units_string(0,"volume");
-			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs);
+			print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
 			//if (empty($calculatedVolume)) print ' ('.$langs->trans("Calculated").')';
 			if ($calculatedVolume) print ')';
 		}
@@ -1874,10 +1886,7 @@ else if ($id || $ref)
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-		{
-			$formmail->trackid='shi'.$object->id;
-		}
+		$formmail->trackid='shi'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2016 		Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2016 		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/bookkeeping/balance.php
- * \ingroup Accounting Expert
- * \brief Balance of book keeping
+ *  \file 		htdocs/accountancy/bookkeeping/balance.php
+ *  \ingroup 	Advanced accountancy
+ *  \brief 		Balance of book keeping
  */
 require '../../main.inc.php';
 
@@ -137,7 +137,6 @@ else {
 	/*
 	 * List
 	 */
-
 	$nbtotalofrecords = 0;
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 		$nbtotalofrecords = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
@@ -150,13 +149,12 @@ else {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $nbtotalofrecords);
-
+	
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result);
+	
 	print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<div class="tabsAction">' . "\n";
 	print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';
-
 	print '</div>';
 
 	print '<div class="liste_titre">';
@@ -169,6 +167,7 @@ else {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Numerocompte"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Solde"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
@@ -176,11 +175,11 @@ else {
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print '<td>';
+	print '<td colspan="2">';
 	print $langs->trans('From');
 	print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
 	print '<br>';
-	print $langs->trans('To');
+	print $langs->trans('to');
 	print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
 	print '</td>';
 
@@ -203,22 +202,27 @@ else {
 
 	foreach ( $object->lines as $line ) {
 		$var = ! $var;
-
+		$link = '';
 		$total_debit += $line->debit;
 		$total_credit += $line->credit;
-
+		$description = $object->get_compte_desc($line->numero_compte); // Search description of the account
+		if(empty($description)){
+			$link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() .'</a>';
+		}
 		print "<tr $bc[$var]>";
 
 		print '<td>' . length_accountg($line->numero_compte) . '</td>';
-		print '<td align="right">' . price($line->debit) . '</td>';
-		print '<td align="right">' . price($line->credit) . '</td>';
-		print '<td align="right">' . price($line->credit - $line->debit) . '</td>';
-		print '<td align="center">';
+		print '<td>' . $description . '</td>';
+		print '<td align="right">' .  number_format($line->debit, 2, ',', ' ') . '</td>';
+        print '<td align="right">' . number_format($line->credit, 2, ',', ' ') . '</td>';
+        print '<td align="right">' . number_format($line->credit - $line->debit, 2, ',', ' ') . '</td>';
+		print '<td align="center">' . $link;
 		print '</td>';
 		print "</tr>\n";
 	}
 
 	print '<tr class="liste_total">';
+	print '<td></td>';
 	print '<td></td>';
 	print '<td  align="right">';
 	print price($total_debit);

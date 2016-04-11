@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Aðferð til að nota til að senda tölvupóst
 MAIN_MAIL_SMTPS_ID=SMTP ID ef sannprófun sem krafist
 MAIN_MAIL_SMTPS_PW=SMTP lykilorð ef sannprófun sem krafist
 MAIN_MAIL_EMAIL_TLS= Nota TLS (SSL) dulkóða
+MAIN_MAIL_EMAIL_STARTTLS= Nota TLS (STARTTLS) dulkóða
 MAIN_DISABLE_ALL_SMS=Slökkva öll SMS sendings (vegna rannsókna eða kynningum)
 MAIN_SMS_SENDMODE=Aðferð til að nota til að senda SMS
 MAIN_MAIL_SMS_FROM=Sjálfgefin sendanda símanúmer fyrir SMS senda

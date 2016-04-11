@@ -527,10 +527,13 @@ jQuery(document).ready(function() {
 		jQuery('#trlinefordates').show();
 	});
 
-	/* When changing predefined product, we reload list of supplier prices */
+	/* When changing predefined product, we reload list of supplier prices required for margin combo */
 	$("#idprod, #idprodfournprice").change(function()
 	{
-		setforpredef();
+		console.log("#idprod, #idprodfournprice change triggered");
+		
+		setforpredef();		// TODO Keep vat combo visible and set it to first entry into list that match result of get_default_tva
+		
 		jQuery('#trlinefordates').show();
 
 		<?php
@@ -539,103 +542,107 @@ jQuery(document).ready(function() {
 			$langs->load('stocks');
 			?>
 
-		/* Code for margin */
-  		$("#fournprice_predef").find("option").remove();
-		$("#fournprice_predef").hide();
-		$("#buying_price").val("").show();
-		/* Call post to load content of combo list fournprice_predef */
-  		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val() }, function(data) {
-	    	if (data && data.length > 0)
-	    	{
-    	  		var options = '';
-    	  		var defaultkey = '';
-    	  		var defaultprice = '';
-	      		var bestpricefound = 0;
-	      		
-	      		var bestpriceid = 0; var bestpricevalue = 0;
-	      		var pmppriceid = 0; var pmppricevalue = 0;
-	      		var costpriceid = 0; var costpricevalue = 0;
+    		/* Code for margin */
+      		$("#fournprice_predef").find("option").remove();
+    		$("#fournprice_predef").hide();
+    		$("#buying_price").val("").show();
+    		/* Call post to load content of combo list fournprice_predef */
+      		$.post('<?php echo DOL_URL_ROOT; ?>/fourn/ajax/getSupplierPrices.php?bestpricefirst=1', { 'idprod': $(this).val() }, function(data) {
+    	    	if (data && data.length > 0)
+    	    	{
+        	  		var options = '';
+        	  		var defaultkey = '';
+        	  		var defaultprice = '';
+    	      		var bestpricefound = 0;
+    	      		
+    	      		var bestpriceid = 0; var bestpricevalue = 0;
+    	      		var pmppriceid = 0; var pmppricevalue = 0;
+    	      		var costpriceid = 0; var costpricevalue = 0;
+    
+    				/* setup of margin calculation */
+    	      		var defaultbuyprice = '<?php 
+    	      		if (isset($conf->global->MARGIN_TYPE))
+    	      		{
+    	      		    if ($conf->global->MARGIN_TYPE == '1')   print 'bestsupplierprice';
+    	      		    if ($conf->global->MARGIN_TYPE == 'pmp') print 'pmp';
+    	      		    if ($conf->global->MARGIN_TYPE == 'costprice') print 'costprice';
+    	      		} ?>';
+    	      		console.log("we will set the field for margin. defaultbuyprice="+defaultbuyprice);
+    	      		
+    	      		var i = 0;
+    	      		$(data).each(function() {
+    	      			if (this.id != 'pmpprice' && this.id != 'costprice')
+    		      		{
+    		        		i++;
+                            this.price = parseFloat(this.price); // to fix when this.price >0
+    			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
+    			      		//console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
+    		      			if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
+    		      		}
+    	      			if (this.id == 'pmpprice')
+    	      			{
+    	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
+    			      		//console.log("id="+this.id+"-price="+this.price);
+    			      		if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
+    			      		{
+    			      			if (this.price > 0) { 
+    				      			defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
+    			      				//console.log("pmppricevalue="+pmppricevalue);
+    			      			}
+    			      		}
+    	      			}
+    	      			if (this.id == 'costprice')
+    	      			{
+    	      				// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
+    			      		//console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
+    			      		if ('costprice' == defaultbuyprice)
+    			      		{
+    		      				if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
+    		      				else if (pmppricevalue > 0) { defaultkey = pmppriceid; defaultprice = pmppricevalue; }
+    			      		}
+    	      			}
+    	        		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
+    	      		});
+    	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
+    
+    	      		console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
+    
+    	      		$("#fournprice_predef").html(options).show();
+    	      		if (defaultkey != '')
+    				{
+    		      		$("#fournprice_predef").val(defaultkey);
+    		      	}
+    
+    	      		/* At loading, no product are yet selected, so we hide field of buying_price */
+    	      		$("#buying_price").hide();
+    
+    	      		/* Define default price at loading */
+    	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
+    			    $("#buying_price").val(defaultprice);
+    
+    	      		$("#fournprice_predef").change(function() {
+    		      		console.log("change on fournprice_predef");
+    	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
+    					var linevalue=$(this).find('option:selected').val();
+    	        		var pricevalue = $(this).find('option:selected').attr("price");
+    	        		if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
+    	          			$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
+    	        		}
+    	        		if (linevalue == 'inputprice') {
+    		          		$('#buying_price').show();
+    	        		}
+    	        		if (linevalue == 'pmpprice') {
+    	        			$("#buying_price").val(pricevalue);
+    		          		$('#buying_price').hide();
+    	        		}
+    				});
+    	    	}
+    	  	},
+    	  	'json');
 
-				/* setup of margin calculation */
-	      		var defaultbuyprice = '<?php 
-	      		if (isset($conf->global->MARGIN_TYPE))
-	      		{
-	      		    if ($conf->global->MARGIN_TYPE == '1')   print 'bestsupplierprice';
-	      		    if ($conf->global->MARGIN_TYPE == 'pmp') print 'pmp';
-	      		    if ($conf->global->MARGIN_TYPE == 'costprice') print 'costprice';
-	      		} ?>';
-	      		console.log("defaultbuyprice="+defaultbuyprice);
-	      		
-	      		var i = 0;
-	      		$(data).each(function() {
-	      			if (this.id != 'pmpprice' && this.id != 'costprice')
-		      		{
-		        		i++;
-                        this.price = parseFloat(this.price); // to fix when this.price >0
-			      		// If margin is calculated on best supplier price, we set it by defaut (but only if value is not 0)
-			      		console.log("id="+this.id+"-price="+this.price+"-"+(this.price > 0));
-		      			if (bestpricefound == 0 && this.price > 0) { defaultkey = this.id; defaultprice = this.price; bestpriceid = this.id; bestpricevalue = this.price; bestpricefound=1; }	// bestpricefound is used to take the first price > 0
-		      		}
-	      			if (this.id == 'pmpprice')
-	      			{
-	      				// If margin is calculated on PMP, we set it by defaut (but only if value is not 0)
-			      		console.log("id="+this.id+"-price="+this.price);
-			      		if ('pmp' == defaultbuyprice || 'costprice' == defaultbuyprice)
-			      		{
-			      			if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; pmppriceid = this.id; pmppricevalue = this.price;
-			      			console.log("pmppricevalue="+pmppricevalue); }
-			      		}
-	      			}
-	      			if (this.id == 'costprice')
-	      			{
-	      				// If margin is calculated on Cost price, we set it by defaut (but only if value is not 0)
-			      		console.log("id="+this.id+"-price="+this.price+"-pmppricevalue="+pmppricevalue);
-			      		if ('costprice' == defaultbuyprice)
-			      		{
-		      				if (this.price > 0) { defaultkey = this.id; defaultprice = this.price; costpriceid = this.id; costpricevalue = this.price; }
-		      				else if (pmppricevalue > 0) { defaultkey = pmppriceid; defaultprice = pmppricevalue; }
-			      		}
-	      			}
-	        		options += '<option value="'+this.id+'" price="'+this.price+'">'+this.label+'</option>';
-	      		});
-	      		options += '<option value="inputprice" price="'+defaultprice+'"><?php echo $langs->trans("InputPrice"); ?></option>';
-
-	      		console.log("finally selected defaultkey="+defaultkey+" defaultprice="+defaultprice);
-
-	      		$("#fournprice_predef").html(options).show();
-	      		if (defaultkey != '')
-				{
-		      		$("#fournprice_predef").val(defaultkey);
-		      	}
-
-	      		/* At loading, no product are yet selected, so we hide field of buying_price */
-	      		$("#buying_price").hide();
-
-	      		/* Define default price at loading */
-	      		var defaultprice = $("#fournprice_predef").find('option:selected').attr("price");
-			    $("#buying_price").val(defaultprice);
-
-	      		$("#fournprice_predef").change(function() {
-		      		console.log("change on fournprice_predef");
-	      			/* Hide field buying_price according to choice into list (if 'inputprice' or not) */
-					var linevalue=$(this).find('option:selected').val();
-	        		var pricevalue = $(this).find('option:selected').attr("price");
-	        		if (linevalue != 'inputprice' && linevalue != 'pmpprice') {
-	          			$("#buying_price").val(pricevalue).hide();	/* We set value then hide field */
-	        		}
-	        		if (linevalue == 'inputprice') {
-		          		$('#buying_price').show();
-	        		}
-	        		if (linevalue == 'pmpprice') {
-	        			$("#buying_price").val(pricevalue);
-		          		$('#buying_price').hide();
-	        		}
-				});
-	    	}
-	  	},
-	  	'json');
-
-  		<?php } ?>
+  		<?php
+        }
+        ?>
 
   		/* To set focus */
   		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0) 
@@ -659,6 +666,7 @@ jQuery(document).ready(function() {
 
 /* Function to set fields from choice */
 function setforfree() {
+	console.log("Call setforfree. We show most fields");
 	jQuery("#search_idprod").val('');
 	jQuery("#idprod").val('');
 	jQuery("#idprodfournprice").val('0');	// Set cursor on not selected product
@@ -680,6 +688,7 @@ function setforfree() {
 	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
+	console.log("Call setforpredef. We hide some fields");
 	jQuery("#select_type").val(-1);
 	jQuery("#prod_entry_mode_free").prop('checked',false);
 	jQuery("#prod_entry_mode_predef").prop('checked',true);

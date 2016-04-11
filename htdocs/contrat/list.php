@@ -321,7 +321,7 @@ if ($resql)
         			print '</div>';
         		}
         	}
-        	else print $langs->trans("NoSalesRepresentativeAffected");
+        	//else print $langs->trans("NoSalesRepresentativeAffected");
         }
         else
         {

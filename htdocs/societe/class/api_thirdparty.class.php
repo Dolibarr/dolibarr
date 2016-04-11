@@ -270,7 +270,7 @@ class ThirdpartyApi extends DolibarrApi
      * Delete thirdparty
      *
      * @param int $id   Thirparty ID
-     * @return type
+     * @return integer
      * 
      * @url	DELETE thirdparty/{id}
      */

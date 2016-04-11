@@ -38,6 +38,7 @@ class Import
 	var $array_import_regex;
 	var $array_import_examplevalues;
 	var $array_import_convertvalue;
+	var $array_import_run_sql_after;
 
 
 	/**
@@ -151,6 +152,8 @@ class Import
 						$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
 						$this->array_import_convertvalue[$i]=(isset($module->import_convertvalue_array[$r])?$module->import_convertvalue_array[$r]:'');
+						// Sql request to run after import
+						$this->array_import_run_sql_after[$i]=(isset($module->import_run_sql_after_array[$r])?$module->import_run_sql_after_array[$r]:'');
 						// Module
 						$this->array_import_module[$i]=$module;
 

@@ -62,7 +62,7 @@ $langs->load("main");
 print '<div class="menu_bloc">';
 print '<ul class="menu">';
 // Link to new sell
-print '<li class="menu_choix1"><a href="affIndex.php?menu=facturation&id=NOUV"><span>'.$langs->trans("NewSell").'</span></a></li>';
+print '<li class="menu_choix1"><a href="affIndex.php?menutpl=facturation&id=NOUV"><span>'.$langs->trans("NewSell").'</span></a></li>';
 // Open new tab on backoffice (this is not a disconnect from POS)
 print '<li class="menu_choix2"><a href=".." target="backoffice"><span>'.$langs->trans("BackOffice").'</span></a></li>';
 // Disconnect

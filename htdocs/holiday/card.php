@@ -677,7 +677,7 @@ $cp = new Holiday($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader('', $langs->trans('CPTitreMenu'));
 
 if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
 {

@@ -393,7 +393,7 @@ class Resource extends CommonObject
     			}
     		}
     	}
-    	$sql.= " GROUP BY t.rowid";
+    	$sql.= " GROUP BY t.rowid, ty.label";
     	$sql.= $this->db->order($sortfield,$sortorder);
         $this->num_all = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -473,7 +473,7 @@ class Resource extends CommonObject
    				}
    			}
    		}
-   		$sql.= " GROUP BY t.rowid";
+   		$sql.= " GROUP BY t.rowid, ty.label";
     	$sql.= $this->db->order($sortfield,$sortorder);
    		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);

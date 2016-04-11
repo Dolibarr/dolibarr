@@ -1465,7 +1465,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					$destpath=$upload_dir . "/" . preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
 					$destfile=preg_replace('/__file__/',$TFile['name'][$i],$savingdocmask);
 				}
-	
+
+				// lowercase extension
+				$info = pathinfo($destpath);
+				$destpath = $info['dirname'].'/'.$info['filename'].'.'.strtolower($info['extension']);
+				$info = pathinfo($destfile);
+				$destfile = $info['filename'].'.'.strtolower($info['extension']);
+				    
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destpath, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 				if (is_numeric($resupload) && $resupload > 0)
 				{
@@ -1480,9 +1486,11 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					}
 					if (image_format_supported($destpath) == 1)
 					{
-						// Create small thumbs for image (Ratio is near 16/9)
+						// Create thumbs
+						// We can't use $object->addThumbs here because there is no $object known
+						
 						// Used on logon for example
-						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheigthsmall, '_small', 50, "thumbs");
+						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
 						// Create mini thumbs for image (Ratio is near 16/9)
 						// Used on menu or for setup page for example
 						$imgThumbMini = vignette($destpath, $maxwidthmini, $maxheightmini, '_mini', 50, "thumbs");

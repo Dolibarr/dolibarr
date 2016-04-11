@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=El. pašto siuntimui naudoti metodą
 MAIN_MAIL_SMTPS_ID=SMTP ID, jei reikalingas autentiškumo patvirtinimas
 MAIN_MAIL_SMTPS_PW=SMTP slaptažodis, jei reikalingas autentiškumo patvirtinimas
 MAIN_MAIL_EMAIL_TLS= Užšifravimui naudoti TLS (SSL)
+MAIN_MAIL_EMAIL_STARTTLS= Užšifravimui naudoti TLS (STARTTLS)
 MAIN_DISABLE_ALL_SMS=Išjungti visus SMS siuntimus (bandymo ar demo tikslais)
 MAIN_SMS_SENDMODE=SMS siuntimui naudoti metodą
 MAIN_MAIL_SMS_FROM=SMS siuntimui naudojamas siuntėjo telefono numeris pagal nutylėjimą

@@ -198,7 +198,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($commande,'ref','',1,'ref','ref');
 		print '</td>';

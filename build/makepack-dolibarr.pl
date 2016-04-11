@@ -1159,10 +1159,13 @@ if ($nboftargetok) {
 	    		if ($target eq 'SF') { 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
 	    		}
-	    		elsif ($target eq 'ASSO' && $NEWPUBLISH =~ /stable/) {
+	    		elsif ($target eq 'ASSO' and $NEWPUBLISH =~ /stable/) {
 	    			$destFolder="$NEWPUBLISH/$filestoscanstableasso{$file}";
 	    		} 
-	    		else
+	    		elsif ($target eq 'ASSO' and $NEWPUBLISH !~ /stable/) {
+	    			$destFolder="$NEWPUBLISH";
+	    		} 
+	    		else	# No more used
 	    		{
 	    			$dirnameonly=$file;
 	    			$dirnameonly =~ s/.*\/([^\/]+)\/[^\/]+$/$1/;  

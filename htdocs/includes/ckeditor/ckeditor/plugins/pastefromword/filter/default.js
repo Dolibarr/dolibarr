@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
+ Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
  For licensing, see LICENSE.md or http://ckeditor.com/license
 */
 (function(){function C(a){a=a.toUpperCase();for(var c=D.length,b=0,f=0;f<c;++f)for(var d=D[f],e=d[1].length;a.substr(0,e)==d[1];a=a.substr(e))b+=d[0];return b}function E(a){a=a.toUpperCase();for(var c=1,b=1;0<a.length;b*=26)c+="ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(a.charAt(a.length-1))*b,a=a.substr(0,a.length-1);return c}var F=CKEDITOR.htmlParser.fragment.prototype,r=CKEDITOR.htmlParser.element.prototype;F.onlyChild=r.onlyChild=function(){var a=this.children;return 1==a.length&&a[0]||null};r.removeAnyChildWithName=

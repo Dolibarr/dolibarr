@@ -161,11 +161,11 @@ if ($result) {
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_accountparent" value="' . $search_accountparent . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_pcgtype" value="' . $search_pcgtype . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_accountparent" value="' . $search_accountparent . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="' . $search_pcgtype . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgsubtype" value="' . $search_pcgsubtype . '"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td align="right" colspan="2" class="liste_titre">';
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
@@ -190,7 +190,7 @@ if ($result) {
 		print '<td>' . $accountstatic->getNomUrl(1) . '</td>';
 		print '<td>' . $obj->label . '</td>';
 
-		if ($obj->account_parent)
+		if (! empty($obj->account_parent))
         {
 			$accountparent->id = $obj->rowid2;
 			$accountparent->label = $obj->label2;

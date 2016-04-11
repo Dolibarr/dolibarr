@@ -40,6 +40,11 @@ with:
 
 TCPDF:
 ------
+* To avoid to have QRcode changed because generated with a random mask, replace
+define('QR_FIND_FROM_RANDOM', 2);
+with
+define('QR_FIND_FROM_RANDOM', false);
+
 * Removed all fonts except 
     dejavusans* (used by greek, arab, persan, romanian, turkish), 
     freemono* (russian), 
@@ -60,12 +65,6 @@ In htdocs/includes/tcpdf/tcpdf.php
 +       protected $default_monospaced_font = 'freemono';
 
 * Renamed getmypid into dol_getmypid().
-
-
-To avoid to have QRcode changed because generated with a random mask, replace
-define('QR_FIND_FROM_RANDOM', 2);
-with
-define('QR_FIND_FROM_RANDOM', false);
 
 
 

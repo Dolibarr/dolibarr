@@ -49,6 +49,7 @@ class Importxlsx extends ModeleImports
 
 	var $separator;
 
+    var $file;      // Path of file
 	var $handle;    // Handle fichier
 
 	var $cacheconvert=array();      // Array to cache list of value found after a convertion
@@ -72,100 +73,29 @@ class Importxlsx extends ModeleImports
 
 		// this is used as an extension from the example file code, so we have to put xlsx here !!!
 		$this->id='xlsx';                // Same value as xxx in file name export_xxx.modules.php
-		$this->label='Excel';             // Label of driver
-		$this->desc=$langs->trans("ExcelFormatDesc",$this->separator,$this->enclosure,$this->escape);
+		$this->label='Excel 2007';             // Label of driver
+		$this->desc=$langs->trans("Excel2007FormatDesc");
 		$this->extension='xlsx';         // Extension for generated file by this driver
 		$this->picto='mime/xls';		// Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version='1.0';         // Driver version
 
 		// If driver use an external library, put its name here
-    require_once PHPEXCEL_PATH.'PHPExcel.php';
+        require_once PHPEXCEL_PATH.'PHPExcel.php';
 		require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-              if (! class_exists('ZipArchive')) // For Excel2007, PHPExcel need ZipArchive
-              {
+        if (! class_exists('ZipArchive')) // For Excel2007, PHPExcel need ZipArchive
+        {
                 $langs->load("errors");
                 $this->error=$langs->trans('ErrorPHPNeedModule','zip');
                 return -1;
-              }
-    $this->label_lib='PhpExcel';
-    $this->version_lib='1.8.0';
+        }
+        $this->label_lib='PhpExcel';
+        $this->version_lib='1.8.0';
 
 		$this->datatoimport=$datatoimport;
 		if (preg_match('/^societe_/',$datatoimport)) $this->thirpartyobject=new Societe($this->db);
 	}
 
-// Those Get methods should all be in the parent class !!! 
-	/**
-	 * getDriverId
-	 *
-	 * @return string		Id
-	 */
-	function getDriverId()
-	{
-		return $this->id;
-	}
-
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label
-	 */
-	function getDriverLabel()
-	{
-		return $this->label;
-	}
-
-	/**
-	 *	getDriverDesc
-	 *
-	 *	@return string	Description
-	 */
-	function getDriverDesc()
-	{
-		return $this->desc;
-	}
-
-	/**
-	 * getDriverExtension
-	 *
-	 * @return string	Driver suffix
-	 */
-	function getDriverExtension()
-	{
-		return $this->extension;
-	}
-
-	/**
-	 *	getDriverVersion
-	 *
-	 *	@return string	Driver version
-	 */
-	function getDriverVersion()
-	{
-		return $this->version;
-	}
-
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label of external lib
-	 */
-	function getLibLabel()
-	{
-		return $this->label_lib;
-	}
-
-	/**
-	 * getLibVersion
-	 *
-	 *	@return string	Version of external lib
-	 */
-	function getLibVersion()
-	{
-		return $this->version_lib;
-	}
-
-
+	
 	/**
 	 * 	Output header of an example file for this format
 	 *
@@ -276,8 +206,30 @@ class Importxlsx extends ModeleImports
 		$reader = new PHPExcel_Reader_Excel2007();
 		$this->workbook = $reader->load($file);
 		$this->record = 1;
+		$this->file = $file;
+
 		return $ret;
 	}
+
+	
+	/**
+	 * 	Return nb of records. File must be closed.
+	 *
+	 * 	@return		int		<0 if KO, >=0 if OK
+	 */
+	function import_get_nb_of_lines($file)
+	{
+		$reader = new PHPExcel_Reader_Excel2007();
+		$this->workbook = $reader->load($file);
+	    
+	    $rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
+	    
+	    $this->workbook->disconnectWorksheets();
+	    unset($this->workbook);
+	    
+		return $rowcount;
+    }
+    
 
 	/**
 	 * 	Input header line from file
@@ -336,7 +288,7 @@ class Importxlsx extends ModeleImports
 	 *
 	 * @param	array	$arrayrecord					Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 * @param 	Object	$objimport						Object import (contains objimport->import_tables_array, objimport->import_fields_array, objimport->import_convertvalue_array, ...)
+	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
 	 * @return	int										<0 if KO, >0 if OK
@@ -419,7 +371,7 @@ class Importxlsx extends ModeleImports
 						// Make some tests on $newval
 
 						// Is it a required field ?
-						if (preg_match('/\*/',$objimport->array_import_fields[0][$val]) && ($newval==''))
+						if (preg_match('/\*/',$objimport->array_import_fields[0][$val]) && ((string) $newval == ''))
 						{
 							$this->errors[$error]['lib']=$langs->trans('ErrorMissingMandatoryValue',$key);
 							$this->errors[$error]['type']='NOTNULL';
@@ -438,7 +390,13 @@ class Importxlsx extends ModeleImports
                                 	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel'
                                 	)
                                 {
-                                    if (! is_numeric($newval) && $newval != '')    // If value into input import file is not a numeric, we apply the function defined into descriptor
+                                    // New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
+                                    $isidorref='id';
+                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i',$newval)) $isidorref='ref';
+                                    $newval=preg_replace('/^(id|ref):/i','',$newval);    // Remove id: or ref: that was used to force if field is id or ref
+                                    //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+                                    
+                                    if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
                                     {
                                         $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
                                         $class=$objimport->array_import_convertvalue[0][$val]['class'];
@@ -645,7 +603,8 @@ class Importxlsx extends ModeleImports
 						}
 						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$user->id;
 						$sql.=')';
-print($sql);
+                        
+						//print($sql).'<br>';
 						dol_syslog("import_csv.modules", LOG_DEBUG);
 
 						//print '> '.join(',',$arrayrecord);

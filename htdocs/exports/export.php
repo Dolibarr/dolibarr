@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("exports");
 $langs->load("users");
+$langs->load("companies");
 
 // Everybody should be able to go on this page
 //if (! $user->admin)

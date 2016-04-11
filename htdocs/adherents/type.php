@@ -200,7 +200,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
 			print '<td align="center">'.yn($objp->cotisation).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			if ($user->rights->adherent->configurer)
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			else
+				print '<td align="right">&nbsp;</td>';
 			print "</tr>";
 			$i++;
 		}
