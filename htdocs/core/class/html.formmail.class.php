@@ -334,7 +334,7 @@ class FormMail extends Form
         	    $out.= ' &nbsp; ';
         	    $out.= '</div>';
         	}
-        	    
+
 
 
         	$out.= '<table class="border" width="100%">'."\n";
@@ -894,7 +894,7 @@ class FormMail extends Form
 				$line->id=$obj->rowid;
 				$line->label=$obj->label;
 				$line->topic=$obj->topic;
-				$line->content=$obj->lacontentbel;
+				$line->content=$obj->content;
 				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
 			}
