@@ -59,6 +59,78 @@ class ModeleImports
 	{
 	}
 
+	
+	/**
+	 * getDriverId
+	 *
+	 * @return string		Id
+	 */
+	function getDriverId()
+	{
+	    return $this->id;
+	}
+	
+	/**
+	 *	getDriverLabel
+	 *
+	 *	@return string	Label
+	 */
+	function getDriverLabel()
+	{
+	    return $this->label;
+	}
+	
+	/**
+	 *	getDriverDesc
+	 *
+	 *	@return string	Description
+	 */
+	function getDriverDesc()
+	{
+	    return $this->desc;
+	}
+	
+	/**
+	 * getDriverExtension
+	 *
+	 * @return string	Driver suffix
+	 */
+	function getDriverExtension()
+	{
+	    return $this->extension;
+	}
+	
+	/**
+	 *	getDriverVersion
+	 *
+	 *	@return string	Driver version
+	 */
+	function getDriverVersion()
+	{
+	    return $this->version;
+	}
+	
+	/**
+	 *	getDriverLabel
+	 *
+	 *	@return string	Label of external lib
+	 */
+	function getLibLabel()
+	{
+	    return $this->label_lib;
+	}
+	
+	/**
+	 * getLibVersion
+	 *
+	 *	@return string	Version of external lib
+	 */
+	function getLibVersion()
+	{
+	    return $this->version_lib;
+	}
+	
+	
 	/**
 	 *  Charge en memoire et renvoie la liste des modeles actifs
 	 *

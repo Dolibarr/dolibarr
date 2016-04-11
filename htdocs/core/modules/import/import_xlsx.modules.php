@@ -73,100 +73,29 @@ class Importxlsx extends ModeleImports
 
 		// this is used as an extension from the example file code, so we have to put xlsx here !!!
 		$this->id='xlsx';                // Same value as xxx in file name export_xxx.modules.php
-		$this->label='Excel';             // Label of driver
-		$this->desc=$langs->trans("ExcelFormatDesc",$this->separator,$this->enclosure,$this->escape);
+		$this->label='Excel 2007';             // Label of driver
+		$this->desc=$langs->trans("Excel2007FormatDesc");
 		$this->extension='xlsx';         // Extension for generated file by this driver
 		$this->picto='mime/xls';		// Picto (This is not used by the example file code as Mime type, too bad ...)
 		$this->version='1.0';         // Driver version
 
 		// If driver use an external library, put its name here
-    require_once PHPEXCEL_PATH.'PHPExcel.php';
+        require_once PHPEXCEL_PATH.'PHPExcel.php';
 		require_once PHPEXCEL_PATH.'PHPExcel/Style/Alignment.php';
-              if (! class_exists('ZipArchive')) // For Excel2007, PHPExcel need ZipArchive
-              {
+        if (! class_exists('ZipArchive')) // For Excel2007, PHPExcel need ZipArchive
+        {
                 $langs->load("errors");
                 $this->error=$langs->trans('ErrorPHPNeedModule','zip');
                 return -1;
-              }
-    $this->label_lib='PhpExcel';
-    $this->version_lib='1.8.0';
+        }
+        $this->label_lib='PhpExcel';
+        $this->version_lib='1.8.0';
 
 		$this->datatoimport=$datatoimport;
 		if (preg_match('/^societe_/',$datatoimport)) $this->thirpartyobject=new Societe($this->db);
 	}
 
-// Those Get methods should all be in the parent class !!! 
-	/**
-	 * getDriverId
-	 *
-	 * @return string		Id
-	 */
-	function getDriverId()
-	{
-		return $this->id;
-	}
-
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label
-	 */
-	function getDriverLabel()
-	{
-		return $this->label;
-	}
-
-	/**
-	 *	getDriverDesc
-	 *
-	 *	@return string	Description
-	 */
-	function getDriverDesc()
-	{
-		return $this->desc;
-	}
-
-	/**
-	 * getDriverExtension
-	 *
-	 * @return string	Driver suffix
-	 */
-	function getDriverExtension()
-	{
-		return $this->extension;
-	}
-
-	/**
-	 *	getDriverVersion
-	 *
-	 *	@return string	Driver version
-	 */
-	function getDriverVersion()
-	{
-		return $this->version;
-	}
-
-	/**
-	 *	getDriverLabel
-	 *
-	 *	@return string	Label of external lib
-	 */
-	function getLibLabel()
-	{
-		return $this->label_lib;
-	}
-
-	/**
-	 * getLibVersion
-	 *
-	 *	@return string	Version of external lib
-	 */
-	function getLibVersion()
-	{
-		return $this->version_lib;
-	}
-
-
+	
 	/**
 	 * 	Output header of an example file for this format
 	 *
