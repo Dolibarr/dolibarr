@@ -354,7 +354,7 @@ if ($id > 0 || ! empty($ref))
 				    	else { print $langs->trans("NotDefined"); $notdefined++; $atleastonenotdefined++; }
 					}
 					print '</td>';
-					$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
+					$totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise), 'MT');
 					$total+=$totalline;
 					print '<td align="right">'.($notdefined?'':price($totalline,'','',0,0,-1,$conf->currency)).'</td>';
 					if (! empty($conf->stock->enabled)) print '<td align="right">'.$langs->trans("Stock").': '.$value['stock'].'</td>';	// Real stock
