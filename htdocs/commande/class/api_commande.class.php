@@ -212,19 +212,84 @@ class CommandeApi extends DolibarrApi
 		}
         // Check mandatory fields
         $result = $this->_validate($request_data);
-        
+
         foreach($request_data as $field => $value) {
             $this->commande->$field = $value;
+        }
+        if (isset($request_data["lines"])) {
+          $lines = array();
+          foreach ($request_data["lines"] as $line) {
+            array_push($lines, (object)$line);
+          }
+          $this->commande->lines = $lines;
         }
         if(! $this->commande->create(DolibarrApiAccess::$user) ) {
             throw new RestException(401);
         }
         
-        return $this->commande->ref;
+        return $this->commande->id;
+    }
+    /**
+     * Add a line to given order
+     *
+     *
+     * @param int   $id             Id of commande to update
+     * @param array $request_data   Orderline data   
+     * 
+     * @url	POST order/{id}/line
+     * 
+     * @return int 
+     */
+    function postLine($id, $request_data = NULL) {
+      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+		  	throw new RestException(401);
+		  }
+        
+      $result = $this->commande->fetch($id);
+      if( ! $result ) {
+         throw new RestException(404, 'Commande not found');
+      }
+		
+		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+			$request_data = (object)$request_data;
+      $updateRes = $this->commande->addline(
+                        $request_data->desc,
+                        $request_data->subprice,
+                        $request_data->qty,
+                        $request_data->tva_tx,
+                        $request_data->localtax1_tx,
+                        $request_data->localtax2_tx,
+                        $request_data->fk_product,
+                        $request_data->remise_percent,
+                        $request_data->info_bits,
+                        $request_data->fk_remise_except,
+                        'HT',
+                        0,
+                        $request_data->date_start,
+                        $request_data->date_end,
+                        $request_data->product_type,
+                        $request_data->rang,
+                        $request_data->special_code,
+                        $fk_parent_line,
+                        $request_data->fk_fournprice,
+                        $request_data->pa_ht,
+                        $request_data->label,
+                        $request_data->array_options,
+                        $request_data->fk_unit,
+                        $this->element,
+                        $request_data->id
+      );
+
+      if ($updateRes > 0) {
+        return $this->get($id);
+      }
+      return false;
     }
 
     /**
-     * Update order
+     * Update order general fields (don't touch lines of order)
      *
      * @param int   $id             Id of commande to update
      * @param array $request_data   Datas   
@@ -233,11 +298,10 @@ class CommandeApi extends DolibarrApi
      * 
      * @return int 
      */
-    function put($id, $request_data = NULL)
-    {
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
-			throw new RestException(401);
-		}
+    function put($id, $request_data = NULL) {
+      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+		  	throw new RestException(401);
+		  }
         
         $result = $this->commande->fetch($id);
         if( ! $result ) {
@@ -247,13 +311,12 @@ class CommandeApi extends DolibarrApi
 		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-
         foreach($request_data as $field => $value) {
             $this->commande->$field = $value;
         }
         
         if($this->commande->update($id, DolibarrApiAccess::$user,1,'','','update'))
-            return $this->get ($id);
+            return $this->get($id);
         
         return false;
     }
@@ -346,6 +409,7 @@ class CommandeApi extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $commande[$field] = $data[$field];
+            
         }
         return $commande;
     }
