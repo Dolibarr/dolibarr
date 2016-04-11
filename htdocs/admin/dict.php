@@ -685,7 +685,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             $i++;
         }
         $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
-		print $sql;
+
         dol_syslog("actionmodify", LOG_DEBUG);
         //print $sql;
         $resql = $db->query($sql);
