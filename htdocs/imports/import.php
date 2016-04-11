@@ -1415,6 +1415,25 @@ if ($step == 5 && $datatoimport)
             print $langs->trans("ErrorFailedToOpenFile",$pathfile);
         }
 
+	    $error=0;
+	    
+	    // Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
@@ -1740,8 +1759,31 @@ if ($step == 6 && $datatoimport)
 	}
 
 	if (count($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
-	else  $db->commit();	// We can commit if no errors.
-
+	else 
+	{
+	    $error=0;
+	    
+		// Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
+	    if (! $error) $db->commit();	// We can commit if no errors.
+	    else $db->rollback();
+	}
+	    
     dol_fiche_end();
 
 
