@@ -49,6 +49,7 @@ class ImportCsv extends ModeleImports
 
 	var $separator;
 
+	var $file;      // Path of file
 	var $handle;    // Handle fichier
 
 	var $cacheconvert=array();      // Array to cache list of value found after a convertion
@@ -235,6 +236,18 @@ class ImportCsv extends ModeleImports
 
 		return $ret;
 	}
+
+	
+	/**
+	 * 	Return nb of records. File must be closed.
+	 *
+	 * 	@return		int		<0 if KO, >=0 if OK
+	 */
+	function import_get_nb_of_lines($file)
+	{
+	   return dol_count_nb_of_line($file);
+    }
+    
 
 	/**
 	 * 	Input header line from file

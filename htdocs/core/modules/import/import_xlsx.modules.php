@@ -49,6 +49,7 @@ class Importxlsx extends ModeleImports
 
 	var $separator;
 
+    var $file;      // Path of file
 	var $handle;    // Handle fichier
 
 	var $cacheconvert=array();      // Array to cache list of value found after a convertion
@@ -276,8 +277,30 @@ class Importxlsx extends ModeleImports
 		$reader = new PHPExcel_Reader_Excel2007();
 		$this->workbook = $reader->load($file);
 		$this->record = 1;
+		$this->file = $file;
+
 		return $ret;
 	}
+
+	
+	/**
+	 * 	Return nb of records. File must be closed.
+	 *
+	 * 	@return		int		<0 if KO, >=0 if OK
+	 */
+	function import_get_nb_of_lines($file)
+	{
+		$reader = new PHPExcel_Reader_Excel2007();
+		$this->workbook = $reader->load($file);
+	    
+	    $rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
+	    
+	    $this->workbook->disconnectWorksheets();
+	    unset($this->workbook);
+	    
+		return $rowcount;
+    }
+    
 
 	/**
 	 * 	Input header line from file

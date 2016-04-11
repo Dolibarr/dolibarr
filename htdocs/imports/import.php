@@ -1142,6 +1142,7 @@ if ($step == 5 && $datatoimport)
 	// Load source fields in input file
 	$fieldssource=array();
 	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+
 	if ($result >= 0)
 	{
 		// Read first line
@@ -1156,8 +1157,7 @@ if ($step == 5 && $datatoimport)
 		$obj->import_close_file();
 	}
 
-  // TODO, remove this, since it only works for csv
-	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
+	$nboflines=$obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
 	$param='&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param;  // $param2 = $param without excludefirstline and endatlinenb
