@@ -98,16 +98,16 @@ class CommandeApi extends DolibarrApi
      * Get a list of orders
      * 
      * @param int		$mode		Use this param to filter list
-     * @param string	$societe	Societe filter field
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param string	$societe	Societe filter field
      *
      * @url     GET     /order/list
      * @return  array   Array of order objects
      */
-    function getList($mode=0, $societe = "", $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $societe = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -191,8 +191,8 @@ class CommandeApi extends DolibarrApi
      * @url     GET     /thirdparty/{socid}/order/list
      * @return  array   Array of order objects
      */
-    function getListForSoc($socid = "") {
-      return getList(0,$socid);
+    function getListForSoc($socid = 0) {
+      return getList(0,"s.rowid","ASC",0,0,$socid);
     }
 
     
@@ -219,7 +219,7 @@ class CommandeApi extends DolibarrApi
         if (isset($request_data["lines"])) {
           $lines = array();
           foreach ($request_data["lines"] as $line) {
-            array_push($lines, (object)$line);
+            array_push($lines, (object) $line);
           }
           $this->commande->lines = $lines;
         }
@@ -284,7 +284,7 @@ class CommandeApi extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-			$request_data = (object)$request_data;
+			$request_data = (object) $request_data;
       $updateRes = $this->commande->addline(
                         $request_data->desc,
                         $request_data->subprice,
@@ -344,7 +344,7 @@ class CommandeApi extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-			$request_data = (object)$request_data;
+			$request_data = (object) $request_data;
       $updateRes = $this->commande->updateline(
                         $lineid,
                         $request_data->desc,
@@ -400,7 +400,7 @@ class CommandeApi extends DolibarrApi
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-			$request_data = (object)$request_data;
+			$request_data = (object) $request_data;
       $updateRes = $this->commande->deleteline($lineid);
       if ($updateRes == 1) {
         return $this->get($id);
