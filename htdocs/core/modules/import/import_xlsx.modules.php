@@ -336,7 +336,7 @@ class Importxlsx extends ModeleImports
 	 *
 	 * @param	array	$arrayrecord					Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 * @param 	Object	$objimport						Object import (contains objimport->import_tables_array, objimport->import_fields_array, objimport->import_convertvalue_array, ...)
+	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
 	 * @return	int										<0 if KO, >0 if OK
@@ -438,7 +438,13 @@ class Importxlsx extends ModeleImports
                                 	|| $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel'
                                 	)
                                 {
-                                    if (! is_numeric($newval) && $newval != '')    // If value into input import file is not a numeric, we apply the function defined into descriptor
+                                    // New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
+                                    $isidorref='id';
+                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i',$newval)) $isidorref='ref';
+                                    $newval=preg_replace('/^(id|ref):/i','',$newval);    // Remove id: or ref: that was used to force if field is id or ref
+                                    //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
+                                    
+                                    if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
                                     {
                                         $file=$objimport->array_import_convertvalue[0][$val]['classfile'];
                                         $class=$objimport->array_import_convertvalue[0][$val]['class'];
@@ -645,7 +651,8 @@ class Importxlsx extends ModeleImports
 						}
 						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$user->id;
 						$sql.=')';
-print($sql);
+                        
+						//print($sql).'<br>';
 						dol_syslog("import_csv.modules", LOG_DEBUG);
 
 						//print '> '.join(',',$arrayrecord);
