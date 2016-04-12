@@ -2335,8 +2335,13 @@ else
             $result=$adh->fetch('','',$object->id);
             if ($result > 0)
             {
+            	if ($adh->morphy=='mor'){
+            		$adh->ref=$adh->company;
+					print $adh->getNomUrl(1);
+            	}else{
+            	//var_dump($adh);
                 $adh->ref=$adh->getFullName($langs);
-                print $adh->getNomUrl(1);
+                print $adh->getNomUrl(1);}
             }
             else
             {

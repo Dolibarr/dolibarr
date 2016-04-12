@@ -381,9 +381,15 @@ if ($result)
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='user') {
-                    print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$links[$key]['url_id'].'">';
+                    print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->fk_user_author.'">';
                     print img_object($langs->trans('ShowUser'),'user').' ';
                     print $langs->trans("User");
+                    print '</a>';
+                }
+                else if ($links[$key]['type']=='payment_expensereport'){
+                	print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowPayment'),'payment').' ';
+                    print 'Note de frais';
                     print '</a>';
                 }
                 else {

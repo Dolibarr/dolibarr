@@ -1322,6 +1322,7 @@ class FactureFournisseur extends CommonInvoice
 	    } else {
 		    // Update total price into invoice record
 		    $res = $this->update_price('','auto');
+			$this->lines[] = $line;
 	    }
 
 	    return $res;

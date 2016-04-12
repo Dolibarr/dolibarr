@@ -1846,6 +1846,7 @@ function getElementProperties($element_type)
     if ($element_type == 'propal')  {
         $classpath = 'comm/propal/class';
     }
+
     if ($element_type == 'askpricesupplier')  {
         $classpath = 'comm/askpricesupplier/class';
     }

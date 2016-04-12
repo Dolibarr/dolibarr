@@ -1173,7 +1173,92 @@ UPDATE llx_bank_url set url = REPLACE( url, 'fiche.php', 'card.php');
 
 -- Add id commandefourndet in llx_commande_fournisseur_dispatch to correct /fourn/commande/dispatch.php display when several times same product in supplier order
 ALTER TABLE llx_commande_fournisseur_dispatch ADD COLUMN fk_commandefourndet INTEGER NOT NULL DEFAULT 0 AFTER fk_product;
+-- Module AskPriceSupplier --
+CREATE TABLE llx_askpricesupplier (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  ref varchar(30) NOT NULL,
+  entity integer NOT NULL DEFAULT '1',
+  ref_ext varchar(255) DEFAULT NULL,
+  ref_int varchar(255) DEFAULT NULL,
+  fk_soc integer DEFAULT NULL,
+  fk_projet integer DEFAULT NULL,
+  tms timestamp,
+  datec datetime DEFAULT NULL,
+  date_valid datetime DEFAULT NULL,
+  date_cloture datetime DEFAULT NULL,
+  fk_user_author integer DEFAULT NULL,
+  fk_user_modif integer DEFAULT NULL,
+  fk_user_valid integer DEFAULT NULL,
+  fk_user_cloture integer DEFAULT NULL,
+  fk_statut smallint NOT NULL DEFAULT '0',
+  price double DEFAULT '0',
+  remise_percent double DEFAULT '0',
+  remise_absolue double DEFAULT '0',
+  remise double DEFAULT '0',
+  total_ht double(24,8) DEFAULT 0,
+  tva double(24,8) DEFAULT 0,
+  localtax1 double(24,8) DEFAULT 0,
+  localtax2 double(24,8) DEFAULT 0,
+  total double(24,8) DEFAULT 0,
+  fk_account integer DEFAULT NULL,
+  fk_currency varchar(3) DEFAULT NULL,
+  fk_cond_reglement integer DEFAULT NULL,
+  fk_mode_reglement integer DEFAULT NULL,
+  note_private text,
+  note_public text,
+  model_pdf varchar(255) DEFAULT NULL,
+  date_livraison date DEFAULT NULL,
+  fk_shipping_method integer DEFAULT NULL,
+  import_key varchar(14) DEFAULT NULL,
+  extraparams varchar(255) DEFAULT NULL
+) ENGINE=innodb;
 
+CREATE TABLE llx_askpricesupplierdet (
+  rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  fk_askpricesupplier integer NOT NULL,
+  fk_parent_line integer DEFAULT NULL,
+  fk_product integer DEFAULT NULL,
+  label varchar(255) DEFAULT NULL,
+  description text,
+  fk_remise_except integer DEFAULT NULL,
+  tva_tx double(6,3) DEFAULT 0,
+  localtax1_tx double(6,3) DEFAULT 0,
+  localtax1_type varchar(10) DEFAULT NULL,
+  localtax2_tx double(6,3) DEFAULT 0,
+  localtax2_type varchar(10) DEFAULT NULL,
+  qty double DEFAULT NULL,
+  remise_percent double DEFAULT '0',
+  remise double DEFAULT '0',
+  price double DEFAULT NULL,
+  subprice double(24,8) DEFAULT 0,
+  total_ht double(24,8) DEFAULT 0,
+  total_tva double(24,8) DEFAULT 0,
+  total_localtax1 double(24,8) DEFAULT 0,
+  total_localtax2 double(24,8) DEFAULT 0,
+  total_ttc double(24,8) DEFAULT 0,
+  product_type integer DEFAULT 0,
+  info_bits integer DEFAULT 0,
+  buy_price_ht double(24,8) DEFAULT 0,
+  fk_product_fournisseur_price integer DEFAULT NULL,
+  special_code integer DEFAULT 0,
+  rang integer DEFAULT 0,
+  ref_fourn varchar(30) DEFAULT NULL
+) ENGINE=innodb;
+
+CREATE TABLE llx_askpricesupplier_extrafields (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=innodb;
+
+CREATE TABLE llx_askpricesupplierdet_extrafields (
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14) DEFAULT NULL
+) ENGINE=innodb;
+-- End Module AskPriceSupplier --
 
 -- Not into official 3.7 but must be into migration for 3.7 when migration is done by 3.8 code 
 ALTER TABLE llx_extrafields ADD COLUMN perms varchar(255) after fieldrequired;

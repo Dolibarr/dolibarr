@@ -32,7 +32,8 @@
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal', 'askpricesupplier','commande'))) $usemargins=1;
+
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','askpricesupplier','commande'))) $usemargins=1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
 if (empty($dateSelector)) $dateSelector=0;
@@ -44,6 +45,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
+
 if (in_array($object->element,array('propal','askpricesupplier','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 ?>
 
@@ -106,9 +108,7 @@ $coldisplay=-1; // We remove first td
 
 	<?php if ($object->element == 'askpricesupplier') { ?>
 		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="<?php echo $line->ref_fourn; ?>" size="12"></td>
-	<?php } ?>
-
-	<?php
+	<?php }
 	$coldisplay++;
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
 		print '<td align="right">' . $form->load_tva('tva_tx',$line->tva_tx,$seller,$buyer,0,$line->info_bits,$line->product_type) . '</td>';

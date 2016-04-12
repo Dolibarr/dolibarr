@@ -162,7 +162,6 @@ abstract class ModeleNumRefAskPriceSupplier
 function askpricesupplier_pdf_create(DoliDB $db, AskPriceSupplier $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 {
 	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
 

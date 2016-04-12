@@ -283,6 +283,7 @@ class FormFile
         }
 
         $printer=0;
+
         if (in_array($modulepart,array('facture','askpricesupplier','propal','proposal','order','commande','expedition')))	// The direct print feature is implemented only for such elements
         {
             $printer = (!empty($user->rights->printing->read) && !empty($conf->printing->enabled))?true:false;
@@ -692,6 +693,7 @@ class FormFile
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
+
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
 		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)

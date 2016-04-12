@@ -1086,7 +1086,7 @@ class ExtraFields
 			$InfoFieldList = explode(":", $param_list[0]);
 			dol_include_once($InfoFieldList[1]);
 			$object = new $InfoFieldList[0]($this->db);
-			$object->fetch($value);
+			if (!empty($value)) $object->fetch($value); // [PH] Fix error display because value is null
 			$out='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$object->ref.'" >';
 
 		}

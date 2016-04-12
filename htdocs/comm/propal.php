@@ -745,6 +745,7 @@ if (empty($reshook))
 				// If prices fields are update
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
+					//echo $tva_tx.'<br>';
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -757,8 +758,10 @@ if (empty($reshook))
 						$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 						$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 						$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
-						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						//echo $object->thirdparty->price_level;
+						if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level]) && $tva_tx != 0) $tva_tx=$prod->multiprices_tva_tx[$object->thirdparty->price_level];
+						if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level]) && $tva_npr != 0) $tva_npr=$prod->multiprices_recuperableonly[$object->thirdparty->price_level];
+						//echo "test".$tva_tx.'<br>';
 					}
 					elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
@@ -865,6 +868,7 @@ if (empty($reshook))
 			$date_end = dol_mktime(0, 0, 0, GETPOST('date_end' . $predef . 'month'), GETPOST('date_end' . $predef . 'day'), GETPOST('date_end' . $predef . 'year'));
 
 			// Local Taxes
+			//echo $tva_tx;exit;
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 

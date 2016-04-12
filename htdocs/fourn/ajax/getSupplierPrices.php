@@ -49,7 +49,7 @@ if ($idprod > 0)
 	$producttmp=new ProductFournisseur($db);
 	$producttmp->fetch($idprod);
 
-	$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
+	$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, s.rowid as idsoc,";
 	$sql.= " pfp.ref_fourn,";
 	$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.remise_percent, pfp.quantity, pfp.unitprice, pfp.charges, pfp.unitcharges,";
 	$sql.= " pfp.fk_supplier_price_expression, pfp.tva_tx, s.nom as name";
@@ -75,6 +75,16 @@ if ($idprod > 0)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($result);
+				
+				if($conf->multidevise->enabled){
+
+					$resql = $db->query("SELECT s.devise_code FROM ".MAIN_DB_PREFIX."societe as s WHERE rowid = ".$objp->idsoc);
+					$res = $db->fetch_object($resql);
+					$currency = $res->devise_code;
+				}
+				else{
+					$currency = $conf->currency;
+				}
 
                 if (!empty($objp->fk_supplier_price_expression)) {
                     $priceparser = new PriceParser($db);
@@ -95,26 +105,27 @@ if ($idprod > 0)
 
 				if ($objp->quantity == 1)
 				{
-					$title.= price($price,0,$langs,0,0,-1,$conf->currency)."/";
+					$title.= price($price,0,$langs,0,0,-1,$currency)."/";
 				}
 				$title.= $objp->quantity.' '.($objp->quantity == 1 ? $langs->trans("Unit") : $langs->trans("Units"));
 
 				if ($objp->quantity > 1)
 				{
 					$title.=" - ";
-					$title.= price($unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
+					$title.= price($unitprice,0,$langs,0,0,-1,$currency)."/".$langs->trans("Unit");
 
 					$price = $unitprice;
 				}
 				if ($objp->unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2"))
 				{
 					$title.=" + ";
-					$title.= price($objp->unitcharges,0,$langs,0,0,-1,$conf->currency);
+					$title.= price($objp->unitcharges,0,$langs,0,0,-1,$currency);
 					$price += $objp->unitcharges;
 				}
 				if ($objp->duration) $label .= " - ".$objp->duration;
 
-				$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
+				$label = price($price,0,$langs,0,0,-1,$currency)."/".$langs->trans("Unit");
+
 				if ($objp->ref_fourn) $label.=' ('.$objp->ref_fourn.')';
 
 				$prices[] = array("id" => $objp->idprodfournprice, "price" => price2num($price,0,'',0), "label" => $label, "title" => $title);  // For price field, we must use price2num(), for label or title, price()

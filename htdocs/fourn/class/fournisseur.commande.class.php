@@ -107,6 +107,7 @@ class CommandeFournisseur extends CommonOrder
 	 * @var CommandeFournisseurLigne[]
 	 */
 	public $lines = array();
+
 	//Ajout pour askpricesupplier
 	var $origin;
     var $origin_id;

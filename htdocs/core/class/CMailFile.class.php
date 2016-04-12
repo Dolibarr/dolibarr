@@ -372,6 +372,19 @@ class CMailFile
 		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
 
 		$res=false;
+        
+        dol_include_once('/core/class/hookmanager.class.php');
+        $hookmanager=new HookManager($db);
+        $hookmanager->initHooks(array('maildao'));
+        $reshook=$hookmanager->executeHooks('doactions',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if (!empty($reshook))
+        {
+                
+            $this->error="Error in hook maildao doactions ".$reshook;
+            dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+        
+            return $reshook;
+        }
 
 		if (empty($conf->global->MAIN_DISABLE_ALL_MAILS))
 		{
