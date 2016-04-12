@@ -1919,7 +1919,7 @@ if ($action == 'create')
 			$objectsrc->fetch_thirdparty();
 
 			$projectid = (! empty($projectid) ? $projectid : $objectsrc->fk_project);
-			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
+			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : (! empty($objectsrc->ref_customer) ? $objectsrc->ref_customer:''));
 			$ref_int = (! empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
 
 			// only if socid not filled else it's allready done upper

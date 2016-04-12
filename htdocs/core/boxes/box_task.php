@@ -36,7 +36,8 @@ class box_task extends ModeleBoxes
     //var $depends = array("projet");
     var $db;
     var $param;
-
+    var $enabled = 0;		// Disabled because bugged.
+    
     var $info_box_head = array();
     var $info_box_contents = array();
 
