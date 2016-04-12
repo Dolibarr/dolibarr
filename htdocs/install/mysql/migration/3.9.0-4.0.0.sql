@@ -359,7 +359,7 @@ CREATE TABLE llx_c_accounting_category (
 ) ENGINE=innodb;
 
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
-
+UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = '';
 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
 
 
