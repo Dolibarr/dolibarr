@@ -222,7 +222,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
 	$sql.= " AND f.entity = ".$conf->entity;
-	$sql.= " GROUP BY p.rowid, p.ref, p.label";
+	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql.= $db->order($sortfield,$sortorder);
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
