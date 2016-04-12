@@ -307,9 +307,6 @@ if (! empty($conf->margin->enabled))
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
 		{
 		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_marginRate");
-			});
 			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_marginRate");
@@ -319,9 +316,6 @@ if (! empty($conf->margin->enabled))
 		if (! empty($conf->global->DISPLAY_MARK_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
 		{
 		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_markRate");
-			});
 			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkEditLine(e, "np_markRate");
@@ -334,6 +328,7 @@ if (! empty($conf->margin->enabled))
 
 	/* If margin rate field empty, do nothing. */
 	/* Force content of price_ht to 0 or if a discount is set, recalculate it from margin rate */
+	/* TODO This function seems no more used */
 	function checkEditLine(e, npRate)
 	{
 		var buying_price = $("input[name='buying_price']:first");
