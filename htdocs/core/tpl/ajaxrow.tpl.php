@@ -70,7 +70,7 @@ $(document).ready(function(){
 										if (intIndex % 2 == 1) $(this).addClass('pair');
 									});
 									
-							$("#<?php echo $tagidfortablednd; ?>").trigger('tableDnD_endDrop');
+							$("#<?php echo $tagidfortablednd; ?>").trigger('tableDnD_endDrop', [fk_element, element_id, table, row]);
 						}
 					});
 		},
