@@ -33,13 +33,18 @@ class Import
 	var $array_import_code;
 	var $array_import_label;
 	var $array_import_tables;
+	var $array_import_tables_creator;
 	var $array_import_fields;
+	var $array_import_fieldshidden;
 	var $array_import_entities;
 	var $array_import_regex;
 	var $array_import_examplevalues;
 	var $array_import_convertvalue;
 	var $array_import_run_sql_after;
 
+	var $error;
+	var $errors;
+	
 
 	/**
 	 *    Constructor
@@ -138,7 +143,7 @@ class Import
 						$this->array_import_label[$i]=$module->getImportDatasetLabel($r);
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i]=$module->import_tables_array[$r];
-						// Array of tables creator field to import (key=alias, value=creator field)
+						// Array of tables creator field to import (key=alias, value=creator field name)
 						$this->array_import_tables_creator[$i]=(isset($module->import_tables_creator_array[$r])?$module->import_tables_creator_array[$r]:'');
 						// Array of fields to import (key=field, value=label)
 						$this->array_import_fields[$i]=$module->import_fields_array[$r];
