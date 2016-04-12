@@ -190,8 +190,7 @@ CREATE TABLE llx_multicurrency_rate
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	date_sync datetime DEFAULT NULL,  
 	rate double NOT NULL DEFAULT 0, 
-	fk_multicurrency integer NOT NULL, 
-	entity integer NOT NULL DEFAULT 1
+	fk_multicurrency integer NOT NULL 
 ) ENGINE=innodb;
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;

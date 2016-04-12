@@ -136,7 +136,7 @@ if ($resql)
  * View
  */
 
-$page_name = "MultiCurrency";
+$page_name = "MultiCurrencySetup";
 
 llxHeader('', $langs->trans($page_name));
 
@@ -212,7 +212,7 @@ print '<td align="right" width="400">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_MULTICURRENCY_MODIFY_RATE_APPLICATION">';
-print $form->selectarray('MULTICURRENCY_MODIFY_RATE_APPLICATION', array('PU_DOLIBARR' => 'PU_DOLIBARR', 'PU_CURRENCY' => 'PU_CURRENCY'));
+print $form->selectarray('MULTICURRENCY_MODIFY_RATE_APPLICATION', array('PU_DOLIBARR' => 'PU_DOLIBARR', 'PU_CURRENCY' => 'PU_CURRENCY'), $conf->global->MULTICURRENCY_MODIFY_RATE_APPLICATION);
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
@@ -230,6 +230,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+/* This property seems not used in code, so i comment it
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_currencyFromToRate").'</td>';
@@ -242,6 +243,7 @@ print '<input type="text" name="MULTICURRENCY_FROM_TO_RATE" value="'.$conf->glob
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
+*/
 
 print '</table>';
 
