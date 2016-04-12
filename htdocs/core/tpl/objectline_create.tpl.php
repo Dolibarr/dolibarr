@@ -32,7 +32,7 @@
 
 
 $usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) 
+if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande')))
 {
     $usemargins=1;
 }
@@ -193,11 +193,17 @@ else {
 	{
         $parameters=array('fk_parent_line'=>GETPOST('fk_parent_line','int'));
 		$reshook=$hookmanager->executeHooks('formCreateProductOptions',$parameters,$object,$action);
+		if (!empty($hookmanager->resPrint)) {
+			print $hookmanager->resPrint;
+		}
 	}
 	if (is_object($hookmanager) && ! empty($senderissupplier))
 	{
 		$parameters=array('htmlname'=>'addproduct');
 		$reshook=$hookmanager->executeHooks('formCreateProductSupplierOptions',$parameters,$object,$action);
+		if (!empty($hookmanager->resPrint)) {
+			print $hookmanager->resPrint;
+		}
 	}
 
 
@@ -476,7 +482,7 @@ jQuery(document).ready(function() {
 	$("#select_type").change(function()
 	{
 		setforfree();
-		if (jQuery('#select_type').val() >= 0) 
+		if (jQuery('#select_type').val() >= 0)
 		{
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
@@ -582,7 +588,7 @@ jQuery(document).ready(function() {
   		<?php } ?>
 
   		/* To set focus */
-  		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0) 
+  		if (jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val() > 0)
   	  	{
 			/* focus work on a standard textarea but not if field was replaced with CKEDITOR */
 			jQuery('#dp_desc').focus();
