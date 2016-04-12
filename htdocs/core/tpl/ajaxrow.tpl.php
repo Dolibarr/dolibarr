@@ -69,6 +69,8 @@ $(document).ready(function(){
 										if (intIndex % 2 == 0) $(this).addClass('impair');
 										if (intIndex % 2 == 1) $(this).addClass('pair');
 									});
+									
+							$("#<?php echo $tagidfortablednd; ?>").trigger('tableDnD_endDrop');
 						}
 					});
 		},
