@@ -515,6 +515,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 			print '<a name="builddoc"></a>'; // ancre
 
+			
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	
+	
 			/*
 			 * Documents generes
 			 */
