@@ -429,7 +429,6 @@ class User extends CommonObject
 				{
 					$obj = $this->db->fetch_object($result);
 					$add_ids[]=$obj->id;
-					$insert_rights[]='('.(int) $this->id.','.(int) $obj->id.')';
 					$i++;
 				}
 				
@@ -449,8 +448,11 @@ class User extends CommonObject
 					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'user_rights WHERE fk_user = '.$this->id.' AND fk_id in ('.implode(',', $add_ids).')';
 					if (! $this->db->query($sql)) $err++;
 					
-					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'user_rights (fk_user, fk_id) VALUES '.implode(',',$insert_rights);
-					if (! $this->db->query($sql)) $err++;
+					foreach ($add_ids as $id_right) {
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'user_rights (fk_user, fk_id) VALUES ('.(int) $this->id .','. (int) $id_right.')';
+						if (! $this->db->query($sql)) $err++;
+					}
+					
 				}
 			}
 			else

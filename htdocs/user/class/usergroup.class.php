@@ -321,7 +321,6 @@ class UserGroup extends CommonObject
 				{
 					$obj = $this->db->fetch_object($result);
 					$add_ids[]=$obj->id;
-					$insert_rights[]='('.(int) $this->id.','.(int) $obj->id.')';
 					$i++;
 				}
 				
@@ -339,9 +338,11 @@ class UserGroup extends CommonObject
 				if(!empty($add_ids) AND !$err){
 					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'usergroup_rights WHERE fk_usergroup = '.$this->id.' AND fk_id in ('.implode(',', $add_ids).')';
 					if (! $this->db->query($sql)) $err++;
-					
-					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'usergroup_rights (fk_usergroup, fk_id) VALUES '.implode(',',$insert_rights);
-					if (! $this->db->query($sql)) $err++;
+
+					foreach ($add_ids as $id_right) {
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'usergroup_rights (fk_usergroup, fk_id) VALUES ('.(int) $this->id .','. (int) $id_right.')';
+						if (! $this->db->query($sql)) $err++;
+					}
 				}
 				
 			}
