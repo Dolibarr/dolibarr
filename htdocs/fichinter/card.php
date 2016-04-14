@@ -1409,7 +1409,7 @@ else if ($id > 0 || ! empty($ref))
 		$sql.= ' WHERE ft.fk_fichinter = '.$object->id;
 		if (!empty($conf->global->FICHINTER_HIDE_EMPTY_DURATION))
 			$sql.= ' AND ft.duree <> 0';
-		$sql.= ' ORDER BY ft.rang ASC, ft.rowid';
+		$sql.= ' ORDER BY ft.rang ASC, ft.date ASC, ft.rowid';
 
 		$resql = $db->query($sql);
 		if ($resql)
