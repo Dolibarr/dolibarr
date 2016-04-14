@@ -440,7 +440,7 @@ class User extends CommonObject
 						'entity'=> $entity,
 						'add_ids' => $add_ids
 				);
-				$result=$this->call_trigger('USER_ADDRIGHTS', $user);
+				$result=$this->call_trigger('USER_SETRIGHTS', $user);
 				if ($result < 0) { $err++; }
 				// End call trigger
 
@@ -464,7 +464,7 @@ class User extends CommonObject
 		
 		// Call trigger
 		$this->trigger_parameters['result'] = !($err);
-		$this->call_trigger('USER_ADDRIGHTS_AFTER', $user);
+		$this->call_trigger('USER_SETRIGHTS_AFTER', $user);
 		// End call trigger
 
 		if ($err) {
@@ -561,7 +561,7 @@ class User extends CommonObject
 						'entity'=> $entity,
 						'del_ids' => $del_ids
 				);
-				$result=$this->call_trigger('USER_DELRIGHTS',$user);
+				$result=$this->call_trigger('USER_REMOVERIGHTS',$user);
 				if ($result < 0) { $err++; }
 				// End call trigger
 
@@ -580,7 +580,7 @@ class User extends CommonObject
 		
 		// Call trigger
 		$this->trigger_parameters['result'] = !($err);
-		$this->call_trigger('USER_DELRIGHTS_AFTER',$user);
+		$this->call_trigger('USER_REMOVERIGHTS_AFTER',$user);
 		// End call trigger
 		
 		if ($err) {

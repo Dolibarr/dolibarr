@@ -331,7 +331,7 @@ class UserGroup extends CommonObject
 						'allperms'=> $allperms,
 						'add_ids' => $add_ids
 				);
-				$result=$this->call_trigger('GROUP_ADDRIGHTS', $user);
+				$result=$this->call_trigger('GROUP_SETRIGHTS', $user);
 				if ($result < 0) { $err++; }
 				// End call trigger
 				
@@ -355,7 +355,7 @@ class UserGroup extends CommonObject
 
 		// Call trigger
 		$this->trigger_parameters['result'] = !($err);
-		$this->call_trigger('GROUP_ADDRIGHTS_AFTER', $user);
+		$this->call_trigger('GROUP_SETRIGHTS_AFTER', $user);
 		// End call trigger
 		
 		if ($err) {
@@ -452,7 +452,7 @@ class UserGroup extends CommonObject
 						'allperms'=> $allperms,
 						'del_ids' => $del_ids
 				);
-				$result=$this->call_trigger('GROUP_DELRIGHTS',$user);
+				$result=$this->call_trigger('GROUP_REMOVERIGHTS',$user);
 				if ($result < 0) { $err++; }
 				// End call trigger
 				
@@ -472,7 +472,7 @@ class UserGroup extends CommonObject
 		
 		// Call trigger
 		$this->trigger_parameters['result'] = !($err);
-		$this->call_trigger('GROUP_DELRIGHTS_AFTER',$user);
+		$this->call_trigger('GROUP_REMOVERIGHTS_AFTER',$user);
 		// End call trigger
 
 		if ($err) {
