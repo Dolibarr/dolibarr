@@ -1661,8 +1661,12 @@ if ($action == 'create')
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
 
-	$head = propal_prepare_head($object);
-	dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
+        $parameters = array('id' => $id);
+        $reshook=$hookmanager->executeHooks('fichePrepareHead', $parameters, $object, $action);  
+        if(empty($reshook)) {
+            $head = propal_prepare_head($object);
+	    dol_fiche_head($head, 'comm', $langs->trans('Proposal'), 0, 'propal');
+        }
 
 	$formconfirm = '';
 

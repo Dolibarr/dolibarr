@@ -140,6 +140,7 @@ class HookManager
 				'doActions',
 				'formCreateThirdpartyOptions',
 				'formObjectOptions',
+                                'fichePrepareHead',
 				'formattachOptions',
 				'formBuilddocLineOptions',
 				'moveUploadedFile',
