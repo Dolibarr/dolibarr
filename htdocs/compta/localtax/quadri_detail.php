@@ -196,8 +196,8 @@ $total = 0;
 $i=0;
 
 // Load arrays of datas
-$x_coll= local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell', $local);
-$x_paye = local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy', $local);
+$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 
 echo '<table class="noborder" width="100%">';
@@ -220,9 +220,9 @@ else
 	foreach(array_keys($x_coll) as $my_coll_rate)
 	{
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
-		$x_both[$my_coll_rate]['coll']['vat']     = $x_coll[$my_coll_rate]['vat'];
+		$x_both[$my_coll_rate]['coll']['localtax'.$local]     = $x_coll[$my_coll_rate]['localtax'.$local];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
-		$x_both[$my_coll_rate]['paye']['vat'] = 0;
+		$x_both[$my_coll_rate]['paye']['localtax'.$local] = 0;
 		$x_both[$my_coll_rate]['coll']['links'] = '';
 		$x_both[$my_coll_rate]['coll']['detail'] = array();
 		foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy)
@@ -399,7 +399,7 @@ else
 							print $langs->trans("NotUsedForGoods");
 						}
 						else {
-							print $fields['payment_amount'];
+							print price($fields['payment_amount']);
 							if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 						}
 						print '</td>';
@@ -559,7 +559,7 @@ else
 						}
 						else
 						{
-							print $fields['payment_amount'];
+							print price($fields['payment_amount']);
 							if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 						}
 						print '</td>';
@@ -637,6 +637,5 @@ else
 	$i++;
 }
 
-$db->close();
-
 llxFooter();
+$db->close();
