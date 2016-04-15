@@ -220,9 +220,9 @@ else
 	foreach(array_keys($x_coll) as $my_coll_rate)
 	{
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
-		$x_both[$my_coll_rate]['coll']['vat']     = $x_coll[$my_coll_rate]['vat'];
+		$x_both[$my_coll_rate]['coll']['localtax'.$local]     = $x_coll[$my_coll_rate]['localtax'.$local];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
-		$x_both[$my_coll_rate]['paye']['vat'] = 0;
+		$x_both[$my_coll_rate]['paye']['localtax'.$local] = 0;
 		$x_both[$my_coll_rate]['coll']['links'] = '';
 		$x_both[$my_coll_rate]['coll']['detail'] = array();
 		foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy)
