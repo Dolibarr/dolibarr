@@ -1261,12 +1261,6 @@ else if ($id > 0 || ! empty($ref))
 	// Print form confirm
 	print $formconfirm;
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" name="formfichinter">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($action == 'edit_extras') print '<input type="hidden" name="action" value="update_extras">';
-	if ($action == 'contrat')     print '<input type="hidden" name="action" value="setcontrat">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1405,8 +1399,6 @@ else if ($id > 0 || ! empty($ref))
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print "</table>";
-
-	print '</form>';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
