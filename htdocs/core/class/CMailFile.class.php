@@ -352,6 +352,80 @@ class CMailFile
 			$this->phpmailer->setErrorsTo($errors_to);
 			$this->phpmailer->setDeliveryReceipt($deliveryreceipt);
 		}
+        else if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer')
+        {
+            // Use Swift Mailer library
+            // ------------------------------------------
+
+            require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
+            // Create the message
+            $this->message = Swift_Message::newInstance();
+
+            // Give the message a subject
+            $this->message->setSubject($this->encodetorfc2822($subject));
+
+            // Set the From address with an associative array
+            //$this->message->setFrom(array('john@doe.com' => 'John Doe'));
+            $this->message->setFrom($this->getArrayAddress($from));
+
+            // Set the To addresses with an associative array
+            $this->message->setTo($this->getArrayAddress($to));
+
+            $this->message->SetReplyTo($this->getArrayAddress($from));
+
+            $this->message->setCharSet($conf->file->character_set_client);
+
+            // TODO Add trackid into smtp header
+
+            if (! empty($this->html))
+            {
+                if (!empty($css))
+                {
+                    $this->css = $css;
+                    $this->buildCSS();
+                }
+                $msg = $this->html;
+                $msg = $this->checkIfHTML($msg);
+            }
+
+            if ($this->msgishtml) {
+                $this->message->setBody($msg,'text/html');
+                // And optionally an alternative body
+                //$this->message->addPart('Here is the message itself', 'text/plain');
+            } else {
+                $this->message->setBody($msg,'text/plain');
+                // And optionally an alternative body
+                //$this->message->addPart('<q>Here is the message itself</q>', 'text/html');
+            }
+
+            if ($this->atleastoneimage)
+            {
+                foreach ($this->images_encoded as $img)
+                {
+                    //$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
+                    // TODO this part is not tested
+                    //$attachment = Swift_Attachment::fromPath($img['fullpath'], 'image/jpeg');
+                    //$attachment->setFilename($img['name']);
+                    //$attachment->setDisposition('inline');
+                    //$message->attach($attachment);
+                }
+            }
+
+            if ($this->atleastonefile)
+            {
+                foreach ($filename_list as $i => $val)
+                {
+                    //$this->message->attach(Swift_Attachment::fromPath($filename_list[$i],$mimetype_list[$i]));
+                    $attachment = Swift_Attachment::fromPath($filename_list[$i],$mimetype_list[$i]);
+                    $this->message->attach($attachment);
+                }
+            }
+
+            if (! empty($addr_cc)) $this->message->setCc($this->getArrayAddress($addr_cc));
+            if (! empty($addr_bcc)) $this->message->setBcc($this->getArrayAddress($addr_bcc));
+            //if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
+            if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
+        }
 		else
 		{
 			// Send mail method not correctly defined
@@ -392,7 +466,7 @@ class CMailFile
                 
                 return $reshook;
             }
-			
+
 			// Action according to choosed sending method
 			if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
 			{
@@ -427,7 +501,7 @@ class CMailFile
 					if (! empty($conf->global->MAIN_MAIL_ALLOW_SENDMAIL_F))
 					{
 						// le "Return-Path" (retour des messages bounced) dans les header ne fonctionne pas avec tous les MTA
-						// Le forcage de la valeure grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
+						// Le forcage de la valeur grace à l'option -f de sendmail est donc possible si la constante MAIN_MAIL_ALLOW_SENDMAIL_F est definie.
 						// La variable definie pose des pb avec certains sendmail securisee (option -f refusee car dangereuse)
 						$bounce .= ($bounce?' ':'').(! empty($conf->global->MAIN_MAIL_ERRORS_TO) ? '-f' . $this->getValidAddress($conf->global->MAIN_MAIL_ERRORS_TO,2) : ($this->addr_from != '' ? '-f' . $this->getValidAddress($this->addr_from,2) : '') );
 					}
@@ -527,6 +601,49 @@ class CMailFile
 					}
 				}
 			}
+            else if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer')
+            {
+
+                // Use Swift Mailer library
+                // ------------------------------------------
+                require_once DOL_DOCUMENT_ROOT.'/includes/swiftmailer/lib/swift_required.php';
+
+                // Forcage parametres
+                if (empty($conf->global->MAIN_MAIL_SMTP_SERVER)) $conf->global->MAIN_MAIL_SMTP_SERVER=ini_get('SMTP');
+                if (empty($conf->global->MAIN_MAIL_SMTP_PORT))   $conf->global->MAIN_MAIL_SMTP_PORT=ini_get('smtp_port');
+
+                // If we use SSL/TLS
+                $server=$conf->global->MAIN_MAIL_SMTP_SERVER;
+                $secure='';
+                //var_dump(stream_get_transports());
+                if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $secure='ssl';
+                if (! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $secure='tls';
+
+                $this->transport = Swift_SmtpTransport::newInstance($server, $conf->global->MAIN_MAIL_SMTP_PORT, $secure);
+
+                if (! empty($conf->global->MAIN_MAIL_SMTPS_ID)) $this->transport->setUsername($conf->global->MAIN_MAIL_SMTPS_ID);
+                if (! empty($conf->global->MAIN_MAIL_SMTPS_PW)) $this->transport->setPassword($conf->global->MAIN_MAIL_SMTPS_PW);
+                //$smtps->_msgReplyTo  = 'reply@web.com';
+
+                // Create the Mailer using your created Transport
+                $this->mailer = Swift_Mailer::newInstance($this->transport);
+
+                //if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->mailer->setDebug(true);
+                try {
+                    $result = $this->mailer->send($this->message);
+                } catch (Exception $e) {
+                    $this->error =  $e->getMessage();
+                }
+                //if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+
+                $res = true;
+                if (! empty($this->error) && ! $result) {
+                    dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+                    $res=false;
+                } else {
+                    $this->error = sprintf ("Sent %d messages\n", $result);
+                }
+            }
 			else
 			{
 
@@ -1127,5 +1244,39 @@ class CMailFile
 
 		return $ret;
 	}
+
+    /**
+     * Return a formatted array of address string for SMTP protocol
+     *
+     * @param   string      $address        Example: 'John Doe <john@doe.com>, Alan Smith <alan@smith.com>' or 'john@doe.com, alan@smith.com'
+     * @return  array                       array of email => name
+     */
+    function getArrayAddress($address)
+    {
+        global $conf;
+
+        $ret=array();
+
+        $arrayaddress=explode(',',$address);
+
+        // Boucle sur chaque composant de l'adresse
+        foreach($arrayaddress as $val)
+        {
+            if (preg_match('/^(.*)<(.*)>$/i',trim($val),$regs))
+            {
+                $name  = trim($regs[1]);
+                $email = trim($regs[2]);
+            }
+            else
+            {
+                $name  = null;
+                $email = trim($val);
+            }
+
+            $ret[$email]=empty($conf->global->MAIN_MAIL_NO_FULL_EMAIL)?$name:null;
+        }
+
+        return $ret;
+    }
 }
 
