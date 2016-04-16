@@ -628,13 +628,20 @@ class CMailFile
                 // Create the Mailer using your created Transport
                 $this->mailer = Swift_Mailer::newInstance($this->transport);
 
-                //if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->mailer->setDebug(true);
+                if (! empty($conf->global->MAIN_MAIL_DEBUG)) {
+                    // To use the ArrayLogger
+                    $this->logger = new Swift_Plugins_Loggers_ArrayLogger();
+                    // Or to use the Echo Logger
+                    //$this->logger = new Swift_Plugins_Loggers_EchoLogger();
+                    $this->mailer->registerPlugin(new Swift_Plugins_LoggerPlugin($this->logger));
+                }
+                // send mail
                 try {
                     $result = $this->mailer->send($this->message);
                 } catch (Exception $e) {
                     $this->error =  $e->getMessage();
                 }
-                //if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
+                if (! empty($conf->global->MAIN_MAIL_DEBUG)) $this->dump_mail();
 
                 $res = true;
                 if (! empty($this->error) && ! $result) {
@@ -728,6 +735,10 @@ class CMailFile
 			{
 				fputs($fp, $this->smtps->log);	// this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
 			}
+            elseif ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer')
+            {
+                fputs($fp, $this->logger->dump());	// this->logger is filled only if MAIN_MAIL_DEBUG was set to on
+            }
 
 			fclose($fp);
 			if (! empty($conf->global->MAIN_UMASK))
