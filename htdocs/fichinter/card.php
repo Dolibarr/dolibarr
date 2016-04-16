@@ -882,8 +882,7 @@ if (empty($reshook))
 			$parameters=array('id'=>$object->id);
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			if (empty($reshook))
-			{
-				$result=$object->insertExtraFields();
+			{   $result=$object->updateExtraField($_POST["attribute"]);
 				if ($result < 0)
 				{
 					$error++;
