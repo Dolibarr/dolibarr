@@ -114,10 +114,15 @@ $dolibarr_main_document_root=trim($dolibarr_main_document_root);
 $dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':trim($dolibarr_main_document_root_alt));
 
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+
+//Mysql driver support has been removed in favor of mysqli
+if ($dolibarr_main_db_type == 'mysql') {
+	$dolibarr_main_db_type = 'mysqli';
+}
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysql'?'utf8':'');		// Old installation
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysql'?'utf8_general_ci':'');	// Old installation
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysqli'?'utf8':'');		// Old installation
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysqli'?'utf8_general_ci':'');	// Old installation
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
@@ -149,7 +154,6 @@ if (empty($dolibarr_main_url_root))
 	print 'You must add this parameter with your full Dolibarr root Url (Example: http://myvirtualdomain/ or http://mydomain/mydolibarrurl/)'."\n";
 	die;
 }
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_data_root))
 {
 	// Si repertoire documents non defini, on utilise celui par defaut

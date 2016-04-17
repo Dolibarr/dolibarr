@@ -37,7 +37,7 @@ if (! file_exists($conffile))
 {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
-require_once $conffile; if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+require_once $conffile;
 require_once $dolibarr_main_document_root . '/compta/facture/class/facture.class.php';
 require_once $dolibarr_main_document_root . '/comm/propal/class/propal.class.php';
 require_once $dolibarr_main_document_root . '/contrat/class/contrat.class.php';
@@ -69,7 +69,6 @@ $langs->load('install');
 $langs->load("bills");
 $langs->load("suppliers");
 
-if ($dolibarr_main_db_type == 'mysql')  $choix=1;
 if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
 if ($dolibarr_main_db_type == 'mssql')  $choix=3;

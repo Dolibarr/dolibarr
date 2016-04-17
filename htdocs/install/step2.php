@@ -48,7 +48,6 @@ $langs->load("admin");
 $langs->load("install");
 
 $choix=0;
-if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
