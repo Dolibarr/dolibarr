@@ -178,7 +178,7 @@ class AccountancyCategory
 	/**
 	 * Function to delete an accounting account from an accounting category
 	 *
-	 * @param	int		$id_cat		Id category
+	 * @param	int		$cpt_id		Id of accounting account
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */

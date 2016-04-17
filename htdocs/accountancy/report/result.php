@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016 		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
