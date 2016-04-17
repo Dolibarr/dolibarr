@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/class/html.formventilation.class.php
- * \ingroup Accounting Expert
- * \brief File of class with all html predefined components
+ * \file		htdocs/accountancy/class/html.formventilation.class.php
+ * \ingroup		Advanced accountancy
+ * \brief		File of class with all html predefined components
  */
 
 /**

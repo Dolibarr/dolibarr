@@ -380,7 +380,7 @@ else {
 	print_liste_field_titre($langs->trans("NumPiece"), $_SERVER['PHP_SELF'], "t.piece_num", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_date", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Numerocompte"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "bk_label_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
