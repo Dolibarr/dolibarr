@@ -361,6 +361,14 @@ class CMailFile
             // Create the message
             $this->message = Swift_Message::newInstance();
 
+            // Adding a trackid header to a message
+            $headers = $this->message->getHeaders();
+            $headers->addTextHeader('X-Dolibarr-TRACKID', $trackid);
+            $headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $conf->global->MAIN_MAIL_SMTP_SERVER;
+            $msgid = $headers->get('Message-ID');
+            $msgid->setId($headerID);
+            $headers->addIdHeader('References', $headerID);
+
             // Give the message a subject
             $this->message->setSubject($this->encodetorfc2822($subject));
 
@@ -375,8 +383,6 @@ class CMailFile
 
             $this->message->setCharSet($conf->file->character_set_client);
 
-            // TODO Add trackid into smtp header
-
             if (! empty($this->html))
             {
                 if (!empty($css))
@@ -388,6 +394,19 @@ class CMailFile
                 $msg = $this->checkIfHTML($msg);
             }
 
+            if ($this->atleastoneimage)
+            {
+                foreach ($this->images_encoded as $img)
+                {
+                    //$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
+                    $attachment = Swift_Image::fromPath($img['fullpath'], $img['content_type']);
+                    // embed image
+                    $imgcid = $this->message->embed($attachment);
+                    // replace cid by the one created by swiftmail in html message
+                    $msg = str_replace("cid:".$img['cid'], $imgcid, $msg);
+                }
+            }
+
             if ($this->msgishtml) {
                 $this->message->setBody($msg,'text/html');
                 // And optionally an alternative body
@@ -396,19 +415,6 @@ class CMailFile
                 $this->message->setBody($msg,'text/plain');
                 // And optionally an alternative body
                 //$this->message->addPart('<q>Here is the message itself</q>', 'text/html');
-            }
-
-            if ($this->atleastoneimage)
-            {
-                foreach ($this->images_encoded as $img)
-                {
-                    //$img['fullpath'],$img['image_encoded'],$img['name'],$img['content_type'],$img['cid']
-                    // TODO this part is not tested
-                    //$attachment = Swift_Attachment::fromPath($img['fullpath'], 'image/jpeg');
-                    //$attachment->setFilename($img['name']);
-                    //$attachment->setDisposition('inline');
-                    //$message->attach($attachment);
-                }
             }
 
             if ($this->atleastonefile)
@@ -1175,6 +1181,7 @@ class CMailFile
 							$imgName = $regs[1];
 
 							$this->images_encoded[$i]['name'] = $imgName;
+							$this->images_encoded[$i]['fullpath'] = $fullpath;
 							$this->images_encoded[$i]['content_type'] = $img["content_type"];
 							$this->images_encoded[$i]['cid'] = $img["cid"];
 							// Encodage de l'image

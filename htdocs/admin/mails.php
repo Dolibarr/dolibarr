@@ -207,7 +207,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
             $msgishtml,
             $errors_to,
         	'',
-        	$trackid	
+        	$trackid
         );
 
 		$result=$mailfile->sendfile();
