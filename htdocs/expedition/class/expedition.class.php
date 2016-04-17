@@ -1914,12 +1914,16 @@ class ExpeditionLigne extends CommonObjectLine
 	var $qty_shipped;
 	var $fk_product;
 	var $detail_batch;
+	
 
 	// From llx_commandedet or llx_propaldet
 	var $qty_asked;
 	public $product_ref;
 	public $product_label;
 	public $product_desc;
+
+	// From llx_commande, llx_expeditiondet ...
+	var $qty_yet_shipped;
 
 
 	// Invoicing
@@ -1960,6 +1964,36 @@ class ExpeditionLigne extends CommonObjectLine
 	function __construct($db)
 	{
 		$this->db=$db;
+	}
+	
+    /**
+     * Return qty yet shipped of an order for a line
+     *
+
+     *
+     * @param int $origin_id id of the initial order
+     * @param int $fk_product id of product of line
+     */
+	function getQtyYetShipped($origin_id, $fk_product)
+	{
+		$sql =" SELECT sum(ed.qty) as yetshipped FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
+		$sql.=" ,".MAIN_DB_PREFIX."expedition as e";
+		$sql.=" ,".MAIN_DB_PREFIX."commandedet as cd";
+		$sql.=" ,".MAIN_DB_PREFIX."element_element as ee";
+		$sql.=" WHERE ee.fk_source=".$origin_id;
+		$sql.=" AND ee.sourcetype='commande'";
+		$sql.=" AND ee.targettype='shipping'";
+		$sql.=" AND e.fk_statut=2"; // only terminate shipping
+		$sql.=" AND ee.fk_target=e.rowid";
+		$sql.=" AND ed.fk_expedition=e.rowid";
+		$sql.=" AND ed.fk_origin_line=cd.rowid";
+		$sql.=" AND cd.fk_product=".$fk_product;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$this->qty_yet_shipped = $row[0] ;
+		}
 	}
 
 }
