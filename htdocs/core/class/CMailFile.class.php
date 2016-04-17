@@ -374,12 +374,12 @@ class CMailFile
 
             // Set the From address with an associative array
             //$this->message->setFrom(array('john@doe.com' => 'John Doe'));
-            $this->message->setFrom($this->getArrayAddress($from));
+            if (! empty($from)) $this->message->setFrom($this->getArrayAddress($from));
 
             // Set the To addresses with an associative array
-            $this->message->setTo($this->getArrayAddress($to));
+            if (! empty($to)) $this->message->setTo($this->getArrayAddress($to));
 
-            $this->message->SetReplyTo($this->getArrayAddress($from));
+            if (! empty($from)) $this->message->SetReplyTo($this->getArrayAddress($from));
 
             $this->message->setCharSet($conf->file->character_set_client);
 
@@ -1049,11 +1049,17 @@ class CMailFile
 	 */
 	function check_server_port($host,$port)
 	{
+        global $conf;
 		$_retVal=0;
 		$timeout=5;	// Timeout in seconds
 
 		if (function_exists('fsockopen'))
 		{
+            // If we use SSL/TLS
+            if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $host='ssl://'.$host;
+            // tls smtp start with no encryption
+            //if (! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
+
 			dol_syslog("Try socket connection to host=".$host." port=".$port);
 			//See if we can connect to the SMTP server
 			if ($socket = @fsockopen(

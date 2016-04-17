@@ -720,9 +720,6 @@ else
 	{
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
-		// If we use SSL/TLS
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
-
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('','','','');
 		$result=$mail->check_server_port($server,$port);
