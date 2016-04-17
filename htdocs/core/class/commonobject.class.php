@@ -130,12 +130,6 @@ abstract class CommonObject
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
-	/**
-	 * @deprecated
-	 * @var Societe A related customer
-	 * @see thirdparty
-	 */
-	public $client;
 
 	/**
 	 * @var User A related user
@@ -1016,12 +1010,10 @@ abstract class CommonObject
         if ($idtofetch) {
             $thirdparty = new Societe($this->db);
             $result = $thirdparty->fetch($idtofetch);
-            $this->client = $thirdparty;  // deprecated
             $this->thirdparty = $thirdparty;
 
             // Use first price level if level not defined for third party
             if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level)) {
-                $this->client->price_level = 1; // deprecated
                 $this->thirdparty->price_level = 1;
             }
 
