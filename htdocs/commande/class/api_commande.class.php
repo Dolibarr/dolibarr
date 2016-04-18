@@ -234,7 +234,6 @@ class CommandeApi extends DolibarrApi
      *
      *
      * @param int   $id             Id of order
-     * @param array $request_data   Orderline data   
      * 
      * @url	GET order/{id}/line/list
      * 
