@@ -190,8 +190,7 @@ CREATE TABLE llx_multicurrency_rate
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	date_sync datetime DEFAULT NULL,  
 	rate double NOT NULL DEFAULT 0, 
-	fk_multicurrency integer NOT NULL, 
-	entity integer NOT NULL DEFAULT 1
+	fk_multicurrency integer NOT NULL 
 ) ENGINE=innodb;
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
@@ -383,3 +382,4 @@ ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NU
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
 
+ALTER TABLE llx_societe ADD COLUMN fk_shipping_method_id integer;

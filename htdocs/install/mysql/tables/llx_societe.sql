@@ -103,5 +103,6 @@ create table llx_societe
   webservices_key          varchar(128),                            -- supplier webservice key
   
   fk_multicurrency			integer,
-  multicurrency_code		varchar(255)
+  multicurrency_code		varchar(255),
+  fk_shipping_method_id integer
 )ENGINE=innodb;
