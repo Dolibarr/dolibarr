@@ -18,9 +18,9 @@
  */
 
 /**
- * \file htdocs/accountancy/class/accountancysystem.class.php
- * \ingroup Accounting Expert
- * \brief File of class to manage accountancy systems
+ * \file		htdocs/accountancy/class/accountancysystem.class.php
+ * \ingroup		Advanced accountancy
+ * \brief		File of class to manage accountancy systems
  */
 
 /**

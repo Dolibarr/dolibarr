@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>  
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *   
  * This program is free software; you can redistribute it and/or modify
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/accountancy/supplier/lines.php
- * \ingroup Accounting Expert
- * \brief Page of detail of the lines of ventilation of invoices suppliers
+ * \file 		htdocs/accountancy/supplier/lines.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Page of detail of the lines of ventilation of invoices suppliers
  */
 require '../../main.inc.php';
 
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -213,11 +214,11 @@ if ($result) {
 	print "</tr>\n";
 	
 	print '<tr class="liste_titre"><td><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center">%<input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
@@ -233,7 +234,7 @@ if ($result) {
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
-		$codeCompta = $objp->account_number . ' - ' . $objp->label;
+		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
 		
 		print "<tr $bc[$var]>";
 		
@@ -257,7 +258,7 @@ if ($result) {
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
-		print '<td align="center">' . $codeCompta . '</td>';
+		print '<td>' . $codeCompta . '</td>';
 		print '<td align="right">' . $objp->rowid . '</td>';
 		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();

@@ -974,17 +974,18 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 
 				// General Ledger
-				$newmenu->add("/accountancy/bookkeeping/list.php",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire);
+				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/list.php",$langs->trans("Bookkeeping"),1,$user->rights->accounting->mouvements->lire);
 
 				// Balance
-				$newmenu->add("/accountancy/bookkeeping/balance.php",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
+				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/bookkeeping/balance.php",$langs->trans("AccountBalance"),1,$user->rights->accounting->mouvements->lire);
 
 				// Reports
 				$langs->load("compta");
 
-				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report&amp;mainmenu=accountancy",$langs->trans("Reportings"),1,$user->rights->accounting->comptarapport->lire, '', $mainmenu, 'ca');
+				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/report/result.php?leftmenu=accountancy_report&amp;mainmenu=accountancy",$langs->trans("Reportings"),1,$user->rights->accounting->comptarapport->lire, '', $mainmenu, 'ca');
 
-				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report",$langs->trans("ReportInOut"),2,$user->rights->accounting->comptarapport->lire);
+				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/accountancy/report/result.php?leftmenu=accountancy_report",$langs->trans("ReportInOut"),2,$user->rights->accounting->comptarapport->lire);
+				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report",$langs->trans("ByExpenseIncome"),3,$user->rights->accounting->comptarapport->lire);
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/index.php?leftmenu=accountancy_report",$langs->trans("ReportTurnover"),2,$user->rights->accounting->comptarapport->lire);
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
