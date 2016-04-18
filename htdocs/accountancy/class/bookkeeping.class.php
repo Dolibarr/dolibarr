@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015-2016  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2014-2016 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +18,16 @@
  */
 
 /**
- * \file accountancy/bookkeeping.class.php
- * \ingroup accountancy
- * \brief This file is an example for a CRUD class file (Create/Read/Update/Delete)
- * Put some comments here
+ *	\file       htdocs/accountancy/class/bookkeeping.class.php
+ *	\ingroup    Advanced accountancy
+ *	\brief      File of class to manage general ledger
  */
 
-// Put here all includes required by your class file
+// Class
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-// require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-// require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class Accountingbookkeeping
- *
- * Put here description of your class
+ * Class to manage general ledger
  */
 class BookKeeping extends CommonObject
 {
@@ -461,7 +455,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param int $id Id object
 	 * @param string $ref Ref
-	 *       
+	 * 
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null) {

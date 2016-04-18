@@ -353,8 +353,11 @@ CREATE TABLE llx_c_accounting_category (
   code 				varchar(16) NOT NULL,
   label 			varchar(255) NOT NULL,
   range_account		varchar(255) NOT NULL,
+  sens 				tinyint(1) NOT NULL DEFAULT '0', -- For international accounting  0 : credit - debit / 1 : debit - credit
+  category_type		tinyint(1) NOT NULL DEFAULT '0', -- Field calculated or not
+  formula			varchar(255) NOT NULL,			 -- Example : 1 + 2 (rowid of the category)
   position    		integer DEFAULT 0,
-  fk_country 		integer DEFAULT NULL,			-- This category is dedicated to a country
+  fk_country 		integer DEFAULT NULL,			 -- This category is dedicated to a country
   active 			integer DEFAULT 1
 ) ENGINE=innodb;
 
@@ -364,7 +367,7 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
 
 
 DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
-ALTER TABLE llx_bordereau_cheque CHANGE number ref VARCHAR(30) NOT NULL;
+ALTER TABLE llx_bordereau_cheque CHANGE COLUMN number ref VARCHAR(30) NOT NULL;
 CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 
 
@@ -383,3 +386,4 @@ ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NU
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
 
+ALTER TABLE llx_societe ADD COLUMN fk_shipping_method_id integer;
