@@ -385,5 +385,3 @@ ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NU
 
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
-
-ALTER TABLE llx_societe ADD COLUMN fk_shipping_method_id integer;
