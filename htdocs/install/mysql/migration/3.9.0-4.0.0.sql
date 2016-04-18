@@ -62,6 +62,7 @@ ALTER TABLE llx_product ADD COLUMN width_units	tinyint      DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN height		float        DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN height_units tinyint      DEFAULT NULL;
 
+ALTER TABLE llx_product ADD COLUMN default_vat_code	varchar(10) after cost_price;
 
 CREATE TABLE llx_categorie_user 
 (

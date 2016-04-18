@@ -4137,7 +4137,7 @@ class Form
      *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
      *  @param	string	$htmlname           Name of HTML select field
-     *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.
+     *  @param  float|string    $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
      *  @param  Societe	$societe_vendeuse   Thirdparty seller
      *  @param  Societe	$societe_acheteuse  Thirdparty buyer
      *  @param  int		$idprod             Id product
@@ -4169,7 +4169,7 @@ class Form
             $defaultcode=$reg[1];
             $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
         }
-        //var_dump($defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
+        //var_dump($selectedrate.'-'.$defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
         
         // Check parameters
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->country_code)
@@ -4266,7 +4266,7 @@ class Form
         		$return.= $rate['nprtva'] ? '*': '';
         		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
-        		if ($defaultcode)
+        		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
         		{
                     if ($defaultcode == $rate['code']) $return.= ' selected';    	
         		}
@@ -4276,7 +4276,7 @@ class Form
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');
-        		$return.= $rate['nprtva'] ? ' *': '';
+        		$return.= (empty($defaultcode) && $rate['nprtva']) ? ' *': '';         // We show the *  (old behaviour only if new vat code is not used)
         		
         		$return.= '</option>';
         	}
