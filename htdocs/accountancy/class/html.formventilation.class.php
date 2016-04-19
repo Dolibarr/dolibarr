@@ -98,7 +98,9 @@ class FormVentilation extends Form
 	 */
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
 		global $conf;
-		
+
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+
 		$out = '';
 		
 		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version";
@@ -123,7 +125,7 @@ class FormVentilation extends Form
 			if ($num) {
 				while ( $i < $num ) {
 					$obj = $this->db->fetch_object($resql);
-					$label = $obj->account_number . ' - ' . $obj->label;
+					$label = length_accountg($obj->account_number) . ' - ' . $obj->label;
 					$label = dol_trunc($label, $trunclength);
 					if ($select_in == 0)
 						$select_value_in = $obj->rowid;
