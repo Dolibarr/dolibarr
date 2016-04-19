@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014-2015	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,65 +388,28 @@ if ($action == 'create')
 		print '</tr>';
 
 		// Show fields of bank account
-		$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-		if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-		{
-			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-			}
-			else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
-		}
-		$fieldlistsarray=explode(' ',$fieldlists);
-
-		foreach($fieldlistsarray as $val)
-		{
-			if ($val == 'BankCode')
-			{
-				if ($account->useDetailedBBAN()  == 1)
-				{
-					print '<tr><td>'.$langs->trans("BankCode").'</td>';
-					print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-					print '</tr>';
-				}
+		foreach ($account->getFieldsToShow() as $val) {
+			if ($val == 'BankCode') {
+				$name = 'code_banque';
+				$size = 8;
+				$content = $account->code_banque;
+			} elseif ($val == 'DeskCode') {
+				$name = 'code_guichet';
+				$size = 8;
+				$content = $account->code_guichet;
+			} elseif ($val == 'BankAccountNumber') {
+				$name = 'number';
+				$size = 18;
+				$content = $account->number;
+			} elseif ($val == 'BankAccountNumberKey') {
+				$name = 'cle_rib';
+				$size = 3;
+				$content = $account->cle_rib;
 			}
 
-			if ($val == 'DeskCode')
-			{
-				if ($account->useDetailedBBAN()  == 1)
-				{
-					print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-					print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
-					print '</tr>';
-				}
-			}
-
-			if ($val == 'BankCode')
-			{
-				if ($account->useDetailedBBAN()  == 2)
-				{
-					print '<tr><td>'.$langs->trans("BankCode").'</td>';
-					print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-					print '</tr>';
-				}
-			}
-
-			if ($val == 'AccountNumber')
-			{
-				print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-				print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
-				print '</tr>';
-			}
-
-			if ($val == 'BankAccountNumberKey')
-			{
-				if ($account->useDetailedBBAN() == 1)
-				{
-					print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-					print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
-					print '</tr>';
-				}
-			}
+			print '<td>'.$langs->trans($val).'</td>';
+			print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+			print '</tr>';
 		}
 		$ibankey = FormBank::getIBANLabel($account);
 		$bickey="BICNumber";
@@ -650,64 +614,20 @@ else
 			print '<td colspan="3">'.$account->bank.'</td></tr>';
 
 			// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
-			}
-			$fieldlistsarray=explode(' ',$fieldlists);
-
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td colspan="3">'.$account->code_banque.'</td>';
-						print '</tr>';
-					}
-				}
-				if ($val == 'DeskCode')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-						print '<td colspan="3">'.$account->code_guichet.'</td>';
-						print '</tr>';
-					}
+			foreach ($account->getFieldsToShow() as $val) {
+				if ($val == 'BankCode') {
+					$content = $account->code_banque;
+				} elseif ($val == 'DeskCode') {
+					$content = $account->code_guichet;
+				} elseif ($val == 'BankAccountNumber') {
+					$content = $account->number;
+				} elseif ($val == 'BankAccountNumberKey') {
+					$content = $account->cle_rib;
 				}
 
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN() == 2)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td colspan="3">'.$account->code_banque.'</td>';
-						print '</tr>';
-					}
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
-					print '<td colspan="3">'.$account->number.'</td>';
-					print '</tr>';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
-						print '<td colspan="3">'.$account->cle_rib.'</td>';
-						print '</tr>';
-					}
-				}
+				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<td colspan="3">'.$content.'</td>';
+				print '</tr>';
 			}
 
 			$ibankey = FormBank::getIBANLabel($account);
@@ -937,65 +857,28 @@ else
 			print '</tr>';
 
 			// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
-			}
-			$fieldlistsarray=explode(' ',$fieldlists);
-
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN()  == 1)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-						print '</tr>';
-					}
+			foreach ($account->getFieldsToShow() as $val) {
+				if ($val == 'BankCode') {
+					$name = 'code_banque';
+					$size = 8;
+					$content = $account->code_banque;
+				} elseif ($val == 'DeskCode') {
+					$name = 'code_guichet';
+					$size = 8;
+					$content = $account->code_guichet;
+				} elseif ($val == 'BankAccountNumber') {
+					$name = 'number';
+					$size = 18;
+					$content = $account->number;
+				} elseif ($val == 'BankAccountNumberKey') {
+					$name = 'cle_rib';
+					$size = 3;
+					$content = $account->cle_rib;
 				}
 
-				if ($val == 'DeskCode')
-				{
-					if ($account->useDetailedBBAN()  == 1)
-					{
-						print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-						print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
-						print '</tr>';
-					}
-				}
-
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN()  == 2)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-						print '</tr>';
-					}
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-					print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
-					print '</tr>';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-						print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
-						print '</tr>';
-					}
-				}
+				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+				print '</tr>';
 			}
 
 			$ibankey = FormBank::getIBANLabel($account);

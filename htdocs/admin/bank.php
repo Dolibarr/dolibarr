@@ -92,10 +92,10 @@ print "</tr>\n";
 
 $bankorder[0][0]=$langs->trans("BankOrderGlobal");
 $bankorder[0][1]=$langs->trans("BankOrderGlobalDesc");
-$bankorder[0][2]='BankCode DeskCode AccountNumber BankAccountNumberKey';
+$bankorder[0][2]='BankCode DeskCode BankAccountNumber BankAccountNumberKey';
 $bankorder[1][0]=$langs->trans("BankOrderES");
 $bankorder[1][1]=$langs->trans("BankOrderESDesc");
-$bankorder[1][2]='BankCode DeskCode BankAccountNumberKey AccountNumber';
+$bankorder[1][2]='BankCode DeskCode BankAccountNumberKey BankAccountNumber';
 
 $var = true;
 $i=0;
