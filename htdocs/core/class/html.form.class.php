@@ -5765,7 +5765,7 @@ class Form
             if ($caneditfield)
             {
                 if ($object->photo) $ret.="<br>\n";
-                $ret.='<table class="nobordernopadding hideonsmartphone">';
+                $ret.='<table class="nobordernopadding">';
                 if ($object->photo) $ret.='<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
                 $ret.='<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
                 $ret.='<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';

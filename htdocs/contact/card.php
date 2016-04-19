@@ -972,8 +972,8 @@ else
             print '</td></tr>';
 
             // Photo
-            print '<tr class="hideonsmartphone">';
-            print '<td>'.fieldLabel('Photo','photoinput').'</td>';
+            print '<tr>';
+            print '<td>'.$langs->trans("PhotoFile").'</td>';
             print '<td colspan="3">';
             if ($object->photo) {
                 print $form->showphoto('contact',$object);
