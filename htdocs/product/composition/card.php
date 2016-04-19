@@ -359,7 +359,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '</td>';
 
-						$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
+					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise), 'MT');
 						$total+=$totalline;
 						print '<td align="right">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));

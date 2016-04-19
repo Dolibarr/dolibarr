@@ -245,7 +245,7 @@ if (! empty($conf->fournisseur->enabled))
 /*
  * List of users allowed
  */
-$sql = "SELECT u.rowid, u.lastname, u.firstname";
+$sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
 $sql.= " ".MAIN_DB_PREFIX."user_rights as ur";
 $sql.= ", ".MAIN_DB_PREFIX."rights_def as rd";
@@ -278,6 +278,7 @@ if ($resql)
         $userstatic->id=$obj->rowid;
         $userstatic->lastname=$obj->lastname;
         $userstatic->firstname=$obj->firstname;
+        $userstatic->email=$obj->email;
         print $userstatic->getNomUrl(1);
         print '</td>';
         print "</tr>\n";

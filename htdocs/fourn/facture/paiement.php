@@ -281,9 +281,10 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
+	        dol_fiche_head();
+
             print '<table class="border" width="100%">';
 
-            print '<tr class="liste_titre"><td colspan="3">'.$langs->trans('Payment').'</td>';
             print '<tr><td>'.$langs->trans('Company').'</td><td colspan="2">';
             $supplierstatic->id=$obj->socid;
             $supplierstatic->name=$obj->name;
@@ -311,6 +312,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             }
             print '</table>';
 
+	        dol_fiche_end();
 
 			$parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -337,7 +339,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                {
 	                    $i = 0;
 	                    print '<br>';
-	                    print $langs->trans('Invoices').'<br>';
 
 						if(!empty($conf->global->FAC_AUTO_FILLJS)){
 							//Add js for AutoFill
@@ -432,7 +433,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            $preselectedchoice=$addwarning?'no':'yes';
 
 	            print '<br>';
-	            $text=$langs->trans('ConfirmSupplierPayment',$totalpayment,$langs->trans("Currency".$conf->currency));
+	            $text=$langs->trans('ConfirmSupplierPayment', price($totalpayment),$langs->trans("Currency".$conf->currency));
 	            if (GETPOST('closepaidinvoices'))
 	            {
 	                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");

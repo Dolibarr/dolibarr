@@ -369,18 +369,12 @@ if (! empty($usemargins) && $user->rights->margins->creer)
 	jQuery(document).ready(function() {
 		<?php
 		if (! empty($conf->global->DISPLAY_MARGIN_RATES)) { ?>
-			$('#addline').click(function (e) {
-				return checkFreeLine(e, "np_marginRate");
-			});
 			$("input[name='np_marginRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_marginRate");
 			});
 		<?php
 		}
 		if (! empty($conf->global->DISPLAY_MARK_RATES)) { ?>
-			$('#addline').click(function (e) {
-				return checkFreeLine(e, "np_markRate");
-			});
 			$("input[name='np_markRate']:first").blur(function(e) {
 				return checkFreeLine(e, "np_markRate");
 			});
