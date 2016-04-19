@@ -20,7 +20,7 @@
  */
 
 /**
- * \file    websites/website.class.php
+ * \file    websites/websitepage.class.php
  * \ingroup websites
  * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *          Put some comments here
@@ -32,40 +32,33 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class Website
- *
- * Put here description of your class
- * @see CommonObject
+ * Class Websitepage
  */
-class Website extends CommonObject
+class WebsitePage extends CommonObject
 {
 	/**
 	 * @var string Id to identify managed objects
 	 */
-	public $element = 'website';
+	public $element = 'websitepage';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'website';
-
-	/**
-	 * @var WebsitePage[]  Lines of all pages
-	 */
-	public $lines = array();
+	public $table_element = 'website_page';
 
 	/**
 	 */
 	
-	public $entity;
-	public $ref;
+	public $fk_website;
+	public $pageurl;
+	public $title;
 	public $description;
+	public $keywords;
+	public $content;
 	public $status;
 	public $date_creation = '';
 	public $date_modification = '';
 	public $tms = '';
 
-	public $records;
-	
 	/**
 	 */
 	
@@ -97,14 +90,23 @@ class Website extends CommonObject
 
 		// Clean parameters
 		
-		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+		if (isset($this->fk_website)) {
+			 $this->fk_website = trim($this->fk_website);
 		}
-		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+		if (isset($this->pageurl)) {
+			 $this->pageurl = trim($this->pageurl);
+		}
+		if (isset($this->title)) {
+			 $this->title = trim($this->title);
 		}
 		if (isset($this->description)) {
 			 $this->description = trim($this->description);
+		}
+		if (isset($this->keywords)) {
+			 $this->keywords = trim($this->keywords);
+		}
+		if (isset($this->content)) {
+			 $this->content = trim($this->content);
 		}
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
@@ -118,9 +120,12 @@ class Website extends CommonObject
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
 		
-		$sql.= 'entity,';
-		$sql.= 'ref,';
+		$sql.= 'fk_website,';
+		$sql.= 'pageurl,';
+		$sql.= 'title,';
 		$sql.= 'description,';
+		$sql.= 'keywords,';
+		$sql.= 'content,';
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
 		$sql.= 'date_modification';
@@ -128,9 +133,12 @@ class Website extends CommonObject
 		
 		$sql .= ') VALUES (';
 		
-		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
-		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
+		$sql .= ' '.(! isset($this->fk_website)?'NULL':$this->fk_website).',';
+		$sql .= ' '.(! isset($this->pageurl)?'NULL':"'".$this->db->escape($this->pageurl)."'").',';
+		$sql .= ' '.(! isset($this->title)?'NULL':"'".$this->db->escape($this->title)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
+		$sql .= ' '.(! isset($this->keywords)?'NULL':"'".$this->db->escape($this->keywords)."'").',';
+		$sql .= ' '.(! isset($this->content)?'NULL':"'".$this->db->escape($this->content)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").',';
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
@@ -176,30 +184,34 @@ class Website extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param string $ref Ref
+	 * @param int    $id           Id object
+	 * @param string $website_id   Web site page
+	 * @param string $page         Page name
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $website_id = null, $page = null)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		
-		$sql .= " t.entity,";
-		$sql .= " t.ref,";
+		$sql .= " t.fk_website,";
+		$sql .= " t.pageurl,";
+		$sql .= " t.title,";
 		$sql .= " t.description,";
+		$sql .= " t.keywords,";
+		$sql .= " t.content,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
-
 		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+		if (null !== $website_id) {
+		    $sql .= ' WHERE t.fk_website = ' . '\'' . $website_id . '\'';
+		    $sql .= ' AND t.pageurl = ' . '\'' . $page . '\'';
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
@@ -212,9 +224,12 @@ class Website extends CommonObject
 
 				$this->id = $obj->rowid;
 				
-				$this->entity = $obj->entity;
-				$this->ref = $obj->ref;
+				$this->fk_website = $obj->fk_website;
+				$this->pageurl = $obj->pageurl;
+				$this->title = $obj->title;
 				$this->description = $obj->description;
+				$this->keywords = $obj->keywords;
+				$this->content = $obj->content;
 				$this->status = $obj->status;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
@@ -256,13 +271,17 @@ class Website extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		
-		$sql .= " t.entity,";
-		$sql .= " t.ref,";
+		$sql .= " t.fk_website,";
+		$sql .= " t.pageurl,";
+		$sql .= " t.title,";
 		$sql .= " t.description,";
+		$sql .= " t.keywords,";
+		$sql .= " t.content,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
+
 		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
 
@@ -283,26 +302,31 @@ class Website extends CommonObject
 		if (!empty($limit)) {
 		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
 		}
-		$this->records = array();
+		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new WebsiteLine();
+				$line = new WebsitepageLine();
 
 				$line->id = $obj->rowid;
 				
-				$line->entity = $obj->entity;
-				$line->ref = $obj->ref;
+				$line->fk_website = $obj->fk_website;
+				$line->pageurl = $obj->pageurl;
+				$line->title = $obj->title;
 				$line->description = $obj->description;
+				$line->keywords = $obj->keywords;
+				$line->content = $obj->content;
 				$line->status = $obj->status;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 				$line->tms = $this->db->jdate($obj->tms);
 
-				$this->records[$line->id] = $line;
+				
+
+				$this->lines[$line->id] = $line;
 			}
 			$this->db->free($resql);
 
@@ -331,14 +355,23 @@ class Website extends CommonObject
 
 		// Clean parameters
 		
-		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+		if (isset($this->fk_website)) {
+			 $this->fk_website = trim($this->fk_website);
 		}
-		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+		if (isset($this->pageurl)) {
+			 $this->pageurl = trim($this->pageurl);
+		}
+		if (isset($this->title)) {
+			 $this->title = trim($this->title);
 		}
 		if (isset($this->description)) {
 			 $this->description = trim($this->description);
+		}
+		if (isset($this->keywords)) {
+			 $this->keywords = trim($this->keywords);
+		}
+		if (isset($this->content)) {
+			 $this->content = trim($this->content);
 		}
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
@@ -352,9 +385,12 @@ class Website extends CommonObject
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
 		
-		$sql .= ' entity = '.(isset($this->entity)?$this->entity:"null").',';
-		$sql .= ' ref = '.(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").',';
+		$sql .= ' fk_website = '.(isset($this->fk_website)?$this->fk_website:"null").',';
+		$sql .= ' pageurl = '.(isset($this->pageurl)?"'".$this->db->escape($this->pageurl)."'":"null").',';
+		$sql .= ' title = '.(isset($this->title)?"'".$this->db->escape($this->title)."'":"null").',';
 		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
+		$sql .= ' keywords = '.(isset($this->keywords)?"'".$this->db->escape($this->keywords)."'":"null").',';
+		$sql .= ' content = '.(isset($this->content)?"'".$this->db->escape($this->content)."'":"null").',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
 		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' date_modification = '.(! isset($this->date_modification) || dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null').',';
@@ -459,7 +495,7 @@ class Website extends CommonObject
 
 		global $user;
 		$error = 0;
-		$object = new Website($this->db);
+		$object = new Websitepage($this->db);
 
 		$this->db->begin();
 
@@ -598,9 +634,12 @@ class Website extends CommonObject
 	{
 		$this->id = 0;
 		
-		$this->entity = '';
-		$this->ref = '';
+		$this->fk_website = '';
+		$this->pageurl = '';
+		$this->title = '';
 		$this->description = '';
+		$this->keywords = '';
+		$this->content = '';
 		$this->status = '';
 		$this->date_creation = '';
 		$this->date_modification = '';
@@ -609,31 +648,4 @@ class Website extends CommonObject
 		
 	}
 
-}
-
-/**
- * Class WebsiteLine
- */
-class WebsiteLine
-{
-	/**
-	 * @var int ID
-	 */
-	public $id;
-	/**
-	 * @var mixed Sample line property 1
-	 */
-	
-	public $entity;
-	public $ref;
-	public $description;
-	public $status;
-	public $date_creation = '';
-	public $date_modification = '';
-	public $tms = '';
-
-	/**
-	 * @var mixed Sample line property 2
-	 */
-	
 }

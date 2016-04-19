@@ -249,7 +249,7 @@ class Skeleton_Class extends CommonObject
 				$line->prop1 = $obj->field1;
 				$line->prop2 = $obj->field2;
 
-				$this->lines[] = $line;
+				$this->lines[$line->id] = $line;
 				//...
 			}
 			$this->db->free($resql);

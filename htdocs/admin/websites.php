@@ -75,23 +75,23 @@ $tablib[1] = "Websites";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.shortname, f.description, f.status FROM ".MAIN_DB_PREFIX."website as f";
+$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.status FROM ".MAIN_DB_PREFIX."website as f";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
-$tabsqlsort[1] ="shortname ASC";
+$tabsqlsort[1] ="ref ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[1] = "shortname,description";
+$tabfield[1] = "ref,description";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[1] = "shortname,description";
+$tabfieldvalue[1] = "ref,description";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[1] = "shortname,description,entity";
+$tabfieldinsert[1] = "ref,description,entity";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on

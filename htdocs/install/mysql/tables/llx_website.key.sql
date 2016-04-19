@@ -16,5 +16,5 @@
 --
 -- ===========================================================================
 
-ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_shortname (shortname, entity);
+ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 

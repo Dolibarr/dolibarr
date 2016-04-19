@@ -106,7 +106,7 @@ CREATE TABLE llx_website
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	entity        integer DEFAULT 1,
-	shortname     varchar(24) NOT NULL,
+	ref		      varchar(24) NOT NULL,
 	description   varchar(255),
 	status		  integer,
     date_creation     datetime,
@@ -114,7 +114,7 @@ CREATE TABLE llx_website
 	tms           timestamp
 ) ENGINE=innodb;
  
-ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_shortname (shortname, entity);
+ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 
 CREATE TABLE llx_website_page
 (
