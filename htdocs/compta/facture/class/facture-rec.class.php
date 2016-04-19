@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 /**
  *	Classe de gestion des factures recurrentes/Modeles
  */
-class FactureRec extends Facture
+class FactureRec extends CommonInvoice
 {
 	public $element='facturerec';
 	public $table_element='facture_rec';

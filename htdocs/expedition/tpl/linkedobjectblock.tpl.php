@@ -28,20 +28,7 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("sendings");
-echo '<br>';
-print load_fiche_titre($langs->trans('RelatedShippings'), '', '');
 
-?>
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="center"><?php echo $langs->trans("DateDeliveryPlanned"); ?></td>
-	<td align="right"><?php echo $langs->trans(""); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
-	<td></td>
-</tr>
-<?php
 $total=0;
 $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
@@ -49,8 +36,9 @@ foreach($linkedObjectBlock as $key => $objectlink)
 	$var=!$var;
 ?>
 <tr <?php echo $GLOBALS['bc'][$var]; ?> >
+    <td><?php echo $langs->trans("Shipment"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date_creation,'day'); ?></td>
+    <td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
 	<td align="right"><?php
 		/*if ($user->rights->expedition->lire) {
@@ -62,19 +50,6 @@ foreach($linkedObjectBlock as $key => $objectlink)
 </tr>
 <?php
 }
-
 ?>
-<!-- 
-<tr class="liste_total">
-	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php
-		/*if ($user->rights->expedition->lire) {
-			echo price($total);
-		}*/ ?></td>
-	<td></td>
-	<td></td>
-</tr>
--->
-</table>
 
 <!-- END PHP TEMPLATE -->

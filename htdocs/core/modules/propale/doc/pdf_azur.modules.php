@@ -686,21 +686,39 @@ class pdf_azur extends ModelePDFPropales
 							if (count($filetomerge->lines) > 0) {
 								foreach ( $filetomerge->lines as $linefile ) {
 									if (! empty($linefile->id) && ! empty($linefile->file_name)) {
-										if (! empty($conf->product->enabled))
-											$filetomerge_dir = $conf->product->multidir_output[$entity_product_file] . '/' . dol_sanitizeFileName($line->product_ref);
-										elseif (! empty($conf->service->enabled))
-											$filetomerge_dir = $conf->service->multidir_output[$entity_product_file] . '/' . dol_sanitizeFileName($line->product_ref);
+
+
+										if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+										{
+											if (! empty($conf->product->enabled)) {
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file] . '/' . get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos";
+											} elseif (! empty($conf->service->enabled)) {
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file] . '/' . get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos";
+											}
+										}
+										else
+										{
+											if (! empty($conf->product->enabled)) {
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file] . '/' . get_exdir(0,0,0,0,$product,'product') . dol_sanitizeFileName($product->ref);
+											} elseif (! empty($conf->service->enabled)) {
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file] . '/' . get_exdir(0,0,0,0,$product,'product') . dol_sanitizeFileName($product->ref);
+											}
+										}
 
 										dol_syslog(get_class($this) . ':: upload_dir=' . $filetomerge_dir, LOG_DEBUG);
 
 										$infile = $filetomerge_dir . '/' . $linefile->file_name;
-										if (is_file($infile)) {
+										if (file_exists($infile) && is_readable($infile)) {
 											$pagecount = $pdf->setSourceFile($infile);
 											for($i = 1; $i <= $pagecount; $i ++) {
-												$tplidx = $pdf->ImportPage($i);
-												$s = $pdf->getTemplatesize($tplidx);
-												$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-												$pdf->useTemplate($tplidx);
+												$tplIdx = $pdf->importPage(1);
+												if ($tplIdx!==false) {
+													$s = $pdf->getTemplatesize($tplIdx);
+													$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+													$pdf->useTemplate($tplIdx);
+												} else {
+													setEventMessages(null, array($infile.' cannot be added, probably protected PDF'),'warnings');
+												}
 											}
 										}
 									}
@@ -709,10 +727,6 @@ class pdf_azur extends ModelePDFPropales
 						}
 					}
 				}
-
-				//exit;
-
-
 
 				$pdf->Close();
 
@@ -1061,7 +1075,7 @@ class pdf_azur extends ModelePDFPropales
 				// VAT
 				foreach($this->tva as $tvakey => $tvaval)
 				{
-					if ($tvakey > 0)    // On affiche pas taux 0
+					if ($tvakey != 0)    // On affiche pas taux 0
 					{
 						$this->atleastoneratenotnull++;
 

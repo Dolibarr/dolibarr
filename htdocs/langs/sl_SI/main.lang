@@ -25,6 +25,7 @@ FormatDateHourTextShort=%d. %b, %Y, %I:%M %p
 FormatDateHourText=%d. %B, %Y, %I:%M %p
 DatabaseConnection=Povezave podatkovnih baz
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Ni prevoda
 NoRecordFound=Ni najden zapis
 NoError=Ni napake

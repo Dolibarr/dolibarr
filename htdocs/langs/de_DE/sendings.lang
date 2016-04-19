@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Produktmenge in geöffneter Lieferantenbestel
 ProductQtyInShipmentAlreadySent=Produktmenge von offenem Kundenauftrag bereits geliefert
 ProductQtyInSuppliersShipmentAlreadyRecevied=Produktmenge aus Lieferantenbestellung bereits erhalten
 NoProductToShipFoundIntoStock=Kein Artikel zum Versenden gefunden im Lager <b>%s</b>. Korrigieren Sie den Lagerbestand oder wählen Sie ein anderes Lager.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Abholung durch Kunden

@@ -1204,6 +1204,22 @@ class Expedition extends CommonObject
 						if ($result < 0) { $error++; }
 						// End call triggers
 
+						if (! empty($this->origin) && $this->origin_id > 0)
+						{
+						    $this->fetch_origin();
+						    $origin=$this->origin;
+						    if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS)     // If order source of shipment is "shipment in progress"
+						    {
+                                // Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+						        $this->$origin->loadExpeditions();
+						        //var_dump($this->$origin->expeditions);exit;
+						        if (count($this->$origin->expeditions) <= 0)
+						        {
+                                    $this->$origin->setStatut(Commande::STATUS_VALIDATED);
+						        }
+						    }
+						}
+						
 						if (! $error)
 						{
 							$this->db->commit();
@@ -1740,56 +1756,6 @@ class Expedition extends CommonObject
 
         $resql = $this->db->query($sql);
 
-    }
-
-    /**
-     * Return into unit=0, the calculated total of weight and volume of all lines * qty
-	 * Calculate by adding weight and volume of each product line.
-     * 
-     * @return  array           array('weight'=>...,'volume'=>...)
-     */
-    function getTotalWeightVolume()
-    {
-        $weightUnit=0;
-        $volumeUnit=0;
-        $totalWeight = '';
-        $totalVolume = '';
-        $totalOrdered = '';
-        $totalToShip = '';
-        foreach ($this->lines as $line)
-        {
-            $totalOrdered+=$line->qty_asked;
-            $totalToShip+=$line->qty_shipped;
-            
-            $weightUnit=0;
-            $volumeUnit=0;
-            if (! empty($line->weight_units)) $weightUnit = $line->weight_units;
-            if (! empty($line->volume_units)) $volumeUnit = $line->volume_units;
-        
-            //var_dump($line->volume_units);
-            if ($line->weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
-            {
-                $trueWeightUnit=pow(10,$weightUnit);
-                $totalWeight += $line->weight*$line->qty_shipped*$trueWeightUnit;
-            }
-            else
-            {
-                $totalWeight += $line->weight*$line->qty_shipped;   // This may be wrong if we mix different units
-            }
-            if ($line->volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
-            {
-                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
-                $trueVolumeUnit=pow(10,$volumeUnit);
-                //print $line->volume;
-                $totalVolume += $line->volume*$line->qty_shipped*$trueVolumeUnit;
-            }
-            else
-            {
-                $totalVolume += $line->volume*$line->qty_shipped;   // This may be wrong if we mix different units
-            }
-        }
-        
-        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
     }
 
     

@@ -32,6 +32,7 @@ StatusOrderSent=In verzending
 StatusOrderOnProcessShort=Besteld
 StatusOrderProcessedShort=Verwerkt
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Te factureren
 StatusOrderToBill2Short=Te factureren
 StatusOrderApprovedShort=Goedgekeurd

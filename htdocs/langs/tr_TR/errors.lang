@@ -172,6 +172,8 @@ ErrorMandatoryParametersNotProvided=Zorunlu parametre(ler) girilmemiş
 ErrorOppStatusRequiredIfAmount=Bu fırsat/aday için tahmini bir tutar ayarladınız. Durumunu da girmelisiniz
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Modül Tanımlayıcıda hatalı Menu Dizisi tanımı (fk_menu anahtarı için hatalı değer)
 ErrorSavingChanges=Değişiklikler kaydedilirken bir hata oluştu
+ErrorWarehouseRequiredIntoShipmentLine=Depo gemi hattı üzerinde gerekli
+ErrorFileMustHaveFormat=Dosya %s biçiminde olmalıdır
 
 # Warnings
 WarningPasswordSetWithNoAccount=Bu üye için bir parola ayarlıdır. Ancak, hiçbir kullanıcı hesabı oluşturulmamıştır. Yani bu şifre saklanır ama Dolibarr'a giriş için kullanılamaz. Dış bir modül/arayüz tarafından kullanılıyor olabilir, ama bir üye için ne bir kullanıcı adı ne de parola tanımlamanız gerekmiyorsa "Her üye için bir kullanıcı adı yönet" seçeneğini devre dışı bırakabilirsiniz. Bir kullanıcı adı yönetmeniz gerekiyorsa ama herhangi bir parolaya gereksinim duymuyorsanız bu uyarıyı engellemek için bu alanı boş bırakabilirsiniz. Not: Eğer bir üye bir kullanıcıya bağlıysa kullanıcı adı olarak eposta adresi de kullanılabilir.

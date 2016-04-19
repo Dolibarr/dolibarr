@@ -440,3 +440,6 @@ MergeThirdparties=Fursion de tiers
 ConfirmMergeThirdparties=Etes-vous sûr que vous voulez fusionner ce tiers dans l'actuel ? Tous les objets liés (factures, commandes, ...) seront déplacés sur le tiers en cours de sorte que vous serez en mesure de supprimer le doublon.
 ThirdpartiesMergeSuccess=Les tiers ont été fusionnés
 ErrorThirdpartiesMerge=Il y a eu une erreur lors de la suppression du tiers. Aucune modification n'a été enregistrée.
+SaleRepresentativeLogin=Login du commercial
+SaleRepresentativeFirstname=Prénom du commercial
+SaleRepresentativeLastname=Nom du commercial

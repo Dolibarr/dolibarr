@@ -32,6 +32,7 @@ StatusOrderSent=Saatmine töötlemisel
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=Töödeldud
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Saadetud
 StatusOrderToBill2Short=Arve esitada
 StatusOrderApprovedShort=Heaks kiidetud

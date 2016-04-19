@@ -47,7 +47,7 @@ UpdateAccount=Modificació d'un compte comptable
 UpdateMvts=Modificació d'un moviment
 WriteBookKeeping=Registre de comptabilitat en el llibre major
 Bookkeeping=Llibre major
-AccountBalance=Account balance
+AccountBalance=Compte saldo
 
 AccountingVentilation=Desglossament de comptabilitat
 AccountingVentilationSupplier=Desglossament de comptabilitat de proveïdor

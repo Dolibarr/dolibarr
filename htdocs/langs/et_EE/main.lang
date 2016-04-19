@@ -25,6 +25,7 @@ FormatDateHourTextShort=%d. %b %Y. %I:%M %p
 FormatDateHourText=%d. %b %Y. %I:%M %p
 DatabaseConnection=Andmebaasi ühendus
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Tõlge puudub
 NoRecordFound=Kirjet ei leitud
 NoError=Vigu ei tekkinud

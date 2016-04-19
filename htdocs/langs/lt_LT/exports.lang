@@ -128,6 +128,10 @@ SpecialCode=Specialusis kodas
 ExportStringFilter=%% leidžia pakeisti vieną ar daugiau simbolių tekste
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filtruoja paeiliui metai/mėnuo/diena<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filtruoja diapazone metai/mėnesiai/dienos<br> > YYYY, > YYYYMM, > YYYYMMDD : filtruoja visus sekančius metai/mėnesiai/dienos<br> < YYYY, < YYYYMM, < YYYYMMDD : filtruoja visus ankstesnius metai/mėnesiai/dienos
 ExportNumericFilter='NNNNN' filtruos pagal vieną reikšmę<br>'NNNNN+NNNNN' filtruos diapazono reikšmes<br>'&gt;NNNNN' filtruos mažesnes reikšmes<br>'&gt;NNNNN' filtruos didesnes reikšmes.
+ImportFromLine=Import starting from line number
+EndAtLineNb=End at line number
+SetThisValueTo2ToExcludeFirstLine=For example, set this value to 3 to exclude the 2 first lines
+KeepEmptyToGoToEndOfFile=Keep this field empty to go up to the end of file
 ## filters
 SelectFilterFields=Jei norite filtruoti pagal kai kokias reikšmes, įveskite reikšmes čia.
 FilterableFields=Filterable Fields

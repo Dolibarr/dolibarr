@@ -24,7 +24,12 @@ Dolibarr 4.0 should be compatible with PHP 7 but more feedbacks are still expect
 
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
+- Function log() of class CommandeFournisseur has been removed. Using it is no more required.
 - Method select_type_comptes_financiers() has been renamed into selectTypeOfBankAccount() 
+- File '/core/tpl/document_actions_pre_headers.tpl.php' were renamed into '/core/actions_linkedfiles.inc.php'.
+So if you included it into your module, change your code like this to be compatible with all version:
+  $res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+  if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
 
@@ -187,6 +192,109 @@ This is list of hooks modified:
 
 
  
+***** ChangeLog for 3.8.4 compared to 3.8.3 *****
+FIX: #3694
+FIX: #3798 #2519 Cron jobs would never be executed
+FIX: #4155 Search Categories error
+FIX: #4239
+FIX: #4272 Error when trying to print the page "Linked objects" of a Thirdparty
+FIX: #4291 Correctly filter bank card GETPOSTs
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: #4341
+FIX: #4394 Untranslated label in list of expense reports
+FIX: #4414 Supplier invoices use FAC_FORCE_DATE_VALIDATION client invoices property
+FIX: #4418
+FIX: #4425 Missing "VAT" translation in supplier order popup
+FIX: #4434 Weird behaviour when enabling multiprices
+FIX: #4440 Wrong price is filled by Product::fetch into multiprices arrays
+FIX: #4453 SEPA Direct Debit generated XML shows a trailing comma in RmtInf field
+FIX: #4528
+FIX: #4556 desiredstock and seuil_stock_alerte cleared on modify product card
+FIX: #4580
+FIX: #4583 Incorrect call of Categories::containing throws a DoliDB error
+FIX: #4649 Wrong parameters order
+FIX: #4768
+FIX: #4785
+FIX: Add a test to show bugged module with a bad declaration of dictionaries to avoid to see clean module to be breaked.
+FIX: add Croatia into list of country in EEC
+FIX: add missing global def for ttc column
+FIX: ajax error with multicompany module
+FIX: Avoid errors when batch stock is negative
+FIX: bad field in select
+FIX: bad path
+FIX: bad transaction level due to code of situation invoices
+FIX: best sql request
+FIX: bookmark's user change after update if the user hasn't superadmin right
+FIX: call trigger LINEBILL_SUPPLIER_CREATE
+FIX: Can not disabled an opened service line in a contract
+FIX: can't clone event
+FIX: can't send mail to thirdparty contact if no mail defined on thirdparty card
+FIX: Check stock of batch on shippment
+FIX: code corrupting database
+FIX: compatibility with multicompany transversal mode
+FIX: compatibility with multicompany transversal mode and more security issue
+FIX: Contrat card don't consider user permissions to show active/unactive service button
+FIX: CVE CVE-2015-8685
+FIX: Deadlock situation. Can't edit anymore contract. FIX: List of automatic events was not visible.
+FIX: disable main.inc.php hooks
+FIX: do not show warning if account defined
+FIX: don't see the sales representative of anothers entities
+FIX: duration format
+FIX: Correct problem of rights beetween tax and salaries module
+FIX: Email templates not compatible with Multicompany
+FIX: $fileparams is not defined
+FIX: filter by socid if from customer card
+FIX: for avoid conflict with "global $m" in memory.lib.php
+FIX: for avoid division by 0
+FIX: hover css
+FIX: If option to hide automatic ECM is on, dont show menu.
+FIX: if we dont use SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE the hour is displayed on pdf
+FIX: Introduce hidden option to disable feature than hangs when too much data
+FIX: ISSUE #4506 : make working the PROPAL_CLONE_ON_CREATE_PAGE hidden constant
+FIX: issue when bank module is disabled FIX: missing entity filter for lines of payment
+FIX: list of leave request was not showing label correctly.
+FIX: MAIN_THIRDPARTY_CREATION_INDIVIDUAL syntax error in name
+FIX: markRate can be 100
+FIX: minor css error (pixel size must have "px"). Compatibility with old behaviour.
+FIX: missing field "label"
+FIX: missing signature and uniformize code between card and script
+FIX: missing traduction
+FIX: missing translation
+FIX: missing translation key
+FIX: nblignes not calculated after hook and hook can't modify this value. Usefull for modules
+FIX: no database structure change is allowed into minor versions
+FIX: no transaction in this place
+FIX: Noway to validate a leave request for some uer even if they have permission for.
+FIX: Option to disable meteo was not set correctly in edit mode
+FIX: $outputlangs is not defined (dolibarr 3.7, 3.8, 3.9)
+FIX: path to copyrighted files
+FIX: php unit to work both with old and new setup
+FIX: Purge of temp files was broken
+FIX: Relative discount decimals are not saved
+FIX: Removed a bugged list. Fixed another one to not count data of previous year.
+FIX: retrieve correct pu_ttc (set by printObjectLine function) like in 3.7
+FIX: search product in customer product prices doesn't work
+FIX: Some filters are lost when paging
+FIX: sql injection #4341
+FIX: sql injection even when code is on several lines
+FIX: sql request and total for time spen for current month
+FIX: Sql syntax error in doc_generic_task_odt
+FIX: Status filter don't work
+FIX: Strict Standards: Only variables should be passed by reference
+FIX: The part added with hidden option MAIN_DOC_USE_TIMING was included with a . instead of -. This make os think it is part of extension instead of file name.
+FIX: The third dashboard don't consider user permissions
+FIX: the view my task must show only task you are assigned to
+FIX: to allow phpunit of migration process for 3.4 to 3.5
+FIX: to allow phpunit of migration process for 3.5 to 3.6
+FIX: userlocaltax
+FIX: view of product image when using old path 
+FIX: size of image uploaded on user.
+FIX: We must ue the "small" size of imge to show on card pages.
+FIX: When we make a direct assignement on a task to a user, we must check he is also assigned to project (and if not assign it)
+FIX: wrong fk_parent_line in credit note with invoiceAvoirWithLines option
+FIX: wrong modelpdf var name
+FIX: wrong object name
+
 ***** ChangeLog for 3.8.3 compared to 3.8.2 *****
 FIX: #3805
 FIX: #3231 [Members] Public subscription page displays GeoIP error
@@ -608,6 +716,23 @@ Dolibarr better:
   to make difference between creation from contact or not.
 - Function get_exdir require now 6 parameters. This is to prepare a future feature.
 
+
+***** ChangeLog for 3.7.4 compared to 3.7.3 *****
+FIX: #3694
+FIX: #4239
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: #4341
+FIX: #4414 Supplier invoices use FAC_FORCE_DATE_VALIDATION client invoices property
+FIX: #4440 Wrong price is filled by Product::fetch into multiprices arrays
+FIX: add missing global def for ttc column
+FIX: Contrat card don't consider user permissions to show active/unactive service button
+FIX: CVE CVE-2015-8685
+FIX: Email templates not compatible with Multicompany
+Fix: for avoid division by 0
+FIX: ISSUE #4506 : make working the PROPAL_CLONE_ON_CREATE_PAGE hidden constant
+FIX: $outputlangs is not defined (dolibarr 3.7, 3.8, 3.9)
+FIX: sql injection even when code is on several lines
+FIX: The third dashboard don't consider user permissions
 
 ***** ChangeLog for 3.7.3 compared to 3.7.2 *****
 FIX: #3734 Do not show empty links of deleted source objects in stock movement list
@@ -1758,7 +1883,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: [ bug #810 ] Cannot update ODT template path
 - Fix: [ bug #816 ] Sales journal does not reflect localtaxes
 - Fix: [ bug #817 ] Purchases journal does not reflect localtaxes
-- Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionnary
+- Fix: [ bug #824 ] MAIN_DB_PREFIX not use into dictionary
 - Fix: [ bug #828 ] Error when code_region is not a number in llx_c_regions (with postgres)
 - Fix: [ bug #855 ] Holiday approval email in French
 - Fix: [ bug #856 ] (Holidays module) Mail error if destination user doesn't have an email
@@ -1777,7 +1902,7 @@ backport commit 384e3812eb73a15adafb472cacfb93397a54459b to fix W3C/edit contrac
 - Fix: [ bug #736 ] Missing column in llx_c_chargesociales  
 - Fix: Localtax2 for Spain must be based into buyer
 - Fix: [ bug #762 ] Bad profit calculation in Reporting
-- Fix: bug dictionnary with wrong prefix table
+- Fix: bug dictionary with wrong prefix table
 
 ***** ChangeLog for 3.3 compared to 3.2.* *****
 For users:
@@ -1865,7 +1990,7 @@ New experimental module:
 For developers:
 - New: Add webservice for thirdparty creation and list.
 - New: A module can overwrite templates parts.
-- New: Can add a link on title field of added dictionnary.
+- New: Can add a link on title field of added dictionary.
 - New: Uniformize code.
 - New: Add option WORKFLOW_DISABLE_CREATE_INVOICE_FROM_ORDER and 
        WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER.

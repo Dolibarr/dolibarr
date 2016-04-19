@@ -152,7 +152,8 @@ if (empty($user->societe_id))
     $parameters=array();
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
+    $boxstat.=$hookmanager->resPrint;
+    
     if (empty($reshook))
     {
 	    // Condition to be checked for each display line dashboard
@@ -456,7 +457,11 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
     $board=new Account($db);
-	$dashboardlines[] = $board->load_board($user);
+    $nb = $board::countAccountToReconcile();
+    if ($nb > 0)
+    {
+        $dashboardlines[] = $board->load_board($user);
+    }
 }
 
 // Number of cheque to send
@@ -537,7 +542,7 @@ foreach($valid_dashboardlines as $board)
     
     if ($showweather)
     {
-        $boxwork.='<td class="nohover hideonsmartphone" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
+        $boxwork.='<td class="nohover hideonsmartphone noborderbottom" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
         $text='';
         if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
         $options='height="64px"';

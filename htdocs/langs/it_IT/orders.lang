@@ -32,6 +32,7 @@ StatusOrderSent=Spedizione in corso
 StatusOrderOnProcessShort=Ordinato
 StatusOrderProcessedShort=Lavorato
 StatusOrderDelivered=Spedito
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Spedito
 StatusOrderToBill2Short=Da fatturare
 StatusOrderApprovedShort=Approvato

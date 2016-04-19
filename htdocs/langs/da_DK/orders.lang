@@ -32,6 +32,7 @@ StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=Forarbejdede
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Til lovforslag
 StatusOrderToBill2Short=Til lovforslag
 StatusOrderApprovedShort=Godkendt

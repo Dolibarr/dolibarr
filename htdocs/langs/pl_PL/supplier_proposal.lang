@@ -58,3 +58,5 @@ DefaultModelSupplierProposalCreate=Stworzenie modelu Domyślnie
 DefaultModelSupplierProposalToBill=Domyślny szablon podczas zamykania wniosek cenowej (przyjęte)
 DefaultModelSupplierProposalClosed=Domyślny szablon podczas zamykania wniosek cenowej (odmówił)
 ListOfSupplierProposal=Lista wniosków wniosku dostawca
+SupplierProposalsToClose=Supplier proposals to close
+SupplierProposalsToProcess=Supplier proposals to process

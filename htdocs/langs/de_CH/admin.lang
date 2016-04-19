@@ -30,6 +30,7 @@ GenericMaskCodes2=<b>{cccc}</b>  den Kunden-Code mit n Zeichen<br><b>{cccc000}</
 GenericMaskCodes4a=<u>Beispiel auf der 99. %s des Dritten thecompany Geschehen 2007-01-31:</u> <br>
 GenericMaskCodes4b=<u>Beispiel für Dritte erstellt am 2007-03-01:</u> <br>
 UMaskExplanation=Über diesen Parameter können Sie die standardmässigen Dateiberechtigungen für vom System erzeugte/verwaltete Inhalte festlegen. <br>Erforderlich ist ein Oktalwert (0666 bedeutet z.B. Lesen und Schreiben für alle). <br>Auf Windows-Umgebungen haben diese Einstellungen keinen Effekt.
+DescWeather=Die folgenden Diagramme werden auf der Übersicht Startseite angezeigt, wenn die entsprechenden Toleranzwerte erreicht werden:
 HideAnyVATInformationOnPDF=Unterdrücken aller MwSt.-Informationen auf dem generierten PDF
 OldVATRates=Alter MwSt. Satz
 NewVATRates=Neuer MwSt. Satz
@@ -93,6 +94,7 @@ ExtraFieldsSupplierOrdersLines=Ergänzende Attribute (in Bestellungszeile)
 ExtraFieldsThirdParties=Ergänzende Attribute (Geschäftspartner)
 AlphaNumOnlyCharsAndNoSpace=nur alphanumericals Zeichen ohne Leerzeichen
 SendmailOptionNotComplete=Achtung, auf einigen Linux-Systemen, E-Mails von Ihrem E-Mail zu senden, sendmail Ausführung Setup muss conatins Option-ba (Parameter mail.force_extra_parameters in Ihre php.ini-Datei). Wenn einige Empfänger niemals E-Mails erhalten, versuchen, diese Parameter mit PHP mail.force_extra_parameters =-ba) zu bearbeiten.
+TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 AddRefInList=Darstellung Kunden- /Lieferanten- Nr. in Listen (Listbox oder ComboBox) und die meisten von Hyperlinks. Third parties will appears with name "CC12345 - SC45678 - The big company coorp", instead of "The big company coorp".
 UserGroupSetup=Benutzer- und Gruppeneinstellunen
 CompanyCodeChecker=Modul für Geschäftspartner-Code-Erstellung (Kunden oder Lieferanten)

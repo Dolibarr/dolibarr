@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2014 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+/* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2012-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class Holiday extends CommonObject
 	public $table_element='holiday';
 	protected $isnolinkedbythird = 1;     // No field fk_soc
 	protected $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	
+
 	/**
 	 * @deprecated
 	 * @see id
@@ -161,7 +161,7 @@ class Holiday extends CommonObject
 
         if (! $error)
         {
-            $this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday");
         }
 
         // Commit or rollback
@@ -178,7 +178,7 @@ class Holiday extends CommonObject
         else
         {
             $this->db->commit();
-            return $this->rowid;
+            return $this->id;
         }
     }
 
@@ -301,7 +301,8 @@ class Holiday extends CommonObject
         $sql.= " ua.firstname as validator_firstname";
 
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-		$sql.= " WHERE cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
         $sql.= " AND cp.fk_user = '".$user_id."'";
 
         // Filtre de séléction
@@ -413,7 +414,8 @@ class Holiday extends CommonObject
         $sql.= " ua.firstname as validator_firstname";
 
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
-        $sql.= " WHERE cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
+        $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
+        $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 
         // Filtrage de séléction
         if(!empty($filter)) {
@@ -560,7 +562,7 @@ class Holiday extends CommonObject
             $sql.= " detail_refuse = NULL";
         }
 
-        $sql.= " WHERE rowid= '".$this->rowid."'";
+        $sql.= " WHERE rowid= '".$this->id."'";
 
         $this->db->begin();
 
@@ -607,7 +609,7 @@ class Holiday extends CommonObject
         $error=0;
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday";
-        $sql.= " WHERE rowid=".$this->rowid;
+        $sql.= " WHERE rowid=".$this->id;
 
         $this->db->begin();
 
@@ -1112,16 +1114,29 @@ class Holiday extends CommonObject
      */
     function fetchUsers($stringlist=true,$type=true)
     {
+    	global $conf;
+
         // Si vrai donc pour user Dolibarr
         if ($stringlist)
         {
-            if($type)
+            if ($type)
             {
                 // Si utilisateur de Dolibarr
 
                 $sql = "SELECT u.rowid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE statut > 0";
+
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                {
+                	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+                	$sql.= " WHERE (ug.fk_user = u.rowid";
+                	$sql.= " AND ug.entity = ".$conf->entity.")";
+                	$sql.= " OR u.admin = 1";
+                }
+                else
+                	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+
+                $sql.= " AND u.statut > 0";
 
                 dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1138,7 +1153,7 @@ class Holiday extends CommonObject
                     {
                         $obj = $this->db->fetch_object($resql);
 
-                        if($i == 0) {
+                        if ($i == 0) {
                             $stringlist.= $obj->rowid;
                         } else {
                             $stringlist.= ', '.$obj->rowid;
@@ -1158,7 +1173,7 @@ class Holiday extends CommonObject
 
             }
             else
-           {
+            {
            		// We want only list of user id
                 $sql = "SELECT DISTINCT cpu.fk_user";
                 $sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu";
@@ -1199,14 +1214,25 @@ class Holiday extends CommonObject
 
         }
         else
-       { // Si faux donc user Congés Payés
+        { // Si faux donc user Congés Payés
 
             // List for Dolibarr users
             if ($type)
             {
                 $sql = "SELECT u.rowid, u.lastname, u.firstname";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-                $sql.= " WHERE statut > 0";
+
+                if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+                {
+                	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+                	$sql.= " WHERE (ug.fk_user = u.rowid";
+                	$sql.= " AND ug.entity = ".$conf->entity.")";
+                	$sql.= " OR u.admin = 1";
+                }
+                else
+                	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+
+                $sql.= " AND u.statut > 0";
 
                 dol_syslog(get_class($this)."::fetchUsers", LOG_DEBUG);
                 $resql=$this->db->query($sql);
@@ -1558,7 +1584,7 @@ class Holiday extends CommonObject
     /**
      * Select event
      *
-     * @return string|boolean		Select Html to select type of holiday
+     * @return string|false		Select Html to select type of holiday
      */
     function selectEventCP()
     {
@@ -1615,7 +1641,7 @@ class Holiday extends CommonObject
      * getValueEventCp
      *
      * @param 	int		$rowid		Row id
-     * @return string|boolean
+     * @return string|false
      */
     function getValueEventCp($rowid) {
 

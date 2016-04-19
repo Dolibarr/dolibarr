@@ -2,10 +2,10 @@
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
 ACCOUNTING_EXPORT_PIECE=Eksporter antall enheter
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Eksporter med hovedkonto
 ACCOUNTING_EXPORT_LABEL=Eksporter etikett
 ACCOUNTING_EXPORT_AMOUNT=Eksporter beløp
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_DEVISE=Eksporter valuta
 Selectformat=Velg filformat
 ACCOUNTING_EXPORT_PREFIX_SPEC=Velg prefiks for filnavnet
 
@@ -21,22 +21,22 @@ JournalFinancial=Finasielle journaler
 Exports=Eksporter
 Export=Eksport
 Modelcsv=Eksportmodell
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+OptionsDeactivatedForThisExportModel=For denne eksportmodellen er opsjoner deaktivert
 Selectmodelcsv=Velg eksportmodell
 Modelcsv_normal=Klassisk eksport
-Modelcsv_CEGID=Export towards CEGID Expert
-BackToChartofaccounts=Return chart of accounts
+Modelcsv_CEGID=Eksport mot CEGID Expert
+BackToChartofaccounts=Returner kontotabell
 
-Definechartofaccounts=Define a chart of accounts
-Selectchartofaccounts=Select a chart of accounts
-Addanaccount=Add an accounting account
+Definechartofaccounts=Definer en kontotabell
+Selectchartofaccounts=Velg kontotabell
+Addanaccount=Legg til regnskapskonto
 AccountAccounting=Regnskapskonto
-AccountAccountingSuggest=Accounting account suggest
-Ventilation=Breakdown
+AccountAccountingSuggest=Forslag til regnskapskonto
+Ventilation=Fordeling
 
-MenuAccountancy=Accountancy
-CustomersVentilation=Breakdown customers
-SuppliersVentilation=Breakdown suppliers
+MenuAccountancy=Regnskap
+CustomersVentilation=Fordeling Kunder
+SuppliersVentilation=Fordeling Leverandører
 TradeMargin=Fortjenestemargin
 Reports=Rapporter
 ByCustomerInvoice=Etter kundefakturaer
@@ -45,113 +45,113 @@ Create=Opprett
 CreateMvts=Opprett bevegelse
 UpdateAccount=Endring av reknskapskonto
 UpdateMvts=Endring av bevegelse
-WriteBookKeeping=Record accounts in general ledger
+WriteBookKeeping=Kontoposter i hovedboken
 Bookkeeping=Hovedbok
-AccountBalance=Account balance
+AccountBalance=Kontobalanse
 
 AccountingVentilation=Regnskapsmessig fordelingen
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
+AccountingVentilationSupplier=Regnskapsfordeling Leverandør
+AccountingVentilationCustomer=Regskapsfordeling Kunde
 
-CAHTF=Total purchase supplier before tax
+CAHTF=Totalt leverandørkjøp eks. MVA
 InvoiceLines=Fakturalinjer som skal ventileres
 InvoiceLinesDone=Ventilerte fakturalinjer
 IntoAccount=Ventiler regnskapskontoen
 
 Ventilate=Ventiler
-VentilationAuto=Automatic breakdown
+VentilationAuto=Automatisk fordeling
 
 Processing=Behandler
 EndProcessing=Behandling ferdig
-AnyLineVentilate=Any lines to ventilate
+AnyLineVentilate=Ingen linjer å ventilere
 SelectedLines=Valgte linjer
 Lineofinvoice=Fakturalinje
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+VentilatedinAccount=Vellykket ventilering i regnskapskonto
+NotVentilatedinAccount=Ikke ventilert i regnskapskonto
 
 ACCOUNTING_SEPARATORCSV=Kolonneseparator for exportfil
 
-ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
-ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
-ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
+ACCOUNTING_LIMIT_LIST_VENTILATION=Antall elementer for ventilering viset per side (maks anbefalt: 50)
+ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begynn sortering av ventilering "Må ventileres" etter de nyeste elementene
+ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begynn sortering av fordelingssidene "Fordeling" etter de nyeste elementene
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
-ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
-ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+AccountLength=Lengde på regskapskontoer i Dolibarr
+AccountLengthDesc=Funksjon for å simulere lengde på regnskapskonto ved å erstatte mellomrom med tallet null. Denne funksjonen påvirker bare skjermen, det endrer ikke de regnskapskontoene som er registrert i Dolibarr. For eksport, er denne funksjonen nødvendig for å være kompatibel med enkelte programvarer.
+ACCOUNTING_LENGTH_DESCRIPTION=Lengde for visning av varer- og tjenesterbeskrivelser i lister (Anbefalt = 50)
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Lengde for visning av varer- og tjenesters kontobeskrivelser i lister (Anbefalt = 50)
+ACCOUNTING_LENGTH_GACCOUNT=Lengde på generelle kontoer
+ACCOUNTING_LENGTH_AACCOUNT=Lengde på tredjeparts-kontoer
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diverseprotokoll
-ACCOUNTING_EXPENSEREPORT_JOURNAL=Expense report journal
-ACCOUNTING_SOCIAL_JOURNAL=Social journal
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Utgiftsjournal
+ACCOUNTING_SOCIAL_JOURNAL=Sosialjournal
 
-ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
-ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+ACCOUNTING_ACCOUNT_TRANSFER_CASH=Overføring av regnskapskonto
+ACCOUNTING_ACCOUNT_SUSPENSE=Regnskapskonto på vent
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
-ACCOUNTING_SERVICE_BUY_ACCOUNT=Accounting account by default for the bought services (if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold services (if not defined in the service sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard regnskapskonto for kjøpte varer (hvis den ikke er definert på varekortet)
+ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard regnskapskonto for solgte varer (hvis den ikke er definert på varekortet)
+ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard regnskapskonto for kjøpte tjenseter (hvis den ikke er definert på tjenestekortet)
+ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard regnskapskonto for solgte tjenester (hvis den ikke er definert på tjenestekortet)
 
 Doctype=Dokumenttype
 Docdate=Dato
 Docref=Referanse
 Numerocompte=Konto
 Code_tiers=Tredjepart
-Labelcompte=Label account
-Sens=Sens
+Labelcompte=Kontoetikett
+Sens=som betyr
 Codejournal=Journal
-NumPiece=Piece number
+NumPiece=Del nummer
 
-DelBookKeeping=Delete the records of the general ledger
+DelBookKeeping=Slett postene i hovedboken
 
 DescSellsJournal=Salgsjournal
 DescPurchasesJournal=Innkjøpsjournal
 FinanceJournal=Finansjournal
-DescFinanceJournal=Finance journal including all the types of payments by bank account
+DescFinanceJournal=Finansjournal med alle typer betalinger etter bankkonto
 
-CashPayment=Cash Payment
+CashPayment=Kontantbetaling
 
-SupplierInvoicePayment=Payment of invoice supplier
-CustomerInvoicePayment=Payment of invoice customer
+SupplierInvoicePayment=Betaling av leverandørfaktura
+CustomerInvoicePayment=Betaling av kundefaktura
 
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Tredjepart-konto
 
-NewAccountingMvt=New movement
-NumMvts=Number of movement
-ListeMvts=List of the movement
-ErrorDebitCredit=Debit and Credit cannot have a value at the same time
+NewAccountingMvt=Ny bevegelse
+NumMvts=Antall bevegelser
+ListeMvts=Liste over bevegelser
+ErrorDebitCredit=Debet og kredit kan ikke ha en verdi samtidig
 
-ReportThirdParty=List thirdparty account
-DescThirdPartyReport=Consult here the list of the thirdparty customers and the suppliers and their accounting accounts
+ReportThirdParty=Liste over tredjeparts-kontoer
+DescThirdPartyReport=Liste over kunder og leverandører og deres regnskapskontoer
 
-ListAccounts=List of the accounting accounts
+ListAccounts=Liste over regnskapskontoer
 
-Pcgversion=Version of the plan
-Pcgtype=Class of account
-Pcgsubtype=Under class of account
-Accountparent=Root of the account
+Pcgversion=Versjon av plan
+Pcgtype=Kontoklasse
+Pcgsubtype=Underklasse av konto
+Accountparent=Rot/base-kontoer
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+DescVentilCustomer=Viser den årlige økonomiske fordelingen av kundefakturaer
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
-ChangeAccount=Change the accounting account for lines selected by the account:
+DescVentilDoneCustomer=Liste over kundefakturalinjer og tilhørende regnskapskonto
+DescVentilTodoCustomer=Ventiler kundefakturalinjer med tildelt regnskapskonto
+ChangeAccount=Endre regnskapskonto for valgte linjer
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Kontroller årlig fordeling for leverandørfakturaer
+DescVentilTodoSupplier=Ventiler leverandørfakturalinjer med regnskapskonto
+DescVentilDoneSupplier=Liste over leverandørfakturalinjer og tilhørende regnskapskonto
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Automatisk validering
 
-ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
+ErrorAccountancyCodeIsAlreadyUse=Feil, du kan ikke slette denne regnskapskontoen fordi den er i bruk
 MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
-FicheVentilation=Breakdown card
-GeneralLedgerIsWritten=Operations are written in the general ledger
+FicheVentilation=Ventilasjonskort
+GeneralLedgerIsWritten=Transaksjonene ble registrert i hovedboken
 
 MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
 
@@ -159,21 +159,21 @@ MvtNotCorrectlyBalanced=Bevegelse er ikke korrekt balansert. Kredit=%s. Debet=%s
 ExportFormat=Eksportformat
 Prefixname=Prefiks for ekportfil
 Separate=Eksportseparator
-Textframe=Frame of text value
+Textframe=Verdi for tekstramme
 Headercol=Kolonnenavn i filheading
 Fieldname=Feltnavn
 Headername=Overskrift
 Type=Felttyper
 Param=Tilleggsparametre
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+EnabledProduct=I varen
+EnabledTiers=I tredjepart
+EnabledVat=I MVA
 
 ## Tools - Init accounting account on product / service
-InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
-Options=Options
-OptionModeProductSell=Mode sales
-OptionModeProductBuy=Mode purchases
-OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
-OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+InitAccountancy=Initier regnskap
+InitAccountancyDesc=Denne siden kan brukes til å initialisere en regnskapskonto for produkter og tjenester som ikke har regnskap konto definert for salg og kjøp. Sjekk først at oppsett av  regnskapsmodulen er komplett.
+Options=Innstillinger
+OptionModeProductSell=Salgsmodus
+OptionModeProductBuy=Innkjøpsmodus
+OptionModeProductSellDesc=Vis alle produkter for salg uten regnskapskonto
+OptionModeProductBuyDesc=Vis alle produkter for innkjøp uten regnskapskonto

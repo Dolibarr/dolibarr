@@ -32,6 +32,7 @@ StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=処理
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=請求する
 StatusOrderToBill2Short=請求する
 StatusOrderApprovedShort=承認された

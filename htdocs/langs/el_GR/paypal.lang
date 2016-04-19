@@ -28,5 +28,5 @@ SetExpressCheckoutAPICallFailed=SetExpressCheckout API call failed.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API call failed.
 DetailedErrorMessage=Detailed Error Message
 ShortErrorMessage=Short Error Message
-ErrorCode=Error Code
+ErrorCode=Λάθος κωδικός
 ErrorSeverityCode=Error Severity Code

@@ -25,6 +25,7 @@ FormatDateHourTextShort=%b %d, %Y, %I:%M %p
 FormatDateHourText=%B %d, %Y, %I:%M %p
 DatabaseConnection=Prisijungimas prie duomenų bazės
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Nėra vertimo
 NoRecordFound=Įrašų nerasta
 NoError=Klaidos nėra

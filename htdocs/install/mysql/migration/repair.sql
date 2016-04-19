@@ -3,6 +3,17 @@
 -- when current version is 2.6.0 or higher. 
 --
 
+
+-- Replace xxx with your IP Address 
+-- bind-address        = xxx.xxx.xxx.xxx
+-- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
+-- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
+-- GRANT ALL ON *.* TO 'myuser'@'localhost';
+-- GRANT ALL ON *.* TO 'myuser'@'%';
+-- flush privileges;
+
+
+
 -- Requests to clean corrupted database
 
 
@@ -214,14 +225,6 @@ UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS
 -- List of product into 2 categories xxx: select cp.fk_product, count(cp.fk_product) as nb from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' group by fk_product having nb > 1;
 -- List of product with no category xxx yet: select rowid, ref from llx_product where rowid not in (select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product);
 
--- Replace xxx with your IP Address 
--- bind-address        = xxx.xxx.xxx.xxx
--- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
--- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
--- GRANT ALL ON *.* TO 'myuser'@'localhost';
--- GRANT ALL ON *.* TO 'myuser'@'%';
--- flush privileges;
-
 -- Fix type of product 2 does not exists
 update llx_propaldet set product_type = 1 where product_type = 2;
 update llx_commandedet set product_type = 1 where product_type = 2;
@@ -240,4 +243,11 @@ delete from llx_menu where menu_handler = 'smartphone';
 -- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
 update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid)
  
+
+-- Remove duplicate of shipment mode (keep the one with tracking defined)
+drop table tmp_c_shipment_mode;
+create table tmp_c_shipment_mode as (select code, tracking from llx_c_shipment_mode);
+DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_mode WHERE tracking is NULL OR tracking = '') AND code IN (select code from tmp_c_shipment_mode WHERE tracking is NOT NULL AND tracking != '') AND (tracking IS NULL OR tracking = '');
+drop table tmp_c_shipment_mode;
+
 

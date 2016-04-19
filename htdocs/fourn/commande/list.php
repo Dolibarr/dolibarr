@@ -28,16 +28,21 @@
 
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("orders");
 $langs->load("sendings");
 
 
+$orderyear=GETPOST("orderyear","int");
+$ordermonth=GETPOST("ordermonth","int");
+$orderday=GETPOST("orderday","int");
 $sall=GETPOST('search_all');
 $search_ref=GETPOST('search_ref');
 $search_refsupp=GETPOST('search_refsupp');
@@ -62,9 +67,23 @@ $orderid = GETPOST('orderid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'fournisseur', $orderid, '', 'commande');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='cf.ref';
+if (! $sortorder) $sortorder='DESC';
+
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
+    $ordermonth='';
+    $orderyear='';
+    $orderday='';
     $search_ref='';
     $search_refsupp='';
     $search_company='';
@@ -98,6 +117,7 @@ $thirdpartytmp = new Fournisseur($db);
 $commandestatic=new CommandeFournisseur($db);
 $formfile = new FormFile($db);
 $formorder = new FormOrder($db);
+$formother = new FormOther($db);
 
 $title = $langs->trans("SuppliersOrders");
 if ($socid > 0)
@@ -174,7 +194,7 @@ if (GETPOST('statut', 'alpha') !== '')
 	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
 }
 
-if ($billed !== '')
+if ($billed != '' && $billed >= 0)
 {
 	$sql .= " AND cf.billed = ".$billed;
 }
@@ -188,7 +208,19 @@ if ($search_status != '' && $search_status >= 0)
 	if (strstr($search_status, ',')) $sql.=" AND cf.fk_statut IN (".$db->escape($search_status).")";
 	else $sql.=" AND cf.fk_statut = ".$search_status;
 }
-
+if ($ordermonth > 0)
+{
+    if ($orderyear > 0 && empty($orderday))
+        $sql.= " AND cf.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,$ordermonth,false))."' AND '".$db->idate(dol_get_last_day($orderyear,$ordermonth,false))."'";
+        else if ($orderyear > 0 && ! empty($orderday))
+            $sql.= " AND cf.date_commande BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $ordermonth, $orderday, $orderyear))."' AND '".$db->idate(dol_mktime(23, 59, 59, $ordermonth, $orderday, $orderyear))."'";
+            else
+                $sql.= " AND date_format(cf.date_commande, '%m') = '".$ordermonth."'";
+}
+else if ($orderyear > 0)
+{
+    $sql.= " AND cf.date_commande BETWEEN '".$db->idate(dol_get_first_day($orderyear,1,false))."' AND '".$db->idate(dol_get_last_day($orderyear,12,false))."'";
+}
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = 0;
@@ -208,6 +240,9 @@ if ($resql)
 	$i = 0;
 
 	$param="";
+	if ($orderday)      		$param.='&orderday='.$orderday;
+	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
+	if ($orderyear)       		$param.='&orderyear='.$orderyear;
 	if ($search_ref)			$param.="&search_ref=".$search_ref;
 	if ($search_company)		$param.="&search_company=".$search_company;
 	if ($search_user)			$param.="&search_user=".$search_user;
@@ -234,7 +269,7 @@ if ($resql)
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
 	
-	print '<table class="noborder" width="100%">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","",$param,'',$sortfield,$sortorder);
 	if (empty($conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER)) print_liste_field_titre($langs->trans("RefSupplier"),$_SERVER["PHP_SELF"],"cf.ref_supplier","",$param,'',$sortfield,$sortorder);
@@ -263,7 +298,11 @@ if ($resql)
 	print '<td class="liste_titre"><input type="text" size="6" class="flat" name="search_user" value="'.$search_user.'"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" size="6" class="flat" name="search_ht" value="'.$search_ht.'"></td>';
 	print '<td class="liste_titre" align="right"><input type="text" size="6" class="flat" name="search_ttc" value="'.$search_ttc.'"></td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="center">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="orderday" value="'.$orderday.'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="ordermonth" value="'.$ordermonth.'">';
+	$formother->select_year($orderyear?$orderyear:-1,'orderyear',1, 20, 5);
+	print '</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
 	$formorder->selectSupplierOrderStatus((strstr($search_status, ',')?-1:$search_status),1,'search_status');
@@ -336,13 +375,13 @@ if ($resql)
 		print "</td>";
 
 		// Amount net
-		print '<td align="right" width="100">'.price($obj->total_ht)."</td>";
+		print '<td align="right">'.price($obj->total_ht)."</td>";
 
 		// Amount with tax
-		print '<td align="right" width="100">'.price($obj->total_ttc)."</td>";
+		print '<td align="right">'.price($obj->total_ttc)."</td>";
 
 		// Date
-		print "<td align=\"center\" width=\"100\">";
+		print '<td align="center">';
 		if ($obj->dc)
 		{
 			print dol_print_date($db->jdate($obj->dc),"day");

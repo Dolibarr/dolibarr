@@ -25,6 +25,7 @@ FormatDateHourTextShort=%d. %b %Y %H.%M
 FormatDateHourText=%d. %B %Y %H.%M
 DatabaseConnection=Tietokantayhteys
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Ei käännöstä
 NoRecordFound=Tietueita ei löytynyt
 NoError=Ei virheitä

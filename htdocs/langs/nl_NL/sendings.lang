@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Hoeveelheid producten in geopende leverancier
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Hoeveelheid producte uit geopende leverancier bestelling reeds ontvangen
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Afhalen door de afnemer

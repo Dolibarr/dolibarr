@@ -128,6 +128,10 @@ SpecialCode=Código Especial
 ExportStringFilter=%% allows replacing one or more characters in the text
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD : filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD : filters on all previous years/months/days
 ExportNumericFilter='NNNNN' filters by one value<br>'NNNNN+NNNNN' filters over a range of values<br>'&gt;NNNNN' filters by lower values<br>'&gt;NNNNN' filters by higher values
+ImportFromLine=Import starting from line number
+EndAtLineNb=End at line number
+SetThisValueTo2ToExcludeFirstLine=For example, set this value to 3 to exclude the 2 first lines
+KeepEmptyToGoToEndOfFile=Keep this field empty to go up to the end of file
 ## filters
 SelectFilterFields=If you want to filter on some values, just input values here.
 FilterableFields=Filterable Fields

@@ -32,6 +32,7 @@ StatusOrderSent=ในขั้นตอนการจัดส่ง
 StatusOrderOnProcessShort=ได้รับคำสั่ง
 StatusOrderProcessedShort=การประมวลผล
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=จัดส่ง
 StatusOrderToBill2Short=เพื่อเรียกเก็บเงิน
 StatusOrderApprovedShort=ได้รับการอนุมัติ

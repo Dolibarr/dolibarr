@@ -32,6 +32,7 @@ StatusOrderSent=Gabenimas vykdomas
 StatusOrderOnProcessShort=Užsakyta
 StatusOrderProcessedShort=Apdorotas
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Pristatyta
 StatusOrderToBill2Short=Pateikti sąskaitą-faktūrą
 StatusOrderApprovedShort=Patvirtinta

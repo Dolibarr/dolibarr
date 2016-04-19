@@ -34,7 +34,7 @@ AccountAccounting=Cuenta contable
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Contabilizar
 
-MenuAccountancy=Accountancy
+MenuAccountancy=Contabilidad
 CustomersVentilation=Contabilizar clientes
 SuppliersVentilation=Contabilizar proveedores
 TradeMargin=Margen de beneficio
@@ -47,7 +47,7 @@ UpdateAccount=Modificar una cuenta contable
 UpdateMvts=Modificar un movimiento
 WriteBookKeeping=Registrar los asientos en el libro mayor
 Bookkeeping=Libro Mayor
-AccountBalance=Account balance
+AccountBalance=Saldo de la cuenta
 
 AccountingVentilation=Descuadre contabilidad
 AccountingVentilationSupplier=Contablilización compras
@@ -104,7 +104,7 @@ Code_tiers=Tercero
 Labelcompte=Descripción
 Sens=Sentido
 Codejournal=Diario
-NumPiece=Piece number
+NumPiece=Apunte
 
 DelBookKeeping=Eliminar los registros del Diario Mayor
 
@@ -167,7 +167,7 @@ Type=Tipos de campos
 Param=Parámetros adicionales
 EnabledProduct=En producto
 EnabledTiers=En el tercero
-EnabledVat=In VAT
+EnabledVat=Sujeto a IVA
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Iniciar contabilidad

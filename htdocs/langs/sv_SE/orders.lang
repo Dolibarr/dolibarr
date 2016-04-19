@@ -32,6 +32,7 @@ StatusOrderSent=Sändning pågår
 StatusOrderOnProcessShort=Beställda
 StatusOrderProcessedShort=Bearbetade
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Till Bill
 StatusOrderToBill2Short=Till Bill
 StatusOrderApprovedShort=Godkänd

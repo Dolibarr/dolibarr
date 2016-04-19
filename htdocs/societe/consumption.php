@@ -5,9 +5,6 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
  *
- * Version V1.1 Initial version of Philippe Berthet
- * Version V2   Change to be compatible with 3.4 and enhanced to be more generic
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -42,16 +39,16 @@ $object = new Societe($db);
 if ($socid > 0) $object->fetch($socid);
 
 // Sort & Order fields
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) {
-    $page = 0;
-}
-$offset = $conf->liste_limit * $page;
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='dateprint';
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 
 // Search fields
 $sref=GETPOST("sref");
@@ -79,6 +76,7 @@ $langs->load("suppliers");
 $langs->load("propal");
 $langs->load("interventions");
 $langs->load("contracts");
+$langs->load("products");
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('consumptionthirdparty'));
@@ -124,7 +122,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
 
 // Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td class="titlefield" width="25%"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
+print '<tr id="name_alias"><td class="titlefield"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
 print '<td colspan="3">'.$object->name_alias.'</td></tr>';
 
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
@@ -305,9 +303,19 @@ if ($month > 0) {
 	$end = dol_time_plus_duree($start,1,'y') - 1;
 	$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 }
-if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$sref."%'";
-if ($sprod_fulldescr) $sql.= " AND (d.description LIKE '%".$sprod_fulldescr."%' OR p.label LIKE '%".$sprod_fulldescr."%')";
+if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
+if ($sprod_fulldescr) 
+{
+    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
+    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
+    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
+    $sql.=")";
+}
 $sql.= $db->order($sortfield,$sortorder);
+
+$resql=$db->query($sql);
+$totalnboflines = $db->num_rows($resql);
+
 $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
@@ -316,49 +324,56 @@ $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPO
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 $param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
 
-print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
 
 if ($sql_select)
 {
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
-}
 
-print '<table class="liste" width="100%">'."\n";
-// Titles with sort buttons
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'doc_number','',$param,'align="left"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','',$param,'align="center" width="150"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
-print "</tr>\n";
-// Filters
-print '<tr class="liste_titre">';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
-print '</td>';
-print '<td class="liste_titre nowrap">'; // date
-print $formother->select_month($month?$month:-1,'month',1);
-$formother->select_year($year?$year:-1,'year',1, 20, 1);
-print '</td>';
-print '<td class="liste_titre" align="center">';
-print '</td>';
-print '<td class="liste_titre" align="left">';
-print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
-print '</td>';
-print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
-print '</td>';
-print '</tr>';
-
-if ($sql_select)
-{
 	$var=true;
 	$num = $db->num_rows($resql);
+	
+	$param="&socid=".$socid."&type_element=".$type_element;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sprod_fulldescr) $param.= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
+	if ($sref) $param.= "&sref=".urlencode($sref);
+	if ($month) $param.= "&month=".$month;
+	if ($year) $param.= "&year=".$year;
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	
+    print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $totalnboflines, '', 0, '', '', $limit);
+    
+    print '<table class="liste" width="100%">'."\n";
+    // Titles with sort buttons
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'doc_number','',$param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','',$param,'align="center" width="150"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
+    // Filters
+    print '<tr class="liste_titre">';
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" name="sref" size="8" value="'.$sref.'">';
+    print '</td>';
+    print '<td class="liste_titre nowrap">'; // date
+    print $formother->select_month($month?$month:-1,'month',1);
+    $formother->select_year($year?$year:-1,'year',1, 20, 1);
+    print '</td>';
+    print '<td class="liste_titre" align="center">';
+    print '</td>';
+    print '<td class="liste_titre" align="left">';
+    print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
+    print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+    print '</tr>';
+
 	$i = 0;
-	while (($objp = $db->fetch_object($resql)) && $i < $conf->liste_limit )
+	while (($objp = $db->fetch_object($resql)) && $i < min($num, $limit))
 	{
 		$documentstatic->id=$objp->doc_id;
 		$documentstatic->ref=$objp->doc_number;
@@ -532,20 +547,42 @@ if ($sql_select)
 		print "</tr>\n";
 		$i++;
 	}
-	if ($num > $conf->liste_limit) {
+
+	print "</table>";
+	
+	if ($num > $limit) {
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 	}
 	$db->free($resql);
 }
 else if (empty($type_element) || $type_element == -1)
 {
+    print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
+    
+    print '<table class="liste" width="100%">'."\n";
+    // Titles with sort buttons
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'doc_number','',$param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','',$param,'align="center" width="150"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
+    print "</tr>\n";
+    
 	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
+
+	print "</table>";
 }
 else {
+    print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
+    
+    print '<table class="liste" width="100%">'."\n";
+    
 	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+
+	print "</table>";
 }
 
-print "</table>";
 print "</form>";
 
 llxFooter();

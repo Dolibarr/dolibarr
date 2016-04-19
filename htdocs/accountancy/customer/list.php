@@ -106,7 +106,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 /*
  * View
  */
-
 llxHeader('', $langs->trans("Ventilation"));
 
 print '<script type="text/javascript">
@@ -135,7 +134,7 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
-	
+
 		foreach ( $mesCasesCochees as $maLigneCochee ) {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
@@ -153,7 +152,7 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 			if ($db->query($sql)) {
 				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
 			} else {
-				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' .  length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
 			}
 
 			$cpt ++;

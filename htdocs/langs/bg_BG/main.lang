@@ -25,6 +25,7 @@ FormatDateHourTextShort=%d %b %Y, %H:%M
 FormatDateHourText=%d %B %Y, %H:%M
 DatabaseConnection=Свързване с базата данни
 NoTemplateDefined=No template defined for this email type
+AvailableVariables=Available substitution variables
 NoTranslation=Няма превод
 NoRecordFound=Няма открити записи
 NoError=Няма грешка

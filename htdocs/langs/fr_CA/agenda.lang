@@ -1,5 +1,12 @@
 # Dolibarr language file - Source file is en_US - agenda
+OrderDeliveredInDolibarr=Commande %s classée Délivrée
 ShippingSentByEMail=Bon expédition %s envoyé par EMail
 InterventionSentByEMail=Intervention %s envoyée par EMail
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux écévements associés au projet <b>PROJECT_ID</b>.
 ExportDataset_event1=Liste évênements de l'agenda
+VisibleTimeRange=Plage d'heures visibles
+VisibleDaysRange=Plage de jours visibles
+CloneAction=Dupliquer événement
+ConfirmCloneEvent=Etes-vous sûr de vouloir dupliquer l'événement <b>%s</b> ?
+RepeatEvent=Répéter événement
+DateStartPlusOne=Date de début +1 heure

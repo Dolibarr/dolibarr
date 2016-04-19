@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,9 @@
  */
 
 /**
- * 		\file			htdocs/core/lib/account.lib.php
- * 		\ingroup		Accounting Expert
- * 		\brief			Library of accountancy functions
+ * 	\file		htdocs/core/lib/accounting.lib.php
+ * 	\ingroup	Advanced accountancy
+ * 	\brief		Library of accountancy functions
  */
 
 /**
@@ -120,7 +120,7 @@ function length_accountg($account)
 		// Clean parameters
 		$i = strlen($account);
 
-		if ($i >= 2) {
+		if ($i >= 1) {
 			while ( $i < $g ) {
 				$account .= '0';
 
@@ -152,7 +152,7 @@ function length_accounta($accounta)
 		// Clean parameters
 		$i = strlen($accounta);
 
-		if ($i >= 2) {
+		if ($i >= 1) {
 			while ( $i < $a ) {
 				$accounta .= '0';
 
@@ -166,41 +166,4 @@ function length_accounta($accounta)
 	} else {
 		return $accounta;
 	}
-}
-
-/**
- * Return accounting account with defined length for Sage Export Software
- *
- * @param 	string		$txt		Accounting account
- * @param	int			$len		Length
- * @param	int			$end		Number of characters
- *
- * @return	string          		Formated string
- */
-function length_exportsage($txt, $len, $end)
-{
-	// $txt = utf8_decode($txt);
-	// problem with this function, but we need to have the number of letter
-	if (strlen($txt) == $len) {
-		$res = $txt;
-	}
-
-	elseif (strlen($txt) > $len) {
-		$res = substr($txt, 0, $len);
-	}
-
-	else {
-		if ($end == 1) {
-			$res = $txt;
-		} else {
-			$res = "";
-		}
-		for($i = strlen($txt); $i <= ($len - 1); $i ++) {
-			$res .= " ";
-		}
-		if ($end == 0) {
-			$res .= $txt;
-		}
-	}
-	return $res;
 }

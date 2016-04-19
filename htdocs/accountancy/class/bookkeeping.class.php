@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015-*2016 Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2014-2016 Olivier Geffroy      <jeff@jeffinfo.com>
+ * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,21 +18,16 @@
  */
 
 /**
- * \file accountancy/bookkeeping.class.php
- * \ingroup accountancy
- * \brief This file is an example for a CRUD class file (Create/Read/Update/Delete)
- * Put some comments here
+ *	\file       htdocs/accountancy/class/bookkeeping.class.php
+ *	\ingroup    Advanced accountancy
+ *	\brief      File of class to manage general ledger
  */
 
-// Put here all includes required by your class file
+// Class
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
-// require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-// require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class Accountingbookkeeping
- *
- * Put here description of your class
+ * Class to manage general ledger
  */
 class BookKeeping extends CommonObject
 {
@@ -170,7 +164,7 @@ class BookKeeping extends CommonObject
 		$this->piece_num = 0;
 		
 		// first check if line not yet in bookkeeping
-		$sql = "SELECT count(*)";
+		$sql = "SELECT count(*) as nb";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE doc_type = '" . $this->doc_type . "'";
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;
@@ -180,8 +174,8 @@ class BookKeeping extends CommonObject
 		$resql = $this->db->query($sql);
 		
 		if ($resql) {
-			$row = $this->db->fetch_array($resql);
-			if ($row[0] == 0) {
+			$row = $this->db->fetch_object($resql);
+			if ($row->nb == 0) {
 				
 				// Determine piece_num
 				$sqlnum = "SELECT piece_num";
@@ -461,7 +455,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param int $id Id object
 	 * @param string $ref Ref
-	 *       
+	 * 
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null) {
@@ -1064,6 +1058,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			$obj = $this->db->fetch_object($result);
@@ -1118,7 +1113,7 @@ class BookKeeping extends CommonObject
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
 		$sql .= " WHERE piece_num = " . $piecenum;
 		
-		dol_syslog(get_class($this) . "fetch_all_per_mvt sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::" . __METHOD__, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
 			
@@ -1147,7 +1142,7 @@ class BookKeeping extends CommonObject
 			}
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
-			dol_syslog(get_class($this) . "::fetch_all_per_mvt " . $this->error, LOG_ERR);
+			dol_syslog(get_class($this) . "::" . __METHOD__ . $this->error, LOG_ERR);
 			return - 1;
 		}
 		
@@ -1206,6 +1201,48 @@ class BookKeeping extends CommonObject
 			return - 1;
 		}
 	}
+	
+	/**
+	* Description of accounting account
+	*
+	* @param 	string 	$account	Accounting account
+	* @return 	string 	
+	*/
+	function get_compte_desc($account = null)
+	{	
+		global $conf;
+		$pcgver = $conf->global->CHARTOFACCOUNTS;
+
+		$sql  = "SELECT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version, cat.label as category";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa ";
+		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+		$sql .= " AND aa.account_number = '" . $account . "'";
+		$sql .= " AND asy.rowid = " . $pcgver;
+		$sql .= " AND aa.active = 1";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
+
+		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = '';
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);	
+			}
+			
+			if(empty($obj->category)){				
+				return $obj->label;
+			}else{
+				return $obj->label.' ('.$obj->category.')';
+				
+			}
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
+
+			return -1;
+		}
+	}
+	
 }
 
 /**

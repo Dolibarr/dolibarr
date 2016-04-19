@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - bills
 BillsCustomer=Facturas a clientes
 ErrorVATIntraNotConfigured=IVA aún no configurado
+DescTaxAndDividendsArea=Esta área muestra un resumen de todos los pagos realizados en gastos especiales. Solamente se incluyen los registros del año fijado
 IntracommunityVATNumber=Número de IVA
 VATIsNotUsedForInvoice=-
 LawApplicationPart1=-

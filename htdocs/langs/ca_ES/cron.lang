@@ -16,7 +16,7 @@ KeyForCronAccess=Codi de seguretat per a la URL de llançament de tasques autom�
 FileToLaunchCronJobs=Ordre per llançar les tasques automàtiques
 CronExplainHowToRunUnix=A entorns Unix s'ha d'utilitzar la següent entrada crontab per executar la comanda cada 5 minuts
 CronExplainHowToRunWin=En entorns Microsoft (tm) Windows, pot utilitzar l'eina 'tareas programadas' per executar la comanda cada 5 minuts
-CronMethodDoesNotExists=Class %s does not contains any method %s
+CronMethodDoesNotExists=La classe %s no conté cap mètode %s
 # Menu
 CronJobs=Tasques programades
 CronListActive=Tasques programades habilitades
@@ -91,4 +91,4 @@ CronCannotLoadClass=impossible carregar la classe %s de l'objecte %s
 UseMenuModuleToolsToAddCronJobs=Anar a "inici - Utilitats mòduls - Llista de tasques Cron" per veure i editar tasques programades
 TaskDisabled=Tasca desactivada
 MakeLocalDatabaseDumpShort=Còpia de seguretat de la base de dades local
-MakeLocalDatabaseDump=Create a local database dump
+MakeLocalDatabaseDump=Crea un bolcat de base de dades local

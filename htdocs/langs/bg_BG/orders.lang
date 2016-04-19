@@ -32,6 +32,7 @@ StatusOrderSent=Доставка в процес
 StatusOrderOnProcessShort=Поръчано
 StatusOrderProcessedShort=Обработен
 StatusOrderDelivered=Доставени
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=За плащане
 StatusOrderToBill2Short=На Бил
 StatusOrderApprovedShort=Одобрен

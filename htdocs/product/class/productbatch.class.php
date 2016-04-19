@@ -469,7 +469,7 @@ class Productbatch extends CommonObject
      *  @param	DoliDB		$db    				database object
      *  @param	int			$fk_product_stock	id product_stock for objet
      *  @param	int			$with_qty    		doesn't return line with 0 quantity
-	 *  @return int         					<0 if KO, >0 if OK
+     *  @return array         					<0 if KO, array of batch
      */
     public static function findAll($db,$fk_product_stock,$with_qty=0)
     {

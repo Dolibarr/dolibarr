@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=ปริมาณสินค้าลงใ
 ProductQtyInShipmentAlreadySent=ปริมาณสินค้าจากการสั่งซื้อของลูกค้าที่เปิดส่งแล้ว
 ProductQtyInSuppliersShipmentAlreadyRecevied=ปริมาณการสั่งซื้อสินค้าจากซัพพลายเออร์ที่เปิดรับอยู่แล้ว
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=จับลูกค้า

@@ -32,6 +32,7 @@ StatusOrderSent=Sūtījuma procesā
 StatusOrderOnProcessShort=Pasūtīts
 StatusOrderProcessedShort=Apstrādāti
 StatusOrderDelivered=Piegādāts
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Pasludināts
 StatusOrderToBill2Short=Lai likumprojektu
 StatusOrderApprovedShort=Apstiprināts

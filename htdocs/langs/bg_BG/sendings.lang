@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Количество на продукт в �
 ProductQtyInShipmentAlreadySent=Количество на продукт от отворени клиентски поръчки, които вече са изпратени
 ProductQtyInSuppliersShipmentAlreadyRecevied=Количество на продукт от отворени поръчки към доставчик, които вече са получени
 NoProductToShipFoundIntoStock=Няма намерен продукт за изпращане в склад <b>%s</b>. Поправете стоковата и се върнете обратно, за да изберете друг склад.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Улов от клиента

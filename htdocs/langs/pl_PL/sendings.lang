@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Ilość produktów w otwartych dostawców zam
 ProductQtyInShipmentAlreadySent=Ilość produktu z otwartego zamówienia klienta już wysłana
 ProductQtyInSuppliersShipmentAlreadyRecevied=Ilość produktów z otwartego zlecenia dostawca otrzymał już
 NoProductToShipFoundIntoStock=Nie znaleziono produktu do wysyłki do <b>magazynu% s.</b> Prawidłowe akcji lub wrócić do wyboru innego magazynu.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Odbiór własny

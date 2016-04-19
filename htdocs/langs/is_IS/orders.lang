@@ -32,6 +32,7 @@ StatusOrderSent=Shipment in process
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=Afgreitt
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Við reikning
 StatusOrderToBill2Short=Við reikning
 StatusOrderApprovedShort=Samþykkt

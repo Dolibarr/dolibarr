@@ -124,6 +124,14 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
+    // customer preferred shipping method
+    if ($action == 'setshippingmethod' && $user->rights->societe->creer)
+    {
+        $object->fetch($id);
+        $result = $object->setShippingMethod(GETPOST('shipping_method_id','int'));
+        if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+    }
+
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->rights->societe->creer)
 	{
@@ -239,8 +247,8 @@ if ($id > 0)
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-	   print ($object->prefix_comm?$object->prefix_comm:'&nbsp;');
-	   print '</td></tr>';
+	    print ($object->prefix_comm?$object->prefix_comm:'&nbsp;');
+	    print '</td></tr>';
     }
 
 	if ($object->client)
@@ -430,6 +438,27 @@ if ($id > 0)
 		}
 		print '</div></td></tr>';
 	}
+
+    // Preferred shipping Method
+    if (! empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('SendingMethod');
+        print '<td>';
+        if (($action != 'editshipping') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editshipping')
+        {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->shipping_method_id,'shipping_method_id');
+        }
+        else
+        {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->shipping_method_id,'none');
+        }
+        print "</td>";
+        print '</tr>';
+    }
 
 	// Categories
 	if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {

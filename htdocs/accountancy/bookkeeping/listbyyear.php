@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,7 +74,6 @@ if (empty($search_date_start)) {
 	$search_date_start = dol_mktime(0, 0, 0, 1, 1, dol_print_date(dol_now(), '%Y'));
 	$search_date_end = dol_mktime(0, 0, 0, 12, 31, dol_print_date(dol_now(), '%Y'));
 }
-
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
@@ -184,13 +183,13 @@ print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
 print $formventilation->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
-print $langs->trans('to') . ' ' . $langs->trans('AccountAccounting') . ': ';
+print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
 print $formventilation->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 print $formventilation->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
-print $langs->trans('to') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
+print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 print $formventilation->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
@@ -257,9 +256,10 @@ print '<td class="liste_titre" align="center">';
 print '<input type="text" size=3 class="flat" name="search_code_journal" value="' . $search_code_journal . '"/>';
 print '</td>';
 
-print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+print '<td align="right" colspan="2" class="liste_titre">';
+print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+print '&nbsp;';
+print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 print '</td>';
 
 print "</tr>\n";
@@ -268,7 +268,7 @@ $var = True;
 
 foreach ( $object->lines as $line ) {
 	$var = ! $var;
-	
+
 	print "<tr $bc[$var]>";
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";

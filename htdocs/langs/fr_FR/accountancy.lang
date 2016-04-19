@@ -34,7 +34,7 @@ AccountAccounting=Compte comptable
 AccountAccountingSuggest=Suggestion du compte
 Ventilation=Ventilation
 
-MenuAccountancy=Accountancy
+MenuAccountancy=Comptabilité
 CustomersVentilation=Ventilation clients
 SuppliersVentilation=Ventilation fournisseurs
 TradeMargin=Marge commerciale
@@ -47,7 +47,7 @@ UpdateAccount=Modification de compte comptable
 UpdateMvts=Modification de mouvements
 WriteBookKeeping=Enregistrer les écritures dans le grand livre
 Bookkeeping=Grand livre
-AccountBalance=Account balance
+AccountBalance=Balance des comptes
 
 AccountingVentilation=Ventilation comptable
 AccountingVentilationSupplier=Ventilation comptable client
@@ -104,7 +104,7 @@ Code_tiers=Tiers
 Labelcompte=Libellé du compte
 Sens=Sens
 Codejournal=Journal
-NumPiece=Piece number
+NumPiece=Numéro de pièce
 
 DelBookKeeping=Supprimer les écritures du grand livre
 
@@ -166,14 +166,14 @@ Headername=Nom en-tête
 Type=Type de champs
 Param=Paramètres Supplémentaires
 EnabledProduct=Dans produit
-EnabledTiers=In third party
-EnabledVat=In VAT
+EnabledTiers=Dans le compte de tiers
+EnabledVat=Dans le compte TVA
 
 ## Tools - Init accounting account on product / service
-InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+InitAccountancy=Initialisation comptabilité
+InitAccountancyDesc=Cette page peut être utilisée pour initialiser un compte comptable sur les produits et services qui n'ont pas de compte comptable défini pour les ventes et les achats. Vérifiez avant que l'installation du module comptabilité avancée est complète. 
 Options=Options
-OptionModeProductSell=Mode sales
-OptionModeProductBuy=Mode purchases
-OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
-OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+OptionModeProductSell=Mode ventes
+OptionModeProductBuy=Modes achats
+OptionModeProductSellDesc=Afficher tous les produits/services n'ayant pas de compte comptable défini pour les ventes.
+OptionModeProductBuyDesc=Afficher tous les produits/services n'ayant pas de compte comptable défini pour les achats.

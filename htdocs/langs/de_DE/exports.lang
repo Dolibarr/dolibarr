@@ -128,6 +128,10 @@ SpecialCode=Spezialcode
 ExportStringFilter=%% erlaubt die Ersetzung eines oder mehrerer Zeichen im Text
 ExportDateFilter='YYYY' 'YYYYMM' 'YYYYMMDD': filtert nach einem Jahr/Monat/Tag<br>'YYYY+YYYY' 'YYYYMM+YYYYMM' 'YYYYMMDD+YYYYMMDD': filtert über einen Bereich von Jahren/Monaten/Tagen<br>'>YYYY' '>YYYYMM' '>YYYYMMDD': filtert auf die folgenden Jahre/Monate/Tage<br>'<YYYY' '<YYYYMM' '<YYYYMMDD': filtert auf die vorhergehenden Jahre/Monate/Tage
 ExportNumericFilter='NNNNN' filtert genau einen Wert<br>'NNNNN+NNNNN' filtert einen Wertebereich<br>'&gt;NNNNN' filtert nach kleineren Werten<br>'&gt;NNNNN' filtert nach größeren Werten
+ImportFromLine=Import beginnen bei Zeile
+EndAtLineNb=Ende bei Zeile
+SetThisValueTo2ToExcludeFirstLine=Setzen Sie beispielsweise den Wert auf 3, um die ersten beiden Zeilen auszuschliessen.
+KeepEmptyToGoToEndOfFile=Dieses Feld leer lassen, um die Datei bis zum Ende zu bearbeiten.
 ## filters
 SelectFilterFields=Wenn Sie nach bestimmten Werten filtern wollen, geben Sie diese Werte hier ein.
 FilterableFields=filtrierbare Felder

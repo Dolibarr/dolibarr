@@ -32,6 +32,7 @@ StatusOrderSent=Dostava u tijeku
 StatusOrderOnProcessShort=Ordered
 StatusOrderProcessedShort=Processed
 StatusOrderDelivered=Delivered
+StatusOrderDeliveredShort=Delivered
 StatusOrderToBillShort=Dostavljeno
 StatusOrderToBill2Short=Za poslat račun
 StatusOrderApprovedShort=Odobreno

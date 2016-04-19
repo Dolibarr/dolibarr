@@ -58,3 +58,5 @@ DefaultModelSupplierProposalCreate=Създаване на модел по по�
 DefaultModelSupplierProposalToBill=Шаблон по подразбиране, когато се затваря запитване за цена (прието)
 DefaultModelSupplierProposalClosed=Шаблон по подразбиране, когато се затваря запитване за цена (отказано)
 ListOfSupplierProposal=Списък на запитвания за цени към доставчици
+SupplierProposalsToClose=Supplier proposals to close
+SupplierProposalsToProcess=Supplier proposals to process

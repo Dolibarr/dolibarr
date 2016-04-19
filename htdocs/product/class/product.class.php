@@ -5,13 +5,13 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2007-2011	Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2013-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Ion agorria			<ion@agorria.com>
+ * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,6 +97,8 @@ class Product extends CommonObject
 	var $prices_by_qty=array();
 	var $prices_by_qty_id=array();
 	var $prices_by_qty_list=array();
+	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
+	var $default_vat_code;
 	//! Default VAT rate of product
 	var $tva_tx;
 	//! French VAT NPR (0 or 1)
@@ -702,6 +704,7 @@ class Product extends CommonObject
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
 			$sql.= ", ref = '" . $this->db->escape($this->ref) ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
+			$sql.= ", default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null");
 			$sql.= ", tva_tx = " . $this->tva_tx;
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
@@ -824,12 +827,14 @@ class Product extends CommonObject
 				{
 					if (empty($conf->barcode->enabled)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
 					else $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductBarCodeAlreadyExists",$this->barcode);
+					$this->errors[]=$this->error;
 					$this->db->rollback();
 					return -1;
 				}
 				else
 				{
 					$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+					$this->errors[]=$this->error;
 					$this->db->rollback();
 					return -2;
 				}
@@ -1390,27 +1395,28 @@ class Product extends CommonObject
 
 
 	/**
-	 *	Modify price of a product/Service
+	 *	Modify customer price of a product/Service
 	 *
-	 *	@param  	double	$newprice		New price
-	 *	@param  	string	$newpricebase	HT or TTC
-	 *	@param  	User	$user        	Object user that make change
-	 *	@param  	double	$newvat			New VAT Rate (For example 8.5. Should not be a string)
-	 *  @param		double	$newminprice	New price min
-	 *  @param		int		$level			0=standard, >0 = level if multilevel prices
-	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 *  @param     	int		$newpsq         1 if it has price by quantity
-	 *  @param 		int 	$ignore_autogen Used to avoid infinite loops
+	 *	@param  	double	$newprice		    New price
+	 *	@param  	string	$newpricebase	    HT or TTC
+	 *	@param  	User	$user        	    Object user that make change
+	 *	@param  	double	$newvat			    New VAT Rate (For example 8.5. Should not be a string)
+	 *  @param		double	$newminprice	    New price min
+	 *  @param		int		$level			    0=standard, >0 = level if multilevel prices
+	 *  @param     	int		$newnpr             0=Standard vat rate, 1=Special vat rate for French NPR VAT
+	 *  @param     	int		$newpsq             1 if it has price by quantity
+	 *  @param 		int 	$ignore_autogen     Used to avoid infinite loops
      *	@param      array	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+     *  @param      string  $newdefaultvatcode  Default vat code
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array())
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
 	{
 		global $conf,$langs;
 
 		$id=$this->id;
 
-		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
+		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr," newdefaultvatcode=".$newdefaultvatcode);
 
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
@@ -1504,6 +1510,7 @@ class Product extends CommonObject
 			$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
 			$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$localtaxtype1."'":"'0'").",";
 			$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$localtaxtype2."'":"'0'").",";
+            $sql.= " default_vat_code=".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
 			$sql.= " tva_tx='".price2num($newvat)."',";
             $sql.= " recuperableonly='".$newnpr."'";
 			$sql.= " WHERE rowid = ".$id;
@@ -1517,6 +1524,7 @@ class Product extends CommonObject
 				$this->multiprices_min[$level]= $price_min;
 				$this->multiprices_min_ttc[$level]= $price_min_ttc;
 				$this->multiprices_base_type[$level]= $newpricebase;
+				$this->multiprices_default_vat_code[$level]= $newdefaultvatcode;
 				$this->multiprices_tva_tx[$level]= $newvat;
 				$this->multiprices_recuperableonly[$level]= $newnpr;
 
@@ -1525,6 +1533,7 @@ class Product extends CommonObject
 				$this->price_min = $price_min;
 				$this->price_min_ttc = $price_min_ttc;
 				$this->price_base_type = $newpricebase;
+				$this->default_vat_code = $newdefaultvatcode;
 				$this->tva_tx = $newvat;
 				$this->tva_npr = $newnpr;
 				//Local taxes
@@ -1603,7 +1612,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
-		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
+		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
@@ -1647,6 +1656,7 @@ class Product extends CommonObject
 				$this->price_min_ttc			= $obj->price_min_ttc;
 				$this->price_base_type			= $obj->price_base_type;
 				$this->cost_price    			= $obj->cost_price;
+				$this->default_vat_code 		= $obj->default_vat_code;
 				$this->tva_tx					= $obj->tva_tx;
 				//! French VAT NPR
 				$this->tva_npr					= $obj->tva_npr;
@@ -2587,7 +2597,7 @@ class Product extends CommonObject
     		$sql = "SELECT rowid, fk_product";
     		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
     		$sql.= " WHERE fk_soc = ".$id_fourn;
-    		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+    		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
     		$sql.= " AND fk_product != ".$this->id;
     		$sql.= " AND entity = ".$conf->entity;
 
@@ -2609,7 +2619,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
-		if ($ref_fourn) $sql.= " AND ref_fourn = '".$ref_fourn."'";
+		if ($ref_fourn) $sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
@@ -2638,7 +2648,7 @@ class Product extends CommonObject
 				$sql.= ", ".$conf->entity;
 				$sql.= ", ".$this->id;
 				$sql.= ", ".$id_fourn;
-				$sql.= ", '".$ref_fourn."'";
+				$sql.= ", '".$this->db->escape($ref_fourn)."'";
 				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
 				$sql.= ", 0";
@@ -3338,7 +3348,7 @@ class Product extends CommonObject
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
 
-		$sql = "SELECT ps.reel, ps.fk_entrepot, ps.pmp, ps.rowid";
+		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
 		$sql.= " WHERE w.entity IN (".getEntity('stock', 1).")";
@@ -3358,7 +3368,6 @@ class Product extends CommonObject
 					$row = $this->db->fetch_object($result);
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
-					$this->stock_warehouse[$row->fk_entrepot]->pmp = $row->pmp;
 					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
 					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
@@ -3508,8 +3517,8 @@ class Product extends CommonObject
 
 			if (file_exists(dol_osencode($originImage)))
 			{
-				// Cree fichier en taille vignette
-				$this->add_thumb($originImage);
+				// Create thumbs
+				$this->addThumbs($originImage);
 			}
 		}
 
@@ -3541,7 +3550,7 @@ class Product extends CommonObject
 			$handle=opendir($dir_osencoded);
 			if (is_resource($handle))
 			{
-			    while (($file = readdir($handle)) != false)
+			    while (($file = readdir($handle)) !== false)
     			{
     				if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure data is stored in UTF8 in memory
     				if (dol_is_file($dir.$file)) return true;
@@ -3599,7 +3608,7 @@ class Product extends CommonObject
 			$handle=opendir($dir_osencoded);
             if (is_resource($handle))
             {
-    			while (($file = readdir($handle)) != false)
+    			while (($file = readdir($handle)) !== false)
     			{
     				$photo='';
 
@@ -3745,7 +3754,7 @@ class Product extends CommonObject
 		$handle=@opendir($dir_osencoded);
 		if (is_resource($handle))
 		{
-			while (($file = readdir($handle)) != false)
+			while (($file = readdir($handle)) !== false)
 			{
 				if (! utf8_check($file)) $file=utf8_encode($file);	// readdir returns ISO
 				if (dol_is_file($dir.$file) && preg_match('/('.$this->regeximgext.')$/i', $dir.$file))
@@ -3943,7 +3952,7 @@ class Product extends CommonObject
     }
 
 	/**
-	 *	Returns the text label from units dictionnary
+	 *	Returns the text label from units dictionary
 	 *
 	 * 	@param	string $type Label type (long or short)
 	 *	@return	string|int <0 if ko, label if ok
@@ -4124,13 +4133,12 @@ class Product extends CommonObject
 		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 
 			$price = $baseprice;
-			$price_min = 0;
+			$price_min = $baseprice;
 
-			if ($i > 1) {
-				//We have to make sure it does exist and it is > 0
-				if (isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
-					$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
-				}
+			//We have to make sure it does exist and it is > 0
+			//First price level only allows changing min_price
+			if ($i > 1 && isset($rules[$i]->var_percent) && $rules[$i]->var_percent) {
+				$price = $prices[$rules[$i]->fk_level] * (1 + ($rules[$i]->var_percent/100));
 			}
 
 			$prices[$i] = $price;
@@ -4140,7 +4148,11 @@ class Product extends CommonObject
 				$price_min = $price * (1 - ($rules[$i]->var_min_percent/100));
 			}
 
-			if ($price == $this->multiprices[$i] && ($price_min == $this->multiprices_min[$i])) {
+			//Little check to make sure the price is modified before triggering generation
+			$check_amount = (($price == $this->multiprices[$i]) && ($price_min == $this->multiprices_min[$i]));
+			$check_type = ($baseprice == $this->multiprices_base_type[$i]);
+
+			if ($check_amount && $check_type) {
 				continue;
 			}
 

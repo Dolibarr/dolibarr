@@ -198,7 +198,7 @@ if ($id > 0 || ! empty($ref))
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($commande,'ref','',1,'ref','ref');
 		print '</td>';
@@ -265,7 +265,12 @@ if ($id > 0 || ! empty($ref))
 
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
-		print '<td colspan="2">'.dol_print_date($commande->date,'daytext').'</td>';
+		print '<td colspan="2">';
+		print dol_print_date($commande->date,'daytext');
+		if ($commande->hasDelay() && empty($commande->date_livraison)) {
+		    print ' '.img_picto($langs->trans("Late").' : '.$commande->showDelay(), "warning");
+		}
+		print '</td>';
 		print '</tr>';
 
 		// Delivery date planned
@@ -289,6 +294,9 @@ if ($id > 0 || ! empty($ref))
 		else
 		{
 			print dol_print_date($commande->date_livraison,'daytext');
+			if ($commande->hasDelay() && ! empty($commande->date_livraison)) {
+			    print ' '.img_picto($langs->trans("Late").' : '.$commande->showDelay(), "warning");
+			}
 		}
 		print '</td>';
 		// Note on several rows

@@ -21,8 +21,49 @@
  *		\brief      Page to setup the module Website
  */
 
+
+/**
+ *	Show HTML header HTML + BODY + Top menu + left menu + DIV
+ *
+ * @param 	string 	$head				Optionnal head lines
+ * @param 	string 	$title				HTML title
+ * @param	string	$help_url			Url links to help page
+ * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ *                                  	For other external page: http://server/url
+ * @param	string	$target				Target to use on links
+ * @param 	int    	$disablejs			More content into html header
+ * @param 	int    	$disablehead		More content into html header
+ * @param 	array  	$arrayofjs			Array of complementary js files
+ * @param 	array  	$arrayofcss			Array of complementary css files
+ * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @return	void
+ */
+function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
+{
+    global $conf;
+
+    // html header
+    top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+    // top menu and left menu area
+    if (empty($conf->dol_hide_topmenu))
+    {
+        top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
+    }
+    if (empty($conf->dol_hide_leftmenu))
+    {
+        left_menu('', $help_url, '', '', 1, $title, 1);
+    }
+
+    // main area
+    //main_area($title);
+}
+
+
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
 
 $langs->load("admin");
 $langs->load("other");
@@ -36,7 +77,7 @@ $conf->dol_hide_leftmenu = 1;
 
 
 $website='website1';
-
+$object=new Website($db);
 
 
 /*
@@ -75,12 +116,21 @@ $form = new Form($db);
 
 $help_url='';
 
-llxHeader('',$langs->trans("WebsiteSetup"),$help_url);
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url);
 
+$style=' style="padding-top: 4px; padding-left: 10px; border-bottom: 1px solid #888; height: 20px; vertical-align: middle; margin-bottom: 5px;"';
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("WebsiteSetup"),$linkback,'title_setup');
+print '<div class="websiteselection centpercent"'.$style.'>';
 
+// Loop on each sites
+
+$tmp = $object->fetchAll();
+foreach($object->lines as $websitearray)
+{
+    var_dump($websitearray);
+}
+
+print '</div>';
 
 $head = array();
 
@@ -94,10 +144,6 @@ if ($_SESSION['website_mode'] == 'edit')
     print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    
-    dol_fiche_head($head, 'general', $langs->trans("Page").': '.$langs->trans("Home"), 0, 'globe');
-    
-    print load_fiche_titre($langs->trans("SEO"),'','');
     
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
@@ -151,8 +197,6 @@ if ($_SESSION['website_mode'] == 'edit')
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('WEBSITE_FOOTER',$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
     $doleditor->Create();
-    
-    dol_fiche_end();
     
     print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'" name="update"></div>';
     
