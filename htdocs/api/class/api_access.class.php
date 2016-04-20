@@ -46,7 +46,8 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * @var array $requires	role required by API method		user / external / admin
 	 */
-	public static $requires = array('user','external','admin');
+	//public static $requires = array('user','external','admin');
+	public static $requires = 'user,external,admin';
 
 	/**
 	 * @var string $role		user role
@@ -122,7 +123,8 @@ class DolibarrApiAccess implements iAuthenticate
 
         $userClass::setCacheIdentifier(static::$role);
         Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
-        return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
+        //return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
+        return strpos(static::$requires, static::$role) || static::$role == 'admin';
 	}
 
 	/**
