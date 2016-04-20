@@ -239,7 +239,7 @@ class FactureRec extends CommonInvoice
 	 * 	@param		int		$ref_int		Internal reference of other object
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
+	function fetch($rowid=0, $ref='', $ref_ext='', $ref_int='')
 	{
 		$sql = 'SELECT f.rowid, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
@@ -254,7 +254,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
-		if ($rowid) $sql.= ' WHERE f.rowid='.$rowid;
+		if ($rowid >0 ) $sql.= ' WHERE f.rowid='.$rowid;
 		elseif ($ref) $sql.= " WHERE f.titre='".$this->db->escape($ref)."'";
 		/* This field are not used for template invoice
 		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
