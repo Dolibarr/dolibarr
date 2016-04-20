@@ -985,6 +985,7 @@ class Commande extends CommonOrder
         $this->user_author_id     = $user->id;
         $this->user_valid         = '';
 		$this->date				  = dol_now();
+		$this->date_commande	  = dol_now();
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
@@ -1253,7 +1254,7 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -1386,7 +1387,7 @@ class Commande extends CommonOrder
             if (empty($tva_tx)) $tva_npr=0;
             $localtax1_tx=get_localtax($tva_tx,1,$this->client,$mysoc,$tva_npr);
             $localtax2_tx=get_localtax($tva_tx,2,$this->client,$mysoc,$tva_npr);
-            
+
             // multiprix
             if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
             $price = $prod->multiprices[$this->client->price_level];
@@ -2481,7 +2482,7 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2918,7 +2919,7 @@ class Commande extends CommonOrder
     function LibStatut($statut,$billed,$mode,$donotshowbilled=0)
     {
         global $langs, $conf;
-        
+
         $billedtext = '';
         if (empty($donotshowbilled)) $billedtext .= ($billed?' - '.$langs->trans("Billed"):'');
 
