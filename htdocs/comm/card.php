@@ -146,7 +146,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
-		$result=$object->set_prospect_level($user);
+		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -155,7 +155,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
-		$result=$object->set_commnucation_level($user);
+		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -164,7 +164,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$object->outstanding_limit=GETPOST('outstanding_limit');
-		$result=$object->set_OutstandingBill($user);
+		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
