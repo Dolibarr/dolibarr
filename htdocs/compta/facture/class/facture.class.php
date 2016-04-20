@@ -1932,7 +1932,7 @@ class Facture extends CommonInvoice
 				$this->date=dol_now();
 				$this->date_lim_reglement=$this->calculate_date_lim_reglement();
 			}
-			$num = $this->getNextNumRef($this->client);
+			$num = $this->getNextNumRef($this->thirdparty);
 		}
 		else
 		{
@@ -1971,7 +1971,7 @@ class Facture extends CommonInvoice
 			if (! $error)
 			{
 				// Define third party as a customer
-				$result=$this->client->set_as_client();
+				$result=$this->thirdparty->set_as_client();
 
 				// Si active on decremente le produit principal et ses composants a la validation de facture
 				if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_BILL) && $idwarehouse > 0)
@@ -3085,7 +3085,7 @@ class Facture extends CommonInvoice
 		// If not a draft invoice and not temporary invoice
 		if ($facref != 'PROV')
 		{
-			$maxfacnumber = $this->getNextNumRef($this->client,'last');
+			$maxfacnumber = $this->getNextNumRef($this->thirdparty,'last');
 			$ventilExportCompta = $this->getVentilExportCompta();
 			// If there is no invoice into the reset range and not already dispatched, we can delete
 			if ($maxfacnumber == '' && $ventilExportCompta == 0) return 1;

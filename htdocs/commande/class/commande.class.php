@@ -1420,15 +1420,15 @@ class Commande extends CommonOrder
             $prod=new Product($this->db);
             $prod->fetch($idproduct);
 
-            $tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
-            $tva_npr = get_default_npr($mysoc,$this->client,$prod->id);
+            $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-            $localtax1_tx=get_localtax($tva_tx,1,$this->client,$mysoc,$tva_npr);
-            $localtax2_tx=get_localtax($tva_tx,2,$this->client,$mysoc,$tva_npr);
+            $localtax1_tx=get_localtax($tva_tx,1,$this->thirdparty,$mysoc,$tva_npr);
+            $localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
             
             // multiprix
-            if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
-            $price = $prod->multiprices[$this->client->price_level];
+            if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
+            $price = $prod->multiprices[$this->thirdparty->price_level];
             else
             $price = $prod->price;
 

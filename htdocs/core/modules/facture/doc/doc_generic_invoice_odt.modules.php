@@ -291,14 +291,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
 					else {
-			                        $socobject = $object->client;
+			                        $socobject = $object->thirdparty;
                         			// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
                         			$contactobject = $object->contact;
                     			}
 				}
 				else
 				{
-					$socobject=$object->client;
+					$socobject=$object->thirdparty;
 				}
 
 				// Fetch info for linked propal

@@ -289,11 +289,11 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 				{
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->client;
+					else $socobject = $object->thirdparty;
 				}
 				else
 				{
-					$socobject=$object->client;
+					$socobject=$object->thirdparty;
 				}
 
 				// Make substitution
