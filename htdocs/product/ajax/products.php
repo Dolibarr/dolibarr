@@ -183,7 +183,7 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	if (empty($mode) || $mode == 1) {
 		$arrayresult = $form->select_produits_list("", $htmlname, $type, "", $price_level, $searchkey, $status, $finished, $outjson, $socid);
 	} elseif ($mode == 2) {
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, $socid);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson);
 	}
 
 	$db->close();
