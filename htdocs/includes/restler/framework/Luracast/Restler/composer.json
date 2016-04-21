@@ -9,10 +9,6 @@
         {
             "name":"Luracast",
             "email":"arul@luracast.com"
-        },
-        {
-            "name":"Nick nickl- Lombard",
-            "email":"github@jigsoft.co.za"
         }
     ],
     "extra":{
@@ -21,41 +17,23 @@
         }
     },
     "suggest":{
-        "luracast/explorer":"Restler's very own api explorer (see require-dev for details)",
-        "rodneyrehm/plist":"Restler supports tho Apple plist xml format (see require-dev for details)",
-        "zendframework/zendamf":"Support for the amf document format  (see require-dev for details)",
-        "symfony/yaml":"Restler can produce content in yaml format as well (see require-dev for details)",
-        "twig/twig":"Restler can render HtmlView using twig templates (see require-dev for details)",
-        "mustache/mustache":"Restler can render HtmlView using mustache/handlebar templates (see require-dev for details)",
-        "bshaffer/oauth2-server-php":"Restler can provide OAuth2 authentication using this library (see require-dev for details)"
+        "rodneyrehm/plist":"If you need Apple plist binary/xml format",
+        "zendframework/zendamf":"If you need AMF format",
+        "symfony/yaml":"If you need YAML format",
+        "twig/twig":"If you want to use twig templates with Html format",
+        "mustache/mustache":"If you want to use mustache/handlebar templates with Html format",
+        "illuminate/view":"If you want to use laravel blade templates with Html format",
+        "bshaffer/oauth2-server-php":"If you want to use OAuth2 for authentication"
     },
     "require":{
         "php":">=5.3.0"
     },
     "require-dev":{
-        "luracast/explorer":"*",
-        "rodneyrehm/plist":"dev-master",
-        "zendframework/zendamf":"dev-master",
-        "symfony/yaml":"*",
-        "mustache/mustache": "dev-master",
-        "twig/twig": "v1.13.0",
-        "bshaffer/oauth2-server-php":"v1.0"
     },
     "repositories":[
         {
             "type":"vcs",
             "url":"https://github.com/zendframework/ZendAmf.git"
-        },
-        {
-            "type":"package",
-            "package":{
-                "name":"luracast/explorer",
-                "version":"v3.0.0",
-                "dist":{
-                    "type":"zip",
-                    "url":"https://github.com/Luracast/Restler-API-Explorer/zipball/v3.0.0"
-                }
-            }
         }
     ],
     "autoload":{
