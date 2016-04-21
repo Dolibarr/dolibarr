@@ -55,9 +55,9 @@ class WebsitePage extends CommonObject
 	public $keywords;
 	public $content;
 	public $status;
-	public $date_creation = '';
-	public $date_modification = '';
-	public $tms = '';
+	public $date_creation;
+	public $date_modification;
+	public $tms;
 
 	/**
 	 */
@@ -71,7 +71,6 @@ class WebsitePage extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
@@ -546,11 +545,10 @@ class WebsitePage extends CommonObject
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
+        $label = '<u>' . $langs->trans("Page") . '</u>';
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
