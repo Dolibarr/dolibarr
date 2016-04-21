@@ -64,12 +64,12 @@ class printing_printgcp extends PrintingDriver
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
         $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
         //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+        $this->db = $db;
         
         if (!$conf->oauth->enabled) {
             $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'ModuleAuthNotActive', 'type'=>'info');
         } else {
          
-        	$this->db = $db;
         	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
         	$this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
         	// Token storage
