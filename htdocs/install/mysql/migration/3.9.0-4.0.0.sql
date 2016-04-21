@@ -385,5 +385,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NULL;
 
+ALTER TABLE llx_product ADD COLUMN default_vat_code varchar(10) after cost_price;
+
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
