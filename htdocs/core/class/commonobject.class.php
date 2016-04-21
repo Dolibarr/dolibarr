@@ -4295,7 +4295,7 @@ abstract class CommonObject
             }
             
             $this->db->begin();
-            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET $key='".$this->array_options["options_$key"]."'";
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET $key='".$this->db->escape($this->array_options["options_$key"])."'";
             $sql .= " WHERE fk_object = ".$this->id;
             $resql = $this->db->query($sql);
             if (! $resql)
