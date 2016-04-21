@@ -318,7 +318,7 @@ if ($action == 'add')
 		$db->begin();
 
 		// On cree l'action
-		$idaction=$object->add($user);
+		$idaction=$object->create($user);
 
 		if ($idaction > 0)
 		{

@@ -191,7 +191,7 @@ if (empty($reshook))
 		$object = new Client($db);
 		$result=$object->fetch(GETPOST('stcommsocid'));
 		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
-		$result=$object->set_commnucation_level($user);
+		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error,$object->errors,'errors');
 
 		$action='';

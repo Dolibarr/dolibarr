@@ -281,7 +281,7 @@ if ($action == 'create')
 		$object->fetch_thirdparty();
 
 		// Third party
-		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$object->client->getNomUrl(1,'customer').'</td>';
+		print '<tr><td>'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1,'customer').'</td>';
 		print '<td>';
 		print $langs->trans("Comment");
 		print '</td></tr>';

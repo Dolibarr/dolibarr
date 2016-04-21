@@ -1184,12 +1184,12 @@ if (empty($reshook))
 	                // Recipient was provided from combo list
 	                if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
 	                {
-	                    $sendto = $object->client->email;
+	                    $sendto = $object->thirdparty->email;
 	                    $sendtoid = 0;
 	                }
 	                else	// Id du contact
 	                {
-	                    $sendto = $object->client->contact_get_property(GETPOST('receiver','alpha'),'email');
+	                    $sendto = $object->thirdparty->contact_get_property(GETPOST('receiver','alpha'),'email');
 	                    $sendtoid = GETPOST('receiver','alpha');
 	                }
 	            }
@@ -2451,7 +2451,7 @@ elseif (! empty($object->id))
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 			$newlang = $_REQUEST['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->client->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 
 		if (!empty($newlang))
 		{

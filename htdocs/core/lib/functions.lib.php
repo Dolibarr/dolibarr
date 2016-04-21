@@ -3929,12 +3929,9 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  *  @see get_default_npr, get_default_localtax
  */
-function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
+function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
 	global $conf;
-
-	if (!is_object($thirdparty_seller)) return -1;
-	if (!is_object($thirdparty_buyer)) return -1;
 
 	// Note: possible values for tva_assuj are 0/1 or franchise/reel
 	$seller_use_vat=((is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj) || (! is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj=='franchise'))?0:1;
@@ -4012,7 +4009,7 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *	@return float       			        	0 or 1
  *  @see get_default_tva, get_default_localtax
  */
-function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
+function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
 	global $db;
 

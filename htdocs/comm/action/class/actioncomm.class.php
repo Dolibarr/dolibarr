@@ -173,7 +173,7 @@ class ActionComm extends CommonObject
      *
      *      @param		DoliDB		$db      Database handler
      */
-    function __construct($db)
+    public function __construct(DoliDB $db)
     {
         $this->db = $db;
 
@@ -189,7 +189,7 @@ class ActionComm extends CommonObject
      *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
      *    @return   int 		        	Id of created event, < 0 if KO
      */
-    function add($user,$notrigger=0)
+    public function create(User $user, $notrigger = 0)
     {
         global $langs,$conf,$hookmanager;
 
@@ -395,6 +395,20 @@ class ActionComm extends CommonObject
 
     }
 
+	/**
+	 *    Add an action/event into database.
+	 *    $this->type_id OR $this->type_code must be set.
+	 *
+	 *    @param	User	$user      		Object user making action
+	 *    @param    int		$notrigger		1 = disable triggers, 0 = enable triggers
+	 *    @return   int 		        	Id of created event, < 0 if KO
+	 * @deprecated Use create instead
+	 */
+	public function add(User $user, $notrigger = 0)
+	{
+		$this->create($user, $notrigger);
+	}
+
     /**
      *		Load an object from its id and create a new one in database
      *
@@ -436,7 +450,7 @@ class ActionComm extends CommonObject
 		}
 
         // Create clone
-        $result=$this->add($fuser);
+        $result=$this->create($fuser);
         if ($result < 0) $error++;
 
         if (! $error)

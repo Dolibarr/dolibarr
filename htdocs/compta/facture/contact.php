@@ -175,7 +175,7 @@ if ($id > 0 || ! empty($ref))
 
 		// Customer
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1,'compta').'</td></tr>';
+		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'compta').'</td></tr>';
 		print "</table>";
 
 		dol_fiche_end();
