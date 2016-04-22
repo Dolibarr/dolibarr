@@ -2060,7 +2060,7 @@ class Form
 
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
-        	if (!empty($conf->global->SUPPLIERORDER_WITH_NOPRICEDEFINED))
+        	if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
 			{
 				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
 			}
@@ -2071,7 +2071,7 @@ class Form
         }
         else
         {
-            if (!empty($conf->global->SUPPLIERORDER_WITH_NOPRICEDEFINED))
+            if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
 			{
 				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
 				print '<script type="text/javascript">$("#'.$htmlname.'").change(function() { $("#idprod").val($(this).val());});</script>';

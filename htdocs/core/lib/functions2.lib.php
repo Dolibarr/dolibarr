@@ -31,26 +31,6 @@
 //print xdebug_print_function_stack('Functions2.lib was called');exit;
 
 /**
- * Return first line of text. Cut will depends if content is HTML or not.
- *
- * @param 	string	$text		Input text
- * @return	string				Output text
- * @see dol_nboflines_bis
- */
-function dolGetFirstLineOfText($text)
-{
-	if (dol_textishtml($text))
-	{
-		$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
-	}
-	else
-	{
-    	$firstline=preg_replace('/[\n\r].*/','',$text);
-	}
-    return $firstline.((strlen($firstline) != strlen($text))?'...':'');
-}
-
-/**
  * Same function than javascript unescape() function but in PHP.
  *
  * @param 	string	$source		String to decode

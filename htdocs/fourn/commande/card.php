@@ -346,7 +346,7 @@ if (empty($reshook))
 	    {
 	    	$productsupplier = new ProductFournisseur($db);
 
-	    	if (empty($conf->global->SUPPLIERORDER_WITH_NOPRICEDEFINED))
+	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
 	    	{
 				$idprod=0;
 				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)

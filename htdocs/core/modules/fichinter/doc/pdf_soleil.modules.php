@@ -615,12 +615,12 @@ class pdf_soleil extends ModelePDFFicheinter
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+				$thirdparty = $object->thirdparty;
 			}
 
-			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$carac_client_name=pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->client, (isset($object->contact)?$object->contact:''), $usecontact, 'target',$object);
+			$carac_client=pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, (isset($object->contact)?$object->contact:''), $usecontact, 'target',$object);
 
 			// Show recipient
 			$widthrecbox=100;
