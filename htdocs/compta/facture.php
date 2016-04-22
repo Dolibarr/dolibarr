@@ -3108,13 +3108,13 @@ else if ($id > 0 || ! empty($ref))
 	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 		$sign = - 1;
 
-	$nbrows = 9;
-	$nbcols = 2;
+	$nbrows = 8;
+	$nbcols = 3;
 	if (! empty($conf->projet->enabled))
 		$nbrows ++;
-	if (! empty($conf->banque->enabled))
-		$nbcols ++;
-		// if (! empty($soc->outstandingbill)) $nbrows++;
+	if (! empty($conf->banque->enabled)) {
+		$nbrows ++; $nbcols++;
+	}
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 		$nbrows ++;
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0)
