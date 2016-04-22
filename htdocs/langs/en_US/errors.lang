@@ -6,6 +6,7 @@ NoErrorCommitIsDone=No error, we commit
 ErrorButCommitIsDone=Errors found but we validate despite this
 ErrorBadEMail=EMail %s is wrong
 ErrorBadUrl=Url %s is wrong
+ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorLoginAlreadyExists=Login %s already exists.
 ErrorGroupAlreadyExists=Group %s already exists.
 ErrorRecordNotFound=Record not found.
