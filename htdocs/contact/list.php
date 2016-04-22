@@ -483,7 +483,7 @@ if ($result)
         print '<input class="flat" type="text" name="search_lastname" size="6" value="'.dol_escape_htmltag($search_lastname).'">';
         print '</td>';
     }
-    if (! empty($arrayfields['p.lastname']['checked']))
+    if (! empty($arrayfields['p.firstname']['checked']))
     {
         print '<td class="liste_titre">';
         print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';

@@ -79,7 +79,7 @@ $dol_use_jmobile=$conf->dol_use_jmobile;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 // Colors
-$colorbackhmenu1='120,130,170';      // topmenu
+$colorbackhmenu1='110,120,160';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
 $colortopbordertitle1='40,40,40';    // top border of title
 $colorbacktitle1='230,230,230';      // title of tables,list
@@ -97,14 +97,15 @@ $colortext='0,0,0';
 $colortextlink='0,0,120';
 $fontsize='13';
 $fontsizesmaller='11';
-$usegradient=1;
-$useboldtitle=1;
+$usegradienttop=(isset($conf->global->THEME_ELDY_TOPMENU_BACK1)?0:1);
+$usegradienttitle=(isset($conf->global->THEME_ELDY_BACKTITLE1)?0:1);
+$useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
-if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='120,130,170';
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1=$colorbackhmenu1;
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
-if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
+if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER==$colorbacklinepairhover;
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
 if (! isset($conf->global->THEME_ELDY_TEXTLINK)) $conf->global->THEME_ELDY_TEXTLINK=$colortextlink;
 
@@ -803,7 +804,7 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
-	<?php if ($usegradient) { ?>
+	<?php if ($usegradienttop) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
@@ -882,7 +883,7 @@ ul.tmenu {	/* t r b l */
 }
 ul.tmenu li {	/* We need this to have background color when menu entry wraps on new lines */
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
-	<?php if ($usegradient) { ?>
+	<?php if ($usegradienttop) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -moz-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
@@ -2205,17 +2206,8 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 }
 table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
-
-	border-right-width: 1px;
-	border-right-color: #BBB;
-	border-right-style: solid;
-
-	border-left-width: 1px;
-	border-left-color: #BBB;
-	border-left-style: solid;
 	min-height: 20px;
 }
-
 table.liste th, table.noborder th {
 	padding: 10px 2px 10px 3px;			/* t r b l */
 }
@@ -2526,13 +2518,13 @@ div.liste_titre {
 	padding-top: 2px;
 	padding-bottom: 2px;
 
-	border-right-width: 1px;
+	/*border-right-width: 1px;
 	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
 	border-left-color: #BBB;
-	border-left-style: solid;
+	border-left-style: solid;*/
 
 	border-top-width: 1px;
 	border-top-color: #BBB;
@@ -2560,13 +2552,14 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 	color: #000 !important;*/
 
 	/* TO MATCH ELDY */
-	/*background: rgb(<?php echo $colorbacktitle1; ?>);*/
-	<?php if ($usegradient) { ?>
+	<?php if ($usegradienttitle) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	<?php } else { ?>
+	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php } ?>
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
 
@@ -2712,13 +2705,14 @@ tr.box_titre {
 	color: #000 !important;*/
 
 	/* TO MATCH ELDY */
-	/* background: rgb(<?php echo $colorbacktitle1; ?>); */
-	<?php if ($usegradient) { ?>
+	<?php if ($usegradienttitle) { ?>
 	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	<?php } else { ?>
+	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php } ?>
 
 	color: rgb(<?php echo $colortexttitle; ?>);
