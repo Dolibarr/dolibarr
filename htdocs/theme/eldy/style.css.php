@@ -81,7 +81,8 @@ $dol_use_jmobile=$conf->dol_use_jmobile;
 // Colors
 $colorbackhmenu1='120,130,170';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
-$colorbacktitle1='230,230,230';      // title of array
+$colortopbordertitle1='40,40,40';    // top border of title
+$colorbacktitle1='230,230,230';      // title of tables,list
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -345,7 +346,7 @@ input:-moz-placeholder { color:#ccc; }
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
 <?php } ?>
-fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #DDD; }
+fieldset { border: 1px solid #AAAAAA !important; }
 
 
 .button, input[name="sbmtConnexion"] {
@@ -1720,11 +1721,11 @@ div.tabBar {
 
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 
-	<?php if (empty($dol_optimize_smallscreen)) { ?>
+	/*<?php if (empty($dol_optimize_smallscreen)) { ?>
     -moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
-	<?php } ?>
+	<?php } ?>*/
 }
 div.popuptabset {
 	padding: 6px;
@@ -2177,17 +2178,17 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-spacing: 0px;
 
 	border-top-width: 1px;
-	border-top-color: #BBB;
+	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
-	border-right-width: 1px;
+/*	border-right-width: 1px;
 	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
 	border-left-color: #BBB;
 	border-left-style: solid;
-
+*/
 	border-bottom-width: 1px;
 	border-bottom-color: #BBB;
 	border-bottom-style: solid;
@@ -2538,6 +2539,10 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
+	border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+    
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
@@ -2555,13 +2560,13 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
 	color: #000 !important;*/
 
 	/* TO MATCH ELDY */
-	background: rgb(<?php echo $colorbacktitle1; ?>);
+	/*background: rgb(<?php echo $colorbacktitle1; ?>);*/
 	<?php if ($usegradient) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	<?php } ?>
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
 
@@ -2707,13 +2712,13 @@ tr.box_titre {
 	color: #000 !important;*/
 
 	/* TO MATCH ELDY */
-	background: rgb(<?php echo $colorbacktitle1; ?>);
+	/* background: rgb(<?php echo $colorbacktitle1; ?>); */
 	<?php if ($usegradient) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
 	<?php } ?>
 
 	color: rgb(<?php echo $colortexttitle; ?>);

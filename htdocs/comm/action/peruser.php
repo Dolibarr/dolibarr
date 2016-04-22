@@ -564,7 +564,7 @@ echo '</form>';
 //print "begin_d=".$begin_d." end_d=".$end_d;
 
 
-echo '<table width="100%" class="nocellnopadd cal_month">';
+echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';

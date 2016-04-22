@@ -334,7 +334,8 @@ print '</form>';
 
 if ($action == 'preview')
 {
-    print '<div class="center">Preview TO DO</center>';
+    print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $website).'</center><br><br><br>';
+    print '<div class="center"><div class="logo_setup"></div></div>';
 }
 
     
