@@ -200,7 +200,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			$i++;
 		}
 	    print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-	    print '<td align="right" class="liste_total">'.price($total)."</td>";
+	    print '<td align="right" class="liste_total"></td>';     // A total here has no sense
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
@@ -278,7 +278,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		        $i++;
 		    }
 		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-		    print '<td align="right">'.price($total)."</td>";
+		    print '<td align="right">'.price($total).'</td>';
 		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="right">'.price($total)."</td>";
@@ -463,7 +463,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
                 $i++;
             }
             print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
-            print '<td align="right">'."</td>";
+            print '<td align="right"></td>';      // A total here has no sense
             print '<td align="center">&nbsp;</td>';
             print '<td align="center">&nbsp;</td>';
             print '<td align="right">'.price($total)."</td>";
