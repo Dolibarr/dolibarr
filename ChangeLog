@@ -1110,6 +1110,11 @@ Dolibarr better:
 - Replaced USER_UPDATE_SESSION trigger with an updateSession hook may break modules using it.
 
 
+
+***** ChangeLog for 3.6.7 compared to 3.6.6 *****
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: CVE CVE-2015-8685
+
 ***** ChangeLog for 3.6.6 compared to 3.6.5 *****
 FIX: #3734 Do not show empty links of deleted source objects in stock movement list
 FIX: #4081 Added missing translation
@@ -1361,6 +1366,17 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Properties "civilite_id" were renamed into "civility_id".
 - Remove add_photo_web() that is not used anymore by core code.
 
+
+***** ChangeLog for 3.5.8 compared to 3.5.7 *****
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: bad calculation for stock value
+FIX: bad stock valo
+FIX: change order date on clone (as everywhere else)
+FIX: CVE CVE-2015-8685
+FIX: The hours of date filter aren't correct
+FIX: #3442 Remove useless syslog
+FIX: #3448 Pass expected date format
+FIX: #3471 3.5 Rounding issue when dispatching non-integer
 
 ***** ChangeLog for 3.5.7 compared to 3.5.6 *****
 Fix: Paypal link were broken due to SSL v3 closed.
