@@ -13,8 +13,7 @@ make a Dolibarr upgrade.
 
 
 ***** ChangeLog for 3.9.1 compared to 3.9.* *****
-FIX: #3815 Call to undefined function local_by_date().
-FIX: #3815 With higher quality
+FIX: #3815 Call to undefined function local_by_date()
 FIX: #4424 Missing email of user popup in supplier orders area
 FIX: #4442 Missing translation in Banks menu
 FIX: #4737 Bank transacion type selector translation is cropped
@@ -33,6 +32,7 @@ FIX: #4874 SQL error when listing users
 FIX: #4880
 FIX: #4961
 FIX: #4989
+FIX: If oauth has never been activated two tables are missing and printing is not working
 FIX: A not enabled field for list must not into fields to add
 FIX: Bad color of message password changed
 FIX: Bad error and style message when changing its own login
