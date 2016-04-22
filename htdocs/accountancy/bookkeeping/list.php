@@ -385,7 +385,7 @@ else {
 	print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "bk_label_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print "</tr>\n";
 
@@ -396,7 +396,7 @@ else {
 	print $langs->trans('From') . ': ';
 	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
 	print '<br>';
-	print $langs->trans('To') . ': ';
+	print $langs->trans('to') . ': ';
 	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
 	print '</td>';
 	print '<td><input type="text" name="search_doc_ref" size="8" value="' . $search_doc_ref . '"></td>';
@@ -404,14 +404,14 @@ else {
 	print $langs->trans('From');
 	print $formventilation->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '');
 	print '<br>';
-	print $langs->trans('To');
+	print $langs->trans('to');
 	print $formventilation->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, '');
 	print '</td>';
 	print '<td>';
 	print $langs->trans('From');
 	print $formventilation->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
 	print '<br>';
-	print $langs->trans('To');
+	print $langs->trans('to');
 	print $formventilation->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
 	print '</td>';
 
@@ -450,7 +450,7 @@ else {
 		print '<td>' . $line->label_compte . '</td>';
 		print '<td align="right">' . price($line->debit) . '</td>';
 		print '<td align="right">' . price($line->credit) . '</td>';
-		print '<td align="right">' . $line->code_journal . '</td>';
+		print '<td align="center">' . $line->code_journal . '</td>';
 		print '<td align="center">';
 		print '<a href="./card.php?piece_num=' . $line->piece_num . '">' . img_edit() . '</a>&nbsp;';
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $options . '&page=' . $page . '">' . img_delete() . '</a>';

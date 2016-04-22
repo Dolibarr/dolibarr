@@ -1155,9 +1155,6 @@ class CommandeFournisseur extends CommonOrder
 	            dol_syslog(get_class($this)."::create", LOG_DEBUG);
 	            if ($this->db->query($sql))
 	            {
-	                // Add entry into log
-	                $this->log($user, 0, $now);
-
 					// Add link with price request and supplier order
 					if ($this->id)
                     {
