@@ -251,6 +251,17 @@ removed. You must now use the 6 parameters way. See file modMyModule.class.php f
 - Remove add_photo_web() that is not used anymore by core code.
 
 
+***** ChangeLog for 3.5.8 compared to 3.5.7 *****
+FIX: #4291 Correctly filter external calendar GETPOSTs
+FIX: bad calculation for stock value
+FIX: bad stock valo
+FIX: change order date on clone (as everywhere else)
+FIX: CVE CVE-2015-8685
+FIX: The hours of date filter aren't correct
+FIX: #3442 Remove useless syslog
+FIX: #3448 Pass expected date format
+FIX: #3471 3.5 Rounding issue when dispatching non-integer
+
 ***** ChangeLog for 3.5.7 compared to 3.5.6 *****
 Fix: Paypal link were broken due to SSL v3 closed.
 Fix: [ bug #1769 ] Error when installing to a PostgreSQL DB that contains numbers
