@@ -97,6 +97,8 @@ class Product extends CommonObject
 	var $prices_by_qty=array();
 	var $prices_by_qty_id=array();
 	var $prices_by_qty_list=array();
+	//! Default VAT code for product (link to code into llx_c_tva but without foreign keys)
+	var $default_vat_code;
 	//! Default VAT rate of product
 	var $tva_tx;
 	//! French VAT NPR (0 or 1)
@@ -702,6 +704,7 @@ class Product extends CommonObject
 			$sql.= " SET label = '" . $this->db->escape($this->label) ."'";
 			$sql.= ", ref = '" . $this->db->escape($this->ref) ."'";
 			$sql.= ", ref_ext = ".(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext)."'":"null");
+			$sql.= ", default_vat_code = ".($this->default_vat_code ? "'".$this->db->escape($this->default_vat_code)."'" : "null");
 			$sql.= ", tva_tx = " . $this->tva_tx;
 			$sql.= ", recuperableonly = " . $this->tva_npr;
 			$sql.= ", localtax1_tx = " . $this->localtax1_tx;
@@ -824,12 +827,14 @@ class Product extends CommonObject
 				{
 					if (empty($conf->barcode->enabled)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
 					else $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductBarCodeAlreadyExists",$this->barcode);
+					$this->errors[]=$this->error;
 					$this->db->rollback();
 					return -1;
 				}
 				else
 				{
 					$this->error=$langs->trans("Error")." : ".$this->db->error()." - ".$sql;
+					$this->errors[]=$this->error;
 					$this->db->rollback();
 					return -2;
 				}
@@ -1390,27 +1395,28 @@ class Product extends CommonObject
 
 
 	/**
-	 *	Modify price of a product/Service
+	 *	Modify customer price of a product/Service
 	 *
-	 *	@param  	double	$newprice		New price
-	 *	@param  	string	$newpricebase	HT or TTC
-	 *	@param  	User	$user        	Object user that make change
-	 *	@param  	double	$newvat			New VAT Rate (For example 8.5. Should not be a string)
-	 *  @param		double	$newminprice	New price min
-	 *  @param		int		$level			0=standard, >0 = level if multilevel prices
-	 *  @param     	int		$newnpr         0=Standard vat rate, 1=Special vat rate for French NPR VAT
-	 *  @param     	int		$newpsq         1 if it has price by quantity
-	 *  @param 		int 	$ignore_autogen Used to avoid infinite loops
+	 *	@param  	double	$newprice		    New price
+	 *	@param  	string	$newpricebase	    HT or TTC
+	 *	@param  	User	$user        	    Object user that make change
+	 *	@param  	double	$newvat			    New VAT Rate (For example 8.5. Should not be a string)
+	 *  @param		double	$newminprice	    New price min
+	 *  @param		int		$level			    0=standard, >0 = level if multilevel prices
+	 *  @param     	int		$newnpr             0=Standard vat rate, 1=Special vat rate for French NPR VAT
+	 *  @param     	int		$newpsq             1 if it has price by quantity
+	 *  @param 		int 	$ignore_autogen     Used to avoid infinite loops
      *	@param      array	$localtaxes_array	Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
+     *  @param      string  $newdefaultvatcode  Default vat code
 	 * 	@return		int						    <0 if KO, >0 if OK
 	 */
-	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array())
+	function updatePrice($newprice, $newpricebase, $user, $newvat='',$newminprice='', $level=0, $newnpr=0, $newpsq=0, $ignore_autogen=0, $localtaxes_array=array(), $newdefaultvatcode='')
 	{
 		global $conf,$langs;
 
 		$id=$this->id;
 
-		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr);
+		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr," newdefaultvatcode=".$newdefaultvatcode);
 
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
@@ -1504,6 +1510,7 @@ class Product extends CommonObject
 			$sql.= " localtax2_tx=".($localtax2>=0?$localtax2:'NULL').",";
 			$sql.= " localtax1_type=".($localtaxtype1!=''?"'".$localtaxtype1."'":"'0'").",";
 			$sql.= " localtax2_type=".($localtaxtype2!=''?"'".$localtaxtype2."'":"'0'").",";
+            $sql.= " default_vat_code=".($newdefaultvatcode?"'".$this->db->escape($newdefaultvatcode)."'":"null").",";
 			$sql.= " tva_tx='".price2num($newvat)."',";
             $sql.= " recuperableonly='".$newnpr."'";
 			$sql.= " WHERE rowid = ".$id;
@@ -1517,6 +1524,7 @@ class Product extends CommonObject
 				$this->multiprices_min[$level]= $price_min;
 				$this->multiprices_min_ttc[$level]= $price_min_ttc;
 				$this->multiprices_base_type[$level]= $newpricebase;
+				$this->multiprices_default_vat_code[$level]= $newdefaultvatcode;
 				$this->multiprices_tva_tx[$level]= $newvat;
 				$this->multiprices_recuperableonly[$level]= $newnpr;
 
@@ -1525,6 +1533,7 @@ class Product extends CommonObject
 				$this->price_min = $price_min;
 				$this->price_min_ttc = $price_min_ttc;
 				$this->price_base_type = $newpricebase;
+				$this->default_vat_code = $newdefaultvatcode;
 				$this->tva_tx = $newvat;
 				$this->tva_npr = $newnpr;
 				//Local taxes
@@ -1603,7 +1612,7 @@ class Product extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
-		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
+		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, stock, pmp,";
@@ -1647,6 +1656,7 @@ class Product extends CommonObject
 				$this->price_min_ttc			= $obj->price_min_ttc;
 				$this->price_base_type			= $obj->price_base_type;
 				$this->cost_price    			= $obj->cost_price;
+				$this->default_vat_code 		= $obj->default_vat_code;
 				$this->tva_tx					= $obj->tva_tx;
 				//! French VAT NPR
 				$this->tva_npr					= $obj->tva_npr;

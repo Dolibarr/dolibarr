@@ -678,6 +678,7 @@ class Societe extends CommonObject
         $this->idprof5		= (! empty($this->idprof5)?trim($this->idprof5):'');
         $this->idprof6		= (! empty($this->idprof6)?trim($this->idprof6):'');
         $this->prefix_comm	= trim($this->prefix_comm);
+        $this->outstanding_limit = price2num($this->outstanding_limit);
 
         $this->tva_assuj	= trim($this->tva_assuj);
         $this->tva_intra	= dol_sanitizeFileName($this->tva_intra,'');
@@ -831,7 +832,7 @@ class Societe extends CommonObject
             $sql .= ",prefix_comm = ".(! empty($this->prefix_comm)?"'".$this->db->escape($this->prefix_comm)."'":"null");
 
             $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
-
+            $sql .= ",fk_stcomm='".$this->stcomm_id."'";
             $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
             $sql .= ",fk_forme_juridique = ".(! empty($this->forme_juridique_code)?"'".$this->db->escape($this->forme_juridique_code)."'":"null");
@@ -840,13 +841,15 @@ class Societe extends CommonObject
             $sql .= ",cond_reglement = ".(! empty($this->cond_reglement_id)?"'".$this->db->escape($this->cond_reglement_id)."'":"null");
             $sql .= ",mode_reglement_supplier = ".(! empty($this->mode_reglement_supplier_id)?"'".$this->db->escape($this->mode_reglement_supplier_id)."'":"null");
             $sql .= ",cond_reglement_supplier = ".(! empty($this->cond_reglement_supplier_id)?"'".$this->db->escape($this->cond_reglement_supplier_id)."'":"null");
-            $sql .= ", fk_shipping_method_id = ".(! empty($this->shipping_method_id)?"'".$this->db->escape($this->shipping_method_id)."'":"null");
+            $sql .= ",fk_shipping_method = ".(! empty($this->shipping_method_id)?"'".$this->db->escape($this->shipping_method_id)."'":"null");
             
             $sql .= ",client = " . (! empty($this->client)?$this->client:0);
             $sql .= ",fournisseur = " . (! empty($this->fournisseur)?$this->fournisseur:0);
             $sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->db->escape($this->barcode)."'":"null");
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
+            $sql .= ",outstanding_limit= '".($this->outstanding_limit!=''?$this->outstanding_limit:'null')."'";
+            $sql .= ",fk_prospectlevel='".$this->fk_prospectlevel."'";
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
@@ -3178,30 +3181,11 @@ class Societe extends CommonObject
 	 *
 	 *  @param  User	$user		Utilisateur qui definie la remise
 	 *	@return	int					<0 if KO, >0 if OK
+     * @deprecated Use update function instead
 	 */
 	function set_prospect_level(User $user)
 	{
-		if ($this->id)
-		{
-			$this->db->begin();
-
-			// Positionne remise courante
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " fk_prospectlevel='".$this->fk_prospectlevel."'";
-			$sql.= ",fk_user_modif='".$user->id."'";
-			$sql.= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this)."::set_prospect_level", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if (! $resql)
-			{
-				$this->db->rollback();
-				$this->error=$this->db->error();
-				return -1;
-			}
-
-			$this->db->commit();
-			return 1;
-		}
+        return $this->update($this->id, $user);
 	}
 
 	/**
@@ -3274,31 +3258,11 @@ class Societe extends CommonObject
 	 *
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
+     * @deprecated Use update function instead
 	 */
 	function set_commnucation_level($user)
 	{
-		if ($this->id)
-		{
-			$this->db->begin();
-
-			// Positionne remise courante
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " fk_stcomm='".$this->stcomm_id."'";
-			$sql.= ",fk_user_modif='".$user->id."'";
-			$sql.= " WHERE rowid = ".$this->id;
-
-			dol_syslog(get_class($this)."::set_commnucation_level", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if (! $resql)
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
-
-			$this->db->commit();
-			return 1;
-		}
+		return $this->update($this->id, $user);
 	}
 
 	/**
@@ -3306,35 +3270,11 @@ class Societe extends CommonObject
 	 *
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
+     * @deprecated Use update function instead
 	 */
 	function set_OutstandingBill(User $user)
 	{
-		if ($this->id)
-		{
-			$this->db->begin();
-
-			// Clean parameters
-			$outstanding = price2num($this->outstanding_limit);
-
-			// Set outstanding amount
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " outstanding_limit= '".($outstanding!=''?$outstanding:'null')."'";
-			$sql.= " WHERE rowid = ".$this->id;
-
-			dol_syslog(get_class($this)."::set_outstanding", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
-		}
+        return $this->update($this->id, $user);
 	}
 
     /**

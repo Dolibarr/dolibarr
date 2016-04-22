@@ -803,7 +803,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->fk_element  = $object->id;
 		$actioncomm->elementtype = $object->element;
 
-		$ret=$actioncomm->add($user);       // User creating action
+		$ret=$actioncomm->create($user);       // User creating action
 		
 		unset($object->actionmsg); unset($object->actionmsg2); unset($object->actiontypecode);	// When several action are called on same object, we must be sure to not reuse value of first action.
 		

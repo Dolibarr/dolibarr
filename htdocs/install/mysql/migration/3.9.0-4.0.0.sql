@@ -62,6 +62,7 @@ ALTER TABLE llx_product ADD COLUMN width_units	tinyint      DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN height		float        DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN height_units tinyint      DEFAULT NULL;
 
+ALTER TABLE llx_product ADD COLUMN default_vat_code	varchar(10) after cost_price;
 
 CREATE TABLE llx_categorie_user 
 (
@@ -101,11 +102,13 @@ UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_statu
 ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
 ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
 
+--DROP TABLE llx_website_page;
+--DROP TABLE llx_website;
 CREATE TABLE llx_website
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	entity        integer DEFAULT 1,
-	shortname     varchar(24) NOT NULL,
+	ref		      varchar(24) NOT NULL,
 	description   varchar(255),
 	status		  integer,
     date_creation     datetime,
@@ -113,7 +116,7 @@ CREATE TABLE llx_website
 	tms           timestamp
 ) ENGINE=innodb;
  
-ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_shortname (shortname, entity);
+ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 
 CREATE TABLE llx_website_page
 (
@@ -190,8 +193,7 @@ CREATE TABLE llx_multicurrency_rate
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	date_sync datetime DEFAULT NULL,  
 	rate double NOT NULL DEFAULT 0, 
-	fk_multicurrency integer NOT NULL, 
-	entity integer NOT NULL DEFAULT 1
+	fk_multicurrency integer NOT NULL 
 ) ENGINE=innodb;
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
@@ -353,8 +355,11 @@ CREATE TABLE llx_c_accounting_category (
   code 				varchar(16) NOT NULL,
   label 			varchar(255) NOT NULL,
   range_account		varchar(255) NOT NULL,
+  sens 				tinyint(1) NOT NULL DEFAULT '0', -- For international accounting  0 : credit - debit / 1 : debit - credit
+  category_type		tinyint(1) NOT NULL DEFAULT '0', -- Field calculated or not
+  formula			varchar(255) NOT NULL,			 -- Example : 1 + 2 (rowid of the category)
   position    		integer DEFAULT 0,
-  fk_country 		integer DEFAULT NULL,			-- This category is dedicated to a country
+  fk_country 		integer DEFAULT NULL,			 -- This category is dedicated to a country
   active 			integer DEFAULT 1
 ) ENGINE=innodb;
 
@@ -364,7 +369,7 @@ ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
 
 
 DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
-ALTER TABLE llx_bordereau_cheque CHANGE number ref VARCHAR(30) NOT NULL;
+ALTER TABLE llx_bordereau_cheque CHANGE COLUMN number ref VARCHAR(30) NOT NULL;
 CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 
 
@@ -382,4 +387,3 @@ ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NU
 
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
-

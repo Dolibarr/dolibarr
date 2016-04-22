@@ -120,7 +120,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEPAIR1='250,250,250';
     $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
-    $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
+    $conf->global->THEME_ELDY_USE_HOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
@@ -699,7 +699,7 @@ td.showDragHandle {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'4')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
@@ -737,7 +737,7 @@ div.ficheaddleft {
 @media only screen and (max-width: 900px)
 {
     div.fiche {
-    	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
+    	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;
     	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:16); ?>px;
     	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
     	margin-bottom: 15px;
@@ -1072,6 +1072,10 @@ div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
 
+div.mainmenu.websites {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png',1) ?>);
+}
+
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
@@ -1091,7 +1095,8 @@ foreach($conf->modules as $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
+// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices','websites');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -2941,6 +2946,27 @@ tr.visible {
 
 td.hidden {
     display: none;
+}
+
+
+/* ============================================================================== */
+/*  Module website                                                                */
+/* ============================================================================== */
+
+.websitebar {
+	border-bottom: 1px solid #888;
+	height: 30px; 
+}
+.websiteselection {
+	display: inline-block;
+	padding-left: 10px;
+	vertical-align: middle; 
+	margin-bottom: 5px;
+	line-height: 29px;
+}
+.websitetools {
+	float: right;
+	padding-top: 2px;
 }
 
 

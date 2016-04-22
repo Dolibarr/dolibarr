@@ -145,6 +145,10 @@ class mod_syslog_sentry extends LogHandler implements LogHandlerInterface
 	 */
 	public function export($content)
 	{
+		if (! $this->isActive()) {
+			return;
+		}
+
 		global $conf;
 		$dsn = $conf->global->SYSLOG_SENTRY_DSN;
 		$client = new Raven_Client(

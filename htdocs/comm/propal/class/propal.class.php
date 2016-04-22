@@ -247,16 +247,16 @@ class Propal extends CommonObject
 
             $productdesc = $prod->description;
 
-            $tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
-            $tva_npr = get_default_npr($mysoc,$this->client,$prod->id);
+            $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-            $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->client,$tva_npr);
-            $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->client,$tva_npr);
+            $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->thirdparty,$tva_npr);
+            $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->thirdparty,$tva_npr);
 
             // multiprix
-            if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
+            if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
             {
-                $price = $prod->multiprices[$this->client->price_level];
+                $price = $prod->multiprices[$this->thirdparty->price_level];
             }
             else
             {
@@ -1975,7 +1975,7 @@ class Propal extends CommonObject
                	if (! empty($conf->global->MAIN_MULTILANGS))
                	{
                		$outputlangs = new Translate("",$conf);
-               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
+               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->thirdparty->default_lang);
                		$outputlangs->setDefaultLang($newlang);
                	}
                	//$ret=$object->fetch($id);    // Reload to get new records

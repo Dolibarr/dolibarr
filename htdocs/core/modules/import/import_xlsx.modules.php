@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2012       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2012-2016 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -214,7 +214,8 @@ class Importxlsx extends ModeleImports
 	
 	/**
 	 * 	Return nb of records. File must be closed.
-	 *
+	 * 
+	 *	@param	string	$file		Path of filename
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
 	function import_get_nb_of_lines($file)

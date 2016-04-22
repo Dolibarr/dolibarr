@@ -902,7 +902,7 @@ class Form
      *	@param	string	$selected       Preselected type
      *	@param  string	$htmlname       Name of field in form
      *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client IN (1,3)')
-     *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
+     *	@param	string	$showempty		Add an empty field (Can be '1' or text key to use on empty line like 'SelectThirdParty')
      * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$events			Ajax event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
@@ -3779,7 +3779,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->selectMultiCurrency($selected,$htmlname);
+            print $this->selectMultiCurrency($selected, $htmlname, 1);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -3797,11 +3797,13 @@ class Form
      *    @param	string	$page        	Page
      *    @param    double	$rate	    	Current rate
      *    @param    string	$htmlname    	Name of select html field
+     *    @param    string  $currency       Currency code to explain the rate
      *    @return	void
      */
-    function form_multicurrency_rate($page, $rate='', $htmlname='multicurrency_tx')
+    function form_multicurrency_rate($page, $rate='', $htmlname='multicurrency_tx', $currency='')
     {
-        global $langs;
+        global $langs, $mysoc, $conf;
+        
         if ($htmlname != "none")
         {
             print '<form method="POST" action="'.$page.'">';
@@ -3816,7 +3818,15 @@ class Form
         }
         else
         {
-        	print !empty($rate) ? price(price2num($rate), 1, $langs) : 1;
+        	if (! empty($rate))
+        	{
+        	    print price($rate, 1, $langs, 1, 0);
+        	    if ($currency && $rate != 1) print ' &nbsp; ('.price($rate, 1, $langs, 1, 0).' '.$currency.' = 1 '.$conf->currency.')';
+        	}
+        	else
+        	{
+        	    print 1;
+        	}
         }
     }
 
@@ -4030,17 +4040,17 @@ class Form
      *  @param  integer	$useempty    1=Add empty line
      * 	@return	string
      */
-    function selectMultiCurrency($selected='',$htmlname='multicurrency_code', $useempty=0)
+    function selectMultiCurrency($selected='', $htmlname='multicurrency_code', $useempty=0)
     {
         global $db,$conf,$langs,$user;
 
-        $langs->loadCacheCurrencies('');
+        $langs->loadCacheCurrencies('');        // Load ->cache_currencies
 
 		$TCurrency = array();
 		
 		$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'multicurrency';
+		$sql.= " WHERE entity IN ('".getEntity('mutlicurrency')."')";
 		$resql = $db->query($sql);
-		
 		if ($resql)
 		{
 			while ($obj = $db->fetch_object($resql)) $TCurrency[$obj->code] = $obj->code;
@@ -4048,14 +4058,14 @@ class Form
 		
 		$out='';
         $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value="">&nbsp;</option>';
+		if ($useempty) $out .= '<option value="'.$conf->currency.'"'.((empty($selected) || $selected == $conf->currency)?' selected="selected"':'').'>'.$langs->cache_currencies[$conf->currency]['label'].'</option>';
 		if (count($TCurrency) > 0)
 		{
 			foreach ($langs->cache_currencies as $code_iso => $currency)
 	        {
 	        	if (isset($TCurrency[$code_iso]))
 				{
-					if (!empty($selected) && $selected == $code_iso) $out.= '<option value="'.$code_iso.'" selected>';
+					if (!empty($selected) && $selected == $code_iso) $out.= '<option value="'.$code_iso.'" selected="selected">';
 		        	else $out.= '<option value="'.$code_iso.'">';
 		        	
 		        	$out.= $currency['label'];
@@ -4063,6 +4073,7 @@ class Form
 		        	$out.= '</option>';	
 				}
 	        }
+	        
 		}
         
         $out.= '</select>';
@@ -4126,7 +4137,7 @@ class Form
      *  The name of this function should be selectVat. We keep bad name for compatibility purpose.
      *
      *  @param	string	$htmlname           Name of HTML select field
-     *  @param  float	$selectedrate       Force preselected vat rate. Use '' for no forcing.
+     *  @param  float|string    $selectedrate       Force preselected vat rate. Can be '8.5' or '8.5 (NOO)' for example. Use '' for no forcing.
      *  @param  Societe	$societe_vendeuse   Thirdparty seller
      *  @param  Societe	$societe_acheteuse  Thirdparty buyer
      *  @param  int		$idprod             Id product
@@ -4158,7 +4169,7 @@ class Form
             $defaultcode=$reg[1];
             $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
         }
-        //var_dump($defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
+        //var_dump($selectedrate.'-'.$defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
         
         // Check parameters
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->country_code)
@@ -4255,7 +4266,7 @@ class Form
         		$return.= $rate['nprtva'] ? '*': '';
         		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
-        		if ($defaultcode)
+        		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
         		{
                     if ($defaultcode == $rate['code']) $return.= ' selected';    	
         		}
@@ -4265,7 +4276,7 @@ class Form
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');
-        		$return.= $rate['nprtva'] ? ' *': '';
+        		$return.= (empty($defaultcode) && $rate['nprtva']) ? ' *': '';         // We show the *  (old behaviour only if new vat code is not used)
         		
         		$return.= '</option>';
         	}
@@ -5754,7 +5765,7 @@ class Form
             if ($caneditfield)
             {
                 if ($object->photo) $ret.="<br>\n";
-                $ret.='<table class="nobordernopadding hideonsmartphone">';
+                $ret.='<table class="nobordernopadding">';
                 if ($object->photo) $ret.='<tr><td align="center"><input type="checkbox" class="flat photodelete" name="deletephoto" id="photodelete"> '.$langs->trans("Delete").'<br><br></td></tr>';
                 $ret.='<tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
                 $ret.='<tr><td><input type="file" class="flat" name="photo" id="photoinput"></td></tr>';

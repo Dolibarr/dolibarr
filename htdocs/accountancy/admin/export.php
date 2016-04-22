@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/export.php
- * \ingroup Accounting Expert
- * \brief Setup page to configure accounting expert module
+ * \file 		htdocs/accountancy/admin/export.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 

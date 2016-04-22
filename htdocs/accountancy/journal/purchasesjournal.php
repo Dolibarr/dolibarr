@@ -22,9 +22,9 @@
  */
 
 /**
- * \file htdocs/accountancy/journal/purchasesjournal.php
- * \ingroup Accounting Expert
- * \brief Page with purchases journal
+ * \file		htdocs/accountancy/journal/purchasesjournal.php
+ * \ingroup		Advanced accountancy
+ * \brief		Page with purchases journal
  */
 require '../../main.inc.php';
 

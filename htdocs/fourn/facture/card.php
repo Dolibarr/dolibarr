@@ -830,6 +830,7 @@ if (empty($reshook))
 	    	unset($_POST['remise_percent']);
 	    	unset($_POST['pu']);
 	    	unset($_POST['price_ht']);
+			unset($_POST['multicurrency_price_ht']);
 	    	unset($_POST['price_ttc']);
 	    	unset($_POST['tva_tx']);
 	    	unset($_POST['label']);
@@ -975,12 +976,12 @@ if (empty($reshook))
                 // Recipient was provided from combo list
                 if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
-                    $sendto = $object->client->email;
+                    $sendto = $object->thirdparty->email;
                     $sendtoid = 0;
                 }
                 else	// Id du contact
                 {
-                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
+                    $sendto = $object->thirdparty->contact_get_property($_POST['receiver'],'email');
                     $sendtoid = $_POST['receiver'];
                 }
             }
@@ -1119,7 +1120,7 @@ if (empty($reshook))
 
 	    $outputlangs = $langs;
 	    $newlang=GETPOST('lang_id','alpha');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	    if (! empty($newlang))
 	    {
 	        $outputlangs = new Translate("",$conf);
@@ -2053,9 +2054,9 @@ else
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($action == 'editmulticurrencyrate') {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
 			}
 			print '</td></tr>';
 		}
@@ -2350,7 +2351,11 @@ else
 	            // Delete
 	            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
-	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    if ($object->getSommePaiement()) {
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+                    } else {
+    	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    }
 	            }
 	            print '</div>';
 	            print '<br>';
@@ -2418,7 +2423,7 @@ else
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
             	$newlang = $_REQUEST['lang_id'];
             if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-            	$newlang = $object->client->default_lang;
+            	$newlang = $object->thirdparty->default_lang;
 
             if (!empty($newlang))
             {

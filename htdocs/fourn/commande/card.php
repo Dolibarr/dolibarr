@@ -472,6 +472,7 @@ if (empty($reshook))
 	    	unset($_POST['remise_percent']);
 	    	unset($_POST['pu']);
 	    	unset($_POST['price_ht']);
+			unset($_POST['multicurrency_price_ht']);
 	    	unset($_POST['price_ttc']);
 	    	unset($_POST['tva_tx']);
 	    	unset($_POST['label']);
@@ -1183,12 +1184,12 @@ if (empty($reshook))
 	                // Recipient was provided from combo list
 	                if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
 	                {
-	                    $sendto = $object->client->email;
+	                    $sendto = $object->thirdparty->email;
 	                    $sendtoid = 0;
 	                }
 	                else	// Id du contact
 	                {
-	                    $sendto = $object->client->contact_get_property(GETPOST('receiver','alpha'),'email');
+	                    $sendto = $object->thirdparty->contact_get_property(GETPOST('receiver','alpha'),'email');
 	                    $sendtoid = GETPOST('receiver','alpha');
 	                }
 	            }
@@ -2027,9 +2028,9 @@ elseif (! empty($object->id))
 		print '</tr></table>';
 		print '</td><td colspan="5">';
 		if ($action == 'editmulticurrencyrate') {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
 		}
 		print '</td></tr>';
 	}
@@ -2450,7 +2451,7 @@ elseif (! empty($object->id))
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 			$newlang = $_REQUEST['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->client->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 
 		if (!empty($newlang))
 		{

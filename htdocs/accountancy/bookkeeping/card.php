@@ -333,7 +333,7 @@ if ($action == 'create') {
 				
 				print '<tr class="liste_titre">';
 				
-				print_liste_field_titre($langs->trans("Numerocompte"));
+				print_liste_field_titre($langs->trans("AccountAccountingShort"));
 				print_liste_field_titre($langs->trans("Code_tiers"));
 				print_liste_field_titre($langs->trans("Labelcompte"));
 				print_liste_field_titre($langs->trans("Debit"), "", "", "", "", 'align="center"');
