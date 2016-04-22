@@ -171,10 +171,10 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Customer
-		if (is_null($object->client))	$object->fetch_thirdparty();
+		if (is_null($object->thirdparty))	$object->fetch_thirdparty();
 
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
 		// Delivery address
 		if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))

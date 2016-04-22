@@ -146,9 +146,6 @@ class FormCompany
 		print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
 		print '<tr><td>';
 
-		print '<select class="flat" name="'.$htmlname.'">';
-		if ($empty) print '<option value="">&nbsp;</option>';
-
 		dol_syslog(get_class($this).'::form_prospect_level',LOG_DEBUG);
 		$sql = "SELECT code, label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
@@ -157,25 +154,25 @@ class FormCompany
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			while ($i < $num)
-			{
-				$obj = $this->db->fetch_object($resql);
+			$options = array();
 
-				print '<option value="'.$obj->code.'"';
-				if ($selected == $obj->code) print ' selected';
-				print '>';
-				$level=$langs->trans($obj->code);
-				if ($level == $obj->code) $level=$langs->trans($obj->label);
-				print $level;
-				print '</option>';
-
-				$i++;
+			if ($empty) {
+				$options[''] = '';
 			}
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$level = $langs->trans($obj->code);
+
+				if ($level == $obj->code) {
+					$level = $langs->trans($obj->label);
+				}
+
+				$options[$obj->code] = $level;
+			}
+
+			print Form::selectarray($htmlname, $options, $selected);
 		}
 		else dol_print_error($this->db);
-		print '</select>';
 
 		print '</td>';
 		print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';

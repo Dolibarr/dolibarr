@@ -530,7 +530,7 @@ if ($id > 0 || ! empty($ref))
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$commande->client->default_lang;
+						if (empty($newlang)) $newlang=$commande->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);

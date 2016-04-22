@@ -920,6 +920,7 @@ class FormMail extends Form
 	 */
 	function setSubstitFromObject($object)
 	{
+		global $user;
 		$this->substit['__REF__'] = $object->ref;
 		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__REFCLIENT__'] = $object->ref_client;

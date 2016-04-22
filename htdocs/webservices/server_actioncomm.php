@@ -459,7 +459,7 @@ function createActionComm($authentication,$actioncomm)
 
 		$db->begin();
 
-		$result=$newobject->add($fuser);
+		$result=$newobject->create($fuser);
 		if ($result <= 0)
 		{
 			$error++;

@@ -26,6 +26,7 @@ Following changes may create regression for some external modules, but were nece
 Dolibarr better:
 - Function log() of class CommandeFournisseur has been removed. Using it is no more required.
 - Method select_type_comptes_financiers() has been renamed into selectTypeOfBankAccount() 
+- Property ->client that was deprecated 6 years ago, is replaced in all core code with ->thirdparty.
 - File '/core/tpl/document_actions_pre_headers.tpl.php' were renamed into '/core/actions_linkedfiles.inc.php'.
 So if you included it into your module, change your code like this to be compatible with all version:
   $res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';

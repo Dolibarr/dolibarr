@@ -87,10 +87,10 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 			
 			// Customer
-			if ( is_null($object->client) )
+			if ( is_null($object->thirdparty) )
 				$object->fetch_thirdparty();
 			print "<tr><td>".$langs->trans("Supplier")."</td>";
-			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 			
 			print '<tr><td>'.$langs->trans('SupplierProposalDate').'</td><td colspan="3">';
 			print dol_print_date($object->date_livraison,'daytext');

@@ -123,7 +123,7 @@ if (empty($reshook))
 				$outputlangs = $langs;
 				$newlang='';
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 				if (! empty($newlang))
 				{
 					$outputlangs = new Translate("",$conf);
@@ -152,7 +152,7 @@ if (empty($reshook))
 				$outputlangs = $langs;
 				$newlang='';
 				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 				if (! empty($newlang))
 				{
 					$outputlangs = new Translate("",$conf);
@@ -410,7 +410,7 @@ if (empty($reshook))
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
@@ -515,7 +515,7 @@ if (empty($reshook))
 			$outputlangs = $langs;
 			$newlang='';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
@@ -612,7 +612,7 @@ if (empty($reshook))
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
@@ -647,7 +647,7 @@ if (empty($reshook))
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
@@ -668,7 +668,7 @@ if (empty($reshook))
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
@@ -688,7 +688,7 @@ if (empty($reshook))
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
@@ -750,12 +750,12 @@ if (empty($reshook))
 			// Recipient was provided from combo list
 			if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
 			{
-				$sendto = $object->client->email;
+				$sendto = $object->thirdparty->email;
 				$sendtoid = 0;
 			}
 			else    // Id du contact
 			{
-				$sendto = $object->client->contact_get_property(GETPOST('receiver'),'email');
+				$sendto = $object->thirdparty->contact_get_property(GETPOST('receiver'),'email');
 				$sendtoid = GETPOST('receiver','alpha');
 			}
 		}
@@ -1261,12 +1261,6 @@ else if ($id > 0 || ! empty($ref))
 	// Print form confirm
 	print $formconfirm;
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST" name="formfichinter">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($action == 'edit_extras') print '<input type="hidden" name="action" value="update_extras">';
-	if ($action == 'contrat')     print '<input type="hidden" name="action" value="setcontrat">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -1277,7 +1271,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</td></tr>';
 
 	// Third party
-	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->client->getNomUrl(1)."</td></tr>";
+	print "<tr><td>".$langs->trans("Company").'</td><td colspan="3">'.$object->thirdparty->getNomUrl(1)."</td></tr>";
 
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
@@ -1405,8 +1399,6 @@ else if ($id > 0 || ! empty($ref))
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	print "</table>";
-
-	print '</form>';
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
@@ -1824,7 +1816,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 			$newlang = $_REQUEST['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->client->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 
 		if (!empty($newlang))
 		{

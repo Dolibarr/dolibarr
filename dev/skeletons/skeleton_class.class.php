@@ -71,7 +71,6 @@ class Skeleton_Class extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-		return 1;
 	}
 
 	/**
