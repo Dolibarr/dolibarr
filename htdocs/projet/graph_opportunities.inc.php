@@ -16,6 +16,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $i = 0;
 
 	    $totalnb=0;
+	    $totaloppnb=0;
 	    $totalamount=0;
 	    $ponderated_opp_amount=0;
 	    $valsnb=array();
@@ -32,6 +33,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	                $valsnb[$obj->opp_status]=$obj->nb;
 	                $valsamount[$obj->opp_status]=$obj->opp_amount;
 	                $totalnb+=$obj->nb;
+	                if ($obj->opp_status) $totaloppnb+=$obj->nb;
 	                $totalamount+=$obj->opp_amount;
 	                $ponderated_opp_amount+=$obj->ponderated_opp_amount;
 	            }
@@ -71,8 +73,8 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    if ($conf->use_javascript_ajax)
 	    {
 	        print '<tr class="impair"><td align="center" colspan="2">';
-	        $data=array('series'=>$dataseries);
-	        dol_print_graph('stats',400,180,$data,1,'pie',0,'',0);
+   	        $data=array('series'=>$dataseries);
+   	        dol_print_graph('stats',400,180,$data,1,'pie',0,'',0,$totaloppnb?0:1);
 	        print '</td></tr>';
 	    }
 	    //if ($totalinprocess != $total)

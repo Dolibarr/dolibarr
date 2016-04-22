@@ -1874,17 +1874,25 @@ function dol_substr($string,$start,$length,$stringencoding='')
  *  @param		int		$showpercent	Show percent (with type='pie' only)
  *  @param		string	$url			Param to add an url to click values
  *  @param		int		$combineother	0=No combine, 0.05=Combine if lower than 5%
+ *  @param      int     $shownographyet Show graph to say there is not enough data
  *  @return		void
  *  @deprecated
  *  @see DolGraph
  */
-function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05)
+function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05,$shownographyet=0)
 {
 	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
 	global $conf,$langs;
 	global $theme_datacolor;    // To have var kept when function is called several times
 
+	if ($shownographyet)
+	{
+	    print '<div class="nographyet" style="width:'.$width.'px;height:'.$height.'px;"></div>';
+	    print '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+	    return;
+	}
+	
 	if (empty($conf->use_javascript_ajax)) return;
 	$jsgraphlib='flot';
 	$datacolor=array();
@@ -2031,7 +2039,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 			});
 			</script>';
 		}
-		else print 'BadValueForPArameterType';
+		else print 'BadValueForParameterType';
 	}
 }
 

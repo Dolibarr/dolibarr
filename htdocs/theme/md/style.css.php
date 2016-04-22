@@ -2707,8 +2707,19 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 
 .logo_setup
 {
-	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg',1) ?>);
+	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg',1) ?>);	/* content is used to best fit the container */
 	display: inline-block;
+}
+.nographyet
+{
+	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nographyet.svg',1) ?>);
+	display: inline-block;
+    opacity: 0.1;
+    background-repeat: no-repeat;
+}
+.nographyettext
+{
+    opacity: 0.5;
 }
 
 div.titre {
