@@ -43,7 +43,9 @@ $search_pcgtype = GETPOST("search_pcgtype");
 $search_pcgsubtype = GETPOST("search_pcgsubtype");
 
 // Security check
-if (! $user->admin)
+if ($user->societe_id > 0)
+	accessforbidden();
+if (! $user->rights->accounting->chartofaccount)
 	accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
