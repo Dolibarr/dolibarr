@@ -10,6 +10,16 @@ Replace "& new" by "new"
 
 
 
+CKEDITOR:
+---------
+* In ckeditor/ckeditor/contents.css
+Replace:
+	margin: 20px;
+With
+	margin: 5px;
+
+
+
 NUSOAP:
 -------
 * In file nusoap.php, to avoid a warning,
@@ -38,6 +48,7 @@ with:
     }
 
 
+
 TCPDF:
 ------
 * To avoid to have QRcode changed because generated with a random mask, replace
@@ -45,13 +56,8 @@ define('QR_FIND_FROM_RANDOM', 2);
 with
 define('QR_FIND_FROM_RANDOM', false);
 
-* Removed all fonts except 
-    dejavusans* (used by greek, arab, persan, romanian, turkish), 
-    freemono* (russian), 
-    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese), 
-    helvetica* (all other languages),
-    zapfdingbats.php (for special chars like form checkboxes)
 * Removed useless directories (examples, tools)
+
 * Fix
  	// initialize subsetchars
 	$subsetchars = array();
@@ -59,12 +65,17 @@ into
 	// initialize subsetchars
 	$subsetchars = array_fill(0, 256, true);
 
-* Made freemono the default monotype font because we removed courier
+* Optionnaly, removed all fonts except 
+    dejavusans* (used by greek, arab, persan, romanian, turkish), 
+    freemono* (russian), 
+    cid*+msungstdlight+stsongstdlight+uni2cid* (chinese), 
+    helvetica* (all other languages),
+    zapfdingbats.php (for special chars like form checkboxes)
+
+* Optionnaly, made freemono the default monotype font because we removed courier
 In htdocs/includes/tcpdf/tcpdf.php
 -       protected $default_monospaced_font = 'courier';
 +       protected $default_monospaced_font = 'freemono';
-
-* Renamed getmypid into dol_getmypid().
 
 
 
@@ -76,7 +87,6 @@ Add tcpdi_parser.php and replace:
 require_once(dirname(__FILE__).'/include/tcpdf_filters.php');
 with:
 require_once(dirname(__FILE__).'/../tecnickcom/tcpdf/include/tcpdf_filters.php');
-
 
 
 

@@ -207,7 +207,10 @@ class User extends CommonObject
 		}
 		else  // The fetch was forced on an entity
 		{
-            $sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
+			if (!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode))
+				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
+			else
+				$sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba

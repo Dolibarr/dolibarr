@@ -593,8 +593,15 @@ class Contact extends CommonObject
 				$this->canvas			= $obj->canvas;
 
 				$this->import_key		= $obj->import_key;
+				
+				// Define gender according to civility
+				if(in_array($this->civility_id, array('MR'))) {
+					$this->gender = 'man';
+				} else if(in_array($this->civility_id, array('MME','MLE'))) {
+					$this->gender = 'woman';
+				}
 
-				// Recherche le user Dolibarr lie a ce contact
+				// Search Dolibarr user linked to this contact
 				$sql = "SELECT u.rowid ";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE u.fk_socpeople = ". $this->id;

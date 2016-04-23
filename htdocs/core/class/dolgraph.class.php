@@ -600,7 +600,7 @@ class DolGraph
 
 
 	/**
-	 * Build a graph onto disk using Artichow library
+	 * Build a graph onto disk using Artichow library and return img string to it
 	 *
 	 * @param	string	$file    	Image file name to use if we save onto disk
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
@@ -779,7 +779,7 @@ class DolGraph
 
 
 	/**
-	 * Build a graph onto disk using JFlot library. Input when calling this method should be:
+	 * Build a graph using JFlot library. Input when calling this method should be:
 	 *	$this->data  = array(array(      0=>'labelxA',     1=>yA),  array('labelxB',yB)); or
 	 *  $this->data  = array(array('label'=>'labelxA','data'=>yA),  array('labelxB',yB));			// TODO Syntax not supported. Removed when dol_print_graph_removed
 	 *	$this->data  = array(array(0=>'labelxA',1=>yA1,...,n=>yAn), array('labelxB',yB1,...yBn));   // when there is n series to show for each x
@@ -788,9 +788,10 @@ class DolGraph
 	 *  $this->mode = 'depth' ???
 	 *  $this->bgcolorgrid
 	 *  $this->datacolor
+	 *  $this->shownodatagraph
 	 *
 	 * @param	string	$file    	Image file name to use to save onto disk (also used as javascript unique id)
-	 * @param	string	$fileurl	Url path to show image if saved onto disk
+	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
 	private function draw_jflot($file,$fileurl)
@@ -849,7 +850,14 @@ class DolGraph
 
 		$this->stringtoshow ='<!-- Build using '.$this->_library.' -->'."\n";
 		if (! empty($this->title)) $this->stringtoshow.='<div align="center" class="dolgraphtitle'.(empty($this->cssprefix)?'':' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
+		if (! empty($this->shownographyet))
+		{
+		  $this->stringtoshow.='<div style="width:'.$this->width.'px;height:'.$this->height.'px;" class="nographyet"></div>';
+		  $this->stringtoshow.='<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+		  return;
+		}
 		$this->stringtoshow.='<div id="placeholder_'.$tag.'" style="width:'.$this->width.'px;height:'.$this->height.'px;" class="dolgraph'.(empty($this->cssprefix)?'':' dolgraph'.$this->cssprefix).'"></div>'."\n";
+		
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;

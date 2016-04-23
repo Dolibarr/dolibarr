@@ -4230,12 +4230,14 @@ abstract class CommonObject
         }
         else return 0;
     }
+    
     /**
      *	Update an exta field value for the current object.
      *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
      *  This function delte record with all extrafields and insert them again from the array $this->array_options.
-     *  $key    key of the extrafield
-     *  @return int -1=error, O=did nothing, 1=OK
+     *
+     *  @param  string      $key    Key of the extrafield
+     *  @return int                 -1=error, O=did nothing, 1=OK
      */
     function updateExtraField($key)
     {
@@ -4295,7 +4297,7 @@ abstract class CommonObject
             }
             
             $this->db->begin();
-            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET $key=".$this->array_options["options_$key"];
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET $key='".$this->db->escape($this->array_options["options_$key"])."'";
             $sql .= " WHERE fk_object = ".$this->id;
             $resql = $this->db->query($sql);
             if (! $resql)

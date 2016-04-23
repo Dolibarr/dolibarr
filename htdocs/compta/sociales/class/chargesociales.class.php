@@ -339,7 +339,22 @@ class ChargeSociales extends CommonObject
         if ($return) return 1;
         else return -1;
     }
-
+    /**
+     *    Remove tag payed on social contribution
+     *
+     *    @param	User	$user       Object user making change
+     *    @return	int					<0 if KO, >0 if OK
+     */
+    function set_unpaid($user)
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales SET";
+        $sql.= " paye = 0";
+        $sql.= " WHERE rowid = ".$this->id;
+        $return = $this->db->query($sql);
+        if ($return) return 1;
+        else return -1;
+    }
+    
     /**
      *  Retourne le libelle du statut d'une charge (impaye, payee)
      *

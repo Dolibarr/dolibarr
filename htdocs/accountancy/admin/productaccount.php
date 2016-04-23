@@ -263,9 +263,9 @@ if ($result) {
 	
 	print "</table>\n";
 	
-	print '<br /><div align="right"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="changetype"></div>';
+	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 	
-	print "<br>\n";
+	print "<br><br>\n";
 	
 	if (! empty($msg)) {
 		print $msg;
