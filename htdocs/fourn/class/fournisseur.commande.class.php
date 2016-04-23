@@ -65,7 +65,13 @@ class CommandeFournisseur extends CommonOrder
     //  		                                      -> 9=Refused  -> (reopen) 1=Validated
     //  Note: billed or not is on another field "billed"
     var $statuts;           // List of status
-    
+
+    /**
+     * Is the order already billed?
+     * @var int
+     */
+    public $billed;
+
     var $socid;
     var $fourn_id;
     var $date;
