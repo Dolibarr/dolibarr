@@ -376,7 +376,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		//$showdetails=$conf->global->PDF_PAGEFOOT_SHOWDETAILS;
+		//$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'BANK_CHEQUERECEIPT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 		$paramfreetext='BANK_CHEQUERECEIPT_FREE_TEXT';
 		$marge_basse=$this->marge_basse;
