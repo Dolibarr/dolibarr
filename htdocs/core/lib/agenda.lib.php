@@ -65,7 +65,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '<div class="fichecenter">';
 
 	if (! empty($conf->browser->phone)) print '<div class="fichehalfleft">';
-	else print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap borderright">';
+	else print '<table class="nobordernopadding" width="100%"><tr><td class="borderright">';
 
 	print '<table class="nobordernopadding">';
 
@@ -74,7 +74,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $langs->trans("ActionsToDoBy").' &nbsp; ';
-		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		print '</td><td class="maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
 		print $form->select_dolusers($filtert, 'usertodo', 1, '', ! $canedit, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		if (empty($conf->dol_optimize_smallscreen)) print ' &nbsp; '.$langs->trans("or") . ' '.$langs->trans("ToUserOfGroup").' &nbsp; ';
 		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', ! $canedit);
@@ -94,14 +94,6 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
             $multiselect=(!empty($conf->global->AGENDA_USE_EVENT_TYPE));
 		}
         print $formactions->select_type_actions($actioncode, "actioncode", $excludetype, (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), 0, $multiselect);
-		print '</td></tr>';
-
-		// Status
-		print '<tr>';
-		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
-		print $langs->trans("Status");
-		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
-		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
 		print '</td></tr>';
 	}
 
@@ -125,6 +117,17 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print $langs->trans("Project").' &nbsp; ';
 		print '</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px;">';
 		$formproject->select_projects($socid?$socid:-1, $pid, 'projectid', 0);
+		print '</td></tr>';
+	}
+
+	if ($canedit)
+	{
+		// Status
+		print '<tr>';
+		print '<td class="nowrap" style="padding-bottom: 2px; padding-right: 4px;">';
+		print $langs->trans("Status");
+		print ' &nbsp;</td><td class="nowrap maxwidthonsmartphone" style="padding-bottom: 2px; padding-right: 4px;">';
+		$formactions->form_select_status_action('formaction',$status,1,'status',1,2);
 		print '</td></tr>';
 	}
 
