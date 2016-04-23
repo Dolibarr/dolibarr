@@ -4205,7 +4205,7 @@ class Form
             $code_country="'".$societe_vendeuse->country_code."'";
         }
         else
-       {
+        {
             $code_country="'".$mysoc->country_code."'";   // Pour compatibilite ascendente
         }
         if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))    // If option to have vat for end customer for services is on
@@ -4243,8 +4243,9 @@ class Form
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
         	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         	{
-        		$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
-        		$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
+        	    $tmpthirdparty=new Societe($this->db);
+        		$defaulttx=get_default_tva($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
+        		$defaultnpr=get_default_npr($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
         		if (empty($defaulttx)) $defaultnpr=0;
         	}
 
