@@ -241,7 +241,7 @@ if (empty($reshook))
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
 		
 		if ($object->update() < 0) {
-			setEventMessage($object->error, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
