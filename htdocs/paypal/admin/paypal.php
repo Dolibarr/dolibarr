@@ -137,8 +137,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_USER").'</td><td>';
-print '<input size="32" type="text" name="PAYPAL_API_USER" value="'.$conf->global->PAYPAL_API_USER.'">';
-print ' &nbsp; '.$langs->trans("Example").': paypal_api1.mywebsite.com';
+print '<input size="32" type="text" name="PAYPAL_API_USER" placeholder="'.$langs->trans("Example").': paypal_api1.mywebsite.com" value="'.$conf->global->PAYPAL_API_USER.'">';
 print '</td></tr>';
 
 $var=!$var;
@@ -150,8 +149,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td class="fieldrequired">';
 print $langs->trans("PAYPAL_API_SIGNATURE").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" value="'.$conf->global->PAYPAL_API_SIGNATURE.'">';
-print '<br>'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF';
+print '<input size="64" type="text" name="PAYPAL_API_SIGNATURE" placeholder="'.$langs->trans("Example").': ASsqXEmw4KzmX-CPChWSVDNCNfd.A3YNR7uz-VncXXAERFDFDFDF" value="'.$conf->global->PAYPAL_API_SIGNATURE.'">';
 print '</td></tr>';
 
 $var=!$var;
@@ -183,15 +181,13 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("VendorName").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_CREDITOR" value="'.$conf->global->PAYPAL_CREDITOR.'">';
-print ' &nbsp; '.$langs->trans("Example").': '.$mysoc->name;
+print '<input size="64" type="text" name="PAYPAL_CREDITOR" placeholder="'.$langs->trans("Example").': '.$mysoc->name.'" value="'.$conf->global->PAYPAL_CREDITOR.'">';
 print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
-print '<input size="64" type="text" name="PAYPAL_CSS_URL" value="'.$conf->global->PAYPAL_CSS_URL.'">';
-print ' &nbsp; '.$langs->trans("Example").': http://mysite/mycss.css';
+print '<input size="64" type="text" name="PAYPAL_CSS_URL" placeholder="'.$langs->trans("Example").':  http://mysite/mycss.css" value="'.$conf->global->PAYPAL_CSS_URL.'">';
 print '</td></tr>';
 
 $var=!$var;
@@ -217,8 +213,7 @@ print '</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("PAYPAL_PAYONLINE_SENDEMAIL").'</td><td>';
-print '<input size="32" type="email" name="PAYPAL_PAYONLINE_SENDEMAIL" value="'.$conf->global->PAYPAL_PAYONLINE_SENDEMAIL.'">';
-print ' &nbsp; '.$langs->trans("Example").': myemail@myserver.com';
+print '<input size="32" type="email" name="PAYPAL_PAYONLINE_SENDEMAIL" placeholder="'.$langs->trans("Example").':  myemail@myserver.com" value="'.$conf->global->PAYPAL_PAYONLINE_SENDEMAIL.'">';
 print '</td></tr>';
 
 $var=true;
