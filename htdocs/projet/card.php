@@ -913,7 +913,7 @@ else
             if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
             {
                 $langs->load("propal");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
             }
             if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
             {

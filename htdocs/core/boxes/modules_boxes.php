@@ -236,8 +236,6 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             // Show box title
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']))
             {
-                //$out.= '<div id="boxto_'.$this->box_id.'_title">'."\n";
-                //$out.= '<table summary="boxtabletitle'.$this->box_id.'" width="100%" class="noborder">'."\n";
                 $out.= '<tr class="box_titre">';
                 $out.= '<td';
                 if ($nbcol > 0) { $out.= ' colspan="'.$nbcol.'"'; }
@@ -268,14 +266,11 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 }
                 $out.= '</td>';
                 $out.= "</tr>\n";
-                //$out.= "</table>\n";
-                //$out.= "</div>\n";
             }
 
             // Show box lines
             if ($nblines)
             {
-                //$out.= '<table summary="boxtablelines'.$this->box_id.'" width="100%" class="noborder">'."\n";
                 // Loop on each record
                 for ($i=0, $n=$nblines; $i < $n; $i++)
                 {

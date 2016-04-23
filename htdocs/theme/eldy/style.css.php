@@ -2204,6 +2204,11 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
+#tablelines tr.liste_titre td, tr.liste_titre.trnoborder td {
+    border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 	min-height: 20px;

@@ -189,7 +189,7 @@ $listofreferent=array(
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
-    'urlnew'=>DOL_URL_ROOT.'/comm/propal.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'propal',
     'buttonnew'=>'AddProp',
     'testnew'=>$user->rights->propal->creer,
