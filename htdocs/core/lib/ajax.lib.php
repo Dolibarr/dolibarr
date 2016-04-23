@@ -290,14 +290,15 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
 								    	needtotrigger="#" + fields[i];
 									}
 								}
-							}
-							if (needtotrigger != "")	// To force select2 to refresh visible content
-							{
-								// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
-								// This is required for example when changing zip with autocomplete that change the country
-								jQuery(needtotrigger).delay(500).queue(function() {
-    								jQuery(needtotrigger).trigger("change");
-								});
+							
+								if (needtotrigger != "")	// To force select2 to refresh visible content
+								{
+									// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
+									// This is required for example when changing zip with autocomplete that change the country
+									jQuery(needtotrigger).delay(500).queue(function() {
+	    								jQuery(this).trigger("change");
+									});
+								}
 							}
     					}
 					});
