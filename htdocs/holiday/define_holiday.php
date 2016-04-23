@@ -181,6 +181,10 @@ if ($result < 0)
 }
 
 $listUsers = $holiday->fetchUsers(false,true);
+if (is_numeric($listUsers) && $listUsers < 0)
+{
+    setEventMessages($holiday->error, $holiday->errors, 'errors');    
+}
 
 $var=true;
 $i = 0;
@@ -260,9 +264,13 @@ else
         print '<tr '.$bc[$var].' style="height: 20px;">';
         print '<td>';
         $userstatic->id=$users['rowid'];
-        $userstatic->lastname=$users['name'];
+        $userstatic->lastname=$users['lastname'];
         $userstatic->firstname=$users['firstname'];
-        print $userstatic->getNomUrl(1);
+        $userstatic->gender=$users['gender'];
+        $userstatic->photo=$users['photo'];
+        $userstatic->statut=$users['status'];
+        $userstatic->employee=$users['employee'];
+        print $userstatic->getNomUrl(-1);
         print '</td>';
 
         if (count($typeleaves))

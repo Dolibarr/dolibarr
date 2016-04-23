@@ -2075,7 +2075,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
-#tablelines tr.liste_titre td, form.formnoborder, tr.liste_titre.trnoborder td {
+#tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;

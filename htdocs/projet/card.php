@@ -991,7 +991,6 @@ else
     }
 
     print "</div>";
-    print "<br>\n";
 
     if ($action != 'presend')
     {
@@ -1011,7 +1010,7 @@ else
 
         $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-        print '</div></div class="fichehalfright">';
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
         if (!empty($object->id))
         {
@@ -1021,7 +1020,7 @@ else
 	        $somethingshown=$formactions->showactions($object,'project',$socid);
         }
 
-        print '</div>';
+        print '</div></div></div>';
     }
 
     // Hook to add more things on page
