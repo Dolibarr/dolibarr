@@ -46,7 +46,7 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 
 // Define colspan for button Add
 $colspan = 3;	// Col total ht + col edit + col delete
-if (in_array($object->element,array('propal', 'supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
+if (in_array($object->element,array('propal', 'supplier_proposal','facture','facturerec','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
 ?>
 
@@ -360,6 +360,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 			'propal',
 			'supplier_proposal',
 			'facture',
+		    'facturerec',
 			'invoice',
 			'commande',
 			'order',

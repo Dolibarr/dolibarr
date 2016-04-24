@@ -126,8 +126,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     if ($cancel) $action='';
-    
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
@@ -672,7 +672,7 @@ if (empty($reshook))
 
 	/*
 	 * Insert new invoice in database
-	*/
+	 */
 	else if ($action == 'add' && $user->rights->facture->creer)
 	{
 		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
@@ -722,7 +722,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-				
+
 				// Proprietes particulieres a facture de remplacement
 				$object->fk_facture_source = $_POST['fac_replacement'];
 				$object->type = Facture::TYPE_REPLACEMENT;
@@ -868,6 +868,15 @@ if (empty($reshook))
 				$object->ref_client     = $_POST['ref_client'];
 				$object->ref_int     	= $_POST['ref_int'];
 				$object->modelpdf       = $_POST['model'];
+				$object->fk_project		= $_POST['projectid'];
+				$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
+				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+	            $object->fk_account         = GETPOST('fk_account', 'int');
+				$object->amount				= $_POST['amount'];
+				$object->remise_absolue		= $_POST['remise_absolue'];
+				$object->remise_percent		= $_POST['remise_percent'];
+				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
+				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
 				
