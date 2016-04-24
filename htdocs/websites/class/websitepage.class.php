@@ -253,6 +253,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
+	 * @param string $website_id   ID of website
 	 * @param string $sortorder    Sort Order
 	 * @param string $sortfield    Sort field
 	 * @param int    $limit        limit
