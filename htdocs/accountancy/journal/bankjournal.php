@@ -238,7 +238,7 @@ if ($result) {
 					$paymentsalstatic->ref = $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentsalstatic->getNomUrl(2);
-					$tabtp[$obj->rowid][$account_employee ] += $obj->amount;
+					$tabtp[$obj->rowid][$account_employee] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
@@ -598,6 +598,9 @@ else {
 		}
 		if ($reflabel == '(DonationPayment)') {
 			$reflabel = $langs->trans('Donation');
+		}
+		if ($reflabel == '(SubscriptionPayment)') {
+			$reflabel = $langs->trans('SubscriptionPayment');
 		}
 
 		// Bank
