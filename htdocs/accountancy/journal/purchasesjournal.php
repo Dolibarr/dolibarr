@@ -288,7 +288,7 @@ if ($action == 'export_csv') {
 
 				if ($mt) {
 					print $date . $sep;
-					print $purchase_journal . $sep;
+					print $journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -303,7 +303,7 @@ if ($action == 'export_csv') {
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $purchase_journal . $sep;
+					print $journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -314,9 +314,10 @@ if ($action == 'export_csv') {
 				}
 			}
 
+			// Thirdparty
 			foreach ( $tabttc[$key] as $k => $mt ) {
 				print $date . $sep;
-				print $purchase_journal . $sep;
+				print $journal . $sep;
 				print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
 				print length_accounta(html_entity_decode($k)) . $sep;
 				print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -348,6 +349,7 @@ if ($action == 'export_csv') {
 				$accountingaccount = new AccountingAccount($db);
 				$accountingaccount->fetch(null, $k);
 				if ($mt) {
+					print '"' . $journal . '"' . $sep;
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -361,6 +363,7 @@ if ($action == 'export_csv') {
 			// VAT
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
+					print '"' . $journal . '"' . $sep;
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -374,6 +377,7 @@ if ($action == 'export_csv') {
 
 			// Third party
 			foreach ( $tabttc[$key] as $k => $mt ) {
+				print '"' . $journal . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;

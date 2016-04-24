@@ -160,7 +160,7 @@ if ($result) {
 		if ($obj->label == '(CustomerInvoicePayment)')
 			$compta_soc = (! empty($obj->code_compta) ? $obj->code_compta : $account_customer);
 
-			// Variable bookkeeping
+		// Variable bookkeeping
 		$tabpay[$obj->rowid]["date"] = $obj->do;
 		$tabpay[$obj->rowid]["type_payment"] = $obj->fk_type;
 		$tabpay[$obj->rowid]["ref"] = $obj->label;
@@ -418,11 +418,26 @@ if ($action == 'export_csv') {
 		foreach ( $tabpay as $key => $val ) {
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
+			$reflabel = $val["ref"];
+			if ($reflabel == '(SupplierInvoicePayment)') {
+				$reflabel = $langs->trans('Supplier');
+			}
+			if ($reflabel == '(CustomerInvoicePayment)') {
+				$reflabel = $langs->trans('Customer');
+			}		
+			if ($reflabel == '(SocialContributionPayment)') {
+				$reflabel = $langs->trans('SocialContribution');
+			}
+			if ($reflabel == '(DonationPayment)') {
+				$reflabel = $langs->trans('Donation');
+			}
+			if ($reflabel == '(SubscriptionPayment)') {
+				$reflabel = $langs->trans('Donation');
+			}
+
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
-
-			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
 			// Bank
 			foreach ( $tabbq[$key] as $k => $mt ) {
@@ -432,8 +447,12 @@ if ($action == 'export_csv') {
 				print $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
 				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-				print $val["type_payment"] . $sep;
-				print utf8_decode($val["ref"]) . $sep;
+				if ($companystatic->name == '') {
+					print $langs->trans('Bank')." - ". utf8_decode($val["ref"]) . $sep;
+				} else {
+					print $langs->trans("Bank") .' - '.utf8_decode($companystatic->name) . $sep;
+				}
+				print utf8_decode($reflabel) . $sep;
 				print "\n";
 			}
 
@@ -443,16 +462,24 @@ if ($action == 'export_csv') {
 					if ($mt) {
 						print $date . $sep;
 						print $journal . $sep;
-						if ($val["lib"] == '(SupplierInvoicePayment)') {
-							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
-						} else {
+						if ($tabtype[$key] == 'payment') {
 							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
+							print length_accounta(html_entity_decode($k)) . $sep;
+						} else if ($tabtype[$key] == 'payment_supplier') {
+							print length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) . $sep;
+							print length_accounta(html_entity_decode($k)) . $sep;
+						} else {
+							print length_accountg(html_entity_decode($k)) . $sep;
+							print $sep;
 						}
-						print length_accounta(html_entity_decode($k)) . $sep;
 						print ($mt < 0 ? 'D' : 'C') . $sep;
 						print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-						print $val["type_payment"] . $sep;
-						print utf8_decode($val["ref"]) . $sep;
+						if ($companystatic->name == '') {
+							print $langs->trans('ThirdParty')." - ". utf8_decode($val["ref"]) . $sep;
+						} else {
+							print $langs->trans('ThirdParty')." - ". utf8_decode($companystatic->name) . $sep;
+						}
+						print utf8_decode($reflabel) . $sep;
 						print "\n";
 					}
 				}
@@ -464,8 +491,12 @@ if ($action == 'export_csv') {
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
 					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print $val["type_payment"] . $sep;
-					print utf8_decode($val["ref"]) . $sep;
+					if ($companystatic->name == '') {
+						print $langs->trans('ThirdParty')." - ". utf8_decode($val["ref"]) . $sep;
+					} else {
+						print $langs->trans('ThirdParty')." - ". utf8_decode($companystatic->name) . $sep;
+					}
+					print utf8_decode($reflabel) . $sep;
 					print "\n";
 				}
 			}
@@ -480,6 +511,7 @@ if ($action == 'export_csv') {
 
 			// Bank
 			foreach ( $tabbq[$key] as $k => $mt ) {
+				print '"' . $journal . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["type_payment"] . '"' . $sep;
 				print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -498,6 +530,7 @@ if ($action == 'export_csv') {
 			if (is_array($tabtp[$key])) {
 				foreach ( $tabtp[$key] as $k => $mt ) {
 					if ($mt) {
+						print '"' . $journal . '"' . $sep;
 						print '"' . $date . '"' . $sep;
 						print '"' . $val["type_payment"] . '"' . $sep;
 						print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
@@ -514,6 +547,7 @@ if ($action == 'export_csv') {
 				}
 			} else {
 				foreach ( $tabbq[$key] as $k => $mt ) {
+					print '"' . $journal . '"' . $sep;
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg($conf->global->ACCOUNTING_ACCOUNT_SUSPENSE) . '"' . $sep;
@@ -596,6 +630,9 @@ if ($action == 'export_csv') {
 			$reflabel = $langs->trans('SocialContribution');
 		}
 		if ($reflabel == '(DonationPayment)') {
+			$reflabel = $langs->trans('Donation');
+		}
+		if ($reflabel == '(SubscriptionPayment)') {
 			$reflabel = $langs->trans('Donation');
 		}
 

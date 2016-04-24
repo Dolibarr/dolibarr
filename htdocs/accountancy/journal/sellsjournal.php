@@ -287,7 +287,7 @@ if ($action == 'writebookkeeping') {
 // Export
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
+	$journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
@@ -307,7 +307,7 @@ if ($action == 'export_csv') {
 
 			foreach ( $tabttc[$key] as $k => $mt ) {
 				print $date . $sep;
-				print $sell_journal . $sep;
+				print $journal . $sep;
 				print length_accountg($conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) . $sep;
 				print length_accounta(html_entity_decode($k)) . $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
@@ -322,7 +322,7 @@ if ($action == 'export_csv') {
 				$accountingaccount_static = new AccountingAccount($db);
 				if ($accountingaccount_static->fetch(null, $k)) {
 					print $date . $sep;
-					print $sell_journal . $sep;
+					print $journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -337,7 +337,7 @@ if ($action == 'export_csv') {
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
 					print $date . $sep;
-					print $sell_journal . $sep;
+					print $journal . $sep;
 					print length_accountg(html_entity_decode($k)) . $sep;
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
@@ -358,6 +358,7 @@ if ($action == 'export_csv') {
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
 
 			foreach ( $tabttc[$key] as $k => $mt ) {
+				print '"' . $journal . '"' . $sep;
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
@@ -374,6 +375,7 @@ if ($action == 'export_csv') {
 				$accountingaccount->fetch(null, $k);
 
 				if ($mt) {
+					print '"' . $journal . '"' . $sep;
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
@@ -388,6 +390,7 @@ if ($action == 'export_csv') {
 			// VAT
 			foreach ( $tabtva[$key] as $k => $mt ) {
 				if ($mt) {
+					print '"' . $journal . '"' . $sep;
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
