@@ -2329,6 +2329,15 @@ if ($action == 'create')
 		}
 	}
 
+	// Template invoice
+	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	$tmp='<input type="radio" name="type" id="radio_template" value="0" disabled> ';
+	$text = $tmp.$langs->trans("RepeatableInvoice") . ' ';
+	//$text.= '('.$langs->trans("YouMustCreateStandardInvoiceFirst").') ';
+	$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3);
+	print $desc;
+	print '</div></div>';
+	
 	print '</div>';
 
 	print '</td></tr>';
