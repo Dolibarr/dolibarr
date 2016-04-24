@@ -233,7 +233,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);

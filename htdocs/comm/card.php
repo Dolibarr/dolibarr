@@ -970,7 +970,7 @@ if ($id > 0)
 	if (! empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status==1)
 	{
 		$langs->load("propal");
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
 	}
 
 	if (! empty($conf->commande->enabled) && $user->rights->commande->creer && $object->status==1)

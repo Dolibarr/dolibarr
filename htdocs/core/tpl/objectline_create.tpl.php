@@ -183,7 +183,7 @@ else {
 		else
 		{
 			$ajaxoptions=array(
-					'update' => array('qty'=>'qty','remise_percent' => 'discount'),	// html id tags that will be edited with which ajax json response key
+					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
 					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
 			);

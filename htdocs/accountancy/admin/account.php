@@ -43,7 +43,9 @@ $search_pcgtype = GETPOST("search_pcgtype");
 $search_pcgsubtype = GETPOST("search_pcgsubtype");
 
 // Security check
-if (! $user->admin)
+if ($user->societe_id > 0)
+	accessforbidden();
+if (! $user->rights->accounting->chartofaccount)
 	accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -145,8 +147,8 @@ if ($result) {
 	print '<br/>';
 	
 	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
-	print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
-	print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
+	// print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
+	// print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
 	print '<br/><br/>';
 	
 	print '<table class="noborder" width="100%">';

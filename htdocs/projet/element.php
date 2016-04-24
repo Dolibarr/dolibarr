@@ -189,7 +189,7 @@ $listofreferent=array(
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
-    'urlnew'=>DOL_URL_ROOT.'/comm/propal.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'propal',
     'buttonnew'=>'AddProp',
     'testnew'=>$user->rights->propal->creer,
@@ -378,10 +378,11 @@ $showdatefilter=0;
 // Show the filter on date on top of element list
 if (! $showdatefilter)
 {
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
+	print '<div class="center centpercent">';
+    print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$projectid.'" method="post">';
 	print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
-	print '<table><tr>';
+	print '<table class="center"><tr>';
 	print '<td>'.$langs->trans("From").' ';
 	print $form->select_date($dates,'dates',0,0,1,'',1,0,1);
 	print '</td>';
@@ -393,7 +394,8 @@ if (! $showdatefilter)
 	print '</td>';
 	print '</tr></table>';
 	print '</form>';
-
+	print '</div>';
+	
 	$showdatefilter++;
 }
 

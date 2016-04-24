@@ -1127,8 +1127,8 @@ if (empty($reshook))
 										}
 
 										// View third's localtaxes for now
-										$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $object->client);
-										$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $object->client);
+										$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $object->thirdparty);
+										$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $object->thirdparty);
 
 										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit);
 
@@ -3108,13 +3108,13 @@ else if ($id > 0 || ! empty($ref))
 	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 		$sign = - 1;
 
-	$nbrows = 9;
-	$nbcols = 2;
+	$nbrows = 8;
+	$nbcols = 3;
 	if (! empty($conf->projet->enabled))
 		$nbrows ++;
-	if (! empty($conf->banque->enabled))
-		$nbcols ++;
-		// if (! empty($soc->outstandingbill)) $nbrows++;
+	if (! empty($conf->banque->enabled)) {
+		$nbrows ++; $nbcols++;
+	}
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 		$nbrows ++;
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0)

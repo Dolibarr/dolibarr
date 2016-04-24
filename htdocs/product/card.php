@@ -687,7 +687,7 @@ if (empty($reshook))
                     $object->fk_unit
                 );
                 if ($result > 0) {
-                    header("Location: " . DOL_URL_ROOT . "/comm/propal.php?id=" . $propal->id);
+                    header("Location: " . DOL_URL_ROOT . "/comm/propal/card.php?id=" . $propal->id);
                     return;
                 }
 

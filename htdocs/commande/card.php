@@ -1380,7 +1380,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$projectid = (! empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
-			$soc = $objectsrc->client;
+			$soc = $objectsrc->thirdparty;
 			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
             $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
@@ -2587,12 +2587,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if ($action != 'presend')
 		{
 			print '<div class="fichecenter"><div class="fichehalfleft">';
-			// print '<table width="100%"><tr><td width="50%" valign="top">';
-			// print '<a name="builddoc"></a>'; // ancre
 
-			/*
-			 * Documents generes
-			*/
+			// Documents
 			$comref = dol_sanitizeFileName($object->ref);
 			$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
 			$relativepath = $comref . '/' . $comref . '.pdf';
@@ -2611,14 +2607,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-			// print '</td><td valign="top" width="50%">';
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'order', $socid);
 
-			// print '</td></tr></table>';
 			print '</div></div></div>';
 		}
 

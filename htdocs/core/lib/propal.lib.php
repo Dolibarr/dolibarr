@@ -38,7 +38,7 @@ function propal_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('ProposalCard');
 	$head[$h][2] = 'comm';
 	$h++;

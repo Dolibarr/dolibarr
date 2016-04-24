@@ -937,7 +937,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
 
 		// Type of event
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
@@ -951,7 +951,7 @@ if ($id > 0)
 		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
 
         // Full day event
-        print '<tr><td class="fieldrequired">'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
+        print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
 
 		// Date start
 		print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td colspan="3">';
@@ -1090,7 +1090,7 @@ if ($id > 0)
 		// Thirdparty - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$events=array();
@@ -1115,7 +1115,7 @@ if ($id > 0)
 
 			$langs->load("projects");
 
-			print '<tr><td class="titlefield">'.$langs->trans("Project").'</td><td colspan="3">';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td colspan="3">';
 			$numprojet=$formproject->select_projects($object->socid, $object->fk_project, 'projectid');
 			if ($numprojet==0)
 			{
@@ -1125,7 +1125,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="titlefield nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
 

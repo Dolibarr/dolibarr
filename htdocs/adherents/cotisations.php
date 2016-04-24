@@ -128,7 +128,9 @@ if ($result)
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
 
     $param='';
-    $param.="&statut=$statut&date_select=$date_select";
+    if ($statut != '')    $param.="&statut=".$statut;
+    if ($date_select)     $param.="&date_select=".$date_select;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_lastname) $param.="&search_lastname=".$search_lastname;
 	if ($search_login)    $param.="&search_login=".$search_login;
 	if ($search_acount)   $param.="&search_account=".$search_account;
@@ -214,7 +216,7 @@ if ($result)
 
     $var=true;
     $total=0;
-    while ($i < $num && $i < $conf->liste_limit)
+    while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($result);
         $total+=$objp->cotisation;

@@ -692,7 +692,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("propal");
 				$newmenu->add("/comm/propal/index.php?leftmenu=propals", $langs->trans("Prop"), 0, $user->rights->propale->lire, '', $mainmenu, 'propals', 100);
-				$newmenu->add("/comm/propal.php?action=create&amp;leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
+				$newmenu->add("/comm/propal/card.php?action=create&amp;leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
 				$newmenu->add("/comm/propal/list.php?leftmenu=propals", $langs->trans("List"), 1, $user->rights->propale->lire);
 				if (empty($leftmenu) || $leftmenu=="propals") $newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=0", $langs->trans("PropalsDraft"), 2, $user->rights->propale->lire);
 				if (empty($leftmenu) || $leftmenu=="propals") $newmenu->add("/comm/propal/list.php?leftmenu=propals&viewstatut=1", $langs->trans("PropalsOpened"), 2, $user->rights->propale->lire);
@@ -1324,6 +1324,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		// We update newmenu for special dynamic menus
 		if (!empty($user->rights->banque->lire) && $mainmenu == 'bank')	// Entry for each bank account
 		{
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
 			$sql = "SELECT rowid, label, courant, rappro";
 			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 			$sql.= " WHERE entity = ".$conf->entity;
