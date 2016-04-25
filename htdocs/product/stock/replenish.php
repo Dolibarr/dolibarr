@@ -228,7 +228,9 @@ if ($action == 'order' && isset($_POST['valid']))
 $form = new Form($db);
 
 $virtualdiffersfromphysical=0;
-if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) 
+	|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED) 
+	|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 {
 	$virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
