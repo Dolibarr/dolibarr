@@ -31,6 +31,7 @@ Dolibarr better:
 So if you included it into your module, change your code like this to be compatible with all version:
   $res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
   if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+- Method commonobject->add_thumb() has been renamed into commonobject->addThumbs().
 
 
 
