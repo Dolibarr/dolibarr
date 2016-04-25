@@ -228,6 +228,8 @@ MemberResiliatedInDolibarr=Member %s resiliated
 MemberDeletedInDolibarr=Member %s deleted
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added
 ShipmentValidatedInDolibarr=Shipment %s validated
+ShipmentClassifyBilledInDolibarr=Shipment %s classify billed
+ShipmentUnClassifyBilledInDolibarr=Shipment %s classify reopened
 ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
 Export=Export
