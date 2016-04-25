@@ -3937,7 +3937,7 @@ class Form
     /**
      *	Load into the cache vat rates of a country
      *
-     *	@param	string	$country_code		Country code
+     *	@param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
      *	@return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
      */
     function load_cache_vatrates($country_code)
@@ -4013,11 +4013,18 @@ class Form
 
         $return='';
 
-        // Define defaultnpr and defaultttx
+        // Define defaultnpr, defaultttx and defaultcode
         $defaultnpr=($info_bits & 0x01);
         $defaultnpr=(preg_match('/\*/',$selectedrate) ? 1 : $defaultnpr);
         $defaulttx=str_replace('*','',$selectedrate);
-
+        $defaultcode='';
+        if (preg_match('/\s*\((.*)\)/', $defaulttx, $reg))
+        {
+            $defaultcode=$reg[1];
+            $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
+        }
+        //var_dump($defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
+        
         // Check parameters
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->country_code)
         {
@@ -4113,9 +4120,13 @@ class Form
         		$return.= $rate['nprtva'] ? '*': '';
         		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
-        		if ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
+        		if ($defaultcode)
         		{
-        			$return.= ' selected';
+                    if ($defaultcode == $rate['code']) $return.= ' selected';    	
+        		}
+        		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
+           		{
+           		    $return.= ' selected';
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');
@@ -4838,7 +4849,10 @@ class Form
         
         foreach($array as $key => $val)
         {
-           if (isset($val['enabled']) && ! $val['enabled']) 
+           /* var_dump($val);
+            var_dump(array_key_exists('enabled', $val));
+            var_dump(!$val['enabled']);*/
+           if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) 
            {
                unset($array[$key]);     // We don't want this field
                continue; 

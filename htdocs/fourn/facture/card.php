@@ -2227,7 +2227,11 @@ else
 	            // Delete
 	            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
-	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    if ($object->getSommePaiement()) {
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+                    } else {
+    	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    }
 	            }
 	            print '</div>';
 	            print '<br>';

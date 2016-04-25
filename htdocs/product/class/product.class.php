@@ -5,13 +5,13 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2007-2011	Jean Heimburger			<jean@tiaris.info>
  * Copyright (C) 2010-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2014	Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2013-2015	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2011-2014	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Henry Florian			<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2014		Ion agorria			<ion@agorria.com>
+ * Copyright (C) 2014-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2014		Ion agorria			    <ion@agorria.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2571,7 +2571,7 @@ class Product extends CommonObject
     		$sql = "SELECT rowid, fk_product";
     		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
     		$sql.= " WHERE fk_soc = ".$id_fourn;
-    		$sql.= " AND ref_fourn = '".$ref_fourn."'";
+    		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
     		$sql.= " AND fk_product != ".$this->id;
     		$sql.= " AND entity = ".$conf->entity;
 
@@ -2593,7 +2593,7 @@ class Product extends CommonObject
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
-		if ($ref_fourn) $sql.= " AND ref_fourn = '".$ref_fourn."'";
+		if ($ref_fourn) $sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
@@ -2622,7 +2622,7 @@ class Product extends CommonObject
 				$sql.= ", ".$conf->entity;
 				$sql.= ", ".$this->id;
 				$sql.= ", ".$id_fourn;
-				$sql.= ", '".$ref_fourn."'";
+				$sql.= ", '".$this->db->escape($ref_fourn)."'";
 				$sql.= ", ".$quantity;
 				$sql.= ", ".$user->id;
 				$sql.= ", 0";
@@ -3927,7 +3927,7 @@ class Product extends CommonObject
     }
 
 	/**
-	 *	Returns the text label from units dictionnary
+	 *	Returns the text label from units dictionary
 	 *
 	 * 	@param	string $type Label type (long or short)
 	 *	@return	string|int <0 if ko, label if ok
@@ -4123,7 +4123,11 @@ class Product extends CommonObject
 				$price_min = $price * (1 - ($rules[$i]->var_min_percent/100));
 			}
 
-			if ($price == $this->multiprices[$i] && ($price_min == $this->multiprices_min[$i])) {
+			//Little check to make sure the price is modified before triggering generation
+			$check_amount = (($price == $this->multiprices[$i]) && ($price_min == $this->multiprices_min[$i]));
+			$check_type = ($baseprice == $this->multiprices_base_type[$i]);
+
+			if ($check_amount && $check_type) {
 				continue;
 			}
 

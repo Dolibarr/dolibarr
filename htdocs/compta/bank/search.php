@@ -62,6 +62,8 @@ if (dol_strlen($search_dt_start) > 0)
 	$param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
 if (dol_strlen($search_dt_end) > 0)
 	$param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
+if (GETPOST("req_nb")) $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
+if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -91,7 +93,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 $companystatic=new Societe($db);
 $bankaccountstatic=new Account($db);
 
-llxHeader();
+llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -114,12 +116,10 @@ $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 if (GETPOST("req_nb"))
 {
     $sql.= " AND b.num_chq LIKE '%".$db->escape(GETPOST("req_nb"))."%'";
-    $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
 }
 if (GETPOST("thirdparty"))
 {
     $sql.=" AND s.nom LIKE '%".$db->escape(GETPOST("thirdparty"))."%'";
-    $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
 }
 if ($bid)
 {
@@ -214,7 +214,7 @@ if ($resql)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="center">';
-    $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1, 8);
+    $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1);
     print '</td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="req_nb" value="'.GETPOST("req_nb").'" size="2"></td>';
     print '<td class="liste_titre">';

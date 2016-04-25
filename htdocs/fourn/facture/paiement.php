@@ -283,7 +283,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
             print '<input type="hidden" name="societe" value="'.$obj->name.'">';
 
-            dol_fiche_head('');
+            dol_fiche_head(null);
             
             print '<table class="border" width="100%">';
 
@@ -315,6 +315,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '</table>';
             dol_fiche_end();
 
+            
 			$parameters=array('facid'=>$facid, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
 			$reshook=$hookmanager->executeHooks('paymentsupplierinvoices',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 			$error=$hookmanager->error; $errors=$hookmanager->errors;
@@ -434,7 +435,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            $preselectedchoice=$addwarning?'no':'yes';
 
 	            print '<br>';
-	            $text=$langs->trans('ConfirmSupplierPayment',$totalpayment,$langs->trans("Currency".$conf->currency));
+	            $text=$langs->trans('ConfirmSupplierPayment', price($totalpayment),$langs->trans("Currency".$conf->currency));
 	            if (GETPOST('closepaidinvoices'))
 	            {
 	                $text.='<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");

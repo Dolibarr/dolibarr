@@ -14,7 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-CREATE TABLE IF NOT EXISTS llx_propal_merge_pdf_product (
+CREATE TABLE llx_propal_merge_pdf_product (
   rowid integer NOT NULL auto_increment PRIMARY KEY,
   fk_product integer NOT NULL,
   file_name varchar(200) NOT NULL,

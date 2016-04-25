@@ -5,7 +5,7 @@
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
- * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2013  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
@@ -1211,7 +1211,7 @@ else
             print '<tr>';
             print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
-            $form->select_dolusers((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
+            print $form->select_dolusers((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
             print '</td></tr>';
         }
 
@@ -1885,7 +1885,7 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1, 0, 0, array(), 0, 'minwidth200')
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
 			    )
 		    );
 

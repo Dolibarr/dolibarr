@@ -4,7 +4,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
@@ -138,11 +138,11 @@ class User extends CommonObject
 
 		// For cache usage
 		$this->all_permissions_are_loaded = 0;
-		
-		// Force some default values 
+
+		// Force some default values
 		$this->admin = 0;
 		$this->employee = 1;
-		
+
 		$this->conf				    = new stdClass();
 		$this->rights				= new stdClass();
 		$this->rights->user			= new stdClass();
@@ -162,7 +162,7 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
 	{
-		global $langs, $conf, $user;
+		global $conf, $user;
 
 		// Clean parameters
 		$login=trim($login);
@@ -202,14 +202,17 @@ class User extends CommonObject
     		}
     		else
     		{
-    			$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database 
+    			$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
     		}
 		}
 		else  // The fetch was forced on an entity
 		{
-            $sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
+			if (!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode))
+				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
+			else
+				$sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
 		}
-		
+
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
 		{
 			$sql.= " AND (u.ldap_sid = '".$this->db->escape($sid)."' OR u.login = '".$this->db->escape($login)."') LIMIT 1";
@@ -239,7 +242,7 @@ class User extends CommonObject
 				$this->ldap_sid 	= $obj->ldap_sid;
 				$this->lastname		= $obj->lastname;
 				$this->firstname 	= $obj->firstname;
-				
+
 				$this->employee		= $obj->employee;
 
 				$this->login		= $obj->login;
@@ -256,7 +259,7 @@ class User extends CommonObject
 
                 $this->country_id   = $obj->country_id;
                 $this->country_code = $obj->country_id?$obj->country_code:'';
-                $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+                //$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
                 $this->state_id     = $obj->state_id;
                 $this->state_code   = $obj->state_code;
@@ -298,8 +301,8 @@ class User extends CommonObject
 
 				// Protection when module multicompany was set, admin was set to first entity and the module disabled,
 				// then this admin user must be admin for all entities.
-				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) $this->entity = 0; 
-				
+				if (empty($conf->multicompany->enabled) && $this->admin && $this->entity == 1) $this->entity = 0;
+
 				// Retreive all extrafield for thirdparty
 				// fetch optionals attributes and labels
 				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
@@ -1227,7 +1230,7 @@ class User extends CommonObject
 			$this->error = $langs->trans("ErrorFieldRequired",$this->login);
 			return -1;
 		}
-		
+
 		$this->db->begin();
 
 		// Update datas
@@ -1272,7 +1275,7 @@ class User extends CommonObject
 			$nbrowsaffected+=$this->db->affected_rows($resql);
 
 			// Update password
-			if ($this->pass)
+			if (!empty($this->pass))
 			{
 				if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 				{
@@ -1893,7 +1896,7 @@ class User extends CommonObject
         global $menumanager;
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
-			
+
         $result = '';
         $companylink = '';
         $link = '';
@@ -1947,11 +1950,11 @@ class User extends CommonObject
         $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
         if (empty($notooltip))
         {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
                 $langs->load("users");
                 $label=$langs->trans("ShowUser");
-                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+                $link.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $link.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
@@ -1969,7 +1972,7 @@ class User extends CommonObject
         	else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 'mini', 0, 1).'</div>';
             $result.=$picto;
 		}
-		if (abs($withpictoimg) != 2) 
+		if (abs($withpictoimg) != 2)
 		{
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block valignmiddle'.($morecss?' usertext'.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
@@ -2582,8 +2585,8 @@ class User extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-	
-	
+
+
 	/**
      *      Charge indicateurs this->nb pour le tableau de bord
      *
@@ -2618,6 +2621,6 @@ class User extends CommonObject
             return -1;
         }
     }
-	
+
 }
 

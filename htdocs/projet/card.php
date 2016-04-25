@@ -352,7 +352,7 @@ if (empty($reshook))
 	    $result=$object->delete($user);
 	    if ($result > 0)
 	    {
-	        setEventMessagess($langs->trans("RecordDeleted"), null, 'mesgs');
+	        setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	    	header("Location: index.php");
 	        exit;
 	    }
@@ -535,7 +535,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     dol_fiche_end();
 
     print '<div class="center">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
+    print '<input type="submit" class="button" value="'.$langs->trans("CreateDraft").'">';
     if (! empty($backtopage))
     {
         print ' &nbsp; &nbsp; ';

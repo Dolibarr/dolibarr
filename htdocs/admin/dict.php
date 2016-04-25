@@ -168,7 +168,7 @@ $tabsql[21]= "SELECT c.rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX
 $tabsql[22]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_input_reason";
 $tabsql[23]= "SELECT t.rowid as rowid, t.taux, c.label as country, c.code as country_code, t.fk_pays as country_id, t.note, t.active, t.accountancy_code_sell, t.accountancy_code_buy FROM ".MAIN_DB_PREFIX."c_revenuestamp as t, ".MAIN_DB_PREFIX."c_country as c WHERE t.fk_pays=c.rowid";
 $tabsql[24]= "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
-$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content, active FROM ".MAIN_DB_PREFIX."c_email_templates";
+$tabsql[25]= "SELECT rowid   as rowid, label, type_template, private, position, topic, content, active FROM ".MAIN_DB_PREFIX."c_email_templates WHERE entity IN (".getEntity('email_template',1).")";
 $tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
 $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newByMonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
@@ -232,7 +232,7 @@ $tabfield[21]= "code,label";
 $tabfield[22]= "code,label";
 $tabfield[23]= "country_id,country,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfield[24]= "code,label";
-$tabfield[25]= "label,type_template,position,topic,content";
+$tabfield[25]= "label,type_template,private,position,topic,content";
 $tabfield[26]= "code,label,short_label";
 $tabfield[27]= "code,libelle";
 $tabfield[28]= "code,label,affect,delay,newByMonth,country_id,country";
@@ -264,7 +264,7 @@ $tabfieldvalue[21]= "code,label";
 $tabfieldvalue[22]= "code,label";
 $tabfieldvalue[23]= "country,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldvalue[24]= "code,label";
-$tabfieldvalue[25]= "label,type_template,position,topic,content";
+$tabfieldvalue[25]= "label,type_template,private,position,topic,content";
 $tabfieldvalue[26]= "code,label,short_label";
 $tabfieldvalue[27]= "code,libelle";
 $tabfieldvalue[28]= "code,label,affect,delay,newByMonth,country";
@@ -296,7 +296,7 @@ $tabfieldinsert[21]= "code,label";
 $tabfieldinsert[22]= "code,label";
 $tabfieldinsert[23]= "fk_pays,taux,accountancy_code_sell,accountancy_code_buy,note";
 $tabfieldinsert[24]= "code,label";
-$tabfieldinsert[25]= "label,type_template,position,topic,content";
+$tabfieldinsert[25]= "label,type_template,private,position,topic,content,entity";
 $tabfieldinsert[26]= "code,label,short_label";
 $tabfieldinsert[27]= "code,libelle";
 $tabfieldinsert[28]= "code,label,affect,delay,newByMonth,fk_country";
@@ -585,7 +585,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
        	$ok=0;
        	setEventMessages($langs->transnoentities("ErrorFieldMustBeANumeric",$langs->transnoentities("Code")), null, 'errors');
     }
-    
+
 	// Clean some parameters
     if (isset($_POST["localtax1"]) && empty($_POST["localtax1"])) $_POST["localtax1"]='0';	// If empty, we force to 0
     if (isset($_POST["localtax2"]) && empty($_POST["localtax2"])) $_POST["localtax2"]='0';	// If empty, we force to 0
@@ -1330,7 +1330,7 @@ if ($id)
                     if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO')) || in_array($obj->type, array('systemauto'))) { $canbedisabled=0; $canbedisabled = 0; }
                     $canbemodified=$iserasable;
                     if ($obj->code == 'RECEP') $canbemodified=1;
-                        
+
                     $url = $_SERVER["PHP_SELF"].'?'.($page?'page='.$page.'&':'').'sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(! empty($obj->rowid)?$obj->rowid:(! empty($obj->code)?$obj->code:'')).'&amp;code='.(! empty($obj->code)?urlencode($obj->code):'').'&amp;id='.$id.'&amp;';
 
 					// Favorite

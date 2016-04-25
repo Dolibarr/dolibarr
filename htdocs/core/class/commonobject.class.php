@@ -2890,7 +2890,7 @@ abstract class CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
-			$sql.= ", location_incoterms = '".($id_incoterm > 0 ? $this->db->escape($location) : "null")."'";
+			$sql.= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
             $sql.= " WHERE rowid = " . $this->id;
 			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
             $resql=$this->db->query($sql);

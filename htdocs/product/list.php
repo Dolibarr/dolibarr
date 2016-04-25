@@ -10,6 +10,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013       Adolfo segura           <adolfo.segura@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,6 +80,7 @@ if ($type === '0') { $contextpage='productlist'; if ($search_type=='') $search_t
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
+$form=new Form($db);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('product');
@@ -118,6 +120,15 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 }
 if (! empty($conf->barcode->enabled)) {
 	$fieldstosearchall['p.barcode']='Gencod';
+}
+
+if (empty($conf->global->PRODUIT_MULTIPRICES))
+{
+	$titlesellprice=$langs->trans("SellingPrice");
+	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+	{
+		$titlesellprice=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
+	}
 }
 
 // Definition of fields for lists
@@ -176,7 +187,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
  */
 
 $htmlother=new FormOther($db);
-$form=new Form($db);
 
 if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 {
@@ -210,7 +220,7 @@ else
     //$sql.= ' pfp.ref_fourn as ref_supplier, ';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
 	// Add fields from extrafields
-	foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+    foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -250,7 +260,7 @@ else
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    $typ=$extrafields->attribute_type[$tmpkey];
 	    $mode=0;
-	    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+	    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
 	    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
 	    {
 	        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -264,7 +274,7 @@ else
     $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
     $sql.= ' p.datec, p.tms';
 	// Add fields from extrafields
-	foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key;
+    foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -402,16 +412,7 @@ else
     		    print '</div>';
     		}
 
-    	    if (empty($conf->global->PRODUIT_MULTIPRICES))
-    		{
-    			$titlesellprice=$langs->trans("SellingPrice");
-    		   	if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
-   				{
-					$titlesellprice=$form->textwithpicto($langs->trans("SellingPrice"), $langs->trans("DefaultPriceRealPriceMayDependOnCustomer"));
-    			}
-    		}
-    		
-            $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+			$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
             $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     		
             print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
@@ -423,7 +424,7 @@ else
     		if (! empty($arrayfields['p.duration']['checked']))  print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"],"p.duration","",$param,"",$sortfield,$sortorder);
     		if (! empty($arrayfields['p.sellprice']['checked']))  print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
-    		if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desirestock","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desiredstock","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.tobatch']['checked']))  print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"],"p.tobatch","",$param,'align="center"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.stock']['checked']))  print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"],"p.stock","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.accountancy_code_sell']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_sell","",$param,'',$sortfield,$sortorder);
