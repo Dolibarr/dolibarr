@@ -52,14 +52,17 @@ if($action)
 	// Mode of stock decrease
 	if ($action == 'STOCK_CALCULATE_ON_BILL'
 	|| $action == 'STOCK_CALCULATE_ON_VALIDATE_ORDER'
-	|| $action == 'STOCK_CALCULATE_ON_SHIPMENT')
+	|| $action == 'STOCK_CALCULATE_ON_SHIPMENT'
+	|| $action == 'STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED')
 	{
 		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", '','chaine',0,'',$conf->entity);
 		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", '','chaine',0,'',$conf->entity);
 		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", '','chaine',0,'',$conf->entity);
+		$res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED", '','chaine',0,'',$conf->entity);
 		if ($action == 'STOCK_CALCULATE_ON_BILL')           $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", GETPOST('STOCK_CALCULATE_ON_BILL','alpha'),'chaine',0,'',$conf->entity);
 		if ($action == 'STOCK_CALCULATE_ON_VALIDATE_ORDER') $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", GETPOST('STOCK_CALCULATE_ON_VALIDATE_ORDER','alpha'),'chaine',0,'',$conf->entity);
 		if ($action == 'STOCK_CALCULATE_ON_SHIPMENT')       $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", GETPOST('STOCK_CALCULATE_ON_SHIPMENT','alpha'),'chaine',0,'',$conf->entity);
+		if ($action == 'STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED')       $res=dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED", GETPOST('STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED','alpha'),'chaine',0,'',$conf->entity);
 	}
 	// Mode of stock increase
 	if ($action == 'STOCK_CALCULATE_ON_SUPPLIER_BILL'
@@ -193,6 +196,26 @@ if (! empty($conf->expedition->enabled))
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SHIPMENT\">";
 	print $form->selectyesno("STOCK_CALCULATE_ON_SHIPMENT",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1,$disabled);
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
+	print "</form>\n";
+}
+else
+{
+    print $langs->trans("ModuleMustBeEnabledFirst", $langs->transnoentitiesnoconv("Module80Name")); 
+}
+print "</td>\n</tr>\n";
+$found++;
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="60%">'.$langs->trans("DeStockOnShipmentClassifyBilled").'</td>';
+print '<td width="160" align="right">';
+if (! empty($conf->expedition->enabled))
+{
+	print "<form method=\"post\" action=\"stock.php\">";
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED\">";
+	print $form->selectyesno("STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED",$conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED,1,$disabled);
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"'.$disabled.'>';
 	print "</form>\n";
 }
