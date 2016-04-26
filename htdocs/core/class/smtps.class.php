@@ -1607,14 +1607,17 @@ class SMTPs
 		$_retVal = true;
 
 		$server_response = '';
+        // avoid infinite loop
+        $limit=0;
 
-		while ( substr($server_response,3,1) != ' ' )
+		while ( substr($server_response,3,1) != ' ' && $limit<100)
 		{
 			if( !( $server_response = fgets($socket, 256) ) )
 			{
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
 			}
+            $limit++;
 		}
 
 		if( !( substr($server_response, 0, 3) == $response ) )

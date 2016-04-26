@@ -1271,6 +1271,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
+$paymentstatic=new PaiementFourn($db);
 
 llxHeader('',$langs->trans('SupplierInvoice'),'');
 
@@ -1871,7 +1872,7 @@ else
         /*
          * List of payments
          */
-        $nbrows=9; $nbcols=2;
+        $nbrows=9; $nbcols=3;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) { $nbrows++; $nbcols++; }
         if (! empty($conf->incoterm->enabled)) $nbrows++;
@@ -1882,10 +1883,10 @@ else
 
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
-        $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
+        $sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
         $sql.= ' c.id as paiement_type,';
         $sql.= ' pf.amount,';
-        $sql.= ' ba.rowid as baid, ba.ref, ba.label';
+        $sql.= ' ba.rowid as baid, ba.ref as baref, ba.label';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -1902,6 +1903,7 @@ else
             print '<table class="nobordernopadding" width="100%">';
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
+			print '<td>'.$langs->trans('Date').'</td>';
             print '<td>'.$langs->trans('Type').'</td>';
             if (! empty($conf->banque->enabled)) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
             print '<td align="right">'.$langs->trans('Amount').'</td>';
@@ -1915,16 +1917,23 @@ else
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
-                    print '<tr '.$bc[$var].'>';
-                    print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
+                    print '<tr '.$bc[$var].'><td>';
+					$paymentstatic->id=$objp->rowid;
+					$paymentstatic->datepaye=$db->jdate($objp->dp);
+					$paymentstatic->ref=$objp->ref;
+					$paymentstatic->num_paiement=$objp->num_paiement;
+					$paymentstatic->payment_code=$objp->payment_code;
+					print $paymentstatic->getNomUrl(1);
+					print '</td>';
+					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
                     print '<td>';
                     print $form->form_modes_reglement(null, $objp->paiement_type,'none').' '.$objp->num_paiement;
                     print '</td>';
                     if (! empty($conf->banque->enabled))
                     {
                         $bankaccountstatic->id=$objp->baid;
-                        $bankaccountstatic->ref=$objp->ref;
-                        $bankaccountstatic->label=$objp->ref;
+                        $bankaccountstatic->ref=$objp->baref;
+                        $bankaccountstatic->label=$objp->baref;
                         print '<td align="right">';
                         if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
                         print '</td>';

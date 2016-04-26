@@ -222,16 +222,21 @@ class mailing_contacts4 extends MailingTargets
 	        $s='';
 	        $s.='<select name="filter" class="flat">';
 	        $s.='<option value="all"></option>';
-	        if ($resql)
+
+	        $num = $this->db->num_rows($resql);
+	        if ($num)
 	        {
-	            $num = $this->db->num_rows($resql);
-	            $i = 0;
-	            while ($i < $num)
-	            {
-	                $obj = $this->db->fetch_object($resql);
-	                $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
-	                $i++;
-	            }
+    	        $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
+                    $i++;
+                }
+	        }
+	        else
+	        {
+                $s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactWithCategoryFound").'</option>';
 	        }
 	        $s.='</select>';
 	        return $s;

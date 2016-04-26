@@ -17,6 +17,7 @@ MyEvents=My events
 OtherEvents=Other events
 ListOfActions=List of events
 Location=Location
+ToUserOfGroup=To any user in group
 EventOnFullDay=Event on all day(s)
 SearchAnAction= Search an event/task
 MenuToDoActions=All incomplete events

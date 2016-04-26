@@ -348,7 +348,7 @@ class FactureRec extends CommonInvoice
  	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx, ';
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
 		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 		$sql.= ' l.rang, l.special_code,';
@@ -358,7 +358,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 
-		dol_syslog('Facture::fetch_lines', LOG_DEBUG);
+		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -369,10 +369,13 @@ class FactureRec extends CommonInvoice
 				$objp = $this->db->fetch_object($result);
 				$line = new FactureLigne($this->db);
 
+				$line->id	            = $objp->rowid;
 				$line->rowid	        = $objp->rowid;
 				$line->label            = $objp->custom_label;		// Label line
 				$line->desc             = $objp->description;		// Description line
+				$line->description      = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
+				$line->ref              = $objp->product_ref;		// Ref product
 				$line->product_ref      = $objp->product_ref;		// Ref product
 				$line->libelle          = $objp->product_label;		// deprecated
 				$line->product_label	= $objp->product_label;		// Label product
@@ -903,4 +906,53 @@ class FactureRec extends CommonInvoice
             return -1;
         }
     }
+}
+
+
+
+/**
+ *	Class to manage invoice lines of templates.
+ *  Saved into database table llx_facturedet_rec
+ */
+class FactureLigneRec extends CommonInvoiceLine
+{
+    
+    /**
+     * 	Delete line in database
+     *
+     *	@return		int		<0 if KO, >0 if OK
+     */
+    function delete()
+    {
+        global $conf,$langs,$user;
+    
+        $error=0;
+    
+        $this->db->begin();
+    
+        // Call trigger
+        /*$result=$this->call_trigger('LINEBILLREC_DELETE',$user);
+        if ($result < 0)
+        {
+            $this->db->rollback();
+            return -1;
+        }*/
+        // End call triggers
+    
+    
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE rowid = ".($this->rowid > 0 ? $this->rowid : $this->id);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        if ($this->db->query($sql) )
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error()." sql=".$sql;
+            $this->db->rollback();
+            return -1;
+        }
+    }
+    
 }

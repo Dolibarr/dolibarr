@@ -2060,14 +2060,23 @@ class Form
 
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
-            // mode=2 means suppliers products
+        	if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+			{
+				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
+			}
+			// mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
             print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
             print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
         }
         else
         {
-            print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0);
+            if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+			{
+				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
+				print '<script type="text/javascript">$("#'.$htmlname.'").change(function() { $("#idprod").val($(this).val());});</script>';
+			}
+        	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0);
         }
     }
 
@@ -4196,7 +4205,7 @@ class Form
             $code_country="'".$societe_vendeuse->country_code."'";
         }
         else
-       {
+        {
             $code_country="'".$mysoc->country_code."'";   // Pour compatibilite ascendente
         }
         if (! empty($conf->global->SERVICE_ARE_ECOMMERCE_200238EC))    // If option to have vat for end customer for services is on
@@ -4234,8 +4243,9 @@ class Form
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
         	if ($defaulttx < 0 || dol_strlen($defaulttx) == 0)
         	{
-        		$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$idprod);
-        		$defaultnpr=get_default_npr($societe_vendeuse,$societe_acheteuse,$idprod);
+        	    $tmpthirdparty=new Societe($this->db);
+        		$defaulttx=get_default_tva($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
+        		$defaultnpr=get_default_npr($societe_vendeuse, (is_object($societe_acheteuse)?$societe_acheteuse:$tmpthirdparty), $idprod);
         		if (empty($defaulttx)) $defaultnpr=0;
         	}
 

@@ -311,7 +311,7 @@ class Notify
 								$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$newref);
 								break;
 							case 'PROPAL_VALIDATE':
-								$link='/comm/propal.php?id='.$object->id;
+								$link='/comm/propal/card.php?id='.$object->id;
 								$dir_output = $conf->propal->dir_output;
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
@@ -470,7 +470,7 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$newref);
 						break;
 					case 'PROPAL_VALIDATE':
-						$link='/comm/propal.php?id='.$object->id;
+						$link='/comm/propal/card.php?id='.$object->id;
 						$dir_output = $conf->propal->dir_output;
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);

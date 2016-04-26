@@ -126,8 +126,8 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     if ($cancel) $action='';
-    
-	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
@@ -672,7 +672,7 @@ if (empty($reshook))
 
 	/*
 	 * Insert new invoice in database
-	*/
+	 */
 	else if ($action == 'add' && $user->rights->facture->creer)
 	{
 		if ($socid > 0) $object->socid = GETPOST('socid', 'int');
@@ -722,7 +722,7 @@ if (empty($reshook))
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-				
+
 				// Proprietes particulieres a facture de remplacement
 				$object->fk_facture_source = $_POST['fac_replacement'];
 				$object->type = Facture::TYPE_REPLACEMENT;
@@ -868,6 +868,15 @@ if (empty($reshook))
 				$object->ref_client     = $_POST['ref_client'];
 				$object->ref_int     	= $_POST['ref_int'];
 				$object->modelpdf       = $_POST['model'];
+				$object->fk_project		= $_POST['projectid'];
+				$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
+				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
+	            $object->fk_account         = GETPOST('fk_account', 'int');
+				$object->amount				= $_POST['amount'];
+				$object->remise_absolue		= $_POST['remise_absolue'];
+				$object->remise_percent		= $_POST['remise_percent'];
+				$object->fk_incoterms 		= GETPOST('incoterm_id', 'int');
+				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
 				
@@ -1127,8 +1136,8 @@ if (empty($reshook))
 										}
 
 										// View third's localtaxes for now
-										$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $object->client);
-										$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $object->client);
+										$localtax1_tx = get_localtax($lines[$i]->tva_tx, 1, $object->thirdparty);
+										$localtax2_tx = get_localtax($lines[$i]->tva_tx, 2, $object->thirdparty);
 
 										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit);
 
@@ -2329,6 +2338,15 @@ if ($action == 'create')
 		}
 	}
 
+	// Template invoice
+	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+	$tmp='<input type="radio" name="type" id="radio_template" value="0" disabled> ';
+	$text = $tmp.$langs->trans("RepeatableInvoice") . ' ';
+	//$text.= '('.$langs->trans("YouMustCreateStandardInvoiceFirst").') ';
+	$desc = $form->textwithpicto($text, $langs->transnoentities("YouMustCreateStandardInvoiceFirstDesc"), 1, 'help', '', 0, 3);
+	print $desc;
+	print '</div></div>';
+	
 	print '</div>';
 
 	print '</td></tr>';
@@ -3108,13 +3126,13 @@ else if ($id > 0 || ! empty($ref))
 	if ($object->type == Facture::TYPE_CREDIT_NOTE)
 		$sign = - 1;
 
-	$nbrows = 9;
-	$nbcols = 2;
+	$nbrows = 8;
+	$nbcols = 3;
 	if (! empty($conf->projet->enabled))
 		$nbrows ++;
-	if (! empty($conf->banque->enabled))
-		$nbcols ++;
-		// if (! empty($soc->outstandingbill)) $nbrows++;
+	if (! empty($conf->banque->enabled)) {
+		$nbrows ++; $nbcols++;
+	}
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
 		$nbrows ++;
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0)

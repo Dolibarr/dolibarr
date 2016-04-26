@@ -30,6 +30,7 @@ PHPPrintIPP            1.3           GPL-2+                      Yes            
 Restler                3.0           LGPL-3+                     Yes             Library to develop REST Web services
 TCPDF                  6.2.12        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
+Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
 
 JS libraries:
 jQuery                 1.11.3        MIT License                 Yes             JS library
@@ -60,6 +61,8 @@ http://www.gnu.org/licenses/licenses.en.html
 
 Copyright
 ---------
+
+Copyright (C) 2016
 
 Copyright (C) 2015
 - Laurent Destailleur <eldy@users.sourceforge.net>

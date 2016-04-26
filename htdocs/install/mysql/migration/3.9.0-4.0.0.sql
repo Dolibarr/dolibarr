@@ -365,7 +365,7 @@ CREATE TABLE llx_c_accounting_category (
 
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
 UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = '';
-ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
 
 
 DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
@@ -384,6 +384,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CLASSIFY_BILLED','Supplier order set billed','Executed when a supplier order is set as billed','order_supplier',14);
 
 ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NULL;
+
+ALTER TABLE llx_product ADD COLUMN default_vat_code varchar(10) after cost_price;
 
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;

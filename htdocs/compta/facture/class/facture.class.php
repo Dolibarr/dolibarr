@@ -280,7 +280,7 @@ class Facture extends CommonInvoice
 
 			$this->socid 		     = $_facrec->socid;
 			
-			$this->fk_project        = $_facrec->fk_project;
+			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
 			$this->fk_account        = $_facrec->fk_account;
 			$this->cond_reglement_id = $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
@@ -2564,7 +2564,7 @@ class Facture extends CommonInvoice
 			$this->line->date_start			= $date_start;
 			$this->line->date_end			= $date_end;
 			$this->line->total_ht			= (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ht):$total_ht);  // For credit note and if qty is negative, total is negative
-			$this->line->total_tva			= $total_tva;
+			$this->line->total_tva			= (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_tva):$total_tva);
 			$this->line->total_localtax1	= $total_localtax1;
 			$this->line->total_localtax2	= $total_localtax2;
 			$this->line->total_ttc			= (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ttc):$total_ttc);

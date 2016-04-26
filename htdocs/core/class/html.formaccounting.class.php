@@ -67,7 +67,7 @@ class FormAccounting
             $sql = "SELECT c.rowid, c.label as type, c.range_account";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
             $sql.= " WHERE c.active = 1";
-			$sql.= " AND c.account_type = 0";
+			$sql.= " AND c.category_type = 0";
             $sql.= " AND c.fk_country = ".$mysoc->country_id;
             $sql.= " ORDER BY c.label ASC";
         }

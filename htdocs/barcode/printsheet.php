@@ -62,7 +62,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 	{
 		$producttmp->fetch(GETPOST('productid'));
 		$forbarcode=$producttmp->barcode;
-		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
+		$fk_barcode_type=$producttmp->barcode_type;
 
 		if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 
@@ -384,7 +384,7 @@ print '</div>';
 print '<input id="fillfromthirdparty" type="radio" '.((GETPOST("selectorforbarcode")=='fillfromthirdparty')?'checked ':'').'name="selectorforbarcode" value="fillfromthirdparty" class="radiobarcodeselect"> '.$langs->trans("FillBarCodeTypeAndValueFromThirdParty").' &nbsp; ';
 print '<br>';
 print '<div class="showforthirdpartyselector">';
-print $form->select_company(GETPOST('socid'), 'socid', '', 1, 0, 0, array(), 0, 'minwidth300');
+print $form->select_company(GETPOST('socid'), 'socid', '', 'SelectThirdParty', 0, 0, array(), 0, 'minwidth300');
 print ' &nbsp; <input type="submit" id="submitthirdparty" name="submitthirdparty" class="button showforthirdpartyselector" value="'.(dol_escape_htmltag($langs->trans("GetBarCode"))).'">';
 print '</div>';
 
