@@ -885,6 +885,7 @@ if ($action == 'create')
 					//ship from preselected location
 					$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
 					$deliverableQty=min($quantityToBeDelivered, $stock);
+					if ($deliverableQty < 0) $deliverableQty = 0;
 					if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
 					{
 						// Quantity to send
@@ -1774,13 +1775,12 @@ else if ($id || $ref)
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 		}
-
 		// Close
 		if (! empty($conf->facture->enabled) && $object->statut > 0)
 		{
 			if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
 			{
-				$label="Close";
+				$label="Close"; // = Transferred/Received
 				// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
 				if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) $label="ClassifyBilled";
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
