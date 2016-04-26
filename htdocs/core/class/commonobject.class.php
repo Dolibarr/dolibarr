@@ -3236,7 +3236,7 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $langs, $user;
+		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
 
 		// Define usemargins
 		$usemargins=0;
