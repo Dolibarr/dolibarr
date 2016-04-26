@@ -280,7 +280,7 @@ class Facture extends CommonInvoice
 
 			$this->socid 		     = $_facrec->socid;
 			
-			$this->fk_project        = $_facrec->fk_project;
+			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
 			$this->fk_account        = $_facrec->fk_account;
 			$this->cond_reglement_id = $_facrec->cond_reglement_id;
 			$this->mode_reglement_id = $_facrec->mode_reglement_id;
