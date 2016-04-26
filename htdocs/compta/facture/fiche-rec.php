@@ -73,6 +73,13 @@ if (($id > 0 || $ref) && $action != 'create' && $action != 'add')
 	}
 }
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('invoicecard','globalcard'));
+
+$permissionnote = $user->rights->facture->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
+
 
 /*
  * Actions
@@ -101,7 +108,7 @@ if ($action == 'add')
 	$rehour=GETPOST('rehour');
 	$remin=GETPOST('remin');
 	$nb_gen_max=GETPOST('nb_gen_max', 'int');
-	if (empty($nb_gen_max)) $nb_gen_max =0;
+	//if (empty($nb_gen_max)) $nb_gen_max =0;
 	
 	if (GETPOST('frequency'))
 	{
@@ -111,7 +118,7 @@ if ($action == 'add')
 			$action = "create";
 			$error++;	
 		}
-		if ($nb_gen_max == '')
+		if ($nb_gen_max === '')
 		{
 			setEventMessages($langs->transnoentities("ErrorFieldRequired",$langs->trans("MaxPeriodNumber")), null, 'errors');
 			$action = "create";
@@ -599,7 +606,9 @@ if ($action == 'create')
 	
 	if ($object->fetch($id, $ref) > 0)
 	{
-		print '<form action="fiche-rec.php" method="post">';
+		$result = $object->getLinesArray();
+				
+	    print '<form action="fiche-rec.php" method="post">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
@@ -707,10 +716,22 @@ if ($action == 'create')
 
 		print load_fiche_titre($title, '', '');
 
-		
 		/*
 		 * Invoice lines
 		 */
+		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		// Show object lines
+		if (! empty($object->lines))
+		{
+		    $disableedit=1;
+		    $disablemove=1;
+		    $disableremove=1;
+		    $ret = $object->printObjectLines('', $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
+		}
+		
+		print "</table>\n";
+		
+		/*
 		print '<table class="notopnoleftnoright" width="100%">';
 		print '<tr><td colspan="3">';
 
@@ -877,7 +898,8 @@ if ($action == 'create')
 			print $db->error();
 		}
 		print "</table>";
-
+        */
+					
 		print '</td></tr>';
 
 		if ($flag_price_may_change)
