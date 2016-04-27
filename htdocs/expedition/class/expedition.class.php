@@ -664,7 +664,7 @@ class Expedition extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			// TODO possibilite d'expedier a partir d'une propale ou autre origine
+			// TODO in future, shipment lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
@@ -738,7 +738,7 @@ class Expedition extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
+            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);     // TODO Add option in workflow module on this trigger to close order if sum of shipment = product to ship of order
             if ($result < 0) { $error++; }
             // End call triggers
 		}

@@ -342,22 +342,40 @@ class FactureRec extends CommonInvoice
 
 
 	/**
+	 * 	Create an array of invoice lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
+	 */
+	function getLinesArray()
+	{
+	    return $this->fetch_lines();
+	}
+	
+	
+	/**
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
 	 *	@return     int         1 if OK, < 0 if KO
  	 */
 	function fetch_lines()
 	{
+		$this->lines=array();
+
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
-		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
+		//$sql.= ' l.situation_percent, l.fk_prev_id,';
+		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
+		//$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql.= ' l.fk_unit, l.fk_contract_line,';
+		//$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
-
+		$sql.= ' ORDER BY l.rang';
+		
 		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
@@ -387,10 +405,6 @@ class FactureRec extends CommonInvoice
 				$line->remise_percent   = $objp->remise_percent;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product       = $objp->fk_product;
-				$line->date_start       = $objp->date_start;
-				$line->date_end         = $objp->date_end;
-				$line->date_start       = $objp->date_start;
-				$line->date_end         = $objp->date_end;
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
@@ -415,7 +429,7 @@ class FactureRec extends CommonInvoice
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db-lasterror();
 			return -3;
 		}
 	}
