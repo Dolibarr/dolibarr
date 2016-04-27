@@ -50,18 +50,16 @@ if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'facture', $id, $objecttype);
 $projectid = GETPOST('projectid','int');
 
-if ($page == -1)
-{
-	$page = 0 ;
-}
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-$offset = $limit * $page ;
-
-if ($sortorder == "")
-$sortorder="DESC";
-
-if ($sortfield == "")
-$sortfield="f.datef";
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+if (! $sortorder) $sortorder='DESC';
+if (! $sortfield) $sortfield='f.titre';
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 $object = new FactureRec($db);
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add')
@@ -1321,14 +1319,15 @@ else
 		$sql.= " WHERE f.fk_soc = s.rowid";
 		$sql.= " AND f.entity = ".$conf->entity;
 		if ($socid)	$sql .= " AND s.rowid = ".$socid;
-
+        
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
         	$result = $db->query($sql);
         	$nbtotalofrecords = $db->num_rows($result);
         }
-        
+      
+        $sql.= $db->order($sortfield, $sortorder);
         $sql.= $db->plimit($limit+1,$offset);
 		
 		$resql = $db->query($sql);
@@ -1346,7 +1345,7 @@ else
         	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
         	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-            
+
 	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
 
 			print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
@@ -1354,14 +1353,14 @@ else
 			$i = 0;
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("Ref"));
-			print_liste_field_titre($langs->trans("Company"),$_SERVER['PHP_SELF'],"s.nom","","&socid=$socid","",$sortfiled,$sortorder);
-			print_liste_field_titre($langs->trans("AmountHT"),'','','','','align="right"');
-			print_liste_field_titre($langs->trans("AmountVAT"),'','','','','align="right"');
-			print_liste_field_titre($langs->trans("AmountTTC"),'','','','','align="right"');
-			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),'','','','','align="center"');
-			print_liste_field_titre($langs->trans("DateLastGeneration"),'','','','','align="center"');
-			print_liste_field_titre($langs->trans("NextDateToExecution"),'','','','','align="center"');
+			print_liste_field_titre($langs->trans("Ref"),$_SERVER['PHP_SELF'],"f.titre","",$param,"",$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],"s.nom","",$param,"",$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountHT"),$_SERVER['PHP_SELF'],"f.total","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountVAT"),$_SERVER['PHP_SELF'],"f.tva","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER['PHP_SELF'],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("RecurringInvoiceTemplate"),$_SERVER['PHP_SELF'],"f.frequency","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("DateLastGeneration"),$_SERVER['PHP_SELF'],"f.date_last_gen","",$param,'align="center"',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("NextDateToExecution"),$_SERVER['PHP_SELF'],"f.date_when","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre('');		// Field may contains ling text
 			print "</tr>\n";
 
