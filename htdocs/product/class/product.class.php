@@ -3339,6 +3339,7 @@ class Product extends CommonObject
 
 	/**
 	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
+	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id. 
 	 *
 	 *    @return     	int             < 0 if KO, > 0 if OK
 	 *    @see			load_virtual_stock, getBatchInfo
@@ -3388,7 +3389,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about objects that are delat between physical and virtual stock of a product
+	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
+	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id. 
 	 *
 	 *    @return   int             < 0 if KO, > 0 if OK
 	 *    @see		load_stock, getBatchInfo
