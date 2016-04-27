@@ -683,10 +683,10 @@ else
 
         		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)	// To optimize call of load_stock
     			{
-    				if ($objp->fk_product_type != 1)
+    				if ($objp->fk_product_type != 1)    // Not a service
     				{
     					$product_static->id = $objp->rowid;
-    					$product_static->load_stock();
+    					$product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse + batch detail. This also call load_virtual_stock()
     				}
     			}
     			

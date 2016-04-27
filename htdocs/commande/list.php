@@ -716,7 +716,7 @@ if ($resql)
                             // Get local and virtual stock and store it into cache
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
                                 $generic_product->load_stock();
-                                $generic_product->load_virtual_stock();
+                                //$generic_product->load_virtual_stock();   Already included into load_stock
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
                                 $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
                             } else {
