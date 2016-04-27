@@ -1346,7 +1346,7 @@ else
         	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
         	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecord,'title_accountancy.png',0,'','',$limit);
+	        print_barre_liste($langs->trans("RepeatableInvoices"),$page,$_SERVER['PHP_SELF'],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
 
 			print $langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'<br><br>';
 
