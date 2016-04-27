@@ -53,7 +53,7 @@ class FactureRec extends CommonInvoice
 	var $propalid;
 
 	var $date_last_gen;
-	var $next_gen;
+	var $date_when;
 	var $nb_gen_done;
 	var $nb_gen_max;
 	
