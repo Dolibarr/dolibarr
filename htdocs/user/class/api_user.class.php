@@ -159,8 +159,35 @@ class UserApi extends DolibarrApi
 		if ($this->useraccount->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
 			return $this->get($id);
 
-		return false;
-	}
+    return false;
+  }
+
+  /**
+	 * add user to group
+	 *
+	 * @param   int     $id User ID
+	 * @param   int     $group Group ID
+	 * @return  int
+     * 
+	 * @url	GET user/{id}/setGroup/{group}
+	 */
+	function setGroup($id,$group) {
+		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
+			//throw new RestException(401);
+		//}
+    $result = $this->useraccount->fetch($id);
+    if (!$result)
+    {
+      throw new RestException(404, 'User not found');
+    }
+
+    if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
+    {
+      throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+    }
+
+    return $this->useraccount->SetInGroup($group,1);
+  }
 
 	/**
 	 * Delete account
