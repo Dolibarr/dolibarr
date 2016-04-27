@@ -86,7 +86,6 @@ $permissiontoedit = $user->rights->facture->creer; // Used by the include of act
  */
 
 // Set note
-$permissionnote=$user->rights->facture->creer;	// Used by the include of actions_setnotes.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
 include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
@@ -129,7 +128,8 @@ if ($action == 'add')
 	if (! $error)
 	{
 		$object->titre = GETPOST('titre', 'alpha');
-		$object->note_private  = GETPOST('note_private');
+		$object->note_private = GETPOST('note_private');
+		$object->note_public  = GETPOST('note_public');
 		$object->usenewprice = GETPOST('usenewprice');
 		
 		$object->frequency = $frequency;
@@ -625,20 +625,23 @@ if ($action == 'create')
 
 		// Third party
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1,'customer').'</td>';
-		print '<td>';
-		print $langs->trans("Comment");
-		print '</td></tr>';
+		print '</tr>';
 
 		// Title
 		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td>';
 		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.$_POST["titre"].'">';
-		print '</td>';
-
-		// Note
-		print '<td rowspan="'.$rowspan.'" valign="top">';
-		print '<textarea class="flat centpercent" name="note_private" wrap="soft" rows="'.ROWS_4.'"></textarea>';
 		print '</td></tr>';
 
+		// Note public
+		print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
+		print '<textarea class="flat centpercent" name="note_public" wrap="soft" rows="'.ROWS_4.'"></textarea>';
+		print '</td></tr>';
+
+		// Note private
+		print '<tr><td>'.$langs->trans("NotePrivate").'</td><td valign="top">';
+		print '<textarea class="flat centpercent" name="note_private" wrap="soft" rows="'.ROWS_4.'"></textarea>';
+		print '</td></tr>';
+		
 		// Author
 		print "<tr><td>".$langs->trans("Author")."</td><td>".$user->getFullName($langs)."</td></tr>";
 
@@ -657,7 +660,7 @@ if ($action == 'create')
     	{
     	    $projectid = $object->fk_project;
     		$langs->load('projects');
-    		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
+    		print '<tr><td>' . $langs->trans('Project') . '</td><td>';
     		$numprojet = $formproject->select_projects($socid, $projectid, 'projectid', 0);
     		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
     		print '</td></tr>';
@@ -1029,7 +1032,15 @@ else
 		}
 		print '</td></tr>';
 
+		// Note public
+		print '<tr><td>';
+		print $form->editfieldkey($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->rights->facture->creer);
+		print '</td><td colspan="5">';
+		print $form->editfieldval($langs->trans("NotePublic"), 'note_public', $object->note_public, $object, $user->rights->facture->creer, 'textarea:'.ROWS_4.':60');
+		print '</td>';
+		print '</tr>';
 		
+		// Note private
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans("NotePrivate"), 'note_private', $object->note_private, $object, $user->rights->facture->creer);
 		print '</td><td colspan="5">';
@@ -1230,7 +1241,7 @@ else
 		if (! empty($object->lines))
 		{
 		    $disableedit=1;
-		    $disablemove=1;
+		    //$disablemove=1;
 		    $ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 0);      // No date selector for template invoice
 		}
 		
