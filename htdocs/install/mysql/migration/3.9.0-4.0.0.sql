@@ -36,6 +36,8 @@ ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 
 
+ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
+
 CREATE TABLE llx_product_lot (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,

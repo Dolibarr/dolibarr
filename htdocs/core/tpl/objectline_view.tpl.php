@@ -31,7 +31,7 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  * $usemargins (0 to disable all margins columns, 1 to show according to margin setup)
  * $object_rights->creer initialized from = $object->getRights()
- * $disableedit, $disablemove
+ * $disableedit, $disablemove, $disableremove
  * 
  * $type, $text, $description, $line
  */
@@ -46,7 +46,6 @@ if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 if (empty($usemargins)) $usemargins=0;
-
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
@@ -216,7 +215,7 @@ if (empty($usemargins)) $usemargins=0;
 
 	<td class="linecoldelete" align="center"><?php $coldisplay++; ?>
 		<?php
-		if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
+		if (($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disableremove)) {
 			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
 			print img_delete();
 			print '</a>';
