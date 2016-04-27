@@ -557,7 +557,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
 		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
 
-		print '<td class="nowrap">'.$prod->getNomUrl(1, '', 16).'</td>';
+		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" ></td>';
 
