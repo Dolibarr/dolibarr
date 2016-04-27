@@ -694,7 +694,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
-if ($search_montant_vat != '') $sql.= natural_search('f.total', $search_montant_vat, 1);
+if ($search_montant_vat != '') $sql.= natural_search('f.total_vat', $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
