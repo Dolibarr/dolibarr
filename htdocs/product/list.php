@@ -142,8 +142,8 @@ $arrayfields=array(
     'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.seuil_stock_alerte'=>array('label'=>$langs->trans("StockLimit"), 'checked'=>0, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
     'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
-	'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
+    'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
 	'p.accountancy_code_sell'=>array('label'=>$langs->trans("ProductAccountancySellCode"), 'checked'=>0),
 	'p.accountancy_code_buy'=>array('label'=>$langs->trans("ProductAccountancyBuyCode"), 'checked'=>0),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
@@ -428,8 +428,8 @@ else
     		if (! empty($arrayfields['p.minbuyprice']['checked']))  print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"],"","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))  print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"],"p.seuil_stock_alerte","",$param,'align="right"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.desiredstock']['checked']))  print_liste_field_titre($arrayfields['p.desiredstock']['label'], $_SERVER["PHP_SELF"],"p.desiredstock","",$param,'align="right"',$sortfield,$sortorder);
-    		if (! empty($arrayfields['p.tobatch']['checked']))  print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"],"p.tobatch","",$param,'align="center"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.stock']['checked']))  print_liste_field_titre($arrayfields['p.stock']['label'], $_SERVER["PHP_SELF"],"p.stock","",$param,'align="right"',$sortfield,$sortorder);
+    		if (! empty($arrayfields['p.tobatch']['checked']))  print_liste_field_titre($arrayfields['p.tobatch']['label'], $_SERVER["PHP_SELF"],"p.tobatch","",$param,'align="center"',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.accountancy_code_sell']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_sell']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_sell","",$param,'',$sortfield,$sortorder);
     		if (! empty($arrayfields['p.accountancy_code_buy']['checked']))  print_liste_field_titre($arrayfields['p.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"],"p.accountancy_code_buy","",$param,'',$sortfield,$sortorder);
     		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -515,11 +515,11 @@ else
     			print '&nbsp;';
     			print '</td>';
     		}
-    		// To batch
-			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
     		// Stock
 			if (! empty($arrayfields['p.stock']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
-    	    // Accountancy code sell
+    		// To batch
+			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
+			// Accountancy code sell
     		if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_sell" size="6" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
     	    // Accountancy code sell
     		if (! empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_buy" size="6" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
@@ -600,7 +600,16 @@ else
     			$product_static->status_buy = $objp->tobuy;
                 $product_static->status     = $objp->tosell;
 				$product_static->entity = $objp->entity;
-
+				
+				if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)	// To optimize call of load_stock
+				{
+				    if ($objp->fk_product_type != 1)    // Not a service
+				    {
+				        $product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse. This also call load_virtual_stock()
+				    }
+				}
+				 
+				
     			$var=!$var;
     			print '<tr '.$bc[$var].'>';
 
@@ -681,15 +690,6 @@ else
         			print '</td>';
     			}
 
-        		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)	// To optimize call of load_stock
-    			{
-    				if ($objp->fk_product_type != 1)    // Not a service
-    				{
-    					$product_static->id = $objp->rowid;
-    					$product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse + batch detail. This also call load_virtual_stock()
-    				}
-    			}
-    			
     		    // Limit alert
 		        if (! empty($arrayfields['p.seuil_stock_alerte']['checked']))
         		{
@@ -710,13 +710,6 @@ else
     				}
     				print '</td>';
         		}
-    		    // Lot/Serial
-		        if (! empty($arrayfields['p.tobatch']['checked']))
-        		{
-                    print '<td align="center">';
-    				print yn($objp->tobatch);
-    				print '</td>';
-        		}        		
 				// Stock
 		        if (! empty($arrayfields['p.stock']['checked']))
         		{
@@ -728,6 +721,13 @@ else
     				}
     				print '</td>';
     			}
+    		    // Lot/Serial
+		        if (! empty($arrayfields['p.tobatch']['checked']))
+        		{
+                    print '<td align="center">';
+    				print yn($objp->tobatch);
+    				print '</td>';
+        		}        		
     			// Accountancy code sell
 		        if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td>'.$objp->accountancy_code_sell.'</td>';
     			// Accountancy code sell

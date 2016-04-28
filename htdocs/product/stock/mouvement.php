@@ -207,11 +207,10 @@ if ($action == "transfert_stock" && ! $cancel)
 
             $db->begin();
 
-            $product->load_stock();	// Load array product->stock_warehouse
+            $product->load_stock('novirtual');	// Load array product->stock_warehouse
 
             // Define value of products moved
             $pricesrc=0;
-            //if (isset($product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
             if (isset($product->pmp)) $pricesrc=$product->pmp;
             $pricedest=$pricesrc;
             

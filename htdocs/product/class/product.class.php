@@ -1850,7 +1850,7 @@ class Product extends CommonObject
                     }
                 }
 
-				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
+				// We should not load stock during the fetch. If someone need stock of product, he must call load_stock after fetching product.
 				//$res=$this->load_stock();
 				// instead we just init the stock_warehouse array
 				$this->stock_warehouse = array();
@@ -2847,7 +2847,7 @@ class Product extends CommonObject
 
 				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
 				$this->fetch($id);		// Load product
-				$this->load_stock();	// Load stock
+				$this->load_stock('nobatch,novirtual');	// Load stock to get true this->stock_reel
 				$this->res[]= array(
 					'id'=>$id,					// Id product
 					'id_parent'=>$id_parent,

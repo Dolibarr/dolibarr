@@ -411,7 +411,8 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 	            	'localtax1_tx' => $product->localtax1_tx,
 	            	'localtax2_tx' => $product->localtax2_tx,
 
-	            	'stock_real' => $product->stock_reel,
+            	    'stock_real' => $product->stock_reel,
+            	    'stock_virtual' => $product->stock_theorique,
 	            	'stock_alert' => $product->seuil_stock_alerte,
 	            	'pmp' => $product->pmp,
 	            	'import_key' => $product->import_key,
@@ -572,7 +573,7 @@ function createProductOrService($authentication,$product)
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
-				$newobject->load_stock();		// This overwrite ->stock_reel
+				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel, surely 0 because we have just created product
 				$getstockreal = $newobject->stock_reel;
 
 				if ($savstockreal != $getstockreal)
@@ -741,7 +742,7 @@ function updateProductOrService($authentication,$product)
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
-				$newobject->load_stock();		// This overwrite ->stock_reel
+				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel
 				$getstockreal = $newobject->stock_reel;
 
 				if ($savstockreal != $getstockreal)
