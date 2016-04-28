@@ -198,7 +198,7 @@ if (empty($reshook))
 
 	    $batch_line = array();
 	    $array_options=array();
-	    
+
 	    $num=count($objectsrc->lines);
 	    $totalqty=0;
 
@@ -223,9 +223,9 @@ if (empty($reshook))
 					$sub_qty[$j]['q']=GETPOST($qty,'int');				// the qty we want to move for this stock record
 					$sub_qty[$j]['id_batch']=GETPOST($batch,'int');		// the id into llx_product_batch of stock record to move
 					$subtotalqty+=$sub_qty[$j]['q'];
-				
+
 					//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
-					
+
 					$j++;
 					$batch="batchl".$i."_".$j;
 					$qty = "qtyl".$i.'_'.$j;
@@ -242,7 +242,7 @@ if (empty($reshook))
 				//shipment line for product with no batch management
 				if (GETPOST($qty,'int') > 0) $totalqty+=GETPOST($qty,'int');
 			}
-			
+
 			// Extrafields
 			$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
             $array_options[$i] = $extrafieldsline->getOptionalsFromPost($extralabelsline, $i);
@@ -253,9 +253,9 @@ if (empty($reshook))
 					unset($_POST["options_" . $key]);
 				}
 			}
-			
+
 	    }
-	
+
 	    //var_dump($batch_line[2]);
 
 	    if ($totalqty > 0)		// There is at least one thing to ship
@@ -265,7 +265,7 @@ if (empty($reshook))
 	        {
 	            $qty = "qtyl".$i;
 				if (! isset($batch_line[$i]))
-				{	
+				{
 					// not batch mode
 					if (GETPOST($qty,'int') > 0 || (GETPOST($qty,'int') == 0 && $conf->global->SHIPMENT_GETS_ALL_ORDER_PRODUCTS))
 					{
@@ -274,7 +274,7 @@ if (empty($reshook))
 						$entrepot_id = is_numeric(GETPOST($ent,'int'))?GETPOST($ent,'int'):GETPOST('entrepot_id','int');
 						if ($entrepot_id < 0) $entrepot_id='';
 						if (! ($objectsrc->lines[$i]->fk_product > 0)) $entrepot_id = 0;
-						
+
 						$ret=$object->addline($entrepot_id,GETPOST($idl,'int'),GETPOST($qty,'int'),$array_options[$i]);
 						if ($ret < 0)
 						{
@@ -284,7 +284,7 @@ if (empty($reshook))
 					}
 				}
 				else
-				{	
+				{
 					// batch mode
 					if ($batch_line[$i]['qty']>0)
 					{
@@ -296,11 +296,11 @@ if (empty($reshook))
 						}
 					}
 				}
-	        }	        
+	        }
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 	        if ($ret < 0) $error++;
-	        
+
 	        if (! $error)
 	        {
 	            $ret=$object->create($user);		// This create shipment (like Odoo picking) and line of shipments. Stock movement will when validating shipment.
@@ -530,7 +530,7 @@ if ($action == 'create2')
     $action=''; $id=''; $ref='';
 }
 
-// Mode creation. TODO This part seems to not be used at all. Receipt record is created by the action "create_delivery" not from a form. 
+// Mode creation. TODO This part seems to not be used at all. Receipt record is created by the action "create_delivery" not from a form.
 if ($action == 'create')
 {
     $expe = new Expedition($db);
@@ -660,15 +660,15 @@ if ($action == 'create')
             print '<td colspan="3">';
             print '<input name="tracking_number" size="20" value="'.GETPOST('tracking_number','alpha').'">';
             print "</td></tr>\n";
-            
+
             // Other attributes
             $parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"', 'socid'=>$socid);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
-            
+
             if (empty($reshook) && ! empty($extrafields->attribute_label)) {
             	print $expe->showOptionals($extrafields, 'edit');
             }
-            
+
 
             // Incoterms
 			if (!empty($conf->incoterm->enabled))
@@ -687,7 +687,7 @@ if ($action == 'create')
 			$liste = ModelePdfExpedition::liste_modeles($db);
 			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
             print "</td></tr>\n";
-            
+
             print "</table>";
 
             dol_fiche_end();
@@ -721,8 +721,8 @@ if ($action == 'create')
 
 
             print '<br>';
-            
-            
+
+
             print '<table class="noborder" width="100%">';
 
 
@@ -736,7 +736,7 @@ if ($action == 'create')
                 print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td align="center">'.$langs->trans("QtyToShip");
-				if (empty($conf->productbatch->enabled)) 
+				if (empty($conf->productbatch->enabled))
 				{
 	                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
 	                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
@@ -923,7 +923,7 @@ if ($action == 'create')
 
 					$staticwarehouse=new Entrepot($db);
 					$staticwarehouse->fetch($warehouse_id);
-					
+
 					$subj=0;
 					print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 					if (count($product->stock_warehouse[$warehouse_id]->detail_batch))
@@ -935,11 +935,11 @@ if ($action == 'create')
 							print '<tr><td colspan="3" ></td><td align="center"><!-- qty to ship (with lot management) -->';
 							print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.($substock > 0 ? min($defaultqty,$substock) : '0').'">';
 							print '</td>';
-	
+
 							print '<td align="left">';
-	
+
 							print $staticwarehouse->getNomUrl(0).' / ';
-	
+
 							print '<!-- Show details of lot -->';
 							print '<input name="batchl'.$indiceAsked.'_'.$subj.'" type="hidden" value="'.$dbatch->id.'">';
 							print $langs->trans("DetailBatchFormat", $dbatch->batch, dol_print_date($dbatch->eatby,"day"), dol_print_date($dbatch->sellby,"day"), $dbatch->qty);
@@ -956,13 +956,13 @@ if ($action == 'create')
 						print '<tr><td colspan="3" ></td><td align="center">';
 						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0" disabled="disabled"> ';
 						print '</td>';
-						
+
 						print '<td align="left">';
 						print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $staticwarehouse->libelle);
 					}
 				}
-				
-				
+
+
 				//Display lines extrafields
 				if (is_array($extralabelslines) && count($extralabelslines)>0) {
 					$colspan=5;
@@ -1011,7 +1011,7 @@ else if ($id || $ref)
 
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
-		
+
 		$res = $object->fetch_optionals($object->id, $extralabels);
 
 		$head=shipping_prepare_head($object);
@@ -1199,9 +1199,9 @@ else if ($id || $ref)
 
 		if ($totalWeight > 0)
 		{
-			if (!empty($object->trueWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
+			if (!empty($totalWeight)) print ' ('.$langs->trans("SumOfProductWeights").': ';
 			print $totalWeight.' '.measuring_units_string(0,"weight");
-			if (!empty($object->trueWeight)) print ')';
+			if (!empty($totalWeight)) print ')';
 		}
 		print '</td></tr>';
 
@@ -1333,7 +1333,7 @@ else if ($id || $ref)
 		// Other attributes
 		$cols = 3;
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-		
+
 		print "</table>\n";
 
 		/*
@@ -1506,7 +1506,7 @@ else if ($id || $ref)
 						}
 						print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
 					}
-					else 
+					else
 					{
 						print $langs->trans("NA");
 					}
@@ -1516,7 +1516,7 @@ else if ($id || $ref)
 				}
 			}
 			print "</tr>";
-			
+
 			//Display lines extrafields
 			if (is_array($extralabelslines) && count($extralabelslines)>0) {
 				$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
@@ -1618,7 +1618,7 @@ else if ($id || $ref)
 	if ($action != 'presend')
 	{
         print '<div class="fichecenter"><div class="fichehalfleft">';
-	    
+
         $objectref = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->expedition->dir_output . "/sending/" .$objectref;
 
@@ -1710,7 +1710,7 @@ else if ($id || $ref)
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'shi'.$object->id);
-		}		
+		}
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;
