@@ -696,15 +696,15 @@ if ($resql)
             // Show shippable Icon (create subloop, so may be slow)
             if ($conf->stock->enabled) 
             {
+                $notshippable=0;
+                $warning = 0;
+                $text_info='';
+                $text_warning='';
+                $nbprod=0;
+                    
                 $langs->load("stocks");
                 if (($obj->fk_statut > 0) && ($obj->fk_statut < 3))
                 {
-                    $notshippable=0;
-                    $warning = 0;
-                    $text_info='';
-                    $text_warning='';
-                    $nbprod=0;
-                    
                     $numlines = count($generic_commande->lines); // Loop on each line of order
                     for ($lig=0; $lig < $numlines; $lig++) 
                     {
@@ -712,9 +712,11 @@ if ($resql)
                         {
                             $nbprod++; // order contains real products
                             $generic_product->id = $generic_commande->lines[$lig]->fk_product;
+
+                            // Get local and virtual stock and store it into cache
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
                                 $generic_product->load_stock();
-                                $generic_product->load_virtual_stock();
+                                //$generic_product->load_virtual_stock();   Already included into load_stock
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
                                 $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
                             } else {
@@ -722,7 +724,7 @@ if ($resql)
                                 $generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
                             }
                             
-                            if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code is when this option is not set, setting it create strange result
+                            if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code. Default is when this option is not set, setting it create strange result
                             {
                                 $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
                                 $text_info .= ' - '.$langs->trans("Stock").': '.$generic_product->stock_reel;
@@ -795,7 +797,7 @@ if ($resql)
                 {
                     print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
                 }
-                if ($warning) {
+                if ($warning) {     // Always false in default mode
                     print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'),'',2);
                 }
                 print '</td>';
