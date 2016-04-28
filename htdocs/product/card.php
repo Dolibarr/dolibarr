@@ -1476,24 +1476,24 @@ else
             }
 
             // Accountancy sell code
-			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-            print $langs->trans("ProductAccountancySellCode");
-            print '</td>';
-			print '</tr></table>';
-            print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_sell);
-            print '</td></tr>';
+            if (! empty($conf->accounting->enabled)){
+                print '<tr><td class="nowrap">';
+                print $langs->trans("ProductAccountancySellCode");
+                print '</td><td colspan="2">';
+                print length_accountg($object->accountancy_code_sell);
+                print '</td></tr>';
+            }
+
 
             // Accountancy buy code
-			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-            print $langs->trans("ProductAccountancyBuyCode");
-            print '</td>';
-			print '</tr></table>';
-            print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_buy);
-            print '</td></tr>';
+            if (! empty($conf->accounting->enabled)){
+                print '<tr><td class="nowrap">';
+                print $langs->trans("ProductAccountancyBuyCode");
+                print '</td><td colspan="2">';
+                print length_accountg($object->accountancy_code_buy);
+                print '</td></tr>';
+            }
+
 
             // Status (to sell)
             /*
