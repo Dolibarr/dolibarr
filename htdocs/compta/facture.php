@@ -83,6 +83,7 @@ $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
+$fac_rec=GETPOST('fac_rec','int');
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -2082,8 +2083,9 @@ if ($action == 'create')
 			$(document).ready(function() {
 				$("#socid").change(function() {
 					var socid = $(this).val();
+			        var fac_rec = $(\'#fac_rec\').val();
 					// reload page
-					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid;
+        			window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
 				});
 			});
 			</script>';
@@ -2098,6 +2100,8 @@ if ($action == 'create')
 	    $invoice_predefined = new FactureRec($db);
 	    $invoice_predefined->fetch(GETPOST('fac_rec','int'));
 	    
+	    $dateinvoice = $invoice_predefined->date_when;     // To use next gen date by default later
+	    
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
 		$sql .= ' WHERE r.fk_soc = ' . $invoice_predefined->socid;
@@ -2111,7 +2115,7 @@ if ($action == 'create')
 			if ($num > 0)
 			{
 				print '<tr><td>' . $langs->trans('CreateFromRepeatableInvoice') . '</td><td>';
-				print '<select class="flat" name="fac_rec">';
+				print '<select class="flat" id="fac_rec" name="fac_rec">';
 				print '<option value="0" selected></option>';
 				while ($i < $num)
 				{
@@ -2122,7 +2126,22 @@ if ($action == 'create')
 					print '>' . $objp->titre . ' (' . price($objp->total_ttc) . ' ' . $langs->trans("TTC") . ')</option>';
 					$i ++;
 				}
-				print '</select></td></tr>';
+				print '</select>';
+				// Option to reload page to retrieve customer informations. Note, this clear other input
+        		if (!empty($conf->global->RELOAD_PAGE_ON_TEMPLATE_CHANGE))
+        		{
+        			print '<script type="text/javascript">
+        			$(document).ready(function() {
+        				$("#fac_rec").change(function() {
+        					var fac_rec = $(this).val();
+        			        var socid = $(\'#socid\').val();
+        					// reload page
+        					window.location.href = "'.$_SERVER["PHP_SELF"].'?action=create&socid="+socid+"&fac_rec="+fac_rec;
+        				});
+        			});
+        			</script>';
+        		}
+				print '</td></tr>';
 			}
 			$db->free($resql);
 		} else {
@@ -2402,7 +2421,7 @@ if ($action == 'create')
 		$langs->load('projects');
 		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
 		$numprojet = $formproject->select_projects($socid, $projectid, 'projectid', 0);
-		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec?'&fac_rec='.$fac_rec:'')).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td></tr>';
 	}
 
