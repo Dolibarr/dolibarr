@@ -251,16 +251,15 @@ class WebsitePage extends CommonObject
 	}
 
 	/**
-	 *
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder 	Sort Order
-	 * @param string $sortfield		Sort field
-	 * @param number $limit			limit
-	 * @param number $offset		Offset
-	 * @param array $filter			Filter array
-	 * @param string $filtermode	Filter mode (AND or OR)
-	 *
+	 * @param string $website_id   Web site id
+	 * @param string $sortorder    Sort Order
+	 * @param string $sortfield    Sort field
+	 * @param int    $limit        limit
+	 * @param int    $offset       Offset
+	 * @param array  $filter       Filter array
+	 * @param string $filtermode   Filter mode (AND or OR)
 	 * @return array|int           int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')

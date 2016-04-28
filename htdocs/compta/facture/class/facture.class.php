@@ -280,24 +280,27 @@ class Facture extends CommonInvoice
 
 			$this->socid 		     = $_facrec->socid;
 			
+			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
 			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
-			$this->fk_account        = $_facrec->fk_account;
-			$this->cond_reglement_id = $_facrec->cond_reglement_id;
-			$this->mode_reglement_id = $_facrec->mode_reglement_id;
+			$this->note_public       = GETPOST('note_public') ? GETPOST('note_public') : $_facrec->note_public;
+			$this->note_private      = GETPOST('note_private') ? GETPOST('note_private') : $_facrec->note_private;
+			$this->modelpdf          = GETPOST('model') ? GETPOST('model') : $_facrec->modelpdf;
+			$this->cond_reglement_id = GETPOST('cond_reglement_id') > 0 ? GETPOST('cond_reglement_id') : $_facrec->cond_reglement_id;
+			$this->mode_reglement_id = GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $_facrec->mode_reglement_id;
+			$this->fk_account        = GETPOST('fk_account') > 0 ? GETPOST('fk_account') : $_facrec->fk_account;
+				
+			// Fields always coming from template
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
 			$this->fk_incoterms		 = $_facrec->fk_incoterms;
 			$this->location_incoterms= $_facrec->location_incoterms;
 
-			$this->note_public       = $_facrec->note_public;
-			$this->note_private      = $_facrec->note_private;
-			
 			// Clean parameters
 			if (! $this->type) $this->type = self::TYPE_STANDARD;
 			$this->ref_client=trim($this->ref_client);
 			$this->note_public=trim($this->note_public);
 			$this->note_private=trim($this->note_private);
-		    $this->note_private=dol_concatdesc($facture->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
+		    $this->note_private=dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 		    
 			//if (! $this->remise) $this->remise = 0;
 			if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
