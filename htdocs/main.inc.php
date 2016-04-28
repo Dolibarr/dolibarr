@@ -1396,7 +1396,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    // Show menu entries
     	print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
 	    $menumanager->atarget=$target;
-	    $menumanager->showmenu('top', array('searchform'=>$searchform, 'bookmarks'=>$bookmarks));      // This contains a \n
+	    $menumanager->showmenu('top', array('searchform'=>'', 'bookmarks'=>''));      // This contains a \n
 	    print "</div>\n";
 
 	    //$form=new Form($db);
