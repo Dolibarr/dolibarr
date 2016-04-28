@@ -850,6 +850,7 @@ class ExpenseReport extends CommonObject
     {
         global $conf,$langs;
 
+        $this->oldref = $this->ref;
         $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
 
         // Sélection du numéro de ref suivant
@@ -870,6 +871,36 @@ class ExpenseReport extends CommonObject
             $prefix="ER";
             if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
             $this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
+        }
+
+        // Rename directory if dir was a temporary ref
+        if (preg_match('/^[\(]?PROV/i', $this->oldref))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+            // We rename directory in order to avoid losing the attachments
+            $oldref = dol_sanitizeFileName($this->oldref);
+            $newref = dol_sanitizeFileName($this->ref);
+            $dirsource = $conf->expensereport->dir_output.'/'.$oldref;
+            $dirdest = $conf->expensereport->dir_output.'/'.$newref;
+            if (file_exists($dirsource))
+            {
+                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+
+                if (@rename($dirsource, $dirdest))
+                {
+                    dol_syslog("Rename ok");
+                    // Rename docs starting with $oldref with $newref
+                    $listoffiles=dol_dir_list($conf->expensereport->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+                    foreach($listoffiles as $fileentry)
+                    {
+                        $dirsource=$fileentry['name'];
+                        $dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+                        $dirsource=$fileentry['path'].'/'.$dirsource;
+                        $dirdest=$fileentry['path'].'/'.$dirdest;
+                        @rename($dirsource, $dirdest);
+                    }
+                }
+            }
         }
 
         if ($this->fk_statut != 2)
