@@ -276,6 +276,8 @@ if ($action == 'create')
     print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     // Id
@@ -369,8 +371,10 @@ if ($action == 'create')
 
     print '</table>';
 
+    dol_fiche_end();
+    
     // Boutons
-    print '<br><div class="center">';
+    print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -388,6 +392,8 @@ elseif ($action == 'edit')
     print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
     print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     $menu = new Menubase($db);
@@ -455,8 +461,10 @@ elseif ($action == 'edit')
 
     print '</table>';
 
+    dol_fiche_end();
+    
     // Bouton
-    print '<br><div class="center">';
+    print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
