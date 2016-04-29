@@ -1602,7 +1602,7 @@ ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscel
 KeyForApiAccess=Key to use API (parameter "api_key")
 ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
 ApiEndPointIs=You can access to the API at url
-ApiExporerIs=You can explore the API at url
+ApiExporerIs=You can explore the APIs at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
 ApiKey=Key for API
 ##### Bank #####
