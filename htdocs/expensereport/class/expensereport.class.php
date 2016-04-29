@@ -853,10 +853,6 @@ class ExpenseReport extends CommonObject
         $this->oldref = $this->ref;
         $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
 
-        // Sélection du numéro de ref suivant
-        $ref_next = $this->getNextNumRef();
-        $ref_number_int = ($this->ref+1)-1;
-
         // Sélection de la date de début de la NDF
         $sql = 'SELECT date_debut';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
@@ -865,17 +861,23 @@ class ExpenseReport extends CommonObject
         $objp = $this->db->fetch_object($result);
         $this->date_debut = $this->db->jdate($objp->date_debut);
 
-        // Création du ref_number suivant
-        if($ref_next)
-        {
-            $prefix="ER";
-            if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
-            $this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
-        }
+        $update_number_int = false;
 
+        // Create next ref if ref is PROVxx
         // Rename directory if dir was a temporary ref
-        if (preg_match('/^[\(]?PROV/i', $this->oldref))
+        if (preg_match('/^[\(]?PROV/i', $this->ref))
         {
+            // Sélection du numéro de ref suivant
+            $ref_next = $this->getNextNumRef();
+            $ref_number_int = ($this->ref+1)-1;
+            $update_number_int = true;
+            // Création du ref_number suivant
+            if($ref_next)
+            {
+                $prefix="ER";
+                if (! empty($conf->global->EXPENSE_REPORT_PREFIX)) $prefix=$conf->global->EXPENSE_REPORT_PREFIX;
+                $this->ref = strtoupper($fuser->login).$expld_car.$prefix.$this->ref.$expld_car.dol_print_date($this->date_debut,'%y%m%d');
+            }
             require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
             // We rename directory in order to avoid losing the attachments
             $oldref = dol_sanitizeFileName($this->oldref);
@@ -906,10 +908,12 @@ class ExpenseReport extends CommonObject
         if ($this->fk_statut != 2)
         {
         	$now = dol_now();
-        	
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."',";
-            $sql.= " ref_number_int = ".$ref_number_int;
+            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
+            if ($update_number_int) {
+                $sql.= ", ref_number_int = ".$ref_number_int;
+            }
             $sql.= ' WHERE rowid = '.$this->id;
 
             $resql=$this->db->query($sql);
