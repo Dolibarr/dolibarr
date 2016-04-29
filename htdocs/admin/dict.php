@@ -524,6 +524,7 @@ if ($id == 11)
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
 			'facture'           => $langs->trans('Bill'),
+			'resource'           => $langs->trans('Resource'),
 //			'facture_fourn'     => $langs->trans('SupplierBill'),
 			'fichinter'         => $langs->trans('InterventionCard')
 	);

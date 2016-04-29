@@ -396,3 +396,18 @@ ALTER TABLE llx_product ADD COLUMN default_vat_code varchar(10) after cost_price
 
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_resource ADD COLUMN asset_number    varchar(255) after ref;
+ALTER TABLE llx_resource ADD COLUMN datec           datetime DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN date_valid      datetime DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_author  integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_modif   integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_valid   integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_statut       smallint NOT NULL DEFAULT '0';
+ALTER TABLE llx_resource ADD COLUMN import_key			varchar(14);
+ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);	
+ 
+ALTER TABLE llx_element_resources ADD COLUMN duree real;          -- total duration of using ressource
+

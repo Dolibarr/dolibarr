@@ -152,7 +152,7 @@ $formresource = new FormResource($db);
 
 if ( $object->fetch($id) > 0 )
 {
-	$head=resourcePrepareHead($object);
+	$head=resource_prepare_head($object);
 
 
 	if ($action == 'edit' )

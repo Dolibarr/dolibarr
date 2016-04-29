@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2013		Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +18,8 @@
 
 /**
  *      \file       resource/element_resource.php
- *              \ingroup    resource
- *              \brief      Page to show and manage linked resources to an element
+ *      \ingroup    resource
+ *      \brief      Page to show and manage linked resources to an element
  */
 
 
@@ -257,6 +258,47 @@ else
                 }
         }
 
+	/*
+	 * Specific to fichinter module
+	 */
+	if ($element_id && $element == 'fichinter')
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
+
+		$fichinter = fetchObjectByElement($element_id, $element);
+		if (is_object($fichinter)) 
+		{
+			$head=fichinter_prepare_head($fichinter);
+			dol_fiche_head($head, 'resource', $langs->trans("InterventionCard"),0,'intervention');
+
+			// Affichage fiche action en mode visu
+			print '<table class="border" width="100%">';
+			
+			$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+			// Ref
+			print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
+			print $form->showrefnav($fichinter, 'id', $linkback, ($user->societe_id?0:1), 'ref', 'ref', '');
+			print '</td></tr>';
+
+
+			// Customer
+			if ( is_null($fichinter->client) )
+				$fichinter->fetch_thirdparty();
+		
+			print "<tr><td>".$langs->trans("Company")."</td>";
+			print '<td colspan="3">'.$fichinter->client->getNomUrl(1).'</td></tr>';
+			print "</table>";
+
+			dol_fiche_end();
+		}
+	}
+
+
+	// hook for other elements linked
+	$parameters=array('element'=>$element, 'element_id'=>$element_id );
+	$reshook=$hookmanager->executeHooks('printElementTab',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
         //print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
