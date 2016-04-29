@@ -913,7 +913,7 @@ else
             if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
             {
                 $langs->load("propal");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
             }
             if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
             {
@@ -991,7 +991,6 @@ else
     }
 
     print "</div>";
-    print "<br>\n";
 
     if ($action != 'presend')
     {
@@ -1011,7 +1010,7 @@ else
 
         $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-        print '</div></div class="fichehalfright">';
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
         if (!empty($object->id))
         {
@@ -1021,7 +1020,7 @@ else
 	        $somethingshown=$formactions->showactions($object,'project',$socid);
         }
 
-        print '</div>';
+        print '</div></div></div>';
     }
 
     // Hook to add more things on page

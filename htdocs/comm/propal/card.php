@@ -27,11 +27,11 @@
  */
 
 /**
- * \file 		htdocs/comm/propal.php
+ * \file 		htdocs/comm/propal/card.php
  * \ingroup 	propale
  * \brief 		Page of commercial proposals card and list
  */
-require '../main.inc.php';
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formpropal.class.php';
@@ -2062,7 +2062,7 @@ if ($action == 'create')
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('IncotermLabel');
         print '<td><td align="right">';
-        if ($user->rights->propal->creer) print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
+        if ($user->rights->propal->creer) print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id.'&action=editincoterm">'.img_edit().'</a>';
         else print '&nbsp;';
         print '</td></tr></table>';
         print '</td>';

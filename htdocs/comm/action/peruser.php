@@ -420,7 +420,7 @@ if ($filtert > 0 || $usergroup > 0)
 $sql.= ' ORDER BY fk_user_action, datep'; //fk_user_action
 //print $sql;
 
-dol_syslog("comm/action/index.php", LOG_DEBUG);
+dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -703,7 +703,9 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
+	print $username->getNomUrl(-1,'',0,0,24,1,'');
+	print '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week

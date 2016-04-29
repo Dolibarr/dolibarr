@@ -3236,8 +3236,9 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
-
+		global $conf, $hookmanager, $langs, $user;
+		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
+		
 		// Define usemargins
 		$usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
@@ -3365,7 +3366,8 @@ abstract class CommonObject
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd, $object_rights;
+		global $form,$bc,$bcdd;
+		global $object_rights, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
 
@@ -4458,7 +4460,10 @@ abstract class CommonObject
 	{
 		global $user;
 
-		return $user->rights->{$this->element};
+		$element = $this->element;
+		if ($element == 'facturerec') $element='facture';
+
+		return $user->rights->{$element};
 	}
 
 	/**
@@ -4555,7 +4560,7 @@ abstract class CommonObject
 					$productFournisseur = new ProductFournisseur($this->db);
 					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0)
 					{
-						$buyPrice = $productFournisseur->fourn_price;
+						$buyPrice = $productFournisseur->fourn_unitprice;
 					}
 					else if ($result < 0)
 					{

@@ -153,6 +153,7 @@ $arrayfields=array(
     'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
     'f.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
     'am'=>array('label'=>$langs->trans("Received"), 'checked'=>0),
+    'rtp'=>array('label'=>$langs->trans("Rest"), 'checked'=>0),
     'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'f.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -694,7 +695,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
-if ($search_montant_vat != '') $sql.= natural_search('f.total', $search_montant_vat, 1);
+if ($search_montant_vat != '') $sql.= natural_search('f.total_vat', $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
@@ -997,6 +998,7 @@ if ($resql)
     if (! empty($arrayfields['f.total_vat']['checked']))          print_liste_field_titre($arrayfields['f.total_vat']['label'],$_SERVER['PHP_SELF'],'f.tva','',$param,'align="right"',$sortfield,$sortorder);
     if (! empty($arrayfields['f.total_ttc']['checked']))          print_liste_field_titre($arrayfields['f.total_ttc']['label'],$_SERVER['PHP_SELF'],'f.total_ttc','',$param,'align="right"',$sortfield,$sortorder);
     if (! empty($arrayfields['am']['checked']))                   print_liste_field_titre($arrayfields['am']['label'],$_SERVER['PHP_SELF'],'am','',$param,'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['rtp']['checked']))                  print_liste_field_titre($arrayfields['rtp']['label'],$_SERVER['PHP_SELF'],'rtp','',$param,'align="right"',$sortfield,$sortorder);
     // Extra fields
     if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     {
@@ -1117,6 +1119,11 @@ if ($resql)
         print '<td class="liste_titre" align="right">';
         print '</td>';
     }
+    if (! empty($arrayfields['rtp']['checked']))
+    {
+        print '<td class="liste_titre" align="right">';
+        print '</td>';
+    }
     // Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -1195,6 +1202,7 @@ if ($resql)
                 $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
                 $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$obj->note_public:$obj->note_private),1);
                 $paiement = $facturestatic->getSommePaiement();
+				$remaintopay = $obj->total_ttc - $paiement;
     
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
     
@@ -1347,6 +1355,14 @@ if ($resql)
     		    if (! $i) $totalarray['totalamfield']=$totalarray['nbfield'];
     		    $totalarray['totalam'] += $paiement;
             }
+
+            if (! empty($arrayfields['rtp']['checked']))
+            {
+                print '<td align="right">'.(! empty($remaintopay)?price($remaintopay,0,$langs):'&nbsp;').'</td>';
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totalrtpfield']=$totalarray['nbfield'];
+    		    $totalarray['totalrtp'] += $remaintopay;
+            }
             
             // Extra fields
             if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -1425,6 +1441,7 @@ if ($resql)
     		   elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
     		   elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
     		   elseif ($totalarray['totalamfield'] == $i)  print '<td align="right">'.price($totalarray['totalam']).'</td>';
+			   elseif ($totalarray['totalrtpfield'] == $i)  print '<td align="right">'.price($totalarray['totalrtp']).'</td>';
     		   else print '<td></td>';
     		}
     		print '</tr>';

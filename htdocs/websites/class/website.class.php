@@ -187,7 +187,6 @@ class Website extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
@@ -195,8 +194,6 @@ class Website extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
-
-		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		if (null !== $ref) {
 			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';

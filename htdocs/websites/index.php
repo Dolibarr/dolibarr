@@ -77,30 +77,91 @@ $conf->dol_hide_leftmenu = 1;
 $error=0;
 $website=GETPOST('website', 'alpha');
 $page=GETPOST('page', 'alpha');
-$action = GETPOST('action','alpha');
+$pageid=GETPOST('pageid', 'alpha');
+$action=GETPOST('action','alpha');
 
 if (GETPOST('preview')) $action='preview';
-if (GETPOST('editmeta')) { $action='editmeta'; }
+if (GETPOST('create')) { $action='create'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
+if (GETPOST('editmeta')) { $action='editmeta'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 
 if (empty($action)) $action='preview';
 
-
 $object=new Website($db);
 $objectpage=new WebsitePage($db);
+
+$object->fetchAll();    // Init $object->records
+
+// If website not defined, we take first found
+if (empty($website))
+{
+    foreach($object->records as $key => $valwebsite)
+    {
+        $website=$valwebsite->ref;
+        break;
+    }
+}
+
+if ($website)
+{
+    $res = $object->fetch(0, $website);
+}
+if ($pageid)
+{
+    $res = $objectpage->fetch($pageid);
+}
 
 
 /*
  * Actions
  */
 
-// Action mise a jour ou ajout d'une constante
+// Add page
+if ($action == 'add')
+{
+    $db->begin();
+    
+    $objectpage->fk_website = $object->id;
+    
+    $objectpage->title = GETPOST('WEBSITE_TITLE');
+    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+    $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
+    $objectpage->keyword = GETPOST('WEBSITE_KEYWORD');
+    
+    if (empty($objectpage->title))
+    {
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
+        $error++;
+    }
+    
+    if (! $error)
+    {
+        $res = $objectpage->create($user);
+        if ($res <= 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+    }
+	if (! $error)
+	{
+		$db->commit();
+	    setEventMessages($langs->trans("PageAdded"), null, 'mesgs');
+	    $action='';
+	}
+	else
+	{
+		$db->rollback();
+	}
+}
+
+// Update page
 if ($action == 'update')
 {
     $db->begin();
     
-    $object->fetch(0, $website);
+    $res = $object->fetch(0, $website);
     
     $objectpage->fk_website = $object->id;
     $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
@@ -137,6 +198,45 @@ if ($action == 'update')
     }
 }
 
+// Update page
+if ($action == 'updatecontent')
+{
+    $db->begin();
+    
+    $object->fetch(0, $website);
+    
+    $objectpage->fk_website = $object->id;
+    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+    
+    $res = $objectpage->fetch(0, $object->fk_website, $objectpage->pageurl);
+    
+    if ($res > 0)
+    {
+        $objectpage->content = GETPOST('PAGE_CONTENT');
+        
+        $res = $objectpage->update($user);
+        if (! $res > 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+        
+    	if (! $error)
+    	{
+    		$db->commit();
+    	    setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    	    $action='';
+    	}
+    	else
+    	{
+    		$db->rollback();
+    	}
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
 
 
 
@@ -150,19 +250,30 @@ $help_url='';
 
 llxHeader('', $langs->trans("WebsiteSetup"), $help_url);
 
-    print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+if ($action == 'create')
+{
+    print '<input type="hidden" name="action" value="add">';
+}
+if ($action == 'editcontent')
+{
+    print '<input type="hidden" name="action" value="updatecontent">';
+}
+if ($action == 'edit')
+{
     print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
-    print '<input type="hidden" name="page" value="'.dol_escape_htmltag($page).'">';
+}
+if ($website) print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
 
 
+// Add a margin under toolbar ?
 $style='';
-if ($action != 'preview') $style=' margin-bottom: 5px;';
+if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5px;';
+
 
 print '<div class="centpercent websitebar">';
 
-$tmp = $object->fetchAll();
 if (count($object->records) > 0)
 {
     print '<div class="websiteselection">';
@@ -172,15 +283,15 @@ if (count($object->records) > 0)
     print '<div class="websiteselection">';
     // Loop on each sites
     $i=0;
-    foreach($object->records as $key => $websitearray)
+    foreach($object->records as $key => $valwebsite)
     {
-        if (empty($website)) $website=$websitearray->ref;
-        
+        if (empty($website)) $website=$valwebsite->ref;
+
         if ($i) print ' - ';
-        print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($websitearray->ref).'">';
-        if ($websitearray->ref == $website) print '<strong>';
-        print $websitearray->ref;
-        if ($websitearray->ref == $website) print '</strong>';
+        print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($valwebsite->ref).'">';
+        if ($valwebsite->ref == $website) print '<strong>';
+        print $valwebsite->ref;
+        if ($valwebsite->ref == $website) print '</strong>';
         print '</a>';
         
         $i++;    
@@ -196,25 +307,47 @@ if (count($object->records) > 0)
         if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
 
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
+        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
     }
     //else print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-    if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-
+    
     print '</div>';
     
+    
+    // Part for pages
     if ($website)
     {
         print '</div>';
+
+        $array=$objectpage->fetchAll($object->id);
+        
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
         print '<div class="websiteselection">';
         print $langs->trans("Page").': ';
         print '</div>';
         print '<div class="websiteselection">';
-        $array=$objectpage->fetchAll();
-        print $form->selectarray('page', $array);
+        $out='';
+        $out.='<select name="pageid">';
+        if (is_array($array) && count($array) > 0)
+        {
+            foreach($array as $key => $valpage)
+            {
+                if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
+                
+                $out.='<option value="'.$key.'"';
+                if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+                $out.='>';
+                $out.=$valpage->title;
+                $out.='</option>';
+            }
+        }
+        else $out.='<option value="-1">&nbsp;</option>';
+        $out.='</select>';
+        print $out;
+        print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+        //print $form->selectarray('page', $array);
         print '</div>';
         print '<div class="websiteselection">';
-        print '<a class="buttonAddPage"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?action=addpage&website='.urlencode($website).'">'.dol_escape_htmltag($langs->trans("AddPage")).'</a>';
         print '</div>';
         
         print '<div class="websitetools">';
@@ -224,14 +357,15 @@ if (count($object->records) > 0)
             $disabled='';
             if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
         
-            if ($page)
+            if ($pageid > 0)
             {
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
             }
         }
         else print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-        if (preg_match('/^addpage/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         
         print '</div>';
         
@@ -256,13 +390,13 @@ $head = array();
  * Edit mode
  */
 
-if ($action == 'editmeta' || $action == 'addpage')
+if ($action == 'editmeta' || $action == 'create')
 {
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Description").'</td>';
-    print '<td>'.$langs->trans("Value").'</td>';
-    print "</tr>\n";
+    print '<div class="fiche">';
+    
+    dol_fiche_head();
+    
+    print '<table class="border" width="100%">';
     
     print '<tr><td>';
     print $langs->trans('WEBSITE_PAGENAME');
@@ -270,12 +404,12 @@ if ($action == 'editmeta' || $action == 'addpage')
     print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($page).'">';
     print '</td></tr>';
     
-    if ($action != 'addpage')
+    if ($action != 'create')
     {
         print '<tr><td>';
         print $langs->trans('WEBSITE_URL');
         print '</td><td>';
-        print '/public/websites/'.$website.'/index.php?page='.urlencode($page);
+        print '/public/websites/'.$website.'/index.php?pageid='.urlencode($pageid);
         print '</td></tr>';
     }
     
@@ -299,6 +433,10 @@ if ($action == 'editmeta' || $action == 'addpage')
     
     print '</table>';
     
+    dol_fiche_end();
+    
+    print '</div>';
+    
     print '<br>';
 }
 
@@ -309,22 +447,11 @@ if ($action == 'editmenu')
 
 if ($action == 'editcontent')
 {
-/*
+    /*
      * Editing global variables not related to a specific theme
      */
-    
-    print load_fiche_titre($langs->trans("Other"),'','');
-    
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('WEBSITE_HEADER',$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
-    $doleditor->Create();
-    
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('WEBSITE_CONTENT',$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
-    $doleditor->Create();
-    
-    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('WEBSITE_FOOTER',$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
+    $doleditor=new DolEditor('PAGE_CONTENT',$obj->value,'',160,'dolibarr_notes','',false,false,$conf->fckeditor->enabled,5,60);
     $doleditor->Create();
 }
 
@@ -334,8 +461,20 @@ print '</form>';
 
 if ($action == 'preview')
 {
-    print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $website).'</center><br><br><br>';
-    print '<div class="center"><div class="logo_setup"></div></div>';
+    if ($pageid > 0)
+    {
+        $objectpage->fetch($pageid);
+        
+        print '<!-- Page content -->'."\n";
+        print '<div class="websitecontent">';
+        print $objectpage->content;
+        print '</div>';
+    }
+    else
+    {
+        print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $website).'</center><br><br><br>';
+        print '<div class="center"><div class="logo_setup"></div></div>';
+    }
 }
 
     

@@ -252,25 +252,12 @@ class MouvementStock extends CommonObject
 
 			// Calculate new PMP.
 			$newpmp=0;
-			//$newpmpwarehouse=0;
 			if (! $error)
 			{
 				// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
 				// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
 				if (($type == 0 || $type == 3) && $price > 0)
 				{
-					// If we will change PMP for the warehouse we edit and the product, we must first check/clean that PMP is defined
-					// on every stock entry with old value (so global updated value will match recalculated value from product_stock)
-			/*		$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET pmp = ".($oldpmp?$oldpmp:'0');
-					$sql.= " WHERE pmp = 0 AND fk_product = ".$fk_product;
-					dol_syslog(get_class($this)."::_create", LOG_DEBUG);
-					$resql=$this->db->query($sql);
-					if (! $resql)
-					{
-						$this->errors[]=$this->db->lasterror();
-						$error = -4;
-					}
-			*/
 					$oldqtytouse=($oldqty >= 0?$oldqty:0);
 					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
 					if ($oldpmp > 0) $newpmp=price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
@@ -278,13 +265,8 @@ class MouvementStock extends CommonObject
 					{
 						$newpmp=$price; // For this product, PMP was not yet set. We set it to input price.
 					}
-			/*
-					$oldqtywarehousetouse=$oldqtywarehouse;
-					if ($oldpmpwarehouse > 0) $newpmpwarehouse=price2num((($oldqtywarehousetouse * $oldpmpwarehouse) + ($qty * $price)) / ($oldqtywarehousetouse + $qty), 'MU');
-					else $newpmpwarehouse=$price;
-			*/
-					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." oldpmpwarehouse=".$oldpmpwarehouse." ";
-					//print "qty=".$qty." newpmp=".$newpmp." newpmpwarehouse=".$newpmpwarehouse;
+					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
+					//print "qty=".$qty." newpmp=".$newpmp;
 					//exit;
 				}
 				else if ($type == 1 || $type == 2)
@@ -295,7 +277,6 @@ class MouvementStock extends CommonObject
 				else
 				{
 					$newpmp = $oldpmp;
-					//$newpmpwarehouse = $oldpmpwarehouse;
 				}
 			}
 
@@ -339,11 +320,13 @@ class MouvementStock extends CommonObject
 			// Update PMP and denormalized value of stock qty at product level
 			if (! $error)
 			{
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
+				//$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
+				//$sql.= " WHERE rowid = ".$fk_product;
+    			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET p.pmp = ".$newpmp.", ";
+				$sql.= " stock=(SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)";
 				$sql.= " WHERE rowid = ".$fk_product;
-				// May be this request is better:
-				// UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
-
+				print $sql;
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)

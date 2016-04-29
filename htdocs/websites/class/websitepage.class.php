@@ -86,9 +86,9 @@ class WebsitePage extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
-
+        $now=dol_now();
+        
 		// Clean parameters
-		
 		if (isset($this->fk_website)) {
 			 $this->fk_website = trim($this->fk_website);
 		}
@@ -110,15 +110,18 @@ class WebsitePage extends CommonObject
 		if (isset($this->status)) {
 			 $this->status = trim($this->status);
 		}
-
-		
+		if (isset($this->date_creation)) {
+			 $this->date_creation = $now;
+		}
+		if (isset($this->date_modification)) {
+			 $this->date_modification = $now;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
 		$sql.= 'fk_website,';
 		$sql.= 'pageurl,';
 		$sql.= 'title,';
@@ -128,10 +131,7 @@ class WebsitePage extends CommonObject
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
 		$sql.= 'date_modification';
-
-		
 		$sql .= ') VALUES (';
-		
 		$sql .= ' '.(! isset($this->fk_website)?'NULL':$this->fk_website).',';
 		$sql .= ' '.(! isset($this->pageurl)?'NULL':"'".$this->db->escape($this->pageurl)."'").',';
 		$sql .= ' '.(! isset($this->title)?'NULL':"'".$this->db->escape($this->title)."'").',';
@@ -141,20 +141,18 @@ class WebsitePage extends CommonObject
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").',';
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
-
-		
 		$sql .= ')';
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error ++;
+		if (! $resql) {
+			$error++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error) {
+		if (! $error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
 			if (!$notrigger) {
@@ -169,7 +167,8 @@ class WebsitePage extends CommonObject
 		}
 
 		// Commit or rollback
-		if ($error) {
+		if ($error) 
+		{
 			$this->db->rollback();
 
 			return - 1 * $error;
@@ -254,22 +253,23 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
-	 * @param string $filtermode filter mode (AND or OR)
-	 *
-	 * @return int <0 if KO, >0 if OK
+	 * @param string $website_id   Web site id
+	 * @param string $sortorder    Sort Order
+	 * @param string $sortfield    Sort field
+	 * @param int    $limit        limit
+	 * @param int    $offset       Offset
+	 * @param array  $filter       Filter array
+	 * @param string $filtermode   Filter mode (AND or OR)
+	 * @return array|int           int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($website_id, $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$records=array();
+		
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-		
 		$sql .= " t.fk_website,";
 		$sql .= " t.pageurl,";
 		$sql .= " t.title,";
@@ -280,10 +280,8 @@ class WebsitePage extends CommonObject
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
-
-		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-
+        $sql .= ' WHERE t.fk_website = '.$website_id;
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -292,7 +290,7 @@ class WebsitePage extends CommonObject
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
 		
 		if (!empty($sortfield)) {
@@ -307,34 +305,32 @@ class WebsitePage extends CommonObject
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
 
-			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new WebsitepageLine();
+			while ($obj = $this->db->fetch_object($resql)) 
+			{
+				$record = new Websitepage($this->db);
 
-				$line->id = $obj->rowid;
-				
-				$line->fk_website = $obj->fk_website;
-				$line->pageurl = $obj->pageurl;
-				$line->title = $obj->title;
-				$line->description = $obj->description;
-				$line->keywords = $obj->keywords;
-				$line->content = $obj->content;
-				$line->status = $obj->status;
-				$line->date_creation = $this->db->jdate($obj->date_creation);
-				$line->date_modification = $this->db->jdate($obj->date_modification);
-				$line->tms = $this->db->jdate($obj->tms);
+				$record->id = $obj->rowid;
+				$record->fk_website = $obj->fk_website;
+				$record->pageurl = $obj->pageurl;
+				$record->title = $obj->title;
+				$record->description = $obj->description;
+				$record->keywords = $obj->keywords;
+				$record->content = $obj->content;
+				$record->status = $obj->status;
+				$record->date_creation = $this->db->jdate($obj->date_creation);
+				$record->date_modification = $this->db->jdate($obj->date_modification);
+				$record->tms = $this->db->jdate($obj->tms);
 
-				
-
-				$this->lines[$line->id] = $line;
+				$records[$record->id] = $record;
 			}
 			$this->db->free($resql);
 
-			return $num;
+			return $records;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 

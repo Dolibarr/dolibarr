@@ -885,7 +885,7 @@ else
     {
         print '<div class="tabBar">';
         print $error;
-        print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+        print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
         print '</div>';
     }
     else
@@ -994,10 +994,10 @@ else
                 print '<table class="border" width="100%">';
                 print '<tbody>';
 
-                $linkback='';
+                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
 
                 print '<tr>';
-                print '<td width="25%">'.$langs->trans("Ref").'</td>';
+                print '<td class="titlefield">'.$langs->trans("Ref").'</td>';
                 print '<td>';
                 print $form->showrefnav($cp, 'id', $linkback, 1, 'rowid', 'ref');
                 print '</td>';

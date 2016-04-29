@@ -580,6 +580,7 @@ div.myavailability {
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
 .minheight20 { min-height: 20px; }
+.minheight40 { min-height: 40px; }
 .titlefield { width: 30%; }
 .titlefieldcreate { width: 20%; }
 
@@ -2074,7 +2075,11 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
-
+#tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
+    border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
