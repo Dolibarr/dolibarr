@@ -91,6 +91,18 @@ if (empty($action)) $action='preview';
 $object=new Website($db);
 $objectpage=new WebsitePage($db);
 
+$object->fetchAll();    // Init $object->records
+
+// If website not defined, we take first found
+if (empty($website))
+{
+    foreach($object->records as $key => $valwebsite)
+    {
+        $website=$valwebsite->ref;
+        break;
+    }
+}
+
 if ($website)
 {
     $res = $object->fetch(0, $website);
@@ -262,7 +274,6 @@ if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5p
 
 print '<div class="centpercent websitebar">';
 
-$tmp = $object->fetchAll();
 if (count($object->records) > 0)
 {
     print '<div class="websiteselection">';
@@ -317,16 +328,20 @@ if (count($object->records) > 0)
         print '<div class="websiteselection">';
         $out='';
         $out.='<select name="pageid">';
-        foreach($array as $key => $valpage)
+        if (is_array($array) && count($array) > 0)
         {
-            if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
-            
-            $out.='<option value="'.$key.'"';
-            if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
-            $out.='>';
-            $out.=$valpage->title;
-            $out.='</option>';
+            foreach($array as $key => $valpage)
+            {
+                if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
+                
+                $out.='<option value="'.$key.'"';
+                if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+                $out.='>';
+                $out.=$valpage->title;
+                $out.='</option>';
+            }
         }
+        else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
         print $out;
         print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
