@@ -1265,7 +1265,9 @@ class ExpenseReport extends CommonObject
             $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             $sql.= " WHERE p.rowid = ".$projet_id;
             $result = $this->db->query($sql);
-            $objp_projet = $this->db->fetch_object($result);
+            if ($result) {
+            	$objp_projet = $this->db->fetch_object($result);
+            }
             $ligne->projet_ref          = $objp_projet->ref_projet;
             $ligne->projet_title        = $objp_projet->title_projet;
 
