@@ -3721,7 +3721,7 @@ class Product extends CommonObject
     			}
             }
 
-			if ($size==1 || $size='small')
+			if ($size==1 || $size=='small')
 			{
 				if ($nbbyrow > 0)
 				{
