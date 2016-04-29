@@ -305,18 +305,14 @@ ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ht double(24,8) DEFAUL
 ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
-
-
 ALTER TABLE llx_paiement ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 
-ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) NOT NULL;
+ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_tva double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ttc double(24,8) DEFAULT 0 NOT NULL;
-
-
 
 ALTER TABLE llx_supplier_proposal ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_supplier_proposal ADD COLUMN multicurrency_code varchar(255);
@@ -374,10 +370,12 @@ INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE',"Marge commerciale", '', 0, 1, '1 + 2', '30', 1, 1);
 
 UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = '';
-ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent TYPE integer USING account_parent::integer;
 
 
-DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
+-- VMYSQL4.1 DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
+-- VPGSQL8.2 DROP INDEX uk_bordereau_cheque;
 ALTER TABLE llx_bordereau_cheque CHANGE COLUMN number ref VARCHAR(30) NOT NULL;
 CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 
