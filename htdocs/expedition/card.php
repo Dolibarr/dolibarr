@@ -1546,6 +1546,10 @@ else if ($id || $ref)
 	{
 		print '<div class="tabsAction">';
 
+		$parameters = array();
+		// Note that $action and $object may have been
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);
+
 		if ($object->statut == 0 && $num_prod > 0)
 		{
 			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
