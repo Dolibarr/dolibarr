@@ -31,7 +31,7 @@ Dolibarr better:
 So if you included it into your module, change your code like this to be compatible with all version:
   $res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
   if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-
+- Class Resource was renamed into DolResource to avoid conflict with a reserved PHP word.
 
 
 ***** ChangeLog for 3.9.1 compared to 3.9.* *****
