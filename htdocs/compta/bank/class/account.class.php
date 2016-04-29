@@ -1100,9 +1100,12 @@ class Account extends CommonObject
      */
     public static function countAccountToReconcile()
     {
-        global $db, $conf, $langs;
-    
-        if ($user->societe_id) return 0;   // protection pour eviter appel par utilisateur externe
+        global $db, $conf, $user;
+
+        //Protection against external users
+        if ($user->societe_id) {
+            return 0;
+        }
     
         $nb=0;
         

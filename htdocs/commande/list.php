@@ -715,7 +715,7 @@ if ($resql)
 
                             // Get local and virtual stock and store it into cache
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
-                                $generic_product->load_stock();
+                                $generic_product->load_stock('nobatch');
                                 //$generic_product->load_virtual_stock();   Already included into load_stock
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
                                 $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
@@ -723,7 +723,7 @@ if ($resql)
                                 $generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
                                 $generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
                             }
-                            
+
                             if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code. Default is when this option is not set, setting it create strange result
                             {
                                 $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);

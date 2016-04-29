@@ -382,7 +382,7 @@ print '</tr>';
  * Charges sociales non deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 0)</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
@@ -456,7 +456,7 @@ print '</tr>';
  * Charges sociales deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 1)</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
