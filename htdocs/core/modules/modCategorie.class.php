@@ -269,7 +269,7 @@ class modCategorie extends DolibarrModules
         // End add axtra fields
         
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
-		$this->export_sql_end[$r]  = ' FROM ' . MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'societe_extrafield extra, '. MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
 		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_pays as country ON p.fk_pays = country.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.rowid = cp.fk_categorie AND cp.fk_socpeople = p.rowid AND u.entity = ' . $conf->entity;
 		$this->export_sql_end[$r] .= ' AND u.type = 4'; // contact categories
