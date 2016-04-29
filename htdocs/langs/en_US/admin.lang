@@ -1740,3 +1740,5 @@ AddOtherPagesOrServices=Add other pages or services
 AddModels=Add document or numbering templates
 AddSubstitutions=Add keys substitutions
 DetectionNotPossible=Detection not possible
+UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received it is saved on database user table and will be checked on each future access) 
+ListOfAvailableAPIs=List of available APIs
