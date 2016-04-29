@@ -484,12 +484,13 @@ if ($id > 0 || ! empty($ref))
 			dol_fiche_end();
 		}
 
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-			                                                                                          // modified by hook
-		if (empty($reshook))
+
+		if ($action != 'edit')
 		{
-			if ($action != 'edit')
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+				                                                                                          // modified by hook
+			if (empty($reshook))
 			{
 				/*
 				 * Actions
