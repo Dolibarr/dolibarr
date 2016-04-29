@@ -440,7 +440,7 @@ if (! empty($conf->fournisseur->enabled) && ! empty($conf->facture->enabled) && 
     $board->load_board($user);
     $board->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
     $board->label=$langs->trans("SupplierBillsToPay");
-    $board->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=paye:0';
+    $board->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=paye:0,fk_statut:1';
     $board->img=img_object($langs->trans("Bills"),"bill");
     $rowspan++;
     $dashboardlines[]=$board;
