@@ -251,7 +251,7 @@ class ContactApi extends DolibarrApi
 	 *
 	 * @param   int     $id Contact ID
 	 * @return  integer
-     * 
+   * 
 	 * @url	DELETE contact/{id}
 	 */
 	function delete($id) {
