@@ -199,6 +199,6 @@ OppStatusQUAL=Cualificación
 OppStatusPROPO=Presupuesto
 OppStatusNEGO=Negociación
 OppStatusPENDING=Pendiente
-OppStatusWON=Ganado
+OppStatusWIN=Ganado
 OppStatusLOST=Perdido
 Budget=Budget

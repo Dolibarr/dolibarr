@@ -199,6 +199,6 @@ OppStatusQUAL=Kvalifikasjon
 OppStatusPROPO=Tilbud
 OppStatusNEGO=Forhandling
 OppStatusPENDING=Venter
-OppStatusWON=Vunnet
+OppStatusWIN=Vunnet
 OppStatusLOST=Tapt
 Budget=Budget

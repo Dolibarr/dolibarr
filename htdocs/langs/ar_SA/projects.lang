@@ -199,6 +199,6 @@ OppStatusQUAL=المؤهل العلمى
 OppStatusPROPO=مقترح
 OppStatusNEGO=Negociation
 OppStatusPENDING=بانتظار
-OppStatusWON=فاز
+OppStatusWIN=فاز
 OppStatusLOST=ضائع
 Budget=Budget

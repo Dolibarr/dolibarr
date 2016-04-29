@@ -199,6 +199,6 @@ OppStatusQUAL=Nitelendirme
 OppStatusPROPO=Teklif
 OppStatusNEGO=Pazarlık
 OppStatusPENDING=Beklemede
-OppStatusWON=Kazanç
+OppStatusWIN=Kazanç
 OppStatusLOST=Kayıp
 Budget=Budget

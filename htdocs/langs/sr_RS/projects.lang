@@ -199,6 +199,6 @@ OppStatusQUAL=Kvalifikacija
 OppStatusPROPO=Ponuda
 OppStatusNEGO=Pregovaranje
 OppStatusPENDING=Na čekanju
-OppStatusWON=Dobijeno
+OppStatusWIN=Dobijeno
 OppStatusLOST=Izgubljeno
 Budget=Budget

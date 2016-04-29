@@ -125,5 +125,5 @@ OppStatusQUAL=Qualificação
 OppStatusPROPO=Proposta
 OppStatusNEGO=Negociação
 OppStatusPENDING=Pendente
-OppStatusWON=Ganhou
+OppStatusWIN=Ganhou
 OppStatusLOST=Perdido
