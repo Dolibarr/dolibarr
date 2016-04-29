@@ -81,6 +81,7 @@ $year = GETPOST("year","int");
 $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
+$filter = GETPOST("filtre");
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
 {
@@ -209,6 +210,15 @@ if ($search_amount_all_tax != '')
 if ($search_status != '')
 {
 	$sql.= " AND fac.fk_statut = ".$search_status;
+}
+if ($filter && $filter != -1)
+{
+	$aFilter = explode(',', $filter);
+	foreach ($aFilter as $fil)
+	{
+		$filt = explode(':', $fil);
+		$sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
+	}
 }
 
 $nbtotalofrecords = 0;
