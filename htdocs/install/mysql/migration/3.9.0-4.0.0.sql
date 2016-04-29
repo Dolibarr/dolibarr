@@ -66,6 +66,8 @@ ALTER TABLE llx_product ADD COLUMN height_units tinyint      DEFAULT NULL;
 
 ALTER TABLE llx_product ADD COLUMN default_vat_code	varchar(10) after cost_price;
 
+ALTER TABLE llx_product MODIFY COLUMN stock	real;
+
 CREATE TABLE llx_categorie_user 
 (
   fk_categorie 	integer NOT NULL,
