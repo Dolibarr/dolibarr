@@ -746,7 +746,7 @@ class ExpenseReport extends CommonObject
         $sql.= ' ctf.code as code_type_fees, ctf.label as libelle_type_fees,';
         $sql.= ' p.ref as ref_projet, p.title as title_projet';
         $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as de';
-        $sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
         $sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
 
@@ -776,7 +776,7 @@ class ExpenseReport extends CommonObject
                 $deplig->total_tva      = $objp->total_tva;
                 $deplig->total_ttc      = $objp->total_ttc;
 
-                $deplig->type_fees_code     = $objp->code_type_fees;
+                $deplig->type_fees_code     = empty($objp->code_type_fees)?'TF_OTHER':$objp->code_type_fees;
                 $deplig->type_fees_libelle  = $objp->libelle_type_fees;
 				$deplig->tva_tx			    = $objp->tva_tx;
                 $deplig->vatrate            = $objp->tva_tx;
