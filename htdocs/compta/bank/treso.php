@@ -136,7 +136,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '</tr>';
 
 	$var=!$var;
-	print '<tr class="liste_total">';
+	print '<tr class="liste_titre">';
 	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right" class="nowrap">&nbsp;</td>';
 	print '</tr>';
