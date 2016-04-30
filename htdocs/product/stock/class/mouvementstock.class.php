@@ -220,7 +220,6 @@ class MouvementStock extends CommonObject
 			$oldqty=$product->stock_reel;
 			$oldpmp=$product->pmp;
 			$oldqtywarehouse=0;
-			//$oldpmpwarehouse=0;
 
 			// Test if there is already a record for couple (warehouse / product)
 			$num = 0;
@@ -238,7 +237,6 @@ class MouvementStock extends CommonObject
 					{
 						$num = 1;
 						$oldqtywarehouse = $obj->reel;
-						//$oldpmpwarehouse = $obj->pmp;
 						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
@@ -317,6 +315,10 @@ class MouvementStock extends CommonObject
 				if ($result<0) $error++;
 			}
 
+			// If stock is now 0, we can remove entry into llx_stock_product, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
+			// having a lot=1, qty=X and lot=2, qty=-X, so 0 but we must not loose repartition of different lot.
+			// TODO We should do this but not so important because there is already a filter on !=0 on product stock lists.
+			
 			// Update PMP and denormalized value of stock qty at product level
 			if (! $error)
 			{
