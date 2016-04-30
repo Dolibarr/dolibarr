@@ -589,7 +589,7 @@ class Account extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
 
-            $result=$this->update();
+            $result=$this->update($user);
             if ($result > 0)
             {
 				$accline = new AccountLine($this->db);
