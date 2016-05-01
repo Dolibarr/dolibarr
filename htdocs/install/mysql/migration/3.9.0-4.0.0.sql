@@ -373,6 +373,16 @@ UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = ''
 -- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
 -- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent TYPE integer USING account_parent::integer;
 
+CREATE TABLE llx_accounting_journal
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  code       		varchar(32) NOT NULL,
+  label             varchar(128) NOT NULL,
+  nature			smallint DEFAULT 0 NOT NULL,			-- type of journals (Sale / purchase / bank / various operations)
+  active            smallint DEFAULT 0
+)ENGINE=innodb;
+
+ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (code);
 
 -- VMYSQL4.1 DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
 -- VPGSQL8.2 DROP INDEX uk_bordereau_cheque;
