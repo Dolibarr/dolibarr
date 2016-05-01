@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,10 +16,13 @@
  */
 
 /**
- *   	\file       htdocs/admin/website.php
+ *   	\file       htdocs/website/index.php
  *		\ingroup    website
- *		\brief      Page to setup the module Website
+ *		\brief      Page to website view/edit
  */
+
+define('NOSCANPOSTFORINJECTION',1);
+define('NOSTYLECHECK',1);
 
 
 /**
@@ -78,7 +81,7 @@ $conf->dol_hide_leftmenu = 1;
 $error=0;
 $website=GETPOST('website', 'alpha');
 $page=GETPOST('page', 'alpha');
-$pageid=GETPOST('pageid', 'alpha');
+$pageid=GETPOST('pageid', 'int');
 $action=GETPOST('action','alpha');
 
 if (GETPOST('delete')) { $action='delete'; }
@@ -106,12 +109,13 @@ if (empty($website))
         break;
     }
 }
-
 if ($website)
 {
     $res = $object->fetch(0, $website);
 }
-if ($pageid && $action != 'add')
+
+if ($pageid < 0) $pageid = 0;
+if ($pageid > 0 && $action != 'add')
 {
     $res = $objectpage->fetch($pageid);
 }
@@ -327,6 +331,10 @@ if ($action == 'updatecontent')
     {
         $objectpage->content = GETPOST('PAGE_CONTENT');
         
+        // Clean data. We remove all the head section.
+        $objectpage->content = preg_replace('/<head.*<\/head>/s', '', $objectpage->content);
+        /* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
+        
         $res = $objectpage->update($user);
         if (! $res > 0)
         {
@@ -397,7 +405,6 @@ if ($action == 'edit')
 {
     print '<input type="hidden" name="action" value="update">';
 }
-if ($website) print '<input type="hidden" name="website" value="'.dol_escape_htmltag($website).'">';
 
 
 // Add a margin under toolbar ?
@@ -414,21 +421,25 @@ if (count($object->records) > 0)
     print '</div>';
     
     print '<div class="websiteselection">';
+    $out='';
+    $out.='<select name="website">';
+    if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
     // Loop on each sites
     $i=0;
     foreach($object->records as $key => $valwebsite)
     {
         if (empty($website)) $website=$valwebsite->ref;
 
-        if ($i) print ' - ';
-        print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($valwebsite->ref).'">';
-        if ($valwebsite->ref == $website) print '<strong>';
-        print $valwebsite->ref;
-        if ($valwebsite->ref == $website) print '</strong>';
-        print '</a>';
-        
+        $out.='<option value="'.$valwebsite->ref.'"';
+        if ($website == $valwebsite->ref) $out.=' selected';		// To preselect a value
+        $out.='>';
+        $out.=$valwebsite->ref;
+        $out.='</option>';
         $i++;    
     }
+    $out.='</select>';
+    print $out;
+    print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
     
     print '</div>';
     
@@ -444,7 +455,13 @@ if (count($object->records) > 0)
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
         print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
     }
-    //else print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+    
+    if (in_array($action, array('editcss','editmenu','create')))
+    {
+        if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+    }
     
     print '</div>';
     
@@ -495,13 +512,19 @@ if (count($object->records) > 0)
         
             if ($pageid > 0)
             {
-                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
-                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
+                print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+                print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
+                //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
+                //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcontent&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageContent")).'</a>';
             }
         }
-        else print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        
+        if (! in_array($action, array('editcss','editmenu','create')))
+        {
+            if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+            if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+            if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        }
         
         print '</div>';
         
