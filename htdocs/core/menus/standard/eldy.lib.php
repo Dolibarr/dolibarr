@@ -981,6 +981,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				// Reports
 				$langs->load("compta");
+				$langs->load("admin");
 
 				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/report/result.php?leftmenu=accountancy_report&amp;mainmenu=accountancy",$langs->trans("Reportings"),1,$user->rights->accounting->comptarapport->lire, '', $mainmenu, 'ca');
 
@@ -991,11 +992,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report",$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
 				if (preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report", $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
-
-				// Admin
-				$langs->load("admin");
-			    if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Fiscalyear"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
-				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'chartofaccount');
+			    if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'chartofaccount');
 			}
 
 			// Accountancy (simple)
