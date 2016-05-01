@@ -866,7 +866,7 @@ else
     define('ROWS_9',8);
 }
 
-$heightforframes=52;
+$heightforframes=48;
 
 // Init menu manager
 if (! defined('NOREQUIREMENU'))

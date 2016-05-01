@@ -23,6 +23,7 @@
  */
 
 global $Config ;
+global $website;
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
 
@@ -44,13 +45,15 @@ $Config['Enabled'] = true ;
 
 
 // Path to user files relative to the document root.
-$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=fckeditor&file=' ;
+$Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=medias'.(empty($website)?'':'_'.$website).'&file=' ;
+
+$Config['UserFilesAbsolutePathRelative'] = (empty($website) ? ((!empty($entity) ? '/' . $entity : '') . '/medias/') : ('/websites/'.$website));
 
 // Fill the following value it you prefer to specify the absolute path for the
 // user files directory. Useful if you are using a virtual directory, symbolic
 // link or alias. Examples: 'C:\\MySite\\userfiles\\' or '/root/mysite/userfiles/'.
 // Attention: The above 'UserFilesPath' must point to the same directory.
-$Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root . (!empty($entity) ? '/' . $entity : '') . '/fckeditor/';
+$Config['UserFilesAbsolutePath'] = $dolibarr_main_data_root . $Config['UserFilesAbsolutePathRelative'];
 
 // Due to security issues with Apache modules, it is recommended to leave the
 // following setting enabled.

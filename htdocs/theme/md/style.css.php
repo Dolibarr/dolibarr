@@ -2988,18 +2988,20 @@ td.hidden {
 
 .websitebar {
 	border-bottom: 1px solid #888;
-	height: 30px; 
+	background: #eee;
 }
 .websiteselection {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle; 
-	margin-bottom: 5px;
 	line-height: 29px;
 }
 .websitetools {
 	float: right;
 	padding-top: 2px;
+}
+.websiteiframenoborder {
+	border: 0px;
 }
 
 

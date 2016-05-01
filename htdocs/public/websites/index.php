@@ -22,10 +22,98 @@
  *		\author	    Laurent Destailleur
  */
 
+define('NOTOKENRENEWAL',1); // Disables token renewal
+define("NOLOGIN",1);
+define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+
+/**
+ * Header empty
+ *
+ * @return	void
+ */
+function llxHeader() { }
+/**
+ * Footer empty
+ *
+ * @return	void
+ */
+function llxFooter() { }
+
 require '../../master.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+
+$error=0;
+$website=GETPOST('website', 'alpha');
+$page=GETPOST('page', 'alpha');
+$pageid=GETPOST('pageid', 'alpha');
+
+$accessallowed = 1;
+$type='';
+
+
+/*
+ * View
+ */
 
 $appli=constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
-print 'Directory with '.$appli.' websites.<br>';
+//print 'Directory with '.$appli.' websites.<br>';
+
+
+// Security: Delete string ../ into $original_file
+global $dolibarr_main_data_root;
+
+if ($pageid == 'css')
+{
+    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css';
+}
+else
+{
+    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/page'.$pageid.'.tpl.php';
+}
+
+// Find the subdirectory name as the reference
+$refname=basename(dirname($original_file)."/");
+
+// Security:
+// Limite acces si droits non corrects
+if (! $accessallowed)
+{
+    accessforbidden();
+}
+
+// Security:
+// On interdit les remontees de repertoire ainsi que les pipe dans
+// les noms de fichiers.
+if (preg_match('/\.\./',$original_file) || preg_match('/[<>|]/',$original_file))
+{
+    dol_syslog("Refused to deliver file ".$original_file);
+    $file=basename($original_file);		// Do no show plain path of original_file in shown error message
+    dol_print_error(0,$langs->trans("ErrorFileNameInvalid",$file));
+    exit;
+}
+
+clearstatcache();
+
+$filename = basename($original_file);
+
+// Output file on browser
+dol_syslog("index.php include $original_file $filename content-type=$type");
+$original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
+
+// This test if file exists should be useless. We keep it to find bug more easily
+if (! file_exists($original_file_osencoded))
+{
+    dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+    exit;
+}
+
+include_once $original_file_osencoded;
+
+if (is_object($db)) $db->close();
 
