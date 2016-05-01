@@ -350,7 +350,7 @@ legend { margin-bottom: 8px; }
 fieldset { border: 1px solid #AAAAAA !important; }
 
 
-.button, input[name="sbmtConnexion"] {
+.button, .buttonDelete, input[name="sbmtConnexion"] {
     font-family: <?php print $fontlist ?>;
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
@@ -383,17 +383,17 @@ fieldset { border: 1px solid #AAAAAA !important; }
 	-moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.button:focus  {
+.button:focus, .buttonDelete:focus  {
 	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:hover   {
+.button:hover, .buttonDelete:hover   {
 	-moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	-webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
-.button:disabled {
+.button:disabled, .buttonDelete:disabled {
 	opacity: 0.4;
     filter: alpha(opacity=40); /* For IE8 and earlier */
     box-shadow: none;
@@ -1907,31 +1907,16 @@ span.butAction, span.butActionDelete {
 }
 
 .butAction:hover   {
-/*  for bootstrap look
-  color: #fff;
-  background-color: #286090;
-  border-color: #204d74;
-*/
   -moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
   -webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
-.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
-/* for bootstrap look
-  color: #fff;
-  background-color: #d9534f;
-  border-color: #d43f3a;
-*/
-   color: #800;
+.butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
+   color: #800 !important;
 }
 
 .butActionDelete:hover {
-/*  for bootstrap look
-  color: #fff;
-  background-color: #c9302c;
-  border-color: #ac2925;
-*/
   -moz-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
   -webkit-box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -3127,6 +3112,12 @@ td.hidden {
 .websitebar {
 	border-bottom: 1px solid #888;
 	background: #eee;
+}
+.websitebar .button, .websitebar .buttonDelete 
+{
+	padding: 2px 5px 3px 5px !important;
+	margin: 2px 4px 2px 4px  !important;
+    line-height: normal;
 }
 .websiteselection {
 	display: inline-block;

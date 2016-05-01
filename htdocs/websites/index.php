@@ -81,6 +81,7 @@ $page=GETPOST('page', 'alpha');
 $pageid=GETPOST('pageid', 'alpha');
 $action=GETPOST('action','alpha');
 
+if (GETPOST('delete')) { $action='delete'; }
 if (GETPOST('preview')) $action='preview';
 if (GETPOST('create')) { $action='create'; }
 if (GETPOST('editmedia')) { $action='editmedia'; }
@@ -110,7 +111,7 @@ if ($website)
 {
     $res = $object->fetch(0, $website);
 }
-if ($pageid)
+if ($pageid && $action != 'add')
 {
     $res = $objectpage->fetch($pageid);
 }
@@ -200,6 +201,43 @@ if ($action == 'update')
     	{
     		$db->rollback();
     	}
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+// Update page
+if ($action == 'delete')
+{
+    $db->begin();
+
+    $res = $object->fetch(0, $website);
+
+    $res = $objectpage->fetch($pageid, $object->fk_website);
+
+    if ($res > 0)
+    {
+        $res = $objectpage->delete($user);
+        if (! $res > 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+            setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
+            
+            header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
+            exit;
+        }
+        else
+        {
+            $db->rollback();
+        }
     }
     else
     {
@@ -442,6 +480,7 @@ if (count($object->records) > 0)
         $out.='</select>';
         print $out;
         print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+        print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'">';
         //print $form->selectarray('page', $array);
         print '</div>';
         print '<div class="websiteselection">';
