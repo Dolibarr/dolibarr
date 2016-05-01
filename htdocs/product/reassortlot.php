@@ -100,6 +100,7 @@ if (! empty($_POST["button_removefilter_x"]))
  * View
  */
 
+$form=new Form($db);
 $htmlother=new FormOther($db);
 
 $title=$langs->trans("ProductsAndServices");

@@ -104,6 +104,7 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
  * View
  */
 
+$form=new Form($db);
 $htmlother=new FormOther($db);
 
 $title=$langs->trans("ProductsAndServices");
