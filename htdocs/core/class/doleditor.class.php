@@ -148,7 +148,10 @@ class DolEditor
     {
     	global $conf,$langs;
 
-        $found=0;
+    	$fullpage=False;
+    	$disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT); // Only predefined list of html tags are allowed
+    	
+    	$found=0;
 		$out='';
 
         if ($this->tool == 'fckeditor')
@@ -186,7 +189,8 @@ class DolEditor
             						customConfig : ckeditorConfig,
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
-            						allowedContent :'.(empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)?'false':'true').',
+            						allowedContent :'.($disallowAnyContent?'false':'true').',
+            						fullPage : '.($fullpage?'true':'false').', 
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
