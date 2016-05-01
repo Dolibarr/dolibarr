@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  */
 
 /**
- *     	\file       htdocs/public/paypal/index.php
+ *     	\file       htdocs/public/websites/index.php
  *		\ingroup    core
  *		\brief      A redirect page to an error
  *		\author	    Laurent Destailleur
@@ -63,6 +63,24 @@ $appli=constant('DOL_APPLICATION_TITLE');
 if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
 //print 'Directory with '.$appli.' websites.<br>';
+
+if (empty($pageid))
+{
+    require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
+    
+    $object=new Website($db);
+    $object->fetch(0, $website);
+    
+    $objectpage=new WebsitePage($db);
+    $array=$objectpage->fetchAll($object->id);
+    
+    if (count($array) > 0)
+    {
+        $firstrep=reset($array);
+        $pageid=$firstrep->id;
+    }
+}
 
 
 // Security: Delete string ../ into $original_file

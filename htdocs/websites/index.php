@@ -420,6 +420,7 @@ if (count($object->records) > 0)
     print $langs->trans("Website").': ';
     print '</div>';
     
+    // List of websites
     print '<div class="websiteselection">';
     $out='';
     $out.='<select name="website">';
@@ -441,8 +442,13 @@ if (count($object->records) > 0)
     print $out;
     print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
     
+    if ($website)
+    {
+        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewInNewTab").'</a>';
+    }
     print '</div>';
     
+    // Button for websites
     print '<div class="websitetools">';
     
     if ($action == 'preview') 

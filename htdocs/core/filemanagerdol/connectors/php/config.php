@@ -67,7 +67,7 @@ $Config['SecureImageUploads'] = true;
 $Config['ConfigAllowedCommands'] = array('QuickUpload', 'FileUpload', 'GetFolders', 'GetFoldersAndFiles', 'CreateFolder');
 
 // Allowed Resource Types.
-$Config['ConfigAllowedTypes'] = array('File', 'Image', 'Flash', 'Media');
+$Config['ConfigAllowedTypes'] = array('File', 'Image', 'Media');
 
 // For security, HTML is allowed in the first Kb of data for files having the
 // following extensions only.
@@ -78,11 +78,19 @@ $Config['HtmlExtensions'] = array("html", "htm", "xml", "xsd", "txt", "js");
 // If possible, it is recommended to set more restrictive permissions, like 0755.
 // Set to 0 to disable this feature.
 // Note: not needed on Windows-based servers.
-$Config['ChmodOnUpload'] = 0775 ;
+$newmask = '0644';
+if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+$Config['ChmodOnUpload'] = $newmask;
 
 // See comments above.
 // Used when creating folders that does not exist.
-$Config['ChmodOnFolderCreate'] = 0775 ;
+$newmask = '0755';
+$dirmaskdec=octdec($newmask);
+if (! empty($conf->global->MAIN_UMASK)) $dirmaskdec=octdec($conf->global->MAIN_UMASK);
+$dirmaskdec |= octdec('0200');  // Set w bit required to be able to create content for recursive subdirs files
+$newmask = decoct($dirmaskdec);
+
+$Config['ChmodOnFolderCreate'] = $newmask;
 
 /*
 	Configuration settings for each Resource Type
