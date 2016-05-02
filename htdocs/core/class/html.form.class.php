@@ -2351,10 +2351,10 @@ class Form
                     $form.= $opt;
                     $i++;
                 }
-                $form.= '</select>';
-
-                $this->db->free($result);
             }
+
+            $form.= '</select>';
+            $this->db->free($result);
             return $form;
         }
         else
@@ -4013,11 +4013,18 @@ class Form
 
         $return='';
 
-        // Define defaultnpr and defaultttx
+        // Define defaultnpr, defaultttx and defaultcode
         $defaultnpr=($info_bits & 0x01);
         $defaultnpr=(preg_match('/\*/',$selectedrate) ? 1 : $defaultnpr);
         $defaulttx=str_replace('*','',$selectedrate);
-
+        $defaultcode='';
+        if (preg_match('/\s*\((.*)\)/', $defaulttx, $reg))
+        {
+            $defaultcode=$reg[1];
+            $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
+        }
+        //var_dump($defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
+        
         // Check parameters
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->country_code)
         {
@@ -4113,9 +4120,13 @@ class Form
         		$return.= $rate['nprtva'] ? '*': '';
         		if ($addcode && $rate['code']) $return.=' ('.$rate['code'].')';
         		$return.= '"';
-        		if ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
+        		if ($defaultcode)
         		{
-        			$return.= ' selected';
+                    if ($defaultcode == $rate['code']) $return.= ' selected';    	
+        		}
+        		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
+           		{
+           		    $return.= ' selected';
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');

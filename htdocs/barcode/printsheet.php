@@ -62,7 +62,7 @@ if (GETPOST('submitproduct') && GETPOST('submitproduct'))
 	{
 		$producttmp->fetch(GETPOST('productid'));
 		$forbarcode=$producttmp->barcode;
-		$fk_barcode_type=$thirdpartytmp->barcode_type_code;
+		$fk_barcode_type=$producttmp->barcode_type;
 
 		if (empty($fk_barcode_type) && ! empty($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE)) $fk_barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 
