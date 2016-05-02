@@ -1625,7 +1625,7 @@ else
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
-				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
+				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
 
@@ -1652,7 +1652,7 @@ else
 						print '<tr class="liste_titre">';
 						print '<td style="text-align:center;">'.$langs->trans('Piece').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
-						print '<td>'.$langs->trans('Project').'</td>';
+						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
 						print '<td style="text-align:center;">'.$langs->trans('Type').'</td>';
 						print '<td style="text-align:left;">'.$langs->trans('Description').'</td>';
 						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
@@ -1680,15 +1680,18 @@ else
 								print img_picto($langs->trans("Document"), "object_generic");
 								print ' <span>'.$piece_comptable.'</span></td>';
 								print '<td style="text-align:center;">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
-								print '<td>';
-								if ($objp->projet_id > 0)
+								if (! empty($conf->projet->enabled))
 								{
-									$projecttmp->id=$objp->projet_id;
-									$projecttmp->ref=$objp->projet_ref;
-									print $projecttmp->getNomUrl(1);
+    								print '<td>';
+    								if ($objp->projet_id > 0)
+    								{
+    									$projecttmp->id=$objp->projet_id;
+    									$projecttmp->ref=$objp->projet_ref;
+    									print $projecttmp->getNomUrl(1);
+    								}
+    								print '</td>';
 								}
-								print '</td>';
-								print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper($objp->type_fees_libelle)).'</td>';
+								print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
 								print '<td style="text-align:left;">'.$objp->comments.'</td>';
 								print '<td style="text-align:right;">'.vatrate($objp->vatrate,true).'</td>';
 								print '<td style="text-align:right;">'.price($objp->value_unit).'</td>';
@@ -1729,10 +1732,13 @@ else
 									print '</td>';
 
 									// Select project
-									print '<td>';
-									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 1, 1);
-									print '</td>';
-
+									if (! empty($conf->projet->enabled))
+									{
+    									print '<td>';
+    									$formproject->select_projects(-1, $objp->fk_projet,'fk_projet', 0, 0, 1, 1);
+    									print '</td>';
+									}
+									
 									// Select type
 									print '<td style="text-align:center;">';
 									select_type_fees_id($objp->type_fees_code,'fk_c_type_fees');
@@ -1790,7 +1796,7 @@ else
 						print '<tr class="liste_titre">';
 						print '<td colspan="2"></td>';
 						//print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
-						print '<td>'.$langs->trans('Project').'</td>';
+						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
 						print '<td align="center">'.$langs->trans('Type').'</td>';
 						print '<td>'.$langs->trans('Description').'</td>';
 						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
@@ -1810,10 +1816,13 @@ else
 						print '</td>';
 
 						// Select project
-						print '<td>';
-						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
-						print '</td>';
-
+						if (! empty($conf->projet->enabled))
+						{
+    						print '<td>';
+    						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
+    						print '</td>';
+						}
+						
 						// Select type
 						print '<td align="center">';
 						select_type_fees_id($fk_c_type_fees,'fk_c_type_fees',1);
@@ -1829,7 +1838,6 @@ else
 						$defaultvat=-1;
 						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 						print '<select class="flat" name="vatrate">';
-						print '<option name="none" value="" selected>';
 						print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', true);
 						print '</select>';
 						print '</td>';
@@ -2102,9 +2110,13 @@ if ($action != 'create' && $action != 'edit' && ($id || $ref))
     $somethingshown = $form->showLinkedObjectBlock($object);
 
     // Show links to link elements
-    $linktoelem = $form->showLinkToObjectBlock($object);
+    $linktoelements=array();
+    if($conf->global->EXPENSES_LINK_TO_INTERVENTION) $linktoelements[]='fichinter';
+    $linktoelem='';
+    $linktoelem = $form->showLinkToObjectBlock($object,$linktoelements);
     if ($linktoelem) print '<br>'.$linktoelem;
 
+}
 llxFooter();
 
 $db->close();

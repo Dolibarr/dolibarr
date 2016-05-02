@@ -408,8 +408,8 @@ class Productbatch extends CommonObject
      *  Find first detail record that match eather eat-by or sell-by or batch within given warehouse
      *
      *  @param	int			$fk_product_stock   id product_stock for objet
-     *  @param	date		$eatby    			eat-by date for objet
-     *  @param	date		$sellby   			sell-by date for objet
+     *  @param	date		$eatby    			eat-by date for objet - deprecated: a search must be done on batch number
+     *  @param	date		$sellby   			sell-by date for objet - deprecated: a search must be done on batch number
      *  @param	string		$batch_number   	batch number for objet
      *  @return int          					<0 if KO, >0 if OK
      */
@@ -469,7 +469,7 @@ class Productbatch extends CommonObject
      *  @param	DoliDB		$db    				database object
      *  @param	int			$fk_product_stock	id product_stock for objet
      *  @param	int			$with_qty    		doesn't return line with 0 quantity
-	 *  @return int         					<0 if KO, >0 if OK
+     *  @return array         					<0 if KO, array of batch
      */
     public static function findAll($db,$fk_product_stock,$with_qty=0)
     {

@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Jeste li sigurni da želite ovjeriti otpremnicu <b>
 DeliveryMethod=Metoda dostave
 TrackingNumber=Broj za praćenje
 DeliveryNotValidated=Dostava nije potvrđena
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Ime i potpis:
 ToAndDate=Za___________________________________ dana ____/_____/__________

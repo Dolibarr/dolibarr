@@ -17,7 +17,7 @@
  */
 
 /**
- * \file       htdocs/core/js/timepicker.js.php
+ * \file       htdocs/core/js/select2_locale.js.php
  * \brief      File that include javascript functions for timepicker
  */
 

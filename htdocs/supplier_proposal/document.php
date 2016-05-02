@@ -66,7 +66,7 @@ if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->supplier_proposal->dir_output.'/'.dol_sanitizeFileName($object->ref);
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+	include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 }
 
 

@@ -68,8 +68,8 @@ create table llx_actioncomm
   recurrule         varchar(128),					-- contains string with ical format recurring rule like "FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19" or "FREQ=WEEKLY;BYDAY=MO"
   recurdateend      datetime,
      
-  fk_element		integer DEFAULT NULL,
-  elementtype		varchar(32) DEFAULT NULL
+  fk_element		integer DEFAULT NULL,			-- For link to an element (proposal, invoice, order, ...)
+  elementtype		varchar(255) DEFAULT NULL		-- For link to an element (proposal, invoice, order, ...)
 
 )ENGINE=innodb;
 

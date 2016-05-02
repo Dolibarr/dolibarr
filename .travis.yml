@@ -162,11 +162,11 @@ before_script:
     echo "MySQL"
     mysql -e 'DROP DATABASE IF EXISTS travis;'
     mysql -e 'CREATE DATABASE IF NOT EXISTS travis;'
-    mysql -D travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+    mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
   fi
   # FIXME: find a way to import a MySQL dump into PostgreSQL
   #if [ "$DB" = 'postgresql' ]; then
-  #  pgsql travis < dev/initdata/mysqldump_dolibarr_3.5.0.sql
+  #  pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
   #fi
   # TODO: SQLite
   echo
@@ -197,6 +197,7 @@ before_script:
   echo "Create documents directory and set permissions"
   # and admin/temp subdirectory needed for unit tests
   mkdir -p documents/admin/temp
+  echo "first line" > documents/dolibarr.log
   echo
 
 - |
@@ -265,7 +266,7 @@ script:
 - |
   echo "Upgrading Dolibarr"
   # Ensure we catch errors
-  set -e
+  set +e
   cd htdocs/install
   php upgrade.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360.log
   php upgrade2.php 3.5.0 3.6.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade350360-2.log
@@ -288,29 +289,42 @@ script:
 
 - |
   echo "Unit testing"
-  # Ensure we catch errors
+  # Ensure we catch errors. Set this to +e if you want to go to the end to see log file.
   set -e
-  phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+  #phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   set +e
-  echo
+
+- |
+  #echo "Output dolibarr.log"
+  #echo cat documents/dolibarr.log
+
+after_script:
+- |
+  # Dolibarr log file
+  #echo "After script"
+  #cat documents/dolibarr.log
+
 
 after_success:
+- |
+  echo Success
 
 after_failure:
 - |
+  echo Failure
+  # This part of code seems to be never executed, error or not ???
+  echo "Debugging informations"
+  # Upgrade log files
+  cat *.log
+  echo "Debugging informations"
+  # Apache log file
+  sudo cat /var/log/apache2/error.log
+  # Dolibarr log file
+  cat documents/dolibarr.log
   if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    # Upgrade log files
-    cat *.log
-    # Dolibarr log file
-    cat documents/dolibarr.log
-    # Apache log file
-    sudo cat /var/log/apache2/error.log
     # MariaDB log file
     sudo cat /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
   fi
-
-after_script:
 

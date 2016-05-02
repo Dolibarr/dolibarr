@@ -39,6 +39,7 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
+$object = new ChargeSociales($db);
 
 
 
@@ -49,19 +50,32 @@ $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 /* *************************************************************************** */
 
 // Classify paid
-if ($action == 'confirm_paid' && $confirm == 'yes')
+if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes')
 {
-	$chargesociales = new ChargeSociales($db);
-	$chargesociales->fetch($id);
-	$result = $chargesociales->set_paid($user);
+	$object->fetch($id);
+	$result = $object->set_paid($user);
+}
+
+if ($action == 'reopen' && $user->rights->tax->charges->creer) {
+    $result = $object->fetch($id);
+    if ($object->paye)
+    {
+        $result = $object->set_unpaid($user);
+        if ($result > 0) 
+        {
+            header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+            exit();
+        } else {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    }
 }
 
 // Delete social contribution
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
-	$chargesociales=new ChargeSociales($db);
-	$chargesociales->fetch($id);
-	$result=$chargesociales->delete($user);
+	$object->fetch($id);
+	$result=$object->delete($user);
 	if ($result > 0)
 	{
 		header("Location: index.php");
@@ -69,7 +83,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	}
 	else
 	{
-		setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -77,8 +91,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
-	$dateech=@dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
-	$dateperiod=@dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
+	$dateech=dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
+	$dateperiod=dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
     $amount=price2num(GETPOST('amount'));
     $actioncode=GETPOST('actioncode');
 	if (! $dateech)
@@ -108,18 +122,16 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	}
 	else
 	{
-		$chargesociales=new ChargeSociales($db);
+		$object->type=$actioncode;
+		$object->lib=GETPOST('label');
+		$object->date_ech=$dateech;
+		$object->periode=$dateperiod;
+		$object->amount=$amount;
 
-		$chargesociales->type=$actioncode;
-		$chargesociales->lib=GETPOST('label');
-		$chargesociales->date_ech=$dateech;
-		$chargesociales->periode=$dateperiod;
-		$chargesociales->amount=$amount;
-
-		$id=$chargesociales->create($user);
+		$id=$object->create($user);
 		if ($id <= 0)
 		{
-			setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='create';
 		}
 	}
@@ -153,18 +165,17 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 	}
     else
 	{
-        $chargesociales=new ChargeSociales($db);
-        $result=$chargesociales->fetch($id);
+        $result=$object->fetch($id);
 
-        $chargesociales->lib=GETPOST('label');
-        $chargesociales->date_ech=$dateech;
-        $chargesociales->periode=$dateperiod;
-        $chargesociales->amount=price2num($amount);
+        $object->lib=GETPOST('label');
+        $object->date_ech=$dateech;
+        $object->periode=$dateperiod;
+        $object->amount=price2num($amount);
 
-        $result=$chargesociales->update($user);
+        $result=$object->update($user);
         if ($result <= 0)
         {
-            setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
         }
 	}
 }
@@ -178,7 +189,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 	$originalId = $id;
 
-	$object = new ChargeSociales($db);
 	$object->fetch($id);
 
 	if ($object->id > 0)
@@ -499,6 +509,12 @@ if ($id > 0)
 		{
 			print "<div class=\"tabsAction\">\n";
 
+			// Reopen
+			if ($object->paye && $user->rights->tax->charges->creer)
+			{
+				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/charges.php",1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a>";
+			}
+			
 			// Edit
 			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{

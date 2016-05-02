@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Bạn có chắc muốn xóa chứng từ giao hàn
 DeliveryMethod=Phương thức giao hàng
 TrackingNumber=Số theo dõi
 DeliveryNotValidated=Giao hàng chưa được xác nhận
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Tên và chữ ký:
 ToAndDate=Gửi___________________________________ vào ____ / _____ / __________

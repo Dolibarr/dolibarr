@@ -853,8 +853,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     	// Test RULE ES-ES
     	$vat1=get_default_localtax($companyes,$companyes,1,0);
     	$vat2=get_default_localtax($companyes,$companyes,2,0);
-    	$this->assertEquals(5.2,$vat1);
-    	$this->assertEquals(-19,$vat2);
+    	$this->assertEquals($vat1, 5.2);
+    	$this->assertStringStartsWith((string) $vat2, '-19:-15:-9');       // Can be -19 (old version) or '-19:-15:-9' (new setup)
 
     	// Test RULE ES-IT
     	$vat1=get_default_localtax($companyes,$companyit,1,0);

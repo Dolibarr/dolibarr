@@ -49,5 +49,6 @@ SendSms=Pošlji SMS
 SmsInfoCharRemain=Število preostalih znakov
 SmsInfoNumero= (mednarodni format npr : +33899701761)
 DelayBeforeSending=Zakasnitev začetka pošiljanja (minut)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Ni prejemnika. Preverite nastavitve vašega SMS providerja.
 

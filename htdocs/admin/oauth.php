@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+ * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ if (!$user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Supported OAUTH (a provider is supported when a file xxx_oauth2callback.php is available into htdocs/core/modules/oauth)
+// Supported OAUTH (a provider is supported when a file xxx_oauthcallback.php is available into htdocs/core/modules/oauth)
 $supportedoauth2array=array('OAUTH_GOOGLE_NAME'=>'google');
 
 // API access parameters OAUTH
@@ -346,14 +347,14 @@ foreach ($list as $key)
     $var = !$var;
     print '<tr '.$bc[$var].' class="value">';
     print '<td><label for="'.$key[1].'">'.$langs->trans($key[1]).'</label></td>';
-    print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->$key[1].'">';
+    print '<td><input type="text" size="100" id="'.$key[1].'" name="'.$key[1].'" value="'.$conf->global->{$key[1]}.'">';
     print '</td></tr>';
 
     // Api Secret
     $var = !$var;
     print '<tr '.$bc[$var].' class="value">';
     print '<td><label for="'.$key[2].'">'.$langs->trans($key[2]).'</label></td>';
-    print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->$key[2].'">';
+    print '<td><input type="password" size="100" id="'.$key[2].'" name="'.$key[2].'" value="'.$conf->global->{$key[2]}.'">';
     print '</td></tr>';
 
 }

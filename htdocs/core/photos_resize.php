@@ -124,7 +124,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 
 	if ($result == $fullpath)
 	{
-		$object->add_thumb($fullpath);
+		$object->addThumbs($fullpath);
 
 		if ($backtourl)
 		{
@@ -153,7 +153,7 @@ if ($action == 'confirm_crop')
 
 	if ($result == $fullpath)
 	{
-		$object->add_thumb($fullpath);
+		$object->addThumbs($fullpath);
 
 		if ($backtourl)
 		{

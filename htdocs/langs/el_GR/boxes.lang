@@ -60,6 +60,8 @@ BoxTitleLastContracts=Τα %s πιο πρόσφατα συμβόλαια
 BoxTitleLastModifiedDonations=Οι τελευταίες %s τροποποιημένες δωρεές
 BoxTitleLastModifiedExpenses=Τελευταία %s τροποποιημένη έκθεση εξόδων
 BoxGlobalActivity=Η γενική δραστηριότητα για (τιμολόγια, προσφορές, παραγγελίες)
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Αποτυχία ανανέωσης RSS ροής. Τελευταία ημερομηνία επιτυχημένης ανανέωσης: %s
 LastRefreshDate=Τελευταία ημερομηνία ανανέωσης
 NoRecordedBookmarks=Δεν υπάρχουν σελιδοδείκτες που ορίζονται. Κάντε κλικ <a href="%s">εδώ</a> για να προσθέσετε σελιδοδείκτες.
@@ -95,3 +97,4 @@ ForCustomersInvoices=Τιμολόγια Πελάτη
 ForCustomersOrders=Παραγγελίες πελατών
 ForProposals=Προσφορές
 LastXMonthRolling=Η τελευταία %s κίνηση του μήνα 
+ChooseBoxToAdd=Add a box to your dashboard...

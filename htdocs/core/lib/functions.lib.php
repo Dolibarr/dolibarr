@@ -306,7 +306,7 @@ function dol_getprefix()
  *  To link to a module file from a core file, then this function can be used (call by hook / trigger / speciales pages)
  *
  * 	@param	string	$relpath	Relative path to file (Ie: mydir/myfile, ../myfile, ...)
- * 	@param	string	$classname	Class name
+ * 	@param	string	$classname	Class name (deprecated)
  *  @return bool                True if load is a success, False if it fails
  */
 function dol_include_once($relpath, $classname='')
@@ -630,14 +630,14 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 
 		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && ! empty($conf->global->MAIN_LOGTOHTML))
+		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
 		{
 			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
 		}
 
-		//TODO: Remove this. MAIN_ENABLE_LOG_HTML should be deprecated and use a log handler dedicated to HTML output
+		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
 		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
-		if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
+		if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
 		{
 			print "\n\n<!-- Log start\n";
 			print $message."\n";
@@ -958,6 +958,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
  * @param	string	$langkey		Translation key
  * @param 	string	$fieldkey		Key of the html select field the text refers to
  * @param	int		$fieldrequired	1=Field is mandatory
+ * @deprecated Form::editfieldkey
  */
 function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
 {
@@ -1001,7 +1002,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	global $conf,$langs;
 
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');
+	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// Address
 	$ret .= $object->address;
@@ -1009,7 +1010,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	if (in_array($object->country_code,array('US','AU')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.=", ".$object->state;
 		}
@@ -1018,7 +1019,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else if (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.=", ".$object->state;
 		}
@@ -1028,12 +1029,11 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	{
 		$ret .= ($ret ? $sep : '' ).$object->zip;
 		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-		if ($object->state && in_array($object->country_code,$countriesusingstate))
+		if ($object->state)
 		{
 			$ret.="\n".$object->state;
 		}
 	}
-
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
@@ -1286,7 +1286,10 @@ function dol_getdate($timestamp,$fast=false)
  *	@param	int			$month			Month (1 to 12)
  *	@param	int			$day			Day (1 to 31)
  *	@param	int			$year			Year
- *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values, False or 0 or 'server' = local to server TZ, 'user' = local to user TZ
+ *	@param	mixed		$gm				True or 1 or 'gmt'=Input informations are GMT values
+ *										False or 0 or 'server' = local to server TZ
+ *										'user' = local to user TZ
+ *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
  *	@return	int|string					Date as a timestamp, '' or false if error
  * 	@see 								dol_print_date, dol_stringtotime, dol_getdate
@@ -1330,6 +1333,18 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 			{
 				dol_syslog("Warning dol_tz_string contains an invalid value ".$_SESSION["dol_tz_string"], LOG_WARNING);
 				$default_timezone=@date_default_timezone_get();
+			}
+		}
+		else if (strrpos($gm, "tz,") !== false)
+		{
+			$timezone=str_replace("tz,", "", $gm);  // Example 'tz,Europe/Berlin'
+			try
+			{
+				$localtz = new DateTimeZone($timezone);
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Warning passed timezone contains an invalid value ".$timezone, LOG_WARNING);
 			}
 		}
 
@@ -1859,17 +1874,25 @@ function dol_substr($string,$start,$length,$stringencoding='')
  *  @param		int		$showpercent	Show percent (with type='pie' only)
  *  @param		string	$url			Param to add an url to click values
  *  @param		int		$combineother	0=No combine, 0.05=Combine if lower than 5%
+ *  @param      int     $shownographyet Show graph to say there is not enough data
  *  @return		void
  *  @deprecated
  *  @see DolGraph
  */
-function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05)
+function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05,$shownographyet=0)
 {
 	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
 	global $conf,$langs;
 	global $theme_datacolor;    // To have var kept when function is called several times
 
+	if ($shownographyet)
+	{
+	    print '<div class="nographyet" style="width:'.$width.'px;height:'.$height.'px;"></div>';
+	    print '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+	    return;
+	}
+	
 	if (empty($conf->use_javascript_ajax)) return;
 	$jsgraphlib='flot';
 	$datacolor=array();
@@ -2016,7 +2039,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 			});
 			</script>';
 		}
-		else print 'BadValueForPArameterType';
+		else print 'BadValueForParameterType';
 	}
 }
 
@@ -2037,11 +2060,12 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
 {
 	global $conf;
 
-	if (empty($stringencoding)) $stringencoding='UTF-8';
-
 	if ($size==0 || ! empty($conf->global->MAIN_DISABLE_TRUNC)) return $string;
+	
+	if (empty($stringencoding)) $stringencoding='UTF-8';
 	// reduce for small screen
-    if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+	if ($conf->dol_optimize_smallscreen==1 && $display==1) $size = round($size/3);
+
 	// We go always here
 	if ($trunc == 'right')
 	{
@@ -2168,6 +2192,27 @@ function img_picto($titlealt, $picto, $options = '', $pictoisfullpath = false, $
 function img_object($titlealt, $picto, $options = '', $pictoisfullpath = false)
 {
 	return img_picto($titlealt, 'object_'.$picto, $options, $pictoisfullpath);
+}
+
+/**
+ *	Show weather picto
+ *
+ *	@param      string		$titlealt         	Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param      string		$picto       		Name of image file to show (If no extension provided, we use '.png'). Image must be stored into htdocs/theme/common directory.
+ *	@param		string		$options			Add more attribute on img tag
+ *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *	@return     string      					Return img tag
+ *  @see        #img_object, #img_picto
+ */
+function img_weather($titlealt, $picto, $options = '', $pictoisfullpath = 0)
+{
+	global $conf;
+
+	if (! preg_match('/(\.png|\.gif)$/i', $picto)) $picto .= '.png';
+
+	$path = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/weather/'.$picto;
+
+	return img_picto($titlealt, $path, $options, 1);
 }
 
 /**
@@ -2379,16 +2424,16 @@ function img_info($titlealt = 'default')
  *	Show warning logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  int		$float      If we must add style "float: right"
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"'). If 1
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $float = 0)
+function img_warning($titlealt = 'default', $options = '')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($float ? ' style="float: right"' : ''));
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($options ? ($options == '1' ? ' style="float: right"' : ' '.$options): ''));
 }
 
 /**
@@ -2410,30 +2455,32 @@ function img_error($titlealt = 'default')
  *	Show next logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@return string      		Return img tag
+*	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
+  *	@return string      		Return img tag
  */
-function img_next($titlealt = 'default')
+function img_next($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Next');
 
-	return img_picto($titlealt, 'next.png');
+	return img_picto($titlealt, 'next.png', $options);
 }
 
 /**
  *	Show previous logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"')
  *	@return string      		Return img tag
  */
-function img_previous($titlealt = 'default')
+function img_previous($titlealt = 'default', $options='')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Previous');
 
-	return img_picto($titlealt, 'previous.png');
+	return img_picto($titlealt, 'previous.png', $options);
 }
 
 /**
@@ -2610,14 +2657,15 @@ function img_searchclear($titlealt = 'default', $other = '')
 }
 
 /**
- *	Show information for admin users
+ *	Show information for admin users or standard users
  *
  *	@param	string	$text			Text info
  *	@param  integer	$infoonimgalt	Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv			No div
+ *  @param  int     $admin          1=Info for admin users. 0=Info for standard users (change only the look)
  *	@return	string					String with info text
  */
-function info_admin($text, $infoonimgalt = 0, $nodiv=0)
+function info_admin($text, $infoonimgalt = 0, $nodiv=0, $admin=1)
 {
 	global $conf, $langs;
 
@@ -2626,7 +2674,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv=0)
 		return img_picto($text, 'info', 'class="hideonsmartphone"');
 	}
 
-	return ($nodiv?'':'<div class="info hideonsmartphone">').img_picto($langs->trans('InfoAdmin'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
+	return ($nodiv?'':'<div class="'.($admin?'info':'').' hideonsmartphone">').img_picto($admin?$langs->trans('InfoAdmin'):$langs->trans('Note'), ($nodiv?'info':'info_black'), 'class="hideonsmartphone"').' '.$text.($nodiv?'':'</div>');
 }
 
 
@@ -2927,6 +2975,7 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
  * 	@return	string
+ *  @see print_barre_liste
  */
 function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0)
 {
@@ -2955,31 +3004,35 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 /**
  *	Print a title with navigation controls for pagination
  *
- *	@param	string	$titre				Title to show (required)
- *	@param	string	$page				Numero of page to show in navigation links (required)
- *	@param	string	$file				Url of page (required)
- *	@param	string	$options         	parametres complementaires lien ('' par defaut)
- *	@param	string	$sortfield       	champ de tri ('' par defaut)
- *	@param	string	$sortorder       	ordre de tri ('' par defaut)
- *	@param	string	$center          	chaine du centre ('' par defaut)
- *	@param	int		$num				number of records found by select with limit+1
- *	@param	int		$totalnboflines		Total number of records/lines for all pages (if known)
- *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
- *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
- *  @param	string	$morehtml			More html to show
- *  @param  string  $morecss            More css to the table
- *  @param  int     $limit              Limit ofnumber of lines on each page
+ *	@param	string	    $titre				Title to show (required)
+ *	@param	string	    $page				Numero of page to show in navigation links (required)
+ *	@param	string	    $file				Url of page (required)
+ *	@param	string	    $options         	parametres complementaires lien ('' par defaut)
+ *	@param	string    	$sortfield       	champ de tri ('' par defaut)
+ *	@param	string	    $sortorder       	ordre de tri ('' par defaut)
+ *	@param	string	    $center          	chaine du centre ('' par defaut). We often find here string $massaction comming from $form->selectMassAction() 
+ *	@param	int		    $num				number of records found by select with limit+1
+ *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to no show number.
+ *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
+ *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
+ *  @param	string	    $morehtml			More html to show
+ *  @param  string      $morecss            More css to the table
+ *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
+ *  @param  int         $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=0)
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1, $totalnboflines=0, $picto='title_generic.png', $pictoisfullpath=0, $morehtml='', $morecss='', $limit=-1, $hideselectlimit=0)
 {
 	global $conf,$langs;
-
+	
+	$savlimit = $limit;
+    $savtotalnboflines = $totalnboflines;
+    $totalnboflines=abs($totalnboflines);
+    
 	if ($picto == 'setup') $picto='title_setup.png';
 	if (($conf->browser->name == 'ie') && $picto=='title_generic.png') $picto='title.gif';
-	if ($limit < 1) $limit = $conf->liste_limit;
-	
-	if (($num > $limit) || ($num == -1))
+	if ($limit < 0) $limit = $conf->liste_limit;
+	if ($savlimit != 0 && (($num > $limit) || ($num == -1) || ($limit == 0)))
 	{
 		$nextpage = 1;
 	}
@@ -2987,17 +3040,16 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	{
 		$nextpage = 0;
 	}
-
+	//print 'totalnboflines='.$totalnboflines.'-savlimit='.$savlimit.'-limit='.$limit.'-num='.$num.'-nextpage='.$nextpage;
+	
 	print "\n";
 	print "<!-- Begin title '".$titre."' -->\n";
 	print '<table width="100%" border="0" class="notopnoleftnoright'.($morecss?' '.$morecss:'').'" style="margin-bottom: 6px;"><tr>';
 
 	// Left
-	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, '', $pictoisfullpath).'</td>';
+	if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding"><div class="titre">'.$titre;
-	if (!empty($totalnboflines) && !empty($titre)) {
-		print ' ('.$totalnboflines.')';
-	}
+	if (!empty($titre) && $savtotalnboflines > 0) print ' ('.$totalnboflines.')';
 	print '</div></td>';
 
 	// Center
@@ -3012,13 +3064,14 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	if ($sortorder) $options .= "&amp;sortorder=".$sortorder;
 	// Show navigation bar
 	$pagelist = '';
-	if ($page > 0 || $num > $limit)
+	if ($savlimit != 0 && ($page > 0 || $num > $limit))
 	{
 		if ($totalnboflines)	// If we know total nb of lines
 		{
-			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 6 : 3);		// nb before and after selected page + ... + first or last
+			$maxnbofpage=(empty($conf->dol_optimize_smallscreen) ? 4 : 2);		// page nb before and after selected page + ... + first or last
 
-			$nbpages=ceil($totalnboflines/$limit);
+			if ($limit > 0) $nbpages=ceil($totalnboflines/$limit);
+			else $nbpages=1;
 			$cpt=($page-$maxnbofpage);
 			if ($cpt < 0) { $cpt=0; }
 
@@ -3055,7 +3108,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 			$pagelist.= '<li'.(empty($conf->dol_use_jmobile)?' class="pagination"':'').'><span '.(empty($conf->dol_use_jmobile)?'class="active"':'data-role="button"').'>'.($page+1)."</li>";
 		}
 	}
-	print_fleche_navigation($page,$file,$options,$nextpage,$pagelist,$morehtml);		// output the div and ul for previous/last completed with page numbers into $pagelist
+	print_fleche_navigation($page, $file, $options, $nextpage, $pagelist, $morehtml, $savlimit, $totalnboflines, $hideselectlimit);		// output the div and ul for previous/last completed with page numbers into $pagelist
 	print '</td>';
 
 	print '</tr></table>'."\n";
@@ -3071,13 +3124,64 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  *	@param	integer			$nextpage	    	Do we show a next page button
  *	@param	string			$betweenarrows		HTML content to show between arrows. MUST contains '<li> </li>' tags or '<li><span> </span></li>'.
  *  @param	string			$afterarrows		HTML content to show after arrows. Must NOT contains '<li> </li>' tags.
+ *  @param  int             $limit              Max nb of record to show  (-1 = no combo with limit, 0 = no limit, > 0 = limit)
+ *	@param	int		        $totalnboflines		Total number of records/lines for all pages (if known)
+ *  @param  int             $hideselectlimit    Force to hide select limit
  *	@return	void
  */
-function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='')
+function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betweenarrows='', $afterarrows='', $limit=-1, $totalnboflines=0, $hideselectlimit=0)
 {
 	global $conf, $langs;
 
 	print '<div class="pagination"><ul>';
+	if ((int) $limit >= 0 && empty($hideselectlimit))
+	{
+	    $pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
+	    //$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
+	    //$pagesizechoices.=',2:2';
+	    if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
+	     
+        print '<li class="pagination">';
+        print '<select class="flat selectlimit" name="limit">';
+        $tmpchoice=explode(',',$pagesizechoices);
+        $tmpkey=$limit.':'.$limit;
+        if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
+        $tmpkey=$conf->liste_limit.':'.$conf->liste_limit;
+        if (! in_array($tmpkey, $tmpchoice)) $tmpchoice[]=$tmpkey;
+        asort($tmpchoice, SORT_NUMERIC);
+        $found=false;
+        foreach($tmpchoice as $val)
+        {
+            $selected='';
+            $tmp=explode(':',$val);
+            $key=$tmp[0];
+            $val=$tmp[1];
+            if ($key != '' && $val != '')
+            {
+                if ((int) $key == (int) $limit)
+                {
+                    $selected = ' selected="selected"';
+                    $found = true;
+                }
+                print '<option name="'.$key.'"'.$selected.'>'.dol_escape_htmltag($val).'</option>'."\n";
+            }
+        }
+        print '</select>';
+        if ($conf->use_javascript_ajax)
+        {
+            print '<!-- JS CODE TO ENABLE select limit to launch submit of page -->
+            		<script type="text/javascript">
+                	jQuery(document).ready(function () {
+            	  		jQuery(".selectlimit").change(function() {
+                            console.log("Change limit. Send submit");
+                            $(this).parents(\'form:first\').submit();
+            	  		});
+                	});
+            		</script>
+                ';
+        }
+        print '</li>';	    
+	}
 	if ($page > 0)
 	{
 		if (empty($conf->dol_use_jmobile)) print '<li class="pagination"><a class="paginationprevious" href="'.$file.'?page='.($page-1).$options.'"><</a></li>';
@@ -3146,7 +3250,7 @@ function vatrate($rate,$addpercent=false,$info_bits=0,$usestarfornpr=0)
  *		@param	float		$amount			Amount to format
  *		@param	integer		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
- *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate
+ *		@param	int			$trunc			1=Truncate if there is too much decimals (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before inserted into database or after a computation, so this parameter should be useless.
  *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
  *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
@@ -3315,18 +3419,62 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
 	return $amount;
 }
 
+
+/**
+ * Output a dimension with best unit
+ *  
+ * @param   float       $dimension      Dimension
+ * @param   int         $unit           Unit of dimension (0, -3, ...)
+ * @param   string      $type           'weight', 'volume', ...
+ * @param   Translate   $outputlangs    Translate language object
+ * @param   int         $round          -1 = non rounding, x = number of decimal
+ * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit
+ * @return  string                      String to show dimensions
+ */
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitoutput='no')
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+    
+    if (($forceunitoutput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitoutput) && $forceunitoutput == -6)) 
+    {
+        $dimension = $dimension * 1000000;
+        $unit = $unit - 6; 
+    }
+    elseif (($forceunitoutput == 'no' && $dimension < 1/10) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
+    {
+        $dimension = $dimension * 1000;
+        $unit = $unit - 3; 
+    }
+    elseif (($forceunitoutput == 'no' && $dimension > 100000000) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
+    {
+        $dimension = $dimension / 1000000;
+        $unit = $unit + 6;
+    }
+    elseif (($forceunitoutput == 'no' && $dimension > 100000) || (is_numeric($forceunitoutput) && $forceunitoutput == 3))
+    {
+        $dimension = $dimension / 1000;
+        $unit = $unit + 3;
+    }
+    
+    $ret=price($dimension, 0, $outputlangs, 0, 0, $round).' '.measuring_units_string($unit, $type);
+    
+    return $ret;
+}
+
+
 /**
  *	Return localtax rate for a particular vat, when selling a product with vat $vatrate, from a $thirdparty_buyer to a $thirdparty_seller
  *  Note: This function applies same rules than get_default_tva
  *
- * 	@param	float		$vatrate		        Vat rate
+ * 	@param	float		$vatrate		        Vat rate. Can be '8.5' or '8.5 (VATCODEX)' for example
  * 	@param  int			$local		         	Local tax to search and return (1 or 2 return only tax rate 1 or tax rate 2)
  *  @param  Societe		$thirdparty_buyer    	Object of buying third party
  *  @param	Societe		$thirdparty_seller		Object of selling third party
+ *  @param	int			$vatnpr					If vat rate is NPR or not
  * 	@return	mixed			   					0 if not found, localtax rate if found
  *  @see get_default_tva
  */
-function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller="")
+function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller="", $vatnpr=0)
 {
 	global $db, $conf, $mysoc;
 
@@ -3435,7 +3583,8 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
    	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
    	$sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$thirdparty_seller->country_code."'";
    	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-   	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
+   	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";		// If we have the code, we use it in priority
+   	else $sql.= " AND t.recuperableonly ='".$npr."'";
    	dol_syslog("get_localtax", LOG_DEBUG);
    	$resql=$db->query($sql);
 
@@ -3504,19 +3653,50 @@ function get_localtax_by_third($local)
 
 
 /**
+ *  Get vat rate and npr from id.
+ *  You can call getLocalTaxesFromRate after to get other fields 
+ *
+ *  @param	int      $vatrowid			Line ID into vat rate table.
+ *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
+ */
+function getTaxesFromId($vatrowid)
+{
+    global $db, $mysoc;
+
+    dol_syslog("getTaxesFromId vatrowid=".$vatrowid);
+
+    // Search local taxes
+    $sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_tva as t";
+    $sql.= " WHERE t.rowid ='".$vatrowid."'";
+
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj = $db->fetch_object($resql);
+
+        return array('rowid'=>$obj->rowid, 'code'=>$obj->code, 'rate'=>$obj->rate, 'npr'=>$obj->npr);
+    }
+    else dol_print_error($db);
+
+    return array();
+}
+
+/**
  *  Get type and rate of localtaxes for a particular vat rate/country fo thirdparty
  *  TODO
- *  This function is also called to retrieve type for building PDF. Such call of function must be removed.
+ *  This function is ALSO called to retrieve type for building PDF. Such call of function must be removed.
  *  Instead this function must be called when adding a line to get the array of localtax and type, and then
  *  provide it to the function calcul_price_total.
  *
- *  @param	float	$vatrate			VAT Rate
+ *  @param	string  $vatrate			VAT Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	int		$local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	Societe	$buyer         		Company object
  *  @param	Societe	$seller        		Company object
+ *  @param  int     $firstparamisid     1 if first param is id into table (use this if you can)
  *  @return	array    	  				array(localtax_type1(1-6 / 0 if not found), rate of localtax1, ...)
  */
-function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
+function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisid=0)
 {
 	global $db, $mysoc;
 
@@ -3531,12 +3711,17 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller)
 	
 	// Search local taxes
 	$sql  = "SELECT t.localtax1, t.localtax1_type, t.localtax2, t.localtax2_type, t.accountancy_code_sell, t.accountancy_code_buy";
-	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-	if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";
-	else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
-	$sql .= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
-	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
-
+	$sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t";
+	if ($firstparamisid) $sql.= " WHERE t.rowid ='".$vatrate."'";
+	else
+	{
+	    $sql.=", ".MAIN_DB_PREFIX."c_country as c";
+    	if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // local tax in spain use the buyer country ??
+    	else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+    	$sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
+    	if ($vatratecode) $sql.= " AND t.code ='".$vatratecode."'";
+	}
+	
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -3661,7 +3846,7 @@ function get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournpr
 			}
 			else dol_print_error($db);
 		}
-		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;
+		else $ret=$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS;    // Forced value if autodetect fails
 	}
 
 	dol_syslog("get_product_vat_for_country: ret=".$ret);
@@ -3752,12 +3937,9 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  *  @see get_default_npr, get_default_localtax
  */
-function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
+function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
 	global $conf;
-
-	if (!is_object($thirdparty_seller)) return -1;
-	if (!is_object($thirdparty_buyer)) return -1;
 
 	// Note: possible values for tva_assuj are 0/1 or franchise/reel
 	$seller_use_vat=((is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj) || (! is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj=='franchise'))?0:1;
@@ -3835,7 +4017,7 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *	@return float       			        	0 or 1
  *  @see get_default_tva, get_default_localtax
  */
-function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
+function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
 	global $db;
 
@@ -4104,12 +4286,36 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 
 
 /**
+ * Return first line of text. Cut will depends if content is HTML or not.
+ *
+ * @param 	string	$text		Input text
+ * @return	string				Output text
+ * @see dol_nboflines_bis
+ */
+function dolGetFirstLineOfText($text)
+{
+	if (dol_textishtml($text))
+	{
+		$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
+		$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
+		
+	}
+	else
+	{
+    	$firstline=preg_replace('/[\n\r].*/','',$text);
+	}
+    return $firstline.((strlen($firstline) != strlen($text))?'...':'');
+}
+
+
+/**
  * Replace CRLF in string with a HTML BR tag
  *
  * @param	string	$stringtoencode		String to encode
  * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
  * @param   bool	$forxml             false=Use <br>, true=Use <br />
  * @return	string						String encoded
+ * @see dol_nboflines, dolGetFirstLineOfText
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
@@ -4247,7 +4453,7 @@ function dol_string_is_good_iso($s)
  *	@param	string	$s			String to check
  * 	@param	int     $maxchar	Not yet used
  *	@return	int					Number of lines
- *  @see	dol_nboflines_bis
+ *  @see	dol_nboflines_bis, dolGetFirstLineOfText
  */
 function dol_nboflines($s,$maxchar=0)
 {
@@ -4348,7 +4554,7 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *  Concat 2 descriptions (second one after first one with a new line separator if required)
+ *  Concat 2 descriptions with a new line between them (second operand after first one with appropriate new line separator)
  *  text1 html + text2 html => text1 + '<br>' + text2
  *  text1 html + text2 txt  => text1 + '<br>' + dol_nl2br(text2)
  *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2
@@ -4559,7 +4765,7 @@ function setEventMessage($mesgs, $style='mesgs')
  */
 function setEventMessages($mesg, $mesgs, $style='mesgs')
 {
-	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter for setEventMessage');
+	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
 	if (empty($mesgs)) setEventMessage($mesg, $style);
 	else
 	{
@@ -5113,21 +5319,24 @@ function printCommonFooter($zone='private')
 	if (! empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER."\n";
 
 	print "\n";
-	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
-	
-	print '<!-- If page_y set, we set scollbar with it -->'."\n";
-	print "page_y=getParameterByName('page_y', 0);";
-	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
-	
-	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
-	print 'jQuery(".reposition").click(function() {
-	           var page_y = $(document).scrollTop();
-	           /* alert(page_y); */
-	           this.href=this.href+\'&page_y=\'+page_y;
-	           });'."\n";
-	print '});'."\n";
-	
-	print '</script>'."\n";
+	if (! empty($conf->use_javascript_ajax))
+	{
+    	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
+    	
+    	print '<!-- If page_y set, we set scollbar with it -->'."\n";
+    	print "page_y=getParameterByName('page_y', 0);";
+    	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
+    	
+    	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
+    	print 'jQuery(".reposition").click(function() {
+    	           var page_y = $(document).scrollTop();
+    	           /* alert(page_y); */
+    	           this.href=this.href+\'&page_y=\'+page_y;
+    	           });'."\n";
+    	print '});'."\n";
+    	
+    	print '</script>'."\n";
+	}
 	
 	// Google Analytics (need Google module)
 	if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AN_ID))
@@ -5254,7 +5463,7 @@ function dol_set_focus($selector)
 function dol_getmypid()
 {
     if (! function_exists('getmypid')) {
-        return rand(1,32768);
+        return mt_rand(1,32768);
     } else {
         return getmypid();
     }
@@ -5329,14 +5538,36 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 				$newres .= ($i2 > 0 ? ' OR ' : '') . $field . " IN (" . $db->escape(trim($crit)) . ")";
             	$i2++;	// a criteria was added to string
             }
-            else
+            else    // $mode=0
 			{
 				$textcrit = '';
 				$tmpcrits = explode('|',$crit);
 				$i3 = 0;
 				foreach($tmpcrits as $tmpcrit)
 				{
-	            	$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '') . $field . " LIKE '%" . $db->escape(trim($tmpcrit)) . "%'";
+	            	$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '') . $field . " LIKE '";
+
+	            	$tmpcrit=trim($tmpcrit);
+	            	$tmpcrit2=$tmpcrit;
+	            	$tmpbefore='%'; $tmpafter='%';
+	            	if (preg_match('/^[\^\$]/', $tmpcrit)) 
+	            	{ 
+	            	    $tmpbefore='';
+	            	    $tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2); 
+	            	}
+					if (preg_match('/[\^\$]$/', $tmpcrit)) 
+	            	{ 
+	            	    $tmpafter='';
+	            	    $tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2); 
+	            	}
+	            	$newres .= $tmpbefore;
+	            	$newres .= $db->escape($tmpcrit2);
+	            	$newres .= $tmpafter;
+	            	$newres .= "'";
+	            	if (empty($tmpcrit2))
+	            	{
+	            	    $newres .= ' OR ' . $field . " IS NULL";
+	            	}
 	            	$i3++;
 				}
 				$i2++;	// a criteria was added to string

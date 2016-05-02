@@ -38,10 +38,10 @@ MonthlyInterestRateDesc=<b>Miesięczna stopa procentowa</b> = roczna stopa proce
 MonthTermDesc=<b>Miesięcy okres</b> kredytowania w miesiącach = ilość lat wziąłeś kredyt się do czasów 12
 MonthlyPaymentDesc=Miesięczny płatności zorientowali się, stosując następujący wzór
 AmortizationPaymentDesc=<a href="#amortization">Amortyzacja</a> zepsuje, ile miesięczne płatności idzie w kierunku zainteresowania banku, a ile idzie do spłaty kwoty głównej pożyczki.
-AmountFinanced=Kwota Finansowane
+AmountFinanced=Kwota finansowania
 AmortizationMonthlyPaymentOverYears=Amortyzacja miesięczną <b>spłatę:% s</b> na% s lat
 Totalsforyear=Sumy dla roku
-MonthlyPayment=Miesięczny Płatność
+MonthlyPayment=Miesięczna płatność
 LoanCalcDesc=<b>Kalkulator kredytu hipotecznego</b> może być używany, aby dowiedzieć miesięcznych wypłat kredytu hipotecznego w domu, w oparciu o cenę domu na sprzedaż w, okres kredytowania pożądanym, dół procent płatności kupującego, i stopy procentowej kredytu. <br> Ten kalkulator czynniki PMI (Private Mortgage Insurance) dla kredytów w których mniej niż 20% jest umieszczone jako zaliczki. Brane pod uwagę również to podatki od nieruchomości miasto, a ich wpływ na łączne miesięczne płatności hipotecznych. <br>
 GoToInterest=% s zostanie przeznaczona INTERESÓW
 GoToPrincipal=% s zostanie przeznaczona PODSTAWOWA

@@ -38,11 +38,12 @@ $langs->load("mails");
 if (! $user->rights->mailing->lire || $user->societe_id > 0) accessforbidden();
 
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
@@ -95,6 +96,7 @@ if ($action == 'add')
 
 			// Add targets into database
 			$obj = new $classname($db);
+			dol_syslog("Call add_to_target on class ".$classname);
 			$result=$obj->add_to_target($id,$filtersarray);
 		}
 	}
@@ -194,7 +196,9 @@ if ($object->fetch($id) >= 0)
 	print '</td></tr>';
 
 	// Status
-	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4);
+	if ($object->statut == 2) print ' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.')';
+	print '</td></tr>';
 
 	// Nb of distinct emails
 	print '<tr><td width="25%">';
@@ -366,11 +370,21 @@ if ($object->fetch($id) >= 0)
 	if ($search_email)  $sql.= " AND mc.email  LIKE '%".$db->escape($search_email)."%'";
 	if (!empty($search_dest_status)) $sql.= " AND mc.statut=".$db->escape($search_dest_status)." ";
 	$sql .= $db->order($sortfield,$sortorder);
-	$sql .= $db->plimit($conf->liste_limit+1, $offset);
+
+	// Count total nb of records
+	$nbtotalofrecords = 0;
+	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	{
+	    $result = $db->query($sql);
+	    $nbtotalofrecords = $db->num_rows($result);
+	}
+	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
+	$sql .= $db->plimit($limit+1, $offset);
 
 	$resql=$db->query($sql);
 	if ($resql)
 	{
+	    
 		$num = $db->num_rows($resql);
 
 		$param = "&amp;id=".$object->id;
@@ -388,7 +402,7 @@ if ($object->fetch($id) >= 0)
 			$cleartext='<br></div><div>'.$langs->trans("ToClearAllRecipientsClickHere").': '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
 		}
 
-		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$object->nbemail,'');
+		print_barre_liste($langs->trans("MailSelectedRecipients").$cleartext,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,"",$num,$nbtotalofrecords,'',0,'','',$limit);
 
 		print '</form>';
 
@@ -398,7 +412,8 @@ if ($object->fetch($id) >= 0)
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
-
+		print '<input type="hidden" name="limit" value="'.$limit.'">';
+		
 
 		if ($page)			$param.= "&amp;page=".$page;
 		print '<table class="noborder" width="100%">';
@@ -484,24 +499,24 @@ if ($object->fetch($id) >= 0)
                     if ($obj->source_type == 'member')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-                        $m=new Adherent($db);
-						$m->fetch($obj->source_id);
-                        print $m->getNomUrl(2);
+                        $objectstatic=new Adherent($db);
+						$objectstatic->fetch($obj->source_id);
+                        print $objectstatic->getNomUrl(2);
                     }
                     else if ($obj->source_type == 'user')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-                        $m=new User($db);
-						$m->fetch($obj->source_id);
-                        $m->id=$obj->source_id;
-                        print $m->getNomUrl(2);
+                        $objectstatic=new User($db);
+						$objectstatic->fetch($obj->source_id);
+                        $objectstatic->id=$obj->source_id;
+                        print $objectstatic->getNomUrl(2);
                     }
                     else if ($obj->source_type == 'thirdparty')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-                        $m=new Societe($db);
-						$m->fetch($obj->source_id);
-                        print $m->getNomUrl(2);
+                        $objectstatic=new Societe($db);
+						$objectstatic->fetch($obj->source_id);
+                        print $objectstatic->getNomUrl(2);
                     }
                     else
                     {
@@ -541,7 +556,12 @@ if ($object->fetch($id) >= 0)
 		}
 		else
 		{
-			print '<tr '.$bc[false].'><td colspan="8">'.$langs->trans("NoTargetYet").'</td></tr>';
+			if ($object->statut < 2) 
+			{
+			    print '<tr '.$bc[false].'><td colspan="8">';
+    			print $langs->trans("NoTargetYet");
+    			print '</td></tr>';
+			}
 		}
 		print "</table><br>";
 

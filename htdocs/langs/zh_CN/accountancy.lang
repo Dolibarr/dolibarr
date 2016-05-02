@@ -26,7 +26,6 @@ Selectmodelcsv=选择一个导出模型
 Modelcsv_normal=典型的导出
 Modelcsv_CEGID=出口对Cegid的专家
 BackToChartofaccounts=返回科目表
-Back=返回
 
 Definechartofaccounts=定义会计科目表
 Selectchartofaccounts=选择会计科目表
@@ -35,6 +34,7 @@ AccountAccounting=会计账户
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=明细核算
 
+MenuAccountancy=Accountancy
 CustomersVentilation=客户明细
 SuppliersVentilation=供应商明细
 TradeMargin=贸易保证金
@@ -47,7 +47,7 @@ UpdateAccount=修改”会计帐户“
 UpdateMvts=对一个”活动“进行修改
 WriteBookKeeping=在”总账“中的”账户记录“
 Bookkeeping=总帐
-AccountBalanceByMonth=”账户余额“按月份
+AccountBalance=Account balance
 
 AccountingVentilation=明细核算
 AccountingVentilationSupplier=供应商明细核算
@@ -104,15 +104,12 @@ Code_tiers=第三方
 Labelcompte=标签帐户
 Sens=SENS
 Codejournal=日记帐
+NumPiece=Piece number
 
 DelBookKeeping=删除总帐的记录
 
 DescSellsJournal=出售的”日记帐“
 DescPurchasesJournal=购买的”日记帐“
-BankJournal=银行日记账
-DescBankJournal=银行日记账，包括支付现金以外的所有类型
-CashJournal=现金日记账
-DescCashJournal=现金日记账，包括支付现金的类型
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
@@ -152,9 +149,11 @@ DescVentilDoneSupplier=在这里请教发票的供应商的线条和其会计帐
 ValidateHistory=自动验证
 
 ErrorAccountancyCodeIsAlreadyUse=错误，你不能删除这个会计帐户，因为它是用来
-
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 FicheVentilation=击穿卡
 GeneralLedgerIsWritten=Operations are written in the general ledger
+
+MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
 
 ##Export Journal Feature
 ExportFormat=Format of Export
@@ -167,7 +166,14 @@ Headername=Name in header
 Type=Type of fields
 Param=Additionnal parameters
 EnabledProduct=In Product
-EnabledTiers=In Tiers
-EnabledVat=In Vat
+EnabledTiers=In third party
+EnabledVat=In VAT
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Tools - Init accounting account on product / service
+InitAccountancy=Init accountancy
+InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
+Options=Options
+OptionModeProductSell=Mode sales
+OptionModeProductBuy=Mode purchases
+OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
+OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.

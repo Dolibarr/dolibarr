@@ -45,6 +45,16 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $numero;
 
     /**
+     * @var string  Publisher name
+     */
+    public $editor_name;
+    
+    /**
+     * @var string  URL of module at publisher site
+     */
+    public $editor_web;    
+    
+    /**
      * @var string Family
      */
     public $family;
@@ -153,10 +163,15 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $version;
 
     /**
-     * @var string Module description
+     * @var string Module description (short text)
      */
     public $description;
 
+    /**
+     * @var string Module description (long text)
+     */
+    public $descriptionlong;
+    
     /**
      * @var string[] Module language files
      */
@@ -444,15 +459,58 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
     }
 
-
     /**
-     * Gives module version
+     * Gives the translated module description if translation exists in admin.lang or the default module description
+     *
+     * @return  string  Translated module description
+     */
+    function getDescLong()
+    {
+        global $langs;
+        $langs->load("admin");
+        
+        if (empty($this->descriptionlong)) return '';
+        
+        // If module description translation does not exist using its unique id, we can use its name to find translation
+        if (is_array($this->langfiles))
+        {
+            foreach($this->langfiles as $val)
+            {
+                if ($val) $langs->load($val);
+            }
+        }
+        return $langs->trans($this->descriptionlong);
+    }
+    
+    /**
+     * Gives the publisher name
+     *
+     * @return  string  Publisher name
+     */
+    function getPublisher()
+    {
+        return $this->editor_name;
+    }
+    
+    /**
+     * Gives the publisher url
+     *
+     * @return  string  Publisher url
+     */
+    function getPublisherUrl()
+    {
+        return $this->editor_url;
+    }
+    
+    /**
+     * Gives module version (translated if param $translated is on)
      * For 'experimental' modules, gives 'experimental' translation
      * For 'dolibarr' modules, gives Dolibarr version
      *
-     * @return  string  Module version
+     * @param   int     $translated     1=Special version keys are translated, 0=Special version keys are not translated
+     * @return  string                  Module version
      */
-    function getVersion()
+    function getVersion($translated=1)
     {
         global $langs;
         $langs->load("admin");
@@ -460,13 +518,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $ret='';
 
         $newversion=preg_replace('/_deprecated/','',$this->version);
-        if ($newversion == 'experimental') $ret=$langs->trans("VersionExperimental");
-        elseif ($newversion == 'development') $ret=$langs->trans("VersionDevelopment");
+        if ($newversion == 'experimental') $ret=($translated?$langs->trans("VersionExperimental"):$newversion);
+        elseif ($newversion == 'development') $ret=($translated?$langs->trans("VersionDevelopment"):$newversion);
         elseif ($newversion == 'dolibarr') $ret=DOL_VERSION;
         elseif ($newversion) $ret=$newversion;
-        else $ret=$langs->trans("VersionUnknown");
+        else $ret=($translated?$langs->trans("VersionUnknown"):'unknown');
 
-        if (preg_match('/_deprecated/',$this->version)) $ret.=' ('.$langs->trans("Deprecated").')';
+        if (preg_match('/_deprecated/',$this->version)) $ret.=($translated?' ('.$langs->trans("Deprecated").')':$this->version);
         return $ret;
     }
 
@@ -841,7 +899,19 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 //$titre = $this->boxes[$key][0];
                 $file  = $this->boxes[$key]['file'];
                 //$note  = $this->boxes[$key][2];
-
+                
+                // TODO If the box is also included by another module and the other module is still on, we should not remove it.
+                // For the moment, we manage this with hard coded exception
+                //print "Remove box ".$file.'<br>';
+                if ($file == 'box_graph_product_distribution.php')
+                {
+                    if (! empty($conf->produit->enabled) || ! empty($conf->service->enabled)) 
+                    {
+                        dol_syslog("We discard disabling of module ".$file." because another module still active require it.");
+                        continue;
+                    }
+                }
+                
                 if (empty($file)) $file  = isset($this->boxes[$key][1])?$this->boxes[$key][1]:'';	// For backward compatibility
 
                 if ($this->db->type == 'sqlite3') {
@@ -913,7 +983,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                 $comment = isset($this->cronjobs[$key]['comment'])?$this->cronjobs[$key]['comment']:'';
                 $frequency = isset($this->cronjobs[$key]['frequency'])?$this->cronjobs[$key]['frequency']:'';
                 $unitfrequency = isset($this->cronjobs[$key]['unitfrequency'])?$this->cronjobs[$key]['unitfrequency']:'';
-
+                $status = isset($this->cronjobs[$key]['status'])?$this->cronjobs[$key]['status']:'';
+                $priority = isset($this->cronjobs[$key]['priority'])?$this->cronjobs[$key]['priority']:'';
+                $test = isset($this->cronjobs[$key]['test'])?$this->cronjobs[$key]['test']:'';                              // Line must be visible
+                
                 // Search if boxes def already present
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."cronjob";
                 $sql.= " WHERE module_name = '".$this->db->escape($this->rights_class)."'";
@@ -936,7 +1009,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
                         if (! $err)
                         {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, entity)";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note,";
+                            if(is_int($frequency)){ $sql.= ' frequency,'; }
+                            if(is_int($unitfrequency)){ $sql.= ' unitfrequency,'; }
+                            if(is_int($priority)){ $sql.= ' priority,'; }
+                            if(is_int($status)){ $sql.= ' status,'; }
+                            $sql.= " entity, test)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape($this->rights_class)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
@@ -949,9 +1027,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                             $sql.= ($command?"'".$this->db->escape($command)."'":"null").",";
                             $sql.= ($parameters?"'".$this->db->escape($parameters)."'":"null").",";
                             $sql.= ($comment?"'".$this->db->escape($comment)."'":"null").",";
-                            $sql.= "'".$this->db->escape($frequency)."', ";
-                            $sql.= "'".$this->db->escape($unitfrequency)."', ";
-                            $sql.= $conf->entity;
+                            if(is_int($frequency)){ $sql.= "'".$this->db->escape($frequency)."', "; }
+                            if(is_int($unitfrequency)){ $sql.= "'".$this->db->escape($unitfrequency)."', "; }
+                            if(is_int($priority)) {$sql.= "'".$this->db->escape($priority)."', ";}
+                            if(is_int($status)){ $sql.= "'".$this->db->escape($status)."', "; }
+                            $sql.= $conf->entity.",";
+                            $sql.= "'".$this->db->escape($test)."'";
                             $sql.= ")";
 
                             dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);

@@ -6,7 +6,7 @@ AllSendings=All Shipments
 Shipment=Sändning
 Shipments=Transporter
 ShowSending=Show Shipments
-Receivings=Kvitto
+Receivings=Delivery Receipts
 SendingsArea=Transporter område
 ListOfSendings=Lista över transporter
 SendingMethod=Frakt metod
@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Produktkvantitet till öppnade leverantörsor
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Produktkvantitet från öppnade leverantörsorder är redan skickade
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Fångst av kunden

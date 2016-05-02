@@ -1,8 +1,10 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
+ReceiptPrinterSetup=Configuració del mòdul Impressió de Tiquets
 PrinterAdded=Impressora %s afegida
 PrinterUpdated=Impressora %s actualitzada
 PrinterDeleted=Impressora %s esborrada
 TestSentToPrinter=Prova enviada a la impressora %s
+ReceiptPrinter=Impressores de tiquets
 ReceiptPrinterDesc=Configuració de impressores
 ReceiptPrinterTemplateDesc=Configuració de plantilles
 ReceiptPrinterTypeDesc=Descripció del tipus d'impresora de tiquets
@@ -79,7 +81,7 @@ DOL_PRINT_CUSTOMER_MAIL=Imprimeix correu del client
 DOL_PRINT_CUSTOMER_PHONE=Imprimeix telèfon del client
 DOL_PRINT_CUSTOMER_MOBILE=Imprimeix mòbil del client
 DOL_PRINT_CUSTOMER_SKYPE=Imprimeix skype del client
-DOL_PRINT_CUSTOMER_TAX_NUMBER=Imprimeix el IVA del client
+DOL_PRINT_CUSTOMER_TAX_NUMBER=Imprimeix el CIF/NIF del client
 DOL_PRINT_CUSTOMER_ACCOUNT_BALANCE=Imprimir balanç contable del client
 DOL_PRINT_VENDOR_LASTNAME=Imprimir cognom del venedor
 DOL_PRINT_VENDOR_FIRSTNAME=Imprimir nom del venedor
@@ -92,5 +94,5 @@ DOL_PRINT_IF_HAPPY_HOUR=Imprimeix la línia SI és Happy Hour
 DOL_PRINT_IF_NUM_ORDER_UNIQUE=Imprimeix la línia SI la comanda està validada
 DOL_PRINT_IF_CUSTOMER_POINTS=Imprimeix la línia SI els punts del client > 0
 DOL_PRINT_IF_ORDER_POINTS=Imprimeix la línia SI els punts de la comanda > 0
-DOL_PRINT_IF_CUSTOMER_TAX_NUMBER=Imprimeix la línia SI el client té IVA
+DOL_PRINT_IF_CUSTOMER_TAX_NUMBER=Imprimeix la línia SI el client té CIF/NIF
 DOL_PRINT_IF_CUSTOMER_ACCOUNT_BALANCE_POSITIVE=Imprimeix la línia SI el balanç del client > 0

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -43,7 +43,10 @@ function versiontostring($versionarray)
 
 /**
  *	Compare 2 versions (stored into 2 arrays).
- *  For example, to check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  To check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 beta or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,0)) >= 0) is true if version is 4.0 final or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -62,12 +65,16 @@ function versioncompare($versionarray1,$versionarray2)
     {
         $operande1=isset($versionarray1[$level])?$versionarray1[$level]:0;
         $operande2=isset($versionarray2[$level])?$versionarray2[$level]:0;
-        if (preg_match('/alpha|dev/i',$operande1)) $operande1=-3;
-        if (preg_match('/alpha|dev/i',$operande2)) $operande2=-3;
-        if (preg_match('/beta/i',$operande1)) $operande1=-2;
-        if (preg_match('/beta/i',$operande2)) $operande2=-2;
-        if (preg_match('/rc/i',$operande1)) $operande1=-1;
-        if (preg_match('/rc/i',$operande2)) $operande2=-1;
+        if (preg_match('/alpha|dev/i',$operande1)) $operande1=-5;
+        if (preg_match('/alpha|dev/i',$operande2)) $operande2=-5;
+        if (preg_match('/beta$/i',$operande1)) $operande1=-4;
+        if (preg_match('/beta$/i',$operande2)) $operande2=-4;
+        if (preg_match('/beta([0-9])+/i',$operande1)) $operande1=-3;
+        if (preg_match('/beta([0-9])+/i',$operande2)) $operande2=-3;
+        if (preg_match('/rc$/i',$operande1)) $operande1=-2;
+        if (preg_match('/rc$/i',$operande2)) $operande2=-2;
+        if (preg_match('/rc([0-9])+/i',$operande1)) $operande1=-1;
+        if (preg_match('/rc([0-9])+/i',$operande2)) $operande2=-1;
         $level++;
         //print 'level '.$level.' '.$operande1.'-'.$operande2.'<br>';
         if ($operande1 < $operande2) { $ret = -$level; break; }
@@ -339,7 +346,8 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
 					'DB_ERROR_NO_INDEX_TO_DROP',
 					'DB_ERROR_CANNOT_CREATE',    		// Qd contrainte deja existante
 					'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS'
+					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
+            		'DB_ERROR_22P02'
 				);
                 if ($okerror == 'none') $okerrors=array();
 
@@ -589,9 +597,11 @@ function listOfSessions()
                 if(! @is_dir($fullpath) && is_readable($fullpath))
                 {
                     $sessValues = file_get_contents($fullpath);	// get raw session data
+                    // Example of possible value
+                    //$sessValues = 'newtoken|s:32:"1239f7a0c4b899200fe9ca5ea394f307";dol_loginmesg|s:0:"";newtoken|s:32:"1236457104f7ae0f328c2928973f3cb5";dol_loginmesg|s:0:"";token|s:32:"123615ad8d650c5cc4199b9a1a76783f";dol_login|s:5:"admin";dol_authmode|s:8:"dolibarr";dol_tz|s:1:"1";dol_tz_string|s:13:"Europe/Berlin";dol_dst|i:0;dol_dst_observed|s:1:"1";dol_dst_first|s:0:"";dol_dst_second|s:0:"";dol_screenwidth|s:4:"1920";dol_screenheight|s:3:"971";dol_company|s:12:"MyBigCompany";dol_entity|i:1;mainmenu|s:4:"home";leftmenuopened|s:10:"admintools";idmenu|s:0:"";leftmenu|s:10:"admintools";';
 
                     if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
-                    preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i',$sessValues) && // limit to current entity
+                        (preg_match('/dol_entity\|i:'.$conf->entity.';/i',$sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i',$sessValues)) && // limit to current entity
                     preg_match('/dol_company\|s:([0-9]+):"('.$conf->global->MAIN_INFO_SOCIETE_NOM.')"/i',$sessValues)) // limit to company name
                     {
                         $tmp=explode('_', $file);
@@ -907,27 +917,24 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                             if (! empty($objMod->dictionaries))
                             {
                                 //var_dump($objMod->dictionaries['tabname']);
-                                $taborder[] = 0;
-                                $tabfieldcheck[] = array(); $tabhelp[] = array();
-                                foreach($objMod->dictionaries['tabname'] as $val)
+                                $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp=0;
+                                foreach($objMod->dictionaries['tabname'] as $val)        { $nbtabname++; $taborder[] = count($tabname)+1; $tabname[] = $val; }
+                                foreach($objMod->dictionaries['tablib'] as $val)         { $nbtablib++; $tablib[] = $val; }
+                                foreach($objMod->dictionaries['tabsql'] as $val)         { $nbtabsql++; $tabsql[] = $val; }
+                                foreach($objMod->dictionaries['tabsqlsort'] as $val)     { $nbtabsqlsort++; $tabsqlsort[] = $val; }
+                                foreach($objMod->dictionaries['tabfield'] as $val)       { $nbtabfield++; $tabfield[] = $val; }
+                                foreach($objMod->dictionaries['tabfieldvalue'] as $val)  { $nbtabfieldvalue++; $tabfieldvalue[] = $val; }
+                                foreach($objMod->dictionaries['tabfieldinsert'] as $val) { $nbtabfieldinsert++; $tabfieldinsert[] = $val; }
+                                foreach($objMod->dictionaries['tabrowid'] as $val)       { $nbtabrowid++; $tabrowid[] = $val; }
+                                foreach($objMod->dictionaries['tabcond'] as $val)        { $nbtabcond++; $tabcond[] = $val; }
+                                if (! empty($objMod->dictionaries['tabhelp']))       foreach($objMod->dictionaries['tabhelp'] as $val)       { $nbtabhelp++; $tabhelp[] = $val; }
+                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) { $nbtabfieldcheck++; $tabfieldcheck[] = $val; }
+
+                                if ($nbtabname != $nbtablib || $nbtablib != $nbtabsql || $nbtabsql != $nbtabsqlsort)
                                 {
-                                    $taborder[] = count($tabname)+1;
-                                    $tabname[] = $val;
+                                    print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';
+                                    //print "$const_name: $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp\n";
                                 }
-                                foreach($objMod->dictionaries['tablib'] as $val) $tablib[] = $val;
-                                foreach($objMod->dictionaries['tabsql'] as $val) $tabsql[] = $val;
-                                foreach($objMod->dictionaries['tabsqlsort'] as $val) $tabsqlsort[] = $val;
-                                foreach($objMod->dictionaries['tabfield'] as $val) $tabfield[] = $val;
-                                foreach($objMod->dictionaries['tabfieldvalue'] as $val) $tabfieldvalue[] = $val;
-                                foreach($objMod->dictionaries['tabfieldinsert'] as $val) $tabfieldinsert[] = $val;
-                                foreach($objMod->dictionaries['tabrowid'] as $val) $tabrowid[] = $val;
-                                foreach($objMod->dictionaries['tabcond'] as $val) $tabcond[] = $val;
-                                if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) $tabfieldcheck[] = $val;
-                                if (! empty($objMod->dictionaries['tabhelp'])) foreach($objMod->dictionaries['tabhelp'] as $val) $tabhelp[] = $val;
-                                //foreach($objMod->dictionaries['tabsqlsort'] as $val) $tablib[] = $val;
-                                //$tabname = array_merge ($tabname, $objMod->dictionaries['tabname']);
-                                //var_dump($tabcond);
-                                //exit;
                             }
 
                             $j++;
@@ -1029,7 +1036,6 @@ function complete_elementList_with_modules(&$elementList)
                             if (! empty($objMod->module_parts['contactelement']))
                             {
                             	$elementList[$objMod->name] = $langs->trans($objMod->name);
-                                //exit;
                             }
 
                             $j++;

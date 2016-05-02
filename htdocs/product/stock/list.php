@@ -37,13 +37,13 @@ $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_la
 $sall=GETPOST("sall","alpha");
 $search_status=GETPOST("search_status","int");
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="e.label";
 if (! $sortorder) $sortorder="ASC";
 $page = GETPOST("page");
 if ($page < 0) $page = 0;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $year = strftime("%Y",time());
@@ -107,14 +107,17 @@ if ($result)
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 	llxHeader("",$langs->trans("ListOfWarehouses"),$help_url);
 
-	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $totalnboflines);
-
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
+	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	
+    print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
+	print_barre_liste($langs->trans("ListOfWarehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_generic.png', 0, '', '', $limit);
+	
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
@@ -126,13 +129,13 @@ if ($result)
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("LocationSummary"),$_SERVER["PHP_SELF"], "e.lieu","","","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stockqty",'','','align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "e.valo_pmp",'','','align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'','','align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "e.statut",'','','align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"], "e.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("LocationSummary"),$_SERVER["PHP_SELF"], "e.lieu","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stockqty",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EstimatedStockValue"), $_SERVER["PHP_SELF"], "e.valo_pmp",'',$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EstimatedStockValueSell"), $_SERVER["PHP_SELF"], "",'',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"], "e.statut",'',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'',$param,'',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
@@ -153,10 +156,10 @@ if ($result)
 	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 
-	print '<td class="liste_titre nowrap" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 
 	print '</tr>';
 

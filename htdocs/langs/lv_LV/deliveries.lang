@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Vai tiešām vēlaties dzēst piegādes kvīts <b>%
 DeliveryMethod=Piegādes metode
 TrackingNumber=Sekošanas numurs
 DeliveryNotValidated=Piegāde nav apstiprināta
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Vārds, uzvārds un paraksts:
 ToAndDate=To___________________________________ uz ____ / _____ / __________

@@ -50,25 +50,26 @@ class modMyModule extends DolibarrModules
 		// Key text used to identify module (for permissions, menus, etc...)
 		$this->rights_class = 'mymodule';
 
-		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		// It is used to group modules in module setup page
+		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
+		// It is used to group modules by family in module setup page
 		$this->family = "other";
 		// Module position in the family
 		$this->module_position = 500;
 		// Gives the possibility to the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
-		$this->familyinfo = array('myownfamily' => array('position' => '001', 'label' => $langs->trans("MyOwnFamily")));
+		//$this->familyinfo = array('myownfamily' => array('position' => '001', 'label' => $langs->trans("MyOwnFamily")));
 
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module MyModule";
+		$this->descriptionlong = "A very lon description. Can be a full HTML content";
+		$this->editor_name = 'Editor name';
+		$this->editor_url = 'http://www.dolibarr.org';
 		
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 0;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -144,15 +145,15 @@ class modMyModule extends DolibarrModules
 		// 'user'             to add a tab in user view
         $this->tabs = array();
 
-        // Dictionaries
-	    if (! isset($conf->mymodule->enabled))
+		if (! isset($conf->mymodule) || ! isset($conf->mymodule->enabled))
         {
         	$conf->mymodule=new stdClass();
         	$conf->mymodule->enabled=0;
         }
+        
+        // Dictionaries
 		$this->dictionaries=array();
         /* Example:
-        if (! isset($conf->mymodule->enabled)) $conf->mymodule->enabled=0;	// This is to avoid warnings
         $this->dictionaries=array(
             'langs'=>'mylangfile@mymodule',
             'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor

@@ -26,7 +26,8 @@ create table llx_paiement
   datec            datetime,							-- date de creation
   tms              timestamp,
   datep            datetime,							-- payment date
-  amount           double(24,8) DEFAULT 0,
+  amount           double(24,8) DEFAULT 0,				-- amount paid in Dolibarr currency
+  multicurrency_amount double(24,8) DEFAULT 0,			-- amount paid in invoice currency	
   fk_paiement      integer NOT NULL,
   num_paiement     varchar(50),
   note             text,

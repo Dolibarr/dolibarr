@@ -194,7 +194,16 @@ if (! empty($project_ref) && ! empty($withproject))
 	}
 }
 
+// To show all time lines for project
+$projectidforalltimes=0;
+if (GETPOST('projectid'))
+{
+    $projectidforalltimes=GETPOST('projectid','int');
+    
+}
 
+
+    
 /*
  * View
  */
@@ -205,20 +214,28 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $userstatic = new User($db);
 
-if ($id > 0 || ! empty($ref))
+if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 {
 	/*
 	 * Fiche projet en mode visu
  	 */
-	if ($object->fetch($id, $ref) >= 0)
+    if ($projectidforalltimes)
+    {
+        $result=$projectstatic->fetch($projectidforalltimes);
+        if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+    }
+    elseif ($object->fetch($id, $ref) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 
 		$object->project = clone $projectstatic;
+    }
+	
+    $userWrite = $projectstatic->restrictedProjectArea($user,'write');
 
-		$userWrite = $projectstatic->restrictedProjectArea($user,'write');
-
+	if ($projectstatic->id > 0)
+	{
 		if ($withproject)
 		{
 			// Tabs for project
@@ -230,6 +247,8 @@ if ($id > 0 || ! empty($ref))
 
 			print '<table class="border" width="100%">';
 
+	       $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+			
 			// Ref
 			print '<tr><td width="30%">';
 			print $langs->trans("Ref");
@@ -240,7 +259,7 @@ if ($id > 0 || ! empty($ref))
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
-			print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
+			print $form->showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';
 
 			// Label
@@ -275,8 +294,38 @@ if ($id > 0 || ! empty($ref))
 			print '</table>';
 
 			dol_fiche_end();
+			
+			
+			/*
+			 * Actions
+			 */
+			if (empty($id))
+			{
+    			print '<div class="tabsAction">';
+    			
+    			if ($user->rights->projet->all->creer || $user->rights->projet->creer)
+    			{
+    			    if ($object->public || $userWrite > 0)
+    			    {
+    			        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
+    			    }
+    			    else
+    			    {
+    			        print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
+    			    }
+    			}
+    			else
+    			{
+    			    print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
+    			}
+    			
+    			print '</div>';
+			}
 		}
-
+	}
+	
+	if (empty($projectidforalltimes))
+	{
 		$head=task_prepare_head($object);
 		dol_fiche_head($head, 'task_time', $langs->trans("Task"),0,'projecttask');
 
@@ -423,21 +472,24 @@ if ($id > 0 || ! empty($ref))
 			print '</td></tr>';
 
 			print '</table></form>';
+			
+			print '<br>';
 		}
-
-		print '<br>';
-
+	}
+	
+	if ($projectstatic->id > 0)
+	{	
 		/*
 		 *  List of time spent
 		 */
 		$tasks = array();
 		
-		$sql = "SELECT t.rowid, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm";
+		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm";
 		$sql.= ", u.lastname, u.firstname";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE t.fk_task =".$object->id;
-		$sql .= " AND t.fk_user = u.rowid";
+		$sql .= " WHERE t.fk_user = u.rowid";
+		if (empty($projectidforalltimes)) $sql .= " AND t.fk_task =".$object->id;
 		$sql .= " ORDER BY t.task_date DESC, t.task_datehour DESC, t.rowid DESC";
 
 		$var=true;
@@ -445,6 +497,16 @@ if ($id > 0 || ! empty($ref))
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
+			$totalnboflines=$num;
+
+			if (! empty($projectidforalltimes))
+			{
+			    $title=$langs->trans("ListTaskTimeUserProject");
+			    $linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
+			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
+			    print load_fiche_titre($title,$linktotasks,'title_generic.png');
+			}
+
 			$i = 0;
 			while ($i < $num)
 			{
@@ -569,12 +631,12 @@ if ($id > 0 || ! empty($ref))
 			else if ($user->rights->projet->creer)
 			{
 				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 				print img_edit();
 				print '</a>';
 
 				print '&nbsp;';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
 				print img_delete();
 				print '</a>';
 			}

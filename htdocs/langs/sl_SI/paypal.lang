@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Način test/sandbox
 PAYPAL_API_USER=API ime uporabnika
 PAYPAL_API_PASSWORD=API geslo
 PAYPAL_API_SIGNATURE=API podpis
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponujeno plačilo "integral" (kreditna kartica+Paypal) ali samo "Paypal"
 PaypalModeIntegral=Celovito
 PaypalModeOnlyPaypal=Samo PayPal

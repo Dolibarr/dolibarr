@@ -6,7 +6,7 @@ AllSendings=Все поставки
 Shipment=Поставка
 Shipments=Поставки
 ShowSending=Show Shipments
-Receivings=Получатели
+Receivings=Delivery Receipts
 SendingsArea=Раздел поставок
 ListOfSendings=Список поставок
 SendingMethod=Метод отправки
@@ -70,6 +70,8 @@ ProductQtyInSuppliersOrdersRunning=Количество товара в откр
 ProductQtyInShipmentAlreadySent=Product quantity from opened customer order already sent
 ProductQtyInSuppliersShipmentAlreadyRecevied=Количество товара из открытого заказа поставщика уже получено. 
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse.
+WeightVolShort=Weight/Vol.
+ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
 
 # Sending methods
 SendingMethodCATCH=Получено заказчиком

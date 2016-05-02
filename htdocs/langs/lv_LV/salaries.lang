@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
 Salary=Alga
 Salaries=Algas
-Employee=Darbinieks
 NewSalaryPayment=Jauna algas izmaksa
 SalaryPayment=Algas maksājums
 SalariesPayments=Algu maksājumi

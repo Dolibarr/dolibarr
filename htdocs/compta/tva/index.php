@@ -56,7 +56,7 @@ if (isset($_GET["modetax"])) $modetax=$_GET["modetax"];
 
 
 /**
- * pt
+ * print function
  *
  * @param 	DoliDB	$db		Database handler
  * @param 	string	$sql	SQL Request
@@ -113,10 +113,11 @@ llxHeader();
 $tva = new Tva($db);
 
 
-$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
-$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
+$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
+$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 
-print load_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print $conf->dol_optimize_smallscreen;
+print load_fiche_titre($langs->trans("VAT"), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
 
 print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
 print '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')<br>';
@@ -124,12 +125,12 @@ print '<br>';
 
 print '<table width="100%" class="notopnoleftnoright">';
 print '<tr><td class="notopnoleft" width="50%">';
-print load_fiche_titre($langs->trans("VATSummary"));
+print load_fiche_titre($langs->trans("VATSummary"), '', '');
 // The report mode is the one defined by defaut in tax module setup
 //print $modetax;
 //print '('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
 print '</td><td>';
-print load_fiche_titre($langs->trans("VATPaid"));
+print load_fiche_titre($langs->trans("VATPaid"), '', '');
 print '</td></tr>';
 
 print '<tr><td class="notopnoleft" width="50%" valign="top">';
@@ -160,9 +161,11 @@ for ($m = 1 ; $m < 13 ; $m++ )
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
+    $parameters["type"] = 'vat';
+    
     // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
     $hookmanager->initHooks(array('externalbalance'));
-    $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+    $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
     if (! is_array($coll_listbuy) && $coll_listbuy == -1)
     {

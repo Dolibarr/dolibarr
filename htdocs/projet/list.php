@@ -50,12 +50,12 @@ if ($socid > 0)
 if (!$user->rights->projet->lire) accessforbidden();
 
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
-
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 $offset = $conf->liste_limit * $page ;
@@ -71,6 +71,7 @@ $search_all=GETPOST("search_all");
 $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_opp_percent=GETPOST("search_opp_percent",'alpha');
+$search_opp_amount=GETPOST("search_opp_amount",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -88,16 +89,6 @@ $year	= GETPOST('year','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
-$sortfield = GETPOST("sortfield",'alpha');
-$sortorder = GETPOST("sortorder",'alpha');
-$page = GETPOST("page",'int');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-if ($page == -1) { $page = 0; }
-$offset = $limit * $page;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-if (! $sortfield) $sortfield='p.ref';
-if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='projectlist';
@@ -107,7 +98,7 @@ $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('project');
+$extralabels = $extrafields->fetch_name_optionals_label('projet');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
@@ -122,7 +113,7 @@ if (empty($user->socid)) $fieldstosearchall["p.note_private"]="NotePrivate";
 $arrayfields=array(
     'p.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'p.title'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>$conf->societe->enabled),
     'commercial'=>array('label'=>$langs->trans("SalesRepresentative"), 'checked'=>1),
 	'p.dateo'=>array('label'=>$langs->trans("DateStart"), 'checked'=>1, 'position'=>100),
     'p.datee'=>array('label'=>$langs->trans("DateEnd"), 'checked'=>1, 'position'=>101),
@@ -160,6 +151,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_year="";
 	$search_status=-1;
 	$search_opp_status=-1;
+	$search_opp_amount='';
+	$search_opp_percent='';
 	$search_public="";
 	$search_sale="";
 	$search_user='';
@@ -220,23 +213,24 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 if ($search_user > 0)
 {
 	$sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
 }
-
-$sql.= " WHERE p.entity IN (".getEntity('project').')';
+$sql.= " WHERE p.entity IN (".getEntity('project',1).')';
 if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";     // public and assigned to, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
 if ($search_label) $sql .= natural_search('p.title', $search_label);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_opp_amount) $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
+if ($search_opp_percent) $sql .= natural_search('p.opp_percent', $search_opp_percent, 1);
 if ($smonth > 0)
 {
     if ($syear > 0 && empty($sday))
@@ -269,12 +263,26 @@ if ($search_opp_status)
 {
     if (is_numeric($search_opp_status) && $search_opp_status > 0) $sql .= " AND p.fk_opp_status = ".$db->escape($search_opp_status);
     if ($search_opp_status == 'all') $sql .= " AND p.fk_opp_status IS NOT NULL";
+    if ($search_opp_status == 'openedopp') $sql .= " AND p.fk_opp_status IS NOT NULL AND p.fk_opp_status NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."c_lead_status WHERE code IN ('WIN','LOST'))";
     if ($search_opp_status == 'none') $sql .= " AND p.fk_opp_status IS NULL";
 }
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_user; 
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
+}
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -300,6 +308,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sday)              		$param.='&sday='.$day;
 	if ($smonth)              		$param.='&smonth='.$smonth;
 	if ($syear)               		$param.='&syear=' .$syear;
@@ -328,7 +337,6 @@ if ($resql)
 	
 	$text=$langs->trans("Projects");
 	if ($search_user == $user->id) $text=$langs->trans('MyProjects');
-	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num,'','title_project');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -339,7 +347,9 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-    // Show description of content
+	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
+	
+	// Show description of content
 	if ($search_user == $user->id) print $langs->trans("MyProjectsDesc").'<br><br>';
 	else
 	{
@@ -470,8 +480,9 @@ if ($resql)
 	}
 	if (! empty($arrayfields['p.opp_amount']['checked']))
 	{
-		print '<td class="liste_titre nowrap">';
-	    print '</td>';
+		print '<td class="liste_titre nowrap right">';
+    	print '<input type="text" class="flat" name="search_opp_amount" size="3" value="'.$search_opp_amount.'">';
+		print '</td>';
 	}
 	if (! empty($arrayfields['p.fk_opp_status']['checked']))
 	{
@@ -481,18 +492,34 @@ if ($resql)
     }
 	if (! empty($arrayfields['p.opp_percent']['checked']))
 	{
-		print '<td class="liste_titre nowrap">';
-	    print '</td>';
+		print '<td class="liste_titre nowrap right">';
+    	print '<input type="text" class="flat" name="search_opp_percent" size="2" value="'.$search_opp_percent.'">';
+		print '</td>';
 	}
-    // Extra fields
-    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-    {
-        foreach($extrafields->attribute_label as $key => $val)
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+        foreach($extrafields->attribute_label as $key => $val) 
         {
-            if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+            if (! empty($arrayfields["ef.".$key]['checked']))
+            {
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+            	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
+                print '</td>';
+            }
         }
-    }
-    // Fields from hook
+	}
+	// Fields from hook
     $parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
@@ -515,10 +542,10 @@ if ($resql)
         print '</td>';
     }
     // Action column
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 
     print '</tr>'."\n";
 

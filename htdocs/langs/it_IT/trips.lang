@@ -31,7 +31,7 @@ TripNDF=Informazioni nota spese
 PDFStandardExpenseReports=Template standard per la generazione dei PDF delle not spese
 ExpenseReportLine=Riga di nota spese
 TF_OTHER=Altro
-TF_TRANSPORTATION=Trasporto
+TF_TRIP=Transportation
 TF_LUNCH=Pranzo
 TF_METRO=Metro
 TF_TRAIN=Treno
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Vuoi davvero convalidare questa nota spese?
 NoTripsToExportCSV=Nessuna nota spese da esportare per il periodo
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

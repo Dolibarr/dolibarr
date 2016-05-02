@@ -2,6 +2,7 @@
 /* Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +72,7 @@ if ($action == 'update' && empty($_POST["cancel"]))
 	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",      GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
     // Content parameters
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
@@ -205,7 +207,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
             $msgishtml,
             $errors_to,
         	'',
-        	$trackid	
+        	$trackid
         );
 
 		$result=$mailfile->sendfile();
@@ -257,6 +259,7 @@ $listofmethods=array();
 $listofmethods['mail']='PHP mail function';
 //$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps']='SMTP/SMTPS socket library';
+$listofmethods['swiftmailer']='Swift Mailer socket library';
 
 
 if ($action == 'edit')
@@ -274,6 +277,8 @@ if ($action == 'edit')
                             jQuery(".drag").hide();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_TLS").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").prop("disabled", true);
                             ';
 		if ($linuxlike)
 		{
@@ -300,6 +305,8 @@ if ($action == 'edit')
                             jQuery(".drag").show();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER").show();
@@ -307,11 +314,33 @@ if ($action == 'edit')
                             jQuery("#smtp_server_mess").hide();
 			                jQuery("#smtp_port_mess").hide();
 						}
+                        if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
+                        {
+                            jQuery(".drag").show();
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").show();
+                            jQuery("#MAIN_MAIL_SMTP_PORT").show();
+                            jQuery("#smtp_server_mess").hide();
+                            jQuery("#smtp_port_mess").hide();
+                        }
                     }
                     initfields();
                     jQuery("#MAIN_MAIL_SENDMODE").change(function() {
                         initfields();
                     });
+					jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
+						if (jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val() == 1)
+							jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
+					});
+					jQuery("#MAIN_MAIL_EMAIL_STARTTLS").change(function() {
+						if (jQuery("#MAIN_MAIL_EMAIL_TLS").val() == 1)
+							jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
+					});
                })';
 		print '</script>'."\n";
 	}
@@ -422,7 +451,7 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// ID
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		$var=!$var;
 		$mainstmpid=(! empty($conf->global->MAIN_MAIL_SMTPS_ID)?$conf->global->MAIN_MAIL_SMTPS_ID:'');
@@ -442,7 +471,7 @@ if ($action == 'edit')
 	}
 
 	// PW
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		$var=!$var;
 		$mainsmtppw=(! empty($conf->global->MAIN_MAIL_SMTPS_PW)?$conf->global->MAIN_MAIL_SMTPS_PW:'');
@@ -464,11 +493,25 @@ if ($action == 'edit')
 	// TLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
 		{
 			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS',(! empty($conf->global->MAIN_MAIL_EMAIL_TLS)?$conf->global->MAIN_MAIL_EMAIL_TLS:0),1);
+		}
+		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	}
+	else print yn(0).' ('.$langs->trans("NotSupported").')';
+	print '</td></tr>';
+
+	// STARTTLS
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
+	{
+		if (function_exists('openssl_open'))
+		{
+			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS',(! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS)?$conf->global->MAIN_MAIL_EMAIL_STARTTLS:0),1);
 		}
 		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 	}
@@ -553,14 +596,14 @@ else
 
 	// SMTPS ID
 	$var=!$var;
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
 	}
 
 	// SMTPS PW
 	$var=!$var;
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
 	}
@@ -568,11 +611,25 @@ else
 	// TLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		if (function_exists('openssl_open'))
 		{
 			print yn($conf->global->MAIN_MAIL_EMAIL_TLS);
+		}
+		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	}
+	else print yn(0).' ('.$langs->trans("NotSupported").')';
+	print '</td></tr>';
+
+	// STARTTLS
+	$var=!$var;
+	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
+	{
+		if (function_exists('openssl_open'))
+		{
+			print yn($conf->global->MAIN_MAIL_EMAIL_STARTTLS);
 		}
 		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 	}
@@ -662,9 +719,6 @@ else
 	if ($action == 'testconnect')
 	{
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
-
-		// If we use SSL/TLS
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('','','','');

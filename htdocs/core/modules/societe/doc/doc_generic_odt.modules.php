@@ -131,8 +131,26 @@ class doc_generic_odt extends ModeleThirdPartyDoc
         $texte.= '</table>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->COMPANY_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=$nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
 
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
+		
 		$texte.= '</td>';
 
 		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';
@@ -209,9 +227,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
+				if ( ! empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME))
+				{
+				    $newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+				}
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-					$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.'.$newfileformat;
+				    $format=$conf->global->MAIN_DOC_USE_TIMING;
+				    if ($format == '1') $format='%Y%m%d%H%M%S';
+					$filename=$newfiletmp.'-'.dol_print_date(dol_now(),$format).'.'.$newfileformat;
 				}
 				else
 				{

@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Delivery
+DeliveryRef=Ref Delivery
 Deliveries=Deliveries
 DeliveryCard=Delivery card
 DeliveryOrder=Delivery order
@@ -30,3 +31,4 @@ Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

@@ -238,3 +238,8 @@ ToExport=صادرات
 NewExport=صادرات جدید
 ##### External sites #####
 ExternalSites=سایت های خارجی
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

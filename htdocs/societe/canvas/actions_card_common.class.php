@@ -439,12 +439,12 @@ abstract class ActionsCardCommon
             if ($modCodeClient->code_auto) $this->tpl['prefix_customercode'] = $modCodeClient->verif_prefixIsUsed();
 
             // TODO create a function
-            $this->tpl['select_customertype'] = '<select class="flat" name="client">';
-            $this->tpl['select_customertype'].= '<option value="2"'.($this->object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-            $this->tpl['select_customertype'].= '<option value="3"'.($this->object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="1"'.($this->object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-            $this->tpl['select_customertype'].= '<option value="0"'.($this->object->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
-            $this->tpl['select_customertype'].= '</select>';
+            $this->tpl['select_customertype'] = Form::selectarray('client', array(
+                0 => $langs->trans('NorProspectNorCustomer'),
+                1 => $langs->trans('Customer'),
+                2 => $langs->trans('Prospect'),
+                3 => $langs->trans('ProspectCustomer')
+            ), $this->object->client);
 
             // Customer
             $this->tpl['customercode'] = $this->object->code_client;

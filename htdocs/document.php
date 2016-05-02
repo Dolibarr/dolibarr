@@ -65,6 +65,7 @@ $entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
+if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
@@ -97,7 +98,7 @@ if (preg_match('/\.(html|htm)$/i',$original_file)) $attachment = false;
 if (isset($_GET["attachment"])) $attachment = GETPOST("attachment")?true:false;
 if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
 
-// Suppression de la chaine de caractere ../ dans $original_file
+// Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);
 
 // Find the subdirectory name as the reference
@@ -169,7 +170,6 @@ if (! file_exists($original_file_osencoded))
 }
 
 // Permissions are ok and file found, so we return it
-
 header('Content-Description: File Transfer');
 if ($encoding)   header('Content-Encoding: '.$encoding);
 if ($type)       header('Content-Type: '.$type.(preg_match('/text/',$type)?'; charset="'.$conf->file->character_set_client:''));
@@ -183,7 +183,7 @@ header('Pragma: public');
 
 //ob_clean();
 //flush();
-
+    
 readfile($original_file_osencoded);
 
 if (is_object($db)) $db->close();

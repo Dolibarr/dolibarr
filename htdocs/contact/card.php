@@ -314,13 +314,9 @@ if (empty($reshook))
                         else
                         {
                             $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
-                            // Create small thumbs for company (Ratio is near 16/9)
-                            // Used on logon for example
-                            $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
 
-                            // Create mini thumbs for company (Ratio is near 16/9)
-                            // Used on menu or for setup page for example
-                            $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+    					    // Create thumbs
+    					    $object->addThumbs($newfile);					    
                         }
                     }
                 }
@@ -343,7 +339,7 @@ if (empty($reshook))
                 }
             }
 
-			$object->oldcopy = clone$object;
+			$object->oldcopy = clone $object;
 
             $object->old_lastname	= GETPOST("old_lastname");
             $object->old_firstname	= GETPOST("old_firstname");
@@ -512,10 +508,12 @@ else
 								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
 								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
 								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js($objsoc->state_id).'");
-								$(\'input[name="email"]\').val("'.dol_escape_js($objsoc->email).'");
-            			});
+								console.log("Set state_id to '.dol_escape_js($objsoc->state_id).'");
+								$(\'select[name="state_id"]\').val("'.dol_escape_js($objsoc->state_id).'").trigger("change");
+								/* set country at end because it will trigger page refresh */
+								console.log("Set country id to '.dol_escape_js($objsoc->country_id).'");
+								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
+                            });
 						})'."\n";
 				print '</script>'."\n";
             }
@@ -750,11 +748,14 @@ else
 							});
 
 							$("#copyaddressfromsoc").click(function() {
-								$(\'textarea[name="address"]\').text("'.dol_escape_js($objsoc->address).'");
+								$(\'textarea[name="address"]\').val("'.dol_escape_js($objsoc->address).'");
 								$(\'input[name="zipcode"]\').val("'.dol_escape_js($objsoc->zip).'");
 								$(\'input[name="town"]\').val("'.dol_escape_js($objsoc->town).'");
-								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'");
-								$(\'select[name="state_id"]\').val("'.dol_escape_js($objsoc->state_id).'");
+								console.log("Set state_id to '.dol_escape_js($objsoc->state_id).'");
+								$(\'select[name="state_id"]\').val("'.dol_escape_js($objsoc->state_id).'").trigger("change");
+								/* set country at end because it will trigger page refresh */
+								console.log("Set country id to '.dol_escape_js($objsoc->country_id).'");
+								$(\'select[name="country_id"]\').val("'.dol_escape_js($objsoc->country_id).'").trigger("change");   /* trigger required to update select2 components */
             				});
 						})'."\n";
 				print '</script>'."\n";
@@ -792,7 +793,7 @@ else
             {
                 print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                 print '<td colspan="3" class="maxwidthonsmartphone">';
-                print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):($object->socid?$object->socid:-1),'socid','',1);
+                print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):($object->socid?$object->socid:-1), 'socid', '', $langs->trans("SelectThirdParty"));
                 print '</td>';
                 print '</tr>';
             }
@@ -913,7 +914,7 @@ else
 				print '<td colspan="3">';
 				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
 				$c = new Categorie( $db );
-				$cats = $c->containing( $object->id, Categorie::TYPE_CONTACT );
+				$cats = $c->containing( $object->id, 'contact' );
 				foreach ($cats as $cat) {
 					$arrayselected[] = $cat->id;
 				}
@@ -971,8 +972,8 @@ else
             print '</td></tr>';
 
             // Photo
-            print '<tr class="hideonsmartphone">';
-            print '<td>'.fieldLabel('Photo','photoinput').'</td>';
+            print '<tr>';
+            print '<td>'.$langs->trans("PhotoFile").'</td>';
             print '<td colspan="3">';
             if ($object->photo) {
                 print $form->showphoto('contact',$object);
@@ -1119,14 +1120,6 @@ else
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
         
-        // Statut
-		/*print '<tr><td>'.$langs->trans("Status").'</td>';
-		print '<td>';
-		print $object->getLibStatut(4);
-		print '</td>';
-		print '</tr>'."\n";
-		*/
-        
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 			print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
@@ -1146,17 +1139,22 @@ else
 
         $object->load_ref_elements();
 
-        if (! empty($conf->commande->enabled))
-        {
-            print '<tr><td>'.$langs->trans("ContactForOrders").'</td><td colspan="3">';
-            print $object->ref_commande?$object->ref_commande:$langs->trans("NoContactForAnyOrder");
-            print '</td></tr>';
-        }
-
         if (! empty($conf->propal->enabled))
         {
             print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
             print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
+            print '</td></tr>';
+        }
+
+        if (! empty($conf->commande->enabled) || ! empty($conf->expedition->enabled))
+        {
+            print '<tr><td>';
+            if (! empty($conf->expedition->enabled)) { print $langs->trans("ContactForOrdersOrShipments"); }
+            else print $langs->trans("ContactForOrders");
+            print '</td><td colspan="3">';
+            $none=$langs->trans("NoContactForAnyOrder");
+            if  (! empty($conf->expedition->enabled)) { $none=$langs->trans("NoContactForAnyOrderOrShipments"); }
+            print $object->ref_commande?$object->ref_commande:$none;
             print '</td></tr>';
         }
 

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Charles-Fr BENKE     <charles.fr@benke.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,7 @@
 
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -36,70 +38,39 @@ $action=GETPOST('action');
 if (!$user->rights->banque->configurer)
   accessforbidden();
 
-
+$bankcateg = new BankCateg($db);
+$categid = GETPOST('categid');
+$label = GETPOST("label");
 
 /*
  * Add category
  */
 if (GETPOST('add'))
 {
-	if (GETPOST("label"))
-	{
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (";
-		$sql.= "label";
-		$sql.= ", entity";
-		$sql.= ") VALUES (";
-		$sql.= "'".$db->escape(GETPOST("label"))."'";
-		$sql.= ", ".$conf->entity;
-		$sql.= ")";
-
-		$result = $db->query($sql);
-		if (!$result)
-		{
-			dol_print_error($db);
-		}
+	if ($label) {
+		$bankcateg = new BankCateg($db);
+		$bankcateg->label = GETPOST('label');
+		$bankcateg->create($user);
 	}
 }
 
-/*
- * Update category
- */
-if (GETPOST('update'))
-{
-	if (GETPOST("label"))
-	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_categ ";
-		$sql.= "set label='".$db->escape(GETPOST("label"))."'";
-		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
-		$sql.= " AND entity = ".$conf->entity;
+if ($categid) {
+	$bankcateg = new BankCateg($db);
 
-		$result = $db->query($sql);
-		if (!$result)
-		{
-			dol_print_error($db);
+	if ($bankcateg->fetch($categid) > 0) {
+
+		//Update category
+		if (GETPOST('update') && $label) {
+
+			$bankcateg->label = $label;
+			$bankcateg->update($user);
+		}
+		//Delete category
+		if ($action == 'delete') {
+			$bankcateg->delete($user);
 		}
 	}
 }
-/*
-* Action suppression catégorie
-*/
-if ($action == 'delete')
-{
-	if (GETPOST('categid'))
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
-		$sql.= " WHERE rowid = '".GETPOST('categid')."'";
-		$sql.= " AND entity = ".$conf->entity;
-
-		$result = $db->query($sql);
-		if (!$result)
-		{
-			dol_print_error($db);
-		}
-	}
-}
-
-
 
 /*
  * View
@@ -174,5 +145,3 @@ if ($action != 'edit')
 print '</table></form>';
 
 llxFooter();
-
-$db->close();

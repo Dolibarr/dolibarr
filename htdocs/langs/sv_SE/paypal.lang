@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Läge test / sandlåda
 PAYPAL_API_USER=API användarnamn
 PAYPAL_API_PASSWORD=API-lösenord
 PAYPAL_API_SIGNATURE=API signatur
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Erbjuder betalning &quot;integrerad&quot; (Kreditkort + Paypal) eller &quot;Paypal&quot; endast
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal endast

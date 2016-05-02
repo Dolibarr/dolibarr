@@ -31,7 +31,7 @@ TripNDF=Информация о отчёте о затратах
 PDFStandardExpenseReports=Шаблон отчёта о затратах для создания документа в формате PDF
 ExpenseReportLine=Строка отчёта о затратах
 TF_OTHER=Другое
-TF_TRANSPORTATION=Транспортировка
+TF_TRIP=Transportation
 TF_LUNCH=Обед
 TF_METRO=Метро
 TF_TRAIN=Поезд
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Вы точно хотите проверить данный о�
 NoTripsToExportCSV=Нет отчёта о затратах за этот период.
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

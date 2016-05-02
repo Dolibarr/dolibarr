@@ -219,7 +219,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
+	 * getFileObject
 	 *
 	 * @param	string		$file_name		Filename
 	 * @return 	stdClass|NULL
@@ -247,7 +247,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
+	 * getFileObjects
 	 *
 	 * @return	void
 	 */
@@ -257,11 +257,11 @@ class FileUpload
 	}
 
 	/**
-	 *  Create thumbs
+	 *  Create thumbs of a file uploaded. Only the "mini" thumb is generated.
 	 *
 	 *  @param	string	$file_name		Filename
 	 *  @param	string	$options 		is array('max_width', 'max_height')
-	 *  @return	void
+	 *  @return	boolean
 	 */
 	protected function createScaledImage($file_name, $options)
 	{
@@ -277,9 +277,8 @@ class FileUpload
 				return false;
 			}
 
-			$res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');
+			$res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');  // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
 
-			//return $success;
 			if (preg_match('/error/i',$res)) return false;
 			return true;
 		}
@@ -296,7 +295,7 @@ class FileUpload
 	 * @param 	string	$file				File
 	 * @param 	string	$error				Error
 	 * @param	string	$index				Index
-	 * @return unknown|string
+	 * @return  boolean                     True if OK, False if KO
 	 */
 	protected function validate($uploaded_file, $file, $error, $index)
 	{
@@ -376,12 +375,12 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
+	 * trimFileName
 	 *
-	 * @param 	unknown_type $name		Filename
-	 * @param 	unknown_type $type		???
-	 * @param 	unknown_type $index		???
-	 * @return	void
+	 * @param 	string $name		Filename
+	 * @param 	string $type		???
+	 * @param 	string $index		???
+	 * @return	string
 	 */
 	protected function trimFileName($name, $type, $index)
 	{
@@ -405,43 +404,7 @@ class FileUpload
 	}
 
 	/**
-	 * Enter description here ...
-	 *
-	 * @param 	unknown_type 	$file_path		???
-	 * @return	int				Success or not
-	 */
-	protected function orientImage($file_path)
-	{
-		$exif = @exif_read_data($file_path);
-		if ($exif === false) {
-			return false;
-		}
-		$orientation = intval(@$exif['Orientation']);
-		if (!in_array($orientation, array(3, 6, 8))) {
-			return false;
-		}
-		$image = @imagecreatefromjpeg($file_path);
-		switch ($orientation) {
-			case 3:
-				$image = @imagerotate($image, 180, 0);
-				break;
-			case 6:
-				$image = @imagerotate($image, 270, 0);
-				break;
-			case 8:
-				$image = @imagerotate($image, 90, 0);
-				break;
-			default:
-				return false;
-		}
-		$success = imagejpeg($image, $file_path);
-		// Free up memory (imagedestroy does not delete files):
-		@imagedestroy($image);
-		return $success;
-	}
-
-	/**
-	 * Enter description here ...
+	 * handleFileUpload
 	 *
 	 * @param 	string		$uploaded_file		Uploade file
 	 * @param 	string		$name				Name

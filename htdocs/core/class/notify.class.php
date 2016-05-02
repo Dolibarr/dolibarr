@@ -234,9 +234,11 @@ class Notify
 			$notifcode,
 			array(
 				'BILL_VALIDATE',
+			    'BILL_PAYED',
 				'ORDER_VALIDATE',
 				'PROPAL_VALIDATE',
 				'FICHINTER_VALIDATE',
+                'FICHINTER_ADD_CONTACT',
 				'ORDER_SUPPLIER_VALIDATE',
 				'ORDER_SUPPLIER_APPROVE',
 				'ORDER_SUPPLIER_REFUSE',
@@ -296,6 +298,12 @@ class Notify
 								$object_type = 'facture';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
 								break;
+							case 'BILL_PAYED':
+								$link='/compta/facture.php?facid='.$object->id;
+								$dir_output = $conf->facture->dir_output;
+								$object_type = 'facture';
+								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed",$newref);
+								break;
 							case 'ORDER_VALIDATE':
 								$link='/commande/card.php?id='.$object->id;
 								$dir_output = $conf->commande->dir_output;
@@ -303,10 +311,16 @@ class Notify
 								$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$newref);
 								break;
 							case 'PROPAL_VALIDATE':
-								$link='/comm/propal.php?id='.$object->id;
+								$link='/comm/propal/card.php?id='.$object->id;
 								$dir_output = $conf->propal->dir_output;
 								$object_type = 'propal';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
+								break;
+							case 'FICHINTER_ADD_CONTACT':
+								$link='/fichinter/card.php?id='.$object->id;
+								$dir_output = $conf->facture->dir_output;
+								$object_type = 'ficheinter';
+								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$object->ref);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link='/fichinter/card.php?id='.$object->id;
@@ -420,7 +434,7 @@ class Notify
     			if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
 
     			$threshold = (float) $reg[1];
-    			if ($object->total_ht <= $threshold)
+    			if (!empty($object->total_ht) && $object->total_ht <= $threshold)
     			{
     				dol_syslog("A notification is requested for notifcode = ".$notifcode." but amount = ".$object->total_ht." so lower than threshold = ".$threshold.". We discard this notification");
     				continue;
@@ -443,6 +457,12 @@ class Notify
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
 						break;
+					case 'BILL_PAYED':
+						$link='/compta/facture.php?facid='.$object->id;
+						$dir_output = $conf->facture->dir_output;
+						$object_type = 'facture';
+						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed",$newref);
+						break;
 					case 'ORDER_VALIDATE':
 						$link='/commande/card.php?id='.$object->id;
 						$dir_output = $conf->commande->dir_output;
@@ -450,11 +470,17 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$newref);
 						break;
 					case 'PROPAL_VALIDATE':
-						$link='/comm/propal.php?id='.$object->id;
+						$link='/comm/propal/card.php?id='.$object->id;
 						$dir_output = $conf->propal->dir_output;
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$newref);
 						break;
+                    case 'FICHINTER_ADD_CONTACT':
+                        $link='/fichinter/card.php?id='.$object->id;
+                        $dir_output = $conf->facture->dir_output;
+                        $object_type = 'ficheinter';
+                        $mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$newref);
+                        break;
 					case 'FICHINTER_VALIDATE':
 						$link='/fichinter/card.php?id='.$object->id;
 						$dir_output = $conf->facture->dir_output;

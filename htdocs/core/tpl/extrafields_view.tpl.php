@@ -45,7 +45,8 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 		}
 		else
 		{
-			print '<tr><td>';
+			if (!empty($extrafields->attribute_hidden[$key])) print '<tr class="hideobject"><td>';
+			else print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding"><tr><td';
 			//var_dump($action);exit;
 			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attribute_required[$key])) print ' class="fieldrequired"';
@@ -67,7 +68,8 @@ if (empty($reshook) && ! empty($extrafields->attribute_label))
 				print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
 
 			print '</tr></table>';
-			print '<td colspan="'.$cols.'">';
+			$html_id = !empty($object->id) ? $object->element.'_extras_'.$key.'_'.$object->id : '';
+			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'" colspan="'.$cols.'">';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attribute_type[$key], array('date','datetime'))) {

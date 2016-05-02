@@ -25,7 +25,6 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
-use OAuth\Common\Storage\Session;
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\Google;
@@ -64,56 +63,56 @@ class printing_printgcp extends PrintingDriver
         $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
         $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
         //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
-        
         $this->db = $db;
-        $this->google_id = $conf->global->OAUTH_GOOGLE_ID;
-        $this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
-        // Token storage
-        $storage = new DoliStorage($this->db, $this->conf);
-        //$storage->clearToken('Google');
-        // Setup the credentials for the requests
-        $credentials = new Credentials(
-            $this->google_id,
-            $this->google_secret,
-            $urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php'
-        );
-        $access = ($storage->hasAccessToken('Google')?'HasAccessToken':'NoAccessToken');
-        $serviceFactory = new \OAuth\ServiceFactory();
-        $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
-        $token_ok=true;
-        try {
-            $token = $storage->retrieveAccessToken('Google');
-        } catch (Exception $e) {
-            $this->errors[] = $e->getMessage();
-            $token_ok = false;
-        }
-        //var_dump($this->errors);exit;
         
-        $expire = false;
-        // Is token expired or will token expire in the next 30 seconds
-        if ($token_ok) {
-            $expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
-        }
-
-        // Token expired so we refresh it
-        if ($token_ok && $expire) {
-            try {
-                // il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
-                $refreshtoken = $token->getRefreshToken();
-                $token = $apiService->refreshAccessToken($token);
-                $token->setRefreshToken($refreshtoken);
-                $storage->storeAccessToken('Google', $token);
-            } catch (Exception $e) {
-                $this->errors[] = $e->getMessage();
-            }
-        }
         if (!$conf->oauth->enabled) {
             $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'ModuleAuthNotActive', 'type'=>'info');
         } else {
          
+        	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
+        	$this->google_secret = $conf->global->OAUTH_GOOGLE_SECRET;
+        	// Token storage
+        	$storage = new DoliStorage($this->db, $this->conf);
+        	//$storage->clearToken('Google');
+        	// Setup the credentials for the requests
+        	$credentials = new Credentials(
+            	$this->google_id,
+            	$this->google_secret,
+            	$urlwithroot.'/core/modules/oauth/google_oauthcallback.php'
+        	);
+        	$access = ($storage->hasAccessToken('Google')?'HasAccessToken':'NoAccessToken');
+        	$serviceFactory = new \OAuth\ServiceFactory();
+        	$apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
+        	$token_ok=true;
+        	try {
+            	$token = $storage->retrieveAccessToken('Google');
+        	} catch (Exception $e) {
+            	$this->errors[] = $e->getMessage();
+            	$token_ok = false;
+        	}
+        	//var_dump($this->errors);exit;
+        
+        	$expire = false;
+        	// Is token expired or will token expire in the next 30 seconds
+        	if ($token_ok) {
+            	$expire = ($token->getEndOfLife() !== -9002 && $token->getEndOfLife() !== -9001 && time() > ($token->getEndOfLife() - 30));
+        	}
+
+        	// Token expired so we refresh it
+        	if ($token_ok && $expire) {
+            	try {
+                	// il faut sauvegarder le refresh token car google ne le donne qu'une seule fois
+                	$refreshtoken = $token->getRefreshToken();
+                	$token = $apiService->refreshAccessToken($token);
+                	$token->setRefreshToken($refreshtoken);
+                	$storage->storeAccessToken('Google', $token);
+            	} catch (Exception $e) {
+                	$this->errors[] = $e->getMessage();
+            	}
+        	}
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
-                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken('Google')?$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
+                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken('Google')?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
                 if ($token_ok) {
                     $refreshtoken = $token->getRefreshToken();
                     $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_REFRESH',   'info'=>((! empty($refreshtoken))?'Yes':'No'), 'type'=>'info');
@@ -122,10 +121,10 @@ class printing_printgcp extends PrintingDriver
                 }
                 /*
                 if ($storage->hasAccessToken('Google')) {
-                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
-                    $this->conf[] = array('varname'=>'PRINTGCP_DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
+                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
+                    $this->conf[] = array('varname'=>'PRINTGCP_DELETE_TOKEN', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'delete');
                 } else {
-                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
+                    $this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
                 }*/
             } else {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthNotConfigured', 'type'=>'info');
@@ -200,7 +199,7 @@ class printing_printgcp extends PrintingDriver
         $credentials = new Credentials(
             $this->google_id,
             $this->google_secret,
-            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getgoogleoauthcallback.php'
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/google_oauthcallback.php'
         );
         $serviceFactory = new \OAuth\ServiceFactory();
         $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
@@ -338,7 +337,7 @@ class printing_printgcp extends PrintingDriver
         $credentials = new Credentials(
             $this->google_id,
             $this->google_secret,
-            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getoauthcallback.php?service=google'
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/google_oauthcallback.php?service=google'
         );
         $serviceFactory = new \OAuth\ServiceFactory();
         $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());
@@ -387,7 +386,7 @@ class printing_printgcp extends PrintingDriver
         $credentials = new Credentials(
             $this->google_id,
             $this->google_secret,
-            DOL_MAIN_URL_ROOT.'/core/modules/oauth/getgoogleoauthcallback.php'
+            DOL_MAIN_URL_ROOT.'/core/modules/oauth/google_oauthcallback.php'
         );
         $serviceFactory = new \OAuth\ServiceFactory();
         $apiService = $serviceFactory->createService('Google', $credentials, $storage, array());

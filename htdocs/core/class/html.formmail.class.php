@@ -170,7 +170,7 @@ class FormMail extends Form
     /**
      * Remove a file from the list of attached files (stored in SECTION array)
      *
-     * @param  	string	$keytodelete     Key in file array
+     * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
      * @return	void
      */
     function remove_attached_files($keytodelete)
@@ -334,7 +334,7 @@ class FormMail extends Form
         	    $out.= ' &nbsp; ';
         	    $out.= '</div>';
         	}
-        	    
+
 
 
         	$out.= '<table class="border" width="100%">'."\n";
@@ -657,9 +657,10 @@ class FormMail extends Form
 
         			$langs->load('paypal');
 
+        			// Set the paypal message and url link into __PERSONALIZED__ key
         			if ($this->param["models"]=='order_send')
         			{
-        				$url=getPaypalPaymentUrl(0,'order',$this->substit['__ORDERREF__']);
+        				$url=getPaypalPaymentUrl(0,'order',$this->substit['__ORDERREF__']?$this->substit['__ORDERREF__']:$this->substit['__REF__']);
         				$this->substit['__PERSONALIZED__']=str_replace('\n',"\n",$langs->transnoentitiesnoconv("PredefinedMailContentLink",$url));
         			}
         			if ($this->param["models"]=='facture_send')
@@ -875,13 +876,13 @@ class FormMail extends Form
 	{
 		$ret=array();
 
-		$sql = "SELECT rowid, label, topic, content, lang";
+		$sql = "SELECT rowid, label, topic, content, lang, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
-		$sql.= $this->db->order("lang,label","ASC");
+		$sql.= $this->db->order("position,lang,label","ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -895,7 +896,7 @@ class FormMail extends Form
 				$line->id=$obj->rowid;
 				$line->label=$obj->label;
 				$line->topic=$obj->topic;
-				$line->content=$obj->lacontentbel;
+				$line->content=$obj->content;
 				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
 			}
@@ -908,7 +909,94 @@ class FormMail extends Form
 			return -1;
 		}
 	}
+	
+	
+	
+	/**
+	 * Set substit array from object
+	 * 
+	 * @param	Object	$object		Object to use
+	 * @return	void
+	 */
+	function setSubstitFromObject($object)
+	{
+		global $user;
+		$this->substit['__REF__'] = $object->ref;
+		$this->substit['__SIGNATURE__'] = $user->signature;
+		$this->substit['__REFCLIENT__'] = $object->ref_client;
+		$this->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
+		$this->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
+		$this->substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+		$this->substit['__PERSONALIZED__'] = '';
+		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
+	}
+	
+	/**
+	 * Set substit array from object
+	 * 
+	 * @param	string	$mode		'form' or 'emailing'
+	 * @return	void
+	 */
+	function getAvailableSubstitKey($mode='form')
+	{
+		global $conf;
+		
+		$vars=array();
+		
+		if ($mode == 'form')
+		{
+			$vars=array(
+				'__REF__', 
+				'__REFCLIENT__', 
+				'__THIRDPARTY_NAME__', 
+				'__PROJECT_REF__', 
+				'__PROJECT_NAME__',
+				'__CONTACTCIVNAME__',
+				'__PERSONALIZED__',			// Paypal link will be added here in form mode
+				'__SIGNATURE__', 
+			);
+		}
+		if ($mode == 'emailing')
+		{
+			// For mass emailing, we have different keys
+			$vars=array(
+			    '__ID__' => 'IdRecord',
+			    '__EMAIL__' => 'EMail',
+			    '__LASTNAME__' => 'Lastname',
+			    '__FIRSTNAME__' => 'Firstname',
+			    '__MAILTOEMAIL__' => 'TagMailtoEmail',
+			    '__OTHER1__' => 'Other1',
+			    '__OTHER2__' => 'Other2',
+			    '__OTHER3__' => 'Other3',
+			    '__OTHER4__' => 'Other4',
+			    '__OTHER5__' => 'Other5',
+			    '__SIGNATURE__' => 'TagSignature',
+			    '__CHECK_READ__' => 'TagCheckMail',
+				'__UNSUBSCRIBE__' => 'TagUnsubscribe'
+				//,'__PERSONALIZED__' => 'Personalized'	// Hidden because not used yet in mass emailing
+			);
+			if (! empty($conf->paypal->enabled) && ! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+			{
+				$vars['__SECUREKEYPAYPAL__']='SecureKeyPaypal';
+				if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+				{
+					if ($conf->adherent->enabled) $vars['__SECUREKEYPAYPAL_MEMBER__']='SecureKeyPaypalUniquePerMember';
+					if ($conf->facture->enabled) $vars['__SECUREKEYPAYPAL_INVOICE__']='SecureKeyPaypalUniquePerInvoice';
+					if ($conf->commande->enabled) $vars['__SECUREKEYPAYPAL_ORDER__']='SecureKeyPaypalUniquePerOrder';
+					if ($conf->contrat->enabled) $vars['__SECUREKEYPAYPAL_CONTRACTLINE__']='SecureKeyPaypalUniquePerContractLine';
+				}
+			}
+			else 
+			{
+				$vars['__SECUREKEYPAYPAL__']='';
+				$vars['__SECUREKEYPAYPAL_MEMBER__']='';
+			}
+		}
+		return $vars;
+	}
+
 }
+
 
 /**
  * ModelMail

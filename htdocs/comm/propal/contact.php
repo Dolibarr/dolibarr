@@ -177,7 +177,7 @@ if ($object->id > 0)
 
 	// Customer
 	print "<tr><td>".$langs->trans("Company")."</td>";
-	print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
 	// Delivery address
 	if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))

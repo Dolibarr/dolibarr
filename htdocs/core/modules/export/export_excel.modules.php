@@ -319,7 +319,7 @@ class ExportExcel extends ModeleExports
 
 		foreach($array_selected_sorted as $code => $value)
 		{
-			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
+			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
             if (empty($alias)) dol_print_error('','Bad value for field with code='.$code.'. Try to redefine export.');
             $newvalue=$objp->$alias;

@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=آیا مطمئن هستید که می خواهید
 DeliveryMethod=روش تحویل
 TrackingNumber=تعداد پیگیری
 DeliveryNotValidated=تحویل اعتبار نیست
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=نام و امضا:
 ToAndDate=To___________________________________ در ____ / ____ / __________

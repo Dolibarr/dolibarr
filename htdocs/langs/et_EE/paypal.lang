@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Testimise/liivakasti režii
 PAYPAL_API_USER=API kasutajanimi
 PAYPAL_API_PASSWORD=API parool
 PAYPAL_API_SIGNATURE=API signatuur
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Paku "terviklik" (krediitkaart + Paypal) või ainult "Paypal" makseviisi
 PaypalModeIntegral=Terviklik
 PaypalModeOnlyPaypal=Ainult PayPal

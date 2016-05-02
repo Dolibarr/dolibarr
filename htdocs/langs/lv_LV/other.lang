@@ -58,7 +58,7 @@ NbOfActiveNotifications=Number of notifications (nb of recipient emails)
 PredefinedMailTest=Šis ir testa e-pasts \\ nthe divas līnijas ir atdalīti ar rakstatgriezi.. \n\n __ SIGNATURE__
 PredefinedMailTestHtml=Tas ir <b>tests</b> pasts (vārds testam jābūt treknrakstā). <br> Abas līnijas ir atdalīti ar rakstatgriezi. <br><br> __SIGNATURE__
 PredefinedMailContentSendInvoice=__CONTACTCIVNAME__\n\nYou will find here the invoice __REF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__\n\nWe would like to warn you that the invoice  __REF__ seems to not being payed. So this is the invoice in attachment again, as a reminder.\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__\n\nWe would like to warn you that the invoice __REF__ seems to not being payed. So this is the invoice in attachment again, as a reminder.\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendProposal=__CONTACTCIVNAME__\n\nJums tiek nosūtīts komerciālais piedāvājums __PROPREF__\n\n__PERSONALIZED__Ar cieņu\n\n__SIGNATURE__
 PredefinedMailContentSendSupplierProposal=__CONTACTCIVNAME__\n\n\nYou will find here the price request __ASKREF__\n\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
 PredefinedMailContentSendOrder=__CONTACTCIVNAME__\n\nYou will find here the order __ORDERREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
@@ -238,3 +238,8 @@ ToExport=Eksportēt
 NewExport=Jauns eksports
 ##### External sites #####
 ExternalSites=Ārējās vietas
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@@2byte.es>
- * Copyright (C) 2012-2014 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Florian Henry	    <florian.henry@open-concept.pro>
  *
@@ -209,29 +209,13 @@ if ($id > 0 || ! empty($ref))
 
 	$result=$object->fetch($id, $ref);
 
-	// Chargement des categories bancaires dans $options
-	$nbcategories=0;
+	// Load bank groups
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+	$bankcateg = new BankCateg($db);
+	$options = array();
 
-	$sql = "SELECT rowid, label";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-	$sql.= " WHERE entity = ".$conf->entity;
-	$sql.= " ORDER BY label";
-
-	$result = $db->query($sql);
-	if ($result)
-	{
-		$var=True;
-		$num = $db->num_rows($result);
-		$i = 0;
-		$options = '<option value="0" selected>&nbsp;</option>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($result);
-			$options.= '<option value="'.$obj->rowid.'">'.$obj->label.'</option>'."\n";
-			$nbcategories++;
-			$i++;
-		}
-		$db->free($result);
+	foreach ($bankcateg->fetchAll() as $bankcategory) {
+		$options[$bankcategory->id] = $bankcategory->label;
 	}
 
 	// Definition de sql_rech et param
@@ -397,15 +381,11 @@ if ($id > 0 || ! empty($ref))
             }
         }
 
-		if ($object->type != 2 && $object->rappro) 
-		{ 
+		if ($object->canBeConciliated() > 0) {
 			// If not cash account and can be reconciliate
-			if ($user->rights->banque->consolidate) 
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("Conciliate").'</a>';
-			}
-			else
-			{
+			if ($user->rights->banque->consolidate) {
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?account='.$object->id.($vline ? '&amp;vline='.$vline : '').'">'.$langs->trans("Conciliate").'</a>';
+			} else {
 				print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
 			}
 		}
@@ -489,14 +469,14 @@ if ($id > 0 || ! empty($ref))
 		$form->select_date($dateop,'op',0,0,0,'transaction');
 		print '</td>';
 		print '<td class="nowrap">';
-		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == 2 ? 'LIQ' : '')),'operation','1,2',2,1);
+		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')),'operation','1,2',2,1);
 		print '</td><td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq").'"></td>';
 		print '<td colspan="2">';
 		print '<input name="label" class="flat" type="text" size="24"  value="'.GETPOST("label").'">';
-		if ($nbcategories)
-		{
-			print '<br>'.$langs->trans("Rubrique").': <select class="flat" name="cat1">'.$options.'</select>';
+		if ($options) {
+			print '<br>'.$langs->trans("Rubrique").': ';
+			print Form::selectarray('cat1', $options, GETPOST('cat1'), 1);
 		}
 		print '</td>';
 		print '<td align=right><input name="debit" class="flat" type="text" size="4" value="'.GETPOST("debit").'"></td>';
@@ -529,8 +509,11 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right">'.$langs->trans("Credit").'</td>';
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '<td align="center" width="60">';
-	if ($object->type != 2 && $object->rappro) print $langs->trans("AccountStatementShort");
-	else print '&nbsp;';
+	if ($object->canBeConciliated() > 0) {
+		print $langs->trans("AccountStatementShort");
+	} else {
+		print '&nbsp;';
+	}
 	print '</td></tr>';
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param.'" name="search" method="POST">';
@@ -538,9 +521,9 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	$period_filter .= $langs->trans('From').'&nbsp;'.$form->select_date($req_stdt,'req_stdt',0,0,1,null,1,1,1);
+	$period_filter .= $langs->trans('From').'&nbsp;'.$form->select_date($req_stdt,'req_stdt',0,0,1,null,1,0,1);
 	$period_filter .= '&nbsp;';
-	$period_filter .= $langs->trans('to').'&nbsp;'.$form->select_date($req_enddt,'req_enddt',0,0,1,null,1,1,1);
+	$period_filter .= $langs->trans('to').'&nbsp;'.$form->select_date($req_enddt,'req_enddt',0,0,1,null,1,0,1);
 	
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$period_filter.'</td>';
@@ -555,10 +538,10 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$req_debit.'" size="4"></td>';
 	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$req_credit.'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 	print "</tr>\n";
 
 

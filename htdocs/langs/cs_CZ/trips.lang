@@ -31,7 +31,7 @@ TripNDF=Informace o správě nákladů
 PDFStandardExpenseReports=Standardní šablona pro vytvoření PDF dokumentu pro zprávy o výdajích
 ExpenseReportLine=Výdajová zpráva řádek
 TF_OTHER=Ostatní
-TF_TRANSPORTATION=Doprava
+TF_TRIP=Transportation
 TF_LUNCH=Oběd
 TF_METRO=Metro
 TF_TRAIN=Vlak
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Jste si jisti, že chcete ověřit tuto zprávu o výdajích?
 NoTripsToExportCSV=Žádná zpráva o výdajích na export pro toto období.
 ExpenseReportPayment=Expense report payment
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Expense reports to pay

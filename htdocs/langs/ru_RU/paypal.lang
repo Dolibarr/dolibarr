@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Режим тестирования / песочницы
 PAYPAL_API_USER=API имя пользователя
 PAYPAL_API_PASSWORD=API пароль
 PAYPAL_API_SIGNATURE=API подпись
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предлагает платеж &quot;Интегральный&quot; (кредитные карты + Paypal) или только &quot;PayPal&quot;
 PaypalModeIntegral=Интегральный
 PaypalModeOnlyPaypal=только PayPal

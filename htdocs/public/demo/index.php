@@ -63,34 +63,34 @@ if (empty($reshook))
 {
 	$demoprofiles=array(
 		array('default'=>'1', 'key'=>'profdemoservonly','label'=>'DemoCompanyServiceOnly',
-		'disablemodules'=>'adherent,barcode,cashdesk,categorie,don,expedition,externalsite,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
+		'disablemodules'=>'adherent,barcode,cashdesk,don,expedition,externalsite,incoterm,mailmanspip,margin,prelevement,product,productbatch,stock',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot8.png'),
 		array('default'=>'-1','key'=>'profdemoshopwithdesk','label'=>'DemoCompanyShopWithCashDesk',
-		'disablemodules'=>'adherent,categorie,don,externalsite,ficheinter,incoterm,mailmanspip,prelevement,product,productbatch,stock',
+		'disablemodules'=>'adherent,don,externalsite,ficheinter,incoterm,mailmanspip,prelevement,product,productbatch,stock',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 		array('default'=>'0', 'key'=>'profdemoprodstock','label'=>'DemoCompanyProductAndStocks',
-		'disablemodules'=>'adherent,contrat,categorie,don,externalsite,ficheinter,mailmanspip,prelevement,service',
+		'disablemodules'=>'adherent,contrat,don,externalsite,ficheinter,mailmanspip,prelevement,service',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot2.png'),
 		array('default'=>'0', 'key'=>'profdemoall','label'=>'DemoCompanyAll',
 		'disablemodules'=>'adherent,don,externalsite,mailmanspip',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot9.png'),
 		array('default'=>'-1', 'key'=>'profdemofun','label'=>'DemoFundation',
-		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'banque,barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png'),
 		array('default'=>'0', 'key'=>'profdemofun2','label'=>'DemoFundation2',
-		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,facture,ficheinter,fournisseur,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
+		'disablemodules'=>'barcode,cashdesk,commande,commercial,compta,comptabilite,contrat,expedition,externalsite,ficheinter,incoterm,mailmanspip,margin,prelevement,product,productbatch,projet,propal,propale,service,societe,stock,tax',
 		'icon'=>DOL_URL_ROOT.'/public/demo/dolibarr_screenshot6.png')
 	);
 
 	// Visible
-	$alwayscheckedmodules=array('barcode','bookmark','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('paybox','paypal','google','printing','resource','scanner','workflow');  // Module we never want
+	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
+	$alwaysuncheckedmodules=array('dynamicprices','loan','multicurrency','paybox','paypal','google','printing','resource','scanner','workflow');  // Module we never want
 	// Not visible
 	$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
-									'mailmanspip','notification','syslog','user','webservices',
+									'mailmanspip','notification','oauth','syslog','user','webservices',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('ftp',
+	$alwayshiddenuncheckedmodules=array('ftp','webservicesclient','api','websites',
 	                                // Extended modules
 	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
 	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
@@ -251,6 +251,36 @@ box-shadow: 4px 4px 4px #EEE;
 background: -webkit-linear-gradient(bottom, rgb(255,255,255) 85%, rgb(255,255,255) 100%);
 
 }
+.csscolumns {
+    margin-top: 6px;
+    -webkit-column-count: 4; /* Chrome, Safari, Opera */
+    -moz-column-count: 4; /* Firefox */
+    column-count: 4;
+}
+@media only screen and (max-width: 840px)
+{
+	.csscolumns {
+		-webkit-column-count: 3; /* Chrome, Safari, Opera */
+	    -moz-column-count: 3; /* Firefox */
+	    column-count: 3;
+	}
+}
+@media only screen and (max-width: 640px)
+{
+	.csscolumns {
+		-webkit-column-count: 2; /* Chrome, Safari, Opera */
+	    -moz-column-count: 2; /* Firefox */
+	    column-count: 2;
+	}
+}
+@media only screen and (max-width: 420px)
+{
+	.csscolumns {
+		-webkit-column-count: 1; /* Chrome, Safari, Opera */
+	    -moz-column-count: 1; /* Firefox */
+	    column-count: 1;
+	}
+}
 </style>
 
 <script type="text/javascript">
@@ -289,7 +319,7 @@ print '<tr><td>';
 print '<div class="center"><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></div><br>';
 print '<br>';
 
-print $langs->trans("DemoDesc").'<br>';
+print '<div style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
 print '<br>';
 print '<font color="#555577"><b>'.$langs->trans("ChooseYourDemoProfil").'</b></font>';
 
@@ -331,7 +361,7 @@ foreach ($demoprofiles as $profilearray)
         print '<table summary="Dolibarr online demonstration for profile '.$profilearray['label'].'" style="font-size:14px;" width="100%" class="CTable CTableRow'.($i%2==0?'1':'0').'">'."\n";
 		// Title
         print '<tr>';
-		print '<td width="50" id="a1'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'"><a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'"><img src="'.$profilearray['icon'].'" width="48" border="0" alt="Demo '.$profilearray['label'].'"></a></td>';
+		print '<td width="132" id="a1'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'"><a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'"><img class="demothumb" src="'.$profilearray['icon'].'" width="128" border="0" alt="Demo '.$profilearray['label'].'"></a></td>';
 		print '<td id="a2'.$profilearray['key'].'" class="'.(empty($profilearray['url'])?'modulelineshow cursorpointer':'nomodulelines').'"><a href="'.$urlwithmod.'" class="'.(empty($profilearray['url'])?'modulelineshow':'nomodulelines').'">'.$langs->trans($profilearray['label']).'</a></td>';
 		print '</tr>'."\n";
         // Modules
@@ -340,7 +370,8 @@ foreach ($demoprofiles as $profilearray)
     		print '<tr id="tr1'.$profilearray['key'].'" class="moduleline">';
     		print '<td colspan="2">';
     		print $langs->trans("ThisIsListOfModules").'<br>';
-    		print '<table width="100%">';
+    		print '<div class="csscolumns">';
+    		//print '<table width="100%">';
     		$listofdisabledmodules=explode(',',$profilearray['disablemodules']);
     		$j=0;
     		$nbcolsmod=empty($conf->dol_optimize_smallscreen)?4:3;
@@ -362,22 +393,23 @@ foreach ($demoprofiles as $profilearray)
                 else
                 {
                     $modulo=($j % $nbcolsmod);
-        		    if ($modulo == 0) print '<tr>';
-                    print '<td><input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
+        		    //if ($modulo == 0) print '<tr>';
+                    //print '<td>';
+                    print '<!-- id='.$val->numero.' -->';
+                    print '<input type="checkbox" class="checkbox" name="'.$modulekeyname.'" value="1"';
                     if (in_array($modulekeyname,$alwaysuncheckedmodules)) print ' disabled';
                     if (! in_array($modulekeyname,$alwaysuncheckedmodules)  && (! in_array($modulekeyname,$listofdisabledmodules) || in_array($modulekeyname,$alwayscheckedmodules))) print ' checked';
-                    print '> '.$val->getName().' &nbsp;';
-                    print '<!-- id='.$val->numero.' -->';
-                    print '</td>';
-                    if ($modulo == ($nbcolsmod - 1)) print '</tr>';
+                    print '> '.$val->getName().'<br>';
+                    //print '</td>';
+                    //if ($modulo == ($nbcolsmod - 1)) print '</tr>';
                     $j++;
                 }
     		}
-    		print '</table>';
-    		print '</td>';
+    		//print '</table>';
+    		print '</div></td>';
     		print '</tr>'."\n";
 
-		    print '<tr id="tr2'.$profilearray['key'].'" class="moduleline"><td colspan="'.$nbcolsmod.'" align="center"><input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button"></td></tr>';
+		    print '<tr id="tr2'.$profilearray['key'].'" class="moduleline"><td colspan="2" align="center"><input type="submit" value=" &nbsp; &nbsp; '.$langs->trans("Start").' &nbsp; &nbsp; " class="button"></td></tr>';
         }
 		print '</table>';
 		print '</form>'."\n";

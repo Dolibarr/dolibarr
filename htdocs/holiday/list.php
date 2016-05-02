@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011	   Dimitri Mouillard	<dmouillard@teclib.com>
  * Copyright (C) 2013-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012	   Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2016 Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ $max_year = 5;
 $min_year = 10;
 $filter='';
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader('', $langs->trans('CPTitreMenu'));
 
 $order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 
@@ -232,16 +232,16 @@ if ($id > 0)
 	$title = $langs->trans("User");
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	$head = user_prepare_head($fuser);
-	
+
 	dol_fiche_head($head, 'paidholidays', $title, 0, 'user');
 
     dol_banner_tab($fuser,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
-    
+
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<br>';
-    
+
 }
 else
 {
@@ -283,7 +283,7 @@ if ($sall)
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
     print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
-    
+
 print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
@@ -368,9 +368,9 @@ $holiday->selectStatutCP($search_statut);
 print '</td>';
 
 // ACTION
-print '<td align="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+print '<td class="liste_titre" align="right">';
+$searchpitco=$form->showFilterAndCheckAddButtons(0);
+print $searchpitco;
 print '</td>';
 
 print "</tr>\n";

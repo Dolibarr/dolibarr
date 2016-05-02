@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Testovací/sandbox režim
 PAYPAL_API_USER=API uživatelské jméno
 PAYPAL_API_PASSWORD=API heslo
 PAYPAL_API_SIGNATURE=API podpis
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Nabídka platby "integral" (Kreditní karta+Paypal) nebo pouze "Paypal" 
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Pouze PayPal

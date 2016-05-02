@@ -236,6 +236,12 @@ print '<td>'.$langs->trans('ForceBuyingPriceIfNullDetails').'</td>';
 print '</tr>';
 
 // GLOBAL DISCOUNT MANAGEMENT
+$methods = array(
+	1 => $langs->trans('UseDiscountAsProduct'),
+	2 => $langs->trans('UseDiscountAsService'),
+	3 => $langs->trans('UseDiscountOnTotal')
+);
+
 $var=!$var;
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -243,20 +249,7 @@ print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td align="left">';
-print '<select name="MARGIN_METHODE_FOR_DISCOUNT" class="flat">';
-print '<option value="1" ';
-if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1')
-	print 'selected ';
-print '>'.$langs->trans('UseDiscountAsProduct').'</option>';
-print '<option value="2" ';
-if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2')
-	print 'selected ';
-print '>'.$langs->trans('UseDiscountAsService').'</option>';
-print '<option value="3" ';
-if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3')
-	print 'selected ';
-print '>'.$langs->trans('UseDiscountOnTotal').'</option>';
-print '</select>';
+print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, $conf->global->MARGIN_METHODE_FOR_DISCOUNT);
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';

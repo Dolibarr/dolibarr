@@ -65,11 +65,13 @@ if ($action == 'create')
     $result=$bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET);
     if ($result < 0)
     {
-        $mesg='<div class="error">'.$bprev->error.'</div>';
+    	setEventMessages($bprev->error, $bprev->errors, 'errors');
     }
     if ($result == 0)
     {
-        $mesg='<div class="error">'.$langs->trans("NoInvoiceCouldBeWithdrawed").'</div>';
+    	$mesg='';
+        $mesg=$langs->trans("NoInvoiceCouldBeWithdrawed");
+        setEventMessages($mesg, null, 'errors');
         foreach($bprev->invoice_in_error as $key => $val)
         {
         	$mesg.=$val."<br>\n";

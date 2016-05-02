@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2010 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,59 +13,728 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 /**
- *     \file       htdocs/externalsite/frames.php
- *     \ingroup    externalsite
- *     \brief      Page that build two frames: One for menu, the other for the target page to show
- *     \author	   Laurent Destailleur
+ *   	\file       htdocs/website/index.php
+ *		\ingroup    website
+ *		\brief      Page to website view/edit
  */
 
-require '../main.inc.php';
+define('NOSCANPOSTFORINJECTION',1);
+define('NOSTYLECHECK',1);
 
-$langs->load("externalsite");
 
-if (empty($conf->global->EXTERNALSITE_URL))
+/**
+ *	Show HTML header HTML + BODY + Top menu + left menu + DIV
+ *
+ * @param 	string 	$head				Optionnal head lines
+ * @param 	string 	$title				HTML title
+ * @param	string	$help_url			Url links to help page
+ * 		                            	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
+ *                                  	For other external page: http://server/url
+ * @param	string	$target				Target to use on links
+ * @param 	int    	$disablejs			More content into html header
+ * @param 	int    	$disablehead		More content into html header
+ * @param 	array  	$arrayofjs			Array of complementary js files
+ * @param 	array  	$arrayofcss			Array of complementary css files
+ * @param	string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
+ * @return	void
+ */
+function llxHeader($head='', $title='', $help_url='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='')
 {
-	llxHeader();
-	print '<div class="error">'.$langs->trans('ExternalSiteModuleNotComplete').'</div>';
-	llxFooter();
+    global $conf;
+
+    // html header
+    top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+
+    // top menu and left menu area
+    if (empty($conf->dol_hide_topmenu))
+    {
+        top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
+    }
+    if (empty($conf->dol_hide_leftmenu))
+    {
+        left_menu('', $help_url, '', '', 1, $title, 1);
+    }
+
+    // main area
+    //main_area($title);
 }
 
-$mainmenu=GETPOST('mainmenu', 'alpha');
-$leftmenu=GETPOST('leftmenu', 'alpha');
-$idmenu=GETPOST('idmenu', 'int');
-$theme=GETPOST('theme', 'alpha');
-$codelang=GETPOST('lang', 'alpha');
-
-print "
-<html>
-<head>
-<title>Dolibarr frame for external web site</title>
-</head>
-
-<frameset ".(empty($conf->global->MAIN_MENU_INVERT)?"rows":"cols")."=\"".($heightforframes+50).",*\" border=0 framespacing=0 frameborder=0>
-    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
-    <frame name=\"main\" src=\"".$conf->global->EXTERNALSITE_URL."\">
-    <noframes>
-    <body>
-
-    </body>
-    </noframes>
-</frameset>
-
-<noframes>
-<body>
-	<br><div class=\"center\">
-	Sorry, your browser is too old or not correctly configured to view this area.<br>
-	Your browser must support frames.<br>
-	</div>
-</body>
-</noframes>
-
-</html>
-";
 
 
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
+require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
+
+$langs->load("admin");
+$langs->load("other");
+$langs->load("website");
+
+if (! $user->admin) accessforbidden();
+
+$conf->dol_hide_leftmenu = 1;
+
+$error=0;
+$website=GETPOST('website', 'alpha');
+$page=GETPOST('page', 'alpha');
+$pageid=GETPOST('pageid', 'int');
+$action=GETPOST('action','alpha');
+
+if (GETPOST('delete')) { $action='delete'; }
+if (GETPOST('preview')) $action='preview';
+if (GETPOST('create')) { $action='create'; }
+if (GETPOST('editmedia')) { $action='editmedia'; }
+if (GETPOST('editcss')) { $action='editcss'; }
+if (GETPOST('editmenu')) { $action='editmenu'; }
+if (GETPOST('editmeta')) { $action='editmeta'; }
+if (GETPOST('editcontent')) { $action='editcontent'; }
+
+if (empty($action)) $action='preview';
+
+$object=new Website($db);
+$objectpage=new WebsitePage($db);
+
+$object->fetchAll();    // Init $object->records
+
+// If website not defined, we take first found
+if (empty($website))
+{
+    foreach($object->records as $key => $valwebsite)
+    {
+        $website=$valwebsite->ref;
+        break;
+    }
+}
+if ($website)
+{
+    $res = $object->fetch(0, $website);
+}
+
+if ($pageid < 0) $pageid = 0;
+if ($pageid > 0 && $action != 'add')
+{
+    $res = $objectpage->fetch($pageid);
+}
+
+global $dolibarr_main_data_root;
+$pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
+$filecss=$pathofwebsite.'/styles.css';
+$filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
+
+
+
+/*
+ * Actions
+ */
+
+// Add page
+if ($action == 'add')
+{
+    $db->begin();
+    
+    $objectpage->fk_website = $object->id;
+    
+    $objectpage->title = GETPOST('WEBSITE_TITLE');
+    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+    $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
+    $objectpage->keywords = GETPOST('WEBSITE_KEYWORD');
+    
+    if (empty($objectpage->title))
+    {
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
+        $error++;
+    }
+    
+    if (! $error)
+    {
+        $res = $objectpage->create($user);
+        if ($res <= 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+    }
+	if (! $error)
+	{
+		$db->commit();
+	    setEventMessages($langs->trans("PageAdded"), null, 'mesgs');
+	    $action='';
+	}
+	else
+	{
+		$db->rollback();
+	}
+}
+
+// Update page
+if ($action == 'update')
+{
+    $db->begin();
+    
+    $res = $object->fetch(0, $website);
+    
+    $objectpage->fk_website = $object->id;
+    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+    
+    $res = $objectpage->fetch(0, $object->fk_website, $objectpage->pageurl);
+    
+    if ($res > 0)
+    {
+        $objectpage->title = GETPOST('WEBSITE_TITLE');
+        $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
+        $objectpage->keyword = GETPOST('WEBSITE_KEYWORD');
+        
+        $res = $objectpage->update($user);
+        if (! $res > 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+        
+    	if (! $error)
+    	{
+    		$db->commit();
+    	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    	    $action='';
+    	}
+    	else
+    	{
+    		$db->rollback();
+    	}
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+// Update page
+if ($action == 'delete')
+{
+    $db->begin();
+
+    $res = $object->fetch(0, $website);
+
+    $res = $objectpage->fetch($pageid, $object->fk_website);
+
+    if ($res > 0)
+    {
+        $res = $objectpage->delete($user);
+        if (! $res > 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+            setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
+            
+            header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
+            exit;
+        }
+        else
+        {
+            $db->rollback();
+        }
+    }
+    else
+    {
+        dol_print_error($db);
+    }
+}
+
+// Update css
+if ($action == 'updatecss')
+{
+    $db->begin();
+
+    $res = $object->fetch(0, $website);
+    /*
+    $res = $object->update($user);
+    if ($res > 0)
+    {
+        $db->commit();
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        $action='';
+    }
+    else
+    {
+       $db->rollback();
+    }*/
+    
+    $csscontent = GETPOST('WEBSITE_CSS_INLINE');
+    
+    dol_mkdir($pathofwebsite);
+    file_put_contents($filecss, $csscontent);
+    if (! empty($conf->global->MAIN_UMASK))
+        @chmod($filecss, octdec($conf->global->MAIN_UMASK));
+    
+    $action='preview';
+}
+
+// Update page
+if ($action == 'updatemeta')
+{
+    $db->begin();
+    $object->fetch(0, $website);
+
+    $objectpage->fk_website = $object->id;
+
+    $res = $objectpage->fetch($pageid, $object->fk_website);
+    if ($res > 0)
+    {
+        $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+        $objectpage->title = GETPOST('WEBSITE_TITLE');
+        $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
+        $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
+
+        $res = $objectpage->update($user);
+        if (! $res > 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+
+        if (! $error)
+        {
+            $db->commit();
+            setEventMessages($langs->trans("Saved"), null, 'mesgs');
+            $action='preview';
+        }
+        else
+        {
+            $db->rollback();
+        }
+    }
+    else
+    {
+        dol_print_error($db, 'Page not found');
+    }
+}
+
+// Update page
+if ($action == 'updatecontent')
+{
+    $db->begin();
+    $object->fetch(0, $website);
+
+    $objectpage->fk_website = $object->id;
+    
+    $res = $objectpage->fetch($pageid, $object->fk_website);
+    if ($res > 0)
+    {
+        $objectpage->content = GETPOST('PAGE_CONTENT');
+        
+        // Clean data. We remove all the head section.
+        $objectpage->content = preg_replace('/<head.*<\/head>/s', '', $objectpage->content);
+        /* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
+        
+        $res = $objectpage->update($user);
+        if (! $res > 0)
+        {
+            $error++;
+            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+        }
+        
+    	if (! $error)
+    	{
+    		$db->commit();
+    	    setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    	    
+    	    dol_mkdir($pathofwebsite);
+    	    dol_delete_file($filetpl);
+    	    file_put_contents($filetpl, $objectpage->content);
+    	    if (! empty($conf->global->MAIN_UMASK))
+    	        @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+    	    
+   	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+   	        exit;
+    	}
+    	else
+    	{
+    		$db->rollback();
+    	}
+    }
+    else
+    {
+        dol_print_error($db, 'Page not found');
+    }
+}
+
+
+
+/*
+ * View
+ */
+
+$form = new Form($db);
+
+$help_url='';
+
+llxHeader('', $langs->trans("WebsiteSetup"), $help_url);
+
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+if ($action == 'create')
+{
+    print '<input type="hidden" name="action" value="add">';
+}
+if ($action == 'editcss')
+{
+    print '<input type="hidden" name="action" value="updatecss">';
+}
+if ($action == 'editmenu')
+{
+    print '<input type="hidden" name="action" value="updatemenu">';
+}
+if ($action == 'editmeta')
+{
+    print '<input type="hidden" name="action" value="updatemeta">';
+}
+if ($action == 'editcontent')
+{
+    print '<input type="hidden" name="action" value="updatecontent">';
+}
+if ($action == 'edit')
+{
+    print '<input type="hidden" name="action" value="update">';
+}
+
+
+// Add a margin under toolbar ?
+$style='';
+if ($action != 'preview' && $action != 'editcontent') $style=' margin-bottom: 5px;';
+
+
+print '<div class="centpercent websitebar">';
+
+if (count($object->records) > 0)
+{
+    print '<div class="websiteselection">';
+    print $langs->trans("Website").': ';
+    print '</div>';
+    
+    // List of websites
+    print '<div class="websiteselection">';
+    $out='';
+    $out.='<select name="website">';
+    if (empty($object->records)) $out.='<option value="-1">&nbsp;</option>';
+    // Loop on each sites
+    $i=0;
+    foreach($object->records as $key => $valwebsite)
+    {
+        if (empty($website)) $website=$valwebsite->ref;
+
+        $out.='<option value="'.$valwebsite->ref.'"';
+        if ($website == $valwebsite->ref) $out.=' selected';		// To preselect a value
+        $out.='>';
+        $out.=$valwebsite->ref;
+        $out.='</option>';
+        $i++;    
+    }
+    $out.='</select>';
+    print $out;
+    print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+    
+    if ($website)
+    {
+        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewInNewTab").'</a>';
+    }
+    print '</div>';
+    
+    // Button for websites
+    print '<div class="websitetools">';
+    
+    if ($action == 'preview') 
+    {
+        $disabled='';
+        if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
+
+        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
+        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
+        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+    }
+    
+    if (in_array($action, array('editcss','editmenu','create')))
+    {
+        if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+    }
+    
+    print '</div>';
+    
+    
+    // Part for pages
+    if ($website)
+    {
+        print '</div>';
+
+        $array=$objectpage->fetchAll($object->id);
+        
+        print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
+        print '<div class="websiteselection">';
+        print $langs->trans("Page").': ';
+        print '</div>';
+        print '<div class="websiteselection">';
+        $out='';
+        $out.='<select name="pageid">';
+        if (is_array($array) && count($array) > 0)
+        {
+            foreach($array as $key => $valpage)
+            {
+                if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
+                
+                $out.='<option value="'.$key.'"';
+                if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+                $out.='>';
+                $out.=$valpage->title;
+                $out.='</option>';
+            }
+        }
+        else $out.='<option value="-1">&nbsp;</option>';
+        $out.='</select>';
+        print $out;
+        print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+        print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'">';
+        //print $form->selectarray('page', $array);
+        print '</div>';
+        print '<div class="websiteselection">';
+        print '</div>';
+        
+        print '<div class="websitetools">';
+        
+        if ($action == 'preview')
+        {
+            $disabled='';
+            if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
+        
+            if ($pageid > 0)
+            {
+                print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+                print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
+                //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
+                //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcontent&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageContent")).'</a>';
+            }
+        }
+        
+        if (! in_array($action, array('editcss','editmenu','create')))
+        {
+            if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
+            if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+            if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        }
+        
+        print '</div>';
+        
+    }    
+}
+else
+{
+    print '<div class="websiteselection">';
+    $langs->load("errors");
+    print $langs->trans("ErrorModuleSetupNotComplete");
+    print '<div>';
+    $action='';
+}
+
+
+print '</div>';
+
+$head = array();
+
+
+/*
+ * Edit mode
+ */
+
+if ($action == 'editcss')
+{
+    print '<div class="fiche">';
+
+    print '<br>';
+
+    $csscontent = @file_get_contents($filecss);
+        
+    dol_fiche_head();
+
+    print '<table class="border" width="100%">';
+
+    print '<tr><td>';
+    print $langs->trans('WebSite');
+    print '</td><td>';
+    print $website;
+    print '</td></tr>';
+
+    print '<tr><td valign="top">';
+    print $langs->trans('WEBSITE_CSS_INLINE');
+    print '</td><td>';
+    print '<textarea class="flat centpercent" rows="32" name="WEBSITE_CSS_INLINE">';
+    print $csscontent;
+    print '</textarea>';
+    print '</td></tr>';
+
+    /*print '<tr><td>';
+    print $langs->trans('WEBSITE_CSS_URL');
+    print '</td><td>';
+    print '<input type="text" class="flat" size="96" name="WEBSITE_CSS_URL" value="'.dol_escape_htmltag($obj->WEBSITE_CSS_URL).'">';
+    print '</td></tr>';*/
+
+    print '</table>';
+
+    dol_fiche_end();
+
+    print '</div>';
+
+    print '<br>';
+}
+
+if ($action == 'editmeta' || $action == 'create')
+{
+    print '<div class="fiche">';
+ 
+    print '<br>';
+    
+    dol_fiche_head();
+    
+    print '<table class="border" width="100%">';
+    
+    if ($action != 'create')
+    {
+        print '<tr><td>';
+        print $langs->trans('WEBSITE_PAGEURL');
+        print '</td><td>';
+        print '/public/websites/index.php?website='.urlencode($website).'&pageid='.urlencode($pageid);
+        print '</td></tr>';
+        $pageurl=dol_escape_htmltag($objectpage->pageurl);
+        $pagetitle=dol_escape_htmltag($objectpage->title);
+        $pagedescription=dol_escape_htmltag($objectpage->description);
+        $pagekeywords=dol_escape_htmltag($objectpage->keywords);
+    }
+    if (GETPOST('WEBSITE_PAGENAME'))    $pageurl=GETPOST('WEBSITE_PAGENAME');
+    if (GETPOST('WEBSITE_TITLE'))       $pagetitle=GETPOST('WEBSITE_TITLE');
+    if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION');
+    if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS');
+    
+    print '<tr><td>';
+    print $langs->trans('WEBSITE_PAGENAME');
+    print '</td><td>';
+    print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.$pageurl.'">';
+    print '</td></tr>';
+    
+    print '<tr><td>';
+    print $langs->trans('WEBSITE_TITLE');
+    print '</td><td>';
+    print '<input type="text" class="flat" size="96" name="WEBSITE_TITLE" value="'.$pagetitle.'">';
+    print '</td></tr>';
+    
+    print '<tr><td>';
+    print $langs->trans('WEBSITE_DESCRIPTION');
+    print '</td><td>';
+    print '<input type="text" class="flat" size="96" name="WEBSITE_DESCRIPTION" value="'.$pagedescription.'">';
+    print '</td></tr>';
+    
+    print '<tr><td>';
+    print $langs->trans('WEBSITE_KEYWORDS');
+    print '</td><td>';
+    print '<input type="text" class="flat" size="128" name="WEBSITE_KEYWORDS" value="'.$pagekeywords.'">';
+    print '</td></tr>';
+    
+    print '</table>';
+    
+    dol_fiche_end();
+    
+    print '</div>';
+    
+    print '<br>';
+}
+
+if ($action == 'editmedia')
+{
+    print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+}
+
+if ($action == 'editmenu')
+{
+    print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
+}
+
+if ($action == 'editcontent')
+{
+    /*
+     * Editing global variables not related to a specific theme
+     */
+    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+    $doleditor=new DolEditor('PAGE_CONTENT',$objectpage->content,'',500,'Full','',true,true,true,5,60);
+    $doleditor->Create();
+}
+
+print '</form>';
+
+
+
+if ($action == 'preview')
+{
+    if ($pageid > 0)
+    {
+        $objectpage->fetch($pageid);
+        
+        print "\n".'<!-- Page content '.$filetpl.' c-->'."\n";
+
+        
+        $csscontent = @file_get_contents($filecss);
+        
+        $out='';
+        
+        $out.='<div id="websitecontent" class="websitecontent">'."\n";
+        
+        $out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+        $out.=$csscontent;
+        $out.='</style>'."\n";
+        
+        $out.=$objectpage->content."\n";
+        
+        $out.='</div>';
+        
+        print $out;
+        
+        /*file_put_contents($filetpl, $out);
+        if (! empty($conf->global->MAIN_UMASK))
+            @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+
+        // Output file on browser
+        dol_syslog("index.php include $filetpl $filename content-type=$type");
+        $original_file_osencoded=dol_osencode($filetpl);	// New file name encoded in OS encoding charset
+        
+        // This test if file exists should be useless. We keep it to find bug more easily
+        if (! file_exists($original_file_osencoded))
+        {
+            dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+            exit;
+        }
+        
+        //include_once $original_file_osencoded;
+        */
+        
+        /*print '<iframe class="websiteiframenoborder centpercent" src="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'&pageid='.$pageid.'"/>';
+        print '</iframe>';*/
+    }
+    else
+    {
+        print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $website).'</center><br><br><br>';
+        print '<div class="center"><div class="logo_setup"></div></div>';
+    }
+}
+
+    
+
+llxFooter();
+
+$db->close();

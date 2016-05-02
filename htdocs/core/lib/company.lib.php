@@ -57,17 +57,17 @@ function societe_prepare_head(Societe $object)
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client==1 || $object->client==3)) $head[$h][1] .= $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
-    }
-    if (($object->client==1 || $object->client==2 || $object->client==3) && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)))
-    {
-    	$langs->load("products");
-	    // price
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("CustomerPrices");
-	    $head[$h][2] = 'price';
-	    $h++;
-    }
 
+        if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+        {
+            $langs->load("products");
+            // price
+            $head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
+            $head[$h][1] = $langs->trans("CustomerPrices");
+            $head[$h][2] = 'price';
+            $h++;
+        }
+    }
     if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
@@ -84,13 +84,6 @@ function societe_prepare_head(Societe $object)
         $h++;
     }
 
-    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
-     {
-    	$head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
-    	$head[$h][1] = $langs->trans("Agenda");
-    	$head[$h][2] = 'agenda';
-    	$h++;
-    }
     if (! empty($conf->projet->enabled) && (!empty($user->rights->projet->lire) ))
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
@@ -189,11 +182,21 @@ function societe_prepare_head(Societe $object)
         $h++;
     }
 
+    $head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        $head[$h][1] = $langs->trans("Events");
+        $head[$h][1].= ' / ';
+    }
+    $head[$h][1].= $langs->trans("Info");
+    $head[$h][2] = 'agenda';
+    $h++;
+    
     // Log
-    $head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
+    /*$head[$h][0] = DOL_URL_ROOT.'/societe/info.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
-    $h++;
+    $h++;*/
 
     complete_head_from_modules($conf,$langs,$object,$head,$h,'thirdparty','remove');
 

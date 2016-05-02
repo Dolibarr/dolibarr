@@ -325,10 +325,12 @@ else
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
+	$parameters["type"] = 'vat';
+	
 	$object = array(&$x_coll, &$x_paye, &$x_both);
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
-	$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	
 	foreach(array_keys($x_coll) as $rate)
 	{
@@ -416,7 +418,7 @@ else
 						print $langs->trans("NotUsedForGoods");
 					}
 					else {
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';
@@ -567,7 +569,7 @@ else
 					}
 					else
 					{
-						print $fields['payment_amount'];
+						print price($fields['payment_amount']);
 						if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 					}
 					print '</td>';

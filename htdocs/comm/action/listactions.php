@@ -72,11 +72,11 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 	$filtert=$user->id;
 }
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder)
 {
@@ -142,20 +142,8 @@ $form=new Form($db);
 $userstatic=new User($db);
 
 $nav='';
-$nav.='<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
-if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
-if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 $nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
-$nav.='</form>';
 
 $now=dol_now();
 
@@ -166,6 +154,7 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $listofextcals=array();
 
 $param='';
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($actioncode != '') $param.="&actioncode=".$actioncode;
 if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
 if ($filter) $param.="&filter=".$filter;
@@ -220,6 +209,14 @@ if ($dateselect > 0) $sql.= " AND ((a.datep2 >= '".$db->idate($dateselect)."' AN
 if ($datestart > 0) $sql.= " AND a.datep BETWEEN '".$db->idate($datestart)."' AND '".$db->idate($datestart+3600*24-1)."'";
 if ($dateend > 0) $sql.= " AND a.datep2 BETWEEN '".$db->idate($dateend)."' AND '".$db->idate($dateend+3600*24-1)."'";
 $sql.= $db->order($sortfield,$sortorder);
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->plimit($limit + 1, $offset);
 //print $sql;
 
@@ -279,23 +276,41 @@ if ($resql)
     	$s = $hookmanager->resPrint;
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, 0, '', 0, $nav);
 
-
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'?'.$param.'">'."\n";
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="type" value="'.$type.'">';
+    $nav='';
+    if ($optioncss != '') $nav.= '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    if ($actioncode) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+    if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
+    if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
+    if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+    if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
+    if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
+    if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
+    if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+    print $nav;
+    
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $link, $num, -1 * $nbtotalofrecords, '', 0, $nav, '', $limit);
 
-	$i = 0;
+    $i = 0;
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield,$sortorder);
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ActionsOwnedBy"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("");
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -315,9 +330,12 @@ if ($resql)
 	print '<td class="liste_titre"></td>';
 	//print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    print '</td>';
+    print '<td></td>';
+	// Action column
+	print '<td class="liste_titre" align="middle">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print $searchpitco;
+	print '</td>';
 	print "</tr>\n";
 
 	$contactstatic = new Contact($db);
@@ -357,7 +375,7 @@ if ($resql)
 		{
 		    $labeltype=$obj->type_code;
 		    if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
-		    print '<td>'.dol_trunc($labeltype,24).'</td>';   
+		    print '<td>'.dol_trunc($labeltype,28).'</td>';   
 		}
 		
 		// Start date
@@ -383,7 +401,7 @@ if ($resql)
 			$societestatic->id=$obj->socid;
 			$societestatic->client=$obj->client;
 			$societestatic->name=$obj->societe;
-			print $societestatic->getNomUrl(1,'',10);
+			print $societestatic->getNomUrl(1,'',28);
 		}
 		else print '&nbsp;';
 		print '</td>';
@@ -395,7 +413,7 @@ if ($resql)
 			$contactstatic->lastname=$obj->lastname;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-			print $contactstatic->getNomUrl(1,'',10);
+			print $contactstatic->getNomUrl(1,'',28);
 		}
 		else
 		{
@@ -416,6 +434,8 @@ if ($resql)
 		// Status/Percent
 		print '<td align="right" class="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
 
+		print '<td></td>';
+		
 		print "</tr>\n";
 		$i++;
 	}

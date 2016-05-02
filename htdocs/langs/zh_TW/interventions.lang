@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=用以下固定的方式回傳編號:<br> %syymm-nnnn <b
 PacificNumRefModelError=錯誤編號一個以 $syymm 為起始的 intervention card 已經存在，且不相容於此序號模型。請刪除或重新命名以便啟用這個模塊。
 PrintProductsOnFichinter=Print products on intervention card
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

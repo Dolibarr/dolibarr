@@ -41,10 +41,16 @@ if ($action == 'add')
 		{
 			$error++;
 			$langs->load("errors");
-			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
 			$action = 'create';
 		}
-
+		if (GETPOST('type')=='varchar' && $extrasize <= 0)
+		{
+		    $error++;
+		    $langs->load("errors");
+		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
+		    $action = 'edit';
+		}
         if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
         {
             $error++;
@@ -161,7 +167,8 @@ if ($action == 'add')
                 	$params,
                 	(GETPOST('alwayseditable')?1:0),
                 	(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('ishidden')?1:0)
                 );
     			if ($result > 0)
     			{
@@ -202,8 +209,15 @@ if ($action == 'update')
 		{
 			$error++;
 			$langs->load("errors");
-			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
-			$action = 'create';
+			$mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"));
+			$action = 'edit';
+		}
+		if (GETPOST('type')=='varchar' && $extrasize <= 0)
+		{
+		    $error++;
+		    $langs->load("errors");
+		    $mesg[]=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Size"));
+		    $action = 'edit';
 		}
 		if (GETPOST('type')=='varchar' && $extrasize > $maxsizestring)
         {
@@ -311,7 +325,8 @@ if ($action == 'update')
     				$params,
     				(GETPOST('alwayseditable')?1:0),
     				(GETPOST('perms')?GETPOST('perms'):''),
-                	(GETPOST('list')?1:0)
+                	(GETPOST('list')?1:0),
+					(GETPOST('ishidden')?1:0)
     			);
     			if ($result > 0)
     			{

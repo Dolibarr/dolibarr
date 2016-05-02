@@ -238,3 +238,8 @@ ToExport=Útflutningur
 NewExport=New útflutningur
 ##### External sites #####
 ExternalSites=Ytri síður
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords
