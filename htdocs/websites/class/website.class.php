@@ -63,7 +63,7 @@ class Website extends CommonObject
 	public $date_creation = '';
 	public $date_modification = '';
 	public $tms = '';
-
+    public $fk_default_home;
 	public $records;
 	
 	/**
@@ -122,9 +122,9 @@ class Website extends CommonObject
 		$sql.= 'ref,';
 		$sql.= 'description,';
 		$sql.= 'status,';
+        $sql.= 'fk_default_home,';
 		$sql.= 'date_creation,';
 		$sql.= 'date_modification';
-
 		
 		$sql .= ') VALUES (';
 		
@@ -132,6 +132,7 @@ class Website extends CommonObject
 		$sql .= ' '.(! isset($this->ref)?'NULL':"'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(! isset($this->description)?'NULL':"'".$this->db->escape($this->description)."'").',';
 		$sql .= ' '.(! isset($this->status)?'NULL':$this->status).',';
+		$sql .= ' '.(! isset($this->fk_default_home)?'NULL':$this->fk_default_home).',';
 		$sql .= ' '.(! isset($this->date_creation) || dol_strlen($this->date_creation)==0?'NULL':"'".$this->db->idate($this->date_creation)."'").',';
 		$sql .= ' '.(! isset($this->date_modification) || dol_strlen($this->date_modification)==0?'NULL':"'".$this->db->idate($this->date_modification)."'");
 
@@ -191,6 +192,7 @@ class Website extends CommonObject
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
 		$sql .= " t.status,";
+		$sql .= " t.fk_default_home,";
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
@@ -213,6 +215,7 @@ class Website extends CommonObject
 				$this->ref = $obj->ref;
 				$this->description = $obj->description;
 				$this->status = $obj->status;
+				$this->fk_default_home = $obj->fk_default_home;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->tms = $this->db->jdate($obj->tms);
@@ -257,6 +260,7 @@ class Website extends CommonObject
 		$sql .= " t.ref,";
 		$sql .= " t.description,";
 		$sql .= " t.status,";
+		$sql .= " t.fk_default_home,"; 
 		$sql .= " t.date_creation,";
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
@@ -295,6 +299,7 @@ class Website extends CommonObject
 				$line->ref = $obj->ref;
 				$line->description = $obj->description;
 				$line->status = $obj->status;
+				$line->fk_default_home = $obj->fk_default_home;
 				$line->date_creation = $this->db->jdate($obj->date_creation);
 				$line->date_modification = $this->db->jdate($obj->date_modification);
 				$line->tms = $this->db->jdate($obj->tms);
@@ -353,6 +358,7 @@ class Website extends CommonObject
 		$sql .= ' ref = '.(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").',';
 		$sql .= ' description = '.(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
+		$sql .= ' fk_default_home = '.(($this->fk_default_home > 0)?$this->fk_default_home:"null").',';
 		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' date_modification = '.(! isset($this->date_modification) || dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'");
@@ -595,13 +601,14 @@ class Website extends CommonObject
 	{
 		$this->id = 0;
 		
-		$this->entity = '';
-		$this->ref = '';
-		$this->description = '';
+		$this->entity = 1;
+		$this->ref = 'myspecimenwebsite';
+		$this->description = 'A specimen website';
 		$this->status = '';
-		$this->date_creation = '';
-		$this->date_modification = '';
-		$this->tms = '';
+		$this->fk_default_home = null;
+		$this->date_creation = dol_now();
+		$this->date_modification = dol_now();
+		$this->tms = dol_now();
 
 		
 	}
@@ -625,6 +632,7 @@ class WebsiteLine
 	public $ref;
 	public $description;
 	public $status;
+	public $fk_default_home;
 	public $date_creation = '';
 	public $date_modification = '';
 	public $tms = '';

@@ -24,6 +24,7 @@ CREATE TABLE llx_website
 	ref	          varchar(24) NOT NULL,
 	description   varchar(255),
 	status		  integer,
+	fk_default_home integer, 
     date_creation     datetime,
     date_modification datetime,
 	tms           timestamp

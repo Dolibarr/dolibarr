@@ -90,6 +90,7 @@ if (GETPOST('create')) { $action='create'; }
 if (GETPOST('editmedia')) { $action='editmedia'; }
 if (GETPOST('editcss')) { $action='editcss'; }
 if (GETPOST('editmenu')) { $action='editmenu'; }
+if (GETPOST('setashome')) { $action='setashome'; }
 if (GETPOST('editmeta')) { $action='editmeta'; }
 if (GETPOST('editcontent')) { $action='editcontent'; }
 
@@ -279,6 +280,32 @@ if ($action == 'updatecss')
 }
 
 // Update page
+if ($action == 'setashome')
+{
+    $db->begin();
+    $object->fetch(0, $website);
+
+    $object->fk_default_home = $pageid;
+    $res = $object->update($user);
+    if (! $res > 0)
+    {
+        $error++;
+        setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+    }
+    
+    if (! $error)
+    {
+        $db->commit();
+        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+        $action='preview';
+    }
+    else
+    {
+        $db->rollback();
+    }
+}
+
+// Update page
 if ($action == 'updatemeta')
 {
     $db->begin();
@@ -393,6 +420,10 @@ if ($action == 'editmenu')
 {
     print '<input type="hidden" name="action" value="updatemenu">';
 }
+if ($action == 'setashome')
+{
+    print '<input type="hidden" name="action" value="updateashome">';
+}
 if ($action == 'editmeta')
 {
     print '<input type="hidden" name="action" value="updatemeta">';
@@ -444,7 +475,7 @@ if (count($object->records) > 0)
     
     if ($website)
     {
-        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewInNewTab").'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
     }
     print '</div>';
     
@@ -496,6 +527,7 @@ if (count($object->records) > 0)
                 if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
                 $out.='>';
                 $out.=$valpage->title;
+                if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
                 $out.='</option>';
             }
         }
@@ -505,6 +537,12 @@ if (count($object->records) > 0)
         print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
         print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'">';
         //print $form->selectarray('page', $array);
+        
+        if ($website && $pageid > 0)
+        {
+            print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'&page='.$pageid.'" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+        }
+        
         print '</div>';
         print '<div class="websiteselection">';
         print '</div>';
@@ -518,6 +556,8 @@ if (count($object->records) > 0)
         
             if ($pageid > 0)
             {
+                if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
+                else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
                 print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
