@@ -1219,7 +1219,7 @@ class Holiday extends CommonObject
             // List for Dolibarr users
             if ($type)
             {
-                $sql = "SELECT u.rowid, u.lastname, u.firstname";
+                $sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
                 if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
@@ -1250,11 +1250,15 @@ class Holiday extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->rowid;
-                        $tab_result[$i]['name'] = $obj->lastname;
+                        $tab_result[$i]['name'] = $obj->lastname;       // deprecated
                         $tab_result[$i]['lastname'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
-                        $tab_result[$i]['type'] = $obj->type;
-                        $tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
+                        $tab_result[$i]['gender'] = $obj->gender;
+                        $tab_result[$i]['status'] = $obj->statut;
+                        $tab_result[$i]['employee'] = $obj->employee;
+                        $tab_result[$i]['photo'] = $obj->photo;
+                        //$tab_result[$i]['type'] = $obj->type;
+                        //$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
                         $i++;
                     }
@@ -1264,7 +1268,7 @@ class Holiday extends CommonObject
                 else
 				{
                     // Erreur SQL
-                    $this->error="Error ".$this->db->lasterror();
+                    $this->errors[]="Error ".$this->db->lasterror();
                     return -1;
                 }
             }
@@ -1584,7 +1588,7 @@ class Holiday extends CommonObject
     /**
      * Select event
      *
-     * @return string|boolean		Select Html to select type of holiday
+     * @return string|false		Select Html to select type of holiday
      */
     function selectEventCP()
     {
@@ -1641,7 +1645,7 @@ class Holiday extends CommonObject
      * getValueEventCp
      *
      * @param 	int		$rowid		Row id
-     * @return string|boolean
+     * @return string|false
      */
     function getValueEventCp($rowid) {
 

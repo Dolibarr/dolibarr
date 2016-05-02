@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Μέθοδος που χρησιμοποιείτε για α�
 MAIN_MAIL_SMTPS_ID=SMTP ID αν απαιτείται πιστοποίηση
 MAIN_MAIL_SMTPS_PW=Κωδικός SMTP αν απαιτείται πιστοποίηση
 MAIN_MAIL_EMAIL_TLS= Χρησιμοποιήστε TLS (SSL) κωδικοποίηση
+MAIN_MAIL_EMAIL_STARTTLS= Χρησιμοποιήστε TLS (STARTTLS) κωδικοποίηση
 MAIN_DISABLE_ALL_SMS=Απενεργοποίηση όλων των αποστολών SMS (για λόγους δοκιμής ή demos)
 MAIN_SMS_SENDMODE=Μέθοδος που θέλετε να χρησιμοποιηθεί για την αποστολή SMS
 MAIN_MAIL_SMS_FROM=Προεπιλεγμένος αριθμός τηλεφώνου αποστολέα για την αποστολή SMS

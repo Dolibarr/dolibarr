@@ -43,7 +43,9 @@ if (! $res && file_exists("../../../dolibarr/htdocs/main.inc.php")) $res=@includ
 if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@include '../../../../dolibarr/htdocs/main.inc.php';   // Used on dev env only
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/skeleton_class.class.php');
 
 // Load traductions files requiredby by page
@@ -58,6 +60,7 @@ $myparam	= GETPOST('myparam','alpha');
 
 $search_field1=GETPOST("search_field1");
 $search_field2=GETPOST("search_field2");
+$search_myfield=GETPOST('search_myfield');
 $optioncss = GETPOST('optioncss','alpha');
 
 // Load variable for pagination
@@ -123,6 +126,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 * Put here all code to do according to value of "action" parameter
 ********************************************************************/
 
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction')) { $massaction=''; }
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -141,6 +147,19 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPO
 
 if (empty($reshook))
 {
+    // Mass actions. Controls on number of lines checked
+    $maxformassaction=1000;
+    if (! empty($massaction) && count($toselect) < 1)
+    {
+        $error++;
+        setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
+    }
+    if (! $error && count($toselect) > $maxformassaction)
+    {
+        setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
+        $error++;
+    }
+    
 	// Action to delete
 	if ($action == 'confirm_delete')
 	{
@@ -216,7 +235,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
     if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -265,6 +284,7 @@ if ($resql)
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	
@@ -273,6 +293,11 @@ if ($resql)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall);
     }
+    
+    $moreforfilter = '';
+    $moreforfilter.='<div class="divsearchfield">';
+    $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escpae_htmltag($search_myfield).'">';
+    $moreforfilter.= '</div>';
     
 	if (! empty($moreforfilter))
 	{
@@ -291,8 +316,8 @@ if ($resql)
 
     // Fields title
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['t.field1']['checked'])) print_liste_field_titre($langs->trans('field1'),$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['t.field2']['checked'])) print_liste_field_titre($langs->trans('field2'),$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.field1']['checked'])) print_liste_field_titre($arrayfields['t.field1']['label'],$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.field2']['checked'])) print_liste_field_titre($arrayfields['t.field2']['label'],$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -309,8 +334,8 @@ if ($resql)
 	$parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"t.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"t.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['t.datec']['checked']))  print_liste_field_titre($arrayfields['t.datec']['label'],$_SERVER["PHP_SELF"],"t.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['t.tms']['checked']))    print_liste_field_titre($arrayfields['t.tms']['label'],$_SERVER["PHP_SELF"],"t.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	//if (! empty($arrayfields['t.status']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
     print '</tr>'."\n";
@@ -329,12 +354,15 @@ if ($resql)
                 $align=$extrafields->getAlignFlag($key);
                 $typeofextrafield=$extrafields->attribute_type[$key];
                 print '<td class="liste_titre'.($align?' '.$align:'').'">';
-                if (in_array($typeofextrafield, array('varchar', 'int', 'select')))
-                {
-                   $crit=$val;
-                			$tmpkey=preg_replace('/search_options_/','',$key);
-                			print '<input class="flat" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
-                }
+            	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
                 print '</td>';
             }
         }
@@ -370,7 +398,9 @@ if ($resql)
 	print '</tr>'."\n";
         
     
-    $i = 0;
+	$i=0;
+	$var=true;
+	$totalarray=array();
     while ($i < min($num, $limit))
     {
         $obj = $db->fetch_object($resql);
@@ -378,8 +408,16 @@ if ($resql)
         {
             // You can use here results
             print '<tr>';
-            if (! empty($arrayfields['t.field1']['checked'])) print '<td>'.$obj->field1.'</td>';
-            if (! empty($arrayfields['t.field2']['checked'])) print '<td>'.$obj->field2.'</td>';
+            if (! empty($arrayfields['t.field1']['checked'])) 
+            {
+                print '<td>'.$obj->field1.'</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+            }
+            if (! empty($arrayfields['t.field2']['checked'])) 
+            {
+                print '<td>'.$obj->field2.'</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+            }
         	// Extra fields
     		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     		{
@@ -394,6 +432,7 @@ if ($resql)
     					$tmpkey='options_'.$key;
     					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
     					print '</td>';
+    		            if (! $i) $totalarray['nbfield']++;
     				}
     		   }
     		}
@@ -407,6 +446,7 @@ if ($resql)
                 print '<td align="center">';
                 print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
                 print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
             }
             // Date modification
             if (! empty($arrayfields['t.tms']['checked']))
@@ -414,6 +454,7 @@ if ($resql)
                 print '<td align="center">';
                 print dol_print_date($db->jdate($obj->date_update), 'dayhour');
                 print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
             }
             // Status
             /*
@@ -422,9 +463,12 @@ if ($resql)
     		  $userstatic->statut=$obj->statut;
               print '<td align="center">'.$userstatic->getLibStatut(3).'</td>';
             }*/
+
             // Action column
             print '<td></td>';
-    		print '</tr>';
+            if (! $i) $totalarray['nbfield']++;
+
+            print '</tr>';
         }
         $i++;
     }

@@ -82,7 +82,8 @@ $dol_use_jmobile=$conf->dol_use_jmobile;
 // Colors
 $colorbackhmenu1='0,0,80';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
-$colorbacktitle1='230,230,230';      // title of array
+$colortopbordertitle1='40,40,40';    // top border of tables-lists title
+$colorbacktitle1='230,230,230';      // title of tables-lists
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
@@ -97,8 +98,8 @@ $colortext='0,0,0';
 $colortextlink='0,0,120';
 $fontsize='13';
 $fontsizesmaller='11';
-$usegradient=1;
-$useboldtitle=1;
+$usegradient=0;
+$useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -120,7 +121,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_LINEPAIR1='250,250,250';
     $conf->global->THEME_ELDY_LINEPAIR2='248,248,248';
     $conf->global->THEME_ELDY_LINEPAIRHOVER='238,246,252';
-    $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
+    $conf->global->THEME_ELDY_USE_HOVER='238,246,252';
     $conf->global->THEME_ELDY_TEXT='0,0,0';
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
@@ -285,6 +286,15 @@ input.smallpadd {
 	padding-left: 1px !important;
 	padding-right: 1px !important;
 }
+input.buttongen {
+	vertical-align: middle;
+}
+span.timesheetalreadyrecorded input {
+    /*font-size: smaller;*/
+    border: none;
+    /*background:	transparent;*/
+}
+
 <?php } ?>
 
 select.flat, form.flat select {
@@ -293,9 +303,21 @@ select.flat, form.flat select {
 input:disabled {
 	background:#f4f4f4;
 }
+.optiongrey {
+	opacity: 0.5;
+}
+.opacityhigh {
+	opacity: 0.2;
+}
+.opacitytransp {
+	opacity: 0;
+}
 
 input.liste_titre {
 	box-shadow: none !important;
+}
+.listactionlargetitle .liste_titre {
+	line-height: 24px;
 }
 input.removedfile {
 	padding: 0px !important;
@@ -322,7 +344,7 @@ input:-moz-placeholder { color:#ccc; }
 <?php if (! empty($dol_use_jmobile)) { ?>
 legend { margin-bottom: 8px; }
 <?php } ?>
-fieldset { border: 1px solid #AAAAAA !important; box-shadow: 2px 2px 3px #f4f4f4; }
+fieldset { border: 1px solid #AAAAAA !important; }
 
 
 .button, sbmtConnexion {
@@ -413,6 +435,9 @@ th .button {
 	width: 54px;
 }
 
+.valigntop {
+	vertical-align: top;
+}
 .valignmiddle {
 	vertical-align: middle;
 }
@@ -421,6 +446,12 @@ th .button {
 }
 .centpercent {
 	width: 100%;
+}
+.quatrevingtpercent, .inputsearch {
+	width: 80%;
+}
+.soixantepercent {
+	width: 60%;
 }
 textarea.centpercent {
 	width: 96%;
@@ -525,6 +556,10 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowauto {
+    max-width: 0;
+    overflow: auto;
+}
 
 
 /* ============================================================================== */
@@ -544,16 +579,23 @@ div.myavailability {
 .maxwidth300 { max-width: 300px; }
 .maxwidth400 { max-width: 400px; }
 .maxwidth500 { max-width: 500px; }
+.minheight20 { min-height: 20px; }
+.minheight40 { min-height: 40px; }
 .titlefield { width: 30%; }
-<?php if (! empty($dol_optimize_smallscreen)) { ?>
-.hideonsmartphone { display: none; }
-.noenlargeonsmartphone { width : 50px !important; display: inline !important; }
-.maxwidthonsmartphone { max-width: 100px; }
-.maxwidth100onsmartphone { max-width: 100px; }
-.maxwidth200onsmartphone { max-width: 200px; }
-.maxwidth300onsmartphone { max-width: 300px; }
-.titlefield { width: auto; }
-<?php } ?>
+.titlefieldcreate { width: 20%; }
+
+/* Force values for small screen */
+@media only screen and (max-width: 570px)
+{
+    .hideonsmartphone { display: none; }
+    .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
+    .maxwidthonsmartphone { max-width: 100px; }
+    .maxwidth100onsmartphone { max-width: 100px; }
+    .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth300onsmartphone { max-width: 300px; }
+    .titlefield { width: auto; }
+    .titlefieldcreate { width: auto; }
+}
 .linkobject { cursor: pointer; }
 <?php if (GETPOST("optioncss") == 'print') { ?>
 .hideonprint { display: none; }
@@ -659,7 +701,7 @@ td.showDragHandle {
 
 
 div.fiche {
-	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
+	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'16':'4')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
@@ -694,10 +736,10 @@ div.ficheaddleft {
 	else print "margin-top: 10px;\n"; ?>
 }
 /* Force values for small screen */
-@media only screen and (max-width: 850px)
+@media only screen and (max-width: 900px)
 {
     div.fiche {
-    	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:((empty($conf->global->MAIN_MENU_USE_JQUERY_LAYOUT))?($dol_hide_leftmenu?'4':'20'):'24')); ?>px;
+    	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;
     	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:16); ?>px;
     	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
     	margin-bottom: 15px;
@@ -1032,6 +1074,10 @@ div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
 
+div.mainmenu.websites {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/externalsite.png',1) ?>);
+}
+
 <?php
 // Add here more div for other menu entries. moduletomainmenu=array('module name'=>'name of class for div')
 
@@ -1051,7 +1097,8 @@ foreach($conf->modules as $val)
 $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 
 $generic=1;
-$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices');
+// Put here list of menu entries when the div.mainmenu.menuentry was previously defined
+$divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices','websites');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -1669,11 +1716,13 @@ div.tabBar {
 
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
 
+	/*
 	<?php if (empty($dol_optimize_smallscreen)) { ?>
     -moz-box-shadow: 3px 3px 4px #f4f4f4;
     -webkit-box-shadow: 3px 3px 4px #f4f4f4;
     box-shadow: 3px 3px 4px #f4f4f4;
 	<?php } ?>
+	*/
 }
 
 div.tabsAction {
@@ -1808,7 +1857,8 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
-	color: #333333;
+	color: #333333 !important;
+	text-decoration: none !important;
 	text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
@@ -1863,7 +1913,7 @@ span.butAction, span.butActionDelete {
     background-repeat: repeat-x    
 }
    
-.butActionDelete {
+.butActionDelete, .buttonDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #cc6d00;
@@ -1997,23 +2047,39 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-width: 1px;
-	border-color: #BBB;
-	border-style: solid;
+	border-top-width: 1px;
+	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+	border-top-style: solid;
 
+/*	border-right-width: 1px;
+	border-right-color: #BBB;
+	border-right-style: solid;
+
+	border-left-width: 1px;
+	border-left-color: #BBB;
+	border-left-style: solid;
+*/
+	border-bottom-width: 1px;
+	border-bottom-color: #BBB;
+	border-bottom-style: solid;
+	
 	margin: 0px 0px 8px 0px;
     /*
 	-moz-box-shadow: 2px 2px 4px #CCC;
 	-webkit-box-shadow: 2px 2px 4px #CCC;
 	box-shadow: 2px 2px 4px #CCC;
     */
-	box-shadow: 0 0 3px rgba(0,0,0,0.16);
+	/* box-shadow: 0 0 3px rgba(0,0,0,0.16); */
 	
 	-moz-border-radius: 0.1em;
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
-
+#tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
+    border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2131,7 +2197,9 @@ div.pagination li.pagination span {
 }
 div.pagination li.pagination span.inactive {
   cursor: default;
+  color: #ccc;
 }
+
 div.pagination li.litext a {
 border: none;
   padding-right: 10px;
@@ -2302,24 +2370,28 @@ div.liste_titre {
 	padding-top: 2px;
 	padding-bottom: 2px;
 
-	border-right-width: 1px;
+	/*border-right-width: 1px;
 	border-right-color: #BBB;
 	border-right-style: solid;
 
 	border-left-width: 1px;
 	border-left-color: #BBB;
-	border-left-style: solid;
+	border-left-style: solid;*/
 
 	border-top-width: 1px;
 	border-top-color: #BBB;
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
+	border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+    
 	box-shadow: none;
 	border-collapse: collapse;
 	display: table;
 	padding: 2px 0px 2px 0;
-	width: calc(100% - 1px);	/* 1px more, i don't know why */
+	width: 100%;	/* 1px more, i don't know why */
 }
 tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable.tr
 {
@@ -2328,20 +2400,19 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, table.dataTable thead tr
 {
     /* TO MATCH BOOTSTRAP */
-	background: #ddd;
+	/* background: #ddd; */
 
 	/* TO MATCH ELDY */
-	/*
-	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php if ($usegradient) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	<?php } else { ?>
+	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php } ?>
 	font-weight: <?php echo $useboldtitle?'bold':'normal'; ?>;
-	*/
 	
     color: rgb(<?php echo $colortexttitle; ?>);
     font-family: <?php print $fontlist ?>;
@@ -2434,7 +2505,7 @@ div.tabBar .noborder {
     -webkit-box-shadow: 3px 3px 4px #f4f4f4;
     box-shadow: 3px 3px 4px #f4f4f4;
     margin-bottom: 8px !important;*/
-    border: 1px solid #AAA;
+    border: 1px solid #CCC;
     text-align: center;
     border-radius: 2px;
     min-height: 38px;
@@ -2447,7 +2518,7 @@ div.tabBar .noborder {
 <?php } ?>
 }
 span.boxstatstext {
-	opacity: 0.8;
+	opacity: 0.9;
     line-height: 18px;
 }
 span.boxstatsindicator {
@@ -2477,27 +2548,26 @@ span.dashboardlineko {
 .box {
     padding-right: 0px;
     padding-left: 0px;
-    padding-bottom: 4px;
+    padding-bottom: 12px;
 }
 
 tr.box_titre {
     height: 26px !important;
     
     /* TO MATCH BOOTSTRAP */
-	background: #ddd;
-	color: #000 !important;
+	/*background: #ddd;
+	color: #000 !important; */
 
 	/* TO MATCH ELDY */
-	/*
-	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php if ($usegradient) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(250,250,250,0.3) 100%);
+	<?php } else { ?>
+	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php } ?>
-	*/
 	
     background-repeat: repeat-x;
     color: rgb(<?php echo $colortexttitle; ?>);
@@ -2659,8 +2729,19 @@ td.legendLabel { padding: 2px 2px 2px 0 !important; }
 
 .logo_setup
 {
-	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg',1) ?>);
+	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/logo_setup.svg',1) ?>);	/* content is used to best fit the container */
 	display: inline-block;
+}
+.nographyet
+{
+	content:url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nographyet.svg',1) ?>);
+	display: inline-block;
+    opacity: 0.1;
+    background-repeat: no-repeat;
+}
+.nographyettext
+{
+    opacity: 0.5;
 }
 
 div.titre {
@@ -2898,6 +2979,35 @@ tr.visible {
 
 td.hidden {
     display: none;
+}
+
+
+/* ============================================================================== */
+/*  Module website                                                                */
+/* ============================================================================== */
+
+.websitebar {
+	border-bottom: 1px solid #888;
+	background: #eee;
+}
+.websitebar .button, .websitebar .buttonDelete 
+{
+	padding: 2px 4px 2px 4px !important;
+	margin: 2px 4px 2px 4px  !important;
+    line-height: normal;
+}
+.websiteselection {
+	display: inline-block;
+	padding-left: 10px;
+	vertical-align: middle; 
+	line-height: 29px;
+}
+.websitetools {
+	float: right;
+	padding-top: 2px;
+}
+.websiteiframenoborder {
+	border: 0px;
 }
 
 
@@ -3208,6 +3318,10 @@ a.cke_dialog_ui_button
 {
 	line-height: 1.4 !important;
 	margin: 6px !important;
+}
+a.cke_dialog_ui_button_ok span {
+    text-shadow: none !important;
+    color: #333 !important;
 }
 
 
@@ -3608,7 +3722,7 @@ span.noborderoncategories a, li.noborderoncategories a {
 	line-height: normal;
 }
 span.noborderoncategories {
-	padding: 5px 5px 0px 5px;
+	padding: 3px 5px 0px 5px;
 }
 .categtextwhite, .treeview .categtextwhite.hover {
 	color: #fff !important;
@@ -3659,7 +3773,7 @@ dl.dropdown {
     position:absolute;
     top:2px;
     list-style:none;
-    max-height: 200px;
+    max-height: 300px;
     overflow: auto;
 }
 .dropdown span.value {
@@ -3864,12 +3978,55 @@ border-top-right-radius: 6px;
 
 
 
-/* For demo pages */
+/* ============================================================================== */
+/*  POS                                                                           */
+/* ============================================================================== */
+
+.menu_choix1 a {
+	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/money.png',1) ?>') top left no-repeat;
+	background-position-y: 15px;
+}
+
+.menu_choix2 a {
+	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>') top left no-repeat;
+	background-position-y: 15px;
+}
+.menu_choix1,.menu_choix2 {
+	font-size: 1.4em;
+	text-align: left;
+	border: 1px solid #666;
+	margin-right: 20px;
+}
+.menu_choix1 a, .menu_choix2 a {
+	display: block;
+	color: #fff;
+	text-decoration: none;
+	padding-top: 18px;
+	padding-left: 54px;
+	font-size: 14px;
+	height: 40px;
+}
+.menu_choix1 a:hover,.menu_choix2 a:hover {
+	color: #6d3f6d;
+}
+
+
+
+
+/* ============================================================================== */
+/*  Demo                                                                          */
+/* ============================================================================== */
+
 img.demothumb {
     box-shadow: 2px 2px 8px #888;
 	margin-bottom: 4px;
 }
 
+
+
+/* ============================================================================== */
+/*  Public                                                                        */
+/* ============================================================================== */
 
 /* The theme for public pages */
 .public_body {

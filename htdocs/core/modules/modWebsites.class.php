@@ -46,7 +46,7 @@ class modWebsites extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "portal";
-        $this->module_position = 20;
+        $this->module_position = 50;
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable the public website with CMS features";
@@ -58,8 +58,8 @@ class modWebsites extends DolibarrModules
         // Name of image file used for this module.
         $this->picto='globe';
 
-        // Data directories to create when module is enabled
-        $this->dirs = array();
+		// Data directories to create when module is enabled
+		$this->dirs = array("/websites/temp");
 
         // Config pages
         //-------------
@@ -68,7 +68,7 @@ class modWebsites extends DolibarrModules
         // Dependancies
         //-------------
 		$this->hidden = ! empty($conf->global->WEBSITE_MODULE_DISABLED);	// A condition to disable module
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
+		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
         $this->langfiles = array("websites");

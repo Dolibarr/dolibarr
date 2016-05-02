@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Te gebruiken methode om e-mails te verzenden
 MAIN_MAIL_SMTPS_ID=SMTP-gebruikersnaam indien verificatie vereist
 MAIN_MAIL_SMTPS_PW=SMTP-wachtwoord indien verificatie vereist
 MAIN_MAIL_EMAIL_TLS= Gebruik TLS (SSL) encryptie
+MAIN_MAIL_EMAIL_STARTTLS= Gebruik TLS (STARTTLS) encryptie
 MAIN_DISABLE_ALL_SMS=Schakel alle SMS verzendingen (voor test doeleinden of demo)
 MAIN_SMS_SENDMODE=Methode te gebruiken om SMS te verzenden
 MAIN_MAIL_SMS_FROM=Standaard afzender telefoonnummer voor Sms versturen

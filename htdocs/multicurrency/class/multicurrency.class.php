@@ -208,7 +208,7 @@ class MultiCurrency extends CommonObject
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog('Currency::fetch ' . join(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -383,7 +383,7 @@ class MultiCurrency extends CommonObject
 	 * 
 	 * @param double	$rate	rate value
 	 * 
-	 * @return bool false if KO, true if OK
+	 * @return int -1 if KO, 1 if OK
 	 */
 	 public function addRate($rate)
 	 {
@@ -401,6 +401,40 @@ class MultiCurrency extends CommonObject
 			return -1;
 		}
 	 }
+	 
+	 /**
+	  * Try get label of code in llx_currency then add rate
+	  * 
+	  * @param	string	$code	currency code
+	  * @param	double	$rate	new rate
+	  * 
+	  * @return int -1 if KO, 1 if OK, 2 if label found and OK
+	  */
+	function addRateFromDolibarr($code, $rate)
+	{
+	 	global $db, $user;
+		
+		$currency = new MultiCurrency($db);
+		$currency->code = $code;
+		$currency->name = $code;
+		
+	 	$sql = 'SELECT label FROM '.MAIN_DB_PREFIX.'c_currencies WHERE code_iso = "'.$db->escape($code).'"';
+		$resql = $db->query($sql);
+		if ($resql && ($line = $db->fetch_object($resql)))
+		{
+			$currency->name = $line->label;
+		}
+		
+		if ($currency->create($user) > 0)
+		{
+			$currency->addRate($rate);
+			
+			if (!empty($line)) return 2;
+			else return 1;
+		}
+		
+		return -1;	
+	}
 	 
 	 /**
 	 * Update rate in database 
@@ -471,7 +505,9 @@ class MultiCurrency extends CommonObject
 	 {
 	 	$sql = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
+		// FIXME Is this comptible with SQL ?
 		$sql.= ' WHERE m.code = "'.$db->escape($code).'" AND mc.date_sync >= ALL (SELECT date_sync FROM '.MAIN_DB_PREFIX.'multicurrency_rate)';
+		$sql.= " AND m.entity IN '".getEntity('multicurrency', 1)."'";
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
 		else return array(0, 1);
@@ -520,6 +556,66 @@ class MultiCurrency extends CommonObject
 		 
 		 return false;
 	   }
+
+	/**
+	 * With free account we can't set source then recalcul all rates to force another source
+	 * 
+	 * @param	stdClass	$TRate	Object containing all currencies rates	
+	 * @return	-1 if KO, 0 if nothing, 1 if OK
+	 */
+	public static function  recalculRates(&$TRate)
+	{
+		global $conf;
+		
+		if (!empty($conf->global->MULTICURRENCY_ALTERNATE_SOURCE))
+		{
+			$alternate_source = 'USD'.$conf->global->MULTICURRENCY_ALTERNATE_SOURCE;
+			if (!empty($TRate->{$alternate_source}))
+			{
+				$coef = $TRate->USDUSD / $TRate->{$alternate_source};
+				foreach ($TRate as $attr => &$rate)
+				{
+					$rate *= $coef;
+				}
+				
+				return 1;
+			}
+			
+			return -1; // Alternate souce not found
+		}
+		
+		return 0; // Nothing to do
+	}
+	
+	/**
+	 *  Sync rates from api
+	 * 
+	 *  @param 	array 	$response 	array of reponse from api to sync dolibarr rates
+	 */
+	public static function syncRates($response)
+	{
+		global $db,$conf;
+		
+		$TRate = $response->quotes;
+		$timestamp = $response->timestamp;
+		
+		if (self::recalculRates($TRate) >= 0) 
+		{
+			foreach ($TRate as $currency_code => $rate)
+			{
+				$code = substr($currency_code, 3, 3);
+				$obj = new MultiCurrency($db);
+				if ($obj->fetch(null, $code) > 0)
+				{
+					$obj->updateRate($rate);
+				}
+				else 
+				{
+					self::addRateFromDolibarr($code, $rate);
+				}
+			}	
+		}
+	}
 }
 
 /**
@@ -713,7 +809,7 @@ class CurrencyRate extends CommonObjectLine
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 

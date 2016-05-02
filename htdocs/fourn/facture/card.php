@@ -60,6 +60,7 @@ $confirm	= GETPOST("confirm");
 $ref		= GETPOST('ref','alpha');
 $cancel     = GETPOST('cancel','alpha');
 $lineid     = GETPOST('lineid', 'int');
+$projectid  = GETPOST('projectid','int');
 
 //PDF
 $hidedetails = (GETPOST('hidedetails','int') ? GETPOST('hidedetails','int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
@@ -246,8 +247,11 @@ if (empty($reshook))
 	// Set supplier ref
 	if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 	{
-	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
-	    if ($result < 0) dol_print_error($db, $object->error);
+		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+		
+		if ($object->update($user) < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// payments conditions
@@ -829,6 +833,7 @@ if (empty($reshook))
 	    	unset($_POST['remise_percent']);
 	    	unset($_POST['pu']);
 	    	unset($_POST['price_ht']);
+			unset($_POST['multicurrency_price_ht']);
 	    	unset($_POST['price_ttc']);
 	    	unset($_POST['tva_tx']);
 	    	unset($_POST['label']);
@@ -865,7 +870,7 @@ if (empty($reshook))
 	elseif ($action == 'classin')
 	{
 	    $object->fetch($id);
-	    $result=$object->setProject($_POST['projectid']);
+	    $result=$object->setProject($projectid);
 	}
 
 
@@ -974,12 +979,12 @@ if (empty($reshook))
                 // Recipient was provided from combo list
                 if ($_POST['receiver'] == 'thirdparty') // Id of third party
                 {
-                    $sendto = $object->client->email;
+                    $sendto = $object->thirdparty->email;
                     $sendtoid = 0;
                 }
                 else	// Id du contact
                 {
-                    $sendto = $object->client->contact_get_property($_POST['receiver'],'email');
+                    $sendto = $object->thirdparty->contact_get_property($_POST['receiver'],'email');
                     $sendtoid = $_POST['receiver'];
                 }
             }
@@ -1118,7 +1123,7 @@ if (empty($reshook))
 
 	    $outputlangs = $langs;
 	    $newlang=GETPOST('lang_id','alpha');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	    if (! empty($newlang))
 	    {
 	        $outputlangs = new Translate("",$conf);
@@ -1269,6 +1274,7 @@ if (empty($reshook))
 $form = new Form($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
+$paymentstatic=new PaiementFourn($db);
 
 llxHeader('',$langs->trans('SupplierInvoice'),'');
 
@@ -1374,7 +1380,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
+    print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
     // Third party
     print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
@@ -1387,7 +1393,7 @@ if ($action == 'create')
     }
     else
     {
-        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1',1);
+        print $form->select_company(GETPOST('socid','int'), 'socid', 's.fournisseur = 1', 'SelectThirdParty');
     }
     print '</td></tr>';
 
@@ -1501,6 +1507,21 @@ if ($action == 'create')
 	$form->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id, 'mode_reglement_id', 'DBIT');
 	print '</td></tr>';
 
+    // Bank Account
+    print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+    print '</td></tr>';
+
+	// Multicurrency
+	if (! empty($conf->multicurrency->enabled))
+	{
+		print '<tr>';
+		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
+        print '<td colspan="2" class="maxwidthonsmartphone">';
+	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+		print '</td></tr>';
+	}
+
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -1519,21 +1540,6 @@ if ($action == 'create')
 		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $objectsrc->libelle_incoterms, 1).'</label></td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($objectsrc->fk_incoterms) ? $objectsrc->fk_incoterms : ''), (!empty($objectsrc->location_incoterms)?$objectsrc->location_incoterms:''));
-		print '</td></tr>';
-	}
-
-    // Bank Account
-    print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-    $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
-    print '</td></tr>';
-
-	// Multicurrency
-	if (! empty($conf->multicurrency->enabled))
-	{
-		print '<tr>';
-		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
-        print '<td colspan="2" class="maxwidthonsmartphone">';
-	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
 
@@ -1649,7 +1655,11 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
+    print '<div class="center">';
+    print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+    print '</div>';
 
     print "</form>\n";
 
@@ -1865,20 +1875,21 @@ else
         /*
          * List of payments
          */
-        $nbrows=9; $nbcols=2;
+        $nbrows=9; $nbcols=3;
         if (! empty($conf->projet->enabled)) $nbrows++;
         if (! empty($conf->banque->enabled)) { $nbrows++; $nbcols++; }
-
+        if (! empty($conf->incoterm->enabled)) $nbrows++;
+        
         // Local taxes
         if ($societe->localtax1_assuj=="1") $nbrows++;
         if ($societe->localtax2_assuj=="1") $nbrows++;
 
         print '<td rowspan="'.$nbrows.'" valign="top">';
 
-        $sql = 'SELECT p.datep as dp, p.num_paiement, p.rowid, p.fk_bank,';
+        $sql = 'SELECT p.datep as dp, p.ref, p.num_paiement, p.rowid, p.fk_bank,';
         $sql.= ' c.id as paiement_type,';
         $sql.= ' pf.amount,';
-        $sql.= ' ba.rowid as baid, ba.ref, ba.label';
+        $sql.= ' ba.rowid as baid, ba.ref as baref, ba.label';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -1895,6 +1906,7 @@ else
             print '<table class="nobordernopadding" width="100%">';
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
+			print '<td>'.$langs->trans('Date').'</td>';
             print '<td>'.$langs->trans('Type').'</td>';
             if (! empty($conf->banque->enabled)) print '<td align="right">'.$langs->trans('BankAccount').'</td>';
             print '<td align="right">'.$langs->trans('Amount').'</td>';
@@ -1908,16 +1920,23 @@ else
                 {
                     $objp = $db->fetch_object($result);
                     $var=!$var;
-                    print '<tr '.$bc[$var].'>';
-                    print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.dol_print_date($db->jdate($objp->dp),'day')."</a></td>\n";
+                    print '<tr '.$bc[$var].'><td>';
+					$paymentstatic->id=$objp->rowid;
+					$paymentstatic->datepaye=$db->jdate($objp->dp);
+					$paymentstatic->ref=$objp->ref;
+					$paymentstatic->num_paiement=$objp->num_paiement;
+					$paymentstatic->payment_code=$objp->payment_code;
+					print $paymentstatic->getNomUrl(1);
+					print '</td>';
+					print '<td>'.dol_print_date($db->jdate($objp->dp), 'day') . '</td>';
                     print '<td>';
                     print $form->form_modes_reglement(null, $objp->paiement_type,'none').' '.$objp->num_paiement;
                     print '</td>';
                     if (! empty($conf->banque->enabled))
                     {
                         $bankaccountstatic->id=$objp->baid;
-                        $bankaccountstatic->ref=$objp->ref;
-                        $bankaccountstatic->label=$objp->ref;
+                        $bankaccountstatic->ref=$objp->baref;
+                        $bankaccountstatic->label=$objp->baref;
                         print '<td align="right">';
                         if ($objp->baid > 0) print $bankaccountstatic->getNomUrl(1,'transactions');
                         print '</td>';
@@ -2047,9 +2066,9 @@ else
 			print '</tr></table>';
 			print '</td><td colspan="3">';
 			if ($action == 'editmulticurrencyrate') {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
-				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
+				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
 			}
 			print '</td></tr>';
 		}
@@ -2344,7 +2363,11 @@ else
 	            // Delete
 	            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
-	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    if ($object->getSommePaiement()) {
+                        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecausePayments") . '">' . $langs->trans('Delete') . '</a></div>';
+                    } else {
+    	                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+                    }
 	            }
 	            print '</div>';
 	            print '<br>';
@@ -2385,7 +2408,7 @@ else
 	                // List of actions on element
 	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	                $formactions=new FormActions($db);
-	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
+	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
 	
 					print '</div></div></div>';
 	                //print '</td></tr></table>';
@@ -2412,7 +2435,7 @@ else
             if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
             	$newlang = $_REQUEST['lang_id'];
             if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-            	$newlang = $object->client->default_lang;
+            	$newlang = $object->thirdparty->default_lang;
 
             if (!empty($newlang))
             {
@@ -2448,10 +2471,7 @@ else
             $formmail->fromid   = $user->id;
             $formmail->fromname = $user->getFullName($langs);
             $formmail->frommail = $user->email;
-            if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-            {
-            	$formmail->trackid='sin'.$object->id;
-            }
+           	$formmail->trackid='sin'.$object->id;
             if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
             {
             	include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

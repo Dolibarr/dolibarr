@@ -255,7 +255,7 @@ if ($action == 'builddoc')	// En get ou en post
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
@@ -413,7 +413,7 @@ if ($action == 'create')    // Seems to no be used
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-					if (empty($newlang)) $newlang=$commande->client->default_lang;
+					if (empty($newlang)) $newlang=$commande->thirdparty->default_lang;
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
@@ -755,7 +755,7 @@ else
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);

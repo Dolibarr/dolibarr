@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Metode til at bruge til at sende e-mails
 MAIN_MAIL_SMTPS_ID=SMTP ID hvis påkrævet
 MAIN_MAIL_SMTPS_PW=SMTP Password hvis påkrævet
 MAIN_MAIL_EMAIL_TLS= Brug TLS (SSL) kryptering
+MAIN_MAIL_EMAIL_STARTTLS= Brug TLS (STARTTLS) kryptering
 MAIN_DISABLE_ALL_SMS=Deaktiver alle SMS sendings (til testformål eller demoer)
 MAIN_SMS_SENDMODE=Metode til at bruge til at sende SMS
 MAIN_MAIL_SMS_FROM=Standard afsenderens telefonnummer til afsendelse af SMS'er

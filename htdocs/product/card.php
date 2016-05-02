@@ -8,12 +8,12 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
+ * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.php';
 
@@ -152,7 +151,7 @@ if (empty($reshook))
 		$outputlangs = $langs;
 		$newlang='';
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 		if (! empty($newlang))
 		{
 			$outputlangs = new Translate("",$conf);
@@ -688,7 +687,7 @@ if (empty($reshook))
                     $object->fk_unit
                 );
                 if ($result > 0) {
-                    header("Location: " . DOL_URL_ROOT . "/comm/propal.php?id=" . $propal->id);
+                    header("Location: " . DOL_URL_ROOT . "/comm/propal/card.php?id=" . $propal->id);
                     return;
                 }
 
@@ -1478,22 +1477,24 @@ else
 
             // Accountancy sell code
 			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
             print $langs->trans("ProductAccountancySellCode");
-            print '</td>';
-			print '</tr></table>';
             print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_sell);
-            print '</td></tr>';
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->accountancy_code_sell);
+            } else {
+				print $object->accountancy_code_sell;
+			}
+			print '</td></tr>';
 
             // Accountancy buy code
 			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
             print $langs->trans("ProductAccountancyBuyCode");
-            print '</td>';
-			print '</tr></table>';
             print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_buy);
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->accountancy_code_buy);
+            } else {
+				print $object->accountancy_code_buy;
+			}
             print '</td></tr>';
 
             // Status (to sell)

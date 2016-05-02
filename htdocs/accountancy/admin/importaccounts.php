@@ -19,9 +19,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/importaccounts.php
- * \ingroup Accounting Expert
- * \brief Page import accounting account
+ * \file 		htdocs/accountancy/admin/importaccounts.php
+ * \ingroup		Advanced accountancy
+ * \brief 		Page import accounting account
  */
 require '../../main.inc.php';
 

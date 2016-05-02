@@ -109,7 +109,7 @@ $productstatic = new Product($db);
 
 $form = new Form($db);
 
-$title = $langs->trans("CheckMargins");
+$title = $langs->trans("Margins");
 
 llxHeader('', $title);
 
@@ -118,7 +118,7 @@ llxHeader('', $title);
 // Show tabs
 $head = marges_prepare_head($user);
 $picto = 'margin';
-dol_fiche_head($head, 'checkMargins', $title, 0, $picto);
+dol_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
 
 print '<form method="post" name="sel" action="' . $_SERVER['PHP_SELF'] . '">';
 print '<table class="border" width="100%">';
@@ -133,7 +133,7 @@ print '<td width="20%">';
 $form->select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
-print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Launch')) . '" name="button_search" />';
+print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
 print '</td></tr>';
 print "</table>";
 
@@ -242,6 +242,8 @@ if ($result) {
 } else {
 	dol_print_error($db);
 }
+
+dol_fiche_end();
 
 print '<div class="tabsAction">' . "\n";
 print '<div class="inline-block divButAction"><input type="submit"  name="button_updatemagins" id="button_updatemagins" class="butAction" value="' . $langs->trans("Update") . '" /></div>';

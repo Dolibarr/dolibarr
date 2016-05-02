@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -20,7 +20,7 @@
 
 /**
  * \file		htdocs/core/modules/modAccounting.class.php
- * \ingroup		Accounting Expert
+ * \ingroup		Advanced accountancy
  * \brief		Module to activate Accounting Expert module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
@@ -157,16 +157,19 @@ class modAccounting extends DolibarrModules
 				"yesno",
 				"1"
 		);
+		/*
 		$this->const[15] = array (
 				"ACCOUNTING_GROUPBYACCOUNT",
 				"yesno",
 				"1"
 		);
+		*/
 		$this->const[16] = array (
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
 				"%d%m%Y"
 		);
+		/*
 		$this->const[17] = array (
 				"ACCOUNTING_EXPORT_PIECE",
 				"yesno",
@@ -192,6 +195,7 @@ class modAccounting extends DolibarrModules
 				"yesno",
 				"1" 
 		);
+		*/
 		$this->const[22] = array(
 				"ACCOUNTING_EXPENSEREPORT_JOURNAL",
 				"chaine",

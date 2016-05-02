@@ -664,7 +664,7 @@ class Expedition extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			// TODO possibilite d'expedier a partir d'une propale ou autre origine
+			// TODO in future, shipment lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
@@ -738,7 +738,7 @@ class Expedition extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
+            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);     // TODO Add option in workflow module on this trigger to close order if sum of shipment = product to ship of order
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -878,16 +878,14 @@ class Expedition extends CommonObject
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 
-				$product_type=$product->type;
 				if ($entrepot_id > 0) {
-                    $product->load_stock();
-				    $product_stock = $product->stock_warehouse[$entrepot_id]->real;
+					$product->load_stock();
+					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
 				}
-				else 
-				{
-				    $product_stock = $product->stock_reel;
-				}
-				
+				else
+					$product_stock = $product->stock_reel;
+
+				$product_type=$product->type;
 				if ($product_type == 0 && $product_stock < $qty)
 				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
@@ -1204,6 +1202,22 @@ class Expedition extends CommonObject
 						if ($result < 0) { $error++; }
 						// End call triggers
 
+						if (! empty($this->origin) && $this->origin_id > 0)
+						{
+						    $this->fetch_origin();
+						    $origin=$this->origin;
+						    if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS)     // If order source of shipment is "shipment in progress"
+						    {
+                                // Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+						        $this->$origin->loadExpeditions();
+						        //var_dump($this->$origin->expeditions);exit;
+						        if (count($this->$origin->expeditions) <= 0)
+						        {
+                                    $this->$origin->setStatut(Commande::STATUS_VALIDATED);
+						        }
+						    }
+						}
+						
 						if (! $error)
 						{
 							$this->db->commit();
@@ -1742,56 +1756,6 @@ class Expedition extends CommonObject
 
     }
 
-    /**
-     * Return into unit=0, the calculated total of weight and volume of all lines * qty
-	 * Calculate by adding weight and volume of each product line.
-     * 
-     * @return  array           array('weight'=>...,'volume'=>...)
-     */
-    function getTotalWeightVolume()
-    {
-        $weightUnit=0;
-        $volumeUnit=0;
-        $totalWeight = '';
-        $totalVolume = '';
-        $totalOrdered = '';
-        $totalToShip = '';
-        foreach ($this->lines as $line)
-        {
-            $totalOrdered+=$line->qty_asked;
-            $totalToShip+=$line->qty_shipped;
-            
-            $weightUnit=0;
-            $volumeUnit=0;
-            if (! empty($line->weight_units)) $weightUnit = $line->weight_units;
-            if (! empty($line->volume_units)) $volumeUnit = $line->volume_units;
-        
-            //var_dump($line->volume_units);
-            if ($line->weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
-            {
-                $trueWeightUnit=pow(10,$weightUnit);
-                $totalWeight += $line->weight*$line->qty_shipped*$trueWeightUnit;
-            }
-            else
-            {
-                $totalWeight += $line->weight*$line->qty_shipped;   // This may be wrong if we mix different units
-            }
-            if ($line->volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
-            {
-                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
-                $trueVolumeUnit=pow(10,$volumeUnit);
-                //print $line->volume;
-                $totalVolume += $line->volume*$line->qty_shipped*$trueVolumeUnit;
-            }
-            else
-            {
-                $totalVolume += $line->volume*$line->qty_shipped;   // This may be wrong if we mix different units
-            }
-        }
-        
-        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
-    }
-
     
 	/**
 	 * Forge an set tracking url
@@ -1829,11 +1793,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as invoiced
+	 *	Classify the shipping as closed
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
-	function set_billed()
+	function setClosed()
 	{
 		global $conf;
 
@@ -1843,7 +1807,32 @@ class Expedition extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			//TODO: Add option/checkbox to set order billed if 100% of order is shipped
+			// TODO: Add option/checkbox to set order billed if 100% of order is shipped
+			$this->statut=2;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function set_billed()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1';    // TODO Update only billed
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
 			$this->statut=2;
 			$this->billed=1;
 			return 1;

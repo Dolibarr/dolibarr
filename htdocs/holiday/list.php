@@ -114,7 +114,7 @@ $max_year = 5;
 $min_year = 10;
 $filter='';
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader('', $langs->trans('CPTitreMenu'));
 
 $order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 

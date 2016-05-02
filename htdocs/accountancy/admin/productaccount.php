@@ -20,9 +20,9 @@
  */
 
 /**
- * \file 	htdocs/accountancy/admin/productaccount.php
- * \ingroup Accounting Expert
- * \brief 	To define accounting account on product / service
+ * \file		htdocs/accountancy/admin/productaccount.php
+ * \ingroup		Advanced accountancy
+ * \brief		To define accounting account on product / service
  */
 require '../../main.inc.php';
 
@@ -184,7 +184,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
  * View
  */
 
-llxHeader('', $langs->trans("Accounts"));
+llxHeader('', $langs->trans("InitAccountancy"));
 
 print '<script type="text/javascript">
 			$(function () {
@@ -241,7 +241,7 @@ if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
 	
-	print_barre_liste($langs->trans("ProductAccountingAccountSelect"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+	print_barre_liste($langs->trans("ModulesSystemTools"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
 	print '<br>';
 	
 	print $langs->trans("InitAccountancyDesc") . '<br>';
@@ -263,9 +263,9 @@ if ($result) {
 	
 	print "</table>\n";
 	
-	print '<br /><div align="right"><input type="submit" class="button" value="' . $langs->trans('Modify') . '" name="changetype"></div>';
+	print '<div align="center"><input type="submit" class="button" value="' . $langs->trans('Refresh') . '" name="changetype"></div>';
 	
-	print "<br>\n";
+	print "<br><br>\n";
 	
 	if (! empty($msg)) {
 		print $msg;

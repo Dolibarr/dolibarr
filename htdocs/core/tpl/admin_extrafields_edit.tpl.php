@@ -22,20 +22,45 @@
     jQuery(document).ready(function() {
     	function init_typeoffields(type)
     	{
+        	console.log("select new type "+type);
     		var size = jQuery("#size");
     		var unique = jQuery("#unique");
     		var required = jQuery("#required");
-			if (type == 'date') { size.prop('disabled', true); }
-			else if (type == 'datetime') { size.prop('disabled', true); }
-    		else if (type == 'double') { size.removeAttr('disabled'); }
-    		else if (type == 'int') { size.removeAttr('disabled'); }
-			else if (type == 'text') { size.removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); }
-    		else if (type == 'varchar') { size.removeAttr('disabled'); }
-			else if (type == 'boolean') { size.val('').prop('disabled', true); unique.prop('disabled', true);}
-			else if (type == 'price') { size.val('').prop('disabled', true); unique.prop('disabled', true);}
+    		var default_value = jQuery("#default_value");
+    		<?php
+    		if((GETPOST('type') != "select") &&  (GETPOST('type') != "sellist"))
+    		{
+    			print 'jQuery("#value_choice").hide();';
+    		}
+
+    		if (GETPOST('type') == "separate")
+    		{
+				print "jQuery('#size, #unique, #required, #default_value').val('').prop('disabled', true);";
+    			print 'jQuery("#value_choice").hide();';
+    		}
+    		?>
+
+			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+			else if (type == 'datetime') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+    		else if (type == 'double') { size.removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+			else if (type == 'int') { size.removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+			else if (type == 'text') { size.removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+    		else if (type == 'varchar') { size.removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+			else if (type == 'boolean') { size.val('').prop('disabled', true); unique.prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
+			else if (type == 'price') { size.val('').prop('disabled', true); unique.prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
+			else if (type == 'select') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'link') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").show();}
+			else if (type == 'sellist') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'radio') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'checkbox') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'chkbxlst') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();jQuery("#helplink").hide();}
+			else if (type == 'separate') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.val('').prop('disabled', true); default_value.val('').prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
 			else size.val('').prop('disabled', true);
     	}
     	init_typeoffields(jQuery("#type").val());
+    	jQuery("#type").change(function() {
+    		init_typeoffields($(this).val());
+    	});
     });
 </script>
 
@@ -85,33 +110,56 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $type2label[$type]; ?>
-<input type="hidden" name="type" id="type" value="<?php print $type; ?>">
+<?php 
+// Define list of possible type transition
+$typewecanchangeinto=array(
+    'varchar'=>array('varchar', 'phone', 'mail', 'select'),
+    'mail'=>array('varchar', 'phone', 'mail', 'select'),
+    'phone'=>array('varchar', 'phone', 'mail', 'select'),
+    'select'=>array('varchar', 'phone', 'mail', 'select')
+);
+if (in_array($type, array_keys($typewecanchangeinto)))
+{
+    $newarray=array();
+    print '<select id="type" class="flat type" name="type">';
+    foreach($type2label as $key => $val)
+    {
+        $selected='';
+        if ($key == (GETPOST('type')?GETPOST('type'):$type)) $selected=' selected="selected"';
+        if (in_array($key, $typewecanchangeinto[$type])) print '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
+        else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
+    }
+    print '</select>';
+}
+else
+{
+	print $type2label[$type];
+    print '<input type="hidden" name="type" id="type" value="'.$type.'">';
+} 
+?>
 </td></tr>
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td><input id="size" type="text" name="size" size="5" value="<?php echo $size; ?>"></td></tr>
 <!-- Position -->
 <tr><td><?php echo $langs->trans("Position"); ?></td><td class="valeur"><input type="text" name="pos" size="5" value="<?php  echo $extrafields->attribute_pos[$attrname];  ?>"></td></tr>
 <!--  Value (for select list / radio) -->
-<?php
-if(($type == 'select') || ($type == 'sellist') || ($type == 'checkbox') || ($type == 'chkbxlst') || ($type == 'radio') || ($type == 'link'))
-{
-?>
 <tr id="value_choice">
 <td>
 	<?php echo $langs->trans("Value"); ?>
 </td>
 <td>
-<table class="nobordernopadding">
-<tr><td>
-	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
-</td><td><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelp".$type),1,0)?></td></tr>
-</table>
+    <table class="nobordernopadding">
+    <tr><td>
+    	<textarea name="param" id="param" cols="80" rows="<?php echo ROWS_4 ?>"><?php echo dol_htmlcleanlastbr($param_chain); ?></textarea>
+    </td><td>
+    <span id="helpselect"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpselect"),1,0)?></span>
+    <span id="helpsellist"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpsellist"),1,0)?></span>
+    <span id="helpchkbxlst"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelpchkbxlst"),1,0)?></span>
+    <span id="helplink"><?php print $form->textwithpicto('', $langs->trans("ExtrafieldParamHelplink"),1,0)?></span>
+    </td></tr>
+    </table>
 </td>
 </tr>
-<?php
-}
-?>
 <!-- Unique -->
 <tr><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique" <?php echo ($unique?' checked':''); ?>></td></tr>
 <!-- Required -->

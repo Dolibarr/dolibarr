@@ -101,7 +101,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				{
 					foreach($object->linkedObjects['propal'] as $element)
 					{
-						$ret=$element->classifyBilled();
+						$ret=$element->classifyBilled($user);
 					}
 				}
         		return $ret;
@@ -120,7 +120,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		{
         			foreach($object->linkedObjects['commande'] as $element)
         			{
-        				$ret=$element->classifyBilled();
+        				$ret=$element->classifyBilled($user);
         			}
         		}
         		return $ret;
@@ -139,7 +139,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		{
         			foreach($object->linkedObjects['commande'] as $element)
         			{
-        				$ret=$element->classifyBilled();
+        				$ret=$element->classifyBilled($user);
         			}
         		}
         		return $ret;

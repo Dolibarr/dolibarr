@@ -87,6 +87,11 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
 	$listofsearchfields['search_customer_order']=array('text'=>'CustomerOrder');
 }
+// Search supplier proposal
+if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
+{
+    $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');
+}
 // Search supplier order
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
 {
@@ -100,12 +105,7 @@ if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire)
 // Search contract
 if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 {
-    $listofsearchfields['search_contract']=array('text'=>'Contrat');
-}
-// Search supplier proposal
-if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire)
-{
-    $listofsearchfields['search_supplier_proposal']=array('text'=>'SupplierProposalShort');
+    $listofsearchfields['search_contract']=array('text'=>'Contract');
 }
 
 if (count($listofsearchfields))
@@ -118,8 +118,8 @@ if (count($listofsearchfields))
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		if ($i == 0) print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
 		print '</tr>';
 		$i++;
 	}

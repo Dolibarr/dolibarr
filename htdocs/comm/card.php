@@ -124,6 +124,14 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
+    // customer preferred shipping method
+    if ($action == 'setshippingmethod' && $user->rights->societe->creer)
+    {
+        $object->fetch($id);
+        $result = $object->setShippingMethod(GETPOST('shipping_method_id','int'));
+        if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+    }
+
 	// assujetissement a la TVA
 	if ($action == 'setassujtva' && $user->rights->societe->creer)
 	{
@@ -138,7 +146,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$object->fk_prospectlevel=GETPOST('prospect_level_id','alpha');
-		$result=$object->set_prospect_level($user);
+		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -147,7 +155,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$object->stcomm_id=dol_getIdFromCode($db, GETPOST('stcomm','alpha'), 'c_stcomm');
-		$result=$object->set_commnucation_level($user);
+		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -156,7 +164,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$object->outstanding_limit=GETPOST('outstanding_limit');
-		$result=$object->set_OutstandingBill($user);
+		$result=$object->update($object->id, $user);
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -239,8 +247,8 @@ if ($id > 0)
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-	   print ($object->prefix_comm?$object->prefix_comm:'&nbsp;');
-	   print '</td></tr>';
+	    print ($object->prefix_comm?$object->prefix_comm:'&nbsp;');
+	    print '</td></tr>';
     }
 
 	if ($object->client)
@@ -430,6 +438,27 @@ if ($id > 0)
 		}
 		print '</div></td></tr>';
 	}
+
+    // Preferred shipping Method
+    if (! empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD)) {
+        print '<tr><td class="nowrap">';
+        print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+        print $langs->trans('SendingMethod');
+        print '<td>';
+        if (($action != 'editshipping') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshipping&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+        print '</tr></table>';
+        print '</td><td colspan="3">';
+        if ($action == 'editshipping')
+        {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->shipping_method_id,'shipping_method_id');
+        }
+        else
+        {
+            $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->shipping_method_id,'none');
+        }
+        print "</td>";
+        print '</tr>';
+    }
 
 	// Categories
 	if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
@@ -941,7 +970,7 @@ if ($id > 0)
 	if (! empty($conf->propal->enabled) && $user->rights->propal->creer && $object->status==1)
 	{
 		$langs->load("propal");
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
+		print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
 	}
 
 	if (! empty($conf->commande->enabled) && $user->rights->commande->creer && $object->status==1)

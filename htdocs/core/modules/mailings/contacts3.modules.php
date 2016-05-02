@@ -225,14 +225,22 @@ class mailing_contacts3 extends MailingTargets
         if ($resql)
         {
             $num = $this->db->num_rows($resql);
-            $i = 0;
-            while ($i < $num)
+            if ($num)
             {
-                $obj = $this->db->fetch_object($resql);
-                $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
-                $i++;
+                $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($resql);
+                    $s.='<option value="'.$obj->label.'">'.$obj->label.' ('.$obj->nb.')</option>';
+                    $i++;
+                }
+            }
+            else
+            {
+                $s.='<option value="-1" disabled="disabled">'.$langs->trans("NoContactLinkedToThirdpartieWithCategoryFound").'</option>';
             }
         }
+        else dol_print_error($this->db);
         $s.='</select>';
 
         return $s;

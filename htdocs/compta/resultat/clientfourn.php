@@ -382,7 +382,7 @@ print '</tr>';
  * Charges sociales non deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 0)</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
@@ -456,7 +456,7 @@ print '</tr>';
  * Charges sociales deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 1)</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
@@ -978,7 +978,7 @@ $parameters["date_end"] = $date_end;
 $parameters["bc"] = $bc;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addBalanceLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
 
 if ($mysoc->tva_assuj != 'franchise')	// Assujeti

@@ -379,7 +379,7 @@ if ($nboftargetok) {
 			
 		print 'Run git tag -a -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 		$ret=`git tag -a -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD" 2>&1`;
-		if ($ret =~ /already exists/)
+		if ($ret =~ /(already exists|existe déjà)/)
 		{
 			print "WARNING: Tag ".$MAJOR.'.'.$MINOR.'.'.$BUILD." already exists. Overwrite (y/N) ? ";
 			$QUESTIONOVERWRITETAG=<STDIN>; 
@@ -1159,10 +1159,13 @@ if ($nboftargetok) {
 	    		if ($target eq 'SF') { 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
 	    		}
-	    		elsif ($target eq 'ASSO' && $NEWPUBLISH =~ /stable/) {
+	    		elsif ($target eq 'ASSO' and $NEWPUBLISH =~ /stable/) {
 	    			$destFolder="$NEWPUBLISH/$filestoscanstableasso{$file}";
 	    		} 
-	    		else
+	    		elsif ($target eq 'ASSO' and $NEWPUBLISH !~ /stable/) {
+	    			$destFolder="$NEWPUBLISH";
+	    		} 
+	    		else	# No more used
 	    		{
 	    			$dirnameonly=$file;
 	    			$dirnameonly =~ s/.*\/([^\/]+)\/[^\/]+$/$1/;  

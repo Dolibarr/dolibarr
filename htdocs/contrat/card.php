@@ -621,6 +621,7 @@ if (empty($reshook))
 				unset($_POST['type']);
 				unset($_POST['remise_percent']);
 				unset($_POST['price_ht']);
+				unset($_POST['multicurrency_price_ht']);
 				unset($_POST['price_ttc']);
 				unset($_POST['tva_tx']);
 				unset($_POST['product_ref']);
@@ -1189,7 +1190,11 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+    print '<div align="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+    print '</div>';
 
     if (is_object($objectsrc))
     {

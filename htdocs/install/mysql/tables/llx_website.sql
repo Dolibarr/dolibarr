@@ -21,7 +21,7 @@ CREATE TABLE llx_website
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	entity        integer DEFAULT 1,
-	shortname     varchar(24) NOT NULL,
+	ref	          varchar(24) NOT NULL,
 	description   varchar(255),
 	status		  integer,
     date_creation     datetime,

@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,9 +167,13 @@ class Commande extends CommonOrder
 	 */
 	const STATUS_VALIDATED = 1;
 	/**
-	 * Accepted/On process not managed for customer orders
+	 * Accepted (supplier orders)
 	 */
 	const STATUS_ACCEPTED = 2;
+	/**
+	 * Shipment on process (customer orders)
+	 */
+	const STATUS_SHIPMENTONPROCESS = 2;
 	/**
 	 * Closed (Sent/Received, billed or not)
 	 */
@@ -1006,6 +1011,7 @@ class Commande extends CommonOrder
         $this->user_author_id     = $user->id;
         $this->user_valid         = '';
 		$this->date				  = dol_now();
+		$this->date_commande	  = dol_now();
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
@@ -1277,6 +1283,7 @@ class Commande extends CommonOrder
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
             
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
+
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -1416,15 +1423,16 @@ class Commande extends CommonOrder
             $prod=new Product($this->db);
             $prod->fetch($idproduct);
 
-            $tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
-            $tva_npr = get_default_npr($mysoc,$this->client,$prod->id);
+            $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-            $localtax1_tx=get_localtax($tva_tx,1,$this->client,$mysoc,$tva_npr);
-            $localtax2_tx=get_localtax($tva_tx,2,$this->client,$mysoc,$tva_npr);
-            
+
+            $localtax1_tx=get_localtax($tva_tx,1,$this->thirdparty,$mysoc,$tva_npr);
+            $localtax2_tx=get_localtax($tva_tx,2,$this->thirdparty,$mysoc,$tva_npr);
+
             // multiprix
-            if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
-            $price = $prod->multiprices[$this->client->price_level];
+            if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
+            $price = $prod->multiprices[$this->thirdparty->price_level];
             else
             $price = $prod->price;
 
@@ -1714,12 +1722,13 @@ class Commande extends CommonOrder
         $sql.= ' l.total_ht, l.total_ttc, l.total_tva, l.total_localtax1, l.total_localtax2, l.date_start, l.date_end,';
 	    $sql.= ' l.fk_unit,';
 		$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-        $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label';
+        $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
+        $sql.= ' p.weight, p.weight_units, p.volume, p.volume_units';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
         $sql.= ' WHERE l.fk_commande = '.$this->id;
         if ($only_product) $sql .= ' AND p.fk_product_type = 0';
-        $sql .= ' ORDER BY l.rang';
+        $sql .= ' ORDER BY l.rang, l.rowid';
 
         dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -1740,6 +1749,7 @@ class Commande extends CommonOrder
                 $line->commande_id      = $objp->fk_commande;
                 $line->label            = $objp->custom_label;
                 $line->desc             = $objp->description;
+                $line->description      = $objp->description;		// Description line
                 $line->product_type     = $objp->product_type;
                 $line->qty              = $objp->qty;
                 $line->tva_tx           = $objp->tva_tx;
@@ -1772,6 +1782,11 @@ class Commande extends CommonOrder
                 $line->product_desc     = $objp->product_desc;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 	            $line->fk_unit          = $objp->fk_unit;
+	            
+	            $line->weight           = $objp->weight;
+	            $line->weight_units     = $objp->weight_units;
+	            $line->volume           = $objp->volume;
+	            $line->volume_units     = $objp->volume_units;
 
                 $line->date_start       = $this->db->jdate($objp->date_start);
                 $line->date_end         = $this->db->jdate($objp->date_end);
@@ -1832,14 +1847,14 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Load array this->expeditions of nb of products sent by line in order
-     *
+     *	Load array this->expeditions of lines of shipments with nb of products sent for each order line
+     *  Note: For a dedicated shipment, the fetch_lines load the qty_asked and qty_shipped. This function return qty_shipped cuulated for order
+     *   
      *	@param      int		$filtre_statut      Filter on status
+     *  @param		int		$fk_product			Filter on a product
      * 	@return     int                			<0 if KO, Nb of lines found if OK
-     *
-     *	TODO deprecate, move to Shipping class
      */
-    function loadExpeditions($filtre_statut=-1)
+    function loadExpeditions($filtre_statut=-1, $fk_product=0)
     {
         $this->expeditions = array();
 
@@ -1852,6 +1867,7 @@ class Commande extends CommonOrder
         if ($filtre_statut >= 0) $sql.= ' ed.fk_expedition = e.rowid AND';
         $sql.= ' ed.fk_origin_line = cd.rowid';
         $sql.= ' AND cd.fk_commande =' .$this->id;
+        if ($this->fk_product > 0) $sql.= ' AND cd.fk_product = '.$this->fk_product;
         if ($filtre_statut >= 0) $sql.=' AND e.fk_statut >= '.$filtre_statut;
         $sql.= ' GROUP BY cd.rowid, cd.fk_product';
         //print $sql;
@@ -2409,9 +2425,10 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as invoiced
 	 *
-	 * @return     int     <0 if ko, >0 if ok
+	 * @param      User    $user       Object user making the change
+	 * @return     int                 <0 if KO, >0 if OK
 	 */
-	function classifyBilled()
+	function classifyBilled(User $user)
 	{
 		global $conf, $user, $langs;
         $error = 0;
@@ -2465,9 +2482,10 @@ class Commande extends CommonOrder
 	 */
 	function classer_facturee()
 	{
+	    global $user;
 		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
-		return $this->classifyBilled();
+		return $this->classifyBilled($user);
 	}
 
 
@@ -2499,7 +2517,7 @@ class Commande extends CommonOrder
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null)
     {
-        global $conf, $mysoc;
+        global $conf, $mysoc, $langs;
 
         dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2535,6 +2553,7 @@ class Commande extends CommonOrder
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
             
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
+
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2548,7 +2567,14 @@ class Commande extends CommonOrder
 			
             // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
             $price = $pu;
-            $subprice = $pu;
+			if ($price_base_type == 'TTC') 
+			{
+				$subprice = $tabprice[5];
+			} 
+			else 
+			{
+				$subprice = $pu;
+			}
             $remise = 0;
             if ($remise_percent > 0)
             {
@@ -2559,6 +2585,26 @@ class Commande extends CommonOrder
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new OrderLine($this->db);
             $line->fetch($rowid);
+
+            if (!empty($line->fk_product))
+            {
+                $product=new Product($this->db);
+                $result=$product->fetch($line->fk_product);
+                $product_type=$product->type;
+
+                if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty)
+                {
+                    $this->error=$langs->trans('ErrorStockIsNotEnough');
+                    dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
+                    $this->db->rollback();
+                    unset($_POST['productid']);
+                    unset($_POST['tva_tx']);
+                    unset($_POST['price_ht']);
+                    unset($_POST['qty']);
+                    unset($_POST['buying_price']);
+                    return self::STOCK_NOT_ENOUGH_FOR_ORDER;
+                }
+            }
 
             $staticline = clone $line;
 
@@ -2981,7 +3027,7 @@ class Commande extends CommonOrder
     function LibStatut($statut,$billed,$mode,$donotshowbilled=0)
     {
         global $langs, $conf;
-        
+
         $billedtext = '';
         if (empty($donotshowbilled)) $billedtext .= ($billed?' - '.$langs->trans("Billed"):'');
 
@@ -3276,91 +3322,13 @@ class Commande extends CommonOrder
     }
 
     /**
-     * 	Return an array of order lines
-     *
-     * @return	array		Lines of order
+	 * 	Create an array of order lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
      */
     function getLinesArray()
     {
-        $lines = array();
-
-        $sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx, ';
-        $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits, l.rang, l.special_code, l.fk_parent_line,';
-        $sql.= ' l.total_ht, l.total_tva, l.total_ttc, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht, l.localtax1_tx, l.localtax2_tx,';
-        $sql.= ' l.date_start, l.date_end,';
-	    $sql.= ' l.fk_unit,';
-		$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
-        $sql.= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, ';
-        $sql.= ' p.description as product_desc, p.stock as stock_reel,';
-        $sql.= ' p.entity';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
-        $sql.= ' WHERE l.fk_commande = '.$this->id;
-        $sql.= ' ORDER BY l.rang ASC, l.rowid';
-
-        $resql = $this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            $i = 0;
-
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($resql);
-
-				$this->lines[$i]					= new OrderLine($this->db);
-                $this->lines[$i]->id				= $obj->rowid;
-                $this->lines[$i]->label 			= $obj->custom_label;
-                $this->lines[$i]->description 		= $obj->description;
-                $this->lines[$i]->fk_product		= $obj->fk_product;
-                $this->lines[$i]->ref				= $obj->ref;
-                $this->lines[$i]->entity            = $obj->entity;         // Product entity
-                $this->lines[$i]->product_label		= $obj->product_label;
-                $this->lines[$i]->product_desc		= $obj->product_desc;
-                $this->lines[$i]->fk_product_type	= $obj->fk_product_type;
-                $this->lines[$i]->product_type		= $obj->product_type;
-                $this->lines[$i]->qty				= $obj->qty;
-                $this->lines[$i]->subprice			= $obj->subprice;
-                $this->lines[$i]->fk_remise_except 	= $obj->fk_remise_except;
-                $this->lines[$i]->remise_percent	= $obj->remise_percent;
-                $this->lines[$i]->tva_tx			= $obj->tva_tx;
-                $this->lines[$i]->info_bits			= $obj->info_bits;
-                $this->lines[$i]->total_ht			= $obj->total_ht;
-                $this->lines[$i]->total_tva			= $obj->total_tva;
-                $this->lines[$i]->total_ttc			= $obj->total_ttc;
-                $this->lines[$i]->fk_parent_line	= $obj->fk_parent_line;
-                $this->lines[$i]->special_code		= $obj->special_code;
-				$this->lines[$i]->stock				= $obj->stock_reel;
-                $this->lines[$i]->rang				= $obj->rang;
-                $this->lines[$i]->date_start		= $this->db->jdate($obj->date_start);
-                $this->lines[$i]->date_end			= $this->db->jdate($obj->date_end);
-				$this->lines[$i]->fk_fournprice		= $obj->fk_fournprice;
-				$marginInfos						= getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->lines[$i]->fk_fournprice, $obj->pa_ht);
-				$this->lines[$i]->pa_ht				= $marginInfos[0];
-				$this->lines[$i]->marge_tx			= $marginInfos[1];
-				$this->lines[$i]->marque_tx			= $marginInfos[2];
-	            $this->lines[$i]->fk_unit			= $obj->fk_unit;
-				
-				// Multicurrency
-				$this->lines[$i]->fk_multicurrency 			= $obj->fk_multicurrency;
-				$this->lines[$i]->multicurrency_code 		= $obj->multicurrency_code;
-				$this->lines[$i]->multicurrency_subprice 	= $obj->multicurrency_subprice;
-				$this->lines[$i]->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
-				$this->lines[$i]->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->lines[$i]->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-				
-                $i++;
-            }
-
-            $this->db->free($resql);
-
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
+        return $this->fetch_lines();
     }
 
 	/**

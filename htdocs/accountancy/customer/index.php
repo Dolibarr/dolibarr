@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013      Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/customer/index.php
- * \ingroup Accounting Expert
- * \brief Home customer ventilation
+ * \file		htdocs/accountancy/customer/index.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Home customer ventilation
  */
 require '../../main.inc.php';
 
@@ -44,7 +44,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->ventilation->read)
 	accessforbidden();
 	
-	// Filter
+// Filter
 $year = $_GET["year"];
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
@@ -95,7 +95,7 @@ if ($action == 'validatehistory') {
 	$sql1 .= " SET fd.fk_code_ventilation = 0";
 	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
 	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accountingaccount as accnt';
+	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
 	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
 	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
 	

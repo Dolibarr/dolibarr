@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=שיטה להשתמש כדי לשלוח מיילים
 MAIN_MAIL_SMTPS_ID=SMTP מזהה אם נדרש אימות
 MAIN_MAIL_SMTPS_PW=SMTP סיסמא אם נדרש אימות
 MAIN_MAIL_EMAIL_TLS= השתמש ב-TLS (SSL) להצפין
+MAIN_MAIL_EMAIL_STARTTLS= השתמש ב-TLS (STARTTLS) להצפין
 MAIN_DISABLE_ALL_SMS=הפוך את כל sendings SMS (למטרות בדיקה או הדגמות)
 MAIN_SMS_SENDMODE=שיטה להשתמש כדי לשלוח SMS
 MAIN_MAIL_SMS_FROM=השולח ברירת מחדל מספר הטלפון לשליחת הודעות טקסט

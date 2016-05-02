@@ -272,6 +272,7 @@ MAIN_MAIL_SENDMODE=Metodo da utilizzare per l'invio di email
 MAIN_MAIL_SMTPS_ID=Id per l'autenticazione SMTP, se necessario
 MAIN_MAIL_SMTPS_PW=Password per l'autenticazione SMTP, se necessaria
 MAIN_MAIL_EMAIL_TLS= Usa cifratura TLS (SSL)
+MAIN_MAIL_EMAIL_STARTTLS= Usa cifratura TLS (STARTTLS)
 MAIN_DISABLE_ALL_SMS=Disabilitare tutti gli invii SMS (per scopi di test o demo)
 MAIN_SMS_SENDMODE=Metodo da utilizzare per inviare SMS
 MAIN_MAIL_SMS_FROM=Numero del chiamante predefinito per l'invio di SMS

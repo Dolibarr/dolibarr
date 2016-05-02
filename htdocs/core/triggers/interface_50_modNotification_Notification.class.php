@@ -41,6 +41,7 @@ class InterfaceNotification extends DolibarrTriggers
     	'ORDER_VALIDATE',
     	'PROPAL_VALIDATE',
         'FICHINTER_VALIDATE',
+        'FICHINTER_ADD_CONTACT',
     	'ORDER_SUPPLIER_VALIDATE',
     	'ORDER_SUPPLIER_APPROVE',
     	'ORDER_SUPPLIER_REFUSE',

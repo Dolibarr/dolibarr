@@ -53,8 +53,23 @@ if (empty($usedolheader))
 }
 else
 {
-	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css');
-	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js');
+	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
+			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
+	);
+	$arrayjs=array('/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/dataTables.buttons.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.colVis.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.html5.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.flash.min.js',
+			'/includes/jquery/plugins/datatables/extensions/Buttons/js/buttons.print.min.js',
+			'/includes/jquery/plugins/datatables/extensions/ColReorder/js/dataTables.colReorder.min.js',
+			'/includes/jszip/jszip.min.js',
+			'/includes/pdfmake/pdfmake.min.js',
+			'/includes/pdfmake/vfs_fonts.js'
+	);
+
+
 	llxHeader('','','','',0,0,$arrayjs,$arraycss);
 }
 
@@ -204,34 +219,45 @@ if (! empty($moreforfilter))
 <script type="text/javascript">
 $(document).ready(function(){
     $('#idtableexample2').dataTable( {
+    	<?php
+    	if ($optioncss=='print') {
+    	 	print '\'dom\': \'lfrtip\',';
+    	} else {
+    		print '\'dom\': \'Blfrtip\',';
+    	}
+    	?>
+    	"colReorder": true,
+		'buttons': [
+		          'colvis','copy', 'csv', 'excel', 'pdf', 'print'
+		      ],
 		"sPaginationType": "full_numbers",
-		"aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Tous"]],
+		"lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?php echo $langs->trans('All'); ?>"]],
 		"oLanguage": {
-			"sLengthMenu": "Voir _MENU_ lignes",
-			"sSearch": "Recherche:",
-			"sZeroRecords": "Aucune ligne &agrave; afficher",
-			"sInfoEmpty": "Aucune ligne &agrave; afficher",
-			"sInfoFiltered": "(Filtrer sur _MAX_ Total de lignes)",
-			"sInfo": "Afficher _START_ &agrave; _END_ sur les _TOTAL_ lignes &agrave; afficher",
+			"sLengthMenu": "<?php echo $langs->trans('Show'); ?> _MENU_ <?php echo $langs->trans('Entries'); ?>",
+			"sSearch": "<?php echo $langs->trans('Search'); ?>:",
+			"sZeroRecords": "<?php echo $langs->trans('NoRecordsToDisplay'); ?>",
+			"sInfoEmpty": "<?php echo $langs->trans('NoEntriesToShow'); ?>",
+			"sInfoFiltered": "(<?php echo $langs->trans('FilteredFrom'); ?> _MAX_ <?php echo $langs->trans('TotalEntries'); ?>)",
+			"sInfo": "<?php echo $langs->trans('Showing'); ?> _START_ <?php echo $langs->trans('To'); ?> _END_ <?php echo $langs->trans('WTOf'); ?> _TOTAL_ <?php echo $langs->trans('Entries'); ?>",
 			"oPaginate": {
-				"sFirst": "Début",
-				"sLast": "Fin",
-				"sPrevious": "Précédent",
-				"sNext": "Suivant"
+				"sFirst": "<?php echo $langs->transnoentities('First'); ?>",
+				"sLast": "<?php echo $langs->transnoentities('Last'); ?>",
+				"sPrevious": "<?php echo $langs->transnoentities('Previous'); ?>",
+				"sNext": "<?php echo $langs->transnoentities('Next'); ?>"
 			}
 		},
 		"aaSorting": [[0,'desc']],
-		"sDom": 'CT<"clear">lfrtip',
-//To get flash tools
- 		"oTableTools": {
-			"sSwfPath": "<?php echo dol_buildpath('/includes/jquery/plugins/datatables/extensions/TableTools/swf/copy_csv_xls_pdf.swf',1); ?>"
-		},
+
+
 
 /* To use in ajax mode
-		"bProcessing": true,	// Show	"processing message"
+			"bProcessing": true,
+		"stateSave": true,
 		"bServerSide": true,
-		"bJQueryUI": true,
-		"sAjaxSource": "../ajaxlist.php"
+		"sAjaxSource": "../ajax.php",
+		"aoColumnDefs": [
+		                 { "bSortable": false, "aTargets": [ 2,3,4 ] }
+		               ],
 */
     })
 });
