@@ -16,7 +16,7 @@
 --
 -- ===================================================================
 
-CREATE TABLE IF NOT EXISTS llx_usergroup_extrafields (
+CREATE TABLE llx_usergroup_extrafields (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
   fk_object                 integer NOT NULL,

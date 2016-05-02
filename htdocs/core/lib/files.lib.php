@@ -1358,7 +1358,7 @@ function dol_meta_create($object)
 		if (is_dir($dir))
 		{
 			$nblignes = count($object->lines);
-			$client = $object->client->name . " " . $object->client->address . " " . $object->client->zip . " " . $object->client->town;
+			$client = $object->thirdparty->name . " " . $object->thirdparty->address . " " . $object->thirdparty->zip . " " . $object->thirdparty->town;
 			$meta = "REFERENCE=\"" . $object->ref . "\"
 			DATE=\"" . dol_print_date($object->date,'') . "\"
 			NB_ITEMS=\"" . $nblignes . "\"
@@ -1486,7 +1486,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					}
 					if (image_format_supported($destpath) == 1)
 					{
-						// Create small thumbs for image (Ratio is near 16/9)
+						// Create thumbs
+						// We can't use $object->addThumbs here because there is no $object known
+						
 						// Used on logon for example
 						$imgThumbSmall = vignette($destpath, $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
 						// Create mini thumbs for image (Ratio is near 16/9)
@@ -2211,8 +2213,6 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping for import module
 	else if ($modulepart == 'import')
 	{
-		// Aucun test necessaire car on force le rep de download sur
-		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->import->dir_temp.'/'.$original_file;
 	}
@@ -2220,13 +2220,19 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping pour l'editeur wysiwyg
 	else if ($modulepart == 'editor')
 	{
-		// Aucun test necessaire car on force le rep de download sur
-		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
 	}
-
-	// Wrapping pour les backups
+	
+	// Wrapping for miscellaneous medias files
+	elseif ($modulepart == 'medias')
+	{
+	    $accessallowed=1;
+	    global $dolibarr_main_data_root;
+	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	}
+	
+	// Wrapping for backups
 	else if ($modulepart == 'systemtools')
 	{
 		if ($fuser->admin)

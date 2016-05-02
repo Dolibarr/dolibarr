@@ -41,6 +41,7 @@ $page_y=GETPOST('page_y','int');
 $search_keyword=GETPOST('search_keyword','alpha');
 $search_status=GETPOST('search_status','alpha');
 $search_nature=GETPOST('search_nature','alpha');
+$search_version=GETPOST('search_version','alpha');
 
 if (! $user->admin)
 	accessforbidden();
@@ -64,8 +65,9 @@ $familyinfo=array(
 
 $param='';
 if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status) $param.='&search_status='.urlencode($search_status);
-if ($search_nature) $param.='&search_nature='.urlencode($search_nature);
+if ($search_status)  $param.='&search_status='.urlencode($search_status);
+if ($search_nature)  $param.='&search_nature='.urlencode($search_nature);
+if ($search_version) $param.='&search_version='.urlencode($search_version);
 
 
 
@@ -94,6 +96,7 @@ if (GETPOST('buttonreset'))
     $search_keyword='';
     $search_status='';
     $search_nature='';
+    $search_version='';
 }
 
 
@@ -109,6 +112,7 @@ $_SESSION["mode"]=$mode;
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url);
 
+$arrayofnatures=array('core'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External").' - '.$langs->trans("AllPublishers"));
 
 // Search modules dirs
 $modulesdir = dolGetModulesDirs();
@@ -170,11 +174,30 @@ foreach ($modulesdir as $dir)
 		    					if ($objMod->version == 'development'  && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 2))) $modulequalified=0;
 		    					if ($objMod->version == 'experimental' && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL < 1))) $modulequalified=0;
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
-		    					// We discard modules according to property disabled
-		    					if (! empty($objMod->hidden)) $modulequalified=false;
 
+		    					// We discard modules according to property disabled
+		    					if (! empty($objMod->hidden)) $modulequalified=0;
+
+		    					if ($modulequalified > 0)
+		    					{
+		    					    $publisher=dol_escape_htmltag($objMod->getPublisher());
+		    					    $external=($objMod->isCoreOrExternalModule() == 'external');
+		    					    if ($external)
+		    					    {
+		    					        if ($publisher)
+		    					        {
+		    					            $arrayofnatures['external_'.$publisher]=$langs->trans("External").' - '.$publisher;
+		    					        }
+		    					        else
+		    					        {
+		    					            $arrayofnatures['external_']=$langs->trans("External").' - '.$langs->trans("UnknownPublishers");
+		    					        }
+		    					    }
+		    					    ksort($arrayofnatures);
+		    					}
+		    					
 		    					// Define array $categ with categ with at least one qualified module
-		    					if ($modulequalified)
+		    					if ($modulequalified > 0)
 		    					{
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
@@ -199,6 +222,7 @@ foreach ($modulesdir as $dir)
 
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
+		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
 		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
@@ -254,15 +278,15 @@ if ($mode==='expdev')      print $langs->trans("ModuleFamilyExperimental")."<br>
 $h = 0;
 
 $categidx='common';    // Main
-if (! empty($categ[$categidx]))
-{
+//if (! empty($categ[$categidx]))
+//{
 	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
 	$head[$h][1] = $langs->trans("AvailableModules");
 	$head[$h][2] = 'common';
 	$h++;
-}
+//}
 
-$categidx='expdev';
+/*$categidx='expdev';
 if (! empty($categ[$categidx]))
 {
 	$categidx='expdev';
@@ -270,7 +294,7 @@ if (! empty($categ[$categidx]))
     $head[$h][1] = $form->textwithpicto($langs->trans("ModuleFamilyExperimental"), $langs->trans('DoNotUseInProduction'), 1, 'warning', '', 0, 3);
     $head[$h][2] = 'expdev';
     $h++;
-}
+}*/
 
 $categidx='marketplace';
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
@@ -299,10 +323,20 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
+    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, $search_nature, 1);
     $moreforfilter.= '</div>';
+    if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+    {
+        $array_version = array('stable'=>$langs->transnoentitiesnoconv("Stable"));
+        if ($conf->global->MAIN_FEATURES_LEVEL < 0) $array_version['deprecated']=$langs->trans("Deprecated");
+        if ($conf->global->MAIN_FEATURES_LEVEL > 0) $array_version['experimental']=$langs->trans("Experimental");
+        if ($conf->global->MAIN_FEATURES_LEVEL > 1) $array_version['development']=$langs->trans("Development");
+        $moreforfilter.='<div class="divsearchfield">';
+        $moreforfilter.= $langs->trans('Version') . ': '.$form->selectarray('search_version', $array_version, $search_version, 1);
+        $moreforfilter.= '</div>';
+    }
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', array('standard'=>$langs->transnoentitiesnoconv("Core"), 'external'=>$langs->transnoentitiesnoconv("External")), $search_nature, 1);
+    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.=' ';
     $moreforfilter.='<div class="divsearchfield">';
@@ -337,7 +371,8 @@ if ($mode != 'marketplace')
 
         $modName = $filename[$key];
     	$objMod  = $modules[$key];
-
+    	$dirofmodule = $dirmod[$key];
+    	 
     	$special = $objMod->special;
 
     	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
@@ -358,6 +393,8 @@ if ($mode != 'marketplace')
         $moduledesc=$objMod->getDesc();
         $moduledesclong=$objMod->getDescLong();
         $moduleauthor=$objMod->getPublisher();
+
+        // We discard showing according to filters
         if ($search_keyword)
         {
             $qualified=0;
@@ -375,8 +412,22 @@ if ($mode != 'marketplace')
         }
         if ($search_nature)
         {
-            if ($search_nature == 'external' && $objMod->isCoreOrExternalModule() != 'external') continue;
-            if ($search_nature == 'standard' && $objMod->isCoreOrExternalModule() == 'external') continue;
+            if (preg_match('/^external/',$search_nature) && $objMod->isCoreOrExternalModule() != 'external') continue;
+            if (preg_match('/^external_(.*)$/',$search_nature, $reg))
+            {
+                //print $reg[1].'-'.dol_escape_htmltag($objMod->getPublisher());
+                $publisher=dol_escape_htmltag($objMod->getPublisher());
+                if ($reg[1] && $reg[1] != $publisher) continue;
+                if (! $reg[1] && ! empty($publisher)) continue;
+            }
+            if ($search_nature == 'core' && $objMod->isCoreOrExternalModule() == 'external') continue;
+        }
+        if ($search_version)
+        {
+            if (($objMod->version == 'development' || $objMod->version == 'experimental' || preg_match('/deprecated/', $objMod->version)) && $search_version == 'stable') continue;
+            if ($objMod->version != 'development'  && ($search_version == 'development')) continue;
+            if ($objMod->version != 'experimental' && ($search_version == 'experimental')) continue;
+            if (! preg_match('/deprecated/', $objMod->version) && ($search_version == 'deprecated')) continue;
         }
 
         // Load all lang files of module
@@ -394,7 +445,7 @@ if ($mode != 'marketplace')
         if ($familykey!=$oldfamily)
         {
             print '<tr class="liste_titre">'."\n";
-            print '<td colspan="5">';
+            print '<td colspan="6">';
             $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
             print $familytext;
             print "</td>\n";
@@ -442,18 +493,171 @@ if ($mode != 'marketplace')
         print nl2br($objMod->getDesc());
         print "</td>\n";
 
-        // Version
-        print '<td align="center" valign="top" class="nowrap">';
-        $version=$objMod->getVersion();
-        $dirofmodule=$dirmod[$key];
+        // Help
+        print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
+        $text='';
+        if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
+        else $text.=$objMod->getDesc().'<br>';
+        
+        $textexternal='';
         if ($objMod->isCoreOrExternalModule() == 'external')
         {
-        	$text=$langs->trans("ExternalModule",$dirofmodule);
-        	if (! empty($objMod->editor_name) && $objMod->editor_name != 'dolibarr') $text.=' - '.$objMod->editor_name;
-        	if (! empty($objMod->editor_web) && $objMod->editor_web != 'www.dolibarr.org') $text.=' - '.$objMod->editor_web;
-        	print $form->textwithpicto($version, $text, 1, 'help');
+            $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
+            if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
+            if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> '.$objMod->editor_url;
+            $text.=$textexternal;
+            $text.='<br>';
         }
-        else print $version;
+        else
+        {
+            $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
+        }
+        $text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
+        if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
+        {
+            $i=0;
+            foreach($objMod->tabs as $val)
+            {
+                $tmp=explode(':',$val,3);
+                $text.=($i?', ':'').$tmp[0].':'.$tmp[1];
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddDictionaries").':</strong> ';
+        if (isset($objMod->dictionaries) && isset($objMod->dictionaries['tablib']) && is_array($objMod->dictionaries['tablib']) && count($objMod->dictionaries['tablib']))
+        {
+            $i=0;
+            foreach($objMod->dictionaries['tablib'] as $val)
+            {
+                $text.=($i?', ':'').$val;
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddBoxes").':</strong> ';
+        if (isset($objMod->boxes) && is_array($objMod->boxes) && count($objMod->boxes))
+        {
+            $i=0;
+            foreach($objMod->boxes as $val)
+            {
+                $text.=($i?', ':'').($val['file']?$val['file']:$val[0]);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+
+        $text.='<br><strong>'.$langs->trans("AddModels").':</strong> ';
+        if (isset($objMod->module_parts) && isset($objMod->module_parts['models']) && $objMod->module_parts['models'])
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddSubstitutions").':</strong> ';
+        if (isset($objMod->module_parts) && isset($objMod->module_parts['substitutions']) && $objMod->module_parts['substitutions'])
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddSheduledJobs").':</strong> ';
+        if (isset($objMod->cronjobs) && is_array($objMod->cronjobs) && count($objMod->cronjobs))
+        {
+            $i=0;
+            foreach($objMod->cronjobs as $val)
+            {
+                $text.=($i?', ':'').($val['label']);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddTriggers").':</strong> ';
+        if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers'])
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddHooks").':</strong> ';
+        if (isset($objMod->module_parts) && is_array($objMod->module_parts['hooks']) && count($objMod->module_parts['hooks']))
+        {
+            $i=0;
+            foreach($objMod->module_parts['hooks'] as $val)
+            {
+                $text.=($i?', ':'').($val);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+
+        $text.='<br><strong>'.$langs->trans("AddPermissions").':</strong> ';
+        if (isset($objMod->rights) && is_array($objMod->rights) && count($objMod->rights))
+        {
+            $i=0;
+            foreach($objMod->rights as $val)
+            {
+                $text.=($i?', ':'').($val[1]);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
+        if (isset($objMod->menu) && is_array($objMod->menu) && $objMod->menu)
+        {
+            $text.=$langs->trans("Yes");
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddExportProfiles").':</strong> ';
+        if (isset($objMod->export_label) && is_array($objMod->export_label) && count($objMod->export_label))
+        {
+            $i=0;
+            foreach($objMod->export_label as $val)
+            {
+                $text.=($i?', ':'').($val);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddImportProfiles").':</strong> ';
+        if (isset($objMod->import_label) && is_array($objMod->import_label) && count($objMod->import_label))
+        {
+            $i=0;
+            foreach($objMod->import_label as $val)
+            {
+                $text.=($i?', ':'').($val);
+                $i++;
+            }
+        }
+        else $text.=$langs->trans("No");
+        
+        $text.='<br><strong>'.$langs->trans("AddOtherPagesOrServices").':</strong> ';
+        $text.=$langs->trans("DetectionNotPossible");
+        
+        print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
+
+        // Picto warning 
+        $version=$objMod->getVersion(0);
+        $versiontrans=$objMod->getVersion(1);
+        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
+        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
+        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
+        
+        // Picto external
+        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
+        
+        
+        print '</td>';
+        
+        // Version
+        print '<td align="center" valign="top" class="nowrap">';
+        print $versiontrans;
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
@@ -498,11 +702,11 @@ if ($mode != 'marketplace')
         				{
         					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
         					{
-        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>';
+        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         					else
         					{
-        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a>';
+        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         				}
         			}
@@ -510,16 +714,16 @@ if ($mode != 'marketplace')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup").'</a></td>';
+        			print '<td class="tdsetuppicto" align="right" valign="middle"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else
         	{
-        		print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp"').'</td>';
+        		print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         	}
 
         }
@@ -542,7 +746,7 @@ if ($mode != 'marketplace')
 	        	print "</a>\n";
         	}
         	print "</td>\n";
-        	print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp"').'</td>';
+        	print '<td class="tdsetuppicto" align="right" valign="middle">'.img_picto($langs->trans("NothingToSetup"),"setup",'class="opacitytransp" style="padding-right: 6px"').'</td>';
         }
 
         print "</tr>\n";

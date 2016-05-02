@@ -108,12 +108,12 @@ if ($object->id)
 	}
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
-    $linkback='';
+    $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
 
     print '<tr>';
-    print '<td width="25%">'.$langs->trans("Ref").'</td>';
+    print '<td class="titlefield">'.$langs->trans("Ref").'</td>';
     print '<td>';
     print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref');
     print '</td>';

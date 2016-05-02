@@ -19,15 +19,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
+//define('NOTOKENRENEWAL',1); // Disables token renewal
+//require '../../../../main.inc.php';
+require '../../connectors/php/config.php';      // This include the define('NOTOKENRENEWAL',1) and the require main.in.php
 
-require '../../../../main.inc.php';
+global $Config;
+
+
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
    "http://www.w3.org/TR/html4/frameset.dtd">
 <html>
 	<head>
-		<title>FCKeditor - Resources Browser</title>
+		<title><?php echo $langs->trans("MediaBrowser").' - '.$Config['UserFilesAbsolutePathRelative']; ?></title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<script type="text/javascript" src="js/fckxml.js"></script>
 		<script type="text/javascript">

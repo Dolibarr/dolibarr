@@ -469,6 +469,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         global $langs;
         $langs->load("admin");
         
+        if (empty($this->descriptionlong)) return '';
+        
         // If module description translation does not exist using its unique id, we can use its name to find translation
         if (is_array($this->langfiles))
         {
@@ -501,13 +503,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     }
     
     /**
-     * Gives module version
+     * Gives module version (translated if param $translated is on)
      * For 'experimental' modules, gives 'experimental' translation
      * For 'dolibarr' modules, gives Dolibarr version
      *
-     * @return  string  Module version
+     * @param   int     $translated     1=Special version keys are translated, 0=Special version keys are not translated
+     * @return  string                  Module version
      */
-    function getVersion()
+    function getVersion($translated=1)
     {
         global $langs;
         $langs->load("admin");
@@ -515,13 +518,13 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         $ret='';
 
         $newversion=preg_replace('/_deprecated/','',$this->version);
-        if ($newversion == 'experimental') $ret=$langs->trans("VersionExperimental");
-        elseif ($newversion == 'development') $ret=$langs->trans("VersionDevelopment");
+        if ($newversion == 'experimental') $ret=($translated?$langs->trans("VersionExperimental"):$newversion);
+        elseif ($newversion == 'development') $ret=($translated?$langs->trans("VersionDevelopment"):$newversion);
         elseif ($newversion == 'dolibarr') $ret=DOL_VERSION;
         elseif ($newversion) $ret=$newversion;
-        else $ret=$langs->trans("VersionUnknown");
+        else $ret=($translated?$langs->trans("VersionUnknown"):'unknown');
 
-        if (preg_match('/_deprecated/',$this->version)) $ret.=' ('.$langs->trans("Deprecated").')';
+        if (preg_match('/_deprecated/',$this->version)) $ret.=($translated?' ('.$langs->trans("Deprecated").')':$this->version);
         return $ret;
     }
 
@@ -1006,7 +1009,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
                         if (! $err)
                         {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, priority, status, entity, test)";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note,";
+                            if(is_int($frequency)){ $sql.= ' frequency,'; }
+                            if(is_int($unitfrequency)){ $sql.= ' unitfrequency,'; }
+                            if(is_int($priority)){ $sql.= ' priority,'; }
+                            if(is_int($status)){ $sql.= ' status,'; }
+                            $sql.= " entity, test)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape($this->rights_class)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
@@ -1019,10 +1027,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                             $sql.= ($command?"'".$this->db->escape($command)."'":"null").",";
                             $sql.= ($parameters?"'".$this->db->escape($parameters)."'":"null").",";
                             $sql.= ($comment?"'".$this->db->escape($comment)."'":"null").",";
-                            $sql.= "'".$this->db->escape($frequency)."', ";
-                            $sql.= "'".$this->db->escape($unitfrequency)."', ";
-                            $sql.= "'".$this->db->escape($priority)."', ";
-                            $sql.= "'".$this->db->escape($status)."', ";
+                            if(is_int($frequency)){ $sql.= "'".$this->db->escape($frequency)."', "; }
+                            if(is_int($unitfrequency)){ $sql.= "'".$this->db->escape($unitfrequency)."', "; }
+                            if(is_int($priority)) {$sql.= "'".$this->db->escape($priority)."', ";}
+                            if(is_int($status)){ $sql.= "'".$this->db->escape($status)."', "; }
                             $sql.= $conf->entity.",";
                             $sql.= "'".$this->db->escape($test)."'";
                             $sql.= ")";

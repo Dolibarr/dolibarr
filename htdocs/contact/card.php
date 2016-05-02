@@ -314,13 +314,9 @@ if (empty($reshook))
                         else
                         {
                             $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
-                            // Create small thumbs for company (Ratio is near 16/9)
-                            // Used on logon for example
-                            $imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
 
-                            // Create mini thumbs for company (Ratio is near 16/9)
-                            // Used on menu or for setup page for example
-                            $imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+    					    // Create thumbs
+    					    $object->addThumbs($newfile);					    
                         }
                     }
                 }
@@ -976,8 +972,8 @@ else
             print '</td></tr>';
 
             // Photo
-            print '<tr class="hideonsmartphone">';
-            print '<td>'.fieldLabel('Photo','photoinput').'</td>';
+            print '<tr>';
+            print '<td>'.$langs->trans("PhotoFile").'</td>';
             print '<td colspan="3">';
             if ($object->photo) {
                 print $form->showphoto('contact',$object);

@@ -21,8 +21,8 @@
 
 /**
  * \file		htdocs/accountancy/class/accountingaccount.class.php
- * \ingroup		Accounting Expert
- * \brief		Fichier de la classe des comptes comptable
+ * \ingroup		Advanced accountancy
+ * \brief		File of class to manage accounting accounts
  */
 
 /**
@@ -117,7 +117,7 @@ class AccountingAccount extends CommonObject
 	}
 	
 	/**
-	 * Insert line in accounting_account
+	 * Insert new accounting account in chart of accounts
 	 *
 	 * @param User $user Use making action
 	 * @param int $notrigger Disable triggers

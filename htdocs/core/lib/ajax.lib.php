@@ -136,7 +136,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     					minLength: '.$minLength.',
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
     						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
-    					    $("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
+    					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
+    						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
     							if (ui.item.disabled) {
@@ -179,7 +180,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 									}
     							});
     						}
-    						console.log("ajax_autocompleter new value selected, we trigger change on original component");
+    						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
@@ -290,14 +291,15 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
 								    	needtotrigger="#" + fields[i];
 									}
 								}
-							}
-							if (needtotrigger != "")	// To force select2 to refresh visible content
-							{
-								// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
-								// This is required for example when changing zip with autocomplete that change the country
-								jQuery(needtotrigger).delay(500).queue(function() {
-    								jQuery(needtotrigger).trigger("change");
-								});
+							
+								if (needtotrigger != "")	// To force select2 to refresh visible content
+								{
+									// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
+									// This is required for example when changing zip with autocomplete that change the country
+									jQuery(needtotrigger).delay(500).queue(function() {
+	    								jQuery(this).trigger("change");
+									});
+								}
 							}
     					}
 					});

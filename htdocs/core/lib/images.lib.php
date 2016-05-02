@@ -292,6 +292,46 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 
 
 /**
+ * dolRotateImage if image is a jpg file.
+ * Currently use an autodetection to know if we can rotate.
+ * TODO Introduce a new parameter to force rotate.
+ *
+ * @param 	string   $file_path      Full path to image to rotate
+ * @return	boolean				     Success or not
+ */
+function dolRotateImage($file_path)
+{
+    $exif = @exif_read_data($file_path);
+    if ($exif === false) {
+        return false;
+    }
+    $orientation = intval(@$exif['Orientation']);
+    if (!in_array($orientation, array(3, 6, 8))) {
+        return false;
+    }
+    $image = @imagecreatefromjpeg($file_path);
+    switch ($orientation) {
+        case 3:
+            $image = @imagerotate($image, 180, 0);
+            break;
+        case 6:
+            $image = @imagerotate($image, 270, 0);
+            break;
+        case 8:
+            $image = @imagerotate($image, 90, 0);
+            break;
+        default:
+            return false;
+    }
+    $success = imagejpeg($image, $file_path);
+    // Free up memory (imagedestroy does not delete files):
+    @imagedestroy($image);
+    return $success;
+}
+
+
+
+/**
  *    	Create a thumbnail from an image file (Supported extensions are gif, jpg, png and bmp).
  *      If file is myfile.jpg, new file may be myfile_small.jpg
  *

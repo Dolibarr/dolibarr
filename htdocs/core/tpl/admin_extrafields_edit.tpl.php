@@ -110,7 +110,7 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') )
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php 
+<?php
 // Define list of possible type transition
 $typewecanchangeinto=array(
     'varchar'=>array('varchar', 'phone', 'mail', 'select'),
@@ -135,7 +135,7 @@ else
 {
 	print $type2label[$type];
     print '<input type="hidden" name="type" id="type" value="'.$type.'">';
-} 
+}
 ?>
 </td></tr>
 <!-- Size -->
@@ -167,11 +167,7 @@ else
 <!-- Always editable -->
 <tr><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable" <?php echo ($alwayseditable?' checked':''); ?>></td></tr>
 <!-- Is visible or not -->
-<?php if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) { ?>
 <tr><td><?php echo $langs->trans("Hidden"); ?></td><td class="valeur"><input id="ishidden" type="checkbox" name="ishidden" <?php echo ($ishidden ?' checked':''); ?>></td></tr>
-<?php } else { 
-	print '<input id="ishidden" type="hidden" name="ishidden" value="'.($ishidden?1:0).'">';
-}?>
 <!-- By default visible into list -->
 <?php if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { ?>
 <tr><td><?php echo $langs->trans("ByDefaultInList"); ?>

@@ -53,7 +53,7 @@ class FactureRec extends CommonInvoice
 	var $propalid;
 
 	var $date_last_gen;
-	var $next_gen;
+	var $date_when;
 	var $nb_gen_done;
 	var $nb_gen_max;
 	
@@ -342,23 +342,41 @@ class FactureRec extends CommonInvoice
 
 
 	/**
+	 * 	Create an array of invoice lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
+	 */
+	function getLinesArray()
+	{
+	    return $this->fetch_lines();
+	}
+	
+	
+	/**
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
 	 *	@return     int         1 if OK, < 0 if KO
  	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx, ';
+		$this->lines=array();
+
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
-		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
+		//$sql.= ' l.situation_percent, l.fk_prev_id,';
+		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
+		//$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
 		$sql.= ' l.fk_unit, l.fk_contract_line,';
+		//$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
-
-		dol_syslog('Facture::fetch_lines', LOG_DEBUG);
+		$sql.= ' ORDER BY l.rang';
+		
+		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -369,10 +387,13 @@ class FactureRec extends CommonInvoice
 				$objp = $this->db->fetch_object($result);
 				$line = new FactureLigne($this->db);
 
+				$line->id	            = $objp->rowid;
 				$line->rowid	        = $objp->rowid;
 				$line->label            = $objp->custom_label;		// Label line
 				$line->desc             = $objp->description;		// Description line
+				$line->description      = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
+				$line->ref              = $objp->product_ref;		// Ref product
 				$line->product_ref      = $objp->product_ref;		// Ref product
 				$line->libelle          = $objp->product_label;		// deprecated
 				$line->product_label	= $objp->product_label;		// Label product
@@ -384,10 +405,6 @@ class FactureRec extends CommonInvoice
 				$line->remise_percent   = $objp->remise_percent;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product       = $objp->fk_product;
-				$line->date_start       = $objp->date_start;
-				$line->date_end         = $objp->date_end;
-				$line->date_start       = $objp->date_start;
-				$line->date_end         = $objp->date_end;
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
@@ -412,7 +429,7 @@ class FactureRec extends CommonInvoice
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db-lasterror();
 			return -3;
 		}
 	}
@@ -903,4 +920,53 @@ class FactureRec extends CommonInvoice
             return -1;
         }
     }
+}
+
+
+
+/**
+ *	Class to manage invoice lines of templates.
+ *  Saved into database table llx_facturedet_rec
+ */
+class FactureLigneRec extends CommonInvoiceLine
+{
+    
+    /**
+     * 	Delete line in database
+     *
+     *	@return		int		<0 if KO, >0 if OK
+     */
+    function delete()
+    {
+        global $conf,$langs,$user;
+    
+        $error=0;
+    
+        $this->db->begin();
+    
+        // Call trigger
+        /*$result=$this->call_trigger('LINEBILLREC_DELETE',$user);
+        if ($result < 0)
+        {
+            $this->db->rollback();
+            return -1;
+        }*/
+        // End call triggers
+    
+    
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE rowid = ".($this->rowid > 0 ? $this->rowid : $this->id);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        if ($this->db->query($sql) )
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error()." sql=".$sql;
+            $this->db->rollback();
+            return -1;
+        }
+    }
+    
 }

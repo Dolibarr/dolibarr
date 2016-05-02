@@ -196,13 +196,13 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Label").'</td><td colspan="3"><input name="label" size="40" maxlength="255" value="'.dol_escape_htmltag(GETPOST('label')).'"></td></tr>';
 
 	// Bank account
 	if (! empty($conf->banque->enabled))
 	{
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
-		$form->select_comptes($GETPOST["accountid"],"accountid",0,"courant=1",1);  // Show list of bank account with courant
+		$form->select_comptes(GETPOST("accountid"),"accountid",0,"courant=1",1);  // Show list of bank account with courant
 		print '</td></tr>';
 	}
 	else
@@ -238,7 +238,7 @@ if ($action == 'create')
     print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
     print '<td valign="top" colspan="2">';
 
-    $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_private', GETPOST('note_private', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, true, ROWS_6, 100);
     print $doleditor->Create(1);
 
     print '</td></tr>';
@@ -247,48 +247,34 @@ if ($action == 'create')
     print '<tr>';
     print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
     print '<td valign="top" colspan="2">';
-    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 200, 'dolibarr_notes', 'In', false, true, true, ROWS_8, 100);
+    $doleditor = new DolEditor('note_public', GETPOST('note_public', 'alpha'), '', 160, 'dolibarr_notes', 'In', false, true, true, ROWS_6, 100);
     print $doleditor->Create(1);
     print '</td></tr>';
 
 	print '</table>';
 
-	print '<br>';
-
-	// Accountancy
-	print '<table class="border" width="100%">';
-
+    // Accountancy
 	if ($conf->accounting->enabled)
 	{
-		print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
-		print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
-		print '</td></tr>';
-
-		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
-		print '<td><input name="accountancy_account_insurance" size="16" value="'.$object->accountancy_account_insurance.'">';
-		print '</td></tr>';
-
-		print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
-		print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
-		print '</td></tr>';
+        print '<br>';
+        
+        print '<table class="border" width="100%">';
+        
+        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+        print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
+        print '</td></tr>';
+        
+        print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
+        print '<td><input name="accountancy_account_insurance" size="16" value="'.$object->accountancy_account_insurance.'">';
+        print '</td></tr>';
+        
+        print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
+        print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
+        print '</td></tr>';
+        
+        print '</table>';
 	}
-	else
-	{
-		print '<tr><td width="25%">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
-		print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
-		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
-		print '<td><input name="accountancy_account_insurance" size="16" value="'.$object->accountancy_account_insurance.'">';
-		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("LoanAccountancyInterestCode").'</td>';
-		print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
-		print '</td></tr>';
-	}
-
-	print '</table>';
-
+	
 	dol_fiche_end();
 
     print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -305,8 +291,6 @@ if ($id > 0)
 	if ($result > 0)
 	{
 		$head=loan_prepare_head($object);
-
-		dol_fiche_head($head, 'card', $langs->trans("Loan"),0,'bill');
 
 		// Confirm for loan
 		if ($action == 'paid')
@@ -329,10 +313,12 @@ if ($id > 0)
             print '<input type="hidden" name="id" value="'.$id.'">';
 		}
 
+		dol_fiche_head($head, 'card', $langs->trans("Loan"), 0, 'bill');
+
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $form->showrefnav($object,'id');
 		print "</td></tr>";
 
@@ -394,18 +380,19 @@ if ($id > 0)
 
 		print '</table>';
 
+		dol_fiche_end();
+
+	
 		if ($action == 'edit')
 		{
-			print '<br><div align="center">';
+			print '<div align="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 			print '</div>';
-			print '</form>';
+			print '</form><br><br>';
 		}
-
-		dol_fiche_end();
-
+		
 		print '<table class="border" width="100%">';
 		print '<tr><td>';
 

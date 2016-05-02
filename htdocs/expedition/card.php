@@ -501,7 +501,7 @@ if (empty($reshook))
 	    $outputlangs = $langs;
 	    $newlang='';
 	    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->client->default_lang;
+	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->thirdparty->default_lang;
 	    if (! empty($newlang))
 	    {
 	        $outputlangs = new Translate("",$conf);
@@ -531,6 +531,12 @@ if (empty($reshook))
 	{
 	    $object->fetch($id);
 	    $object->set_billed();
+	}
+
+	elseif ($action == 'classifyclosed')
+	{
+	    $object->fetch($id);
+	    $object->setClosed();
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -885,6 +891,7 @@ if ($action == 'create')
 					//ship from preselected location
 					$stock = + $product->stock_warehouse[$warehouse_id]->real; // Convert to number
 					$deliverableQty=min($quantityToBeDelivered, $stock);
+					if ($deliverableQty < 0) $deliverableQty = 0;
 					if (empty($conf->productbatch->enabled) || ! ($product->hasbatch() && is_object($product->stock_warehouse[$warehouse_id])))
 					{
 						// Quantity to send
@@ -1562,7 +1569,7 @@ else if ($id || $ref)
 			$outputlangs = $langs;
 			$newlang='';
 			if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id','alpha');
-			if (empty($newlang)) $newlang=$object->client->default_lang;
+			if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 			if (! empty($newlang))
 			{
 				$outputlangs = new Translate("",$conf);
@@ -1774,16 +1781,19 @@ else if ($id || $ref)
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
 		}
-
 		// Close
 		if (! empty($conf->facture->enabled) && $object->statut > 0)
 		{
 			if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
 			{
-				$label="Close";
+				$label="Close"; $paramaction='classifyclosed';       // = Transferred/Received
 				// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-				if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) $label="ClassifyBilled";
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled">'.$langs->trans($label).'</a>';
+				if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))  // TODO Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close.
+				{
+				    $label="ClassifyBilled";
+				    $paramaction='classifybilled';
+				}
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$paramaction.'">'.$langs->trans($label).'</a>';
 			}
 		}
 
@@ -1850,7 +1860,7 @@ else if ($id || $ref)
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 			$newlang = $_REQUEST['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->client->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 
 		if (!empty($newlang))
 		{
@@ -1886,10 +1896,7 @@ else if ($id || $ref)
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-		{
-			$formmail->trackid='shi'.$object->id;
-		}
+		$formmail->trackid='shi'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

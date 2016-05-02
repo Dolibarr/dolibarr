@@ -213,7 +213,6 @@ if ($resql)
     }
     else
     {
-   		$var=!$var;
    		print "<tr ".$bc[$var].">";
    		print '<td colspan="7">'.$langs->trans("None")."</td>";
    		print '</tr>';

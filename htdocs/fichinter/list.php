@@ -227,10 +227,11 @@ if ($result)
 		$companystatic->client=$objp->client;
 		print $companystatic->getNomUrl(1,'',44);
 		print '</td>';
-        print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
+        print '<td>'.dol_trunc(dolGetFirstLineOfText($objp->description),48).'</td>';
 		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
-			print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
+			//print '<td>'.dol_trunc(dol_escape_htmltag(dolGetFirstLineOfText($objp->descriptiondetail)),48).'</td>';
+			print '<td>'.dolGetFirstLineOfText($objp->descriptiondetail).'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
 			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		}

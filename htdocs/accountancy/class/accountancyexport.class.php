@@ -35,12 +35,12 @@ class AccountancyExport
 	/**
 	 * @var Type of export
 	 */
-	 public static $EXPORT_TYPE_NORMAL		= 1;
-	 public static $EXPORT_TYPE_CEGID	 	= 2;
-	 public static $EXPORT_TYPE_COALA		= 3;
-	 public static $EXPORT_TYPE_BOB50		= 4;
-	 public static $EXPORT_TYPE_CIEL		= 5;
-	 public static $EXPORT_TYPE_QUADRATUS	= 6;
+	public static $EXPORT_TYPE_NORMAL		= 1;
+	public static $EXPORT_TYPE_CEGID	 	= 2;
+	public static $EXPORT_TYPE_COALA		= 3;
+	public static $EXPORT_TYPE_BOB50		= 4;
+	public static $EXPORT_TYPE_CIEL			= 5;
+	public static $EXPORT_TYPE_QUADRATUS	= 6;
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -69,7 +69,6 @@ class AccountancyExport
 		$this->db = &$db;
 		$this->separator = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 		$this->end_line = "\n";
-		return 1;
 	}
 
 	/**
@@ -277,7 +276,7 @@ class AccountancyExport
 	/**
 	 *
 	 * @param unknown $str data
-	 * @param unknown $size data
+	 * @param integer $size data
 	 */
 	public static function trunc($str, $size)
 	{

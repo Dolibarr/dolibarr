@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/export.php
- * \ingroup Accounting Expert
- * \brief Setup page to configure accounting expert module
+ * \file 		htdocs/accountancy/admin/export.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 
@@ -50,12 +50,14 @@ $main_option = array (
 
 $model_option = array (
 		'ACCOUNTING_EXPORT_SEPARATORCSV',
-		'ACCOUNTING_EXPORT_DATE',
+		'ACCOUNTING_EXPORT_DATE'
+		/*
 		'ACCOUNTING_EXPORT_PIECE',
 		'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
 		'ACCOUNTING_EXPORT_LABEL',
 		'ACCOUNTING_EXPORT_AMOUNT',
-		'ACCOUNTING_EXPORT_DEVISE' 
+		'ACCOUNTING_EXPORT_DEVISE'
+		*/
 );
 
 /*

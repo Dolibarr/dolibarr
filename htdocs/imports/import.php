@@ -1142,6 +1142,7 @@ if ($step == 5 && $datatoimport)
 	// Load source fields in input file
 	$fieldssource=array();
 	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+
 	if ($result >= 0)
 	{
 		// Read first line
@@ -1156,8 +1157,7 @@ if ($step == 5 && $datatoimport)
 		$obj->import_close_file();
 	}
 
-  // TODO, remove this, since it only works for csv
-	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
+	$nboflines=$obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
 	$param='&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param;  // $param2 = $param without excludefirstline and endatlinenb
@@ -1415,6 +1415,25 @@ if ($step == 5 && $datatoimport)
             print $langs->trans("ErrorFailedToOpenFile",$pathfile);
         }
 
+	    $error=0;
+	    
+	    // Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
@@ -1740,8 +1759,31 @@ if ($step == 6 && $datatoimport)
 	}
 
 	if (count($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
-	else  $db->commit();	// We can commit if no errors.
-
+	else 
+	{
+	    $error=0;
+	    
+		// Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
+	    if (! $error) $db->commit();	// We can commit if no errors.
+	    else $db->rollback();
+	}
+	    
     dol_fiche_end();
 
 
