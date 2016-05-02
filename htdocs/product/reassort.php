@@ -85,6 +85,13 @@ if (! empty($_POST["button_removefilter_x"]))
     $toolowstock='';
 }
 
+// Define virtualdiffersfromphysical
+$virtualdiffersfromphysical=0;
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+{
+    $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+}
+
 
 
 /*
@@ -193,11 +200,11 @@ if ($resql)
 
 	if ($sref || $snom || $sall || GETPOST('search'))
 	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy.(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy.(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num, 0, 'title_products');
 	}
 	else
 	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"").(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":"").(!empty($search_categ) ? '&amp;search_categ='.$search_categ : '').(!empty($toolowstock) ? '&amp;toolowstock='.$toolowstock : ''), $sortfield, $sortorder,'',$num, 0, 'title_products');
 	}
 
 	if (! empty($catid))
@@ -272,8 +279,7 @@ if ($resql)
 		
 	} 
 	
-	// TODO Add info of running suppliers/customers orders
-	//print_liste_field_titre($langs->trans("TheoreticalStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
+	if ($virtualdiffersfromphysical) print_liste_field_titre($langs->trans("VirtualStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
@@ -287,16 +293,18 @@ if ($resql)
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="snom" size="8" value="'.$snom.'">';
 	print '</td>';
+	// Duration
 	if (! empty($conf->service->enabled) && $type == 1)
 	{
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
 	}
-	// Lot/Serial
+	// Stock limit
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
+	if ($virtualdiffersfromphysical) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
@@ -334,9 +342,10 @@ if ($resql)
 		//print '<td align="right">'.$objp->stock_theorique.'</td>';
 		print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
 		print '<td align="right">'.$objp->desiredstock.'</td>';
+		// Real stock
 		print '<td align="right">';
-        	if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-		print $product->stock_reel;
+        if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+		print $objp->stock_physique;
 		print '</td>';
 		
 		/*
@@ -356,7 +365,14 @@ if ($resql)
 		
 			
 		
-		
+		// Virtual stock
+		if ($virtualdiffersfromphysical)
+		{
+	    		print '<td align="right">';
+			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+	    		print $product->stock_theorique;
+	    		print '</td>';
+		}
 		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
 		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';
         	print '<td align="right" class="nowrap">'.$product->LibStatut($objp->tobuy,5,1).'</td>';

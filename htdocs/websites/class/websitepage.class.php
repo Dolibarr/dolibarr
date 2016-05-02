@@ -253,13 +253,13 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
+	 * @param string $website_id   Web site id
 	 * @param string $sortorder    Sort Order
 	 * @param string $sortfield    Sort field
 	 * @param int    $limit        limit
 	 * @param int    $offset       Offset
 	 * @param array  $filter       Filter array
 	 * @param string $filtermode   Filter mode (AND or OR)
-	 *
 	 * @return array|int           int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($website_id, $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
@@ -307,7 +307,7 @@ class WebsitePage extends CommonObject
 
 			while ($obj = $this->db->fetch_object($resql)) 
 			{
-				$record = new Websitepage($this->db);
+				$record = new WebsitePage($this->db);
 
 				$record->id = $obj->rowid;
 				$record->fk_website = $obj->fk_website;
@@ -320,7 +320,7 @@ class WebsitePage extends CommonObject
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
 				$record->tms = $this->db->jdate($obj->tms);
-
+				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
 			$this->db->free($resql);

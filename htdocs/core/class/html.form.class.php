@@ -390,6 +390,7 @@ class Form
      *	@param	int			$noencodehtmltext	Do not encode into html entity the htmltext
      *	@return	string							Code html du tooltip (texte+picto)
      *	@see	Use function textwithpicto if you can.
+     *  TODO Move this as static as soon as everybody use textwithpicto or @Form::textwithtooltip
      */
     function textwithtooltip($text, $htmltext, $tooltipon = 1, $direction = 0, $img = '', $extracss = '', $notabs = 2, $incbefore = '', $noencodehtmltext = 0)
     {
@@ -2057,17 +2058,27 @@ class Form
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
-
+        
+        $selected_input_value='';
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
+            if ($selected > 0)
+            {
+                require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+                $producttmpselect = new Product($this->db);
+                $producttmpselect->fetch($selected);
+                $selected_input_value=$producttmpselect->ref;
+                unset($producttmpselect);
+            }
+
         	if (!empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
 			{
 				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
 			}
 			// mode=2 means suppliers products
             $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
-            print ajax_autocompleter('', $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
-            print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'">';
+            print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+            print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'">';
         }
         else
         {
@@ -2089,7 +2100,7 @@ class Form
      *  @param	string	$filtertype     Filter on product type (''=nofilter, 0=product, 1=service)
      *	@param  string	$filtre         Pour filtre sql
      *	@param  string	$filterkey      Filtre des produits
-     *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell
+     *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell (not used here, a filter on tobuy is already hard coded in request)
      *  @param  int		$outputmode     0=HTML select string, 1=Array
      *  @param  int     $limit          Limit of line number
      *  @return array           		Array of keys for json
@@ -2106,7 +2117,7 @@ class Form
         $sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration, p.fk_product_type,";
         $sql.= " pfp.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.remise_percent, pfp.remise, pfp.unitprice,";
         $sql.= " pfp.fk_supplier_price_expression, pfp.fk_product, pfp.tva_tx, pfp.fk_soc, s.nom as name,";
-	$sql.= " pfp.supplier_reputation";
+        $sql.= " pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
@@ -2390,10 +2401,10 @@ class Form
                     $form.= $opt;
                     $i++;
                 }
-                $form.= '</select>';
-
-                $this->db->free($result);
             }
+
+            $form.= '</select>';
+            $this->db->free($result);
             return $form;
         }
         else

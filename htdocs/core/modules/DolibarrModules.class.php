@@ -1009,7 +1009,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
                         if (! $err)
                         {
-                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note, frequency, unitfrequency, priority, status, entity, test)";
+                            $sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob (module_name, datec, datestart, label, jobtype, classesname, objectname, methodename, command, params, note,";
+                            if(is_int($frequency)){ $sql.= ' frequency,'; }
+                            if(is_int($unitfrequency)){ $sql.= ' unitfrequency,'; }
+                            if(is_int($priority)){ $sql.= ' priority,'; }
+                            if(is_int($status)){ $sql.= ' status,'; }
+                            $sql.= " entity, test)";
                             $sql.= " VALUES (";
                             $sql.= "'".$this->db->escape($this->rights_class)."', ";
                             $sql.= "'".$this->db->idate($now)."', ";
@@ -1022,10 +1027,10 @@ class DolibarrModules           // Can not be abstract, because we need to insta
                             $sql.= ($command?"'".$this->db->escape($command)."'":"null").",";
                             $sql.= ($parameters?"'".$this->db->escape($parameters)."'":"null").",";
                             $sql.= ($comment?"'".$this->db->escape($comment)."'":"null").",";
-                            $sql.= "'".$this->db->escape($frequency)."', ";
-                            $sql.= "'".$this->db->escape($unitfrequency)."', ";
-                            $sql.= "'".$this->db->escape($priority)."', ";
-                            $sql.= "'".$this->db->escape($status)."', ";
+                            if(is_int($frequency)){ $sql.= "'".$this->db->escape($frequency)."', "; }
+                            if(is_int($unitfrequency)){ $sql.= "'".$this->db->escape($unitfrequency)."', "; }
+                            if(is_int($priority)) {$sql.= "'".$this->db->escape($priority)."', ";}
+                            if(is_int($status)){ $sql.= "'".$this->db->escape($status)."', "; }
                             $sql.= $conf->entity.",";
                             $sql.= "'".$this->db->escape($test)."'";
                             $sql.= ")";

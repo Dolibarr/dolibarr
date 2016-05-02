@@ -29,7 +29,7 @@ if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
 if (! $res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once 'class/resource.class.php';
+require_once 'class/dolresource.class.php';
 require_once 'class/html.formresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 
@@ -56,7 +56,7 @@ if ($user->societe_id > 0)
 if( ! $user->rights->resource->read)
 	accessforbidden();
 
-$object = new Resource($db);
+$object = new Dolresource($db);
 
 $hookmanager->initHooks(array('resource_card','globalcard'));
 $parameters=array('resource_id'=>$id);
@@ -152,7 +152,7 @@ $formresource = new FormResource($db);
 
 if ( $object->fetch($id) > 0 )
 {
-	$head=resourcePrepareHead($object);
+	$head=resource_prepare_head($object);
 
 
 	if ($action == 'edit' )

@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -588,7 +589,7 @@ class Account extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
 
-            $result=$this->update();
+            $result=$this->update($user);
             if ($result > 0)
             {
 				$accline = new AccountLine($this->db);
@@ -1100,15 +1101,19 @@ class Account extends CommonObject
      */
     public static function countAccountToReconcile()
     {
-        global $db, $conf, $langs;
-    
-        if ($user->societe_id) return 0;   // protection pour eviter appel par utilisateur externe
+        global $db, $conf, $user;
+
+        //Protection against external users
+        if ($user->societe_id) {
+            return 0;
+        }
     
         $nb=0;
         
         $sql = "SELECT COUNT(ba.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
         if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) $sql.= " AND ba.courant != 2";
         $resql=$db->query($sql);
         if ($resql)

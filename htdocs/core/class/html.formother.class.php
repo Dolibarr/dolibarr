@@ -805,6 +805,7 @@ class FormOther
                 $select_week .= '<option value="'.$key.'">';
             }
             $select_week .= $val;
+            $select_week .= '</option>';
         }
         $select_week .= '</select>';
         return $select_week;
@@ -844,6 +845,7 @@ class FormOther
                 $select_month .= '<option value="'.$key.'">';
             }
             $select_month .= $val;
+            $select_month .= '</option>';
         }
         $select_month .= '</select>';
         return $select_month;

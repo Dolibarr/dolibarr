@@ -1963,6 +1963,11 @@ function getElementProperties($element_type)
         $module='ficheinter';
         $subelement='fichinter';
     }
+    if ($element_type == 'dolresource') {
+        $classpath = 'resource/class';
+        $module='resource';
+        $subelement='dolresource';
+    }
     $classfile = strtolower($subelement);
     $classname = ucfirst($subelement);
 

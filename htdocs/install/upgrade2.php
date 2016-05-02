@@ -401,6 +401,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
+            migrate_directories($db,$langs,$conf,'/fckeditor','/medias');
+            
         	// Reload modules (this must be always and only into last targeted version)
         	$listofmodule=array(
         	    'MAIN_MODULE_BARCODE'=>'newboxdefonly',
