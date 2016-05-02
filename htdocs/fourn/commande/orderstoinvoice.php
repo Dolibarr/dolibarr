@@ -239,10 +239,10 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 			
 			foreach($orders_id as $fk_supplier_order) {
 				$supplier_order = new CommandeFournisseur($db);
-				if($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) {
-					
-					if($supplier_order->classifyBilled()<0) {
-							
+				if ($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) 
+				{
+					if ($supplier_order->classifyBilled($user) < 0)
+					{
 						$db->rollback();
 						$action = 'create';
 						$_GET["origin"] = $_POST["origin"];
@@ -500,7 +500,8 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		// print '<td class="liste_titre">';
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="' . $sref_client . '">';
-
+        print '</td>';
+        
 		// DATE ORDER
 		print '<td class="liste_titre" align="center">';
 		print $period;
@@ -512,8 +513,9 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		print '</td>';
 
 		// SEARCH BUTTON
-		print '</td><td align="right" class="liste_titre">';
+		print '<td align="right" class="liste_titre">';
 		print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '"  value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+		print '</td>';
 
 		// ALL/NONE
 		print '<td class="liste_titre" align="center">';

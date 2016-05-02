@@ -49,5 +49,6 @@ SendSms=Lähetä tekstiviesti
 SmsInfoCharRemain=Nb jäljellä olevien merkkien
 SmsInfoNumero= (Muoto kansainvälinen eli +33899701761)
 DelayBeforeSending=Viive ennen lähettämistä (min)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Ei tavoite käytettävissä. Tarkista asetukset oman SMS tarjoaja.
 

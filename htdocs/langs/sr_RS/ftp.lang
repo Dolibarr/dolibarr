@@ -10,5 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Pogrešan login/password za konekciju 
 FTPFailedToRemoveFile=Greška prilikom brisanja fajla <b>%s</b>.
 FTPFailedToRemoveDir=Greška prilkom brisanja foldera  <b>%s</b> (proverite prava i da li je flder pazan).
 FTPPassiveMode=Passive mode
-ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
-FailedToGetFile=Failed to get files %s
+ChooseAFTPEntryIntoMenu=Izaberite FTP stavku u meniju...
+FailedToGetFile=Greška prilikom preuzimanja fajlova %s

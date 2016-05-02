@@ -60,7 +60,7 @@ class ModelePDFLabels
 
 
 /**
- *  Create a document onto disk accordign to template module
+ *  Create a document onto disk according to template module.
  *
  *	@param  DoliDB		$db					Database handler
  *	@param  array		$arrayofrecords		Array of records
@@ -68,9 +68,10 @@ class ModelePDFLabels
  *	@param	Translate	$outputlangs		Objet lang a utiliser pour traduction
  *	@param	string		$outputdir			Output directory
  *  @param  string      $template           pdf generenate document class to use default 'standardlabel'
+ *  @param  string      $filename           Short file name of PDF output file
  *	@return int        						<0 if KO, >0 if OK
  */
-function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='', $template='standardlabel')
+function doc_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $outputdir='', $template='standardlabel', $filename='tmp_address_sheet.pdf')
 {
 	global $conf,$langs;
 	$langs->load("members");
@@ -109,6 +110,8 @@ function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $
 	}
 	else $srctemplatepath=$code;
 
+	dol_syslog("modele=".$modele." outputdir=".$outputdir." template=".$template." code=".$code." srctemplatepath=".$srctemplatepath." filename=".$filename, LOG_DEBUG);
+	
 	// Search template files
 	$file=''; $classname=''; $filefound=0;
 	$dirmodels=array('/');
@@ -141,7 +144,7 @@ function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output=$outputlangs->charset_output;
-		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir) > 0)
+		if ($obj->write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir, $filename) > 0)
 		{
 			$outputlangs->charset_output=$sav_charset_output;
 			return 1;
@@ -149,7 +152,7 @@ function members_label_pdf_create($db, $arrayofrecords, $modele, $outputlangs, $
 		else
 		{
 			$outputlangs->charset_output=$sav_charset_output;
-			dol_print_error($db,"members_label_pdf_create Error: ".$obj->error);
+			dol_print_error($db,"doc_label_pdf_create Error: ".$obj->error);
 			return -1;
 		}
 	}

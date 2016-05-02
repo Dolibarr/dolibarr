@@ -16,7 +16,7 @@
  */
 
 /**
- *  \file	   htdocs/product/expression/editor.php
+ *  \file	   htdocs/product/dynamic_price/editor.php
  *  \ingroup	product
  *  \brief	  Page for editing expression
  */
@@ -73,7 +73,7 @@ if ($action == 'add')
 		{
 			//Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
-            $price_result = $priceparser->parseProductSupplierExpression($id, $expression, 0, 0);
+            $price_result = $priceparser->testExpression($id, $expression);
             if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}
@@ -113,7 +113,7 @@ if ($action == 'update')
 		{
 			//Check the expression validity by parsing it
             $priceparser = new PriceParser($db);
-            $price_result = $priceparser->parseProductSupplierExpression($id, $expression, 0, 0);
+            $price_result = $priceparser->testExpression($id, $expression);
             if ($price_result < 0) { //Expression is not valid
 				setEventMessages($priceparser->translatedError(), null, 'errors');
 			}

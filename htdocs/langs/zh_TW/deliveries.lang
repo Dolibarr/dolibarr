@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=你確定要刪除送達回執<b>%s</b>嗎？
 DeliveryMethod=送貨方式
 TrackingNumber=追蹤號碼
 DeliveryNotValidated=交付未驗證
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=姓名及簽署：
 ToAndDate=To___________________________________對____ / _____ / __________

@@ -26,7 +26,7 @@ $force_install_nophpinfo='1';
 $force_install_lockinstall='444';
 
 // Value to overwrite path to use shared libraries/fonts instead of embedded one.
-// If we enable/disable libraries declaration during install, we must also check they are 
+// If during install, we enable/disable declaration to use non embedded libraries, we must also check they are 
 // - not removed from package (see rm in rules file),
 // - declared into dependencies (see Depends in control file)
 //$force_dolibarr_lib_TCPDF_PATH='';

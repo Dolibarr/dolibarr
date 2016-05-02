@@ -57,7 +57,6 @@ class pdf_proforma extends pdf_einstein
 	}
 
 
-
 	/**
 	 *  Show top header of page.
 	 *

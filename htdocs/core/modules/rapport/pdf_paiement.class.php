@@ -146,10 +146,11 @@ class pdf_paiement
         $num=0;
         $lines=array();
 
-		// count number of ligne of payement
+		// count number of lines of payment
 		$sql = "SELECT p.rowid as prowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
 		$sql.= " WHERE p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";
+		$sql.= " AND p.entity = " . $conf->entity;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -160,19 +161,23 @@ class pdf_paiement
 		$sql = "SELECT p.datep as dp, f.facnumber";
 		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
 		$sql.= ", c.code as paiement_code, p.num_paiement";
-		$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
-		$sql.= ", pf.amount as pf_amount , ba.ref as bankaccount ";
+		$sql.= ", p.amount as paiement_amount, f.total_ttc as facture_amount";
+		$sql.= ", pf.amount as pf_amount";
+		if (! empty($conf->banque->enabled))
+			$sql.= ", ba.ref as bankaccount";
 		$sql.= ", p.rowid as prowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f,";
 		$sql.= " ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf,";
-		$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
+		if (! empty($conf->banque->enabled))
+			$sql.= " ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba,";
 		$sql.= " ".MAIN_DB_PREFIX."societe as s";
 		if (! $user->rights->societe->client->voir && ! $socid)
 		{
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql.= " WHERE f.fk_soc = s.rowid AND pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
-		$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
+		if (! empty($conf->banque->enabled))
+			$sql.= " AND p.fk_bank = b.rowid AND b.fk_account = ba.rowid ";
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " AND p.fk_paiement = c.id ";
 		$sql.= " AND p.datep BETWEEN '".$this->db->idate(dol_get_first_day($year,$month))."' AND '".$this->db->idate(dol_get_last_day($year,$month))."'";

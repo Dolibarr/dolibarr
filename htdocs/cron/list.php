@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013      Florian Henry <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.srouceforge.net>
+ * Copyright (C) 2013      Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,18 +35,23 @@ $langs->load("bills");
 
 if (!$user->rights->cron->read) accessforbidden();
 
-
-/*
- * Actions
- */
-
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 
-$sortorder=GETPOST('sortorder','alpha');
-$sortfield=GETPOST('sortfield','alpha');
-$page=GETPOST('page','int');
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) {
+    $page = 0;
+}
+$offset = $limit * $page;
+if (! $sortorder) $sortorder='ASC';
+if (! $sortfield) $sortfield='t.label';
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 $status=GETPOST('status','int');
 if ($status == '') $status=-2;
 
@@ -57,13 +62,13 @@ if (empty($sortorder)) $sortorder="DESC";
 if (empty($sortfield)) $sortfield="t.status";
 if (empty($arch)) $arch = 0;
 if ($page == -1) {
-	$page = 0 ;
+    $page = 0 ;
 }
 
-$limit = $conf->global->MAIN_SIZE_LISTE_LIMIT;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+
+/*
+ * Actions
+ */
 
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -79,8 +84,8 @@ if (!empty($search_label))
 }
 
 // Delete jobs
-if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete){
-
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->delete)
+{
 	//Delete cron task
 	$object = new Cronjob($db);
 	$object->id=$id;
@@ -92,14 +97,14 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 }
 
 // Execute jobs
-if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute){
-
+if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
+{
 	$object = new Cronjob($db);
 	$job = $object->fetch($id);
 
     $now = dol_now();   // Date we start
 
-    $resrunjob = $object->run_jobs($user->login);
+    $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
 	if ($resrunjob < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -110,8 +115,8 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
 	{
 		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported 
 		{
-			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
-			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
 		}
 		$action='';
 	}
@@ -137,6 +142,7 @@ $pagetitle=$langs->trans("CronList");
 llxHeader('',$pagetitle);
 
 // list of jobs created
+// TODO Replace this with an embedded select.
 $object = new Cronjob($db);
 $result=$object->fetch_all($sortorder, $sortfield, $limit, $offset, $status, $filter);
 if ($result < 0)
@@ -148,12 +154,8 @@ $num=count($object->lines);
 
 $param='&page='.$page.'&status='.$status.'&search_label='.$search_label;
 
+$stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(), 'dayhour');
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup');
-
-
-print $langs->trans('CronInfo');
-print "<br><br>";
 
 
 if ($action == 'delete')
@@ -171,6 +173,28 @@ if ($action == 'execute')
 
 print '<form method="GET" action="'.$url_form.'" name="search_form">'."\n";
 print '<input type="hidden" name="status" value="'.$status.'" >';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $stringcurrentdate, $num, 0, 'title_setup', 0, '', '', $limit);
+
+
+// Line with explanation and button new job
+if (! $user->rights->cron->create)
+{
+    $buttontoshow.='<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
+}
+else
+{
+    $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
+}
+print '<table class="centpercent"><tr><td>'.$langs->trans('CronInfo').'</td><td class="right">'.$buttontoshow.'</td></tr></table>';
+print '<br>';
+
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
@@ -220,13 +244,15 @@ if ($num > 0)
 	$style='pair';
 	foreach($object->lines as $line)
 	{
+	    if (! verifCond($line->test)) continue;        // Discard line with test = false
+	    
 		// title profil
 		if ($style=='pair') {$style='impair';}
 		else {$style='pair';}
 
 		print '<tr class="'.$style.'">';
 
-		print '<td>';
+		print '<td class="nowrap">';
 		print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$line->id.'">';
 		print img_picto('', 'object_cron').' ';
 		print $line->id;
@@ -252,15 +278,15 @@ if ($num > 0)
 			$texttoshow.=$langs->trans('CronClass').': '. $line->classesname.'<br>';
 			$texttoshow.=$langs->trans('CronObject').': '. $line->objectname.'<br>';
 			$texttoshow.=$langs->trans('CronMethod').': '. $line->methodename;
-			$texttoshow.='<br>'.$langs->trans('CronArgs').':'. $line->params;
-			$texttoshow.='<br>'.$langs->trans('Comment').':'. $line->note;
+			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $line->params;
+			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($line->note);
 		}
 		elseif ($line->jobtype=='command') 
 		{
 			$text=$langs->trans('CronCommand');
 			$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($line->command);
-			$texttoshow.='<br>'.$langs->trans('CronArgs').':'. $line->params;
-			$texttoshow.='<br>'.$langs->trans('Comment').':'. $line->note;
+			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $line->params;
+			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($line->note);
 		}
 		print $form->textwithpicto($text, $texttoshow, 1);
 		print '</td>';
@@ -301,7 +327,7 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td>';
-		if(!empty($line->lastoutput)) {print dol_trunc(nl2br($line->lastoutput),100);}
+		if(!empty($line->lastoutput)) {print dol_trunc(nl2br($line->lastoutput),50);}
 		print '</td>';
 
 		// Status
@@ -314,19 +340,20 @@ if ($num > 0)
 		print '<td align="right" class="nowrap">';
 		if ($user->rights->cron->create)
 		{
-			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$line->id."&action=edit&backtourl=".urlencode($_SERVER["PHP_SELF"])."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
+			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$line->id."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"])."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{
-			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&status=".$status."&action=delete\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'),'delete')."</a> &nbsp;";
+			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&action=delete".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'),'delete')."</a> &nbsp;";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete')."</a> &nbsp; ";
 		}
 		if ($user->rights->cron->execute)
 		{
-			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&status=".$status."&action=execute\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    if (!empty($line->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&action=execute".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"play")."</a>";
 		} else {
-			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"execute")."</a>";
+			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"play")."</a>";
 		}
 		print '</td>';
 
@@ -343,21 +370,7 @@ print '</table>';
 print '</from>';
 
 
-
-print "\n<div class=\"tabsAction\">\n";
-
-if (! $user->rights->cron->create)
-{
-	print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
-}
-else
-{
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
-}
-
-print '</div>';
-
-print '<br>';
+print '<br><br>';
 
 
 dol_print_cron_urls();

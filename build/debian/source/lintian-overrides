@@ -1,0 +1,3 @@
+# Remove warning, we want to keep both standard and minified sources.
+dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jsgantt/*
+dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jquery/*

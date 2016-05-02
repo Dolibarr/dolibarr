@@ -69,7 +69,7 @@ PredefinedMailContentSendFichInter=__CONTACTCIVNAME__\n\nYou will find here the 
 PredefinedMailContentThirdparty=__CONTACTCIVNAME__\n\n__PERSONALIZED__\n\n__SIGNATURE__
 DemoDesc=Dolibarr是紧凑型的ERP / CRM的几个功能模块组成。一个演示，其中包括所有模块并不意味着什么，因为这永远不会发生。因此，一些演示配置文件都可用。
 ChooseYourDemoProfil=演示材选择符合您的活动...
-DemoFundation=一个基金会管理成员
+DemoFundation=基础会员管理
 DemoFundation2=管理成员及银行账户的基础
 DemoCompanyServiceOnly=管理一特约销售服务活动只
 DemoCompanyShopWithCashDesk=管理与现金办公桌店
@@ -238,3 +238,8 @@ ToExport=出口
 NewExport=新的出口
 ##### External sites #####
 ExternalSites=外部网站
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

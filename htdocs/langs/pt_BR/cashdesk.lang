@@ -20,3 +20,4 @@ ShowCompany=Mostar Empresa
 DeleteArticle=Clique para remover esse artigo
 FilterRefOrLabelOrBC=Procurar (Ref/Rótulo)
 UserNeedPermissionToEditStockToUsePos=Você tentou retirar do estoque com a emissão da fatura, mas o usuário precisa ter permissão para editar estoque.
+DolibarrReceiptPrinter=Impressão de Recibo Dolibarr

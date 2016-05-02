@@ -35,29 +35,40 @@
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array	$ajaxoptions		Multiple options array (Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done)
+ *  @param	array	$ajaxoptions		Multiple options array 
+ *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
+ *                                          Ex: array('disabled'=>
+ *                                          Ex: array('show'=>
+ *                                          Ex: array('update_textarea'=>
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
 {
     if (empty($minLength)) $minLength=1;
 
+    // Input search_htmlname is original field
+    // Input htmlname is a second input field used when using ajax autocomplete.
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
-	$script.= '<script type="text/javascript">';
+	$script.= '<!-- Javascript code for autocomplete of field '.$htmlname.' -->'."\n";
+	$script.= '<script type="text/javascript">'."\n";
 	$script.= '$(document).ready(function() {
 					var autoselect = '.$autoselect.';
 					var options = '.json_encode($ajaxoptions).';
 
-					// Remove product id before select another product
-					// use keyup instead change to avoid loosing the product id
+					/* Remove product id before select another product use keyup instead of change to avoid loosing the product id. This is needed only for select of predefined product */
+					/* TODO Check if we can remove this */
 					$("input#search_'.$htmlname.'").keydown(function() {
 						$("#'.$htmlname.'").val("");
 					});
-					$("input#search_'.$htmlname.'").change(function() {
+						    
+					/* I disable this. A call to trigger is already done later into the select action of the autocomplete code 
+						$("input#search_'.$htmlname.'").change(function() {
+					    console.log("Call the change trigger on input '.$htmlname.' because of a change on search_'.$htmlname.' was triggered");
 						$("#'.$htmlname.'").trigger("change");
-					});
-					// Check when keyup
+					});*/
+
+					// Check options for secondary actions when keyup
 					$("input#search_'.$htmlname.'").keyup(function() {
 						    if ($(this).val().length == 0)
 						    {
@@ -123,7 +134,9 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 						},
 						dataType: "json",
     					minLength: '.$minLength.',
-    					select: function( event, ui ) {		// Function ran when new value is selected into javascript combo
+    					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
+    						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
+    					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {
@@ -167,6 +180,8 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 									}
     							});
     						}
+    						console.log("ajax_autocompleter new value selected, we trigger change on original component so field #search_'.$htmlname.'");
+    						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
 					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
@@ -276,14 +291,15 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
 								    	needtotrigger="#" + fields[i];
 									}
 								}
-							}
-							if (needtotrigger != "")	// To force select2 to refresh visible content
-							{
-								// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
-								// This is required for example when changing zip with autocomplete that change the country
-								jQuery(needtotrigger).delay(500).queue(function() {
-    								jQuery(needtotrigger).trigger("change");
-								});
+							
+								if (needtotrigger != "")	// To force select2 to refresh visible content
+								{
+									// We introduce a delay so hand is back to js and all other js change can be done before the trigger that may execute a submit is done
+									// This is required for example when changing zip with autocomplete that change the country
+									jQuery(needtotrigger).delay(500).queue(function() {
+	    								jQuery(this).trigger("change");
+									});
+								}
 							}
     					}
 					});

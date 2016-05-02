@@ -116,13 +116,13 @@ class DolibarrApiAccess implements iAuthenticate
 		else
 		{
 		    throw new RestException(401, "Failed to login to API. No parameter 'api_key' provided");
-		    //dol_syslog("Failed to login to API. No parameter key provided", LOG_DEBUG);
-			//return false;
 		}
 
-        $userClass::setCacheIdentifier(static::$role);
-        Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
-        return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
+    $userClass::setCacheIdentifier(static::$role);
+    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
+    $requirefortest = static::$requires;
+    if (! is_array($requirefortest)) $requirefortest=explode(',',$requirefortest);
+    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
 	/**

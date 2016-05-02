@@ -204,11 +204,11 @@ if ($resql)
 
 	if ($sref || $snom || $sall || GETPOST('search'))
 	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;tosell=".$tosell."&amp;tobuy=".$tobuy, $sortfield, $sortorder,'',$num, 0, 'title_products');
 	}
 	else
 	{
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num, 0, 'title_products');
 	}
 
 	if (! empty($catid))
@@ -292,10 +292,10 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" alt="'.$langs->trans("Search").'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" alt="'.$langs->trans("RemoveFilter").'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 	print '</tr>';
 
 	$product_static=new Product($db);

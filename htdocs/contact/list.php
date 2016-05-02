@@ -67,16 +67,15 @@ $optioncss = GETPOST('optioncss','alpha');
 $type=GETPOST("type");
 $view=GETPOST("view");
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
 $userid=GETPOST('userid','int');
 $begin=GETPOST('begin');
-
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.lastname";
 if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 $langs->load("companies");
@@ -127,7 +126,7 @@ $fieldstosearchall = array(
 // Definition of fields for list
 $arrayfields=array(
     'p.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
-    'p.firstname'=>array('label'=>$langs->trans("Firsname"), 'checked'=>1),
+    'p.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
     'p.poste'=>array('label'=>$langs->trans("Post"), 'checked'=>1),
     'p.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
     'p.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
@@ -212,13 +211,13 @@ $sql.= " p.rowid as cidp, p.lastname as lastname, p.statut, p.firstname, p.zip, 
 $sql.= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql.= " co.code as country_code";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contact_extrafields as ef on (p.rowid = ef.fk_object)";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cs ON p.rowid = cs.fk_socpeople"; // We need this table joined to the select in order to filter by categ
@@ -322,7 +321,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
     if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -333,6 +332,16 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+// Add order
+if($view == "recent")
+{
+    $sql.= $db->order("p.datec","DESC");
+}
+else
+{
+    $sql.= $db->order($sortfield,$sortorder);
+}
+
 // Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -341,16 +350,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     $nbtotalofrecords = $db->num_rows($result);
 }
 
-// Add order and limit
+// Add limit
 if($view == "recent")
 {
-    $sql.= $db->order("p.datec","DESC");
-    $sql.= $db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->plimit($limit+1, $offset);
 }
 else
 {
-    $sql.= $db->order($sortfield,$sortorder);
-    $sql.= $db->plimit($conf->liste_limit+1, $offset);
+    $sql.= $db->plimit($limit+1, $offset);
 }
 
 //print $sql;
@@ -361,11 +368,14 @@ if ($result)
 	$num = $db->num_rows($result);
     $i = 0;
 
-	$param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
-    $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
+    $param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param.='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
+    $param.='&type='.urlencode($type).'&view='.urlencode($view);
     if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
     if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
     if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
+    if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);
     if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
     if ($search_town != '') $param.='&amp;search_town='.urlencode($search_town);
     if ($search_job != '') $param.='&amp;search_job='.urlencode($search_job);
@@ -385,8 +395,6 @@ if ($result)
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 	
     
-    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords,'title_companies.png');
-
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -394,6 +402,8 @@ if ($result)
     print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+
+    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit);
 
     if ($sall)
     {
@@ -473,7 +483,7 @@ if ($result)
         print '<input class="flat" type="text" name="search_lastname" size="6" value="'.dol_escape_htmltag($search_lastname).'">';
         print '</td>';
     }
-    if (! empty($arrayfields['p.lastname']['checked']))
+    if (! empty($arrayfields['p.firstname']['checked']))
     {
         print '<td class="liste_titre">';
         print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
@@ -610,23 +620,23 @@ if ($result)
         if (! empty($arrayfields['p.lastname']['checked']))
         {
             print '<td valign="middle">';
-		  print $contactstatic->getNomUrl(1,'',20);
+		  print $contactstatic->getNomUrl(1,'',0);
 		  print '</td>';
         }
 		// Firstname
         if (! empty($arrayfields['p.firstname']['checked']))
         {
-            print '<td>'.dol_trunc($obj->firstname,20).'</td>';
+            print '<td>'.$obj->firstname.'</td>';
         }
     	// Zip
         if (! empty($arrayfields['p.zip']['checked']))
         {
-            print '<td>'.dol_trunc($obj->zip,20).'</td>';
+            print '<td>'.$obj->zip.'</td>';
         }
     	// Town
         if (! empty($arrayfields['p.town']['checked']))
         {
-            print '<td>'.dol_trunc($obj->town,20).'</td>';
+            print '<td>'.$obj->town.'</td>';
         }
         // Function
         if (! empty($arrayfields['p.poste']['checked']))
@@ -739,10 +749,10 @@ if ($result)
 
     print "</table>";
 
+    if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit, 1);
+    
     print '</form>';
-
-    if ($num > $limit) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
-
+    
     $db->free($result);
 }
 else

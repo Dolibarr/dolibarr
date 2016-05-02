@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=yyは年である%syymm - nnnnの形式でニュメロ�
 PacificNumRefModelError=$ syymmで始まる介入のカードは、すでに存在し、シーケンスのこのモデルと互換性がありません。それを削除するか、このモジュールをアクティブにするには、その名前を変更。
 PrintProductsOnFichinter=Print products on intervention card
 PrintProductsOnFichinterDetails=interventions generated from orders
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

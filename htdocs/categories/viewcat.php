@@ -189,7 +189,7 @@ print '<table border="0" width="100%" class="border">';
 
 // Path of category
 print '<tr><td width="20%" class="notopnoleft">';
-$ways = $object->print_all_ways();
+$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 print $langs->trans("Ref").'</td><td>';
 print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 foreach ($ways as $way)

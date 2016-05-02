@@ -50,7 +50,6 @@ DatePropal=Fecha cotización
 DateEndPropal=Validar fecha de término
 DateEndPropalShort=Fecha de término
 ValidityDuration=Validar duración
-CloseAs=Cerrar con estado
 ErrorPropalNotFound=%s cotizaciones no encontradas
 Estimate=Cotización:
 EstimateShort=Cotización

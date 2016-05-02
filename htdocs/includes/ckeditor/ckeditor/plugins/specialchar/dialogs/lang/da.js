@@ -1,5 +1,5 @@
 ﻿/*
- Copyright (c) 2003-2015, CKSource - Frederico Knabben. All rights reserved.
+ Copyright (c) 2003-2016, CKSource - Frederico Knabben. All rights reserved.
  For licensing, see LICENSE.md or http://ckeditor.com/license
 */
 CKEDITOR.plugins.setLang("specialchar","da",{euro:"Euro-tegn",lsquo:"Venstre enkelt anførselstegn",rsquo:"Højre enkelt anførselstegn",ldquo:"Venstre dobbelt anførselstegn",rdquo:"Højre dobbelt anførselstegn",ndash:"Bindestreg",mdash:"Tankestreg",iexcl:"Omvendt udråbstegn",cent:"Cent-tegn",pound:"Pund-tegn",curren:"Kurs-tegn",yen:"Yen-tegn",brvbar:"Brudt streg",sect:"Paragraftegn",uml:"Umlaut",copy:"Copyright-tegn",ordf:"Feminin ordinal indikator",laquo:"Venstre dobbel citations-vinkel",not:"Negation",

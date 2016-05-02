@@ -1,9 +1,8 @@
-# Dolibarr language file - Source file is en_US - users
+# Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Účtovný kód pre výplatu miezd
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Účtovný kód pre zrážky
 Salary=Mzda
 Salaries=Mzdy
-Employee=Zamestnanec
 NewSalaryPayment=Nová výplata mzdy
 SalaryPayment=Výplata mzdy
 SalariesPayments=Výplaty miezd

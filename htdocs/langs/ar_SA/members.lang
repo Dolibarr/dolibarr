@@ -8,7 +8,7 @@ Members=أعضاء
 MemberAccount=دخول الأعضاء
 ShowMember=وتظهر بطاقة عضو
 UserNotLinkedToMember=المستخدم لا ترتبط عضو
-ThirdpartyNotLinkedToMember=Third-party not linked to a member
+ThirdpartyNotLinkedToMember=طرف ثالث لا علاقة لعضو
 MembersTickets=أعضاء التذاكر
 FundationMembers=أعضاء المؤسسة
 Attributs=الصفات
@@ -85,7 +85,7 @@ SubscriptionLateShort=متأخر
 SubscriptionNotReceivedShort=لم يتلق
 ListOfSubscriptions=قائمة الاشتراكات
 SendCardByMail=أرسل بطاقة
-AddMember=Create member
+AddMember=إنشاء عضو
 NoTypeDefinedGoToSetup=لا يجوز لأي عضو في أنواع محددة. الذهاب إلى الإعداد -- أنواع الأعضاء
 NewMemberType=عضو جديد من نوع
 WelcomeEMail=مرحبا بك في البريد الإلكتروني
@@ -124,12 +124,12 @@ Int=Int
 DateAndTime=التاريخ والوقت
 PublicMemberCard=عضو بطاقة العامة
 MemberNotOrNoMoreExpectedToSubscribe=أو ليست عضوا في أي أكثر من المتوقع للاكتتاب
-AddSubscription=Create subscription
+AddSubscription=إنشاء الاشتراك
 ShowSubscription=وتظهر اكتتاب
 MemberModifiedInDolibarr=عضو في تعديل Dolibarr
 SendAnEMailToMember=البريد الإلكتروني لإرسال معلومات العضو
-DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Subject of the e-mail received in case of auto-inscription of a guest
-DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail received in case of auto-inscription of a guest
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=موضوع البريد الإلكتروني وردت في حالة لصناعة السيارات في نقش أحد النزلاء
+DescADHERENT_AUTOREGISTER_NOTIF_MAIL=البريد الإلكتروني وردت في حالة لصناعة السيارات في نقش أحد النزلاء
 DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=بريد إلكتروني الموضوع لautosubscription الأعضاء
 DescADHERENT_AUTOREGISTER_MAIL=البريد الإلكتروني لعضو autosubscription
 DescADHERENT_MAIL_VALID_SUBJECT=البريد الإلكتروني لعضو في موضوع المصادقة
@@ -140,7 +140,7 @@ DescADHERENT_MAIL_RESIL_SUBJECT=موضوع البريد الإلكتروني ل�
 DescADHERENT_MAIL_RESIL=البريد الإلكتروني لعضو resiliation
 DescADHERENT_MAIL_FROM=البريد الإلكتروني للمرسل البريد الإلكتروني التلقائي
 DescADHERENT_ETIQUETTE_TYPE=علامات الشكل
-DescADHERENT_ETIQUETTE_TEXT=Text printed on member address sheets
+DescADHERENT_ETIQUETTE_TEXT=النص المطبوع على أوراق عنوان الأعضاء
 DescADHERENT_CARD_TYPE=شكل بطاقات صفحة
 DescADHERENT_CARD_HEADER_TEXT=نص مطبوع على رأس عضو البطاقات
 DescADHERENT_CARD_TEXT=نص مطبوع على بطاقات الأعضاء
@@ -154,7 +154,7 @@ NoThirdPartyAssociatedToMember=لم يرتبط بها من طرف ثالث له�
 ThirdPartyDolibarr=Dolibarr طرف ثالث
 MembersAndSubscriptions= وأعضاء Subscriptions
 MoreActions=تكميلية العمل على تسجيل
-MoreActionsOnSubscription=Complementary action, suggested by default when recording a subscription
+MoreActionsOnSubscription=الإجراءات التكميلية، اقترح افتراضيا عند تسجيل الاشتراك
 MoreActionBankDirect=إنشاء سجل المعاملات مباشرة على حساب
 MoreActionBankViaInvoice=إنشاء الفاتورة والدفع على حساب
 MoreActionInvoiceOnly=إنشاء فاتورة مع دفع أي مبلغ
@@ -169,8 +169,8 @@ LastSubscriptionAmount=آخر مبلغ الاشتراك
 MembersStatisticsByCountries=أعضاء إحصاءات حسب البلد
 MembersStatisticsByState=أعضاء إحصاءات الولاية / المقاطعة
 MembersStatisticsByTown=أعضاء إحصاءات بلدة
-MembersStatisticsByRegion=Members statistics by region
-MemberByRegion=Members by region
+MembersStatisticsByRegion=إحصائيات الأعضاء حسب المنطقة
+MemberByRegion=الأعضاء حسب المنطقة
 NbOfMembers=عدد الأعضاء
 NoValidatedMemberYet=العثور على أي أعضاء التحقق من صحة
 MembersByCountryDesc=هذه الشاشة تظهر لك إحصاءات عن أعضاء من الدول. لكن الرسم يعتمد على خدمة غوغل الرسم البياني على الإنترنت ويتوفر فقط إذا كان على اتصال بالإنترنت ويعمل.
@@ -196,11 +196,11 @@ Collectivités=المنظمات
 Particuliers=الشخصية
 Entreprises=الشركات
 DOLIBARRFOUNDATION_PAYMENT_FORM=أن يسدد الاشتراك باستخدام حوالة مصرفية، راجع صفحة <a target="_blank" href="http://wiki.dolibarr.org/index.php/Subscribe#To_subscribe_making_a_bank_transfer">http://wiki.dolibarr.org/index.php/Subscribe</a> . <br> الدفع باستخدام بطاقة ائتمان أو باي بال، وانقر على زر في أسفل هذه الصفحة. <br>
-ByProperties=By characteristics
-MembersStatisticsByProperties=Members statistics by characteristics
-MembersByNature=This screen show you statistics on members by nature.
-MembersByRegion=This screen show you statistics on members by region.
-VATToUseForSubscriptions=VAT rate to use for subscriptions
-NoVatOnSubscription=No TVA for subscriptions
-MEMBER_PAYONLINE_SENDEMAIL=Email to warn when Dolibarr receive a confirmation of a validated payment for subscription
-ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for subscription line into invoice: %s
+ByProperties=حسب الخصائص
+MembersStatisticsByProperties=إحصائيات الأعضاء حسب الخصائص
+MembersByNature=هذه الشاشة تظهر لك إحصاءات عن أعضاء من الطبيعة.
+MembersByRegion=هذه الشاشة تظهر لك إحصاءات عن أعضاء حسب المنطقة.
+VATToUseForSubscriptions=معدل ضريبة القيمة المضافة لاستخدامه في اشتراكات
+NoVatOnSubscription=لا TVA للاشتراكات
+MEMBER_PAYONLINE_SENDEMAIL=البريد الإلكتروني للتحذير عندما Dolibarr تتلقى تأكيدا لدفع التحقق من صحتها للاكتتاب
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=المنتج يستخدم لخط الاشتراك في فاتورة و:٪ الصورة

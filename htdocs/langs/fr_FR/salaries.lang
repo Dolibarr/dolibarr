@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Code comptable pour les paiements des salair
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Code comptable pour les charges de personnel
 Salary=Salaire
 Salaries=Salaires
-Employee=Employé
 NewSalaryPayment=Nouveau règlement de salaire
 SalaryPayment=Règlement salaire
 SalariesPayments=Règlements des salaires

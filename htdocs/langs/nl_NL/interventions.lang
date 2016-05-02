@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=Geef nummer met het formaat %sjjmm-nnnn terug waarbij jj
 PacificNumRefModelError=Een interventiedetailkaart beginnend met %s sjjmm bestaat al en is niet verenigbaar met deze reeksinstelling. Verwijder of hernoem het om deze module te activeren.
 PrintProductsOnFichinter=Printproducten op interventie fiche
 PrintProductsOnFichinterDetails=Interventies gegenereerd op basis van bestellingen
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

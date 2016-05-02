@@ -45,7 +45,7 @@ $backtourl = GETPOST('backtourl', 'alpha');
 $uriFactory = new \OAuth\Common\Http\Uri\UriFactory();
 //$currentUri = $uriFactory->createFromSuperGlobalArray($_SERVER);
 //$currentUri->setQuery('');
-$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/getgoogleoauthcallback.php');
+$currentUri = $uriFactory->createFromAbsolute($urlwithroot.'/core/modules/oauth/google_oauthcallback.php');
 
 
 /**

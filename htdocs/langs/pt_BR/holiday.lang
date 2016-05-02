@@ -7,7 +7,6 @@ NotActiveModCP=Você deve permitir módulo de folhas para visualizar esta págin
 NotConfigModCP=Você deve configurar o módulo de folhas para ver esta página. Para fazer isso, <a href="./admin/holiday.php?leftmenu=setup&mainmenu=home" style="font-weight: normal; color: red; text-decoration: underline;"> click aqui </ a>.
 NoCPforUser=Você não tem qualquer dia disponível.
 AddCP=Faça um pedido de licença
-Employe=Empregado
 DateDebCP=Data inicio
 DateFinCP=Data fim
 DateCreateCP=Data criacão

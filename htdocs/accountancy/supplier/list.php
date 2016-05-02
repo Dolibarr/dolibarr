@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>s
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file		htdocs/accountancy/supplier/list.php
- * \ingroup		Accountancy
- * \brief		Ventilation page from suppliers invoices
+ * \file 		htdocs/accountancy/supplier/list.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Ventilation page from suppliers invoices
  */
 require '../../main.inc.php';
 
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -66,9 +67,9 @@ if ($page < 0)
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 } else {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 }
 $offset = $limit * $page;
 
@@ -94,8 +95,8 @@ $formventilation = new FormVentilation($db);
 $accounting = new AccountingAccount($db);
 
 // TODO: we should need to check if result is a really exist accountaccount rowid.....
-$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT,1);
-$aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT,1);
+$aarowid_s = $accounting->fetch('', $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT, 1);
+$aarowid_p = $accounting->fetch('', $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT, 1);
 
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
@@ -128,36 +129,39 @@ print '<script type="text/javascript">
 				    });
 			    });
 			});
-			 </script>';
+		</script>';
+
 /*
  * Action
  */
-
-if ($action == 'ventil' && !empty($btn_ventil)) {
+if ($action == 'ventil' && ! empty($btn_ventil)) {
 	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 	if ($_POST['codeventil'] && $_POST["mesCasesCochees"]) {
 		print '<div><font color="red">' . count($_POST["mesCasesCochees"]) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
-		
+
 		foreach ( $mesCasesCochees as $maLigneCochee ) {
 			// print '<div><font color="red">id selectionnee : '.$monChoix."</font></div>";
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
 			$monNumLigne = $maLigneCourante[1];
 			$monCompte = $mesCodesVentilChoisis[$monNumLigne];
-			
+
 			$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 			$sql .= " SET fk_code_ventilation = " . $monCompte;
 			$sql .= " WHERE rowid = " . $monId;
-			
+
+			$accountventilated = new AccountingAccount($db);
+			$accountventilated->fetch($monCompte, '');
+
 			dol_syslog('accountancy/supplier/list.php:: sql=' . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
-				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("VentilatedinAccount") . ' : ' . $monCompte . '</font></div>';
+				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
 			} else {
-				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . $monCompte . '<br/> <pre>' . $sql . '</pre></font></div>';
+				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
 			}
-			
+
 			$cpt ++;
 		}
 	} else {
@@ -168,15 +172,13 @@ if ($action == 'ventil' && !empty($btn_ventil)) {
 
 /*
  * Supplier Invoice Lines
- *
  */
-
 if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 	$limit = $conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION;
 } else if ($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION <= 0) {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 } else {
-	$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+	$limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
 }
 
 $offset = $limit * $page;
@@ -227,15 +229,15 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
-	
+
 	// TODO : print_barre_liste always use $conf->liste_limit and do not care about custom limit in list...
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
-	
+
 	print '<br><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></br>';
-	
+
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
-	
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
@@ -249,7 +251,7 @@ if ($result) {
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
 	print "</tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_invoice" value="' . $search_invoice . '"></td>';
 	print '<td class="liste_titre">%<input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
@@ -265,16 +267,16 @@ if ($result) {
 	print '<input type="image" class="liste_titre" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 	print '</td>';
 	print '</tr>';
-	
+
 	$facturefourn_static = new FactureFournisseur($db);
 	$productfourn_static = new ProductFournisseur($db);
 	$form = new Form($db);
-	
+
 	$var = True;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
-		
+
 		// product_type: 0 = service ? 1 = product
 		// if product does not exist we use the value of product_type provided in facturedet to define if this is a product or service
 		// issue : if we change product_type value in product DB it should differ from the value stored in facturedet DB !
@@ -282,9 +284,9 @@ if ($result) {
 		$objp->code_buy_p = '';
 		$objp->aarowid_suggest = '';
 		$code_buy_p_l_differ = '';
-		
+
 		$code_buy_p_notset = '';
-		
+
 		$objp->aarowid_suggest = $objp->aarowid;
 		if (! empty($objp->code_buy)) {
 			$objp->code_buy_p = $objp->code_buy;
@@ -298,7 +300,7 @@ if ($result) {
 				$objp->code_buy_p = (! empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			}
 		}
-		
+
 		if ($objp->type_l == 1) {
 			$objp->code_buy_l = (! empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : $langs->trans("CodeNotDef"));
 			if ($objp->aarowid == '')
@@ -308,17 +310,17 @@ if ($result) {
 			if ($objp->aarowid == '')
 				$objp->aarowid_suggest = $aarowid_p;
 		}
-		
+
 		if ($objp->code_buy_l != $objp->code_buy_p)
 			$code_buy_p_l_differ = 'color:red';
 		
 		print "<tr $bc[$var]>";
-		
+
 		// Ref Invoice
 		$facturefourn_static->ref = $objp->ref;
 		$facturefourn_static->id = $objp->facid;
 		print '<td>' . $facturefourn_static->getNomUrl(1) . '</td>';
-		
+
 		// Ref Supplier Invoice
 		$productfourn_static->ref = $objp->product_ref;
 		$productfourn_static->id = $objp->product_id;
@@ -329,23 +331,23 @@ if ($result) {
 		else
 			print '&nbsp;';
 		print '</td>';
-		
+
 		print '<td style="' . $code_buy_p_l_differ . '">' . dol_trunc($objp->product_label, 24) . '</td>';
-		
+
 		// TODO: we should set a user defined value to adjust user square / wide screen size
 		$trunclength = defined('ACCOUNTING_LENGTH_DESCRIPTION') ? ACCOUNTING_LENGTH_DESCRIPTION : 32;
 		print '<td style="' . $code_buy_p_l_differ . '">' . nl2br(dol_trunc($objp->description, $trunclength)) . '</td>';
-		
+
 		print '<td align="right">';
 		print price($objp->price);
 		print '</td>';
-		
+
 		if ($objp->vat_tx_l != $objp->vat_tx_p)
 			$code_vat_differ = 'font-weight:bold; text-decoration:blink; color:red';
 		print '<td style="' . $code_vat_differ . '" align="center">';
 		print price($objp->tva_tx_line);
 		print '</td>';
-		
+
 		print '<td align="center" style="' . $code_buy_p_notset . '">';
 		// if not same kind of product_type stored in product & facturedt we display both account and let user choose
 		if ($objp->code_buy_l == $objp->code_buy_p) {
@@ -354,7 +356,7 @@ if ($result) {
 			print 'lines=' . $objp->code_buy_l . '<br />product=' . $objp->code_buy_p;
 		}
 		print '</td>';
-		
+
 		// Colonne choix du compte
 		print '<td align="center">';
 		print $formventilation->select_account($objp->aarowid_suggest, 'codeventil[]', 1);
@@ -364,11 +366,11 @@ if ($result) {
 		print '<td align="center">';
 		print '<input type="checkbox" name="mesCasesCochees[]" value="' . $objp->rowid . "_" . $i . '"' . ($objp->aarowid ? "checked" : "") . '/>';
 		print '</td>';
-		
+
 		print "</tr>";
 		$i ++;
 	}
-	
+
 	print '</table>';
 	print '<br><div align="center"><input type="submit" class="butAction" value="' . $langs->trans("Ventilate") . '" name="ventil" ></div>';
 	print '</form>';

@@ -42,9 +42,9 @@ $fichinterid = GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ficheinter', $fichinterid,'fichinter');
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST('page','int');
 if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
@@ -123,13 +123,15 @@ if ($socid)
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
+$sql.= $db->order($sortfield,$sortorder);
+
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->order($sortfield,$sortorder);
+
 $sql.= $db->plimit($limit+1, $offset);
 //print $sql;
 
@@ -138,24 +140,26 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 
-	$urlparam='';
-	if ($socid) $urlparam.="&socid=".$socid;
-	if ($search_ref) $urlparam.="&search_ref=".urlencode($search_ref);
-	if ($search_company) $urlparam.="&search_company=".urlencode($search_company);
-	if ($search_desc) $urlparam.="&search_desc=".urlencode($search_desc);
-	if ($search_status != '' && $search_status > -1) $urlparam.="&search_status=".urlencode($search_status);
-	if ($optioncss != '') $urlparam.='&optioncss='.$optioncss;
-
-	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $urlparam, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_commercial.png');
+	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($socid) $param.="&socid=".$socid;
+	if ($search_ref) $param.="&search_ref=".urlencode($search_ref);
+	if ($search_company) $param.="&search_company=".urlencode($search_company);
+	if ($search_desc) $param.="&search_desc=".urlencode($search_desc);
+	if ($search_status != '' && $search_status > -1) $param.="&search_status=".urlencode($search_status);
+	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    if ($sall)
+	print_barre_liste($langs->trans("ListOfInterventions"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
+	
+	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
@@ -164,16 +168,16 @@ if ($result)
     print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$urlparam,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$urlparam,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$param,'width="15%"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$param,'',$sortfield,$sortorder);
 	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 	{
 		print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
-		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$urlparam,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$urlparam,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$param,'align="right"',$sortfield,$sortorder);
 	}
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$urlparam,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -196,9 +200,11 @@ if ($result)
 	$liststatus=$interventionstatic->statuts_short;
 	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
-	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    print "</td></tr>\n";
+	print '<td class="liste_titre" align="right">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print $searchpitco;
+	print '</td>';
+    print "</tr>\n";
 
 	$companystatic=new Societe($db);
 
@@ -221,10 +227,11 @@ if ($result)
 		$companystatic->client=$objp->client;
 		print $companystatic->getNomUrl(1,'',44);
 		print '</td>';
-        print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
+        print '<td>'.dol_trunc(dolGetFirstLineOfText($objp->description),48).'</td>';
 		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
-			print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
+			//print '<td>'.dol_trunc(dol_escape_htmltag(dolGetFirstLineOfText($objp->descriptiondetail)),48).'</td>';
+			print '<td>'.dolGetFirstLineOfText($objp->descriptiondetail).'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
 			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		}

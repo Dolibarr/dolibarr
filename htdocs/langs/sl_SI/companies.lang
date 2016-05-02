@@ -202,11 +202,17 @@ ProfId3IN=Prof Id 3
 ProfId4IN=Prof Id 4
 ProfId5IN==
 ProfId6IN=-
+ProfId1LU=Id. prof. 1 (R.C.S. Luxembourg)
+ProfId2LU=Id. prof. 2 (Business permit)
+ProfId3LU=-
+ProfId4LU=-
+ProfId5LU=-
+ProfId6LU=-
 ProfId1MA==
 ProfId2MA==
 ProfId3MA==
 ProfId4MA==
-ProfId5MA==
+ProfId5MA=Id prof. 5 (C.I.C.E.)
 ProfId6MA=-
 ProfId1MX==
 ProfId2MX==
@@ -311,10 +317,12 @@ ShowContact=Pokaži kontakt
 ContactsAllShort=Vsi (brez filtra)
 ContactType=Vrsta kontakta
 ContactForOrders=Kontakt za naročilo
+ContactForOrdersOrShipments=Order's or shipment's contact
 ContactForProposals=Kontakt za ponudbo
 ContactForContracts=Kontakt za pogodbo
 ContactForInvoices=Kontakt za račun
 NoContactForAnyOrder=Ta kontakt ni pravi za naročila
+NoContactForAnyOrderOrShipment=This contact is not a contact for any order or shipment
 NoContactForAnyProposal=Ta kontakt ni pravi za komercialne ponudbe
 NoContactForAnyContract=Ta kontakt ni pravi za pogodbe
 NoContactForAnyInvoice=Ta kontakt ni pravi za račune
@@ -432,3 +440,6 @@ MergeThirdparties=Združi partnerje
 ConfirmMergeThirdparties=Ali zares želite združiti tega partnerja s trenutnim? Vsi povezani objekti (računi, naročila,  ...) bodo premaknjeni k trenutnemu partnerju, zato boste lahko zbrisali podvojene.
 ThirdpartiesMergeSuccess=Partnerja sta bila združena
 ErrorThirdpartiesMerge=Pri brisanju partnerja je prišlo do napake. Prosimo, preverite dnevnik. Spremembe so bile preklicane.
+SaleRepresentativeLogin=Login of sale representative
+SaleRepresentativeFirstname=Firstname of sale representative
+SaleRepresentativeLastname=Lastname of sale representative

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011       Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +33,18 @@ class Import
 	var $array_import_code;
 	var $array_import_label;
 	var $array_import_tables;
+	var $array_import_tables_creator;
 	var $array_import_fields;
+	var $array_import_fieldshidden;
 	var $array_import_entities;
 	var $array_import_regex;
 	var $array_import_examplevalues;
 	var $array_import_convertvalue;
+	var $array_import_run_sql_after;
 
+	var $error;
+	var $errors;
+	
 
 	/**
 	 *    Constructor
@@ -106,11 +113,11 @@ class Import
 						//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
 						if ($perm[2])
 						{
-						$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+						$bool=$user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
 						}
 						else
 						{
-						$bool=$user->rights->$perm[0]->$perm[1];
+						$bool=$user->rights->{$perm[0]}->{$perm[1]};
 						}
 						if ($perm[0]=='user' && $user->admin) $bool=true;
 						//print $bool." $perm[0]"."<br>";
@@ -136,7 +143,7 @@ class Import
 						$this->array_import_label[$i]=$module->getImportDatasetLabel($r);
 						// Array of tables to import (key=alias, value=tablename)
 						$this->array_import_tables[$i]=$module->import_tables_array[$r];
-						// Array of tables creator field to import (key=alias, value=creator field)
+						// Array of tables creator field to import (key=alias, value=creator field name)
 						$this->array_import_tables_creator[$i]=(isset($module->import_tables_creator_array[$r])?$module->import_tables_creator_array[$r]:'');
 						// Array of fields to import (key=field, value=label)
 						$this->array_import_fields[$i]=$module->import_fields_array[$r];
@@ -150,6 +157,8 @@ class Import
 						$this->array_import_examplevalues[$i]=$module->import_examplevalues_array[$r];
 						// Tableau des regles de conversion d'une valeur depuis une autre source (cle=champ, valeur=tableau des regles)
 						$this->array_import_convertvalue[$i]=(isset($module->import_convertvalue_array[$r])?$module->import_convertvalue_array[$r]:'');
+						// Sql request to run after import
+						$this->array_import_run_sql_after[$i]=(isset($module->import_run_sql_after_array[$r])?$module->import_run_sql_after_array[$r]:'');
 						// Module
 						$this->array_import_module[$i]=$module;
 

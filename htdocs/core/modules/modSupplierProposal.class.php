@@ -49,7 +49,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->db = $db;
 		$this->numero = 1120;
 
-		$this->family = "products";
+		$this->family = "srm";
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "supplier_proposalDESC";
 

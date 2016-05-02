@@ -238,3 +238,8 @@ ToExport=Vienti
 NewExport=Uusia vientimahdollisuuksia
 ##### External sites #####
 ExternalSites=Ulkoiset sivustot
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

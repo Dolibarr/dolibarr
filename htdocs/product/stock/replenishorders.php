@@ -52,6 +52,8 @@ $texte = $langs->trans('ReplenishmentOrders');
 
 llxHeader('', $texte, $helpurl, '');
 
+print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+
 $head = array();
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
 $head[0][1] = $langs->trans('Status');
@@ -60,7 +62,7 @@ $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $texte;
 $head[1][2] = 'replenishorders';
 
-dol_fiche_head($head, 'replenishorders', $langs->trans('Replenishment'), 0, 'stock');
+dol_fiche_head($head, 'replenishorders', '', 0, '');
 
 $commandestatic = new CommandeFournisseur($db);
 $sref = GETPOST('search_ref', 'alpha');

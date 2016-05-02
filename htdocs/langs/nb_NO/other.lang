@@ -238,3 +238,8 @@ ToExport=Eksport
 NewExport=Ny eksport
 ##### External sites #####
 ExternalSites=Eksterne nettsteder
+WebsiteSetup=Oppsett av website-modulen
+WEBSITE_PAGEURL=Side-URL
+WEBSITE_TITLE=Tittel
+WEBSITE_DESCRIPTION=Beskrivelse
+WEBSITE_KEYWORDS=Nøkkelord

@@ -144,7 +144,24 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->FACTURE_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=count($listoffiles);
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
 
 		$texte.= '</td>';
 
@@ -241,7 +258,9 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-					$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.'.$newfileformat;
+				    $format=$conf->global->MAIN_DOC_USE_TIMING;
+				    if ($format == '1') $format='%Y%m%d%H%M%S';
+					$filename=$newfiletmp.'-'.dol_print_date(dol_now(),$format).'.'.$newfileformat;
 				}
 				else
 				{
@@ -272,14 +291,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
 					else {
-			                        $socobject = $object->client;
+			                        $socobject = $object->thirdparty;
                         			// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
                         			$contactobject = $object->contact;
                     			}
 				}
 				else
 				{
-					$socobject=$object->client;
+					$socobject=$object->thirdparty;
 				}
 
 				// Fetch info for linked propal

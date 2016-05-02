@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - boxes
+BoxFicheInter=Letzte Einsätze
+BoxTitleLastFicheInter=Neueste %s veränderte Eingriffe
+NoRecordedInterventions=Keine verzeichneten Einsätze

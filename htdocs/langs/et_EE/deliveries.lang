@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Kas soovite kindlasti kustutada saadetise vastuvõt
 DeliveryMethod=Tarneviis
 TrackingNumber=Jälgimiskood
 DeliveryNotValidated=Saadetis on kinnitamata
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nimi ja allkiri:
 ToAndDate=___________________________________ kuupäev "____" / _____ / __________

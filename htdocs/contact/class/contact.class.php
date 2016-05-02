@@ -107,6 +107,47 @@ class Contact extends CommonObject
 		$this->db = $db;
 		$this->statut = 1;	// By default, status is enabled
 	}
+	
+	/**
+	 *  Load indicators into this->nb for board
+	 *
+	 *  @return     int         <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+		global $user;
+	
+		$this->nb=array();
+		$clause = "WHERE";
+	
+		$sql = "SELECT count(sp.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (sp.fk_soc = s.rowid)";
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
+		}
+		$sql.= ' '.$clause.' s.entity IN ('.getEntity($this->element, 1).')';
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["contacts"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Add a contact into database
@@ -443,6 +484,7 @@ class Contact extends CommonObject
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
+		$sql.= ", photo = ".($this->photo? "'".$this->photo."'" : "null");
 		if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql.= " WHERE rowid=".$this->db->escape($id);
 
@@ -592,8 +634,15 @@ class Contact extends CommonObject
 				$this->canvas			= $obj->canvas;
 
 				$this->import_key		= $obj->import_key;
+				
+				// Define gender according to civility
+				if(in_array($this->civility_id, array('MR'))) {
+					$this->gender = 'man';
+				} else if(in_array($this->civility_id, array('MME','MLE'))) {
+					$this->gender = 'woman';
+				}
 
-				// Recherche le user Dolibarr lie a ce contact
+				// Search Dolibarr user linked to this contact
 				$sql = "SELECT u.rowid ";
 				$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 				$sql .= " WHERE u.fk_socpeople = ". $this->id;
@@ -664,10 +713,10 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Charge le nombre d'elements auquel est lie ce contact
+	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation
 	 *  ref_contrat
-	 *  ref_commande
+	 *  ref_commande (for order and/or shipments)
 	 *  ref_propale
 	 *
      *  @return     int             					<0 if KO, >=0 if OK
@@ -701,7 +750,7 @@ class Contact extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error()." - ".$sql;
+			$this->error=$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -915,7 +964,7 @@ class Contact extends CommonObject
         $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
-        if (! empty($this->email)) $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
         $phonelist=array();
         if ($this->phone_pro) $phonelist[]=$this->phone_pro;
         if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;

@@ -1,0 +1,38 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ACCOUNTING_EXPORT_SEPARATORCSV=Séparateur de colonne pour le fichier export
+ACCOUNTING_EXPORT_DATE=Format de date pour le fichier export
+ACCOUNTING_EXPORT_PIECE=Exporter le nombre de pièces
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporter avec compte global
+ACCOUNTING_EXPORT_LABEL=Exporter la désignation
+Selectformat=Sélectionner le format de date pour le fichier
+ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe du nom de fichier
+Accounting=Compte
+AccountAccountingSuggest=Compte comptable suggéré
+AccountBalance=Solde du compte
+CAHTF=Total achats fournisseur avant taxes
+InvoiceLines=Lignes de factures à ventiler
+IntoAccount=Ventiler dans le compte de la comptabilité
+ACCOUNTING_LENGTH_DESCRIPTION=Longueur pour l'affichage des produits et services description dans les listes (valeur conseillée = 50 )
+ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur pour l'affichage des produits et services compte formulaire de description dans les listes (valeur conseillée = 50 )
+ACCOUNTING_EXPENSEREPORT_JOURNAL=Note de frais
+FinanceJournal=Journal des finances
+DescFinanceJournal=Journal de banque comprenant tous les types de règlements autres que espèce\t
+NumMvts=Nombre de mouvement
+TotalVente=Chiffre d'affaires total avant taxes
+MvtNotCorrectlyBalanced=Le mouvement n'est pas correctement équilibré. Crédit = %s. Débit = %s
+GeneralLedgerIsWritten=Les opérations sont écrites dans le grand livre général
+ExportFormat=Format d'exportation
+Prefixname=Préfixe du fichier exporté
+Separate=Séparateur d'export
+Headercol=Nom de colonne dans l'entête du fichier
+Fieldname=Nom du champs
+Headername=Nom de l'entête
+EnabledProduct=En produits
+EnabledTiers=En tiers
+EnabledVat=En TPS/TVH
+InitAccountancy=Compabilité initiale
+InitAccountancyDesc=Cette page peut être utilisée pour initialiser un compte comptable sur les produits et services qui ne disposent pas de compte comptable défini pour les ventes et les achats . Vérifiez avant que l'installation du module de comptabilité est terminée.
+OptionModeProductSell=Mode de ventes
+OptionModeProductBuy=Mode d'achats
+OptionModeProductSellDesc=Voir tous les produits sans compte comptable défini pour les ventes.
+OptionModeProductBuyDesc=Voir tous les produits sans compte comptable défini pour les achats.

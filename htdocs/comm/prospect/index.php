@@ -54,7 +54,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->propal->enabled))
 {
 	$var=false;
-	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/comm/propal/card.php">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("SearchAProposal").'</td></tr>';
@@ -142,7 +142,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td>';
-				print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$obj->ref.'</a>';
 				print '</td><td align="right">';
 				print price($obj->price);
 				print "</td></tr>";

@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Ste si istí, že chcete zmazať <b>%s</b> potvrden
 DeliveryMethod=Spôsob doručenia
 TrackingNumber=Sledovacie číslo
 DeliveryNotValidated=Dodávka nie je overená
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Meno a podpis:
 ToAndDate=To___________________________________ na ____ / _____ / __________

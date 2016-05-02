@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Cont  contabil pentru plata salariilor
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Cont contabil pentru cheltuieli financiare
 Salary=Salariu
 Salaries=Salarii
-Employee=Angajat
 NewSalaryPayment=Plata noua salariu
 SalaryPayment=Plata salariu
 SalariesPayments=Plati salarii

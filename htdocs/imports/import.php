@@ -75,7 +75,8 @@ $step				= (GETPOST('step') ? GETPOST('step') : 1);
 $import_name		= GETPOST('import_name');
 $hexa				= GETPOST('hexa');
 $importmodelid		= GETPOST('importmodelid');
-$excludefirstline	= (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 0);
+$excludefirstline	= (GETPOST('excludefirstline') ? GETPOST('excludefirstline') : 1);
+$endatlinenb     	= (GETPOST('endatlinenb') ? GETPOST('endatlinenb') : '');
 $separator			= (GETPOST('separator') ? GETPOST('separator') : (! empty($conf->global->IMPORT_CSV_SEPARATOR_TO_USE)?$conf->global->IMPORT_CSV_SEPARATOR_TO_USE:','));
 $enclosure			= (GETPOST('enclosure') ? GETPOST('enclosure') : '"');
 
@@ -221,8 +222,9 @@ if ($step == 3 && $datatoimport)
 		$langs->load("other");
 
 		$param='&datatoimport='.$datatoimport.'&format='.$format;
-		if ($excludefirstline) $param.='&excludefirstline=1';
-
+		if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
+		if ($endatlinenb) $param.='&endatlinenb='.$endatlinenb;
+		
 		$file = $conf->import->dir_temp . '/' . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_REQUEST are already decoded by PHP).
 		$ret=dol_delete_file($file);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -328,7 +330,8 @@ if ($step == 1 || ! $datatoimport)
 	$_SESSION["dol_array_match_file_to_database"]='';
 
 	$param='';
-	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
+	if ($endatlinenb) $param.='&endatlinenb='.$endatlinenb;
 	if ($separator) $param.='&separator='.urlencode($separator);
 	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
@@ -395,7 +398,8 @@ if ($step == 1 || ! $datatoimport)
 if ($step == 2 && $datatoimport)
 {
 	$param='&datatoimport='.$datatoimport;
-	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
+	if ($endatlinenb) $param.='&endatlinenb='.$endatlinenb;
 	if ($separator) $param.='&separator='.urlencode($separator);
 	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
@@ -469,7 +473,8 @@ if ($step == 2 && $datatoimport)
 if ($step == 3 && $datatoimport)
 {
 	$param='&datatoimport='.$datatoimport.'&format='.$format;
-	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
+	if ($endatlinenb) $param.='&endatlinenb='.$endatlinenb;
 	if ($separator) $param.='&separator='.urlencode($separator);
 	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
@@ -547,6 +552,7 @@ if ($step == 3 && $datatoimport)
 	print '<input type="hidden" value="'.$step.'" name="step">';
 	print '<input type="hidden" value="'.$format.'" name="format">';
 	print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
+	print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
 	print '<input type="hidden" value="'.$separator.'" name="separator">';
 	print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
 	print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
@@ -617,6 +623,17 @@ if ($step == 4 && $datatoimport)
 	    $obj->separator = $separator;
 	    $obj->enclosure = $enclosure;
 	}
+    if ($model == 'xlsx') {
+        if (! preg_match('/\.xlsx$/i', $filetoimport))
+        {
+            $langs->load("errors");
+            $param='&datatoimport='.$datatoimport.'&format='.$format;
+            setEventMessages($langs->trans("ErrorFileMustHaveFormat", $model),null,'errors');
+            header("Location: ".$_SERVER["PHP_SELF"].'?step=3'.$param.'&filetoimport='.urlencode($relativepath));
+            exit;
+        }
+        
+    }
 
 	// Load source fields in input file
 	$fieldssource=array();
@@ -684,7 +701,8 @@ if ($step == 4 && $datatoimport)
 	// Now $array_match_file_to_database contains  fieldnb(1,2,3...)=>fielddatabase(key in $array_match_file_to_database)
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport);
-	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
+	if ($endatlinenb) $param.='&endatlinenb='.$endatlinenb;
 	if ($separator) $param.='&separator='.urlencode($separator);
 	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
@@ -732,6 +750,7 @@ if ($step == 4 && $datatoimport)
 		print '<input type="hidden" value="'.$step.'" name="step">';
 		print '<input type="hidden" value="'.$format.'" name="format">';
 		print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
+		print '<input type="hidden" value="'.$endatlinenb.'" name="endatlinenb">';
 		print '<input type="hidden" value="'.$datatoimport.'" name="datatoimport">';
 		print '<input type="hidden" value="'.$filetoimport.'" name="filetoimport">';
 		print $langs->trans("Separator").' : ';
@@ -767,7 +786,8 @@ if ($step == 4 && $datatoimport)
     print '<input type="hidden" name="datatoimport" value="'.$datatoimport.'">';
     print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
     print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
-	print '<input type="hidden" name="separator" value="'.$separator.'">';
+    print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
+    print '<input type="hidden" name="separator" value="'.$separator.'">';
 	print '<input type="hidden" name="enclosure" value="'.$enclosure.'">';
     print '<table><tr><td colspan="2">';
     print $langs->trans("SelectImportFields",img_picto('','uparrow','')).' ';
@@ -836,6 +856,7 @@ if ($step == 4 && $datatoimport)
 	print '</td><td width="50%">';
 
 	// List of targets fields
+	$height=24;
 	$i = 0;
 	$var=true;
 	$mandatoryfieldshavesource=true;
@@ -843,7 +864,7 @@ if ($step == 4 && $datatoimport)
 	foreach($fieldstarget as $code=>$label)
 	{
 		$var=!$var;
-		print '<tr '.$bc[$var].' height="20">';
+		print '<tr '.$bc[$var].' height="'.$height.'">';
 
 		$i++;
 
@@ -1050,7 +1071,8 @@ if ($step == 4 && $datatoimport)
     	print '<input type="hidden" name="filetoimport" value="'.$filetoimport.'">';
 		print '<input type="hidden" name="hexa" value="'.$hexa.'">';
     	print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
-		print '<input type="hidden" value="'.$separator.'" name="separator">';
+    	print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
+    	print '<input type="hidden" value="'.$separator.'" name="separator">';
 		print '<input type="hidden" value="'.$enclosure.'" name="enclosure">';
 
 		print '<table summary="selectofimportprofil" class="noborder" width="100%">';
@@ -1120,6 +1142,7 @@ if ($step == 5 && $datatoimport)
 	// Load source fields in input file
 	$fieldssource=array();
 	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+
 	if ($result >= 0)
 	{
 		// Read first line
@@ -1134,18 +1157,22 @@ if ($step == 5 && $datatoimport)
 		$obj->import_close_file();
 	}
 
-	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
+	$nboflines=$obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
 	$param='&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
-	$param2 = $param;
-	if ($excludefirstline) {
-		$param.='&excludefirstline=1';
-	}
-
+	$param2 = $param;  // $param2 = $param without excludefirstline and endatlinenb
+	if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
+	if ($endatlinenb)      $param.='&endatlinenb='.$endatlinenb;
+	
 	llxHeader('',$langs->trans("NewImport"),'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
 
     $head = import_prepare_head($param,5);
 
+    
+    print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param2.'" method="POST">';
+    print '<input type="hidden" name="step" value="5">';    // step 5
+    print '<input type="hidden" name="action" value="launchsimu">';    // step 5
+    
 	dol_fiche_head($head, 'step5', $langs->trans("NewImport"));
 
 
@@ -1179,6 +1206,17 @@ if ($step == 5 && $datatoimport)
     print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
+	// Separator and enclosure
+	if ($model == 'csv') {
+	    print '<tr><td width="25%">'.$langs->trans("CsvOptions").'</td>';
+	    print '<td>';
+	    print $langs->trans("Separator").' : ';
+	    print htmlentities($separator);
+	    print '&nbsp;&nbsp;&nbsp;&nbsp;'.$langs->trans("Enclosure").' : ';
+	    print htmlentities($enclosure);
+	    print '</td></tr>';
+	}
+	
 	// File to import
 	print '<tr><td>'.$langs->trans("FileToImport").'</td>';
 	print '<td>';
@@ -1196,16 +1234,40 @@ if ($step == 5 && $datatoimport)
 	print $nboflines;
 	print '</td></tr>';
 
-	// Checkbox do not import first line
+	// Do not import first lines
 	print '<tr><td>';
-	print $langs->trans("Option");
+	print $langs->trans("ImportFromLine");
 	print '</td><td>';
-	print '<input type="checkbox" name="excludefirstline" value="1"';
-	print ($excludefirstline?' checked':'');
-	print ' onClick="javascript: window.location=\''.$_SERVER["PHP_SELF"].'?step=5&excludefirstline='.($excludefirstline?'0':'1').$param2.'\';">';
-	print ' '.$langs->trans("DoNotImportFirstLine");
+	if ($action=='launchsimu')
+	{
+	    print '<input type="text" size="4" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
+	    print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
+        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
+	}
+	else
+	{
+	    print '<input type="text" size="4" name="excludefirstline" value="'.$excludefirstline.'">';
+	    print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
+	}
 	print '</td></tr>';
 
+	// Do not import end lines
+	print '<tr><td>';
+	print $langs->trans("EndAtLineNb");
+	print '</td><td>';
+	if ($action=='launchsimu')
+	{
+	    print '<input type="text" size="4" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
+	    print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
+        print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?step=5'.$param.'">'.$langs->trans("Modify").'</a>';
+	}
+	else
+	{
+	    print '<input type="text" size="4" name="endatlinenb" value="'.$endatlinenb.'">';
+	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
+	}
+	print '</td></tr>';
+	
 	print '</table>';
 
 	print '<br>';
@@ -1279,7 +1341,7 @@ if ($step == 5 && $datatoimport)
     dol_fiche_end();
 
 
-    if (GETPOST('action') != 'launchsimu')
+    if ($action != 'launchsimu')
     {
         // Show import id
         print $langs->trans("NowClickToTestTheImport",$langs->transnoentitiesnoconv("RunSimulateImportFile")).'<br>';
@@ -1289,7 +1351,7 @@ if ($step == 5 && $datatoimport)
         print '<div class="center">';
         if ($user->rights->import->run)
         {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=5&action=launchsimu'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
+            print '<input type="submit" class="butAction" value="'.$langs->trans("RunSimulateImportFile").'">';
         }
         else
         {
@@ -1335,9 +1397,10 @@ if ($step == 5 && $datatoimport)
                 	$endoffile++;
                 	continue;
                 }
-                if ($excludefirstline && $sourcelinenb == 1) continue;
+                if ($excludefirstline && ($sourcelinenb < $excludefirstline)) continue;
+                if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
                 
-                //
+                // Run import
                 $result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
                 
                 if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
@@ -1352,6 +1415,25 @@ if ($step == 5 && $datatoimport)
             print $langs->trans("ErrorFailedToOpenFile",$pathfile);
         }
 
+	    $error=0;
+	    
+	    // Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
@@ -1411,7 +1493,7 @@ if ($step == 5 && $datatoimport)
 
         print '<div class="center">';
         print $langs->trans("NowClickToRunTheImport",$langs->transnoentitiesnoconv("RunImportFile")).'<br>';
-        print $langs->trans("DataLoadedWithId",$importid).'<br>';
+        if (empty($nboferrors)) print $langs->trans("DataLoadedWithId",$importid).'<br>';
         print '</div>';
 
         print '<br>';
@@ -1426,7 +1508,7 @@ if ($step == 5 && $datatoimport)
             }
             else
             {
-                //print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=5&action=launchsimu'.$param.'">'.$langs->trans("RunSimulateImportFile").'</a>';
+                //print '<input type="submit" class="butAction" value="'.dol_escape_htmltag($langs->trans("RunSimulateImportFile")).'">';
 
                 print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
             }
@@ -1438,7 +1520,10 @@ if ($step == 5 && $datatoimport)
             print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
         }
         print '</div>';
+        
     }
+
+    print '</form>';
 }
 
 
@@ -1481,7 +1566,8 @@ if ($step == 6 && $datatoimport)
 	$nboflines=(! empty($_GET["nboflines"])?$_GET["nboflines"]:dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport));
 
 	$param='&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines;
-	if ($excludefirstline) $param.='&excludefirstline=1';
+	if ($excludefirstline) $param.='&excludefirstline='.$excludefirstline;
+	if ($endatlinenb) $param.='&endatlinenb='.$endatlinenb;
 	if ($separator) $param.='&separator='.urlencode($separator);
 	if ($enclosure) $param.='&enclosure='.urlencode($enclosure);
 
@@ -1539,16 +1625,20 @@ if ($step == 6 && $datatoimport)
 	print $nboflines;
 	print '</td></tr>';
 
-	// Checkbox do not import first line
+	// Do not import first lines
 	print '<tr><td>';
-	print $langs->trans("Option");
+	print $langs->trans("ImportFromLine");
 	print '</td><td>';
-	print '<input type="checkbox" name="excludefirstline" value="1" disabled';
-	print ($excludefirstline?' checked':'');
-	print '>';
-	print ' '.$langs->trans("DoNotImportFirstLine");
+	print '<input type="text" size="4" name="excludefirstline" disabled="disabled" value="'.$excludefirstline.'">';
 	print '</td></tr>';
 
+	// Do not import end lines
+	print '<tr><td>';
+	print $langs->trans("EndAtLineNb");
+	print '</td><td>';
+    print '<input type="text" size="4" name="endatlinenb" disabled="disabled" value="'.$endatlinenb.'">';
+	print '</td></tr>';
+	
 	print '</table>';
 
 	print '<br>';
@@ -1650,9 +1740,12 @@ if ($step == 6 && $datatoimport)
 				$endoffile++;
 				continue;
 			}
-			if ($excludefirstline && $sourcelinenb == 1) continue;
+			if ($excludefirstline && ($sourcelinenb < $excludefirstline)) continue;
+			if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
 
+			// Run import
 			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
+			
 			if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
 			if (count($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;
 			if (! count($obj->errors) && ! count($obj->warnings)) $nbok++;
@@ -1666,8 +1759,31 @@ if ($step == 6 && $datatoimport)
 	}
 
 	if (count($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
-	else  $db->commit();	// We can commit if no errors.
-
+	else 
+	{
+	    $error=0;
+	    
+		// Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
+	    if (! $error) $db->commit();	// We can commit if no errors.
+	    else $db->rollback();
+	}
+	    
     dol_fiche_end();
 
 
@@ -1704,13 +1820,15 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 {
 	global $langs,$bc;
 
+	$height='24';
+	
 	print "\n\n<!-- Box ".$pos." start -->\n";
 	print '<div class="box" style="padding: 0px 0px 0px 0px;" id="boxto_'.$pos.'">'."\n";
 
 	print '<table summary="boxtable'.$pos.'" width="100%" class="nobordernopadding">'."\n";
 	if ($pos && $pos > count($fieldssource))	// No fields
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print img_picto(($pos>0?$langs->trans("MoveField",$pos):''),'uparrow','class="boxhandle" style="cursor:move;"');
 		print '</td>';
@@ -1721,7 +1839,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	elseif ($key == 'none')	// Empty line
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		print '&nbsp;';
 		print '</td>';
@@ -1732,7 +1850,7 @@ function show_elem($fieldssource,$pos,$key,$var,$nostyle='')
 	}
 	else	// Print field of source file
 	{
-		print '<tr '.($nostyle?'':$bc[$var]).' height="20">';
+		print '<tr '.($nostyle?'':$bc[$var]).' height="'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
 		print img_picto($langs->trans("MoveField",$pos),'uparrow','class="boxhandle" style="cursor:move;"');

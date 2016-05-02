@@ -1,3 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 OnlyOpenedAccount=Uniquement comptes ouverts
 SocialContributionPayment=Règlement charge sociale
+RejectCheck=Chèque renvoyé
+ConfirmRejectCheck=Etes-vous sûr que vous voulez marquer ce chèque comme rejeté ?
+RejectCheckDate=Date à laquelle le chèque a été retourné
+CheckRejected=Chèque renvoyé
+CheckRejectedAndInvoicesReopened=Chèques retournés et factures rouvertes

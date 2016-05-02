@@ -21,6 +21,14 @@
  *
  * This is the File Manager Connector for PHP.
  */
+
+/**
+ * CombinePaths
+ * 
+ * @param   string $sBasePath     sBasePath
+ * @param   string $sFolder       sFolder
+ * @return  string                Combined path
+ */
 function CombinePaths( $sBasePath, $sFolder )
 {
 	return RemoveFromEnd($sBasePath, '/') . '/' . RemoveFromStart($sFolder, '/');
@@ -45,8 +53,8 @@ function GetResourceTypePath($resourceType, $sCommand)
 /**
  * GetResourceTypeDirectory
  *
- * @param unknown_type $resourceType	Resource type
- * @param unknown_type $sCommand		Command
+ * @param string $resourceType	Resource type
+ * @param string $sCommand		Command
  * @return string
  */
 function GetResourceTypeDirectory($resourceType, $sCommand)
@@ -99,7 +107,7 @@ function RemoveExtension($fileName)
  * @param 	string	$resourceType	Resource type
  * @param 	string	$folderPath		Folder
  * @param 	string	$sCommand		Command
- * @return	void
+ * @return	string
  */
 function ServerMapFolder($resourceType, $folderPath, $sCommand)
 {
@@ -380,6 +388,14 @@ EOF;
 // DOL_CHANGE
 
 // This is the function that sends the results of the uploading process to CKE.
+/**
+ * SendCKEditorResults
+ * 
+ * @param   string  $callback       callback
+ * @param   string  $sFileUrl       sFileUrl
+ * @param   string  $customMsg      customMsg
+ * @return  void
+ */
 function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
 {
   echo '<script type="text/javascript">';

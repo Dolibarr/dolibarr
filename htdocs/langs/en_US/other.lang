@@ -8,6 +8,7 @@ BirthdayDate=Birthday
 DateToBirth=Date of birth
 BirthdayAlertOn= birthday alert active
 BirthdayAlertOff= birthday alert inactive
+Notify_FICHINTER_ADD_CONTACT=Added contact to Intervention
 Notify_FICHINTER_VALIDATE=Intervention validated
 Notify_FICHINTER_SENTBYMAIL=Intervention sent by mail
 Notify_ORDER_VALIDATE=Customer order validated
@@ -164,6 +165,7 @@ NumberOfUnitsCustomerOrders=Number of units on customer orders on last 12 month
 NumberOfUnitsCustomerInvoices=Number of units on customer invoices on last 12 month
 NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Number of units on supplier invoices on last 12 month
+EMailTextInterventionAddedContact=A newintervention %s has been assigned to you.
 EMailTextInterventionValidated=The intervention %s has been validated.
 EMailTextInvoiceValidated=The invoice %s has been validated.
 EMailTextProposalValidated=The proposal %s has been validated.
@@ -203,6 +205,7 @@ YouMustClickToChange=You must however first click on the following link to valid
 ForgetIfNothing=If you didn't request this change, just forget this email. Your credentials are kept safe.
 IfAmountHigherThan=If amount higher than <strong>%s</strong>
 SourcesRepository=Repository for sources
+Chart=Chart
 
 ##### Calendar common #####
 AddCalendarEntry=Add entry in calendar %s

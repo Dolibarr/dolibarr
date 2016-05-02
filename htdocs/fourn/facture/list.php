@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry		<florian.henry@open-concept.pro>
@@ -8,7 +8,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015	   juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015 	   Abbes Bahfir 	<bafbes@gmail.com>
- * Copyright (C) 2015	   Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2015-2016 Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,8 @@ $page=GETPOST("page",'int');
 $sortorder = GETPOST("sortorder",'alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 
-if ($page == -1) { $page = 0 ; }
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+if ($page == -1) { $page = 0 ; }
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -97,6 +97,10 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both
 	$search_status="";
 	$year="";
 	$month="";
+	$day="";
+	$year_lim="";
+	$month_lim="";
+	$day_lim="";
 }
 
 // List of fields to search into when doing a "search in all"
@@ -221,9 +225,18 @@ if ($search_amount_all_tax != '')
 	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
 }
 
-if ($search_status != '')
+if ($search_status != '' && $search_status>=0)
 {
 	$sql.= " AND fac.fk_statut = ".$search_status;
+}
+if ($filter && $filter != -1)
+{
+	$aFilter = explode(',', $filter);
+	foreach ($aFilter as $fil)
+	{
+		$filt = explode(':', $fil);
+		$sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
+	}
 }
 
 $nbtotalofrecords = 0;
@@ -232,7 +245,6 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 }
-
 
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1, $offset);
@@ -249,8 +261,12 @@ if ($resql)
 	}
 
 	$param='&socid='.$socid;
+	if ($day) 					$param.='&day='.urlencode($day);
 	if ($month) 				$param.='&month='.urlencode($month);
 	if ($year)  				$param.='&year=' .urlencode($year);
+	if ($day_lim) 				$param.='&day_lim='.urlencode($day_lim);
+	if ($month_lim) 			$param.='&month_lim='.urlencode($month_lim);
+	if ($year_lim)  			$param.='&year_lim=' .urlencode($year_lim);
 	if ($search_ref)          	$param.='&search_ref='.urlencode($search_ref);
 	if ($search_ref_supplier) 	$param.='&search_ref_supplier'.urlencode($search_ref_supplier);
 	if ($search_label)      	$param.='&search_label='.urlencode($search_label);
@@ -258,12 +274,10 @@ if ($resql)
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
 	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy');
-	
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
@@ -271,7 +285,9 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-    if ($search_all)
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->name.":""),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords,'title_accountancy',0,'','',$limit);
+	
+	if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
@@ -332,10 +348,11 @@ if ($resql)
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('0'=>$langs->trans("Draft"),'1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
 	print $form->selectarray('filtre', $liststatus, $search_status, 1);
-	print '</td><td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 	print "</tr>\n";
 
 	$facturestatic=new FactureFournisseur($db);

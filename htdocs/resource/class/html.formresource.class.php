@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) - 2013	Jean-François FERRY	<jfefe@aternatik.fr>
+/* Copyright (C) - 2013-2015 Jean-François FERRY	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *       \file       place/class/html.place.class.php
+ *       \file       place/class/html.formresource.class.php
  *       \ingroup    core
  *       \brief      Class file to manage forms into resource module
  */
@@ -75,7 +75,7 @@ class FormResource
     	$out='';
     	$outarray=array();
 
-    	$resourcestat = new Resource($this->db);
+    	$resourcestat = new Dolresource($this->db);
 
     	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
 
@@ -159,7 +159,7 @@ class FormResource
     {
     	global $langs,$user;
 
-    	$resourcestat = new Resource($this->db);
+    	$resourcestat = new Dolresource($this->db);
 
     	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
 

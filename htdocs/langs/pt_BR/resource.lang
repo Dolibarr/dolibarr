@@ -6,6 +6,7 @@ NoResourceLinked=Nenhum recurso vinculado
 ResourceCard=Cartao recursos
 AddResource=Criar recurso
 ResourcesLinkedToElement=Recursos vinculados ao elemento
+ShowResource=Mostrar recurso
 ShowResourcePlanning=Mostrar planejamento do recurso
 GotoDate=Ir para data
 ResourceElementPage=Elemento recursos

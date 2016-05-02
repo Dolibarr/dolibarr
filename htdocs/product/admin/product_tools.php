@@ -275,7 +275,7 @@ else
 	print '<tr '.$bc[$var].'>'."\n";
 	print '<td>'.$langs->trans("OldVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
-	print $form->load_tva('oldvatrate', $oldvatrate);
+	print $form->load_tva('oldvatrate', $oldvatrate, $mysoc);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
@@ -283,7 +283,7 @@ else
 	print '<tr '.$bc[$var].'>'."\n";
 	print '<td>'.$langs->trans("NewVATRates").'</td>'."\n";
 	print '<td width="60" align="right">'."\n";
-	print $form->load_tva('newvatrate', $newvatrate);
+	print $form->load_tva('newvatrate', $newvatrate, $mysoc);
 	print '</td>'."\n";
 	print '</tr>'."\n";
 

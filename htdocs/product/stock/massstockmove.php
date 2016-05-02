@@ -185,7 +185,7 @@ if ($action == 'createmovements')
 			{
 				$result=$product->fetch($id_product);
 
-				$product->load_stock();	// Load array product->stock_warehouse
+				$product->load_stock('novirtual');	// Load array product->stock_warehouse
 
 				// Define value of products moved
 				$pricesrc=0;
@@ -325,7 +325,7 @@ $title = $langs->trans('MassMovement');
 
 llxHeader('', $title);
 
-print load_fiche_titre($langs->trans("MassStockMovement"));
+print load_fiche_titre($langs->trans("MassStockTransferShort"));
 
 $titletoadd=$langs->trans("Select");
 $titletoaddnoent=$langs->transnoentitiesnoconv("Select");

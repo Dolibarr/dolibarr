@@ -3,7 +3,6 @@ SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Κωδικός Λογιστικής για �
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Κωδικός Λογιστικής για οικονομική επιβάρυνση
 Salary=Mισθός
 Salaries=Μισθοί
-Employee=Υπάλληλος
 NewSalaryPayment=Νέα μισθοδοσία
 SalaryPayment=Μισθός
 SalariesPayments=Πληρωμές μισθών

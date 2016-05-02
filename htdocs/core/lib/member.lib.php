@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -93,7 +93,7 @@ function member_prepare_head(Adherent $object)
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
     if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
-    $head[$h][2] = 'documents';
+    $head[$h][2] = 'document';
     $h++;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$object->id;
@@ -110,7 +110,7 @@ function member_prepare_head(Adherent $object)
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Adherent	$object         Member
+ *  @param	AdherentType	$object         Member
  *  @return array           		head
  */
 function member_type_prepare_head(AdherentType $object)

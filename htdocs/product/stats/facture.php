@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
@@ -48,7 +48,7 @@ $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','',
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('productstatsinvoice'));
 
-$mesg = '';
+$showmessage=GETPOST('showmessage');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -66,6 +66,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 	$search_month='';
 	$search_year='';
 }
+
+
 
 /*
  * View
@@ -107,7 +109,7 @@ if ($id > 0 || ! empty($ref))
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-		show_stats_for_company($product,$socid);
+		$nboflines = show_stats_for_company($product,$socid);
 
 		print "</table>";
 
@@ -116,8 +118,11 @@ if ($id > 0 || ! empty($ref))
 		
 		dol_fiche_end();
 
-
-        if ($user->rights->facture->lire) 
+		if ($showmessage && $nboflines > 1)
+		{
+			print $langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers"));
+		}
+        elseif ($user->rights->facture->lire) 
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
             $sql.= " f.facnumber, f.datef, f.paye, f.fk_statut as statut, f.rowid as facid,";

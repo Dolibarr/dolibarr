@@ -60,6 +60,8 @@ BoxTitleLastContracts=Senaste %s kontrakt
 BoxTitleLastModifiedDonations=Sista %s modifierad donationer
 BoxTitleLastModifiedExpenses=Last %s modified expense reports
 BoxGlobalActivity=Global aktivitet (fakturor, förslag, order)
+BoxGoodCustomers=Good customers
+BoxTitleGoodCustomers=%s Good customers
 FailedToRefreshDataInfoNotUpToDate=Misslyckades med att uppdatera RSS-flöde. Senaste framgångsrika uppdatera datum: %s
 LastRefreshDate=Senaste uppdateringen datum
 NoRecordedBookmarks=Inga bokmärken definieras. Klicka <a href="%s">här</a> för att lägga till bokmärken.
@@ -95,3 +97,4 @@ ForCustomersInvoices=Kundens fakturor
 ForCustomersOrders=Kund beställningar
 ForProposals=Förslag
 LastXMonthRolling=The last %s month rolling
+ChooseBoxToAdd=Add a box to your dashboard...

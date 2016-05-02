@@ -54,15 +54,17 @@ $search_warehouse = trim(GETPOST("search_warehouse"));
 $search_inventorycode = trim(GETPOST("search_inventorycode"));
 $search_user = trim(GETPOST("search_user"));
 $search_batch = trim(GETPOST("search_batch"));
+
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 if ($page < 0) $page = 0;
 $offset = $limit * $page;
-
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
+
+$pdluoid=GETPOST('pdluoid','int');
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -151,6 +153,170 @@ if ($action == "correct_stock")
 
     if (! $error) $action='';
 }
+
+// Transfer stock from a warehouse to another warehouse
+if ($action == "transfert_stock" && ! $cancel)
+{
+	$product = new Product($db);
+	if (! empty($product_id)) $result=$product->fetch($product_id);
+    
+    if (! (GETPOST("id_entrepot_destination",'int') > 0))
+    {
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
+        $error++;
+        $action='transfert';
+    }
+	if (empty($product_id))
+	{
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
+		$action='transfert';
+	}
+    if (! GETPOST("nbpiece",'int'))
+    {
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
+        $error++;
+        $action='transfert';
+    }
+    if ($id == GETPOST("id_entrepot_destination",'int'))
+    {
+        setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
+        $error++;
+        $action='transfert';
+    }
+
+    if (! empty($conf->productbatch->enabled))
+    {
+        $product = new Product($db);
+        $result=$product->fetch($product_id);
+
+        if ($product->hasbatch() && ! GETPOST("batch_number"))
+        {
+            setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("batch_number")), null, 'errors');
+            $error++;
+            $action='transfert';
+        }
+    }
+
+    if (! $error)
+    {
+        if ($id)
+        {
+            $object = new Entrepot($db);
+            $result=$object->fetch($id);
+
+            $db->begin();
+
+            $product->load_stock('novirtual');	// Load array product->stock_warehouse
+
+            // Define value of products moved
+            $pricesrc=0;
+            if (isset($product->pmp)) $pricesrc=$product->pmp;
+            $pricedest=$pricesrc;
+            
+            if ($product->hasbatch())
+            {
+                $pdluo = new Productbatch($db);
+
+                if ($pdluoid > 0)
+                {
+                    $result=$pdluo->fetch($pdluoid);
+                    if ($result)
+                    {
+                        $srcwarehouseid=$pdluo->warehouseid;
+                        $batch=$pdluo->batch;
+                        $eatby=$pdluo->eatby;
+                        $sellby=$pdluo->sellby;
+                    }
+                    else
+                    {
+                        setEventMessages($pdluo->error, $pdluo->errors, 'errors');
+                        $error++;
+                    }
+                }
+                else
+                {
+                    $srcwarehouseid=$id;
+                    $batch=GETPOST('batch_number');
+                    $eatby=$d_eatby;
+                    $sellby=$d_sellby;
+                }
+
+                if (! $error)
+                {
+                    // Remove stock
+                    $result1=$product->correct_stock_batch(
+                        $user,
+                        $srcwarehouseid,
+                        GETPOST("nbpiece",'int'),
+                        1,
+                        GETPOST("label",'san_alpha'),
+                        $pricesrc,
+                        $eatby,$sellby,$batch,
+                        GETPOST('inventorycode')
+                        );
+                    // Add stock
+                    $result2=$product->correct_stock_batch(
+                        $user,
+                        GETPOST("id_entrepot_destination",'int'),
+                        GETPOST("nbpiece",'int'),
+                        0,
+                        GETPOST("label",'san_alpha'),
+                        $pricedest,
+                        $eatby,$sellby,$batch,
+                        GETPOST('inventorycode')
+                        );
+                }
+            }
+            else
+            {
+                // Remove stock
+                $result1=$product->correct_stock(
+                    $user,
+                    $id,
+                    GETPOST("nbpiece"),
+                    1,
+                    GETPOST("label"),
+                    $pricesrc,
+                    GETPOST('inventorycode')
+                    );
+
+                // Add stock
+                $result2=$product->correct_stock(
+                    $user,
+                    GETPOST("id_entrepot_destination"),
+                    GETPOST("nbpiece"),
+                    0,
+                    GETPOST("label"),
+                    $pricedest,
+                    GETPOST('inventorycode')
+                    );
+            }
+            if (! $error && $result1 >= 0 && $result2 >= 0)
+            {
+                $db->commit();
+
+                if ($backtopage)
+                {
+                    header("Location: ".$backtopage);
+                    exit;
+                }
+                else
+                {
+                    header("Location: mouvement.php?id=".$object->id);
+                    exit;
+                }
+            }
+            else
+            {
+                setEventMessages($product->error, $product->errors, 'errors');
+                $db->rollback();
+                $action='transfert';
+            }
+        }
+    }
+}
+
 
 
 /*
@@ -451,7 +617,7 @@ if ($resql)
     /*                                                                            */
     /* ************************************************************************** */
 
-    if (empty($action) && $id)
+    if (empty($action) && $id > 0)
     {
         print "<div class=\"tabsAction\">\n";
 
@@ -460,16 +626,17 @@ if ($resql)
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=correction">'.$langs->trans("StockCorrection").'</a>';
         }
 
-        /*if ($user->rights->stock->mouvement->creer)
+        if ($user->rights->stock->mouvement->creer)
         {
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("StockMovement").'</a>';
-        }*/
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=transfert">'.$langs->trans("StockTransfer").'</a>';
+        }
+        
         print '</div><br>';
     }
 
 
     $param='';
-    if ($id) $param.='&id='.$id;
+    if ($id > 0) $param.='&id='.$id;
     if ($search_movement)   $param.='&search_movement='.urlencode($search_movement);
     if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
     if ($search_product_ref) $param.='&search_product_ref='.urlencode($search_product_ref);
@@ -479,11 +646,11 @@ if ($resql)
     if (!empty($snom)) $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
     if ($search_user)    $param.='&search_user='.urlencode($search_user);
     if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
-    if ($id) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords,'');
+    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords,'');
     else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords);
 
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
-    if ($id) print '<input type="hidden" name="id" value="'.$id.'">';
+    if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
@@ -498,7 +665,7 @@ if ($resql)
 		print_liste_field_titre($langs->trans("l_eatby"),$_SERVER["PHP_SELF"],'m.eatby','',$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("l_sellby"),$_SERVER["PHP_SELF"],'m.sellby','',$param,'align="center"',$sortfield,$sortorder);
 	}
-    print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
+    if (! $id > 0) print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("InventoryCodeShort"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
@@ -532,9 +699,12 @@ if ($resql)
 		print '<td></td>';
 	}
     // Warehouse
-    print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
-    print '</td>';
+    if (! $id > 0) 
+    {
+        print '<td class="liste_titre" align="left">';
+        print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
+        print '</td>';
+    }
     // Author
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" size="6" name="search_user" value="'.($search_user).'">';
@@ -598,17 +768,20 @@ if ($resql)
         // Batch
     	if (! empty($conf->productbatch->enabled))
 		{
-	    		print '<td align="center">'.$objp->batch.'</td>';
-	            print '<td align="center">'. dol_print_date($objp->eatby,'day') .'</td>';
-	            print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
+	    	print '<td align="center">'.$objp->batch.'</td>';
+	        print '<td align="center">'. dol_print_date($objp->eatby,'day') .'</td>';
+	        print '<td align="center">'. dol_print_date($objp->sellby,'day') .'</td>';
 		}
         // Warehouse
-        print '<td>';
-        $warehousestatic->id=$objp->entrepot_id;
-        $warehousestatic->libelle=$objp->stock;
-        $warehousestatic->lieu=$objp->lieu;
-        print $warehousestatic->getNomUrl(1);
-        print "</td>\n";
+		if (! $id > 0)
+		{
+            print '<td>';
+            $warehousestatic->id=$objp->entrepot_id;
+            $warehousestatic->libelle=$objp->stock;
+            $warehousestatic->lieu=$objp->lieu;
+            print $warehousestatic->getNomUrl(1);
+            print "</td>\n";
+		}
         // Author
         print '<td>';
         $userstatic->id=$objp->fk_user_author;

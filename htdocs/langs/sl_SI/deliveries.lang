@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Ali zares želite zbrisati prejemnico <b>%s</b> ?
 DeliveryMethod=Način dobave
 TrackingNumber=Številka za sledenje
 DeliveryNotValidated=Dobava ni potrjena
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Ime in podpis :
 ToAndDate=Za___________________________________ dne ____/_____/__________

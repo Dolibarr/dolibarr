@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +85,7 @@ $arrayfields=array(
     'u.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
     'u.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
     'u.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
-    'u.employee'=>array('label'=>$langs->trans("Employee"), 'checked'=>0),
+    'u.employee'=>array('label'=>$langs->trans("Employee"), 'checked'=>($mode=='employee'?1:0)),
     'u.accountancy_code'=>array('label'=>$langs->trans("AccountancyCode"), 'checked'=>0),
     'u.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
     'u.fk_soc'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
@@ -123,6 +124,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 // Default search
 if ($search_statut == '') $search_statut='1';
+if ($mode == 'employee') $search_employee=1;
 
 
 
@@ -175,7 +177,7 @@ $sql.= " u.tms as date_update, u.datec as date_creation,";
 $sql.= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2,";
 $sql.= " s.nom as name, s.canvas";
 // Add fields from extrafields
-foreach ($extrafields->attribute_label as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -192,7 +194,6 @@ else
 {
 	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
 }
-if ($mode == "employee") $sql.= " AND u.employee = 1";
 if ($socid > 0) $sql.= " AND u.fk_soc = ".$socid;
 //if ($search_user != '')       $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname'), $search_user);
 if ($search_supervisor > 0)   $sql.= " AND u.fk_user = ".$search_supervisor;
@@ -201,7 +202,9 @@ if ($search_login != '')      $sql.= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql.= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql.= natural_search("u.firstname", $search_firstname);
 if ($search_gender != '' && $search_gender != '-1')     $sql.= " AND u.gender = '".$search_gender."'";
-if ($search_employee >= 0)    $sql.= natural_search("u.employee", $search_employee);
+if (is_numeric($search_employee) && $search_employee >= 0)    {
+	$sql .= ' AND u.employee = '.(int) $search_employee;
+}
 if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code", $search_accountancy_code);
 if ($search_email != '')  $sql.= natural_search("u.email", $search_email);
 if ($search_statut != '' && $search_statut >= 0) $sql.= " AND (u.statut=".$search_statut.")";
@@ -213,7 +216,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
     if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -368,7 +371,22 @@ if ($result)
 	{
 	   foreach($extrafields->attribute_label as $key => $val) 
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			{
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+    		    if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
+				print '</td>';
+			}
 	   }
 	}
     // Fields from hook
@@ -395,10 +413,10 @@ if ($result)
         print '</td>';
     }
     // Action column
-	print '<td class="liste_titre" align="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print '</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 	
     print "</tr>\n";
 
