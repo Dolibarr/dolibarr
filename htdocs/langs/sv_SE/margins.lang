@@ -23,8 +23,8 @@ ChooseProduct/Service=Välj produkt eller tjänst
 StartDate=Startdatum
 EndDate=Slutdatum
 Launch=Start
-ForceBuyingPriceIfNull=Tvinga inköpspris om tom
-ForceBuyingPriceIfNullDetails=Om "ON", kommer marginalen att vara noll på linjen (köp pris = försäljningspris), annars ("OFF"), marge kommer vara lika med försäljningspris (köp pris = 0)
+ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
+ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
 MARGIN_METHODE_FOR_DISCOUNT=Marginalmetod för globala rabatter
 UseDiscountAsProduct=Som produkt
 UseDiscountAsService=Som tjänst
@@ -35,8 +35,9 @@ MargeBrute=Bruttomarginal
 MargeNette=Nettomarginal
 MargeType1=Margin on Best supplier price
 MargeType2=Margin on Weighted Average Price (WAP)
-MARGIN_TYPE_DETAILS=Bruttomarginal: Säljpris - Inköpspris<br/>Nettomarginal: Säljpris - Kostnadspris
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price
+MargeType3=Margin on Cost Price
+MARGIN_TYPE_DETAILS=Raw margin : Selling price - Buying price<br>Net margin : Selling price - Cost price
+MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Kostnadspris
 BuyingCost=Kostnadspris
 UnitCharges=Enhetsladdningar

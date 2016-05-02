@@ -54,6 +54,9 @@ PacificNumRefModelDesc1=กลับ Numero ที่มีรูปแบบ% s
 PacificNumRefModelError=บัตรเริ่มต้นด้วยการแทรกแซง $ syymm อยู่แล้วและไม่ได้เข้ากันได้กับรูปแบบของลำดับนี้ ลบหรือเปลี่ยนชื่อเพื่อเปิดใช้งานโมดูลนี้
 PrintProductsOnFichinter=ผลิตภัณฑ์ด้านการพิมพ์บนบัตรแทรกแซง
 PrintProductsOnFichinterDetails=การแทรกแซงที่เกิดจากคำสั่งซื้อ
+InterventionStatistics=Statistics of interventions
+NbOfinterventions=Nb of intervention cards
+NumberOfInterventionsByMonth=Nb of intervention cards by month (date of validation)
 ##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.

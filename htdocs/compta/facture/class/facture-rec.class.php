@@ -30,12 +30,13 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
  *	Classe de gestion des factures recurrentes/Modeles
  */
-class FactureRec extends Facture
+class FactureRec extends CommonInvoice
 {
 	public $element='facturerec';
 	public $table_element='facture_rec';
@@ -51,6 +52,11 @@ class FactureRec extends Facture
 	var $db_table;
 	var $propalid;
 
+	var $date_last_gen;
+	var $date_when;
+	var $nb_gen_done;
+	var $nb_gen_max;
+	
 	var $rang;
 	var $special_code;
 
@@ -71,7 +77,7 @@ class FactureRec extends Facture
 	 *
 	 * 	@param		User	$user		User object
 	 * 	@param		int		$facid		Id of source invoice
-	 *	@return		int					<0 if KO, id of invoice if OK
+	 *	@return		int					<0 if KO, id of invoice created if OK
 	 */
 	function create($user, $facid)
 	{
@@ -83,7 +89,20 @@ class FactureRec extends Facture
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
-
+		
+		// No frequency defined then no next date to execution
+		if (empty($this->frequency)) 
+		{
+			$this->frequency=0;
+			$this->date_when=NULL;
+		}
+		
+		
+		$this->frequency=abs($this->frequency);
+		$this->nb_gen_done=0;
+		$this->nb_gen_max=empty($this->nb_gen_max)?0:$this->nb_gen_max;
+		$this->auto_validate=empty($this->auto_validate)?0:$this->auto_validate;
+		
 		$this->db->begin();
 
 		// Charge facture modele
@@ -105,9 +124,17 @@ class FactureRec extends Facture
 			$sql.= ", note_public";
 			$sql.= ", fk_user_author";
 			$sql.= ", fk_projet";
+			$sql.= ", fk_account";
 			$sql.= ", fk_cond_reglement";
 			$sql.= ", fk_mode_reglement";
 			$sql.= ", usenewprice";
+			$sql.= ", frequency";
+			$sql.= ", unit_frequency";
+			$sql.= ", date_when";
+			$sql.= ", date_last_gen";
+			$sql.= ", nb_gen_done";
+			$sql.= ", nb_gen_max";
+			$sql.= ", auto_validate";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->titre."'";
 			$sql.= ", ".$facsrc->socid;
@@ -119,18 +146,24 @@ class FactureRec extends Facture
 			$sql.= ", ".(!empty($this->note_public)?("'".$this->db->escape($this->note_public)."'"):"NULL");
 			$sql.= ", '".$user->id."'";
 			$sql.= ", ".(! empty($facsrc->fk_project)?"'".$facsrc->fk_project."'":"null");
+			$sql.= ", ".(! empty($facsrc->fk_account)?"'".$facsrc->fk_account."'":"null");
 			$sql.= ", '".$facsrc->cond_reglement_id."'";
 			$sql.= ", '".$facsrc->mode_reglement_id."'";
 			$sql.= ", ".$this->usenewprice;
+			$sql.= ", ".$this->frequency;
+			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
+			$sql.= ", ".(!empty($this->date_when)?"'".$this->db->idate($this->date_when)."'":'NULL');
+			$sql.= ", ".(!empty($this->date_last_gen)?"'".$this->db->idate($this->date_last_gen)."'":'NULL');
+			$sql.= ", ".$this->nb_gen_done;
+			$sql.= ", ".$this->nb_gen_max;
+			$sql.= ", ".$this->auto_validate;
 			$sql.= ")";
 
 			if ($this->db->query($sql))
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
 
-				/*
-				 * Lines
-				 */
+				// Add lines
 				$num=count($facsrc->lines);
 				for ($i = 0; $i < $num; $i++)
 				{
@@ -157,6 +190,20 @@ class FactureRec extends Facture
 						$error++;
 					}
 				}
+				
+			    // Add object linked
+			    if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+			    {
+			        foreach($this->linked_objects as $origin => $origin_id)
+			        {
+			            $ret = $this->add_object_linked($origin, $origin_id);
+			            if (! $ret)
+			            {
+			                $this->error=$this->db->lasterror();
+			                $error++;
+			            }
+			        }
+			    }				    
 
 				if ($error)
 				{
@@ -170,7 +217,7 @@ class FactureRec extends Facture
 			}
 			else
 			{
-				$this->error=$this->db->error().' sql='.$sql;
+			    $this->error=$this->db->lasterror();
 				$this->db->rollback();
 				return -2;
 			}
@@ -184,27 +231,36 @@ class FactureRec extends Facture
 
 
 	/**
-	 *	Recupere l'objet facture et ses lignes de factures
+	 *	Load object and lines
 	 *
-	 *	@param	int		$rowid      Id de la facture a recuperer
-	 *	@return int         		>0 si ok, <0 si ko
+	 *	@param      int		$rowid       	Id of object to load
+	 * 	@param		string	$ref			Reference of recurring invoice
+	 * 	@param		string	$ref_ext		External reference of invoice
+	 * 	@param		int		$ref_int		Internal reference of other object
+	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	function fetch($rowid)
+	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.titre,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
+		$sql = 'SELECT f.rowid, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
-		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement';
+		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
+		$sql.= ', f.fk_account';
+		$sql.= ', f.frequency, f.unit_frequency, f.date_when, f.date_last_gen, f.nb_gen_done, f.nb_gen_max, f.usenewprice, f.auto_validate';
 		$sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
-		$sql.= ', el.fk_source';
+		//$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
-		$sql.= ' WHERE f.rowid='.$rowid;
-
-        dol_syslog("FactureRec::Fetch rowid=".$rowid."", LOG_DEBUG);
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
+		if ($rowid) $sql.= ' WHERE f.rowid='.$rowid;
+		elseif ($ref) $sql.= " WHERE f.titre='".$this->db->escape($ref)."'";
+		/* This field are not used for template invoice
+		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+		if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
+		*/
+		
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -212,7 +268,7 @@ class FactureRec extends Facture
 			{
 				$obj = $this->db->fetch_object($result);
 
-				$this->id                     = $rowid;
+				$this->id                     = $obj->rowid;
 				$this->titre                  = $obj->titre;
 				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
@@ -240,6 +296,7 @@ class FactureRec extends Facture
 				$this->cond_reglement         = $obj->cond_reglement_libelle;
 				$this->cond_reglement_doc     = $obj->cond_reglement_libelle_doc;
 				$this->fk_project             = $obj->fk_projet;
+				$this->fk_account             = $obj->fk_account;
 				$this->fk_facture_source      = $obj->fk_facture_source;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
@@ -247,6 +304,14 @@ class FactureRec extends Facture
 				$this->modelpdf               = $obj->model_pdf;
 				$this->rang					  = $obj->rang;
 				$this->special_code			  = $obj->special_code;
+				$this->frequency			  = $obj->frequency;
+				$this->unit_frequency		  = $obj->unit_frequency;
+				$this->date_when			  = $this->db->jdate($obj->date_when);
+				$this->date_last_gen		  = $this->db->jdate($obj->date_last_gen);
+				$this->nb_gen_done			  = $obj->nb_gen_done;
+				$this->nb_gen_max			  = $obj->nb_gen_max;
+				$this->usenewprice			  = $obj->usenewprice;
+				$this->auto_validate		  = $obj->auto_validate;
 
 				if ($this->statut == self::STATUS_DRAFT)	$this->brouillon = 1;
 
@@ -256,14 +321,14 @@ class FactureRec extends Facture
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					return -3;
 				}
 				return 1;
 			}
 			else
 			{
-				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
+				$this->error='Bill with id '.$rowid.' or ref '.$ref.' not found sql='.$sql;
 				dol_syslog('Facture::Fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
@@ -277,23 +342,41 @@ class FactureRec extends Facture
 
 
 	/**
+	 * 	Create an array of invoice lines
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
+	 */
+	function getLinesArray()
+	{
+	    return $this->fetch_lines();
+	}
+	
+	
+	/**
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
 	 *	@return     int         1 if OK, < 0 if KO
  	 */
 	function fetch_lines()
 	{
-		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.price, l.qty, l.tva_tx, ';
+		$this->lines=array();
+
+		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.tva_tx, ';
 		$sql.= ' l.remise, l.remise_percent, l.subprice,';
-		$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
+		//$sql.= ' l.situation_percent, l.fk_prev_id,';
+		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
-		$sql.= ' l.fk_unit,';
+		//$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
+		$sql.= ' l.fk_unit, l.fk_contract_line,';
+		//$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet_rec as l';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
-
-		dol_syslog('Facture::fetch_lines', LOG_DEBUG);
+		$sql.= ' ORDER BY l.rang';
+		
+		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -304,10 +387,13 @@ class FactureRec extends Facture
 				$objp = $this->db->fetch_object($result);
 				$line = new FactureLigne($this->db);
 
+				$line->id	            = $objp->rowid;
 				$line->rowid	        = $objp->rowid;
 				$line->label            = $objp->custom_label;		// Label line
 				$line->desc             = $objp->description;		// Description line
+				$line->description      = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
+				$line->ref              = $objp->product_ref;		// Ref product
 				$line->product_ref      = $objp->product_ref;		// Ref product
 				$line->libelle          = $objp->product_label;		// deprecated
 				$line->product_label	= $objp->product_label;		// Label product
@@ -319,10 +405,6 @@ class FactureRec extends Facture
 				$line->remise_percent   = $objp->remise_percent;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product       = $objp->fk_product;
-				$line->date_start       = $objp->date_start;
-				$line->date_end         = $objp->date_end;
-				$line->date_start       = $objp->date_start;
-				$line->date_end         = $objp->date_end;
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
@@ -331,7 +413,8 @@ class FactureRec extends Facture
 				$line->rang 			= $objp->rang;
 				$line->special_code 	= $objp->special_code;
 				$line->fk_unit          = $objp->fk_unit;
-
+                $line->fk_contract_line = $objp->fk_contract_line;
+                
 				// Ne plus utiliser
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
@@ -346,39 +429,56 @@ class FactureRec extends Facture
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db-lasterror();
 			return -3;
 		}
 	}
 
 
 	/**
-	 * 		Delete current invoice
+	 * 	Delete template invoice
 	 *
-	 * 		@return		int		<0 if KO, >0 if OK
+	 *	@param     	int		$rowid      	Id of invoice to delete. If empty, we delete current instance of invoice
+	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
+	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete()
+	function delete($rowid=0, $notrigger=0, $idwarehouse=-1)
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$this->id;
+	    if (empty($rowid)) $rowid=$this->id;
+	    
+	    dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
+	    
+        $error=0;
+		$this->db->begin();
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
 		dol_syslog($sql);
 		if ($this->db->query($sql))
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$this->id;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".$rowid;
 			dol_syslog($sql);
-			if ($this->db->query($sql))
-			{
-				return 1;
-			}
-			else
+			if (! $this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
-				return -1;
+				$error=-1;
 			}
 		}
 		else
 		{
 			$this->error=$this->db->lasterror();
-			return -2;
+			$error=-2;
+		}
+		
+		if (! $error)
+		{
+		    $this->db->commit();
+		    return 1;
+		}
+		else
+		{
+	        $this->db->rollback();
+	        return $error;
 		}
 	}
 
@@ -443,7 +543,7 @@ class FactureRec extends Facture
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
-
+			
 			$product_type=$type;
 			if ($fk_product)
 			{
@@ -505,23 +605,136 @@ class FactureRec extends Facture
 	}
 
 	/**
+	 * Return the next date of 
+	 * 
+	 * @return	timestamp	false if KO, timestamp if OK
+	 */
+	function getNextDate()
+	{
+		if (empty($this->date_when)) return false;
+		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
+	}
+	
+	/**
+	 *  Create all recurrents invoices.
+	 *  A result may also be provided into this->output
+	 * 
+	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
+	 */
+	function createRecurringInvoices()
+	{
+		global $langs, $db, $user;
+		
+		$langs->load("bills");
+		
+		$nb_create=0;
+		
+		$now = dol_now();
+		$tmparray=dol_getdate($now);
+		$today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year']);   // Today is last second of current day
+		
+		dol_syslog("createRecurringInvoices");
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
+		$sql.= ' WHERE frequency > 0';      // A recurring invoice is an invoice with a frequency
+		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
+		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
+		//print $sql;exit;
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+		    $i=0;
+		    $num = $db->num_rows($resql);
+		    
+		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
+		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
+		    
+		    while ($i < $num)
+			{
+			    $line = $db->fetch_object($resql);
+
+			    $db->begin();
+			    
+				$facturerec = new FactureRec($db);
+				$facturerec->fetch($line->rowid);
+			
+				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+
+			    $error=0;
+
+			    $facture = new Facture($db);
+				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
+			    $facture->type = self::TYPE_STANDARD;
+			    $facture->brouillon = 1;
+			    $facture->date = $now;
+			    $facture->socid = $facturerec->socid;
+			    
+			    $invoiceidgenerated = $facture->create($user);       // This will also update fields of recurring invoice
+			    if ($invoiceidgenerated <= 0)
+			    {
+			        $this->errors = $facture->errors;
+			        $this->error = $facture->error;
+			        $error++;
+			    }
+			    if (! $error && $facturerec->auto_validate)
+			    {
+			        $result = $facture->validate($user);
+			        if ($result <= 0)
+			        {
+    			        $this->errors = $facture->errors;
+    			        $this->error = $facture->error;
+			            $error++;
+			        }
+			    }
+
+				if (! $error && $invoiceidgenerated >= 0)
+				{
+					$db->commit();
+					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
+					$nb_create++;
+					$this->output.=$langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
+				}
+				else
+				{
+				    $db->rollback();
+				}
+
+				$i++;
+			}
+		}
+		else dol_print_error($db);
+		
+		$this->output=trim($this->output);
+		
+		return $error?$error:0;
+	}
+	
+	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param		string	$option			Sur quoi pointe le lien ('', 'withdraw')
-	 *	@return		string					Chaine avec URL
+	 * @param	int		$withpicto       Add picto into link
+	 * @param  string	$option          Where point the link
+	 * @param  int		$max             Maxlength of ref
+	 * @param  int		$short           1=Return just URL
+	 * @param  string   $moretitle       Add more text to title tooltip
+	 * @return string 			         String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$max=0,$short=0,$moretitle='')
 	{
 		global $langs;
 
 		$result='';
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
-
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        
+        $url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
+        
+        if ($short) return $url;
+        
+		$picto='bill';
+        
+		$link = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		$picto='bill';
 
 
         if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
@@ -568,4 +781,192 @@ class FactureRec extends Facture
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+	
+	/**
+     *	Update frequency and unit
+     *
+     *	@param     	int		$frequency		value of frequency
+	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setFrequencyAndUnit($frequency,$unit)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+
+		if (!empty($frequency) && empty($unit))
+        {
+            dol_syslog(get_class($this)."::setFrequencyAndUnit was called on objet with params frequency defined but unit not defined",LOG_ERR);
+            return -2;
+        }
+
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
+        if (!empty($unit)) 
+        {
+        	$sql.= ', unit_frequency = "'.$this->db->escape($unit).'"';
+		}
+        $sql.= ' WHERE rowid = '.$this->id;
+        
+        dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->frequency = $frequency;
+			if (!empty($unit)) $this->unit_frequency = $unit;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+    
+	/**
+     *	Update the next date of execution
+     *
+     *	@param     	datetime	$date					date of execution
+     *	@param     	int			$increment_nb_gen_done	0 do nothing more, >0 increment nb_gen_done
+     *	@return		int									<0 if KO, >0 if OK
+     */
+    function setNextDate($date, $increment_nb_gen_done=0)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setNextDate was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET date_when = "'.$this->db->idate($date).'"';
+        if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setNextDate", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->date_when = $date;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+	
+	/**
+     *	Update the maximum period
+     *
+     *	@param     	int		$nb		number of maximum period
+     *	@return		int				<0 if KO, >0 if OK
+     */
+    function setMaxPeriod($nb)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+		
+        if (empty($nb)) $nb=0;
+        
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET nb_gen_max = '.$nb;
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setMaxPeriod", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->nb_gen_max = $nb;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+	
+	/**
+     *	Update the auto validate invoice
+     *
+     *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
+     *	@return		int						<0 if KO, >0 if OK
+     */
+    function setAutoValidate($validate)
+    {
+        if (! $this->table_element)
+        {
+            dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined",LOG_ERR);
+            return -1;
+        }
+		
+        $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
+        $sql.= ' SET auto_validate = '.$validate;
+        $sql.= ' WHERE rowid = '.$this->id;
+
+        dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
+        if ($this->db->query($sql))
+        {
+            $this->auto_validate = $validate;
+            return 1;
+        }
+        else
+        {
+            dol_print_error($this->db);
+            return -1;
+        }
+    }
+}
+
+
+
+/**
+ *	Class to manage invoice lines of templates.
+ *  Saved into database table llx_facturedet_rec
+ */
+class FactureLigneRec extends CommonInvoiceLine
+{
+    
+    /**
+     * 	Delete line in database
+     *
+     *	@return		int		<0 if KO, >0 if OK
+     */
+    function delete()
+    {
+        global $conf,$langs,$user;
+    
+        $error=0;
+    
+        $this->db->begin();
+    
+        // Call trigger
+        /*$result=$this->call_trigger('LINEBILLREC_DELETE',$user);
+        if ($result < 0)
+        {
+            $this->db->rollback();
+            return -1;
+        }*/
+        // End call triggers
+    
+    
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE rowid = ".($this->rowid > 0 ? $this->rowid : $this->id);
+        dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+        if ($this->db->query($sql) )
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error()." sql=".$sql;
+            $this->db->rollback();
+            return -1;
+        }
+    }
+    
 }

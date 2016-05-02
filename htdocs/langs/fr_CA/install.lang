@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - install
+WarningUpgrade=Attention:\nEst-ce que votre exécuter une sauvegarde de base de données en premier?\nIl est fortement conseillé: par exemple, en raison de quelques bugs dans les systèmes de bases de données ( pour la version exemple mysql 5.5.40 / 41 /42/ 43) , certaines données ou tables peuvent être perdues au cours de ce processus , il est donc fortement conseillé d'avoir un vidage complet de votre base de données avant de commencer migration.\n\n\nCliquez sur OK pour lancer le processus de migration ...
+MigrationReloadModule=Recharger module %s

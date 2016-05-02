@@ -44,6 +44,7 @@ $type=GETPOST('type', 'alpha');
 $value=GETPOST('value', 'alpha');
 $label = GETPOST('label','alpha');
 $action=GETPOST('action', 'alpha');
+$scandir = GETPOST('scandir','alpha');
 
 $specimenthirdparty=new Societe($db);
 $specimenthirdparty->initAsSpecimen();

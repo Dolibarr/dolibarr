@@ -49,5 +49,6 @@ SendSms=SMSを送信
 SmsInfoCharRemain=残りの文字のNb
 SmsInfoNumero= （フォーマット国際例：33899701761）
 DelayBeforeSending=送信する前に、遅延時間（分）
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=利用可能なターゲットはありません。 SMSプロバイダの設定を確認してください。
 

@@ -50,10 +50,9 @@ if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allf
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
-	$count = $utils->purgeFiles($choice);
-	
-	if ($count) $mesg=$langs->trans("PurgeNDirectoriesDeleted", $count);
-	else $mesg=$langs->trans("PurgeNothingToDelete");
+	$result = $utils->purgeFiles($choice);
+
+	$mesg = $utils->output;
 	setEventMessages($mesg, null, 'mesgs');
 }
 

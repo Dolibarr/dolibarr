@@ -185,7 +185,7 @@ if ($action == "correct_stock" && ! $cancel)
 // Transfer stock from a warehouse to another warehouse
 if ($action == "transfert_stock" && ! $cancel)
 {
-	if (! (GETPOST("id_entrepot_source",'int') > 0) || ! (GETPOST("id_entrepot_destination",'int') > 0))
+	if (! (GETPOST("id_entrepot",'int') > 0) || ! (GETPOST("id_entrepot_destination",'int') > 0))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
@@ -197,7 +197,7 @@ if ($action == "transfert_stock" && ! $cancel)
 		$error++;
 		$action='transfert';
 	}
-	if (GETPOST("id_entrepot_source",'int') == GETPOST("id_entrepot_destination",'int'))
+	if (GETPOST("id_entrepot",'int') == GETPOST("id_entrepot_destination",'int'))
 	{
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
@@ -225,11 +225,10 @@ if ($action == "transfert_stock" && ! $cancel)
 
 			$db->begin();
 
-			$object->load_stock();	// Load array product->stock_warehouse
+			$object->load_stock('novirtual');	// Load array product->stock_warehouse
 
 			// Define value of products moved
 			$pricesrc=0;
-			//if (isset($object->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$object->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
 			if (isset($object->pmp)) $pricesrc=$object->pmp;
 			$pricedest=$pricesrc;
 
@@ -255,7 +254,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				}
 				else
 				{
-					$srcwarehouseid=GETPOST('id_entrepot_source','int');
+					$srcwarehouseid=GETPOST('id_entrepot','int');
 					$batch=GETPOST('batch_number');
 					$eatby=$d_eatby;
 					$sellby=$d_sellby;
@@ -292,7 +291,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				// Remove stock
 				$result1=$object->correct_stock(
 					$user,
-					GETPOST("id_entrepot_source"),
+					GETPOST("id_entrepot"),
 					GETPOST("nbpiece"),
 					1,
 					GETPOST("label"),
@@ -391,6 +390,7 @@ if ($id > 0 || $ref)
 {
 	$object = new Product($db);
 	$result = $object->fetch($id,$ref);
+	
 	$object->load_stock();
 
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -481,7 +481,6 @@ if ($id > 0 || $ref)
         print '</td></tr>';
 
         // Real stock
-        $object->load_stock();
         $text_stock_options = '';
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)?$langs->trans("DeStockOnValidateOrder").'<br>':'');
@@ -493,16 +492,14 @@ if ($id > 0 || $ref)
         print $form->textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
         print '</td>';
 		print '<td>'.$object->stock_reel;
-		if ($object->seuil_stock_alerte && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
+		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
 		print '</td>';
 		print '</tr>';
 
         // Calculating a theorical value
         print '<tr><td>'.$langs->trans("VirtualStock").'</td>';
         print "<td>".(empty($object->stock_theorique)?0:$object->stock_theorique);
-        if ($object->stock_theorique < $object->seuil_stock_alerte) {
-            print ' '.img_warning($langs->trans("StockLowerThanLimit"));
-        }
+        if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
         print '</td>';
         print '</tr>';
 
@@ -648,7 +645,7 @@ if (empty($action) && $object->id)
     //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
     if ($user->rights->stock->mouvement->creer)
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
 	}
 
 	print '</div>';
@@ -679,7 +676,7 @@ if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 	print '</tr>';
 }
 
-$sql = "SELECT e.rowid, e.label, e.lieu, ps.reel, ps.pmp, ps.rowid as product_stock_id";
+$sql = "SELECT e.rowid, e.label, e.lieu, ps.reel, ps.rowid as product_stock_id, p.pmp";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product_stock as ps";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
@@ -705,21 +702,22 @@ if ($resql)
 		$entrepotstatic->id=$obj->rowid;
 		$entrepotstatic->libelle=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
+		$stock_real = round($obj->reel, 10);
 		print '<tr '.$bc[$var].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
-		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
+		print '<td align="right">'.$stock_real.($stock_real < 0 ?' '.img_warning():'').'</td>';
 		// PMP
 		print '<td align="right">'.(price2num($object->pmp)?price2num($object->pmp,'MU'):'').'</td>';
 		// Value purchase
 		print '<td align="right">'.(price2num($object->pmp)?price(price2num($object->pmp*$obj->reel,'MT')):'').'</td>';
         // Sell price
 		print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($object->price,'MU'),1);
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price,'MU'),1);
         else print $langs->trans("Variable");
         print '</td>';
         // Value sell
         print '<td align="right">';
-        if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($object->price*$obj->reel,'MT'),1).'</td>';
+        if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($object->price*$obj->reel,'MT'),1).'</td>';
         else print $langs->trans("Variable");
 		print '</tr>'; ;
 		$total += $obj->reel;
@@ -753,7 +751,7 @@ if ($resql)
 				{
                     print "\n".'<tr><td align="right">';
                     print img_picto($langs->trans("Tranfer"),'uparrow','class="hideonsmartphone"').' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockMovement").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockTransfer").'</a>';
 					// Disabled, because edition of stock content must use the "Correct stock menu".
 					// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
                     //print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';
@@ -782,12 +780,12 @@ print '<td class="liste_total" align="right">';
 print $totalvalue?price(price2num($totalvalue,'MT'),1):'&nbsp;';
 print '</td>';
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
+if (empty($conf->global->PRODUIT_MULTIPRICES)) print ($total?price($totalvaluesell/$total,1):'&nbsp;');
 else print $langs->trans("Variable");
 print '</td>';
 // Value to sell
 print '<td class="liste_total" align="right">';
-if (empty($conf->global->PRODUIT_MULTI_PRICES)) print price(price2num($totalvaluesell,'MT'),1);
+if (empty($conf->global->PRODUIT_MULTIPRICES)) print price(price2num($totalvaluesell,'MT'),1);
 else print $langs->trans("Variable");
 print '</td>';
 print "</tr>";

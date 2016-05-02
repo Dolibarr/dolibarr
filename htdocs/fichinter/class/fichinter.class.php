@@ -89,6 +89,46 @@ class Fichinter extends CommonObject
 		$this->statuts_logo[3]='statut4';
 	}
 
+	/**
+	 *  Load indicators into this->nb for board
+	 *
+	 *  @return     int         <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+		global $user;
+
+		$this->nb=array();
+		$clause = "WHERE";
+
+		$sql = "SELECT count(fi.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as fi";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON fi.fk_soc = s.rowid";
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
+		}
+		$sql.= " ".$clause." fi.entity IN (".getEntity($this->element, 1).")";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["fichinters"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
 	/**
 	 *	Create an intervention into data base
@@ -151,7 +191,6 @@ class Fichinter extends CommonObject
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", '".$this->db->escape($this->ref)."'";
 		$sql.= ", ".$conf->entity;
-		$sql.= ", ".$user->id;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".$user->id;
 		$sql.= ", ".($this->description?"'".$this->db->escape($this->description)."'":"null");
@@ -982,7 +1021,7 @@ class Fichinter extends CommonObject
 	{
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
-		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC' ;
+		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;
 
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$resql=$this->db->query($sql);

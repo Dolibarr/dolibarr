@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,11 +37,11 @@ $action=GETPOST('action','alpha');
 $month=GETPOST('month');
 $year=GETPOST('year');
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="a.datep";
@@ -84,6 +84,14 @@ $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 //$sql.= " AND percent = 100";
 $sql.= " GROUP BY year, month, df";
 $sql.= " ORDER BY year DESC, month DESC, df DESC";
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
 $sql.= $db->plimit($limit+1,$offset);
 
 //print $sql;
@@ -93,7 +101,18 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
+	$param='';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
+	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit);
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';
@@ -143,6 +162,9 @@ if ($resql)
 		$i++;
 	}
 	print "</table>";
+	
+	print '</form>';
+	
 	$db->free($resql);
 }
 else

@@ -61,7 +61,7 @@ $extralabels_task=$extrafields_task->fetch_name_optionals_label($taskstatic->tab
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
+$result = restrictedArea($user, 'projet', $id,'projet&project');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
@@ -207,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
-
+	
 	// Ref
 	print '<tr><td width="30%">';
 	print $langs->trans("Ref");
@@ -391,25 +391,12 @@ else if ($id > 0 || ! empty($ref))
 
 	print '</div>';
 
-	print '<br>';
 
-
-	// Link to switch in "my task" / "all task"
-	print '<table width="100%"><tr><td align="right">';
-	if ($mode == 'mine')
-	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
-		//print ' - ';
-		//print $langs->trans("ShowMyTaskOnly");
-	}
-	else
-	{
-		//print $langs->trans("DoNotShowMyTaskOnly");
-		//print ' - ';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=mine">'.$langs->trans("ShowMyTasksOnly").'</a>';
-	}
-	print '</td></tr></table>';
-
+	$title=$langs->trans("ListOfTasks");
+	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$object->id.'&withproject=1">'.$langs->trans("GoToListOfTimeConsumed").'</a>';
+	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
+	print load_fiche_titre($title,$linktotasks,'title_generic.png');
+	
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$tasksarray=$taskstatic->getTasksArray(0, 0, $object->id, $socid, 0);
@@ -436,11 +423,24 @@ else if ($id > 0 || ! empty($ref))
 	print '<td align="right">'.$langs->trans("ProgressDeclared").'</td>';
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
+
 	if (count($tasksarray) > 0)
 	{
-		// Show all lines in taskarray (recursive function to go down on tree)
+    	// Link to switch in "my task" / "all task"
+    	print '<tr class="liste_titre nodrag nodrop"><td colspan="9">';
+    	if ($mode == 'mine')
+    	{
+    	    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">'.$langs->trans("DoNotShowMyTasksOnly").'</a>';
+    	}
+    	else
+    	{
+    	    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&mode=mine">'.$langs->trans("ShowMyTasksOnly").'</a>';
+    	}
+    	print '</td></tr>';
+	
+	    // Show all lines in taskarray (recursive function to go down on tree)
 		$j=0; $level=0;
-		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $id, 1);
+		$nboftaskshown=projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id);
 	}
 	else
 	{

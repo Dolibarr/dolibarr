@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Üzemmódban végzett vizsgálat / homokozó
 PAYPAL_API_USER=API felhasználónév
 PAYPAL_API_PASSWORD=API jelszó
 PAYPAL_API_SIGNATURE=API aláírás
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ajánlat fizetés &quot;szerves&quot; (hitelkártya + Paypal) vagy a &quot;Paypal&quot; csak
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only

@@ -15,5 +15,6 @@ DictionaryFunction=HRM - Function list
 ListOfEmployees=List of employees
 Employees=Employees
 Employee=Employee
+Employe=Employe
 NewEmployee=New employee
 EmployeeCard=Employee card

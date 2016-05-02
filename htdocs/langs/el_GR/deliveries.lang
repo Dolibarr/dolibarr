@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Είστε σίγουροι ότι θέλετε ν�
 DeliveryMethod=Μέθοδος παράδοσης
 TrackingNumber=Αριθμός παρακολούθησης
 DeliveryNotValidated=Η παράδοση δεν επικυρώνονται
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Όνομα και υπογραφή :
 ToAndDate=Σε ___________________________________ στις ____/_____/__________

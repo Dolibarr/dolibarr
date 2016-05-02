@@ -129,7 +129,7 @@ print '<td width="20%">';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
-print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Launch')).'" />';
+print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
 print '</td></tr>';
 
 print "</table>";

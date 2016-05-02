@@ -35,7 +35,7 @@ SmsStatusSentPartialy=ارسال شده تا حدی
 SmsStatusSentCompletely=به طور کامل ارسال شد
 SmsStatusError=خطا
 SmsStatusNotSent=ارسال نشده
-SmsSuccessfulySent=اس ام اس به درستی ارسال می شود (از%s به%s)
+SmsSuccessfulySent=اس ام اس به درستی ارسال می شود (از٪ s به٪ s)
 ErrorSmsRecipientIsEmpty=تعداد مورد نظر خالی است
 WarningNoSmsAdded=بدون شماره تلفن جدید برای اضافه کردن به لیست مورد هدف قرار دهند
 ConfirmValidSms=آیا اعتبار این campain از تایید شما؟
@@ -49,5 +49,6 @@ SendSms=ارسال SMS
 SmsInfoCharRemain=Nb و از حرف باقی مانده است
 SmsInfoNumero= (فرمت یعنی بین المللی: 33899701761)
 DelayBeforeSending=تاخیری پیش از ارسال (دقیقه)
+SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=بدون هدف در دسترس است. راه اندازی ارائه دهنده SMS خود را چک کنید.
 

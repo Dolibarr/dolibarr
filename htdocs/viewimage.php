@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@ $entity=GETPOST('entity')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for parameter modulepart');
-
+if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 
 /*
@@ -95,7 +95,7 @@ $type = 'application/octet-stream';
 if (! empty($_GET["type"])) $type=$_GET["type"];
 else $type=dol_mimetype($original_file);
 
-// Suppression de la chaine de caractere ../ dans $original_file
+// Security: Delete string ../ into $original_file
 $original_file = str_replace("../","/", $original_file);
 
 // Find the subdirectory name as the reference

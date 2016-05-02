@@ -45,8 +45,10 @@ function facturefourn_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
+	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $head[$h][0] = DOL_URL_ROOT.'/fourn/facture/contact.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -119,8 +121,10 @@ function ordersupplier_prepare_head($object)
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
+	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+	    $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -154,8 +158,8 @@ function ordersupplier_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("OrderFollow");
+	$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'supplier_order', 'remove');
@@ -182,6 +186,11 @@ function supplierorder_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_invoice.php";
 	$head[$h][1] = $langs->trans("SuppliersInvoice");
 	$head[$h][2] = 'invoice';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT."/admin/supplier_payment.php";
+	$head[$h][1] = $langs->trans("SuppliersPayment");
+	$head[$h][2] = 'supplierpayment';
 	$h++;
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'supplierorder_admin');

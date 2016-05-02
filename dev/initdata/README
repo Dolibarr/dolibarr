@@ -1,17 +1,5 @@
-README (English)
---------------------------------
+README
+------
 
-*** Demo
-
-Scripts in this directory can be used to reinit a demo database.
-WARNING: This will erase current database with data into initdemo.sql.
-
-Do a chmod 700 initdemo.sh
-then run ./initdemo.sh to launch Graphic User Interface.
-
-Install of package "dialog" is required.
-
-
-*** Other
-
-Other scripts can be used to load data test.
+Scripts in this directory can be used to load or purge data of a database instance.
+WARNING: This may erase data.

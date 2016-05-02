@@ -18,4 +18,3 @@ NewPaypalPaymentFailed=Paypal-Zahlungsvorgang ist fehlgeschlagen
 ReturnURLAfterPayment=Rückkehr zur URL nach der Zahlung
 DetailedErrorMessage=genaue Fehlermeldung
 ShortErrorMessage=kurze Fehlermeldung
-ErrorCode=Fehlercode

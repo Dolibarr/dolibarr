@@ -17,7 +17,7 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+//require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 /**
  * API class for contact object
@@ -100,6 +100,7 @@ class ContactApi extends DolibarrApi
 	 * @url	GET /contact/list
 	 * @url	GET /contact/list/{socid}
 	 * @url	GET	/thirdparty/{socid}/contacts
+	 * @url	GET	/customer/{socid}/contacts
      * 
 	 * @throws RestException
 	 */
@@ -249,8 +250,8 @@ class ContactApi extends DolibarrApi
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  array
-     * 
+	 * @return  integer
+   * 
 	 * @url	DELETE contact/{id}
 	 */
 	function delete($id) {

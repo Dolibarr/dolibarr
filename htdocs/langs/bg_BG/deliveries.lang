@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Сигурен ли сте, че искате да 
 DeliveryMethod=Начин
 TrackingNumber=Проследяващ номер
 DeliveryNotValidated=Доставката не валидирани
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Име и подпис:
 ToAndDate=To___________________________________ на ____ / _____ / __________

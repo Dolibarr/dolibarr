@@ -300,17 +300,17 @@ class dolReceiptPrinter extends Escpos
     function selectTypePrinter($selected='', $htmlname='printertypeid')
     {
         global $langs;
-        $error = 0;
-        $html = '<select class="flat" name="'.$htmlname.'">';
-        $html.= '<option value="1" '.($selected==1?'selected="selected"':'').'>'.$langs->trans('CONNECTOR_DUMMY').'</option>';
-        $html.= '<option value="2" '.($selected==2?'selected="selected"':'').'>'.$langs->trans('CONNECTOR_FILE_PRINT').'</option>';
-        $html.= '<option value="3" '.($selected==3?'selected="selected"':'').'>'.$langs->trans('CONNECTOR_NETWORK_PRINT').'</option>';
-        $html.= '<option value="4" '.($selected==4?'selected="selected"':'').'>'.$langs->trans('CONNECTOR_WINDOWS_PRINT').'</option>';
-        //$html.= '<option value="5" '.($selected==5?'selected="selected"':'').'>'.$langs->trans('CONNECTOR_JAVA').'</option>';
-        $html.= '</select>';
-
-        $this->resprint = $html;
-        return $error;
+        
+        $options = array(
+            1 => $langs->trans('CONNECTOR_DUMMY'),
+            2 => $langs->trans('CONNECTOR_FILE_PRINT'),
+            3 => $langs->trans('CONNECTOR_NETWORK_PRINT'),
+            4 => $langs->trans('CONNECTOR_WINDOWS_PRINT')
+        );
+        
+        $this->resprint = Form::selectarray($htmlname, $options, $selected);
+        
+        return 0;
     }
 
 
@@ -324,17 +324,17 @@ class dolReceiptPrinter extends Escpos
     function selectProfilePrinter($selected='', $htmlname='printerprofileid')
     {
         global $langs;
-        $error = 0;
-        $html = '<select class="flat" name="'.$htmlname.'">';
-        $html.= '<option value="0" '.($selected==0?'selected="selected"':'').'>'.$langs->trans('PROFILE_DEFAULT').'</option>';
-        $html.= '<option value="1" '.($selected==1?'selected="selected"':'').'>'.$langs->trans('PROFILE_SIMPLE').'</option>';
-        $html.= '<option value="2" '.($selected==2?'selected="selected"':'').'>'.$langs->trans('PROFILE_EPOSTEP').'</option>';
-        $html.= '<option value="3" '.($selected==3?'selected="selected"':'').'>'.$langs->trans('PROFILE_P822D').'</option>';
-        $html.= '<option value="4" '.($selected==4?'selected="selected"':'').'>'.$langs->trans('PROFILE_STAR').'</option>';
-        $html.= '</select>';
-
-        $this->profileresprint = $html;
-        return $error;
+        
+        $options = array(
+            0 => $langs->trans('PROFILE_DEFAULT'),
+            1 => $langs->trans('PROFILE_SIMPLE'),
+            2 => $langs->trans('PROFILE_EPOSTEP'),
+            3 => $langs->trans('PROFILE_P822D'),
+            4 => $langs->trans('PROFILE_STAR')
+        );
+        
+        $this->profileresprint = Form::selectarray($htmlname, $options, $selected);
+        return 0;
     }
 
 

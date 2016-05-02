@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014-2016	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
@@ -58,6 +58,8 @@ $confirm=GETPOST('confirm','alpha');
 $socid = GETPOST('socid','int');
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
+$origin=GETPOST('origin','alpha');
+$originid=GETPOST('originid','int');
 
 $datecontrat='';
 
@@ -239,13 +241,13 @@ if (empty($reshook))
 	    	$object->ref						= GETPOST('ref','alpha');
 	    	$object->ref_customer				= GETPOST('ref_customer','alpha');
 	    	$object->ref_supplier				= GETPOST('ref_supplier','alpha');
-	
+
 		    // If creation from another object of another module (Example: origin=propal, originid=1)
-		    if ($_POST['origin'] && $_POST['originid'])
+		    if (! empty($origin) && ! empty($originid))
 		    {
 		        // Parse element/subelement (ex: project_task)
-		        $element = $subelement = $_POST['origin'];
-		        if (preg_match('/^([^_]+)_([^_]+)/i',$_POST['origin'],$regs))
+		        $element = $subelement = $origin;
+		        if (preg_match('/^([^_]+)_([^_]+)/i',$origin,$regs))
 		        {
 		            $element = $regs[1];
 		            $subelement = $regs[2];
@@ -255,8 +257,8 @@ if (empty($reshook))
 		        if ($element == 'order')    { $element = $subelement = 'commande'; }
 		        if ($element == 'propal')   { $element = 'comm/propal'; $subelement = 'propal'; }
 	
-		        $object->origin    = $_POST['origin'];
-		        $object->origin_id = $_POST['originid'];
+		        $object->origin    = $origin;
+		        $object->origin_id = $originid;
 	
 		        // Possibility to add external linked objects with hooks
 		        $object->linked_objects[$object->origin] = $object->origin_id;
@@ -367,6 +369,38 @@ if (empty($reshook))
 		                setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 		                $error++;
 		            }
+		            
+		            // Now we create same links to contact than the ones found on origin object
+		            if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
+		            {
+		                $originforcontact = $object->origin;
+		                $originidforcontact = $object->origin_id;
+		                if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+		                {
+		                    $originforcontact=$srcobject->origin;
+		                    $originidforcontact=$srcobject->origin_id;
+		                }
+		                $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+		                $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+	                	
+		                $resqlcontact = $db->query($sqlcontact);
+		                if ($resqlcontact)
+		                {
+		                    while($objcontact = $db->fetch_object($resqlcontact))
+		                    {
+		                        //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
+		                        $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
+		                    }
+		                }
+		                else dol_print_error($resqlcontact);
+		            }
+
+		            // Hooks
+		            $parameters = array('objFrom' => $srcobject);
+		            $reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
+		            // modified by hook
+		            if ($reshook < 0)
+		                $error++;		            
 		        }
 		        else
 		        {
@@ -458,6 +492,8 @@ if (empty($reshook))
 	
 	            $tva_tx = get_default_tva($mysoc,$object->thirdparty,$prod->id);
 	            $tva_npr = get_default_npr($mysoc,$object->thirdparty,$prod->id);
+	            if (empty($tva_tx)) $tva_npr=0;
+	            
 	            $pu_ht = $prod->price;
 	            $pu_ttc = $prod->price_ttc;
 	            $price_min = $prod->price_min;
@@ -518,8 +554,8 @@ if (empty($reshook))
 				$fk_unit= GETPOST('units', 'alpha');
 	        }
 	
-	        $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty);
-	        $localtax2_tx=get_localtax($tva_tx,2,$object->thirdparty);
+	        $localtax1_tx=get_localtax($tva_tx,1,$object->thirdparty,$mysoc,$tva_npr);
+	        $localtax2_tx=get_localtax($tva_tx,2,$object->thirdparty,$mysoc,$tva_npr);
 	
 			// ajout prix achat
 			$fk_fournprice = $_POST['fournprice'];
@@ -585,6 +621,7 @@ if (empty($reshook))
 				unset($_POST['type']);
 				unset($_POST['remise_percent']);
 				unset($_POST['price_ht']);
+				unset($_POST['multicurrency_price_ht']);
 				unset($_POST['price_ttc']);
 				unset($_POST['tva_tx']);
 				unset($_POST['product_ref']);
@@ -1153,7 +1190,11 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+    print '<div align="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+    print '</div>';
 
     if (is_object($objectsrc))
     {
@@ -1390,9 +1431,9 @@ else
             print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="updateligne">';
-            print '<input type="hidden" name="elrowid" value="'.GETPOST('rowid').'">';
-            print '<input type="hidden" name="idprod" value="'.($objp->fk_product?$objp->fk_product:'0').'">';
-            print '<input type="hidden" name="fournprice" value="'.($objp->fk_fournprice?$objp->fk_fournprice:'0').'">';
+            print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline-1]->id.'">';
+            print '<input type="hidden" name="idprod" value="'.(!empty($object->lines[$cursorline-1]->fk_product) ? $object->lines[$cursorline-1]->fk_product : 0).'">';
+            print '<input type="hidden" name="fournprice" value="'.(!empty($object->lines[$cursorline-1]->fk_fournprice) ? $object->lines[$cursorline-1]->fk_fournprice : 0).'">';
 
             // Area with common detail of line
             print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
@@ -1718,9 +1759,11 @@ else
                     {
                         $tmpaction='activateline';
                         if ($objp->statut == 4) $tmpaction='unactivateline';
-                        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.$object->lines[$cursorline-1]->id.'&amp;action='.$tmpaction.'">';
-                        print img_edit();
-                        print '</a>';
+						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver)) {
+							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
+							print img_edit();
+							print '</a>';
+						}
                     }
                 }
                 print '</td>';
@@ -1765,7 +1808,7 @@ else
                 print '<form name="active" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;ligne='.GETPOST('ligne').'&amp;action=active" method="post">';
                 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-                print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
+                print '<table class="noborder tableforservicepart2" width="100%">';
 
                 // Definie date debut et fin par defaut
                 $dateactstart = $objp->date_debut;
@@ -1785,15 +1828,15 @@ else
                 }
 
                 print '<tr '.$bc[$var].'>';
-                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
                 print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td>';
+                print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
                 print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
-                print '<td align="center nohover" rowspan="2" valign="middle">';
+                print '<td align="center nohover" rowspan="2" valign="middle" class="nohover">';
                 print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"><br>';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';

@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +95,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $max=10;
 
-$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number as ref";
+$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref";
 $sql.= ", bc.statut, bc.nbcheque";
 $sql.= ", ba.label, ba.rowid as bid";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";

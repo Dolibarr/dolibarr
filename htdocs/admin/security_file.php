@@ -114,9 +114,8 @@ llxHeader('',$langs->trans("Files"),$wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
-//print $langs->trans("FilesDesc")."<br>\n";
-//print "<br>\n";
-
+print $langs->trans("SecurityFilesDesc")."<br>\n";
+print "<br>\n";
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';

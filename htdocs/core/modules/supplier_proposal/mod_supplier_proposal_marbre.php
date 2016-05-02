@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_proposal/modules_supplie
 class mod_supplier_proposal_marbre extends ModeleNumRefSupplierProposal
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $prefix='DF';
+	var $prefix='RQ';               // RQ = Request for quotation
 	var $error='';
 	var $nom = "Marbre";
 

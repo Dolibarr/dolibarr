@@ -136,7 +136,7 @@ else if ($action == 'update')
 			$object->country_id     = $_POST["country_id"];
 			$object->fk_user_mod	= $user->id;
 
-			$result = $object->update();
+			$result = $object->update($user);
 
             if ($result > 0)
             {

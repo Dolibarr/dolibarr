@@ -69,6 +69,13 @@ if (!$sortorder) {
     $sortorder = 'ASC';
 }
 
+// Define virtualdiffersfromphysical
+$virtualdiffersfromphysical=0;
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+{
+    $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+}
+
 
 /*
  * Actions
@@ -227,20 +234,6 @@ if ($action == 'order' && isset($_POST['valid']))
 
 $form = new Form($db);
 
-$virtualdiffersfromphysical=0;
-if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
-{
-	$virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
-}
-
-$usevirtualstock=-1;
-if ($virtualdiffersfromphysical)
-{
-	$usevirtualstock=(! empty($conf->global->STOCK_USE_VIRTUAL_STOCK)?1:0);
-	if ($mode=='virtual') $usevirtualstock=1;
-	if ($mode=='physical') $usevirtualstock=0;
-}
-
 $title = $langs->trans('Status');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price,';
@@ -372,6 +365,8 @@ $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
 
 
+print load_fiche_titre($langs->trans('Replenishment'), '', 'title_generic.png');
+
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
 	'<input type="hidden" name="token" value="' .$_SESSION['newtoken'] . '">'.
@@ -382,7 +377,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'
 	'<input type="hidden" name="action" value="order">'.
 	'<input type="hidden" name="mode" value="' . $mode . '">';
 
-dol_fiche_head($head, 'replenish', $langs->trans('Replenishment'), 0, 'stock');
+dol_fiche_head($head, 'replenish', '', 0, '');
 
 print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
 if ($usevirtualstock == 1)
@@ -468,11 +463,11 @@ print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
-	'<td class="liste_titre">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">'.
-	'<input class="liste_titre" name="button_search" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">'.
-	'<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">'.
-	'</td>';
+	'<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
 print '</tr>';
 
 $prod = new Product($db);
@@ -555,7 +550,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
 		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
 
-		print '<td class="nowrap">'.$prod->getNomUrl(1, '', 16).'</td>';
+		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" ></td>';
 

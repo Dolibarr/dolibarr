@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - sendings
 Shipments=Sendungen
-Receivings=Receipts
 DateReceived=Datum des Warenerhalts
 DocumentModelSirocco=Einfache Dokumentvorlage Scirocco für die Lieferungscheine

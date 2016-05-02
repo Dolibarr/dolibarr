@@ -1,17 +1,17 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Търговски предложения от доставчици
 supplier_proposalDESC=Управление на запитвания за цени към доставчици
-supplier_proposalMENU_LEFT_TITLE=Предложения доставчици
-supplier_proposalMENU_LEFT_TITLE_NEW=Ново запитване
-supplier_proposalMENU_LEFT_TITLE_LIST=Списък
+SupplierProposalShort=Supplier proposals
+SupplierProposalNew=New request
 CommRequest=Запитване за цена
 CommRequests=Запитвания за цени
 SearchRequest=Намиране на запитване
 DraftRequests=Чернови на запитвания
+SupplierProposalsDraft=Draft supplier proposals
 LastModifiedRequests=Последни %s редактирани запитвания за цени
 RequestsOpened=Отваряне на запитване за цена
 SupplierProposalArea=Зона предложения от доставчици
-SupplierProposalShort=Предложение от доставчик
+SupplierProposalShort=Supplier proposals
 SupplierProposals=Предложения доставчици
 NewAskPrice=Ново запитване за цена
 NewAsk=Ново запитване
@@ -58,3 +58,5 @@ DefaultModelSupplierProposalCreate=Създаване на модел по по�
 DefaultModelSupplierProposalToBill=Шаблон по подразбиране, когато се затваря запитване за цена (прието)
 DefaultModelSupplierProposalClosed=Шаблон по подразбиране, когато се затваря запитване за цена (отказано)
 ListOfSupplierProposal=Списък на запитвания за цени към доставчици
+SupplierProposalsToClose=Supplier proposals to close
+SupplierProposalsToProcess=Supplier proposals to process

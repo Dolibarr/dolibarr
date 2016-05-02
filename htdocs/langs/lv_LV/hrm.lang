@@ -15,5 +15,6 @@ DictionaryFunction=HRM - Function list
 ListOfEmployees=Darbinieku saraksts
 Employees=Darbinieki
 Employee=Darbinieks
+Employe=Employe
 NewEmployee=Jauns darbinieks
-EmployeeCard=Employee card
+EmployeeCard=Darbinieka kartiņa

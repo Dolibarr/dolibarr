@@ -36,13 +36,6 @@ $langs->load("products");
 $langs->load("companies");
 $langs->load("compta");
 
-$sortfield=GETPOST('sortfield','alpha');
-$sortorder=GETPOST('sortorder','alpha');
-$page=GETPOST('page','int');
-if ($page == -1) { $page = 0 ; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-$offset = $limit * $page ;
-
 $search_name=GETPOST('search_name');
 $search_contract=GETPOST('search_contract');
 $search_ref_supplier=GETPOST('search_ref_supplier','alpha');
@@ -55,8 +48,16 @@ $search_product_category=GETPOST('search_product_category','int');
 
 $optioncss = GETPOST('optioncss','alpha');
 
-if (! $sortfield) $sortfield="c.rowid";
-if (! $sortorder) $sortorder="DESC";
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = GETPOST("page",'int');
+if ($page == -1) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield='c.ref';
+if (! $sortorder) $sortorder='DESC';
 
 // Security check
 $id=GETPOST('id','int');
@@ -152,7 +153,15 @@ if ($result)
     $totalnboflines = $db->num_rows($result);
 }
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit + 1, $offset);
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit + 1, $offset);
 
 $resql=$db->query($sql);
 if ($resql)
@@ -160,8 +169,14 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], '&search_contract='.$search_contract.'&search_name='.$search_name, $sortfield, $sortorder,'',$num,$totalnboflines,'title_commercial.png');
-
+    $param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    $param.='&search_contract='.$search_contract;
+    $param.='&search_name='.$search_name;
+    $param.='&search_ref_supplier='.$search_ref_supplier;
+    $param.='&search_sale=' .$search_sale;
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
+    
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -169,10 +184,12 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    if ($sall)
+    print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num,$totalnboflines,'title_commercial.png', 0, '', '', $limit);
+
+	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
     
     // If the user can view prospects other than his'
@@ -218,13 +235,7 @@ if ($resql)
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
 
-    $param='&search_contract='.$search_contract;
-    $param.='&search_name='.$search_name;
-    $param.='&search_ref_supplier='.$search_ref_supplier;
-    $param.='&search_sale=' .$search_sale;
-    if ($optioncss != '') $param.='&optioncss='.$optioncss;
-
-    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.ref","","$param",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("RefCustomer"), $_SERVER["PHP_SELF"], "c.ref_customer","","$param",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("RefSupplier"), $_SERVER["PHP_SELF"], "c.ref_supplier","","$param",'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("ThirdParty"), $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
@@ -254,11 +265,12 @@ if ($resql)
     print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
     print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
-    //print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" colspan="5"></td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    print "</td></tr>\n";
+    print '<td class="liste_titre" colspan="5" align="right"></td>';
+    print '<td>';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+    print "</tr>\n";
 
     $var=true;
     while ($i < min($num,$limit))
@@ -279,8 +291,14 @@ if ($resql)
         print '<td>';
         if($obj->socid)
         {
-        	$socstatic->fetch($obj->socid);
+        	$result=$socstatic->fetch($obj->socid);
+        	if ($result < 0)
+        	{
+        		dol_print_error($db);
+        		exit;
+        	}
         	$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
+        	if ($listsalesrepresentatives < 0) dol_print_error($db);
         	$nbofsalesrepresentative=count($listsalesrepresentatives);
         	if ($nbofsalesrepresentative > 3)   // We print only number
         	{
@@ -303,7 +321,7 @@ if ($resql)
         			print '</div>';
         		}
         	}
-        	else print $langs->trans("NoSalesRepresentativeAffected");
+        	//else print $langs->trans("NoSalesRepresentativeAffected");
         }
         else
         {

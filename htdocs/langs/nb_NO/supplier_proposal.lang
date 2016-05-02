@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Leverandørtilbud
 supplier_proposalDESC=Håndter prisforespørsler til leverandører
-supplier_proposalMENU_LEFT_TITLE=Leverandørtilbud
-supplier_proposalMENU_LEFT_TITLE_NEW=Ny forespørsel
-supplier_proposalMENU_LEFT_TITLE_LIST=Liste
+SupplierProposalShort=Leverandørtilbud
+SupplierProposalNew=Ny forespørsel
 CommRequest=Prisforespørsel
 CommRequests=Prisforespørsel
 SearchRequest=Finn en forspørsel
 DraftRequests=Forespørsel-kladder
+SupplierProposalsDraft=Leverandørtilbud-maler
 LastModifiedRequests=Siste %s modifiserte prisforespørsler
 RequestsOpened=Åpne prisforespørsler
 SupplierProposalArea=Område for leverandørtilbud
@@ -58,3 +58,5 @@ DefaultModelSupplierProposalCreate=Standardmodell for opprettelse
 DefaultModelSupplierProposalToBill=Standardmal når prisforespørsel lukkes (akkseptert)
 DefaultModelSupplierProposalClosed=Default template when closing a price request (avvist)
 ListOfSupplierProposal=Liste over prisforespørsler hos leverandører
+SupplierProposalsToClose=Supplier proposals to close
+SupplierProposalsToProcess=Supplier proposals to process

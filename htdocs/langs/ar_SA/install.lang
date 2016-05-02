@@ -71,10 +71,10 @@ CreateDatabaseObjects=إنشاء قاعدة بيانات الأجسام
 ReferenceDataLoading=تحميل البيانات المرجعية
 TablesAndPrimaryKeysCreation=الجداول وإنشاء المفاتيح الأساسية
 CreateTableAndPrimaryKey=إنشاء الجدول ق ٪
-CreateOtherKeysForTable=خلق الخارجية مفاتيح الأرقام القياسية والجدول ق ٪
+CreateOtherKeysForTable=إنشاء الخارجية مفاتيح الأرقام القياسية والجدول ق ٪
 OtherKeysCreation=مفاتيح الخارجية وإنشاء الفهارس
-FunctionsCreation=خلق وظائف
-AdminAccountCreation=مدير ادخل خلق
+FunctionsCreation=إنشاء وظائف
+AdminAccountCreation=مدير ادخل إنشاء
 PleaseTypePassword=الرجاء كتابة كلمة المرور ، وكلمات السر فارغة لا يسمح!
 PleaseTypeALogin=اكتب من فضلك ادخل!
 PasswordsMismatch=وتختلف كلمات السر ، يرجى المحاولة مرة أخرى!
@@ -82,7 +82,7 @@ SetupEnd=نهاية الإعداد
 SystemIsInstalled=هذا التثبيت الكامل.
 SystemIsUpgraded=وقد تم تطوير Dolibarr بنجاح.
 YouNeedToPersonalizeSetup=عليك تكوين Dolibarr لتناسب احتياجاتك (ظهور مقالات...). لذلك ، يرجى اتباع الوصلة التالية :
-AdminLoginCreatedSuccessfuly=مدير Dolibarr ادخل <b>'٪ ق'</b> خلق بنجاح.
+AdminLoginCreatedSuccessfuly=مدير Dolibarr ادخل <b>'٪ ق'</b> إنشاء بنجاح.
 GoToDolibarr=الذهاب إلى Dolibarr
 GoToSetupArea=الذهاب إلى Dolibarr (مجال الإعداد)
 MigrationNotFinished=نسخة من قاعدة البيانات الخاصة بك لا يصل تماما حتى الآن ، لذلك سيكون لديك لتشغيل عملية الترقية مرة أخرى.
@@ -129,7 +129,7 @@ KeepDefaultValuesWamp=استخدام معالج الإعداد DoliWamp ، حت�
 KeepDefaultValuesDeb=يمكنك استخدام معالج الإعداد Dolibarr من أوبونتو أو حزمة ديبيان ، لذلك القيم المقترحة هنا هي الأمثل بالفعل. يجب أن تكتمل إلا كلمة السر للمالك قاعدة البيانات لإنشاء. تغيير معلمات أخرى إلا إذا كنت تعرف ما تفعله.
 KeepDefaultValuesMamp=استخدام معالج الإعداد DoliMamp ، حتى القيم المقترحة هنا بالفعل الأمثل. تغييرها إلا إذا كنت تعرف ما تفعله.
 KeepDefaultValuesProxmox=يمكنك استخدام معالج إعداد Dolibarr من الأجهزة الظاهرية Proxmox، بحيث يتم تحسين بالفعل القيم المقترحة هنا. تغييرها إلا إذا كنت تعرف ما تفعله.
-FieldRenamed=تغيير اسم الميدان
+FieldRenamed=تغيير اسم الحقل
 IfLoginDoesNotExistsCheckCreateUser=اذا ادخل لا يوجد حتى الآن ، يجب عليك التحقق من خيار "تكوين المستخدم"
 ErrorConnection=الخادم <b>"٪ ل"</b> اسم قاعدة بيانات <b>"٪ ل"</b> ادخل <b>"٪ ل"</b> أو كلمة سر قاعدة البيانات قد تكون خاطئة أو PHP العميل نسخة قديمة جدا ويمكن مقارنة مع قاعدة البيانات نسخة.
 InstallChoiceRecommanded=وأوصت لتثبيت اختيار النسخة <b>٪ المستندات</b> الخاصة بك من النسخة الحالية <b>ل ٪</b>
@@ -148,8 +148,8 @@ MigrationFinished=الانتهاء من الهجرة
 LastStepDesc=<strong>الخطوة الأخيرة</strong> : تعريف المستخدم وكلمة السر هنا كنت تخطط لاستخدامها للاتصال البرمجيات. لا تفقد هذا كما هو حساب لإدارة جميع الآخرين.
 ActivateModule=تفعيل وحدة %s
 ShowEditTechnicalParameters=انقر هنا لعرض/تحرير المعلمات المتقدمة (وضع الخبراء)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
-ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s)
+WarningUpgrade=تحذير: \n\nهل قمت بأخذ النسخة الاحتياطية لقاعدة البيانات أولا؟ \n\nينصح به بشدة: على سبيل المثال، بسبب بعض الخلل في نظام قاعدة البيانات (على سبيل المثال MySQL النسخة 5.5.40 / 41/42/43)، وبعض البيانات أو الجداول قد تفقد خلال هذه العملية، لذلك الأفضل لك أن يكون هنالك نسخ احتياطي كامل لقاعدة البيانات الخاصة بك قبل البدء الترحيل.\n\n\nانقر فوق موافق لبدء عملية الترحيل...
+ErrorDatabaseVersionForbiddenForMigration=إصدار قاعدة البيانات الخاصة بك هي%s.   يوجد بعض الخلل أدى لفقدان بعض البيانات إذا قمت بإجراء تغيير هيكلي على قاعدة البيانات الخاصة بك، مثل كان مطلوبا خلال عملية ترحيل البيانات. لن يسمح لك بترحيل البيانات حتى تقوم بترقية قاعدة البيانات الخاصة بك إلى إصدار أعلى موثوق  (قائمة الاصدارات الموثوقة : %s)
 
 #########
 # upgrade
@@ -171,7 +171,7 @@ MigrationContractsUpdate=تصحيح بيانات العقد
 MigrationContractsNumberToUpdate=٪ ق العقد (ق) لتحديث
 MigrationContractsLineCreation=عقد إنشاء خط لعقد المرجع ق ٪
 MigrationContractsNothingToUpdate=لا أكثر مما ينبغي فعله
-MigrationContractsFieldDontExist=الميدان fk_facture لا وجود بعد الآن. لا علاقة.
+MigrationContractsFieldDontExist=الحقل fk_facture لا وجود بعد الآن. لا يمكن تنفيذ اي شيء.
 MigrationContractsEmptyDatesUpdate=عقد فارغ تصحيح التاريخ
 MigrationContractsEmptyDatesUpdateSuccess=تصحيح تاريخ العقد emtpy عمله بنجاح
 MigrationContractsEmptyDatesNothingToUpdate=أي عقد حتى الآن لتصحيح فارغة
@@ -180,8 +180,8 @@ MigrationContractsInvalidDatesUpdate=سوء قيمة العقد تصحيح ال�
 MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=تصحيح العقد ٪ ق (تاريخ العقد ق= ٪ ، اعتبارا من تاريخ الخدمة دقيقة= ٪)
 MigrationContractsInvalidDatesNumber=ق ٪ العقود المعدلة
 MigrationContractsInvalidDatesNothingToUpdate=اي موعد مع سوء قيمة تصحيح
-MigrationContractsIncoherentCreationDateUpdate=سوء خلق قيمة العقد تصحيح التاريخ
-MigrationContractsIncoherentCreationDateUpdateSuccess=سوء خلق قيمة العقد حتى الآن تصحيح ذلك بنجاح
+MigrationContractsIncoherentCreationDateUpdate=سوء إنشاء قيمة العقد تصحيح التاريخ
+MigrationContractsIncoherentCreationDateUpdateSuccess=سوء إنشاء قيمة العقد حتى الآن تصحيح ذلك بنجاح
 MigrationContractsIncoherentCreationDateNothingToUpdate=ليس سيئا بالنسبة للقيمة العقد إنشاء لتصحيح التاريخ
 MigrationReopeningContracts=أغلقت العقود المفتوحة خطأ
 MigrationReopenThisContract=اعادة فتح العقد ق ٪
@@ -201,7 +201,7 @@ MigrationProjectTaskTime=تحديث الوقت الذي يقضيه في ثوان
 MigrationActioncommElement=تحديث البيانات على الإجراءات
 MigrationPaymentMode=بيانات الهجرة لطريقة الدفع
 MigrationCategorieAssociation=تحديث الفئات
-MigrationEvents=Migration of events to add event owner into assignement table
-MigrationReloadModule=Reload module %s
+MigrationEvents=الترحيل من الأحداث لإضافة مالك الحدث في جدول الاحالة
+MigrationReloadModule=إعادة تحديث الوحدات %s
 ShowNotAvailableOptions=عرض خيارات غير متوفرة
 HideNotAvailableOptions=إخفاء خيارات غير متوفرة

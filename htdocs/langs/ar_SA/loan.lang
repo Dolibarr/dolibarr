@@ -1,53 +1,53 @@
 # Dolibarr language file - Source file is en_US - loan
-Loan=Loan
-Loans=Loans
-NewLoan=New Loan
-ShowLoan=Show Loan
-PaymentLoan=Loan payment
-ShowLoanPayment=Show Loan Payment
-Capital=Capital
-Insurance=Insurance
-Interest=Interest
-Nbterms=Number of terms
-LoanAccountancyCapitalCode=Accountancy code capital
-LoanAccountancyInsuranceCode=Accountancy code insurance
-LoanAccountancyInterestCode=Accountancy code interest
-LoanPayment=Loan payment
-ConfirmDeleteLoan=Confirm deleting this loan
-LoanDeleted=Loan Deleted Successfully
-ConfirmPayLoan=Confirm classify paid this loan
-LoanPaid=Loan Paid
-ErrorLoanCapital=Loan amount has to be numeric and greater than zero.
-ErrorLoanLength=Loan length has to be numeric and greater than zero.
-ErrorLoanInterest=Annual interest has to be numeric and greater than zero.
+Loan=قرض
+Loans=القروض
+NewLoan=قرض جديد
+ShowLoan=عرض القرض
+PaymentLoan=سداد القرض
+ShowLoanPayment=مشاهدة قرض الدفع
+Capital=عاصمة
+Insurance=تأمين
+Interest=اهتمام
+Nbterms=عدد من المصطلحات
+LoanAccountancyCapitalCode=العاصمة كود المحاسبة
+LoanAccountancyInsuranceCode=المحاسبة التأمين كود
+LoanAccountancyInterestCode=مصلحة كود المحاسبة
+LoanPayment=سداد القرض
+ConfirmDeleteLoan=تأكيد حذف هذا القرض
+LoanDeleted=بنجاح قرض محذوفة
+ConfirmPayLoan=تأكيد صنف دفع هذا القرض
+LoanPaid=القرض المدفوع
+ErrorLoanCapital=مبلغ القرض يجب أن يكون رقمية وأكبر من الصفر.
+ErrorLoanLength=طول قرض يجب أن يكون رقمية وأكبر من الصفر.
+ErrorLoanInterest=الفائدة السنوية يجب أن تكون رقمية وأكبر من الصفر.
 # Calc
-LoanCalc=Bank Loans Calculator
-PurchaseFinanceInfo=Purchase & Financing Information
-SalePriceOfAsset=Sale Price of Asset
-PercentageDown=Percentage Down
-LengthOfMortgage=Length of Mortgage
-AnnualInterestRate=Annual Interest Rate
-ExplainCalculations=Explain Calculations
-ShowMeCalculationsAndAmortization=Show me the calculations and amortization
-MortgagePaymentInformation=Mortgage Payment Information
-DownPayment=Down Payment
-DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
-InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
-MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
-MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
-MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
-MonthlyPaymentDesc=The montly payment is figured out using the following formula
-AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
-AmountFinanced=Amount Financed
-AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
-Totalsforyear=Totals for year
-MonthlyPayment=Monthly Payment
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a home mortgage loan, based on the home's sale price, the term of the loan desired, buyer's down payment percentage, and the loan's interest rate.<br> This calculator factors in PMI (Private Mortgage Insurance) for loans where less than 20% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
-GoToInterest=%s will go towards INTEREST
-GoToPrincipal=%s will go towards PRINCIPAL
-YouWillSpend=You will spend %s on your house in year %s
+LoanCalc=بنك القروض حاسبة
+PurchaseFinanceInfo=شراء وتمويل معلومات
+SalePriceOfAsset=بيع سعر الأصول
+PercentageDown=نسبة داون
+LengthOfMortgage=طول الرهن العقاري
+AnnualInterestRate=معدل الفائدة السنوي
+ExplainCalculations=شرح الحسابات
+ShowMeCalculationsAndAmortization=تدلني على الحسابات والإطفاء
+MortgagePaymentInformation=معلومات الرهن العقاري الدفع
+DownPayment=الدفعة الأولى
+DownPaymentDesc=<b>الدفعة</b> الأولى = سعر المنزل مضروبا في نسبة مقسمة بنسبة 100٪ (5٪ يصبح أسفل 5/100 أو 0.05)
+InterestRateDesc=<b>سعر</b> الفائدة = نسبة الفائدة السنوية مقسومة على 100
+MonthlyFactorDesc=<b>عامل الشهري</b> = ونتيجة الصيغة التالية
+MonthlyInterestRateDesc=<b>معدل الفائدة الشهرية</b> = معدل الفائدة السنوي مقسوما على 12 (لمدة 12 شهرا في السنة)
+MonthTermDesc=<b>على</b> المدى <b>شهر</b> القرض في أشهر = لعدد من السنوات كنت قد اتخذت القرض بها لمرة 12
+MonthlyPaymentDesc=وبرزت دفع أفضل نتيجة من استخدام الصيغة التالية
+AmortizationPaymentDesc=<a href="#amortization">والإطفاء</a> ينهار مقدار الدفع الشهري يذهب نحو مصلحة البنك، وكم يذهب إلى سداد أصل القرض الخاص بك.
+AmountFinanced=مبلغ التمويل
+AmortizationMonthlyPaymentOverYears=الإطفاء للدفع <b>الشهري:٪ الصورة</b> أكثر من٪ الصورة سنوات
+Totalsforyear=مجاميع العام
+MonthlyPayment=الدفع الشهري
+LoanCalcDesc=هذه <b>آلة حاسبة الرهن العقاري</b> يمكن استخدامها لمعرفة دفعات شهرية لقرض الرهن العقاري، على أساس سعر البيع في المنزل، ومدة القرض المطلوب، نسبة دفع المشتري إلى أسفل، وسعر الفائدة للقرض. <br> هذه العوامل آلة حاسبة في مؤشر مديري المشتريات (الرهن العقاري التأمين الخاصة) للحصول على قروض حيث يتم وضع أقل من 20٪ كدفعة مقدمة. الاعتبار أيضا هي الضرائب على الممتلكات المدينة، وتأثيرها على إجمالي أقساط الرهن العقاري الشهرية. <br>
+GoToInterest=٪ S سوف تذهب نحو الفائدة
+GoToPrincipal=٪ S سوف تذهب نحو PRINCIPAL
+YouWillSpend=سوف تنفق %s على منزلك في العام %s
 # Admin
-ConfigLoan=Configuration of the module loan
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accountancy code capital by default
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accountancy code interest by default
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accountancy code insurance by default
+ConfigLoan=التكوين للقرض وحدة
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=العاصمة كود المحاسبة افتراضيا
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=مصلحة كود المحاسبة افتراضيا
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=التأمين كود المحاسبة افتراضيا

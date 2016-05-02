@@ -23,8 +23,8 @@ ChooseProduct/Service=Choisissez le produit ou le service
 StartDate=Date de début
 EndDate=Date de fin
 Launch=Démarrer
-ForceBuyingPriceIfNull=Force buying/cost price to selling price if not defined
-ForceBuyingPriceIfNullDetails=If buying/cost price not defined, and this option "ON", margin will be zero on line (buying/cost price = selling price), otherwise ("OFF"), marge will be equal to suggested default.
+ForceBuyingPriceIfNull=Forcer le prix d'achat au prix de vente si non renseigné
+ForceBuyingPriceIfNullDetails=Si le prix d'achat/revient n'est pas défini, et que cette option est "ON", la marge sera de zéro sur la ligne (le prix d'achat/revient = prix de vente), autrement ("OFF"), la marge sera égale à la valeur suggérée par défaut.
 MARGIN_METHODE_FOR_DISCOUNT=Méthode de gestion des remises globales
 UseDiscountAsProduct=Comme un produit
 UseDiscountAsService=Comme un service
@@ -35,8 +35,9 @@ MargeBrute=Marge brute
 MargeNette=Marge nette
 MargeType1=Marge sur le meilleur prix fournisseur
 MargeType2=Marge sur le Prix Moyen Pondéré (PMP)
-MARGIN_TYPE_DETAILS=Marge brute : Prix de vente HT - Prix d'achat HT<br/>Marge nette : Prix de vente HT - Weighted Average Price
-MarginTypeDesc=Margin on best buying price : Selling price - Best supplier price defined on product card<br/>Margin on Weighted Average Price (WAP) : Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined
+MargeType3=Marge sur le Prix de Revient
+MARGIN_TYPE_DETAILS=Marge brute : Prix de vente - Prix d'achat<br>Marge nette : Prix de vente - Prix de revient
+MarginTypeDesc=* Marge sur le meilleur prix d'achat fournisseur = Prix de vente - Meilleur prix d'achat défini sur la fiche produit<br>* Marge sur le Prix Moyen Pondéré (PMP) = Prix de vente - Prix Moyen Pondéré (PMP) ou meilleur prix d'achat fournisseur sir le PMP n'est pas encore défini.<br>* Marge sur le Prix de Revient = Prix de vente - Prix de revient défini sur la fiche produit ou PMP si le prix de revient n'est pas défini, ou meilleur prix d'achat fournisseur si le PMP n'est pas défini.
 CostPrice=Prix de revient
 BuyingCost=Coût de revient
 UnitCharges=Charge unitaire

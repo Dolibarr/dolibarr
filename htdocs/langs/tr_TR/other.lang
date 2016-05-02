@@ -238,3 +238,8 @@ ToExport=Dışaaktar
 NewExport=Yeni dışaaktarım
 ##### External sites #####
 ExternalSites=Dış siteler
+WebsiteSetup=Websitesi modülü ayarları
+WEBSITE_PAGEURL=Sayfanın URL si
+WEBSITE_TITLE=Unvan
+WEBSITE_DESCRIPTION=Açıklama
+WEBSITE_KEYWORDS=Anahtar kelimeler

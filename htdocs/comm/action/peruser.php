@@ -242,10 +242,10 @@ $max_day_in_month = date("t",dol_mktime(0,0,0,$month,1,$year));
 
 $tmpday = $first_day;
 
-$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
+$nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>\n";
 $nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week;
 $nav.=" </span>\n";
-$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
+$nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $picto='calendarweek';
 
@@ -420,7 +420,7 @@ if ($filtert > 0 || $usergroup > 0)
 $sql.= ' ORDER BY fk_user_action, datep'; //fk_user_action
 //print $sql;
 
-dol_syslog("comm/action/index.php", LOG_DEBUG);
+dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -564,7 +564,7 @@ echo '</form>';
 //print "begin_d=".$begin_d." end_d=".$end_d;
 
 
-echo '<table width="100%" class="nocellnopadd cal_month">';
+echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';
@@ -634,7 +634,7 @@ else
 	$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 	$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 	if ($usergroup > 0)	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
-	$sql.= " WHERE u.entity IN (".getEntity('user',1).")";
+	$sql.= " WHERE u.statut = 1 AND u.entity IN (".getEntity('user',1).")";
 	if ($usergroup > 0)	$sql.= " AND ug.fk_usergroup = ".$usergroup;
 	//if (GETPOST("usertodo","int",3) > 0) $sql.=" AND u.rowid = ".GETPOST("usertodo","int",3);
 	//print $sql;
@@ -703,7 +703,9 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
+	print $username->getNomUrl(-1,'',0,0,24,1,'');
+	print '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week

@@ -107,6 +107,8 @@ class Odf
 
 		copy($filename, $this->tmpfile);
 
+		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the 
+		// <table:table-row tag
 		$this->_moveRowSegments();
 	}
 
@@ -381,7 +383,8 @@ IMG;
 	}
 
 	/**
-	 * Declare a segment in order to use it in a loop
+	 * Declare a segment in order to use it in a loop.
+	 * Extract the segment and store it into $this->segments[]. Return it for next call.
 	 *
 	 * @param string $segment
 	 * @throws OdfException

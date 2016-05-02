@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,19 +32,20 @@ $langs->load("members");
 
 $filter=$_GET["filter"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
-$search_ref=GETPOST('search_ref');
-$search_lastname=GETPOST('search_lastname');
-$search_login=GETPOST('search_login');
-$search_note=GETPOST('search_note');
+$search_ref=GETPOST('search_ref','alpha');
+$search_lastname=GETPOST('search_lastname','alpha');
+$search_login=GETPOST('search_login','alpha');
+$search_note=GETPOST('search_note','alpha');
 $search_account=GETPOST('search_account','int');
-$search_amount=GETPOST('search_amount','int');
+$search_amount=GETPOST('search_amount','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
@@ -101,28 +102,21 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql.= " AND (c.rowid = ".$db->escape($search_ref).")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
-if ($search_lastname)
-{
-	$sql.= " AND (d.firstname LIKE '%".$db->escape($search_lastname)."%' OR d.lastname LIKE '%".$db->escape($search_lastname)."%' OR d.societe LIKE '%".$db->escape($search_lastname)."%')";
-}
-if ($search_login)
-{
-	$sql.= " AND d.login LIKE '%".$db->escape($search_login)."%'";
-}
-if ($search_note)
-{
-	$sql.= " AND c.note LIKE '%".$db->escape($search_note)."%'";
-}
-if ($search_account > 0)
-{
-	$sql.= " AND b.fk_account = ".$search_account;
-}
-if ($search_amount)
-{
-	$sql.=" AND c.cotisation = ".$db->escape($search_amount);
-}
+if ($search_lastname) $sql.= natural_search(array('d.firstname','d.lastname','d.societe'), $search_lastname);
+if ($search_login) $sql.= natural_search('c.cotisation', $search_login);
+if ($search_note)  $sql.= natural_search('c.note', $search_note);
+if ($search_account > 0) $sql.= " AND b.fk_account = ".$search_account;
+if ($search_amount) $sql.= natural_search('c.cotisation', $search_amount, 1);
 $sql.= $db->order($sortfield,$sortorder);
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+    $result = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -133,24 +127,31 @@ if ($result)
     $title=$langs->trans("ListOfSubscriptions");
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
 
-    $param="";
-    $param.="&statut=$statut&date_select=$date_select";
-
+    $param='';
+    if ($statut != '')    $param.="&statut=".$statut;
+    if ($date_select)     $param.="&date_select=".$date_select;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_lastname) $param.="&search_lastname=".$search_lastname;
 	if ($search_login)    $param.="&search_login=".$search_login;
 	if ($search_acount)   $param.="&search_account=".$search_account;
 	if ($search_amount)   $param.="&search_amount=".$search_amount;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+    
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
 
 	if ($sall)
 	{
 		print $langs->trans("Filter")." (".$langs->trans("Ref").", ".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 	}
 
-
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].($param?'?'.$param:'').'">';
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<table class="noborder" width="100%">';
 
     print '<tr class="liste_titre">';
@@ -164,7 +165,8 @@ if ($result)
     }
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"c.cotisation",$param,"",'colspan="2" align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"c.cotisation",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre('');
     print "</tr>\n";
 
 
@@ -196,11 +198,13 @@ if ($result)
 
 	print '<td align="right" class="liste_titre">';
 	print '<input class="flat" type="text" name="search_amount" value="'.$search_amount.'" size="4">';
-	print '</td><td align="right" class="liste_titre" width="60px">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print ' ';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 	print '</td>';
+	
+    // Action column
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';  
 
 	print "</tr>\n";
 
@@ -212,7 +216,7 @@ if ($result)
 
     $var=true;
     $total=0;
-    while ($i < $num && $i < $conf->liste_limit)
+    while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($result);
         $total+=$objp->cotisation;
@@ -268,7 +272,9 @@ if ($result)
         print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
 
         // Price
-        print '<td align="right" colspan="2">'.price($objp->cotisation).'</td>';
+        print '<td align="right">'.price($objp->cotisation).'</td>';
+        
+        print '<td></td>';
 
         print "</tr>";
 
@@ -288,7 +294,8 @@ if ($result)
     }
    	print '<td>&nbsp;</td>';
    	print '<td>&nbsp;</td>';
-   	print '<td align="right" colspan="2">'.price($total)."</td>\n";
+   	print '<td align="right">'.price($total)."</td>\n";
+   	print '<td></td>';
     print "</tr>\n";
 
     print "</table>";

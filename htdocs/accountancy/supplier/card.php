@@ -22,16 +22,15 @@
  *
  */
 /**
- * \file		htdocs/accountancy/supplier/card.php
- * \ingroup		Accountancy
- * \brief		Card supplier ventilation
+ * \file htdocs/accountancy/supplier/card.php
+ * \ingroup Accountancy
+ * \brief Card supplier ventilation
  */
-
 require '../../main.inc.php';
-	
+
 // Class
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 // Langs
 $langs->load("bills");
@@ -46,8 +45,7 @@ if ($user->societe_id > 0)
 	accessforbidden();
 
 if ($action == 'ventil' && $user->rights->accounting->ventilation->dispatch) {
-	if (! GETPOST('cancel', 'alpha'))
-	{
+	if (! GETPOST('cancel', 'alpha')) {
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
@@ -94,7 +92,7 @@ if (! empty($id)) {
 	
 	dol_syslog("/accounting/supplier/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
-
+	
 	if ($result) {
 		$num_lines = $db->num_rows($result);
 		$i = 0;
@@ -106,9 +104,9 @@ if (! empty($id)) {
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
 			
-			print load_fiche_titre($langs->trans('SuppliersVentilation'),'','title_setup');
-
-            dol_fiche_head();
+			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_setup');
+			
+			dol_fiche_head();
 			
 			print '<table class="border" width="100%">';
 			
@@ -127,15 +125,15 @@ if (! empty($id)) {
 			print $formventilation->select_account($objp->fk_code_ventilation, 'codeventil', 1);
 			print '</td></tr>';
 			print '</table>';
-
-            dol_fiche_end();
-
+			
+			dol_fiche_end();
+			
 			print '<div class="center">';
 			print '<input class="button" type="submit" value="' . $langs->trans("Save") . '">';
 			print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 			print '<input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '">';
 			print '</div>';
-
+			
 			print '</form>';
 		} else {
 			print "Error";

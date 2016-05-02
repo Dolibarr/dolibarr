@@ -20,7 +20,7 @@
 CREATE TABLE llx_website_page
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
-	fk_website    integer,
+	fk_website    integer NOT NULL,
 	pageurl       varchar(16) NOT NULL,
 	title         varchar(255),						
 	description   varchar(255),						

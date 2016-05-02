@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - supplier_proposal
+SupplierProposalShort=Leverancier voorstellen
+SupplierProposals=Leverancier voorstellen
+SupplierProposalStatusBilled=Gefactureerd
+SupplierProposalStatusDraftShort=Concept
+SupplierProposalStatusBilledShort=Gefactureerd

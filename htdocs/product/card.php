@@ -8,11 +8,12 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@
  */
 
 require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -42,8 +44,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.php';
+
 if (! empty($conf->propal->enabled))     require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->commande->enabled))   require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -77,11 +80,21 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+$object = new Product($db);
 if ($id > 0 || ! empty($ref))
 {
-	$object = new Product($db);
-	$object->fetch($id, $ref);
+    $result = $object->fetch($id, $ref);
+
+    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+
+    if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+    {
+        if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+        else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+    }
 }
+$modulepart='product';
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
@@ -125,7 +138,33 @@ if (empty($reshook))
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
+	/*
+	 * Build doc
+	 */
+	else if ($action == 'builddoc' && $user->rights->produit->creer)
+	{
 
+		// Save last template used to generate document
+		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+
+		// Define output language
+		$outputlangs = $langs;
+		$newlang='';
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','alpha')) $newlang=GETPOST('lang_id','alpha');
+		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
+		if (! empty($newlang))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		$result=product_create($db, $object, GETPOST('model','alpha'), $outputlangs);
+		if ($result <= 0)
+		{
+			dol_print_error($db,$result);
+			exit;
+		}
+	}
+	
     // Barcode type
     if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
@@ -338,10 +377,14 @@ if (empty($reshook))
                 $object->status                 = GETPOST('statut');
                 $object->status_buy             = GETPOST('statut_buy');
                 $object->status_batch	        = GETPOST('status_batch');
+                // removed from update view so GETPOST always empty
+                /*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
-                $object->duration_value         = $duration_value;
-                $object->duration_unit          = $duration_unit;
+                */
+                $object->duration_value         = GETPOST('duration_value');
+                $object->duration_unit          = GETPOST('duration_unit');
+
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
                 $object->weight_units           = GETPOST('weight_units');
@@ -576,8 +619,10 @@ if (empty($reshook))
             $desc = $object->description;
 
             $tva_tx = get_default_tva($mysoc, $soc, $object->id);
-            $localtax1_tx = get_localtax($tva_tx, 1, $soc);
-            $localtax2_tx = get_localtax($tva_tx, 2, $soc);
+            $tva_npr = get_default_npr($mysoc, $soc, $object->id);
+            if (empty($tva_tx)) $tva_npr=0;
+            $localtax1_tx = get_localtax($tva_tx, 1, $soc, $mysoc, $tva_npr);
+            $localtax2_tx = get_localtax($tva_tx, 2, $soc, $mysoc, $tva_npr);
 
             $pu_ht = $object->price;
             $pu_ttc = $object->price_ttc;
@@ -642,7 +687,7 @@ if (empty($reshook))
                     $object->fk_unit
                 );
                 if ($result > 0) {
-                    header("Location: " . DOL_URL_ROOT . "/comm/propal.php?id=" . $propal->id);
+                    header("Location: " . DOL_URL_ROOT . "/comm/propal/card.php?id=" . $propal->id);
                     return;
                 }
 
@@ -740,6 +785,7 @@ else $title = $langs->trans('ProductServiceCard');
 llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $formproduct = new FormProduct($db);
 if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
@@ -930,15 +976,21 @@ else
             print $formproduct->select_measuring_units("weight_units","weight");
             print '</td></tr>';
             // Length
-            print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
-            print '<input name="size" size="4" value="'.GETPOST('size').'">';
-            print $formproduct->select_measuring_units("size_units","size");
-            print '</td></tr>';
-            // Surface
-            print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
-            print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
-            print $formproduct->select_measuring_units("surface_units","surface");
-            print '</td></tr>';
+            if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+            {
+                print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
+                print '<input name="size" size="4" value="'.GETPOST('size').'">';
+                print $formproduct->select_measuring_units("size_units","size");
+                print '</td></tr>';
+            }
+            if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
+            {
+                // Surface
+                print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
+                print '<input name="surface" size="4" value="'.GETPOST('surface').'">';
+                print $formproduct->select_measuring_units("surface_units","surface");
+                print '</td></tr>';
+            }
             // Volume
             print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
             print '<input name="volume" size="4" value="'.GETPOST('volume').'">';
@@ -1230,16 +1282,22 @@ else
                 print '<input name="weight" size="5" value="'.$object->weight.'"> ';
                 print $formproduct->select_measuring_units("weight_units", "weight", $object->weight_units);
                 print '</td></tr>';
-                // Length
-                print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
-                print '<input name="size" size="5" value="'.$object->length.'"> ';
-                print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
-                print '</td></tr>';
-                // Surface
-                print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
-                print '<input name="surface" size="5" value="'.$object->surface.'"> ';
-                print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
-                print '</td></tr>';
+                if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
+                {
+                    // Length
+                    print '<tr><td>'.$langs->trans("Length").'</td><td colspan="3">';
+                    print '<input name="size" size="5" value="'.$object->length.'"> ';
+                    print $formproduct->select_measuring_units("size_units", "size", $object->length_units);
+                    print '</td></tr>';
+                }
+                if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
+                {
+                    // Surface
+                    print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="3">';
+                    print '<input name="surface" size="5" value="'.$object->surface.'"> ';
+                    print $formproduct->select_measuring_units("surface_units", "surface", $object->surface_units);
+                    print '</td></tr>';
+                }
                 // Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="3">';
                 print '<input name="volume" size="5" value="'.$object->volume.'"> ';
@@ -1419,22 +1477,24 @@ else
 
             // Accountancy sell code
 			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
             print $langs->trans("ProductAccountancySellCode");
-            print '</td>';
-			print '</tr></table>';
             print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_sell);
-            print '</td></tr>';
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->accountancy_code_sell);
+            } else {
+				print $object->accountancy_code_sell;
+			}
+			print '</td></tr>';
 
             // Accountancy buy code
 			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
             print $langs->trans("ProductAccountancyBuyCode");
-            print '</td>';
-			print '</tr></table>';
             print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_buy);
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->accountancy_code_buy);
+            } else {
+				print $object->accountancy_code_buy;
+			}
             print '</td></tr>';
 
             // Status (to sell)
@@ -1520,28 +1580,34 @@ else
                     print '&nbsp;';
                 }
                 print "</td></tr>\n";
-                // Length
-                print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
-                if ($object->length != '')
+                if (empty($conf->global->PRODUCT_DISABLE_LENGTH))
                 {
-                    print $object->length." ".measuring_units_string($object->length_units,"size");
+                    // Length
+                    print '<tr><td>'.$langs->trans("Length").'</td><td colspan="2">';
+                    if ($object->length != '')
+                    {
+                        print $object->length." ".measuring_units_string($object->length_units,"size");
+                    }
+                    else
+                    {
+                        print '&nbsp;';
+                    }
+                    print "</td></tr>\n";
                 }
-                else
+                if (empty($conf->global->PRODUCT_DISABLE_SURFACE))
                 {
-                    print '&nbsp;';
+                    // Surface
+                    print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
+                    if ($object->surface != '')
+                    {
+                        print $object->surface." ".measuring_units_string($object->surface_units,"surface");
+                    }
+                    else
+                    {
+                        print '&nbsp;';
+                    }
+                    print "</td></tr>\n";
                 }
-                print "</td></tr>\n";
-                // Surface
-                print '<tr><td>'.$langs->trans("Surface").'</td><td colspan="2">';
-                if ($object->surface != '')
-                {
-                    print $object->surface." ".measuring_units_string($object->surface_units,"surface");
-                }
-                else
-                {
-                    print '&nbsp;';
-                }
-                print "</td></tr>\n";
                 // Volume
                 print '<tr><td>'.$langs->trans("Volume").'</td><td colspan="2">';
                 if ($object->volume != '')
@@ -1649,7 +1715,6 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->
 {
     print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneProduct'),$langs->trans('ConfirmCloneProduct',$object->ref),'confirm_clone',$formquestionclone,'yes','action-clone',250,600);
 }
-
 
 
 /* ************************************************************************** */
@@ -1822,14 +1887,38 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         print $html;
         print '</table>';
 		
-		dol_fiche_end();
-
         print '<div class="center">';
         print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
         print '</div>';
 
+        dol_fiche_end();
+
         print '</form>';
     }
+}
+
+
+/*
+ * Documents generes
+ */
+if ($action == '' || $action == 'view')
+{
+    print '<div class="fichecenter"><div class="fichehalfleft">';
+    print '<a name="builddoc"></a>'; // ancre
+
+    $filedir=$upload_dir;
+
+    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+    $genallowed=$user->rights->produit->creer;
+    $delallowed=$user->rights->produit->supprimer;
+
+    $var=true;
+    
+    $somethingshown=$formfile->show_documents($modulepart,$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+
+    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+    print '</div></div></div>';
 }
 
 

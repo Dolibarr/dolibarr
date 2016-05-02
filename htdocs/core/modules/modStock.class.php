@@ -189,13 +189,17 @@ class modStock extends DolibarrModules
 		$this->import_icon[$r]=$this->picto;
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('ps'=>MAIN_DB_PREFIX.'product_stock');
-		$this->import_fields_array[$r]=array('ps.fk_product'=>"Product*",'ps.fk_entrepot'=>"Warehouse*",'ps.reel'=>"Stock*",'ps.pmp'=>"PMP"	);
+		$this->import_fields_array[$r]=array('ps.fk_product'=>"Product*",'ps.fk_entrepot'=>"Warehouse*",'ps.reel'=>"Stock*");
 
 		$this->import_convertvalue_array[$r]=array(
 			'ps.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'product'),
 			'ps.fk_entrepot'=>array('rule'=>'fetchidfromref','classfile'=>'/product/stock/class/entrepot.class.php','class'=>'Entrepot','method'=>'fetch','element'=>'label')
+		  );
+		$this->import_examplevalues_array[$r]=array(
+		    'ps.fk_product'=>"PREF123456",'ps.fk_entrepot'=>"ALM001",'ps.reel'=>"10"
 		);
-		$this->import_examplevalues_array[$r]=array('ps.fk_product'=>"PREF123456",'ps.fk_entrepot'=>"ALM001",'ps.reel'=>"10",'ps.pmp'=>"25"
+		$this->import_run_sql_after_array[$r]=array(    // Because we may change data that are denormalized, we must update dernormalized data after.
+		    'UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);'
 		);
 
 	}

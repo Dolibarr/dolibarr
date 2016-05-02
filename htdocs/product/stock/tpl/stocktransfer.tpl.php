@@ -14,16 +14,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * $product must be defined
+ * $object must be defined
  * $backtopage
  */
 ?>
 
 <!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
 <?php
-        if (! is_object($product)) $product=$object;
+        $productref='';
+        if ($object->element == 'product') $productref = $object->ref;
 
         $langs->load("productbatch");
+        
+        if (empty($id)) $id = $object->id;
         
         $pdluoid=GETPOST('pdluoid','int');
 
@@ -44,7 +47,7 @@
 
 		print load_fiche_titre($langs->trans("StockTransfer"),'','title_generic.png');
 
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'" method="post">'."\n";
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="transfert_stock">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
@@ -54,28 +57,37 @@
 		}
 		print '<table class="border" width="100%">';
 
+		// Source warehouse or product
 		print '<tr>';
-		print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td><td width="15%">';
-		if ($pdluoid > 0)
+		if ($object->element == 'product')
 		{
-		    print $formproduct->selectWarehouses($pdluo->warehouseid,'id_entrepot_source','',1,1);
+		    print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
+		    print '<td width="15%">';
+		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
+		    print '</td>';
 		}
-		else
+		if ($object->element == 'stock')
 		{
-            print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot_source')?GETPOST('id_entrepot_source','int'):'ifone')),'id_entrepot_source','',1);
+		    print '<td width="15%" class="fieldrequired">'.$langs->trans("Product").'</td>';
+		    print '<td width="15%">';
+		    print $form->select_produits(GETPOST('product_id'),'product_id',(empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''));
+		    print '</td>';
 		}
-		print '</td>';
+		
 		print '<td width="15%" class="fieldrequired">'.$langs->trans("WarehouseTarget").'</td><td width="15%">';
 		print $formproduct->selectWarehouses(GETPOST('id_entrepot_destination'),'id_entrepot_destination','',1);
 		print '</td>';
 		print '<td width="15%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="15%"><input type="text" class="flat" name="nbpiece" size="10" value="'.dol_escape_htmltag(GETPOST("nbpiece")).'"></td>';
 		print '</tr>';
 
-		// Eat-by date
-		if ((! empty($conf->productbatch->enabled)) && $product->hasbatch())
+		// Serial / Eat-by date
+		if (! empty($conf->productbatch->enabled) && 
+		    (($object->element == 'product' && $object->hasbatch())
+		    || ($object->element == 'stock'))
+		)
 		{
 			print '<tr>';
-			print '<td class="fieldrequired">'.$langs->trans("batch_number").'</td><td colspan="5">';
+			print '<td'.($object->element == 'stock'?'': ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="5">';
 			print '<input type="text" name="batch_number" size="40"'.($pdluoid > 0 ? ' disabled':'').' value="'.(GETPOST('batch_number')?GETPOST('batch_number'):$pdluo->batch).'">';			// If form was opened for a specific pdluoid, field is disabled
 			print '</td>';
 			print '</tr><tr>';
@@ -90,7 +102,7 @@
 		}
 
 		// Label
-		$valformovementlabel=(GETPOST("label")?GETPOST("label"):$langs->trans("MovementTransferStock", $product->ref));
+		$valformovementlabel=(GETPOST("label")?GETPOST("label"):$langs->trans("MovementTransferStock", $productref));
 		print '<tr>';
 		print '<td width="15%">'.$langs->trans("MovementLabel").'</td>';
 		print '<td colspan="3">';

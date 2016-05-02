@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -110,28 +112,13 @@ if ($action == 'del')
     }
 }
 
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
+$bankcateg = new BankCateg($db);
+$options = array();
 
-// Load bank groups
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
-$resql = $db->query($sql);
-$options="";
-if ($resql)
-{
-    $var=True;
-    $num = $db->num_rows($resql);
-    if ($num > 0) $options .= '<option value="0"'.(GETPOST('cat')?'':' selected').'>&nbsp;</option>';
-    $i = 0;
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $options .= '<option value="'.$obj->rowid.'"'.(GETPOST('cat')==$obj->rowid?' selected':'').'>'.$obj->label.'</option>'."\n";
-        $i++;
-    }
-    $db->free($resql);
-    //print $options;
+foreach ($bankcateg->fetchAll() as $bankcategory) {
+	$options[$bankcategory->id] = $bankcategory->label;
 }
-else dol_print_error($db);
-
 
 /*
  * View
@@ -147,6 +134,7 @@ $memberstatic=new Adherent($db);
 $paymentstatic=new Paiement($db);
 $paymentsupplierstatic=new PaiementFourn($db);
 $paymentvatstatic=new TVA($db);
+$remisestatic = new RemiseCheque($db);
 
 $acct = new Account($db);
 $acct->fetch($id);
@@ -155,7 +143,9 @@ $now=dol_now();
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
 $sql.= ", b.fk_bordereau";
+$sql.= ", bc.ref";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
 $sql.= " WHERE rappro=0 AND fk_account=".$acct->id;
 $sql.= " ORDER BY dateo ASC";
 $sql.= " LIMIT 1000";	// Limit to avoid page overload
@@ -232,10 +222,11 @@ if ($resql)
     print '<strong>'.$langs->trans("InputReceiptNumber").'</strong>: ';
     print '<input class="flat" name="num_releve" type="text" value="'.(GETPOST('num_releve')?GETPOST('num_releve'):'').'" size="10">';  // The only default value is value we just entered
     print '<br>';
-    if ($options)
-    {
-        print $langs->trans("EventualyAddCategory").': <select class="flat" name="cat">'.$options.'</select><br>';
-    }
+	if ($options) {
+		print $langs->trans("EventualyAddCategory").': ';
+		print Form::selectarray('cat', $options, GETPOST('cat'), 1);
+		print '<br>';
+	}
     print '<br>'.$langs->trans("ThenCheckLinesAndConciliate").' "'.$langs->trans("Conciliate").'"<br>';
 
     print '<br>';
@@ -292,7 +283,13 @@ if ($resql)
 		// Type + Number
 		$label=($langs->trans("PaymentType".$objp->type)!="PaymentType".$objp->type)?$langs->trans("PaymentType".$objp->type):$objp->type;  // $objp->type is a code
 		if ($label=='SOLD') $label='';
-		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').($objp->fk_bordereau>0?' ('.$objp->fk_bordereau.')':'').'</td>';
+        $link='';
+        if ($objp->fk_bordereau>0) {
+            $remisestatic->id = $objp->fk_bordereau;
+            $remisestatic->ref = $objp->number;
+            $link = ' '.$remisestatic->getNomUrl(1);
+        }
+		print '<td class="nowrap">'.$label.($objp->num_chq?' '.$objp->num_chq:'').$link.'</td>';
 
 		// Description
         print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
@@ -430,14 +427,6 @@ if ($resql)
 
             print '<td align="center" class="nowrap">';
             print '<input class="flat" name="rowid['.$objp->rowid.']" type="checkbox" value="'.$objp->rowid.'" size="1"'.(! empty($_POST['rowid'][$objp->rowid])?' checked':'').'>';
-//             print '<input class="flat" name="num_releve" type="text" value="'.$objp->num_releve.'" size="8">';
-//             print ' &nbsp; ';
-//             print "<input class=\"button\" type=\"submit\" value=\"".$langs->trans("Conciliate")."\">";
-//             if ($options)
-//             {
-//                 print "<br><select class=\"flat\" name=\"cat\">$options";
-//                 print "</select>";
-//             }
             print "</td>";
         }
         else

@@ -148,7 +148,7 @@ MigrationFinished=Migrazione completata
 LastStepDesc=<strong>Ultimo passo:</strong> Indicare qui login e password che si prevede di utilizzare per la connessione al software. Non dimenticare questi dati perché è l'unico account in grado di amminsitrare tutti gli altri.
 ActivateModule=Attiva modulo %s
 ShowEditTechnicalParameters=Clicca qui per mostrare/modificare i parametri avanzati (modalità esperti)
-WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
+WarningUpgrade=Attenzione:\nHai eseguito il backup del database prima?\nQuesto è fortemente consigliato: per esempio, a causa di qualche bug nel sistema del database (per es. versione mysql 5.5.40/41/42/43), qualche dato o tabella potrebbe essere persa durante il processo, quindi è fortemente raccomandato di avere un copia completa del database prima di procedere con la migrazione.\n\nClicca OK per iniziare il processo di migrazione...
 ErrorDatabaseVersionForbiddenForMigration=La tua versione del database è %s. Essa soffre di un bug critico se si cambia la struttura del database, come è richiesto dal processo di migrazione. Per questa ragione non sarà consentita la migrazione fino a quando non verrà aggiornato il database a una versione stabile più recente (elenco delle versioni probleematiche: %s)
 
 #########
@@ -202,6 +202,6 @@ MigrationActioncommElement=Aggiornare i dati sulle azioni
 MigrationPaymentMode=Migrazione dei dati delle modalità di pagamento
 MigrationCategorieAssociation=Migrazione delle categorie
 MigrationEvents=Migrazione degli eventi per aggiungere i proprietari nella tabella degli utilizzatori assegnati
-MigrationReloadModule=Reload module %s
+MigrationReloadModule=Ricarica modulo %s
 ShowNotAvailableOptions=Mostra opzioni non disponibili
 HideNotAvailableOptions=Nascondi opzioni non disponibili

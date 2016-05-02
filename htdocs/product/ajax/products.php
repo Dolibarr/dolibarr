@@ -48,6 +48,7 @@ $price_level = GETPOST('price_level', 'int');
 $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $price_by_qty_rowid = GETPOST('pbq', 'int');
+$finished = GETPOST('finished', 'int');
 
 /*
  * View
@@ -180,9 +181,9 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 
 	$form = new Form($db);
 	if (empty($mode) || $mode == 1) {
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, "", $price_level, $searchkey, $status, 2, $outjson, $socid);
+		$arrayresult = $form->select_produits_list("", $htmlname, $type, "", $price_level, $searchkey, $status, $finished, $outjson, $socid);
 	} elseif ($mode == 2) {
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, $socid);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson);
 	}
 
 	$db->close();

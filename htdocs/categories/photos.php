@@ -79,7 +79,7 @@ if ($action == 'confirm_delete' && $_GET["file"] && $confirm == 'yes' && $user->
 
 if ($action == 'addthumb' && $_GET["file"])
 {
-    $object->add_thumb($upload_dir."/".$_GET["file"]);
+    $object->addThumbs($upload_dir."/".$_GET["file"]);
 }
 
 

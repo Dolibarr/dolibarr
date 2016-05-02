@@ -371,12 +371,13 @@ class DiscountAbsolute
     /**
      *  Return amount (with tax) of all credit notes and deposits invoices used by invoice
      *
-     *	@param		Facture		$invoice	Object invoice
-     *	@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+     *	@param		Facture		$invoice		Object invoice
+	 *	@param		int			$multicurrency	Return multicurrency_amount instead of amount
+     *	@return		int							<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumCreditNotesUsed($invoice)
+    function getSumCreditNotesUsed($invoice, $multicurrency=0)
     {
-        $sql = 'SELECT sum(rc.amount_ttc) as amount';
+        $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
         $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
         $sql.= ' AND f.type = 2';
@@ -386,7 +387,8 @@ class DiscountAbsolute
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-            return $obj->amount;
+            if ($multicurrency) return $obj->multicurrency_amount;
+			else return $obj->amount;
         }
         else
         {
@@ -397,12 +399,13 @@ class DiscountAbsolute
     /**
      *  Return amount (with tax) of all deposits invoices used by invoice
      *
-     *	@param		Facture		$invoice	Object invoice
-     *	@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
+     *	@param		Facture		$invoice		Object invoice
+	 *  @param 		int 		$multicurrency 	Return multicurrency_amount instead of amount
+     *	@return		int							<0 if KO, Sum of credit notes and deposits amount otherwise
      */
-    function getSumDepositsUsed($invoice)
+    function getSumDepositsUsed($invoice, $multicurrency=0)
     {
-        $sql = 'SELECT sum(rc.amount_ttc) as amount';
+        $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
         $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
         $sql.= ' AND f.type = 3';
@@ -412,7 +415,8 @@ class DiscountAbsolute
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-            return $obj->amount;
+            if ($multicurrency) return $obj->multicurrency_amount;
+			else return $obj->amount;
         }
         else
         {

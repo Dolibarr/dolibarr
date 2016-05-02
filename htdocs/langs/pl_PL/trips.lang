@@ -31,7 +31,7 @@ TripNDF=Informacje raport z wydatków
 PDFStandardExpenseReports=Standardowy szablon do generowania dokumentu PDF do raportu wydatków
 ExpenseReportLine=Linia raport z wydatków
 TF_OTHER=Inny
-TF_TRANSPORTATION=Transport
+TF_TRIP=Transportation
 TF_LUNCH=Obiad
 TF_METRO=Metro
 TF_TRAIN=Pociąg
@@ -99,4 +99,5 @@ ConfirmSaveTrip=Czy na pewno chcesz, aby potwierdzić ten raport wydatków?
 NoTripsToExportCSV=Nie raport z wydatków na eksport za ten okres.
 ExpenseReportPayment=Płatność Raport wydatek
 
+ExpenseReportsToApprove=Expense reports to approve
 ExpenseReportsToPay=Raporty wydatków płacić

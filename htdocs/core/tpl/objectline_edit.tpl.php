@@ -121,6 +121,10 @@ $coldisplay=-1; // We remove first td
 	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
 
+	if (!empty($conf->multicurrency->enabled)) {
+		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat" size="8" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
+	}
+
 	if ($inputalsopricewithtax)
 	{
 		$coldisplay++;
@@ -225,6 +229,24 @@ $coldisplay=-1; // We remove first td
 	echo $form->select_date($line->date_start,'date_start',$hourmin,$hourmin,$line->date_start?0:1,"updateligne",1,0,1);
 	echo ' '.$langs->trans('to').' ';
 	echo $form->select_date($line->date_end,'date_end',$hourmin,$hourmin,$line->date_end?0:1,"updateligne",1,0,1);
+	print '<script type="text/javascript">';
+	if (!$line->date_start) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+			print 'jQuery("#date_starthour").val("'.$conf->global->MAIN_DEFAULT_DATE_START_HOUR.'");';
+		}
+		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+			print 'jQuery("#date_startmin").val("'.$conf->global->MAIN_DEFAULT_DATE_START_MIN.'");';
+		}
+	}
+	if (!$line->date_end) {
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+			print 'jQuery("#date_endhour").val("'.$conf->global->MAIN_DEFAULT_DATE_END_HOUR.'");';
+		}
+		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+			print 'jQuery("#date_endmin").val("'.$conf->global->MAIN_DEFAULT_DATE_END_MIN.'");';
+		}
+	}
+	print '</script>'
 	?>
 	</td>
 </tr>
@@ -233,12 +255,15 @@ $coldisplay=-1; // We remove first td
 
 <script type="text/javascript">
 
-<?php
-if (! empty($conf->margin->enabled))
+jQuery(document).ready(function()
 {
-?>
-	jQuery(document).ready(function()
-	{
+	jQuery("#price_ht").keyup(function() { jQuery("#price_ttc").val(''); });
+	jQuery("#price_ttc").keyup(function() { jQuery("#price_ht").val(''); });
+
+    <?php
+    if (! empty($conf->margin->enabled))
+    {
+    ?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
@@ -249,6 +274,14 @@ if (! empty($conf->margin->enabled))
 			jQuery("input[name='np_markRate']:first").val('');
 		});
 		jQuery("#price_ht").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#qty").keyup(function() {
+			jQuery("input[name='np_marginRate']:first").val('');
+			jQuery("input[name='np_markRate']:first").val('');
+		});
+		jQuery("#remise_percent").keyup(function() {
 			jQuery("input[name='np_marginRate']:first").val('');
 			jQuery("input[name='np_markRate']:first").val('');
 		});
@@ -293,91 +326,10 @@ if (! empty($conf->margin->enabled))
 			$('#buying_price').show();
 		}
 		}, 'json');
-
-		/* Add rules to reset price_ht from margin info */
-		<?php
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-		{
-		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_marginRate");
-			});
-			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
-			$("input[name='np_marginRate']:first").blur(function(e) {
-				return checkEditLine(e, "np_marginRate");
-			});*/
-		<?php
-		}
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
-		{
-		?>
-			$('#savelinebutton').click(function (e) {
-				return checkEditLine(e, "np_markRate");
-			});
-			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
-			$("input[name='np_markRate']:first").blur(function(e) {
-				return checkEditLine(e, "np_markRate");
-			});*/
-		<?php
-		}
-	?>
-	});
-
-
-	/* If margin rate field empty, do nothing. */
-	/* Force content of price_ht to 0 or if a discount is set, recalculate it from margin rate */
-	function checkEditLine(e, npRate)
-	{
-		var buying_price = $("input[name='buying_price']:first");
-		var remise = $("input[name='remise_percent']:first");
-
-		var rate = $("input[name='"+npRate+"']:first");
-		if (rate.val() == '' || (typeof rate.val()) == 'undefined' ) return true;
-
-		if (! $.isNumeric(rate.val().replace(' ','').replace(',','.')))
-		{
-			alert('<?php echo $langs->transnoentitiesnoconv("rateMustBeNumeric"); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
-		if (npRate == "np_markRate" && rate.val() > 100)
-		{
-			alert('<?php echo $langs->transnoentitiesnoconv("markRateShouldBeLesserThan100"); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
-
-		var price = 0;
-		remisejs=price2numjs(remise.val());
-
-		if (remisejs != 100)
-		{
-			bpjs=price2numjs(buying_price.val());
-			ratejs=price2numjs(rate.val());
-			/* console.log(npRate+" - "+bpjs+" - "+ratejs); */
-
-			if (npRate == "np_marginRate")
-				price = ((bpjs * (1 + (ratejs / 100))) / (1 - remisejs / 100));
-			else if (npRate == "np_markRate")
-			{
-				if (ratejs != 100)	// If markRate is 100, it means buying price is 0, so it is not possible to retreive price from it and markRate. We keep it unchange
-				{
-					price = ((bpjs / (1 - (ratejs / 100))) / (1 - remisejs / 100));
-				}
-				else price=$("input[name='price_ht']:first").val();
-			}
-		}
-		/* console.log("new price ht = "+price); */
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
-
-		return true;
-	}
-
-<?php
-}
-?>
+    <?php
+    }
+    ?>
+});
 
 </script>
 <!-- END PHP TEMPLATE objectline_edit.tpl.php -->

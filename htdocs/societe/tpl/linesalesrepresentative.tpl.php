@@ -29,6 +29,7 @@
                 $userstatic->id=$val['id'];
                 $userstatic->lastname=$val['lastname'];
                 $userstatic->firstname=$val['firstname'];
+                $userstatic->statut=$val['statut'];
                 print $userstatic->getNomUrl(1);
                 $i++;
                 if ($i < $nbofsalesrepresentative) print ', ';

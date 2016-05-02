@@ -15,5 +15,6 @@ DictionaryFunction=HRM - Function list
 ListOfEmployees=Daftar Karyawan
 Employees=karyawan
 Employee=karyawan
+Employe=Employe
 NewEmployee=Karyawan Baru
 EmployeeCard=Kartu Karyawan

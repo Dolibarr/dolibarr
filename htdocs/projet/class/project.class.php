@@ -955,7 +955,7 @@ class Project extends CommonObject
         $this->budget_amount = 10000;
 
         /*
-        $nbp = rand(1, 9);
+        $nbp = mt_rand(1, 9);
         $xnbp = 0;
         while ($xnbp < $nbp)
         {
@@ -1169,14 +1169,21 @@ class Project extends CommonObject
 		//Generate next ref
 		$defaultref='';
     	$obj = empty($conf->global->PROJECT_ADDON)?'mod_project_simple':$conf->global->PROJECT_ADDON;
-    	if (! empty($conf->global->PROJECT_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.".php"))
+    	// Search template files
+    	$file=''; $classname=''; $filefound=0;
+    	$dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    	foreach($dirmodels as $reldir)
     	{
-
-        	require_once DOL_DOCUMENT_ROOT ."/core/modules/project/".$conf->global->PROJECT_ADDON.'.php';
-        	$modProject = new $obj;
-        	$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty)?$clone_project->thirdparty->id:0,$clone_project);
+    	    $file=dol_buildpath($reldir."core/modules/project/".$obj.'.php',0);
+    	    if (file_exists($file))
+    	    {
+    	        $filefound=1;
+    	        dol_include_once($reldir."core/modules/project/".$obj.'.php');
+            	$modProject = new $obj;
+            	$defaultref = $modProject->getNextValue(is_object($clone_project->thirdparty)?$clone_project->thirdparty:null, $clone_project);
+            	break;
+    	    }
     	}
-
     	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
 		$clone_project->ref=$defaultref;
@@ -1663,6 +1670,44 @@ class Project extends CommonObject
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
+	
+	
+	/**
+	 *      Charge indicateurs this->nb pour le tableau de bord
+	 *
+	 *      @return     int         <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+	    global $conf;
+	
+	    $this->nb=array();
+	
+	    $sql = "SELECT count(u.rowid) as nb";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as u";
+	    $sql.= " WHERE";
+	    //$sql.= " WHERE u.fk_statut > 0";
+	    //$sql.= " AND employee != 0";
+	    $sql.= " u.entity IN (".getEntity('projet', 1).")";
+	
+	    $resql=$this->db->query($sql);
+	    if ($resql)
+	    {
+	        while ($obj=$this->db->fetch_object($resql))
+	        {
+	            $this->nb["projects"]=$obj->nb;
+	        }
+	        $this->db->free($resql);
+	        return 1;
+	    }
+	    else
+	    {
+	        dol_print_error($this->db);
+	        $this->error=$this->db->error();
+	        return -1;
+	    }
+	}
+	
 	
 	/**
 	 * Is the action delayed?

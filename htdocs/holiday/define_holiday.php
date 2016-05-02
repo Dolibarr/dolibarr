@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011      Dimitri Mouillard <dmouillard@teclib.com>
- * Copyright (C) 2013      Marcos García <marcosgdf@gmail.com>
+/* Copyright (C) 2007-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
+ * Copyright (C) 2013		Marcos García		<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 if ($user->societe_id > 0) accessforbidden();
 
 // If the user does not have perm to read the page
-if(!$user->rights->holiday->define_holiday) accessforbidden();
+if(!$user->rights->holiday->read) accessforbidden();
 
 $action=GETPOST('action');
 
@@ -132,7 +133,7 @@ elseif($action == 'add_event')
         $new_holiday = $nb_holiday + $add_holiday;
 
         // add event to existing types of vacation
-        foreach ($typeleaves as $key => $leave) 
+        foreach ($typeleaves as $key => $leave)
         {
         	$vacationTypeID = $leave['rowid'];
 
@@ -154,13 +155,13 @@ elseif($action == 'add_event')
 $form = new Form($db);
 $userstatic=new User($db);
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader('', $langs->trans('CPTitreMenu'));
 
 print load_fiche_titre($langs->trans('MenuConfCP'), '', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
 $lastUpdate = $holiday->getConfCP('lastUpdate');
-if ($lastUpdate) 
+if ($lastUpdate)
 {
     $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
@@ -180,6 +181,10 @@ if ($result < 0)
 }
 
 $listUsers = $holiday->fetchUsers(false,true);
+if (is_numeric($listUsers) && $listUsers < 0)
+{
+    setEventMessages($holiday->error, $holiday->errors, 'errors');    
+}
 
 $var=true;
 $i = 0;
@@ -213,9 +218,19 @@ if (count($typeleaves) == 0)
 }
 else
 {
+    $canedit=0;
+    if (! empty($user->rights->holiday->define_holiday)) $canedit=1;
+    
+    // Get array of ids of all childs
+    $userchilds=array();
+    if (empty($user->rights->holiday->read_all))
+    {
+        $userchilds=$user->getAllChildIds();
+    }
+    
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     print '<input type="hidden" name="action" value="update" />';
-    
+
     print '<table class="noborder" width="100%;">';
     print "<tr class=\"liste_titre\">";
     print '<td width="55%">'.$langs->trans('Employee').'</td>';
@@ -230,23 +245,34 @@ else
     {
         print '<td>'.$langs->trans("NoLeaveWithCounterDefined").'</td>';
     }
-    print '<td width="20%" style="text-align:center">'.$langs->trans('Note').'</td>';
+    print '<td width="20%" style="text-align:center">';
+    if ($canedit) print $langs->trans('Note');
+    print '</td>';
     print '<td></td>';
     print '</tr>';
-    
-    
+
     foreach($listUsers as $users)
     {
         $var=!$var;
-    
+
+        // If user has not permission to edit/read all, we must see only subordinates
+        if (empty($user->rights->holiday->read_all))  
+        {
+            if (($users['rowid'] != $user->id) && (! in_array($users['rowid'], $userchilds))) continue;     // This user is not into hierarchy of current user, we hide it.
+        }
+        
         print '<tr '.$bc[$var].' style="height: 20px;">';
         print '<td>';
         $userstatic->id=$users['rowid'];
-        $userstatic->lastname=$users['name'];
+        $userstatic->lastname=$users['lastname'];
         $userstatic->firstname=$users['firstname'];
-        print $userstatic->getNomUrl(1);
+        $userstatic->gender=$users['gender'];
+        $userstatic->photo=$users['photo'];
+        $userstatic->statut=$users['status'];
+        $userstatic->employee=$users['employee'];
+        print $userstatic->getNomUrl(-1);
         print '</td>';
-    
+
         if (count($typeleaves))
         {
         	foreach($typeleaves as $key => $val)
@@ -254,24 +280,32 @@ else
         		$nbtoshow='';
         		if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') $nbtoshow=price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
             	print '<td style="text-align:center">';
-            	print '<input type="text" value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+            	if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" size="5" style="text-align: center;"/>';
+            	else print $nbtoshow;
         	    //print ' '.$langs->trans('days');
             	print '</td>'."\n";
         	}
         }
         else
         {
-            print '<td></td>';   
+            print '<td></td>';
         }
-        print '<td style="text-align:center"><input type="text" value="" name="note_holiday['.$users['rowid'].']" size="30"/></td>';
-        print '<td><input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/></td>'."\n";
+        print '<td style="text-align:center">';
+        if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
+        print '</td>';
+        print '<td>';
+        if (! empty($user->rights->holiday->define_holiday))
+        {
+            print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Update")).'" class="button"/>';
+        }
+        print '</td>'."\n";
         print '</tr>';
-    
+
         $i++;
     }
-    
+
     print '</table>';
-    
+
     print '</form>';
 }
 

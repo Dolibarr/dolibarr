@@ -46,7 +46,6 @@ BoxLastExpiredServices=%s plus anciens contacts avec des services actifs expiré
 BoxTitleLastActionsToDo=%s dernières actions à faire
 BoxTitleLastContracts=%s derniers contrats
 BoxTitleLastModifiedDonations=%s derniers dons modifiés
-BoxTitleLastModifiedExpenses=%s dernières dépenses modifiées
 BoxGlobalActivity=Activité globale (factures, propales, commandes)
 FailedToRefreshDataInfoNotUpToDate=Impossible de rafraîchir le flux RSS. Dernière date de mise à jour: %s
 LastRefreshDate=Dernière date de mise à jour

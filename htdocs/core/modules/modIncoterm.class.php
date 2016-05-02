@@ -51,7 +51,7 @@ class modIncoterm extends DolibarrModules
 		$this->rights_class = 'incoterm';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
-		$this->family = "products";
+		$this->family = "srm";
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Incoterm management";
 		$this->version = 'dolibarr';
@@ -91,7 +91,7 @@ class modIncoterm extends DolibarrModules
             'tablib'=>array("Incoterms"),													// Label of tables
             'tabsql'=>array('SELECT rowid, code, libelle, active FROM '.MAIN_DB_PREFIX.'c_incoterms'),	// Request to select fields
             'tabsqlsort'=>array("rowid ASC"),															// Sort order
-            'tabfield'=>array("code,libelle"),															// List of fields (result of select to show dictionnary)
+            'tabfield'=>array("code,libelle"),															// List of fields (result of select to show dictionary)
             'tabfieldvalue'=>array("code,libelle"),														// List of fields (list of fields to edit a record)
             'tabfieldinsert'=>array("code,libelle"),													// List of fields (list of fields for insert)
             'tabrowid'=>array("rowid"),																	// Name of columns with primary key (try to always name it 'rowid')

@@ -153,6 +153,7 @@ if ($action == 'delete' && $user->rights->adherent->configurer)
 	exit;
 }
 
+
 /*
  * View
  */
@@ -200,7 +201,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
 			print '<td align="center">'.yn($objp->cotisation).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			if ($user->rights->adherent->configurer)
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			else
+				print '<td align="right">&nbsp;</td>';
 			print "</tr>";
 			$i++;
 		}
@@ -210,22 +214,6 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 	{
 		dol_print_error($db);
 	}
-
-	//dol_fiche_end();
-
-	/*
-	 * Hotbar
-	 */
-	print '<div class="tabsAction">';
-
-	// New type
-	if ($user->rights->adherent->configurer)
-	{
-		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=create">'.$langs->trans("NewType").'</a></div>';
-	}
-
-	print "</div>";
-
 }
 
 
@@ -249,7 +237,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $form->selectyesno("cotisation",1,1);
@@ -260,7 +248,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-	print '<textarea name="comment" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
+	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -658,7 +646,7 @@ if ($rowid > 0)
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-		print '<textarea name="comment" wrap="soft" cols="90" rows="3">'.$object->note.'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

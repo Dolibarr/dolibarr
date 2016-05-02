@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
+/* Copyright (C) 2005-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
+ * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,11 +132,11 @@ class Export
     									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
     									if (! empty($perm[2]))
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
+    										$bool=$user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
     									}
     									else
     									{
-    										$bool=$user->rights->$perm[0]->$perm[1];
+    										$bool=$user->rights->{$perm[0]}->{$perm[1]};
     									}
     									if ($perm[0]=='user' && $user->admin) $bool=true;
     									if (! $bool) break;
@@ -224,7 +225,7 @@ class Export
 			else $i++;
 
 			if (strpos($key, ' as ')===false) {
-				$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);
+				$newfield=$key.' as '.str_replace(array('.', '-','(',')'),'_',$key);
 			} else {
 				$newfield=$key;
 			}
@@ -586,14 +587,14 @@ class Export
 							if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='';
 							}
 							// Operation ZEROIFNEG
 							if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
 								if ($objp->$alias < 0) $objp->$alias='0';
 							}
 						}

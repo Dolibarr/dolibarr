@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Tila testi / hiekkalaatikko
 PAYPAL_API_USER=API käyttäjätunnus
 PAYPAL_API_PASSWORD=API salasana
 PAYPAL_API_SIGNATURE=API allekirjoitus
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Voit maksaa &quot;kiinteä&quot; (luottokortti + Paypal) tai &quot;PayPal&quot; vain
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=PayPal only

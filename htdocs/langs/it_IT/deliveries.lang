@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Vuoi davvero cancellare la ricevuta di consegna <b>
 DeliveryMethod=Metodo di consegna
 TrackingNumber=Numero di tracking
 DeliveryNotValidated=Consegna non convalidata
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nome e firma:
 ToAndDate=A___________________________________ il ____/_____/__________

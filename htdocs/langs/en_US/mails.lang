@@ -47,6 +47,7 @@ MailingSuccessfullyValidated=EMailing successfully validated
 MailUnsubcribe=Unsubscribe
 Unsuscribe=Unsubscribe
 MailingStatusNotContact=Don't contact anymore
+MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=Email recipient is empty
 WarningNoEMailsAdded=No new Email to add to recipient's list.
 ConfirmValidMailing=Are you sure you want to validate this emailing ?

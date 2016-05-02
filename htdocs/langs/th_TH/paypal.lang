@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=การทดสอบ Mode / ทราย
 PAYPAL_API_USER=ชื่อผู้ใช้ API
 PAYPAL_API_PASSWORD=รหัสผ่าน API
 PAYPAL_API_SIGNATURE=ลายเซ็น API
+PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=การชำระเงินที่เสนอซื้อ "หนึ่ง" (บัตรเครดิต Paypal +) หรือ "Paypal" เท่านั้น
 PaypalModeIntegral=สำคัญ
 PaypalModeOnlyPaypal=PayPal เท่านั้น

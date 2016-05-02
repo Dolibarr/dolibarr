@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015      Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,7 @@ $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
 $search_label = GETPOST('search_label','alpha');
@@ -46,7 +47,6 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortfield) $sortfield="s.datep";
 if (! $sortorder) $sortorder="DESC";
 $optioncss = GETPOST('optioncss','alpha');
@@ -107,6 +107,8 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND s.fk_typepayment=".$typeid;
 }
+$sql.= $db->order($sortfield,$sortorder);
+
 //$sql.= " GROUP BY u.rowid, u.lastname, u.firstname, s.rowid, s.fk_user, s.amount, s.label, s.datev, s.fk_typepayment, s.num_payment, pst.code";
 $totalnboflines=0;
 $result=$db->query($sql);
@@ -114,7 +116,6 @@ if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
@@ -126,15 +127,21 @@ if ($result)
 	$var=true;
 
 	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
-	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy.png');
-
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-    print '<table class="noborder" width="100%">';
+	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+	
+	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
@@ -167,9 +174,12 @@ if ($result)
 	print '</td>';
 	// Amount
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print "</td></tr>\n";
+
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+	print "</tr>\n";
 
     while ($i < min($num,$limit))
     {

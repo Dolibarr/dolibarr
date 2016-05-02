@@ -115,6 +115,7 @@ MigrationShippingDelivery2=Atualizar armazenamento de espediçao 2
 LastStepDesc=<strong>Ultimo passo</strong>: Defina aqui o usuario e a senha que voce planeja usar para conectar-se ao software. Nao perca estas credenciais, pois sao da conta que administra todas as outras contas.
 ActivateModule=Ativar modulo %s
 ShowEditTechnicalParameters=Clique aqui para mostrar/editar parametros avançados (modo avançado)
+WarningUpgrade=Aviso:\nExecutar um backup de seu banco de dados em primeiro lugar?\nIsto é altamente recomendado: por exemplo, devido a alguns erros em sistemas de bases de dados (por exemplo mysql versão 5.5.40 / 41/42/43), alguns dados ou tabelas pode ser perdido durante este processo, por isso é altamente recomendado ter um dump completo de seu banco de dados antes de iniciar a migração.\n\nClique em OK para iniciar o processo de migração ...
 ErrorDatabaseVersionForbiddenForMigration=Sua versão de banco de dados é %s. Ele tem uma perda de dados tomada de bug crítico se você fizer mudanças na estrutura de seu banco de dados, como é exigido pelo processo de migração. Por sua razão, a migração não será permitida até que você atualize seu banco de dados para uma versão fixa superior (lista de versão grampeado conhecido: %s)
 MigrationFixData=Correção para dados não normalizados
 MigrationProposal=Migração de dados de propostas comerciais

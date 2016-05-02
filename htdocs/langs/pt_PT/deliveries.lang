@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Tem certeza de que deseja eliminar <b>%s</b> recibo
 DeliveryMethod=Método de Envio
 TrackingNumber=Nº de tracking
 DeliveryNotValidated=Entrega não validada
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Nome e assinatura:
 ToAndDate=Em___________________________________ a ____/_____/__________

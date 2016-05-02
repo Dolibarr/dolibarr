@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2003       Brian Fraval            <brian@fraval.org>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2016  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Patrick Raguin          <patrick.raguin@auguria.net>
  * Copyright (C) 2010-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
@@ -33,7 +33,7 @@
  *	\brief      File for third party class
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
  *	Class to manage third parties objects (customers, suppliers, prospects...)
@@ -354,6 +354,10 @@ class Societe extends CommonObject
 	var $location_incoterms;
 	var $libelle_incoterms;  //Used into tooltip
 
+	// Multicurrency
+	var $fk_multicurrency;
+	var $multicurrency_code;
+	
     /**
      * To contains a clone of this when we need to save old properties of object
      *  @var Societe
@@ -402,7 +406,14 @@ class Societe extends CommonObject
         if (empty($this->client))      $this->client=0;
         if (empty($this->fournisseur)) $this->fournisseur=0;
         $this->import_key = trim($this->import_key);
-
+		
+		if (!empty($this->multicurrency_code)) $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+		if (empty($this->fk_multicurrency))
+		{
+			$this->multicurrency_code = '';
+			$this->fk_multicurrency = 0;
+		}
+		
         dol_syslog(get_class($this)."::create ".$this->name);
 
         // Check parameters
@@ -427,7 +438,7 @@ class Societe extends CommonObject
 
         if ($result >= 0)
         {
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key)";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
             $sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$conf->entity.", '".$this->db->idate($now)."'";
             $sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
             $sql.= ", ".(! empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'":"null");
@@ -437,7 +448,9 @@ class Societe extends CommonObject
             $sql.= ", 0";
 			$sql.= ", ".(int) $this->fk_incoterms;
 			$sql.= ", '".$this->db->escape($this->location_incoterms)."'";
-            $sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null").")";
+            $sql.= ", ".(! empty($this->import_key) ? "'".$this->db->escape($this->import_key)."'":"null");
+            $sql.= ", ".(int) $this->fk_multicurrency;
+            $sql.= ", '".$this->db->escape($this->multicurrency_code)."')";
 
             dol_syslog(get_class($this)."::create", LOG_DEBUG);
             $result=$this->db->query($sql);
@@ -665,10 +678,18 @@ class Societe extends CommonObject
         $this->idprof5		= (! empty($this->idprof5)?trim($this->idprof5):'');
         $this->idprof6		= (! empty($this->idprof6)?trim($this->idprof6):'');
         $this->prefix_comm	= trim($this->prefix_comm);
+        $this->outstanding_limit = price2num($this->outstanding_limit);
 
         $this->tva_assuj	= trim($this->tva_assuj);
         $this->tva_intra	= dol_sanitizeFileName($this->tva_intra,'');
         if (empty($this->status)) $this->status = 0;
+
+		if (!empty($this->multicurrency_code)) $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
+		if (empty($this->fk_multicurrency))
+		{
+			$this->multicurrency_code = '';
+			$this->fk_multicurrency = 0;
+		}
 
         // Local taxes
         $this->localtax1_assuj=trim($this->localtax1_assuj);
@@ -811,16 +832,27 @@ class Societe extends CommonObject
             $sql .= ",prefix_comm = ".(! empty($this->prefix_comm)?"'".$this->db->escape($this->prefix_comm)."'":"null");
 
             $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
-
+            if (isset($this->stcomm_id))
+            {
+                $sql .= ",fk_stcomm='".$this->stcomm_id."'";
+            }
             $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
             $sql .= ",fk_forme_juridique = ".(! empty($this->forme_juridique_code)?"'".$this->db->escape($this->forme_juridique_code)."'":"null");
 
+            $sql .= ",mode_reglement = ".(! empty($this->mode_reglement_id)?"'".$this->db->escape($this->mode_reglement_id)."'":"null");
+            $sql .= ",cond_reglement = ".(! empty($this->cond_reglement_id)?"'".$this->db->escape($this->cond_reglement_id)."'":"null");
+            $sql .= ",mode_reglement_supplier = ".(! empty($this->mode_reglement_supplier_id)?"'".$this->db->escape($this->mode_reglement_supplier_id)."'":"null");
+            $sql .= ",cond_reglement_supplier = ".(! empty($this->cond_reglement_supplier_id)?"'".$this->db->escape($this->cond_reglement_supplier_id)."'":"null");
+            $sql .= ",fk_shipping_method = ".(! empty($this->shipping_method_id)?"'".$this->db->escape($this->shipping_method_id)."'":"null");
+            
             $sql .= ",client = " . (! empty($this->client)?$this->client:0);
             $sql .= ",fournisseur = " . (! empty($this->fournisseur)?$this->fournisseur:0);
             $sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->db->escape($this->barcode)."'":"null");
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
+            $sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
+            $sql .= ",fk_prospectlevel='".$this->fk_prospectlevel."'";
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");
             $sql .= ",webservices_key = ".(! empty($this->webservices_key)?"'".$this->db->escape($this->webservices_key)."'":"null");
@@ -841,6 +873,8 @@ class Societe extends CommonObject
                 $sql .= ", code_compta_fournisseur = ".(! empty($this->code_compta_fournisseur)?"'".$this->db->escape($this->code_compta_fournisseur)."'":"null");
             }
             $sql .= ", fk_user_modif = ".(! empty($user->id)?"'".$user->id."'":"null");
+			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
+			$sql .= ', multicurrency_code = \''.$this->db->escape($this->multicurrency_code)."'";
             $sql .= " WHERE rowid = '" . $id ."'";
 
 
@@ -991,7 +1025,9 @@ class Societe extends CommonObject
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
         $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
+        $sql .= ', s.fk_shipping_method';
         $sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
+		$sql .= ', s.fk_multicurrency, s.multicurrency_code';
         $sql .= ', fj.libelle as forme_juridique';
         $sql .= ', e.libelle as effectif';
         $sql .= ', c.code as country_code, c.label as country';
@@ -1116,6 +1152,7 @@ class Societe extends CommonObject
                 $this->cond_reglement_id 	= $obj->cond_reglement;
                 $this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
                 $this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
+                $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
 
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
@@ -1141,6 +1178,10 @@ class Societe extends CommonObject
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
+
+				// multicurrency
+				$this->fk_multicurrency = $obj->fk_multicurrency;
+				$this->multicurrency_code = $obj->multicurrency_code;
 
                 $result = 1;
 
@@ -1630,10 +1671,19 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT u.rowid, u.lastname, u.firstname, u.email";
+        $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.email, u.statut, u.entity";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
-        $sql.= " AND entity in (0, ".$conf->entity.")";
+        if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
+        {
+        	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
+        	$sql.= " WHERE ((ug.fk_user = sc.fk_user";
+        	$sql.= " AND ug.entity = ".$conf->entity.")";
+        	$sql.= " OR u.admin = 1)";
+        }
+        else
+        	$sql.= " WHERE entity in (0, ".$conf->entity.")";
+
+        $sql.= " AND u.rowid = sc.fk_user AND sc.fk_soc =".$this->id;
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -1647,6 +1697,8 @@ class Societe extends CommonObject
                 $reparray[$i]['lastname']=$obj->lastname;
                 $reparray[$i]['firstname']=$obj->firstname;
                 $reparray[$i]['email']=$obj->email;
+                $reparray[$i]['statut']=$obj->statut;
+                $reparray[$i]['entity']=$obj->entity;
                 $i++;
             }
             return $reparray;
@@ -3026,7 +3078,7 @@ class Societe extends CommonObject
     }
 
     /**
-     *  Check if we must use localtax feature or not according to country (country of $mysocin most cases).
+     *  Check if we must use localtax feature or not according to country (country of $mysoc in most cases).
      *
      *	@param		int		$localTaxNum	To get info for only localtax1 or localtax2
      *  @return		boolean					true or false
@@ -3050,6 +3102,27 @@ class Societe extends CommonObject
     	else return false;
     }
 
+    /**
+     *  Check if we must use NPR Vat (french stupid rule) or not according to country (country of $mysoc in most cases).
+     *
+     *  @return		boolean					true or false
+     */
+    function useNPR()
+    {
+        $sql  = "SELECT t.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+        $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$this->country_code."'";
+        $sql .= " AND t.active = 1 AND t.recuperableonly = 1";
+
+        dol_syslog("useNPR", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            return ($this->db->num_rows($resql) > 0);
+        }
+        else return false;
+    }
+    
     /**
      *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *
@@ -3111,30 +3184,11 @@ class Societe extends CommonObject
 	 *
 	 *  @param  User	$user		Utilisateur qui definie la remise
 	 *	@return	int					<0 if KO, >0 if OK
+     * @deprecated Use update function instead
 	 */
 	function set_prospect_level(User $user)
 	{
-		if ($this->id)
-		{
-			$this->db->begin();
-
-			// Positionne remise courante
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " fk_prospectlevel='".$this->fk_prospectlevel."'";
-			$sql.= ",fk_user_modif='".$user->id."'";
-			$sql.= " WHERE rowid = ".$this->id;
-			dol_syslog(get_class($this)."::set_prospect_level", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if (! $resql)
-			{
-				$this->db->rollback();
-				$this->error=$this->db->error();
-				return -1;
-			}
-
-			$this->db->commit();
-			return 1;
-		}
+        return $this->update($this->id, $user);
 	}
 
 	/**
@@ -3207,31 +3261,11 @@ class Societe extends CommonObject
 	 *
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
+     * @deprecated Use update function instead
 	 */
 	function set_commnucation_level($user)
 	{
-		if ($this->id)
-		{
-			$this->db->begin();
-
-			// Positionne remise courante
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " fk_stcomm='".$this->stcomm_id."'";
-			$sql.= ",fk_user_modif='".$user->id."'";
-			$sql.= " WHERE rowid = ".$this->id;
-
-			dol_syslog(get_class($this)."::set_commnucation_level", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if (! $resql)
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
-
-			$this->db->commit();
-			return 1;
-		}
+		return $this->update($this->id, $user);
 	}
 
 	/**
@@ -3239,35 +3273,11 @@ class Societe extends CommonObject
 	 *
 	 *  @param  User	$user		User making change
 	 *	@return	int					<0 if KO, >0 if OK
+     * @deprecated Use update function instead
 	 */
 	function set_OutstandingBill(User $user)
 	{
-		if ($this->id)
-		{
-			$this->db->begin();
-
-			// Clean parameters
-			$outstanding = price2num($this->outstanding_limit);
-
-			// Set outstanding amount
-			$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql.= " outstanding_limit= '".($outstanding!=''?$outstanding:'null')."'";
-			$sql.= " WHERE rowid = ".$this->id;
-
-			dol_syslog(get_class($this)."::set_outstanding", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				$this->db->commit();
-				return 1;
-			}
-			else
-			{
-				$this->db->rollback();
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
-		}
+        return $this->update($this->id, $user);
 	}
 
     /**

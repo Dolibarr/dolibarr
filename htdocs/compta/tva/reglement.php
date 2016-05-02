@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
@@ -42,14 +42,15 @@ $search_label = GETPOST('search_label','alpha');
 $search_amount = GETPOST('search_amount','alpha');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
+
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortfield) $sortfield="t.datev";
 if (! $sortorder) $sortorder="DESC";
 
@@ -90,7 +91,7 @@ $form = new Form($db);
 $formother=new FormOther($db);
 $tva_static = new Tva($db);
 
-$sql = "SELECT t.rowid, t.amount, t.label, t.datev as dm, t.fk_typepayment as type, t.num_payment, pst.code as payment_code";
+$sql = "SELECT t.rowid, t.amount, t.label, t.datev as dv, t.datep as dp, t.fk_typepayment as type, t.num_payment, pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
 $sql.= " WHERE t.entity = ".$conf->entity;
@@ -115,13 +116,13 @@ if ($filtre) {
 if ($typeid) {
     $sql .= " AND t.fk_typepayment=".$typeid;
 }
+$sql.= $db->order($sortfield,$sortorder);
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
 {
     $totalnboflines = $db->num_rows($result);
 }
-$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
@@ -133,17 +134,25 @@ if ($result)
 	$var=true;
 
 	$param='';
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
-	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines);
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
-
-    print '<table class="noborder" width="100%">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+	
+	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
+	
+	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"dm","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateValue"),$_SERVER["PHP_SELF"],"dv","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
@@ -152,6 +161,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre" colspan="1" align="center">';
 	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 	$syear = $year;
@@ -162,9 +172,12 @@ if ($result)
 	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
 	print '</td>';
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print "</td></tr>\n";
+
+    print '<td class="liste_titre" align="right">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
+    print '</td>';
+	print "</tr>\n";
 
 	while ($i < min($num,$limit))
     {
@@ -186,8 +199,9 @@ if ($result)
 		$tva_static->ref=$obj->rowid;
 		print "<td>".$tva_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
-        print '<td align="center">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
-		// Type
+        print '<td align="center">'.dol_print_date($db->jdate($obj->dv),'day')."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'day')."</td>\n";
+        // Type
 		print $type;
 		// Amount
         $total = $total + $obj->amount;

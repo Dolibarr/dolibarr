@@ -23,6 +23,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 $langs->load("companies");
 $langs->load("products");
@@ -107,6 +108,8 @@ if ($action == 'delete')
  * View
  */
 
+$formadmin = new FormAdmin($db);
+
 $wikihelp='EN:Setup|FR:Paramétrage|ES:Configuración';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
@@ -118,7 +121,7 @@ print "<br>\n";
 print $langs->trans("CurrentUserLanguage").': <strong>'.$langs->defaultlang.'</strong><br>';
 print '<br>';
 
-print img_warning().' '.$langs->trans("SomeTranslationAreUncomplete").'<br>';
+print img_info().' '.$langs->trans("SomeTranslationAreUncomplete").'<br>';
 $urlwikitranslatordoc='http://wiki.dolibarr.org/index.php/Translator_documentation';
 print $langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a><br>';
 
@@ -134,7 +137,7 @@ print '<input type="hidden" id="action" name="action" value="">';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Language").'</td>';
+print '<td>'.$langs->trans("Language").' (en_US, es_MX, ...)</td>';
 print '<td>'.$langs->trans("Key").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
@@ -146,7 +149,10 @@ print "</tr>\n";
 $var=false;
 print "\n";
 
-print '<tr '.$bc[$var].'><td><input type="text" class="flat" size="24" name="langcode" value="'.GETPOST('langcode').'"></td>'."\n";
+print '<tr '.$bc[$var].'><td>';
+print $formadmin->select_language(GETPOST('langcode'),'langcode',0,null,1,0,0,'',1);
+//print '<input type="text" class="flat" size="24" name="langcode" value="'.GETPOST('langcode').'">';
+print '</td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="30" name="transkey" value="">';
 print '</td><td>';

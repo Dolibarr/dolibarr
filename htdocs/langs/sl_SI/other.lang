@@ -238,3 +238,8 @@ ToExport=Za izvoz
 NewExport=Nov izvoz
 ##### External sites #####
 ExternalSites=Zunanje strani
+WebsiteSetup=Setup of module website
+WEBSITE_PAGEURL=URL of page
+WEBSITE_TITLE=Title
+WEBSITE_DESCRIPTION=Description
+WEBSITE_KEYWORDS=Keywords

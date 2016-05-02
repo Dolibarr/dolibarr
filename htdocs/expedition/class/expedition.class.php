@@ -8,7 +8,8 @@
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014-2015  Francis Appels          <francis.appels@yahoo.com>
- * Copyright (C) 2015				Claudio Aschieri				<c.aschieri@19.coop>
+ * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -663,7 +664,7 @@ class Expedition extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			// TODO possibilite d'expedier a partir d'une propale ou autre origine
+			// TODO in future, shipment lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
@@ -737,7 +738,7 @@ class Expedition extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
+            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);     // TODO Add option in workflow module on this trigger to close order if sum of shipment = product to ship of order
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -866,17 +867,26 @@ class Expedition extends CommonObject
 
 			if (! ($entrepot_id > 0) && empty($conf->global->STOCK_WAREHOUSE_NOT_REQUIRED_FOR_SHIPMENTS))
 			{
+			    $langs->load("errors");
 				$this->error=$langs->trans("ErrorWarehouseRequiredIntoShipmentLine");
 				return -1;
 			}
 
-			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)	// FIXME Check is done for stock of product, it must be done for stock of product into warehouse if $entrepot_id defined
+			if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
 			{
+			    // Check must be done for stock of product into warehouse if $entrepot_id defined
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
-				$product_type=$product->type;
 
-				if ($product_type == 0 && $product->stock_reel < $qty)
+				if ($entrepot_id > 0) {
+					$product->load_stock();
+					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
+				}
+				else
+					$product_stock = $product->stock_reel;
+
+				$product_type=$product->type;
+				if ($product_type == 0 && $product_stock < $qty)
 				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
 					$this->db->rollback();
@@ -901,8 +911,8 @@ class Expedition extends CommonObject
 	 */
 	function addline_batch($dbatch,$array_options=0)
 	{
-		global $conf;
-		
+		global $conf,$langs;
+
 		$num = count($this->lines);
 		if ($dbatch['qty']>0)
 		{
@@ -928,7 +938,17 @@ class Expedition extends CommonObject
 
 					if ($conf->global->STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT)
 					{
-						// TODO
+						require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
+						$prod_batch = new Productbatch($this->db);
+						$prod_batch->fetch($value['id_batch']);
+
+						if ($prod_batch->qty < $linebatch->dluo_qty)
+						{
+							$this->errors[] = $langs->trans('ErrorStockIsNotEnough');
+							dol_syslog(get_class($this)."::addline_batch error=Product ".$prod_batch->batch.": ".$this->errorsToString(), LOG_ERR);
+							$this->db->rollback();
+							return -1;
+						}
 					}
 					
 					//var_dump($linebatch);
@@ -945,6 +965,7 @@ class Expedition extends CommonObject
 			
 			//var_dump($line);
 			$this->lines[$num] = $line;
+			return 1;
 		}
 	}
 
@@ -980,7 +1001,7 @@ class Expedition extends CommonObject
 		if (isset($this->trueWeight)) $this->weight=trim($this->trueWeight);
 		if (isset($this->note_private)) $this->note=trim($this->note_private);
 		if (isset($this->note_public)) $this->note=trim($this->note_public);
-		if (isset($this->model_pdf)) $this->model_pdf=trim($this->model_pdf);
+		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
 
 
 
@@ -1012,7 +1033,7 @@ class Expedition extends CommonObject
 		$sql.= " weight=".(($this->trueWeight != '')?$this->trueWeight:"null").",";
 		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " model_pdf=".(isset($this->model_pdf)?"'".$this->db->escape($this->model_pdf)."'":"null").",";
+		$sql.= " model_pdf=".(isset($this->modelpdf)?"'".$this->db->escape($this->modelpdf)."'":"null").",";
 		$sql.= " entity=".$conf->entity;
 
         $sql.= " WHERE rowid=".$this->id;
@@ -1181,6 +1202,22 @@ class Expedition extends CommonObject
 						if ($result < 0) { $error++; }
 						// End call triggers
 
+						if (! empty($this->origin) && $this->origin_id > 0)
+						{
+						    $this->fetch_origin();
+						    $origin=$this->origin;
+						    if ($this->$origin->statut == Commande::STATUS_SHIPMENTONPROCESS)     // If order source of shipment is "shipment in progress"
+						    {
+                                // Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
+						        $this->$origin->loadExpeditions();
+						        //var_dump($this->$origin->expeditions);exit;
+						        if (count($this->$origin->expeditions) <= 0)
+						        {
+                                    $this->$origin->setStatut(Commande::STATUS_VALIDATED);
+						        }
+						    }
+						}
+						
 						if (! $error)
 						{
 							$this->db->commit();
@@ -1719,6 +1756,7 @@ class Expedition extends CommonObject
 
     }
 
+    
 	/**
 	 * Forge an set tracking url
 	 *
@@ -1755,11 +1793,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as invoiced
+	 *	Classify the shipping as closed
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
-	function set_billed()
+	function setClosed()
 	{
 		global $conf;
 
@@ -1769,7 +1807,32 @@ class Expedition extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			//TODO: Option to set order billed if 100% of order is shipped
+			// TODO: Add option/checkbox to set order billed if 100% of order is shipped
+			$this->statut=2;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function set_billed()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1';    // TODO Update only billed
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
 			$this->statut=2;
 			$this->billed=1;
 			return 1;
@@ -1781,6 +1844,32 @@ class Expedition extends CommonObject
 		}
 	}
 
+	/**
+	 *	Classify the shipping as validated/opened
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function reOpen()
+	{
+		global $conf;
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->statut=1;
+			$this->billed=0;
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+	
 	/**
 	 *  Create a document onto disk according to template module.
 	 *

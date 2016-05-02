@@ -8,6 +8,7 @@ PAYPAL_API_SANDBOX=Modo de pruebas (sandbox)
 PAYPAL_API_USER=Nombre usuario API
 PAYPAL_API_PASSWORD=Contraseña usuario API
 PAYPAL_API_SIGNATURE=Firma API
+PAYPAL_SSLVERSION=Versión Curl SSL
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proponer pago integral (Tarjeta+Paypal) o sólo Paypal
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Sólo PayPal

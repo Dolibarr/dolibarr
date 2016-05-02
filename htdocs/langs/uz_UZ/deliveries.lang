@@ -17,6 +17,9 @@ DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b
 DeliveryMethod=Delivery method
 TrackingNumber=Tracking number
 DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=Canceled
+StatusDeliveryDraft=Draft
+StatusDeliveryValidated=Received
 # merou PDF model
 NameAndSignature=Name and Signature :
 ToAndDate=To___________________________________ on ____/_____/__________

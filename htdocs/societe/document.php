@@ -74,7 +74,7 @@ if ($id > 0 || ! empty($ref))
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -91,7 +91,7 @@ llxHeader('',$title,$help_url);
 if ($object->id)
 {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
@@ -117,7 +117,7 @@ if ($object->id)
 	print '<table class="border centpercent">';
 
 	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+	print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNames').'</td><td colspan="3">';
 	print $object->name_alias;
 	print "</td></tr>";
 
@@ -145,10 +145,10 @@ if ($object->id)
 		print '</td></tr>';
 	}
 
-	// Nbre fichiers
+	// Number of files
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
-	//Total taille
+	// Total size
 	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 
 	print '</table>';

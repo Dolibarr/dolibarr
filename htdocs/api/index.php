@@ -141,6 +141,8 @@ foreach ($modulesdir as $dir)
 
 // TODO If not found, redirect to explorer
 
+
+// Call API (we suppose we found it)
 $api->r->handle();
 
 
