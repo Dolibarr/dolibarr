@@ -6,8 +6,8 @@ WARNING:
 
 Do not try to make any Dolibarr upgrade if you are running Mysql version 5.5.40.
 Mysql version 5.5.40 has a very critical bug making your data beeing definitely lost.
-You may also experience troubles with Mysql 5.5.41/42/43 with error "Lost connection"
-during migration.
+You may also experience troubles with Mysql 5.5.41/42/43 with error "Lost connection" during
+migration.
 Upgrading to any other version or any other database system is abolutely required BEFORE trying
 make a Dolibarr upgrade.
 
@@ -25,13 +25,14 @@ Dolibarr 4.0 should be compatible with PHP 7 but more feedbacks are still expect
 Following changes may create regression for some external modules, but were necessary to make
 Dolibarr better:
 - Function log() of class CommandeFournisseur has been removed. Using it is no more required.
+- Class Resource was renamed into DolResource to avoid conflict with a reserved PHP word.
+- Method commonobject->add_thumb() has been renamed into commonobject->addThumbs().
 - Method select_type_comptes_financiers() has been renamed into selectTypeOfBankAccount() 
 - Property ->client that was deprecated 6 years ago, is replaced in all core code with ->thirdparty.
 - File '/core/tpl/document_actions_pre_headers.tpl.php' were renamed into '/core/actions_linkedfiles.inc.php'.
 So if you included it into your module, change your code like this to be compatible with all version:
   $res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
   if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-
 
 
 ***** ChangeLog for 3.9.1 compared to 3.9.* *****

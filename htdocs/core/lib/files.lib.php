@@ -2213,8 +2213,6 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping for import module
 	else if ($modulepart == 'import')
 	{
-		// Aucun test necessaire car on force le rep de download sur
-		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->import->dir_temp.'/'.$original_file;
 	}
@@ -2222,13 +2220,19 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 	// Wrapping pour l'editeur wysiwyg
 	else if ($modulepart == 'editor')
 	{
-		// Aucun test necessaire car on force le rep de download sur
-		// le rep export qui est propre a l'utilisateur
 		$accessallowed=1;
 		$original_file=$conf->fckeditor->dir_output.'/'.$original_file;
 	}
-
-	// Wrapping pour les backups
+	
+	// Wrapping for miscellaneous medias files
+	elseif ($modulepart == 'medias')
+	{
+	    $accessallowed=1;
+	    global $dolibarr_main_data_root;
+	    $original_file=$dolibarr_main_data_root.'/medias/'.$original_file;
+	}
+	
+	// Wrapping for backups
 	else if ($modulepart == 'systemtools')
 	{
 		if ($fuser->admin)

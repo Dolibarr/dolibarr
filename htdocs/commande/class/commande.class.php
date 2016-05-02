@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2516,7 +2517,7 @@ class Commande extends CommonOrder
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null)
     {
-        global $conf, $mysoc;
+        global $conf, $mysoc, $langs;
 
         dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2584,6 +2585,26 @@ class Commande extends CommonOrder
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new OrderLine($this->db);
             $line->fetch($rowid);
+
+            if (!empty($line->fk_product))
+            {
+                $product=new Product($this->db);
+                $result=$product->fetch($line->fk_product);
+                $product_type=$product->type;
+
+                if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty)
+                {
+                    $this->error=$langs->trans('ErrorStockIsNotEnough');
+                    dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
+                    $this->db->rollback();
+                    unset($_POST['productid']);
+                    unset($_POST['tva_tx']);
+                    unset($_POST['price_ht']);
+                    unset($_POST['qty']);
+                    unset($_POST['buying_price']);
+                    return self::STOCK_NOT_ENOUGH_FOR_ORDER;
+                }
+            }
 
             $staticline = clone $line;
 

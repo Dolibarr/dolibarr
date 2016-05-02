@@ -3,7 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2004-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2014-2015	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load("banks");
 $langs->load("bills");
@@ -675,7 +675,13 @@ else
 		print '<table class="border" width="100%">';
 		// Accountancy code
 		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
-		print '<td colspan="3">'.length_accountg($account->account_number).'</td></tr>';
+		print '<td colspan="3">';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($account->account_number).'</td></tr>';
+		} else {
+			print $account->account_number;
+		}
+		print '</td></tr>';
 
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))

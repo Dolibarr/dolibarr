@@ -220,10 +220,9 @@ class MouvementStock extends CommonObject
 			$oldqty=$product->stock_reel;
 			$oldpmp=$product->pmp;
 			$oldqtywarehouse=0;
-			//$oldpmpwarehouse=0;
 
 			// Test if there is already a record for couple (warehouse / product)
-			$num = 0;
+			$alreadyarecord = 0;
 			if (! $error)
 			{
 				$sql = "SELECT rowid, reel FROM ".MAIN_DB_PREFIX."product_stock";
@@ -236,9 +235,8 @@ class MouvementStock extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					if ($obj)
 					{
-						$num = 1;
+						$alreadyarecord = 1;
 						$oldqtywarehouse = $obj->reel;
-						//$oldpmpwarehouse = $obj->pmp;
 						$fk_product_stock = $obj->rowid;
 					}
 					$this->db->free($resql);
@@ -283,7 +281,7 @@ class MouvementStock extends CommonObject
 			// Update stock quantity
 			if (! $error)
 			{
-				if ($num > 0)
+				if ($alreadyarecord > 0)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + ".$qty;
 					$sql.= " WHERE fk_entrepot = ".$entrepot_id." AND fk_product = ".$fk_product;
@@ -320,11 +318,11 @@ class MouvementStock extends CommonObject
 			// Update PMP and denormalized value of stock qty at product level
 			if (! $error)
 			{
-				//$sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
-				//$sql.= " WHERE rowid = ".$fk_product;
+				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
+				// $sql.= " WHERE rowid = ".$fk_product;
     			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET p.pmp = ".$newpmp.", ";
-				$sql.= " stock=(SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid)";
+				$sql.= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock ps WHERE ps.fk_product = p.rowid)";
 				$sql.= " WHERE rowid = ".$fk_product;
 				print $sql;
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
@@ -335,6 +333,12 @@ class MouvementStock extends CommonObject
 					$error = -4;
 				}
 			}
+			
+		    // If stock is now 0, we can remove entry into llx_stock_product, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
+		    // having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
+		    $sql="DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
+		    $resql=$this->db->query($sql);
+		    // We do not test error, it can fails if there is child in batch details
 		}
 
 		// Add movement for sub products (recursive call)
@@ -526,7 +530,7 @@ class MouvementStock extends CommonObject
 	 * Create or update batch record (update table llx_product_batch)
 	 *
 	 * @param	array|int	$dluo	Could be either 
-	 *                              - int if id of product_batch
+	 *                              - int if row id of product_batch table
 	 *                              - or complete array('fk_product_stock'=>, 'eatby'=>, 'sellby'=> , 'batchnumber'=>)
 	 * @param	int			$qty	Quantity of product with batch number. May be a negative amount.
 	 * @return 	int   				<0 if KO, else return productbatch id

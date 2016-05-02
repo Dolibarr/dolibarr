@@ -71,7 +71,8 @@ function jsUnEscape($source)
 
 
 /**
- * Return list of modules directories
+ * Return list of modules directories. We detect directories that contains a subdirectory /core/modules
+ * We discard directory modules that contains 'disabled' into their name.
  *
  * @param	string	$subdir		Sub directory (Example: '/mailings')
  * @return	array				Array of directories that can contains module descriptors
@@ -95,6 +96,8 @@ function dolGetModulesDirs($subdir='')
         {
             while (($file = readdir($handle))!==false)
             {
+                if (preg_match('/disabled/',$file)) continue;   // We discard module if it contains disabled into name.
+                
                 if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
                 {
                     if (is_dir($dirroot . '/' . $file . '/core/modules'.$subdir.'/'))
@@ -1962,6 +1965,11 @@ function getElementProperties($element_type)
         $classpath = 'fichinter/class';
         $module='ficheinter';
         $subelement='fichinter';
+    }
+    if ($element_type == 'dolresource') {
+        $classpath = 'resource/class';
+        $module='resource';
+        $subelement='dolresource';
     }
     $classfile = strtolower($subelement);
     $classname = ucfirst($subelement);

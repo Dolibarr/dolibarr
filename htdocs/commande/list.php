@@ -673,6 +673,12 @@ if ($resql)
         $var=!$var;
         print '<tr '.$bc[$var].'>';
 
+        $notshippable=0;
+        $warning = 0;
+        $text_info='';
+        $text_warning='';
+        $nbprod=0;
+                
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap">';
@@ -694,17 +700,11 @@ if ($resql)
             print '</td>';
     		
             // Show shippable Icon (create subloop, so may be slow)
-            if ($conf->stock->enabled) 
+            if ($conf->stock->enabled)
             {
-                $notshippable=0;
-                $warning = 0;
-                $text_info='';
-                $text_warning='';
-                $nbprod=0;
-                    
-                $langs->load("stocks");
-                if (($obj->fk_statut > 0) && ($obj->fk_statut < 3))
-                {
+            	$langs->load("stocks");
+	            if (($obj->fk_statut > 0) && ($obj->fk_statut < 3))
+    	        {
                     $numlines = count($generic_commande->lines); // Loop on each line of order
                     for ($lig=0; $lig < $numlines; $lig++) 
                     {

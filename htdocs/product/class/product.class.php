@@ -1418,7 +1418,7 @@ class Product extends CommonObject
 
 		$id=$this->id;
 
-		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr," newdefaultvatcode=".$newdefaultvatcode);
+		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr." newdefaultvatcode=".$newdefaultvatcode);
 
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
@@ -3721,7 +3721,7 @@ class Product extends CommonObject
     			}
             }
 
-			if ($size==1 || $size='small')
+			if ($size==1 || $size=='small')
 			{
 				if ($nbbyrow > 0)
 				{

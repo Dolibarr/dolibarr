@@ -52,7 +52,7 @@ class DolEditor
      *      @param 	string	$content		        Content of WYSIWIG field
      *      @param	int		$width					Width in pixel of edit area (auto by default)
      *      @param 	int		$height			        Height in pixel of edit area (200px by default)
-     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', ')
+     *      @param 	string	$toolbarname	        Name of bar set to use ('Full', 'dolibarr_notes[_encoded]', 'dolibarr_details[_encoded]'=the less featured, 'dolibarr_mailings[_encoded]', 'dolibarr_readonly')
      *      @param  string	$toolbarlocation       	Where bar is stored :
      *                       		             	'In' each window has its own toolbar
      *                              		      	'Out:name' share toolbar into the div called 'name'
@@ -148,7 +148,10 @@ class DolEditor
     {
     	global $conf,$langs;
 
-        $found=0;
+    	$fullpage=False;
+    	$disallowAnyContent=empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT); // Only predefined list of html tags are allowed
+    	
+    	$found=0;
 		$out='';
 
         if ($this->tool == 'fckeditor')
@@ -186,7 +189,8 @@ class DolEditor
             						customConfig : ckeditorConfig,
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
-            						allowedContent :'.(empty($conf->global->FCKEDITOR_ALLOW_ANY_CONTENT)?'false':'true').',
+            						allowedContent :'.($disallowAnyContent?'false':'true').',
+            						fullPage : '.($fullpage?'true':'false').', 
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
             						width: '.($this->width ? '\''.$this->width.'\'' : '\'\'').',
