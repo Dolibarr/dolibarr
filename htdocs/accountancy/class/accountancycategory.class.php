@@ -19,7 +19,7 @@
 /**
  *	\file       htdocs/accountancy/class/accountancycategory.class.php
  *	\ingroup    Advanced accountancy
- *	\brief      File of class to manage categories of an accounting account_category
+ *	\brief      File of class to manage categories of an accounting category_type
  */
 
 // Class
@@ -243,7 +243,7 @@ class AccountancyCategory
         }
         else
         {
-            $sql = "SELECT c.rowid, c.code, c.label, c.account_category ";
+            $sql = "SELECT c.rowid, c.code, c.label, c.category_type ";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql.= " WHERE c.active = 1 AND c.fk_country = co.rowid";
             $sql.= " AND co.code = '".$mysoc->country_code."'";
@@ -343,7 +343,7 @@ class AccountancyCategory
         {
             $sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c";
-            $sql.= " WHERE c.active = 1 AND c.account_category = 1 ";
+            $sql.= " WHERE c.active = 1 AND c.category_type = 1 ";
             $sql.= " AND c.fk_country = ".$mysoc->country_id;
             $sql.= " ORDER BY c.position ASC";
         }
@@ -351,7 +351,7 @@ class AccountancyCategory
         {
             $sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position";
             $sql.= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
-            $sql.= " WHERE c.active = 1 AND c.account_category = 1 AND c.fk_country = co.rowid";
+            $sql.= " WHERE c.active = 1 AND c.category_type = 1 AND c.fk_country = co.rowid";
             $sql.= " AND co.code = '".$mysoc->country_code."'";
 			$sql.= " ORDER BY c.position ASC";
         }
