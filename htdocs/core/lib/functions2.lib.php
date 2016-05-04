@@ -1918,6 +1918,9 @@ function getElementProperties($element_type)
         $subelement = 'Actioncomm';
         $module = 'agenda';
     }
+    if ($element_type == 'resource') {
+        $subelement='dolresource';
+    }
 
     // To work with non standard path
     if ($element_type == 'facture' || $element_type == 'invoice') {
