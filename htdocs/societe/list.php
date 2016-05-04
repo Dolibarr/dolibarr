@@ -519,14 +519,15 @@ if ($resql)
 			$moreforfilter.=$formother->select_categories('customer',$search_categ,'search_categ',1);
 		 	$moreforfilter.='</div>';
 		}
-	 	// If the user can view prospects other than his'
-	 	if ($user->rights->societe->client->voir || $socid)
-	 	{
-		 	$moreforfilter.='<div class="divsearchfield">';
-		 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
-			$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
-			$moreforfilter.='</div>';
-	 	}
+	}
+	
+	// If the user can view prospects other than his'
+	if ($user->rights->societe->client->voir || $socid)
+	{
+	 	$moreforfilter.='<div class="divsearchfield">';
+	 	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
+		$moreforfilter.='</div>';
 	}
 	if ($type == 'f')
 	{
