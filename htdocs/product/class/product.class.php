@@ -2948,9 +2948,9 @@ class Product extends CommonObject
 
 	/**
 	 *  Return all direct parent products fo current product
-	 *
+	 *  
 	 *  @return 	array prod
-	 *  @see		getFather
+	 *  @deprecated	See getFather
 	 */
 	function getParent()
 	{
@@ -3036,7 +3036,9 @@ class Product extends CommonObject
 	 */
 	function get_sousproduits_arbo()
 	{
-		$parent = $this->getParent();
+		//$parent = $this->getParent();
+		$parent[$this->label]=array(0 => $this->id);
+
 		foreach($parent as $key => $value)		// key=label, value[0]=id
 		{
 			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)
