@@ -595,9 +595,12 @@ if ($nboftargetok) {
 		if ($target eq 'TGZ') 
 		{
 			$NEWDESTI=$DESTI;
-			mkdir($DESTI.'/standard');
-			if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
-
+			if ($NEWPUBLISH =~ /stable/)
+			{
+				mkdir($DESTI.'/standard');
+				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
+			}
+			
 			print "Remove target $FILENAMETGZ.tgz...\n";
 			unlink("$NEWDESTI/$FILENAMETGZ.tgz");
 
@@ -624,8 +627,11 @@ if ($nboftargetok) {
 		if ($target eq 'XZ') 
 		{
 			$NEWDESTI=$DESTI;
-			mkdir($DESTI.'/standard');
-			if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
+			if ($NEWPUBLISH =~ /stable/)
+			{
+				mkdir($DESTI.'/standard');
+				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
+			} 
 
 			print "Remove target $FILENAMEXZ.xz...\n";
 			unlink("$NEWDESTI/$FILENAMEXZ.xz");
@@ -658,8 +664,11 @@ if ($nboftargetok) {
 		if ($target eq 'ZIP') 
 		{
 			$NEWDESTI=$DESTI;
-			mkdir($DESTI.'/standard');
-			if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
+			if ($NEWPUBLISH =~ /stable/)
+			{
+				mkdir($DESTI.'/standard');
+				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
+			} 
 
 			print "Remove target $FILENAMEZIP.zip...\n";
 			unlink("$NEWDESTI/$FILENAMEZIP.zip");
@@ -696,8 +705,11 @@ if ($nboftargetok) {
 			if ($target =~ /FEDO/i) { $subdir="package_rpm_redhat-fedora"; }
 			if ($target =~ /MAND/i) { $subdir="package_rpm_mandriva"; }
 			if ($target =~ /OPEN/i) { $subdir="package_rpm_opensuse"; }
-			mkdir($DESTI.'/'.$subdir);
-			if (-d $DESTI.'/'.$subdir) { $NEWDESTI=$DESTI.'/'.$subdir; } 
+			if ($NEWPUBLISH =~ /stable/)
+			{
+				mkdir($DESTI.'/'.$subdir);
+				if (-d $DESTI.'/'.$subdir) { $NEWDESTI=$DESTI.'/'.$subdir; }
+			} 
 
 			if ($RPMDIR eq "") { $RPMDIR=$ENV{'HOME'}."/rpmbuild"; }
 
@@ -779,8 +791,11 @@ if ($nboftargetok) {
 		if ($target eq 'DEB') 
 		{
 			$NEWDESTI=$DESTI;
-			mkdir($DESTI.'/package_debian-ubuntu');
-			if (-d $DESTI.'/package_debian-ubuntu') { $NEWDESTI=$DESTI.'/package_debian-ubuntu'; } 
+			if ($NEWPUBLISH =~ /stable/)
+			{
+				mkdir($DESTI.'/package_debian-ubuntu');
+				if (-d $DESTI.'/package_debian-ubuntu') { $NEWDESTI=$DESTI.'/package_debian-ubuntu'; }
+			} 
 
 			$olddir=getcwd();
 
@@ -979,8 +994,11 @@ if ($nboftargetok) {
 		if ($target eq 'APS') 
 		{
 			$NEWDESTI=$DESTI;
-			mkdir($DESTI.'/package_aps');
-			if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; } 
+			if ($NEWPUBLISH =~ /stable/)
+			{
+				mkdir($DESTI.'/package_aps');
+				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
+			} 
 			
 			$newbuild = $BUILD;
 			$newbuild =~ s/(dev|alpha)/0/gi;                # dev
@@ -1062,8 +1080,11 @@ if ($nboftargetok) {
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;
-			mkdir($DESTI.'/package_windows');
-			if (-d $DESTI.'/package_windows') { $NEWDESTI=$DESTI.'/package_windows'; } 
+			if ($NEWPUBLISH =~ /stable/)
+			{
+				mkdir($DESTI.'/package_windows');
+				if (-d $DESTI.'/package_windows') { $NEWDESTI=$DESTI.'/package_windows'; }
+			} 
 
      		print "Remove target $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe...\n";
     		unlink "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe";
@@ -1195,8 +1216,8 @@ if ($nboftargetok) {
 
 				$command="rsync -s -e 'ssh' \"$file\" \"".$destFolder."\"";
 				print "$command\n";	
-				my $ret=`$command 2>&1`;
-				print "$ret\n";
+				my $ret2=`$command 2>&1`;
+				print "$ret2\n";
 			}
 		}
 	}    
