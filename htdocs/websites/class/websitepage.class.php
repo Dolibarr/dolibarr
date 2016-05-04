@@ -307,7 +307,7 @@ class WebsitePage extends CommonObject
 
 			while ($obj = $this->db->fetch_object($resql)) 
 			{
-				$record = new Websitepage($this->db);
+				$record = new WebsitePage($this->db);
 
 				$record->id = $obj->rowid;
 				$record->fk_website = $obj->fk_website;
@@ -320,7 +320,7 @@ class WebsitePage extends CommonObject
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
 				$record->tms = $this->db->jdate($obj->tms);
-
+				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
 			$this->db->free($resql);

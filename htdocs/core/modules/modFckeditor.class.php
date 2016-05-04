@@ -57,7 +57,7 @@ class modFckeditor extends DolibarrModules
 		$this->picto='list';
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/fckeditor/temp","/fckeditor/image");
+		$this->dirs = array("/medias/temp","/medias/image");
 
 		// Config pages
 		$this->config_page_url = array("fckeditor.php");
@@ -65,7 +65,7 @@ class modFckeditor extends DolibarrModules
 		// Dependencies
 		$this->disabled = (in_array(constant('JS_CKEDITOR'),array('disabled','disabled/'))?1:0);	// A condition to disable module (used for native debian packages)
 		$this->depends = array();
-		$this->requiredby = array();
+		$this->requiredby = array('modWebsites');
 
 		// Constants
 		$this->const = array();
