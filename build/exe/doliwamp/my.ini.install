@@ -69,7 +69,7 @@ port=WAMPMYSQLPORT
 
 
 #Path to installation directory. All paths are usually resolved relative to this.
-basedir=WAMPROOT/bin/mysql/mysql5.6.17
+basedir=WAMPROOT/bin/mysql/mysqlWAMPMYSQLVERSION
 
 #log file
 log-error=WAMPROOT/logs/mysql.log

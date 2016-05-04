@@ -663,6 +663,7 @@ begin
 		      //installDir et version de php
 		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
 		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
