@@ -2956,6 +2956,7 @@ class Product extends CommonObject
 			$prods = array ();
 			while ($record = $this->db->fetch_array($res))
 			{
+				// $record['id'] = $record['rowid'] = id of father
 				$prods[$record['id']]['id'] = $record['rowid'];
 				$prods[$record['id']]['ref'] = $record['ref'];
 				$prods[$record['id']]['label'] = $record['label'];
@@ -2973,37 +2974,6 @@ class Product extends CommonObject
 		}
 	}
 
-
-	/**
-	 *  Return all direct parent products fo current product
-	 *
-	 *  @return 	array prod
-	 *  @see		getFather
-	 */
-	function getParent()
-	{
-		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
-		$sql.= " ".MAIN_DB_PREFIX."product as p";
-		$sql.= " WHERE p.rowid = pa.fk_product_pere";
-		$sql.= " AND p.rowid = ".$this->id;
-
-		$res = $this->db->query($sql);
-		if ($res)
-		{
-			$prods = array ();
-			while ($record = $this->db->fetch_array($res))
-			{
-				$prods[$this->db->escape($record['label'])] = array(0=>$record['id']);
-			}
-			return $prods;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
 
 	/**
 	 *  Return childs of product $id
