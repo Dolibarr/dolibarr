@@ -263,6 +263,12 @@ if ($id || $ref)
 
 	if ($result)
 	{
+		if ($action == 'ask_remove_pf') {
+			$form = new Form($db);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id . '&rowid=' . $rowid, $langs->trans('DeleteProductBuyPrice'), $langs->trans('ConfirmDeleteProductBuyPrice'), 'remove_pf', '', 0, 1);
+			echo $formconfirm;
+		}
+		
 		if ($action <> 'edit' && $action <> 're-edit')
 		{
 			$head=product_prepare_head($product);
@@ -640,7 +646,7 @@ if ($id || $ref)
 						if ($user->rights->produit->creer || $user->rights->service->creer)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$product->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
 						}
 
 						print '</td>';
