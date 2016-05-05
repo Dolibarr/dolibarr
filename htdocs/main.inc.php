@@ -1357,6 +1357,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $dolibarr_main_authentication, $dolibarr_main_demo;
     global $hookmanager,$menumanager;
 
+    $searchform='';
+    $bookmarks='';
+    
     // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('toprightmenu'));
 
