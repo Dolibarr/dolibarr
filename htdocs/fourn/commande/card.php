@@ -2784,15 +2784,17 @@ elseif (! empty($object->id))
 		/**
 		 * Boutons actions
 		 */
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		// modified by hook
-		if (empty($reshook))
+	    
+		if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
 		{
-			if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
-			{
-				print '<div	 class="tabsAction">';
+			print '<div	class="tabsAction">';
 
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+			// modified by hook
+			if (empty($reshook))
+			{
+				
 				// Validate
 				if ($object->statut == 0 && $num > 0)
 				{
@@ -2974,9 +2976,11 @@ elseif (! empty($object->id))
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
 
-				print "</div>";
 			}
+		
+			print "</div>";
 		}
+
 		print "<br>";
 
 

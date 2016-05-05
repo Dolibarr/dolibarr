@@ -487,16 +487,17 @@ if ($id > 0 || ! empty($ref))
 
 		if ($action != 'edit')
 		{
-			$parameters = array();
-			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-				                                                                                          // modified by hook
-			if (empty($reshook))
-			{
-				/*
-				 * Actions
-				*/
-				print '<div class="tabsAction">';
-	
+			/*
+			 * Actions
+ 			 */
+			
+		    print '<div class="tabsAction">';
+
+		    $parameters = array();
+		    $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		    // modified by hook
+		    if (empty($reshook))
+		    {
 				// Modify
 				if ($user->rights->projet->creer)
 				{
@@ -518,27 +519,25 @@ if ($id > 0 || ! empty($ref))
 				}
 	
 				print '</div>';
-	
-				print '<table width="100%"><tr><td width="50%" valign="top">';
-				print '<a name="builddoc"></a>'; // ancre
-	
-				/*
-				 * Documents generes
-				 */
-				$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
-				$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
-				$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-				$genallowed=($user->rights->projet->lire);
-				$delallowed=($user->rights->projet->creer);
-	
-				$var=true;
-	
-				$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
-	
-	
-	
-				print '</td></tr></table>';
-			}
+		    }
+		    
+			print '<table width="100%"><tr><td width="50%" valign="top">';
+			print '<a name="builddoc"></a>'; // ancre
+
+			/*
+			 * Documents generes
+			 */
+			$filename=dol_sanitizeFileName($projectstatic->ref). "/". dol_sanitizeFileName($object->ref);
+			$filedir=$conf->projet->dir_output . "/" . dol_sanitizeFileName($projectstatic->ref). "/" .dol_sanitizeFileName($object->ref);
+			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+			$genallowed=($user->rights->projet->lire);
+			$delallowed=($user->rights->projet->creer);
+
+			$var=true;
+
+			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
+
+			print '</td></tr></table>';
 		}
 	}
 }
