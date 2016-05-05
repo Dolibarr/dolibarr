@@ -208,10 +208,9 @@ print "<td>" . $langs->trans("Selectchartofaccounts") . "</td>";
 print "<td>";
 print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
 
-$sql = "SELECT rowid, pcg_version, fk_pays, label, active";
+$sql = "SELECT rowid, pcg_version, label, active";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
 $sql .= " WHERE active = 1";
-$sql .= " AND fk_pays = " . $mysoc->country_id;
 
 dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
@@ -227,7 +226,7 @@ if ($resql) {
 		
 		print '<option value="' . $row[0] . '"';
 		print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected' : '';
-		print '>' . $row[1] . ' - ' . $row[3] . '</option>';
+		print '>' . $row[1] . ' - ' . $row[2] . '</option>';
 		
 		$i ++;
 	}
