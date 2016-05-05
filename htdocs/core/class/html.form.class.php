@@ -5249,20 +5249,31 @@ class Form
      *  Show block with links to link to other objects.
      *
      *  @param	CommonObject	$object				Object we want to show links to
-     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order')
      *  @return	int									<0 if KO, >0 if OK
      */
-    function showLinkToObjectBlock($object, $restrictlinksto=array())
+    function showLinkToObjectBlock($object)
     {
         global $conf, $langs, $hookmanager;
         global $bc;
-
-		$linktoelem='';
+        
+        $linktoelements='';
+        if($object->element=="propal"){
+            if($conf->global->PROPALE_LINK_TO_INTERVENTION) $linktoelements=array('fichinter');
+        }
+        elseif($object->element=="facture"){
+            $linktoelements=array('order');
+        }
+        elseif($object->element=="expensereport"){
+            if($conf->global->EXPENSES_LINK_TO_INTERVENTION) $linktoelements=array('fichinter');
+        }
+        elseif($object->element=="invoice_supplier"){
+            $linktoelements=array('supplier_order');
+        }
 
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
 
-		if (((! is_array($restrictlinksto)) || in_array('order',$restrictlinksto))
+		if (((! is_array($linktoelements)) || in_array('order',$linktoelements))
 			&& ! empty($conf->commande->enabled))
 		{
 			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
@@ -5390,7 +5401,70 @@ class Form
 			print '</div>';
 		}
 
-        if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
+		if (((! is_array($linktoelements)) || in_array('fichinter',$linktoelements)) 
+                && ! empty($conf->ficheinter->enabled))
+		{
+			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedFichinter') . '</a>';
+
+			print '
+				<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery("#linktoorder").click(function() {
+						jQuery("#orderlist").toggle();
+						jQuery("#linktoorder").toggle();
+					});
+				});
+				</script>
+				';
+
+			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+
+			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, f.rowid, f.ref";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+			$sql .= ", " . MAIN_DB_PREFIX . "fichinter as f";
+			$sql .= ' WHERE f.fk_soc = s.rowid';
+            if($object->socid) $sql .= " AND f.fk_soc=$object->socid";
+
+			$resqlorderlist = $this->db->query($sql);
+			if ($resqlorderlist)
+			{
+				$num = $this->db->num_rows($resqlorderlist);
+				$i = 0;
+
+				print '<br><form action="" method="POST" name="LinkedFichinter">';
+				print '<table class="noborder">';
+				print '<tr class="liste_titre">';
+				print '<td class="nowrap"></td>';
+				print '<td align="center">' . $langs->trans("Ref") . '</td>';
+				print '<td align="left">' . $langs->trans("Company") . '</td>';
+				print '</tr>';
+				while ($i < $num)
+				{
+					$objp = $this->db->fetch_object($resqlorderlist);
+
+					$var = ! $var;
+					print '<tr ' . $bc [$var] . '>';
+					print '<td aling="left">';
+					print '<input type="radio" name="LinkedFichinter" value=' . $objp->rowid . '>';
+					print '<td align="center">' . $objp->ref . '</td>';
+					print '<td>' . $objp->name . '</td>';
+					print '</td>';
+					print '</tr>';
+
+					$i ++;
+				}
+				print '</table>';
+				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+				print '</form>';
+				$this->db->free($resqlorderlist);
+			} else {
+				dol_print_error($this->db);
+			}
+
+			print '</div>';
+		}
+
+        if (((! is_array($linktoelements)) || in_array('supplier_order',$linktoelements))
 			&& ! empty($conf->fournisseur->enabled))
 		{
 			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';

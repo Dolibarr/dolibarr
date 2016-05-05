@@ -2397,7 +2397,7 @@ else
 					$somethingshown = $form->showLinkedObjectBlock($object);
 	
 					// Show links to link elements
-					$linktoelem = $form->showLinkToObjectBlock($object,array('supplier_order'));
+					$linktoelem = $form->showLinkToObjectBlock($object);
 					if ($linktoelem) print '<br>'.$linktoelem;
 	
 	
