@@ -1966,7 +1966,7 @@ function getElementProperties($element_type)
         $module='ficheinter';
         $subelement='fichinter';
     }
-    if ($element_type == 'dolresource') {
+    if ($element_type == 'dolresource' || $element_type == 'resource') {
         $classpath = 'resource/class';
         $module='resource';
         $subelement='dolresource';
