@@ -29,6 +29,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
@@ -250,6 +251,12 @@ if ($resql)
 
 	$param="&tosell=$tosell&tobuy=$tobuy".(isset($type)?"&type=$type":"")."&fourn_id=$fourn_id&snom=$snom&sref=$sref";
     
+	$formProduct = new FormProduct($db);
+	$formProduct->loadWarehouses();
+	$warehouses_list = $formProduct->cache_warehouses;
+	$nb_warehouse = count($warehouses_list);
+	$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1;
+	
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
 	// Lignes des titres
@@ -259,7 +266,20 @@ if ($resql)
 	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre($langs->trans("Duration"), $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("StockLimit"), $_SERVER["PHP_SELF"], "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DesiredStock"), $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
+	
+	/*
+	 * Details per warehouse
+	 */
+	 
+	if($nb_warehouse>1) {
+		
+		foreach($warehouses_list as &$wh) {
+			print_liste_field_titre($wh['label'], '', '','','','align="right"');
+		}
+		
+	} 
+	
 	if ($virtualdiffersfromphysical) print_liste_field_titre($langs->trans("VirtualStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
@@ -287,56 +307,29 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	if ($virtualdiffersfromphysical) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
-    print '</td>';
+	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+    	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+    	print $searchpitco;
+	print '</td>';
 	print '</tr>';
-
-	$product_static=new Product($db);
 
 	$var=True;
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
 
-		// Multilangs
-		if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
-		{
-			$sql = "SELECT label";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
-			$sql.= " WHERE fk_product=".$objp->rowid;
-			$sql.= " AND lang='". $langs->getDefaultLang() ."'";
-			$sql.= " LIMIT 1";
-
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$objtp = $db->fetch_object($result);
-				if (! empty($objtp->label)) $objp->label = $objtp->label;
-			}
-		}
-
-		$product_static->ref=$objp->ref;
-		$product_static->id=$objp->rowid;
-		$product_static->label = $objp->label;
-		$product_static->type=$objp->fk_product_type;
-		$product_static->entity=$objp->entity;
-		if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)	// To optimize call of load_stock
-		{
-		    if ($objp->fk_product_type != 1)    // Not a service
-		    {
-		        $product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse. This also call load_virtual_stock()
-		    }
-		}
-		
 		$var=!$var;
 		print '<tr '.$bc[$var].'><td class="nowrap">';
-		print $product_static->getNomUrl(1,'',24);
 		
+		$product=new Product($db);
+		$product->fetch($objp->rowid);
+		$product->load_stock();
+		
+		print $product->getNomUrl(1,'',16);
+		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
-		print '<td>'.$objp->label.'</td>';
+		print '<td>'.$product->label.'</td>';
 
 		if (! empty($conf->service->enabled) && $type == 1)
 		{
@@ -355,17 +348,35 @@ if ($resql)
         if ($objp->seuil_stock_alerte != '' && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique;
 		print '</td>';
+		
+		/*
+		* Details per warehouse
+		*/
+		 
+		if($nb_warehouse>1) {
+			
+			foreach($warehouses_list as &$wh) {
+				
+				print '<td align="right">';
+				print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
+				print '</td>';
+			}
+			
+		} 
+		
+			
+		
 		// Virtual stock
 		if ($virtualdiffersfromphysical)
 		{
-    		print '<td align="right">';
-            if ($objp->seuil_stock_alerte != '' && ($product_static->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
-    		print $product_static->stock_theorique;
-    		print '</td>';
+	    		print '<td align="right">';
+			if ($objp->seuil_stock_alerte != '' && ($product->stock_theorique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
+	    		print $product->stock_theorique;
+	    		print '</td>';
 		}
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product_static->id.'">'.$langs->trans("Movements").'</a></td>';
-		print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->statut,5,0).'</td>';
-        print '<td align="right" class="nowrap">'.$product_static->LibStatut($objp->tobuy,5,1).'</td>';
+		print '<td align="right"><a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?idproduct='.$product->id.'">'.$langs->trans("Movements").'</a></td>';
+		print '<td align="right" class="nowrap">'.$product->LibStatut($objp->statut,5,0).'</td>';
+        	print '<td align="right" class="nowrap">'.$product->LibStatut($objp->tobuy,5,1).'</td>';
 		print "</tr>\n";
 		$i++;
 	}
