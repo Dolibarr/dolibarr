@@ -1736,72 +1736,80 @@ else if ($id || $ref)
 	{
 		print '<div class="tabsAction">';
 
-		if ($object->statut == 0 && $num_prod > 0)
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		                                                                                               // modified by hook
+		if (empty($reshook))
 		{
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
-  		     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
-			}
-		}
 
-		// TODO add alternative status
-		// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
-		if ($object->statut == 2 && $object->billed && $user->rights->expedition->creer)
-		{
-		    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+			if ($object->statut == 0 && $num_prod > 0)
+			{
+				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
+	  		     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
+				}
+			}
+	
+			// TODO add alternative status
+			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
+			if ($object->statut == 2 && $object->billed && $user->rights->expedition->creer)
+			{
+			    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+			}
+			
+			// Send
+			if ($object->statut > 0)
+			{
+				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
+				}
+				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+			}
+	
+			// Create bill and Close shipment
+			if (! empty($conf->facture->enabled) && $object->statut > 0)
+			{
+				if ($user->rights->facture->creer)
+				{
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
+				}
+			}
+	
+			// This is just to generate a delivery receipt
+			//var_dump($object->linkedObjectsIds['delivery']);
+			if ($conf->livraison_bon->enabled && ($object->statut == 1 || $object->statut == 2) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
+			{
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
+			}
+			// Close
+			if (! empty($conf->facture->enabled) && $object->statut > 0)
+			{
+				if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
+				{
+					$label="Close"; $paramaction='classifyclosed';       // = Transferred/Received
+					// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
+					if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))  // TODO Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close.
+					{
+					    $label="ClassifyBilled";
+					    $paramaction='classifybilled';
+					}
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$paramaction.'">'.$langs->trans($label).'</a>';
+				}
+			}
+	
+			if ($user->rights->expedition->supprimer)
+			{
+				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+			}
+			
 		}
 		
-		// Send
-		if ($object->statut > 0)
-		{
-			if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=presend&amp;mode=init">'.$langs->trans('SendByMail').'</a>';
-			}
-			else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
-		}
-
-		// Create bill and Close shipment
-		if (! empty($conf->facture->enabled) && $object->statut > 0)
-		{
-			if ($user->rights->facture->creer)
-			{
-				print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a>';
-			}
-		}
-
-		// This is just to generate a delivery receipt
-		//var_dump($object->linkedObjectsIds['delivery']);
-		if ($conf->livraison_bon->enabled && ($object->statut == 1 || $object->statut == 2) && $user->rights->expedition->livraison->creer && count($object->linkedObjectsIds['delivery']) == 0)
-		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create_delivery">'.$langs->trans("CreateDeliveryOrder").'</a>';
-		}
-		// Close
-		if (! empty($conf->facture->enabled) && $object->statut > 0)
-		{
-			if ($user->rights->expedition->creer && $object->statut > 0 && ! $object->billed)
-			{
-				$label="Close"; $paramaction='classifyclosed';       // = Transferred/Received
-				// Label here should be "Close" or "ClassifyBilled" if we decided to make bill on shipments instead of orders
-				if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))  // TODO Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close.
-				{
-				    $label="ClassifyBilled";
-				    $paramaction='classifybilled';
-				}
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action='.$paramaction.'">'.$langs->trans($label).'</a>';
-			}
-		}
-
-		if ($user->rights->expedition->supprimer)
-		{
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-		}
-
 		print '</div>';
 	}
 
