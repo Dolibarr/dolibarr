@@ -1070,7 +1070,7 @@ if ($id)
         }
         print '</td>';
         print "</tr>";
-        
+
         if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates')
         {
         	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";

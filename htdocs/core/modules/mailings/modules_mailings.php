@@ -169,6 +169,7 @@ class MailingTargets    // This can't be abstract as it is used for some method
         		$sql.= (empty($targetarray['source_id']) ? 'null' : "'".$this->db->escape($targetarray['source_id'])."'").",";
        			$sql .= "'".$this->db->escape(dol_hash($targetarray['email'].';'.$targetarray['lastname'].';'.$mailing_id.';'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY))."',";
         		$sql .= "'".$this->db->escape($targetarray['source_type'])."')";
+        		dol_syslog(get_class($this)."::".__METHOD__,LOG_DEBUG);
         		$result=$this->db->query($sql);
         		if ($result)
         		{
@@ -188,27 +189,25 @@ class MailingTargets    // This can't be abstract as it is used for some method
         	}
         }
 
-        dol_syslog(get_class($this)."::add_to_target: sql ".$sql,LOG_DEBUG);
-        dol_syslog(get_class($this)."::add_to_target: mailing ".$j." targets added");
+        dol_syslog(get_class($this)."::".__METHOD__.": mailing ".$j." targets added");
 
         //Update the status to show thirdparty mail that don't want to be contacted anymore'
         $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " SET statut=3";
         $sql .= " WHERE fk_mailing=".$mailing_id." AND email in (SELECT email FROM ".MAIN_DB_PREFIX."societe where fk_stcomm=-1)";
         $sql .= " AND source_type='thirdparty'";
+        dol_syslog(get_class($this)."::".__METHOD__.": mailing update status to display thirdparty mail that do not want to be contacted");
         $result=$this->db->query($sql);
 
-        dol_syslog(get_class($this)."::add_to_target: mailing update status to display thirdparty mail that do not want to be contacted sql:".$sql);
+
 
         //Update the status to show contact mail that don't want to be contacted anymore'
         $sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
         $sql .= " SET statut=3";
         $sql .= " WHERE fk_mailing=".$mailing_id." AND source_type='contact' AND (email in (SELECT sc.email FROM ".MAIN_DB_PREFIX."socpeople AS sc ";
-        $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.fk_stcomm=-1 AND s.rowid=sc.fk_soc)";
-        $sql .= "  OR no_email=1)";
+        $sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe s ON s.rowid=sc.fk_soc WHERE s.fk_stcomm=-1 OR no_email=1))";
+        dol_syslog(get_class($this)."::".__METHOD__.": mailing update status to display contact mail that do not want to be contacted",LOG_DEBUG);
         $result=$this->db->query($sql);
-
-        dol_syslog(get_class($this)."::add_to_target: mailing update status to display contact mail that do not want to be contacted sql:".$sql);
 
 
         $this->update_nb($mailing_id);

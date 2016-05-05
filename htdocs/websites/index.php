@@ -136,20 +136,20 @@ $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 if ($action == 'add')
 {
     $db->begin();
-    
+
     $objectpage->fk_website = $object->id;
-    
+
     $objectpage->title = GETPOST('WEBSITE_TITLE');
     $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
     $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
     $objectpage->keywords = GETPOST('WEBSITE_KEYWORD');
-    
+
     if (empty($objectpage->title))
     {
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("WEBSITE_PAGENAME")), null, 'errors');
         $error++;
     }
-    
+
     if (! $error)
     {
         $res = $objectpage->create($user);
@@ -175,27 +175,27 @@ if ($action == 'add')
 if ($action == 'update')
 {
     $db->begin();
-    
+
     $res = $object->fetch(0, $website);
-    
+
     $objectpage->fk_website = $object->id;
     $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
-    
+
     $res = $objectpage->fetch(0, $object->fk_website, $objectpage->pageurl);
-    
+
     if ($res > 0)
     {
         $objectpage->title = GETPOST('WEBSITE_TITLE');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
         $objectpage->keyword = GETPOST('WEBSITE_KEYWORD');
-        
+
         $res = $objectpage->update($user);
         if (! $res > 0)
         {
             $error++;
             setEventMessages($objectpage->error, $objectpage->errors, 'errors');
         }
-        
+
     	if (! $error)
     	{
     		$db->commit();
@@ -316,7 +316,7 @@ if ($action == 'updatemeta')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
-        $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
         $objectpage->title = GETPOST('WEBSITE_TITLE');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
         $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
@@ -352,12 +352,12 @@ if ($action == 'updatecontent')
     $object->fetch(0, $website);
 
     $objectpage->fk_website = $object->id;
-    
+
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
         $objectpage->content = GETPOST('PAGE_CONTENT');
-        
+
         // Clean data. We remove all the head section.
         $objectpage->content = preg_replace('/<head.*<\/head>/s', '', $objectpage->content);
         /* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
@@ -368,7 +368,7 @@ if ($action == 'updatecontent')
             $error++;
             setEventMessages($objectpage->error, $objectpage->errors, 'errors');
         }
-        
+
     	if (! $error)
     	{
     		$db->commit();
@@ -450,7 +450,7 @@ if (count($object->records) > 0)
     print '<div class="websiteselection">';
     print $langs->trans("Website").': ';
     print '</div>';
-    
+
     // List of websites
     print '<div class="websiteselection">';
     $out='';
@@ -467,22 +467,22 @@ if (count($object->records) > 0)
         $out.='>';
         $out.=$valwebsite->ref;
         $out.='</option>';
-        $i++;    
+        $i++;
     }
     $out.='</select>';
     print $out;
     print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
-    
+
     if ($website)
     {
         print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
     }
     print '</div>';
-    
+
     // Button for websites
     print '<div class="websitetools">';
-    
-    if ($action == 'preview') 
+
+    if ($action == 'preview')
     {
         $disabled='';
         if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
@@ -492,7 +492,7 @@ if (count($object->records) > 0)
         print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
         print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
     }
-    
+
     if (in_array($action, array('editcss','editmenu','create')))
     {
         if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
@@ -501,15 +501,15 @@ if (count($object->records) > 0)
     }
     
     print '</div>';
-    
-    
+
+
     // Part for pages
     if ($website)
     {
         print '</div>';
 
-        $array=$objectpage->fetchAll($object->id);
-        
+        $array=$objectpage->fetchAll('','',0,0,array('t.fk_website'=>$object->id));
+
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
         print '<div class="websiteselection">';
         print $langs->trans("Page").': ';
@@ -519,17 +519,17 @@ if (count($object->records) > 0)
         $out.='<select name="pageid">';
         if (is_array($array) && count($array) > 0)
         {
-            foreach($array as $key => $valpage)
-            {
-                if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
-                
-                $out.='<option value="'.$key.'"';
-                if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
-                $out.='>';
-                $out.=$valpage->title;
+        foreach($array as $key => $valpage)
+        {
+            if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
+
+            $out.='<option value="'.$key.'"';
+            if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+            $out.='>';
+            $out.=$valpage->title;
                 if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
-                $out.='</option>';
-            }
+            $out.='</option>';
+        }
         }
         else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
@@ -546,20 +546,20 @@ if (count($object->records) > 0)
         print '</div>';
         print '<div class="websiteselection">';
         print '</div>';
-        
+
         print '<div class="websitetools">';
-        
+
         if ($action == 'preview')
         {
             $disabled='';
             if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
-        
+
             if ($pageid > 0)
             {
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
-                print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
-                print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
+                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+                print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcontent&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageContent")).'</a>';
             }
@@ -568,13 +568,13 @@ if (count($object->records) > 0)
         if (! in_array($action, array('editcss','editmenu','create')))
         {
             if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-            if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-            if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         }
-        
+
         print '</div>';
-        
-    }    
+
+    }
 }
 else
 {
@@ -662,7 +662,7 @@ if ($action == 'editmeta' || $action == 'create')
     if (GETPOST('WEBSITE_TITLE'))       $pagetitle=GETPOST('WEBSITE_TITLE');
     if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION');
     if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS');
-    
+
     print '<tr><td>';
     print $langs->trans('WEBSITE_PAGENAME');
     print '</td><td>';
@@ -674,25 +674,25 @@ if ($action == 'editmeta' || $action == 'create')
     print '</td><td>';
     print '<input type="text" class="flat" size="96" name="WEBSITE_TITLE" value="'.$pagetitle.'">';
     print '</td></tr>';
-    
+
     print '<tr><td>';
     print $langs->trans('WEBSITE_DESCRIPTION');
     print '</td><td>';
     print '<input type="text" class="flat" size="96" name="WEBSITE_DESCRIPTION" value="'.$pagedescription.'">';
     print '</td></tr>';
-    
+
     print '<tr><td>';
     print $langs->trans('WEBSITE_KEYWORDS');
     print '</td><td>';
     print '<input type="text" class="flat" size="128" name="WEBSITE_KEYWORDS" value="'.$pagekeywords.'">';
     print '</td></tr>';
-    
+
     print '</table>';
-    
+
     dol_fiche_end();
-    
+
     print '</div>';
-    
+
     print '<br>';
 }
 
@@ -725,7 +725,7 @@ if ($action == 'preview')
     if ($pageid > 0)
     {
         $objectpage->fetch($pageid);
-        
+
         print "\n".'<!-- Page content '.$filetpl.' c-->'."\n";
 
         
@@ -773,7 +773,7 @@ if ($action == 'preview')
     }
 }
 
-    
+
 
 llxFooter();
 

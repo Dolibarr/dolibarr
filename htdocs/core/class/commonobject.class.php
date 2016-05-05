@@ -3237,8 +3237,9 @@ abstract class CommonObject
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
 		global $conf, $hookmanager, $langs, $user;
-		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
-		
+		// TODO We should not use global var for this !
+		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove;
+
 		// Define usemargins
 		$usemargins=0;
 		if (! empty($conf->margin->enabled) && ! empty($this->element) && in_array($this->element,array('facture','propal','commande'))) $usemargins=1;
@@ -3367,7 +3368,7 @@ abstract class CommonObject
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
-		global $object_rights, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
+		global $object_rights, $disableedit, $disablemove;   // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
 
