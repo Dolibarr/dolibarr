@@ -984,9 +984,17 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					$element = 'supplier_proposal';
-					$subelement = 'supplier_proposal';
-
+					if ($origin == 'order' || $origin == 'commande') {
+                        $element = $subelement = 'commande';
+                    }
+                    elseif ($origin =='supplier_proposal'){
+						$element = 'supplier_proposal';
+						$subelement = 'supplier_proposal';
+					}  
+					else { 
+                        $element = 'comm/askpricesupplier';
+                        $subelement = 'askpricesupplier';
+                    }    
 					$object->origin = $origin;
 					$object->origin_id = $originid;
 
@@ -1046,35 +1054,35 @@ if (empty($reshook))
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
 								}
-								
-								$res = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								/*if ($productsupplier->id > 0)
-								{
-								    $res = $productsupplier->fetch($productsupplier->id);
-								}*/
-								
-								$result = $object->addline(
-									$desc,
-									$lines[$i]->subprice,
-									$lines[$i]->qty,
-									$lines[$i]->tva_tx,
-									$lines[$i]->localtax1_tx,
-									$lines[$i]->localtax2_tx,
-									$lines[$i]->fk_product,
-									$productsupplier->product_fourn_price_id,
-									$productsupplier->ref_fourn,
-									$lines[$i]->remise_percent,
-									'HT',
-									0,
-									$lines[$i]->product_type,
-									'',
-									'',
-									null,
-									null,
-									array(),
-									$lines[$i]->fk_unit
-								);
 
+								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								if ($result>0) {
+									$productsupplier->fetch($productsupplier->id);
+					                                $soc=new societe($db);
+					                                $soc->fetch($socid);
+					                                $tva_tx=($origin=="commande")?get_default_tva($soc,$mysoc,$lines[$i]->fk_product,$idprod):$lines[$i]->tva_tx;
+									$result = $object->addline(
+										$desc,
+										$lines[$i]->subprice,
+										$lines[$i]->qty,
+										$tva_tx,
+										$lines[$i]->localtax1_tx,
+										$lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product,
+										$productsupplier->product_fourn_price_id,
+										$productsupplier->ref_fourn,
+										$lines[$i]->remise_percent,
+										'HT',
+										0,
+										$lines[$i]->product_type,
+										'',
+										'',
+										null,
+										null,
+										array(),
+										$lines[$i]->fk_unit
+									);
+								}
 								if ($result < 0) {
 									$error++;
 									break;
