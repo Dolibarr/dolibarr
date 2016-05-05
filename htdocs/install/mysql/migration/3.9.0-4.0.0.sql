@@ -423,3 +423,18 @@ ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);
  
 ALTER TABLE llx_element_resources ADD COLUMN duree real;          -- total duration of using ressource
 
+
+CREATE TABLE llx_advtargetemailing
+(
+  rowid integer NOT NULL auto_increment PRIMARY KEY,
+  name varchar(200) NOT NULL,
+  entity integer NOT NULL DEFAULT 1,
+  fk_mailing	integer NOT NULL,
+  filtervalue	text,
+  fk_user_author integer NOT NULL,
+  datec datetime NOT NULL,
+  fk_user_mod integer NOT NULL,
+  tms timestamp NOT NULL
+)ENGINE=InnoDB;
+
+ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);

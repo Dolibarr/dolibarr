@@ -540,7 +540,7 @@ if ($object->fetch($id) >= 0)
 					print '</td>';
 				}
 
-				//Sreach Icon
+				// Search Icon
 				print '<td align="right">';
 				if ($obj->statut == 0)
 				{

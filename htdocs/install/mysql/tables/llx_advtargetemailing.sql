@@ -17,7 +17,7 @@
 -- Table of "Plan de comptes" for accountancy expert module
 -- ============================================================================
 
-CREATE TABLE IF NOT EXISTS llx_advtargetemailing
+CREATE TABLE llx_advtargetemailing
 (
   rowid integer NOT NULL auto_increment PRIMARY KEY,
   name varchar(200) NOT NULL,
