@@ -1,20 +1,27 @@
 <?php
-/* Copyright (C) 2014  Florian Henry   <florian.henry@open-concept.pro>
-*
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 3 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
+/* Copyright (C) 2014 Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2016 Laurent Destailleur  <eldy@uers.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ *       \file       htdocs/comm/mailing/advtargetemailing.php
+ *       \ingroup    mailing
+ *       \brief      Page to define emailing targets
+ */
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/comm/mailing/class/mailing.class.php';
@@ -84,8 +91,9 @@ if ($result < 0) {
 	}
 }
 
+
 /*
- * Action
+ * Actions
  */
 
 if ($action == 'loadfilter') {
@@ -387,15 +395,16 @@ if ($_POST["button_removefilter"]) {
 	$search_email = '';
 }
 
+
 /*
  * View
  */
+
 $extrajs = array (
-		'/includes/multiselect/js/ui.multiselect.js'
+		'/includes/jquery/plugins/multiselect/js/ui.multiselect.js'
 );
 $extracss = array (
-		'/includes/multiselect/css/ui.multiselect.css',
-		'/advtargetemailing/css/advtargetemailing.css'
+		'/includes/jquery/plugins/multiselect/css/ui.multiselect.css',
 );
 
 llxHeader('', $langs->trans("MailAdvTargetRecipients"), '', '', '', '', $extrajs, $extracss);
@@ -958,162 +967,11 @@ if ($object->fetch($id) >= 0) {
 		print '</form>';
 		print '<br>';
 	}
-	if (empty($conf->mailchimp->enabled) || (! empty($conf->mailchimp->enabled) && $object->statut != 3)) {
-		// List of selected targets
-		print "\n<!-- Liste destinataires selectionnes -->\n";
-		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
-		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-		print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
-		print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
-		print '<input type="hidden" name="id" value="' . $object->id . '">';
+	
 
-		$sql = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut, mc.date_envoi, mc.source_url, mc.source_id, mc.source_type";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "mailing_cibles as mc";
-		$sql .= " WHERE mc.fk_mailing=" . $object->id;
-		if ($search_nom)
-			$sql .= " AND mc.lastname    LIKE '%" . $db->escape($search_nom) . "%'";
-		if ($search_prenom)
-			$sql .= " AND mc.firstname LIKE '%" . $db->escape($search_prenom) . "%'";
-		if ($search_email)
-			$sql .= " AND mc.email  LIKE '%" . $db->escape($search_email) . "%'";
-		$sql .= $db->order($sortfield, $sortorder);
-		$sql .= $db->plimit($conf->liste_limit + 1, $offset);
-
-		dol_syslog('advtargetemailing.php:: sql=' . $sql);
-		$resql = $db->query($sql);
-		if ($resql) {
-			$num = $db->num_rows($resql);
-
-			$parm = "&amp;id=" . $object->id;
-			if ($search_nom)
-				$parm .= "&amp;search_nom=" . urlencode($search_nom);
-			if ($search_prenom)
-				$parm .= "&amp;search_prenom=" . urlencode($search_prenom);
-			if ($search_email)
-				$parm .= "&amp;search_email=" . urlencode($search_email);
-
-			print_barre_liste($langs->trans("MailSelectedRecipients"), $page, $_SERVER["PHP_SELF"], $parm, $sortfield, $sortorder, "", $num, $object->nbemail, '');
-
-			if ($page)
-				$parm .= "&amp;page=" . $page;
-			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans("EMail"), $_SERVER["PHP_SELF"], "mc.email", $parm, "", "", $sortfield, $sortorder);
-			print_liste_field_titre($langs->trans("Lastname"), $_SERVER["PHP_SELF"], "mc.lastname", $parm, "", "", $sortfield, $sortorder);
-			print_liste_field_titre($langs->trans("Firstname"), $_SERVER["PHP_SELF"], "mc.firstname", $parm, "", "", $sortfield, $sortorder);
-			print_liste_field_titre($langs->trans("OtherInformations"), $_SERVER["PHP_SELF"], "", $parm, "", "", $sortfield, $sortorder);
-			print_liste_field_titre($langs->trans("Source"), $_SERVER["PHP_SELF"], "", $parm, "", 'align="center"', $sortfield, $sortorder);
-
-			// Date sendinf
-			if ($object->statut < 2) {
-				print '<td class="liste_titre">&nbsp;</td>';
-			} else {
-				print_liste_field_titre($langs->trans("DateSending"), $_SERVER["PHP_SELF"], "mc.date_envoi", $parm, '', 'align="center"', $sortfield, $sortorder);
-			}
-
-			// Statut
-			print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "mc.statut", $parm, '', 'align="right"', $sortfield, $sortorder);
-
-			print '</tr>';
-
-			// Ligne des champs de filtres
-			print '<tr class="liste_titre">';
-			// EMail
-			print '<td class="liste_titre">';
-			print '<input class="flat" type="text" name="search_email" size="14" value="' . $search_email . '">';
-			print '</td>';
-			// Name
-			print '<td class="liste_titre">';
-			print '<input class="flat" type="text" name="search_nom" size="12" value="' . $search_nom . '">';
-			print '</td>';
-			// Firstname
-			print '<td class="liste_titre">';
-			print '<input class="flat" type="text" name="search_prenom" size="10" value="' . $search_prenom . '">';
-			print '</td>';
-			// Other
-			print '<td class="liste_titre">';
-			print '&nbsp';
-			print '</td>';
-			// SendDate
-			print '<td class="liste_titre">';
-			print '&nbsp';
-			print '</td>';
-			// Source
-			print '<td class="liste_titre" align="right" colspan="3">';
-			print '<input type="image" class="liste_titre" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png" name="button_search" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
-			print '&nbsp; ';
-			print '<input type="image" class="liste_titre" src="' . DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/searchclear.png" name="button_removefilter" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
-			print '</td>';
-			print '</tr>';
-
-			$var = true;
-			$i = 0;
-
-			if ($num) {
-				while ( $i < min($num, $conf->liste_limit) ) {
-					$obj = $db->fetch_object($resql);
-					$var = ! $var;
-
-					print "<tr $bc[$var]>";
-					print '<td>' . $obj->email . '</td>';
-					print '<td>' . $obj->lastname . '</td>';
-					print '<td>' . $obj->firstname . '</td>';
-					print '<td>' . $obj->other . '</td>';
-					print '<td>';
-					if (empty($obj->source_id) || empty($obj->source_type)) {
-						print $obj->source_url; // For backward compatibility
-					} else {
-
-						if ($obj->source_type == 'thirdparty') {
-							include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-							$m = new Societe($db);
-							$m->fetch($obj->source_id);
-							print $m->getNomUrl(1);
-						} elseif ($obj->source_type == 'contact') {
-							include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-							$m = new Contact($db);
-							$m->fetch($obj->source_id);
-							print $m->getNomUrl(1);
-						}
-					}
-					print '</td>';
-
-					// Statut pour l'email destinataire (Attentioon != statut du mailing)
-					if ($obj->statut == 0) {
-						print '<td>&nbsp;</td>';
-						print '<td align="right" nowrap="nowrap">' . $langs->trans("MailingStatusNotSent");
-						if ($user->rights->mailing->creer) {
-							print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delete&rowid=' . $obj->rowid . $parm . '">' . img_delete($langs->trans("RemoveRecipient"));
-						}
-						print '</td>';
-					} else {
-						print '<td align="center">' . $obj->date_envoi . '</td>';
-						print '<td align="right" nowrap="nowrap">';
-						if ($obj->statut == - 1)
-							print $langs->trans("MailingStatusError") . ' ' . img_error();
-						if ($obj->statut == 1)
-							print $langs->trans("MailingStatusSent") . ' ' . img_picto($langs->trans("MailingStatusSent"), 'statut4');
-						if ($obj->statut == 2)
-							print $langs->trans("MailingStatusRead") . ' ' . img_picto($langs->trans("MailingStatusRead"), 'statut6');
-						if ($obj->statut == 3)
-							print $langs->trans("MailingStatusNotContact") . ' ' . img_picto($langs->trans("MailingStatusNotContact"), 'statut8');
-						print '</td>';
-					}
-					print '</tr>';
-
-					$i ++;
-				}
-			} else {
-				print '<tr ' . $bc[false] . '><td colspan="7">' . $langs->trans("NoTargetYet") . '</td></tr>';
-			}
-			print "</table><br>";
-
-			$db->free($resql);
-		} else {
-			setEventMessage($db->lasterror(), 'errors');
-		}
-
-		print '</form>';
+	if (empty($conf->mailchimp->enabled) || (! empty($conf->mailchimp->enabled) && $object->statut != 3)) 
+	{
+	    // List of recipients (TODO Move code of page cibles.php into a .tpl.php file and make an include here to avoid duplicate content) 
 	}
 }
 

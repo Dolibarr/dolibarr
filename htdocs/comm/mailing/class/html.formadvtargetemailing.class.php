@@ -333,7 +333,8 @@ class FormAdvTargetEmailing extends Form
 	function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0) {
 		global $conf, $langs;
 
-		$return = '<script type="text/javascript" language="javascript">
+		$return = '';
+		$return .= '<script type="text/javascript" language="javascript">
 						$(document).ready(function() {
 							$.extend($.ui.multiselect.locale, {
 								addAll:\'' . $langs->transnoentities ( "AddAll" ) . '\',
@@ -347,8 +348,9 @@ class FormAdvTargetEmailing extends Form
 							});
 						});
 					</script>';
-
 		$return .= '<select id="' . $htmlname . '" class="multiselect" multiple="multiple" name="' . $htmlname . '[]" style="display: none;">';
+        //$return .= '<select id="' . $htmlname . '" class="multiselect" multiple="multiple" name="' . $htmlname . '[]">';
+        
 		if ($showempty)
 			$return .= '<option value="">&nbsp;</option>';
 
