@@ -984,17 +984,16 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					if ($origin == 'order' || $origin == 'commande') {
+					if ($origin == 'order' || $origin == 'commande')
+					{
                         $element = $subelement = 'commande';
                     }
-                    elseif ($origin =='supplier_proposal'){
+                    else
+                    {
 						$element = 'supplier_proposal';
 						$subelement = 'supplier_proposal';
-					}  
-					else { 
-                        $element = 'comm/askpricesupplier';
-                        $subelement = 'askpricesupplier';
-                    }    
+					}
+					
 					$object->origin = $origin;
 					$object->origin_id = $originid;
 
@@ -1056,11 +1055,17 @@ if (empty($reshook))
 								}
 
 								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								if ($result>0) {
-									$productsupplier->fetch($productsupplier->id);
-					                                $soc=new societe($db);
-					                                $soc->fetch($socid);
-					                                $tva_tx=($origin=="commande")?get_default_tva($soc,$mysoc,$lines[$i]->fk_product,$idprod):$lines[$i]->tva_tx;
+								if ($result>0) 
+								{
+								    $tva_tx = $lines[$i]->tva_tx;
+								    
+								    if ($origin=="commande")
+								    {
+					                    $soc=new societe($db);
+					                    $soc->fetch($socid);
+					                    $tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $productsupplier->product_fourn_price_id);
+								    }
+					                                
 									$result = $object->addline(
 										$desc,
 										$lines[$i]->subprice,
@@ -1070,7 +1075,7 @@ if (empty($reshook))
 										$lines[$i]->localtax2_tx,
 										$lines[$i]->fk_product,
 										$productsupplier->product_fourn_price_id,
-										$productsupplier->ref_fourn,
+										$productsupplier->ref_supplier,
 										$lines[$i]->remise_percent,
 										'HT',
 										0,

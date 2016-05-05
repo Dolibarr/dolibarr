@@ -613,7 +613,9 @@ class ProductFournisseur extends Product
                     if ($fourn_unitprice < $min || $min == -1)
                     {
                         $this->product_fourn_price_id   = $record["product_fourn_price_id"];
-                        $this->fourn_ref                = $record["ref_fourn"];
+                        $this->ref_supplier             = $record["ref_fourn"];
+                        $this->ref_fourn                = $record["ref_fourn"];     // deprecated
+                        $this->fourn_ref                = $record["ref_fourn"];     // deprecated
                         $this->fourn_price              = $fourn_price;
                         $this->fourn_qty                = $record["quantity"];
                         $this->fourn_remise_percent     = $record["remise_percent"];
