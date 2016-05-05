@@ -199,7 +199,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		}
 		else
 		{
-			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -275,7 +275,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		}
 		else
 		{
-			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);

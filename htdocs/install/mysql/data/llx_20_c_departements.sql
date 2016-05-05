@@ -1283,3 +1283,31 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LU0010', 14003, '', 0, '', 'Esch-sur-Alzette', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LU0011', 14003, '', 0, '', 'Luxembourg', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LU0012', 14003, '', 0, '', 'Mersch', 1);
+
+-- Provinces Perú (id country=181)
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AMA', 18101, '', 0, '', 'Amazonas', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('ANC', 18101, '', 0, '', 'Ancash', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('APU', 18101, '', 0, '', 'Apurimac', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('ARE', 18101, '', 0, '', 'Arequipa', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('AYA', 18101, '', 0, '', 'Ayacucho', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CAJ', 18101, '', 0, '', 'Cajamarca', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CUS', 18101, '', 0, '', 'Cuzco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('CAL', 18101, '', 0, '', 'Callao', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('HUV', 18101, '', 0, '', 'Huancavelica', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('HUC', 18101, '', 0, '', 'Huanuco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('ICA', 18101, '', 0, '', 'Ica', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('JUN', 18101, '', 0, '', 'Junin', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LAL', 18101, '', 0, '', 'La Libertad', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LAM', 18101, '', 0, '', 'Lambayeque', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LIM', 18101, '', 0, '', 'Lima', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LMA', 18101, '', 0, '', 'Lima Metropolitana', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('LOR', 18101, '', 0, '', 'Loreto', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MDD', 18101, '', 0, '', 'Madre de Dios', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('MOQ', 18101, '', 0, '', 'Moquegua', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PAS', 18101, '', 0, '', 'Pasco', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PIU', 18101, '', 0, '', 'Piura', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PUN', 18101, '', 0, '', 'Puno', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SAM', 18101, '', 0, '', 'San Martin', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('TAC', 18101, '', 0, '', 'Tacna', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('TUM', 18101, '', 0, '', 'Tumbes', 1);
+INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('UCA', 18101, '', 0, '', 'Ucayali', 1);
