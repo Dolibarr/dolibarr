@@ -147,6 +147,7 @@ if ($result) {
 	print '<br/>';
 	
 	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
+	print '<a class="butAction" href="./categories.php">' . $langs->trans("ApplyMassCategories") . '</a>';
 	// print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
 	// print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
 	print '<br/><br/>';
