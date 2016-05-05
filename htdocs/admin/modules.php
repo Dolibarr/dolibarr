@@ -223,7 +223,7 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules=count($conf->modules);
-$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1));
+$moreinfo=$langs->trans("TotalNumberOfActivatedModules",($nbofactivatedmodules-1), count($modules));
 if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
 print load_fiche_titre($langs->trans("ModulesSetup"),$moreinfo,'title_setup');
 
