@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -204,7 +204,7 @@ class Commande extends CommonOrder
 	 */
     function getNextNumRef($soc)
     {
-        global $db, $langs, $conf;
+        global $langs, $conf;
         $langs->load("order");
 
         if (! empty($conf->global->COMMANDE_ADDON))
@@ -239,7 +239,7 @@ class Commande extends CommonOrder
             }
             else
 			{
-            	dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+            	dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
             	return "";
             }
         }
@@ -500,7 +500,6 @@ class Commande extends CommonOrder
      */
     function set_reopen($user)
     {
-        global $conf,$langs;
         $error=0;
 
         if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED)
@@ -560,7 +559,7 @@ class Commande extends CommonOrder
      */
     function cloture($user)
     {
-        global $conf, $langs;
+        global $conf;
 
         $error=0;
 
@@ -697,7 +696,7 @@ class Commande extends CommonOrder
      */
     function create($user, $notrigger=0)
     {
-        global $conf,$langs,$mysoc,$hookmanager;
+        global $conf,$langs;
         $error=0;
 
         // Clean parameters
@@ -971,7 +970,7 @@ class Commande extends CommonOrder
      */
     function createFromClone($socid=0)
     {
-        global $conf,$user,$langs,$hookmanager;
+        global $user,$hookmanager;
 
         $error=0;
 
@@ -1061,7 +1060,7 @@ class Commande extends CommonOrder
      */
     function createFromProposal($object)
     {
-        global $db, $conf,$user,$langs,$hookmanager;
+        global $conf,$user,$hookmanager;
 
 		dol_include_once('/core/class/extrafields.class.php');
 
@@ -1134,7 +1133,7 @@ class Commande extends CommonOrder
         // get extrafields from original line
 		$object->fetch_optionals($object->id);
 
-		$e = new ExtraFields($db);
+		$e = new ExtraFields($this->db);
 		$element_extrafields = $e->fetch_name_optionals_label($this->element);
 
 		foreach($object->array_options as $options_key => $value) {
@@ -1495,7 +1494,6 @@ class Commande extends CommonOrder
      */
     function fetch($id, $ref='', $ref_ext='', $ref_int='')
     {
-        global $conf;
 
         // Check parameters
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
@@ -1854,7 +1852,7 @@ class Commande extends CommonOrder
      *  @param		int		$fk_product			Filter on a product
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
-    function loadExpeditions($filtre_statut=-1, $fk_product=0)
+    function loadExpeditions($filtre_statut=-1)
     {
         $this->expeditions = array();
 
@@ -1983,7 +1981,6 @@ class Commande extends CommonOrder
      */
     function deleteline($lineid)
     {
-        global $user;
 
         if ($this->statut == self::STATUS_DRAFT)
         {
@@ -2262,7 +2259,7 @@ class Commande extends CommonOrder
      */
     function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
     {
-        global $conf,$user;
+        global $user;
 
         $ga = array();
 
@@ -2430,7 +2427,7 @@ class Commande extends CommonOrder
 	 */
 	function classifyBilled(User $user)
 	{
-		global $conf, $user, $langs;
+		global $user;
         $error = 0;
 
 		$this->db->begin();
@@ -2698,7 +2695,6 @@ class Commande extends CommonOrder
 	 */
 	function update($user=null, $notrigger=0)
 	{
-		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -3205,7 +3201,7 @@ class Commande extends CommonOrder
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $langs;
 
         dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -3287,7 +3283,7 @@ class Commande extends CommonOrder
      */
     function load_state_board()
     {
-        global $conf, $user;
+        global $user;
 
         $this->nb=array();
         $clause = "WHERE";
