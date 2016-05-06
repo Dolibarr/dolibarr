@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2015 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
@@ -734,7 +734,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromClone($socid=0)
 	{
-		global $conf,$user,$langs,$hookmanager;
+		global $user,$hookmanager;
 
 		$error=0;
 
@@ -849,7 +849,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromOrder($object)
 	{
-		global $conf,$user,$langs,$hookmanager;
+		global $user,$hookmanager;
 
 		$error=0;
 
@@ -1289,7 +1289,6 @@ class Facture extends CommonInvoice
 	 */
 	function update($user=null, $notrigger=0)
 	{
-		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -1682,7 +1681,6 @@ class Facture extends CommonInvoice
 	 */
 	function set_paid($user,$close_code='',$close_note='')
 	{
-		global $conf,$langs;
 		$error=0;
 
 		if ($this->paye != 1)
@@ -1740,7 +1738,6 @@ class Facture extends CommonInvoice
 	 */
 	function set_unpaid($user)
 	{
-		global $conf,$langs;
 		$error=0;
 
 		$this->db->begin();
@@ -1790,9 +1787,6 @@ class Facture extends CommonInvoice
 	 */
 	function set_canceled($user,$close_code='',$close_note='')
 	{
-		global $conf,$langs;
-
-		$error=0;
 
 		dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
 
@@ -2463,6 +2457,7 @@ class Facture extends CommonInvoice
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=0, $fk_unit = null)
 	{
+		global $conf,$user;
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
@@ -2667,7 +2662,7 @@ class Facture extends CommonInvoice
 	 */
 	function update_percent($line, $percent)
 	{
-	    global $mysoc;
+	    global $mysoc,$user;
 	    
 		include_once(DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php');
 
@@ -2693,7 +2688,6 @@ class Facture extends CommonInvoice
 	 */
 	function deleteline($rowid)
 	{
-		global $langs, $conf;
 
 		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
 
@@ -2931,7 +2925,7 @@ class Facture extends CommonInvoice
 	 */
 	function getNextNumRef($soc,$mode='next')
 	{
-		global $conf, $db, $langs;
+		global $conf, $langs;
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
@@ -2993,7 +2987,7 @@ class Facture extends CommonInvoice
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
+				dol_print_error($this->db,"Facture::getNextNumRef ".$obj->error);
 				return "";
 			}
 
@@ -3307,7 +3301,6 @@ class Facture extends CommonInvoice
 	 */
 	function demande_prelevement($fuser, $amount=0)
 	{
-		global $langs;
 
 		$error=0;
 
@@ -3527,7 +3520,7 @@ class Facture extends CommonInvoice
 	 */
 	function initAsSpecimen($option='')
 	{
-		global $user,$langs,$conf;
+		global $langs;
 
 		$now=dol_now();
 		$arraynow=dol_getdate($now);
@@ -3712,7 +3705,7 @@ class Facture extends CommonInvoice
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("bills");
 
@@ -3812,7 +3805,6 @@ class Facture extends CommonInvoice
 	 */
 	function setFinal()
 	{
-		global $conf, $langs, $user;
 		
         $this->db->begin();
         
@@ -4276,7 +4268,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	function update($user='',$notrigger=0)
 	{
-		global $user,$langs,$conf;
+		global $user,$conf;
 
 		$error=0;
 
@@ -4402,9 +4394,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	function delete()
 	{
-		global $conf,$langs,$user;
-
-		$error=0;
+		global $user;
 
 		$this->db->begin();
 
