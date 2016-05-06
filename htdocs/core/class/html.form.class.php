@@ -5250,7 +5250,7 @@ class Form
      *
      *  @param	CommonObject	$object				Object we want to show links to
      *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order')
-     *  @return	int									<0 if KO, >0 if OK
+     *  @return	string									<0 if KO, >0 if OK
      */
     function showLinkToObjectBlock($object, $restrictlinksto=array())
     {
@@ -5468,7 +5468,7 @@ class Form
      *	@param	int			$option			0 return yes/no, 1 return 1/0
      *	@param	bool		$disabled		true or false
      *  @param	int      	$useempty		1=Add empty line
-     *	@return	mixed						See option
+     *	@return	string						See option
      */
     function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
     {
@@ -5810,7 +5810,7 @@ class Form
      *  @param  string	$include        Array list of groups id to include
      * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
      * 	@param	int		$force_entity	0 or Id of environment to force
-     *  @return	void
+     *  @return	string
      *  @see select_dolusers
      */
     function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0)
