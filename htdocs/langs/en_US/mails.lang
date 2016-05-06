@@ -169,3 +169,5 @@ AdvTgtDeleteFilter=Delete filter
 AdvTgtSaveFilter=Save filter
 AdvTgtCreateFilter=Create filter
 AdvTgtOrCreateNewFilter=Name of new filter
+NoContactWithCategoryFound=No contact/address with a category found
+NoContactLinkedToThirdpartieWithCategoryFound=No contact/address with a category found

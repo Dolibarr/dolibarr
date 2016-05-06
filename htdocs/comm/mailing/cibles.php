@@ -227,7 +227,7 @@ if ($object->fetch($id) >= 0)
 	// Show email selectors
 	if ($allowaddtarget && $user->rights->mailing->creer)
 	{
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"),($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''),'');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''), 'title_generic');
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
@@ -402,7 +402,7 @@ if ($object->fetch($id) >= 0)
 		if ($allowaddtarget) {
 		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
 		}
-		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'',0,'','',$limit);
+		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','',$limit);
 		
 		print '</form>';
 
