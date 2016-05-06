@@ -17,15 +17,14 @@
 */
 
 /**
- * 	\file		class/advtargetemailing.class.php
- * 	\ingroup	advtargetemailing
+ * 	\file		comm/mailing/class/advtargetemailing.class.php
+ * 	\ingroup	mailing
  * 	\brief		This file is an example CRUD class file (Create/Read/Update/Delete)
-
  */
 
 
 /**
- * Put your class' description here
+ * Class to manage advanced emailing target selector
  */
 class AdvanceTargetingMailing extends CommonObject
 {
@@ -293,7 +292,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return int     		   	 <0 if KO, >0 if OK
 	 */
-	function update($user=0, $notrigger=0)
+	function update($user, $notrigger=0)
 	{
 		global $conf, $langs;
 		$error=0;
@@ -737,9 +736,9 @@ class AdvanceTargetingMailing extends CommonObject
 	 *
 	 * 	@param		string		$column_to_test	column to test
 	 *  @param		string		$criteria	Use %% as magic caracters. For exemple to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value,
-	 *  									 and use ! for except this value.
+	 *  									and use ! for except this value.
 	 *  									For exemple  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
-	 * 	@return		int			<0 if KO, >0 if OK
+	 * 	@return		string		Sql to use for the where condition
 	 */
 	public function transformToSQL($column_to_test,$criteria) {
 		$return_sql_criteria = '(';

@@ -17,8 +17,9 @@
 */
 
 /**
- * \file advtargetemailing/class/html.formadvtragetemaling.class.php
- * \brief Fichier de la classe des fonctions predefinie de composants html advtargetemaling
+ * \file    comm/mailing/class/html.formadvtragetemaling.class.php
+ * \ingroup mailing
+ * \brief   Fichier de la classe des fonctions predefinie de composants html advtargetemaling
  */
 
 /**
