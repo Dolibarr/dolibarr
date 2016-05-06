@@ -54,16 +54,37 @@ class Website extends CommonObject
 	public $lines = array();
 
 	/**
+	 * @var int
 	 */
-	
 	public $entity;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var int
+	 */
 	public $status;
-	public $date_creation = '';
-	public $date_modification = '';
+	/**
+	 * @var mixed
+	 */
+	public $date_creation;
+	/**
+	 * @var mixed
+	 */
+	public $date_modification;
+	/**
+	 * @var mixed
+	 */
 	public $tms = '';
-    public $fk_default_home;
+	/**
+	 * @var integer
+	 */
+	public $fk_default_home;
 	public $records;
 	
 	/**
@@ -625,20 +646,36 @@ class WebsiteLine
 	 */
 	public $id;
 	/**
-	 * @var mixed Sample line property 1
+	 * @var int
 	 */
-	
 	public $entity;
-	public $ref;
-	public $description;
-	public $status;
-	public $fk_default_home;
-	public $date_creation = '';
-	public $date_modification = '';
-	public $tms = '';
-
 	/**
-	 * @var mixed Sample line property 2
+	 * @var string
 	 */
+	public $ref;
+	/**
+	 * @var string
+	 */
+	public $description;
+	/**
+	 * @var int
+	 */
+	public $status;
+	/**
+	 * @var int
+	 */
+	public $fk_default_home;
+	/**
+	 * @var mixed
+	 */
+	public $date_creation;
+	/**
+	 * @var mixed
+	 */
+	public $date_modification;
+	/**
+	 * @var mixed
+	 */
+	public $tms = '';
 	
 }
