@@ -456,8 +456,8 @@ class FormAdvTargetEmailing extends Form
 	 * selectAdvtargetemailingTemplate
 	 *
 	 * @param string $htmlname control name
-	 * @param number $selected  defaut selected
-	 * @param number $showempty empty lines
+	 * @param integer $selected  defaut selected
+	 * @param integer $showempty empty lines
 	 *
 	 * @return	string HTML combo
 	 */
