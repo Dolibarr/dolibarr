@@ -1849,7 +1849,6 @@ class Commande extends CommonOrder
      *  Note: For a dedicated shipment, the fetch_lines load the qty_asked and qty_shipped. This function return qty_shipped cuulated for order
      *   
      *	@param      int		$filtre_statut      Filter on status
-     *  @param		int		$fk_product			Filter on a product
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
     function loadExpeditions($filtre_statut=-1)
