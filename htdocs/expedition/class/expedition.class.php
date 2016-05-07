@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
@@ -90,6 +90,7 @@ class Expedition extends CommonObject
 	var $date_creation;
 	var $date_valid;
 
+	var $meths;
 	var $listmeths;			// List of carriers
 
 	/**
@@ -119,7 +120,7 @@ class Expedition extends CommonObject
 	 */
 	function getNextNumRef($soc)
 	{
-		global $db, $langs, $conf;
+		global $langs, $conf;
 		$langs->load("sendings");
 
 	    if (!empty($conf->global->EXPEDITION_ADDON_NUMBER))
@@ -156,7 +157,7 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+				dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
         }
@@ -176,7 +177,7 @@ class Expedition extends CommonObject
 	 */
 	function create($user, $notrigger=0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $hookmanager;
 
 		$now=dol_now();
 
@@ -978,7 +979,7 @@ class Expedition extends CommonObject
      */
     function update($user=null, $notrigger=0)
     {
-    	global $conf, $langs;
+    	global $conf;
 		$error=0;
 
 		// Clean parameters
@@ -1532,7 +1533,7 @@ class Expedition extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs,$conf;
+		global $langs;
 
 		$now=dol_now();
 
@@ -1644,7 +1645,7 @@ class Expedition extends CommonObject
 	function fetch_delivery_methods()
 	{
 		global $langs;
-		$meths = array();
+		$this->meths = array();
 
 		$sql = "SELECT em.rowid, em.code, em.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
@@ -1799,7 +1800,6 @@ class Expedition extends CommonObject
 	 */
 	function setClosed()
 	{
-		global $conf;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
@@ -1825,7 +1825,6 @@ class Expedition extends CommonObject
 	 */
 	function set_billed()
 	{
-		global $conf;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1';    // TODO Update only billed
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
@@ -1851,7 +1850,6 @@ class Expedition extends CommonObject
 	 */
 	function reOpen()
 	{
-		global $conf;
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
@@ -1882,7 +1880,7 @@ class Expedition extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("sendings");
 
