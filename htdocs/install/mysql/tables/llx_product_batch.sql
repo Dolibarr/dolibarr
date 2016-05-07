@@ -21,9 +21,10 @@ CREATE TABLE llx_product_batch (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
   fk_product_stock integer NOT NULL,
+  fk_product_lot integer NOT NULL,
   eatby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
   sellby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
-  batch varchar(30) NOT NULL,
+  batch varchar(30) NOT NULL,       -- depreciated. should not be used here but should be stored into a table llx_product_lot
   qty double NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL
 ) ENGINE=InnoDB;
