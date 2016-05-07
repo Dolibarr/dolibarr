@@ -9,7 +9,7 @@
  * Copyright (C) 2013       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016       Charlie Benke	    <charlie@patas-monkey.com>
+ * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ class Categorie extends CommonObject
 	const TYPE_MEMBER = 3;
 	const TYPE_CONTACT = 4;
 	const TYPE_USER = 4;  // categorie contact and user are same
+    // bank account
+    const TYPE_ACCOUNT = 5;
 
 	/**
 	 * @var array ID mapping from type string
@@ -62,6 +64,7 @@ class Categorie extends CommonObject
 		'member'   => 3,
 		'contact'  => 4,
 		'user'     => 4,
+        'account' => 5,
 	);
 	/**
 	 * @var array Foreign keys mapping from type string
@@ -75,6 +78,7 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'socpeople',
 		'user'  => 'user',
+        'account' => 'account',
 	);
 	/**
 	 * @var array Category tables mapping from type string
@@ -88,6 +92,7 @@ class Categorie extends CommonObject
 		'member'   => 'member',
 		'contact'  => 'contact',
 		'user'  => 'user',
+        'account' => 'account',
 	);
 	/**
 	 * @var array Object class mapping from type string
@@ -101,6 +106,7 @@ class Categorie extends CommonObject
 		'member'   => 'Adherent',
 		'contact'  => 'Contact',
 		'user'     => 'User',
+        'account' => 'Account',
 	);
 	/**
 	 * @var array Object table mapping from type string
@@ -114,6 +120,7 @@ class Categorie extends CommonObject
 		'member'   => 'adherent',
 		'contact'  => 'socpeople',
 		'user'     => 'user',
+        'account' => 'bank_account',
 	);
 
 	public $element='category';
@@ -138,6 +145,8 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_CUSTOMER
 	 * @see Categorie::TYPE_MEMBER
 	 * @see Categorie::TYPE_CONTACT
+	 * @see Categorie::TYPE_USER
+	 * @see Categorie::TYPE_ACCOUNT
 	 */
 	var $type;
 
