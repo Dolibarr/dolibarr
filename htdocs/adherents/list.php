@@ -360,45 +360,78 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	
 	// Ref
-	if (! empty($arrayfields['c.ref']['checked'])) 
+	if (! empty($arrayfields['d.ref']['checked'])) 
 	{
 	    print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	    print '</td>';
 	}
 
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
+	if (! empty($arrayfields['d.firstname']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_ref" value="'.$search_firstname.'" size="4"></td>';
+	}
+	
+	if (! empty($arrayfields['d.lastname']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
+	}
+	
+	if (! empty($arrayfields['d.company']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_company" value="'.$search_company.'" size="7"></td>';
+	}
+	
+	if (! empty($arrayfields['d.login']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
+	}
+	
+	if (! empty($arrayfields['t.libelle']['checked'])) 
+	{
+		print '<td class="liste_titre">';
+		$listetype=$membertypestatic->liste_array();
+		print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
+		print '</td>';
+	}
+	
+	if (! empty($arrayfields['d.address']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_address" value="'.$search_address.'" size="7"></td>';
+	}
+	
+	if (! empty($arrayfields['d.zip']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_zip" value="'.$search_zip.'" size="7"></td>';
+	}
+	
+	if (! empty($arrayfields['d.town']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_town" value="'.$search_town.'" size="7"></td>';
+	}
 
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
+	if (! empty($arrayfields['d.email']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
+	}
 
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
+	if (! empty($arrayfields['d.datefin']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '</td>';
+	}
+	
 
-	print '<td class="liste_titre">';
-	$listetype=$membertypestatic->liste_array();
-	print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
-	print '</td>';
 
-	print '<td class="liste_titre">&nbsp;</td>';
-
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
-
-	$parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-
-    // Status
-    print '<td class="liste_titre">&nbsp;</td>';
-
-    // Action column
-    print '<td class="liste_titre" colspan="2" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
-    print '</td>';    
-
+    
 	print "</tr>\n";
 
 	$var=True;
