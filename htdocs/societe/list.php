@@ -212,6 +212,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_town="";
 	$search_zip="";
 	$search_state="";
+	$search_country='';
 	$search_idprof1='';
 	$search_idprof2='';
 	$search_idprof3='';
@@ -219,7 +220,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_idprof5='';
 	$search_idprof6='';
 	$search_type='';
-	$search_country='';
 	$search_type_thirdparty='';
 	$search_status='';
 	$search_stcomm='';
@@ -384,6 +384,7 @@ if ($search_account_supplier_code) $sql.= natural_search("s.code_compta_fourniss
 if ($search_town)     $sql.= natural_search("s.town",$search_town);
 if ($search_zip)      $sql.= natural_search("s.zip",$search_zip);
 if ($search_state)    $sql.= natural_search("state.nom",$search_state);
+if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_idprof1)  $sql.= natural_search("s.siren",$search_idprof1);
 if ($search_idprof2)  $sql.= natural_search("s.siret",$search_idprof2);
 if ($search_idprof3)  $sql.= natural_search("s.ape",$search_idprof3);
@@ -396,7 +397,6 @@ if ($search_type > 0 && in_array($search_type,array('4')))         $sql .= " AND
 if ($search_type == '0') $sql .= " AND s.client = 0 AND s.fournisseur = 0";
 if ($search_status!='') $sql .= " AND s.status = ".$db->escape($search_status);
 if (!empty($conf->barcode->enabled) && $search_barcode) $sql.= " AND s.barcode LIKE '%".$db->escape($search_barcode)."%'";
-if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_levels)  $sql .= " AND s.fk_prospectlevel IN (".$search_levels.')';
 if ($search_stcomm != '' && $search_stcomm != -2) $sql.= natural_search("s.fk_stcomm",$search_stcomm,2);
