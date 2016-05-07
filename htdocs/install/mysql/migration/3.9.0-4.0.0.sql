@@ -35,6 +35,7 @@ ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NO
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
