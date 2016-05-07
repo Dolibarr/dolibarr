@@ -45,6 +45,7 @@ class CategoryApi extends DolibarrApi
         2 => 'customer',
         3 => 'member',
         4 => 'contact',
+        5 => 'account',
     );
     
     /**

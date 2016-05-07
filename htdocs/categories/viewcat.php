@@ -107,7 +107,14 @@ if ($id > 0 && $removeelem > 0)
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'contact';
-	}
+    }
+    else if ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
+    {
+        require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+        $tmpobject = new Account($db);
+        $result = $tmpobject->fetch($removeelem);
+        $elementtype = 'account';
+    }
 
 	$result=$object->del_type($tmpobject,$elementtype);
 	if ($result < 0) dol_print_error('',$object->error);
@@ -169,6 +176,7 @@ elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCateg
 elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoryShort");
 elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoryShort");
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
+elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -580,6 +588,59 @@ if($object->type == Categorie::TYPE_CONTACT)
 	}
 }
 
+// List of accounts
+if ($object->type == Categorie::TYPE_ACCOUNT)
+{
+    require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+    $accounts = $object->getObjectsInCateg("account");
+    if ($accounts < 0)
+    {
+        dol_print_error($db, $accounts->error, $accounts->errors);
+    }
+    else
+    {
+        print "<br>";
+        print "<table class='noborder' width='100%'>\n";
+        print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Account")."</td></tr>\n";
+
+        if (count($accounts) > 0)
+        {
+            $var=true;
+            foreach ($accounts as $key => $account)
+            {
+                $var=!$var;
+                print "\t<tr ".$bc[$var].">\n";
+                print '<td class="nowrap" valign="top">';
+                print $account->getNomUrl(1,0);
+                print "</td>\n";
+                print '<td valign="top">'.$account->bank."</td>\n";
+                print '<td valign="top">'.$account->number."</td>\n";
+                // Link to delete from category
+                print '<td align="right">';
+                $typeid=$object->type;
+                $permission=0;
+                if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+                if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+                if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+                if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+                if ($typeid == Categorie::TYPE_ACCOUNT)      $permission=$user->rights->banque->configurer;
+                if ($permission)
+                {
+                    print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$account->id."'>";
+                    print img_delete($langs->trans("DeleteFromCat")).' ';
+                    print $langs->trans("DeleteFromCat")."</a>";
+                }
+                print "</tr>\n";
+            }
+        }
+        else
+        {
+            print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("ThisCategoryHasNoAccount")."</td></tr>";
+        }
+        print "</table>\n";
+    }
+}
 
 llxFooter();
 
