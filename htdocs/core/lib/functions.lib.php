@@ -2775,7 +2775,7 @@ function dol_print_error($db='',$error='',$errors=null)
 
 		foreach($errors as $msg)
 		{
-			$msg=$langs->trans($msg);
+			if (empty($msg)) continue;
 			if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 			{
 				$out.="<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;

@@ -126,6 +126,11 @@ $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
 $filecss=$pathofwebsite.'/styles.css';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
 
 
 /*
@@ -162,7 +167,7 @@ if ($action == 'add')
 	if (! $error)
 	{
 		$db->commit();
-	    setEventMessages($langs->trans("PageAdded"), null, 'mesgs');
+	    setEventMessages($langs->trans("PageAdded", $objectpage->pageurl), null, 'mesgs');
 	    $action='';
 	}
 	else
@@ -475,6 +480,9 @@ if (count($object->records) > 0)
 
     if ($website)
     {
+        print ' - '.$langs->trans("RealURL").' ';
+        $realurl=$urlwithroot.'/public/websites/index.php?website='.$website;
+        print '<input type="text" name="realurl" value="'.$realurl.'"> ';
         print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
     }
     print '</div>';
@@ -508,8 +516,10 @@ if (count($object->records) > 0)
     {
         print '</div>';
 
-        $array=$objectpage->fetchAll('','',0,0,array('t.fk_website'=>$object->id));
-
+        $array=$objectpage->fetchAll($object->id);
+        if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+        $atleastonepage=(is_array($array) && count($array) > 0);
+        
         print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
         print '<div class="websiteselection">';
         print $langs->trans("Page").': ';
@@ -517,30 +527,33 @@ if (count($object->records) > 0)
         print '<div class="websiteselection">';
         $out='';
         $out.='<select name="pageid">';
-        if (is_array($array) && count($array) > 0)
+        if ($atleastonepage)
         {
-        foreach($array as $key => $valpage)
-        {
-            if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
-
-            $out.='<option value="'.$key.'"';
-            if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
-            $out.='>';
-            $out.=$valpage->title;
-                if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
-            $out.='</option>';
-        }
+            foreach($array as $key => $valpage)
+            {
+                if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
+    
+                $out.='<option value="'.$key.'"';
+                if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+                $out.='>';
+                $out.=$valpage->title;
+                    if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
+                $out.='</option>';
+            }
         }
         else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
         print $out;
-        print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
-        print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'">';
+        print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+        print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         
         if ($website && $pageid > 0)
         {
-            print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'&page='.$pageid.'" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+            print ' - '.$langs->trans("RealURL").' ';
+            $realurl=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
+            print '<input type="text" name="realurl" value="'.$realurl.'"> ';
+            print '<a href="'.$realurl.'" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
         }
         
         print '</div>';

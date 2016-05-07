@@ -253,15 +253,16 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder    Sort Order
-	 * @param string $sortfield    Sort field
-	 * @param int    $limit        limit
-	 * @param int    $offset       Offset
-	 * @param array  $filter       Filter array
-	 * @param string $filtermode   Filter mode (AND or OR)
-	 * @return array|int           int <0 if KO, array of pages if OK
+	 * @param  string      $websiteid    Web site
+	 * @param  string      $sortorder    Sort Order
+	 * @param  string      $sortfield    Sort field
+	 * @param  int         $limit        limit
+	 * @param  int         $offset       Offset
+	 * @param  array       $filter       Filter array
+	 * @param  string      $filtermode   Filter mode (AND or OR)
+	 * @return array|int                 int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($websiteid, $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -280,14 +281,15 @@ class WebsitePage extends CommonObject
 		$sql .= " t.date_modification,";
 		$sql .= " t.tms";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+		$sql .= ' WHERE t.fk_website = '.$websiteid; 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
 				if ($key=='t.rowid' || $key=='t.fk_website') {
-					$sqlwhere [] = $key . '='. $value;
+					$sqlwhere[] = $key . '='. $value;
 				} else {
-					$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 				}
 			}
 		}
