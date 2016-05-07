@@ -139,12 +139,14 @@ if ($permission) {
 } 
 ?>
 
-    <div class="tagtd"><?php echo $langs->trans("Source"); ?></div>
-    <div class="tagtd"><?php echo $langs->trans("Company"); ?></div>
-    <div class="tagtd"><?php echo $langs->trans("Contacts"); ?></div>
-    <div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
-    <div class="tagtd" align="center"><?php echo $langs->trans("Status"); ?></div>
-    <div class="tagtd">&nbsp;</div>
+	<form class="tagtr liste_titre formnoborder">
+		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
+		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
+		<div class="tagtd"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
+		<div class="tagtd"><?php echo $langs->trans("ContactType"); ?></div>
+		<div class="tagtd" align="center"><?php echo $langs->trans("Status"); ?></div>
+		<div class="tagtd">&nbsp;</div>
+	</form>
 
 	<?php $var=true; ?>
 
