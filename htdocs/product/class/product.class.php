@@ -2948,9 +2948,9 @@ class Product extends CommonObject
 
 	/**
 	 *  Return all direct parent products fo current product
-	 *
+	 *  
 	 *  @return 	array prod
-	 *  @see		getFather
+	 *  @deprecated	See getFather
 	 */
 	function getParent()
 	{
@@ -2982,9 +2982,10 @@ class Product extends CommonObject
 	 *
 	 * 	@param		int		$id					Id of product to search childs of
 	 *  @param		int		$firstlevelonly		Return only direct child
+	 *  @param		int		$level				Level of recursing call (start to 1)
 	 *  @return     array       				Prod
 	 */
-	function getChildsArbo($id, $firstlevelonly=0)
+	function getChildsArbo($id, $firstlevelonly=0, $level=1)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -2993,13 +2994,18 @@ class Product extends CommonObject
 		$sql.= " AND pa.fk_product_pere = ".$id;
 		$sql.= " AND pa.fk_product_fils != ".$id;	// This should not happens, it is to avoid infinite loop if it happens
 
-		dol_syslog(get_class($this).'::getChildsArbo', LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
+		
+		// Protection against infinite loop
+		if ($level > 30) return array();
+		
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
+				// TODO Add check to not add ne record if already added
 				$prods[$rec['rowid']]= array(
 					0=>$rec['id'],
 					1=>$rec['qty'],
@@ -3011,7 +3017,7 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly))
 				{
-					$listofchilds=$this->getChildsArbo($rec['id']);
+					$listofchilds=$this->getChildsArbo($rec['id'], 0, $level + 1);
 					foreach($listofchilds as $keyChild => $valueChild)
 					{
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
@@ -3036,10 +3042,12 @@ class Product extends CommonObject
 	 */
 	function get_sousproduits_arbo()
 	{
-		$parent = $this->getParent();
+		//$parent = $this->getParent();
+		$parent[$this->label]=array(0 => $this->id);
+
 		foreach($parent as $key => $value)		// key=label, value[0]=id
 		{
-			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)
+			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)	// Warning. getChildsArbo can gell getChildsArbo recursively.
 			{
 				$parent[$key][$keyChild] = $valueChild;
 			}
