@@ -3,7 +3,6 @@
  * Copyright (C) 2002-2003  Jean-Louis Bergamo      <jlb@j1b.org>
  * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016 		Philippe Grand			<philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,10 +320,10 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	{
-		print '<td colspan="1" align="center">'.$langs->trans("NumberingShort").'</td>';
+		print '<td width="5" align="center">&nbsp;</td>';
 	}
 	if (! empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'],$_SERVER["PHP_SELF"],'d.rowid','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['d.firstname']['checked']) && empty($arrayfields['d.lastname']['checked']))      print_liste_field_titre($arrayfields['d.firstname']['label'],$_SERVER["PHP_SELF"],'d.firstname','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.firstname']['checked']))      print_liste_field_titre($arrayfields['d.firstname']['label'],$_SERVER["PHP_SELF"],'d.firstname','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.lastname']['checked']))       print_liste_field_titre($arrayfields['d.lastname']['label'],$_SERVER["PHP_SELF"],'d.lastname','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.company']['checked']))        print_liste_field_titre($arrayfields['d.company']['label'],$_SERVER["PHP_SELF"],'d.company','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.login']['checked']))          print_liste_field_titre($arrayfields['d.login']['label'],$_SERVER["PHP_SELF"],'d.login','',$param,'',$sortfield,$sortorder);
@@ -360,89 +359,39 @@ if ($resql)
 	// Line for filters fields
 	print '<tr class="liste_titre">';
 	
-    if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
-	
 	// Ref
-	if (! empty($arrayfields['d.ref']['checked'])) 
+	if (! empty($arrayfields['c.ref']['checked'])) 
 	{
 	    print '<td class="liste_titre">';
     	print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
 	    print '</td>';
 	}
-	
-	if (! empty($arrayfields['d.firstname']['checked']) || ! empty($arrayfields['d.lastname']['checked']) || ! empty($arrayfields['d.company']['checked'])) 
-	{
-		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
-	}
 
-	if (! empty($arrayfields['d.login']['checked']))
-	{
-		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
-	}
-	
-	if (! empty($arrayfields['d.morphy']['checked']))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
 
-	if (! empty($arrayfields['t.libelle']['checked']))
-	{
-		print '<td class="liste_titre">';
-		$listetype=$membertypestatic->liste_array();
-		print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
-		print '</td>';
-	}
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
 
-	if (! empty($arrayfields['d.address']['checked']))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
-	
-	if (! empty($arrayfields['d.zip']['checked']))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
-	
-	if (! empty($arrayfields['d.town']['checked']))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
 
-	if (! empty($arrayfields['d.email']['checked']))
-	{
-		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
-	}
-	
-	if (! empty($arrayfields['d.datefin']['checked']))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
-	
-	if (! empty($arrayfields['d.datec']['checked']))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
-	
-	if (! empty($arrayfields['d.tms']['checked']))
-	{
-		print '<td class="liste_titre">&nbsp;</td>';
-	}
+	print '<td class="liste_titre">';
+	$listetype=$membertypestatic->liste_array();
+	print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
+	print '</td>';
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" type="text" name="search_email" value="'.$search_email.'" size="12"></td>';
 
 	$parameters=array();
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
     // Status
-    if (! empty($arrayfields['d.statut']['checked']))
-	{
-    	print '<td class="liste_titre">&nbsp;</td>';
-	}
+    print '<td class="liste_titre">&nbsp;</td>';
 
     // Action column
     print '<td class="liste_titre" colspan="2" align="right">';
@@ -482,62 +431,29 @@ if ($resql)
 		}
 
 		// Ref
-		if (! empty($arrayfields['d.ref']['checked']))
-		{
-			print "<td>";
-			print $memberstatic->getNomUrl(1);
-			print "</td>\n";
-		}
+		print "<td>";
+		print $memberstatic->getNomUrl(1);
+		print "</td>\n";
 
 		// Lastname
-		if (! empty($arrayfields['d.firstname']['checked']) || ! empty($arrayfields['d.lastname']['checked']) || ! empty($arrayfields['d.company']['checked'])) 
-	    {
-			print "<td><a href=\"card.php?rowid=$objp->rowid\">";
-			print ((! empty($objp->lastname) || ! empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
-			print (((! empty($objp->lastname) || ! empty($objp->firstname)) && ! empty($companyname)) ? ' / ' : '');
-			print (! empty($companyname) ? dol_trunc($companyname, 32) : '');
-			print "</a></td>\n";
-	    }
+		print "<td><a href=\"card.php?rowid=$objp->rowid\">";
+		print ((! empty($objp->lastname) || ! empty($objp->firstname)) ? dol_trunc($memberstatic->getFullName($langs)) : '');
+		print (((! empty($objp->lastname) || ! empty($objp->firstname)) && ! empty($companyname)) ? ' / ' : '');
+		print (! empty($companyname) ? dol_trunc($companyname, 32) : '');
+		print "</a></td>\n";
 
 		// Login
-	    if (! empty($arrayfields['d.login']['checked']))
-		{
-			print "<td>".$objp->login."</td>\n";
-		}
-		
-		// Moral/Physique
-		if (! empty($arrayfields['d.morphy']['checked']))
-		{
-			print "<td>".$memberstatic->getmorphylib($objp->morphy)."</td>\n";
-		}
+		print "<td>".$objp->login."</td>\n";
 
 		// Type
-		if (! empty($arrayfields['t.libelle']['checked']))
-		{
-			$membertypestatic->id=$objp->type_id;
-			$membertypestatic->libelle=$objp->type;
-			print '<td class="nowrap">';
-			print $membertypestatic->getNomUrl(1,32);
-			print '</td>';
-		}
-		
-		// Address
-		if (! empty($arrayfields['d.address']['checked']))
-		{
-			print "<td>".$memberstatic->address."</td>\n";
-		}
-		
-		// Zip
-		if (! empty($arrayfields['d.zip']['checked']))
-		{
-			print "<td>".$memberstatic->zip."</td>\n";
-		}
-		
-		// Town
-		if (! empty($arrayfields['d.town']['checked']))
-		{
-			print "<td>".$memberstatic->town."</td>\n";
-		}
+		$membertypestatic->id=$objp->type_id;
+		$membertypestatic->libelle=$objp->type;
+		print '<td class="nowrap">';
+		print $membertypestatic->getNomUrl(1,32);
+		print '</td>';
+
+		// Moral/Physique
+		print "<td>".$memberstatic->getmorphylib($objp->morphy)."</td>\n";
 
 		// EMail
 		print "<td>".dol_print_email($objp->email,0,0,1)."</td>\n";
@@ -546,10 +462,15 @@ if ($resql)
         $reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
 
+        // Statut
+		print '<td class="nowrap">';
+		print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
+		print "</td>";
+
 		// End of subscription date
 		if ($datefin)
 		{
-			print '<td align="left" class="nowrap">';
+			print '<td align="center" class="nowrap">';
 			print dol_print_date($datefin,'day');
 			if ($memberstatic->hasDelay()) {
 				print " ".img_warning($langs->trans("SubscriptionLate"));
@@ -570,23 +491,6 @@ if ($resql)
 			}
 			print '</td>';
 		}
-		
-		// Date create
-		if (! empty($arrayfields['d.datec']['checked']))
-		{
-			print "<td>".$memberstatic->datec."</td>\n";
-		}
-		
-		// Date modif
-		if (! empty($arrayfields['d.tms']['checked']))
-		{
-			print "<td>".$memberstatic->datem."</td>\n";
-		}
-		
-		 // Statut
-		print '<td class="nowrap">';
-		print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
-		print "</td>";
 
 		// Actions
 		print '<td align="center">';
