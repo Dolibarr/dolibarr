@@ -347,7 +347,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
 	{
-		print '<td width="5" align="center">&nbsp;</td>';
+		print '<td colspan="1" align="center">'.$langs->trans("NumberingShort").'</td>';
 	}
 	if (! empty($arrayfields['d.ref']['checked']))            print_liste_field_titre($arrayfields['d.ref']['label'],$_SERVER["PHP_SELF"],'d.rowid','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.firstname']['checked']))      print_liste_field_titre($arrayfields['d.firstname']['label'],$_SERVER["PHP_SELF"],'d.firstname','',$param,'',$sortfield,$sortorder);
@@ -387,6 +387,12 @@ if ($resql)
 
 	// Line for filters fields
 	print '<tr class="liste_titre">';
+	
+	// Line numbering
+	if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER))
+	{
+ 		print '<td class="liste_titre">&nbsp;</td>';
+ 	}
 	
 	// Ref
 	if (! empty($arrayfields['d.ref']['checked'])) 
