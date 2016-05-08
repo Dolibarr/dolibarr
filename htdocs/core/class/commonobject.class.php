@@ -229,12 +229,13 @@ abstract class CommonObject
 	public $mode_reglement_id;
 
 	/**
-	 * @var string Payment terms ID
+	 * @var int Payment terms ID
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
 	/**
-	 * @deprecated
+	 * @var int Payment terms ID
+	 * @deprecated Kept for compatibility
 	 * @see cond_reglement_id;
 	 */
 	public $cond_reglement;

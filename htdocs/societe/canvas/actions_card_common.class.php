@@ -23,8 +23,7 @@
  */
 
 /**
- *	\class      ActionsCardCommon
- *	\brief      Classe permettant la gestion des tiers par defaut
+ *	Classe permettant la gestion des tiers par defaut
  */
 abstract class ActionsCardCommon
 {

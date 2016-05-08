@@ -48,7 +48,7 @@ abstract class ActionsAdherentCardCommon
 
 
 	/**
-	 * 	Instantiation of DAO class
+	 * 	Instantiation of DAO class. Init ->object
 	 *
 	 * 	@return	int		0
 	 *  @deprecated		Using getInstanceDao should not be used.
@@ -83,18 +83,18 @@ abstract class ActionsAdherentCardCommon
      */
     function getObject($id)
     {
-    	$ret = $this->getInstanceDao();
+    	//$ret = $this->getInstanceDao();
 
-    	if (is_object($this->object) && method_exists($this->object,'fetch'))
+    	/*if (is_object($this->object) && method_exists($this->object,'fetch'))
     	{
     		if (! empty($id)) $this->object->fetch($id);
     	}
     	else
-    	{
+    	{*/
     		$object = new Adherent($this->db);
     		if (! empty($id)) $object->fetch($id);
             $this->object = $object;
-    	}
+    	//}
     }
 
     /**
@@ -121,11 +121,11 @@ abstract class ActionsAdherentCardCommon
 
                 // Creation user
                 $nuser = new User($this->db);
-                $result=$nuser->create_from_member($this->object,$_POST["login"]);
+                $result=$nuser->create_from_member($this->object,GETPOST("login"));
 
                 if ($result > 0)
                 {
-                    $result2=$nuser->setPassword($user,$_POST["password"],0,1,1);
+                    $result2=$nuser->setPassword($user,GETPOST("password"),0,1,1);
                     if ($result2)
                     {
                         $this->db->commit();
@@ -424,13 +424,14 @@ abstract class ActionsAdherentCardCommon
             if ($resql)
             {
                 $obj = $this->db->fetch_object($resql);
+            
+                $this->object->country_code	=	$obj->code;
+                $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
             }
             else
             {
                 dol_print_error($this->db);
             }
-            $this->object->country_code	=	$obj->code;
-            $this->object->country		=	$langs->trans("Country".$obj->code)?$langs->trans("Country".$obj->code):$obj->libelle;
         }
     }
 

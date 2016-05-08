@@ -572,37 +572,37 @@ class Opensurveysondage extends CommonObject
 	    if ($mode == 0)
 	    {
 	        if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
-	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened').$billedtext;
+	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
 	        if ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
 	    }
 	    elseif ($mode == 1)
 	    {
 	        if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
-	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened').$billedtext;
+	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
 	        if ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
 	    }
 	    elseif ($mode == 2)
 	    {
 	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
-	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'),'statut1').' '.$langs->trans('Opened').$billedtext;
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'),'statut1').' '.$langs->trans('Opened');
 	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6').' '.$langs->trans('Closed');
 	    }
 	    elseif ($mode == 3)
 	    {
 	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0');
-	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened').$billedtext,'statut1');
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'),'statut1');
 	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6');
 	    }
 	    elseif ($mode == 4)
 	    {
 	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
-	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened').$billedtext,'statut1').' '.$langs->trans('Opened').$billedtext;
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened').$billedtext,'statut1').' '.$langs->trans('Opened');
 	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6').' '.$langs->trans('Closed');
 	    }
 	    elseif ($mode == 5)
 	    {
 	        if ($status==self::STATUS_DRAFT) return '<span class="hideonsmartphone">'.$langs->trans('Draft').' </span>'.img_picto($langs->trans('Draft'),'statut0');
-	        if ($status==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('Opened').$billedtext.' </span>'.img_picto($langs->trans('Opened').$billedtext,'statut1');
+	        if ($status==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('Opened').' </span>'.img_picto($langs->trans('Opened'),'statut1');
 	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
 	    }
 	}
