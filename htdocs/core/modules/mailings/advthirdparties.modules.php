@@ -52,7 +52,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *    @param	int		$mailing_id    	Id of mailing. No need to use it.
 	 *    @param	array	$socid  		Array of id soc to add
-	 *    @param	int		$type_of_target	define in advtargetemailing.class.php
+	 *    @param	int		$type_of_target	Defined in advtargetemailing.class.php
 	 *    @param	array	$contactid 		Array of contact id to add
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
@@ -73,47 +73,45 @@ class mailing_advthirdparties extends MailingTargets
 				$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
 				$sql.= " AND s.rowid IN (".implode(',',$socid).")";
 				$sql.= " ORDER BY email";
-			}
 
-
-			dol_syslog(get_class($this)."::add_to_target societe sql=".$sql, LOG_DEBUG);
-			// Stock recipients emails into targets table
-			$result=$this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
-				$i = 0;
-
-				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
-
-				$old = '';
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($result);
-
-					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
-						if (!array_key_exists($obj->email, $cibles)) {
-							$cibles[$obj->email] = array(
-								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
-								'name' => $obj->name,
-								'firstname' => $obj->firstname,
-								'other' => '',
-								'source_url' => $this->url($obj->id,'thirdparty'),
-								'source_id' => $obj->id,
-								'source_type' => 'thirdparty'
-						);
-						}
-					}
-
-					$i++;
-				}
-			}
-			else
-			{
-				dol_syslog($this->db->error());
-				$this->error=$this->db->error();
-				return -1;
+    			// Stock recipients emails into targets table
+    			$result=$this->db->query($sql);
+    			if ($result)
+    			{
+    				$num = $this->db->num_rows($result);
+    				$i = 0;
+    
+    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
+    
+    				$old = '';
+    				while ($i < $num)
+    				{
+    					$obj = $this->db->fetch_object($result);
+    
+    					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
+    						if (!array_key_exists($obj->email, $cibles)) {
+    							$cibles[$obj->email] = array(
+    								'email' => $obj->email,
+    								'fk_contact' => $obj->fk_contact,
+    								'name' => $obj->name,
+    								'firstname' => $obj->firstname,
+    								'other' => '',
+    								'source_url' => $this->url($obj->id,'thirdparty'),
+    								'source_id' => $obj->id,
+    								'source_type' => 'thirdparty'
+    						);
+    						}
+    					}
+    
+    					$i++;
+    				}
+    			}
+    			else
+    			{
+    				dol_syslog($this->db->error());
+    				$this->error=$this->db->error();
+    				return -1;
+    			}
 			}
 		}
 
@@ -131,47 +129,45 @@ class mailing_advthirdparties extends MailingTargets
 					$sql.= " AND socp.fk_soc IN (".implode(',',$socid).")";
 				}
 				$sql.= " ORDER BY email";
-			}
-
-
-			dol_syslog(get_class($this)."::add_to_target contact sql=".$sql);
-			// Stock recipients emails into targets table
-			$result=$this->db->query($sql);
-			if ($result)
-			{
-				$num = $this->db->num_rows($result);
-				$i = 0;
-
-				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
-
-				$old = '';
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($result);
-
-					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
-						if (!array_key_exists($obj->email, $cibles)) {
-							$cibles[$obj->email] = array(
-								'email' => $obj->email,
-								'fk_contact' =>$obj->id,
-								'lastname' => $obj->lastname,
-								'firstname' => $obj->firstname,
-								'other' => '',
-								'source_url' => $this->url($obj->id,'contact'),
-								'source_id' => $obj->id,
-								'source_type' => 'contact'
-							);
-						}
-					}
-
-					$i++;
-				}
-			}
-			else
-			{
-				dol_syslog($this->db->error());
-				$this->error=$this->db->error();
-				return -1;
+    
+    			// Stock recipients emails into targets table
+    			$result=$this->db->query($sql);
+    			if ($result)
+    			{
+    				$num = $this->db->num_rows($result);
+    				$i = 0;
+    
+    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+    
+    				$old = '';
+    				while ($i < $num)
+    				{
+    					$obj = $this->db->fetch_object($result);
+    
+    					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
+    						if (!array_key_exists($obj->email, $cibles)) {
+    							$cibles[$obj->email] = array(
+    								'email' => $obj->email,
+    								'fk_contact' =>$obj->id,
+    								'lastname' => $obj->lastname,
+    								'firstname' => $obj->firstname,
+    								'other' => '',
+    								'source_url' => $this->url($obj->id,'contact'),
+    								'source_id' => $obj->id,
+    								'source_type' => 'contact'
+    							);
+    						}
+    					}
+    
+    					$i++;
+    				}
+    			}
+    			else
+    			{
+    				dol_syslog($this->db->error());
+    				$this->error=$this->db->error();
+    				return -1;
+    			}
 			}
 		}
 
