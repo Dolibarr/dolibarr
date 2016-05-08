@@ -625,19 +625,19 @@ if ($resql)
 		    print $obj->address;
 		    print '</td>';
 		}
-    	// Town
-		if (! empty($arrayfields['d.town']['checked']))
-		{
-		    print '<td class="nocellnopadd">';
-		    print $obj->town;
-		    print '</td>';
-		    if (! $i) $totalarray['nbfield']++;
-		}
 		// Zip
 		if (! empty($arrayfields['d.zip']['checked']))
 		{
 		    print '<td class="nocellnopadd">';
 		    print $obj->zip;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+    	// Town
+		if (! empty($arrayfields['d.town']['checked']))
+		{
+		    print '<td class="nocellnopadd">';
+		    print $obj->town;
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		}
