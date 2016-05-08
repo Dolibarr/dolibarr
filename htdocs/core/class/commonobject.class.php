@@ -4251,7 +4251,7 @@ abstract class CommonObject
 
 		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
 
-        if (! empty($this->array_options) && !empty($this->array_options["options_$key"]))
+        if (! empty($this->array_options["options_$key"]))
         {
             // Check parameters
             $langs->load('admin');
