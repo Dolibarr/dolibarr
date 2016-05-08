@@ -313,15 +313,12 @@ class Opensurveysondage extends CommonObject
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+	            // Call triggers
+	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('OPENSURVEY_MODIFY',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
 	    	}
 		}
 
@@ -343,17 +340,16 @@ class Opensurveysondage extends CommonObject
 		}
     }
 
-
- 	/**
-	 *  Delete object in database
-	 *
+    /**
+     *  Delete object in database
+     *
      *	@param  User	$user        		User that deletes
      *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
      *  @param	string	$numsondage			Num sondage admin to delete
-	 *  @return	int					 		<0 if KO, >0 if OK
-	 */
-	function delete($user, $notrigger, $numsondage)
-	{
+     *  @return	int					 		<0 if KO, >0 if OK
+     */
+    function delete($user, $notrigger, $numsondage)
+    {
 		global $conf, $langs;
 		$error=0;
 
