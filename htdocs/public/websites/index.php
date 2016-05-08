@@ -48,8 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $error=0;
 $website=GETPOST('website', 'alpha');
-$page=GETPOST('page', 'alpha');
-$pageid=GETPOST('pageid', 'alpha');
+$pageid=GETPOST('page', 'alpha')?GETPOST('page', 'alpha'):GETPOST('pageid', 'alpha');
 
 $accessallowed = 1;
 $type='';
@@ -81,13 +80,23 @@ if (empty($pageid))
         $pageid=$firstrep->id;
     }
 }
-
+if (empty($pageid))
+{
+    $langs->load("website");
+    print $langs->trans("PreviewOfSiteNotYetAvailable");
+    exit;
+}
 
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
 
 if ($pageid == 'css')
 {
+    header('Content-type: text/css');
+    // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+    //if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
+    //else 
+    header('Cache-Control: no-cache');
     $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css';
 }
 else
@@ -127,7 +136,9 @@ $original_file_osencoded=dol_osencode($original_file);	// New file name encoded 
 // This test if file exists should be useless. We keep it to find bug more easily
 if (! file_exists($original_file_osencoded))
 {
-    dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+    $langs->load("website");
+    print $langs->trans("RequestedPageHasNoContentYet", $pageid);
+    //dol_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
     exit;
 }
 

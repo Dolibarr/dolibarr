@@ -70,6 +70,7 @@ class DolibarrApiAccess implements iAuthenticate
 	{
 		global $db;
 
+		$login = '';
 		$stored_key = '';
 
 		$userClass = Defaults::$userIdentifierClass;
@@ -95,11 +96,15 @@ class DolibarrApiAccess implements iAuthenticate
 				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
 			}
 
-			if ( $stored_key != $_GET['api_key']) {
+			if ($stored_key != $_GET['api_key']) {
 				$userClass::setCacheIdentifier($_GET['api_key']);
 				return false;
 			}
 
+			if (! $login)
+			{
+			    throw new RestException(503, 'Error when searching logn user fro mapi key');
+			}
 			$fuser = new User($db);
 			if(! $fuser->fetch('',$login)) {
 				throw new RestException(503, 'Error when fetching user :'.$fuser->error);

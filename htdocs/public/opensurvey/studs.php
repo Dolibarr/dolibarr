@@ -46,7 +46,7 @@ if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 $nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = (empty($object->date_fin) || $object->date_fin > dol_now());
+$canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 
 /*

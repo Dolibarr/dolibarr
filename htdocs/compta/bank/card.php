@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
@@ -131,6 +132,10 @@ if ($_POST["action"] == 'add')
         $id = $account->create($user);
         if ($id > 0)
         {
+            // Category association
+            $categories = GETPOST('categories');
+            $account->setCategories($categories);
+
             $_GET["id"]=$id;            // Force chargement page en mode visu
         }
         else {
@@ -207,6 +212,10 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         $result = $account->update($user);
         if ($result >= 0)
         {
+            // Category association
+            $categories = GETPOST('categories');
+            $account->setCategories($categories);
+
             $_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
         }
         else
@@ -336,6 +345,20 @@ if ($action == 'create')
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td>';
 	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
+
+    // Tags-Categories
+    if ($conf->categorie->enabled) 
+    {
+        print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+        $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+        $c = new Categorie($db);
+        $cats = $c->containing($account->id,Categorie::TYPE_ACCOUNT);
+        foreach($cats as $cat) {
+            $arrayselected[] = $cat->id;
+        }
+        print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+        print "</td></tr>";
+    }
 
 	// Comment
 	print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
@@ -591,6 +614,13 @@ else
 		if ($account->url) print '</a>';
 		print "</td></tr>\n";
 
+        // Categories
+        if($conf->categorie->enabled) {
+            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+            print $form->showCategories($account->id,'account',1);
+            print "</td></tr>";
+        }
+
 		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">'.dol_htmlentitiesbr($account->comment).'</td></tr>';
 
@@ -833,6 +863,20 @@ else
         print '<tr><td>'.$langs->trans("Web").'</td>';
         print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?$_POST["url"]:$account->url).'">';
         print '</td></tr>';
+
+        // Tags-Categories
+        if ($conf->categorie->enabled) 
+        {
+            print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+            $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+            $c = new Categorie($db);
+            $cats = $c->containing($object->id,Categorie::TYPE_ACCOUNT);
+            foreach($cats as $cat) {
+                $arrayselected[] = $cat->id;
+            }
+            print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+            print "</td></tr>";
+        }
 
 		// Comment
 		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';

@@ -17,8 +17,9 @@
 */
 
 /**
- * \file advtargetemailing/class/html.formadvtragetemaling.class.php
- * \brief Fichier de la classe des fonctions predefinie de composants html advtargetemaling
+ * \file    comm/mailing/class/html.formadvtragetemaling.class.php
+ * \ingroup mailing
+ * \brief   Fichier de la classe des fonctions predefinie de composants html advtargetemaling
  */
 
 /**
@@ -38,8 +39,6 @@ class FormAdvTargetEmailing extends Form
 		global $langs;
 
 		$this->db = $db;
-
-		return 1;
 	}
 
 	/**
@@ -88,52 +87,53 @@ class FormAdvTargetEmailing extends Form
 	function multiselectCountry($htmlname = 'country_id', $selected_array=array()) {
 		global $conf, $langs;
 
-		$langs->load ( "dict" );
-
+		$langs->load("dict");
+		$maxlength = 0;
+		
 		$out = '';
-		$countryArray = array ();
+		$countryArray = array();
 		$label = array ();
 
-		$options_array = array ();
+		$options_array = array();
 
 		$sql = "SELECT rowid, code as code_iso, label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_country";
 		$sql .= " WHERE active = 1 AND code<>''";
 		$sql .= " ORDER BY code ASC";
 
-		dol_syslog ( get_class ( $this ) . "::select_country sql=" . $sql );
-		$resql = $this->db->query ( $sql );
+		dol_syslog(get_class($this) . "::select_country sql=" . $sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
 
-			$num = $this->db->num_rows ( $resql );
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num) {
 				$foundselected = false;
 
-				while ( $i < $num ) {
+				while ($i < $num) {
 					$obj = $this->db->fetch_object ( $resql );
 					$countryArray [$i] ['rowid'] = $obj->rowid;
 					$countryArray [$i] ['code_iso'] = $obj->code_iso;
-					$countryArray [$i] ['label'] = ($obj->code_iso && $langs->transnoentitiesnoconv ( "Country" . $obj->code_iso ) != "Country" . $obj->code_iso ? $langs->transnoentitiesnoconv ( "Country" . $obj->code_iso ) : ($obj->label != '-' ? $obj->label : ''));
-					$label [$i] = $countryArray [$i] ['label'];
+					$countryArray [$i] ['label'] = ($obj->code_iso && $langs->transnoentitiesnoconv("Country" . $obj->code_iso ) != "Country" . $obj->code_iso ? $langs->transnoentitiesnoconv ( "Country" . $obj->code_iso ) : ($obj->label != '-' ? $obj->label : ''));
+					$label[$i] = $countryArray[$i]['label'];
 					$i ++;
 				}
 
-				array_multisort ( $label, SORT_ASC, $countryArray );
+				array_multisort($label, SORT_ASC, $countryArray);
 
-				foreach ( $countryArray as $row ) {
-					$label = dol_trunc ( $row ['label'], $maxlength, 'middle' );
-					if ($row ['code_iso'])
-						$label .= ' (' . $row ['code_iso'] . ')';
+				foreach ($countryArray as $row) {
+					$label = dol_trunc($row['label'], $maxlength, 'middle');
+					if ($row['code_iso'])
+						$label .= ' (' . $row['code_iso'] . ')';
 
-					$options_array [$row ['rowid']] = $label;
+					$options_array[$row['rowid']] = $label;
 				}
 			}
 		} else {
-			dol_print_error ( $this->db );
+			dol_print_error($this->db);
 		}
 
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
 	}
 
 	/**
@@ -150,7 +150,7 @@ class FormAdvTargetEmailing extends Form
 
 		$options_array = array ();
 
-
+        $sql_usr  = '';
 		$sql_usr .= "SELECT DISTINCT u2.rowid, u2.lastname as name, u2.firstname, u2.login";
 		$sql_usr .= " FROM " . MAIN_DB_PREFIX . "user as u2, " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 		$sql_usr .= " WHERE u2.entity IN (0," . $conf->entity . ")";
@@ -196,10 +196,10 @@ class FormAdvTargetEmailing extends Form
 		foreach ($langs_available as $key => $value)
 		{
 			$label = $value;
-			$options_array [$key] = $label;
+			$options_array[$key] = $label;
 		}
 		asort($options_array);
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
 	}
 
 	/**
@@ -246,16 +246,18 @@ class FormAdvTargetEmailing extends Form
 					$sql .= ' WHERE ' . $InfoFieldList [3];
 				}
 			}
-			if (! empty ( $InfoFieldList [1] ) && $key == 'ts_payeur') {
+			if (! empty($InfoFieldList[1])) {
 				$sql .= " ORDER BY nom";
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog ( get_class ( $this ) . "::".__METHOD__,LOG_DEBUG);
-			$resql = $this->db->query ( $sql );
+			$options_array = array();
+			
+			dol_syslog(get_class($this) . "::".__METHOD__,LOG_DEBUG);
+			$resql = $this->db->query($sql);
 			if ($resql) {
 
-				$num = $this->db->num_rows ( $resql );
+				$num = $this->db->num_rows($resql);
 				$i = 0;
 				if ($num) {
 					while ( $i < $num ) {
@@ -269,15 +271,15 @@ class FormAdvTargetEmailing extends Form
 			}
 		}
 
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
 	}
 
 	/**
 	 *  Return combo list with people title
 	 *
-	 * 	@param	string	$htmlname	Name of HTML select combo field
-	 *  @param  array $selected_array array
-	 *  @return	string HTML combo
+	 * 	@param	string $htmlname	       Name of HTML select combo field
+	 *  @param  array  $selected_array     Array
+	 *  @return	string                     HTML combo
 	 */
 	function multiselectCivility($htmlname='civilite_id',$selected_array = array())
 	{
@@ -356,23 +358,21 @@ class FormAdvTargetEmailing extends Form
 
 		// Find if keys is in selected array value
 		if (is_array($selected_array) && count($selected_array)>0) {
-			$intersect_array = array_intersect_key ( $options_array, array_flip ( $selected_array ) );
+			$intersect_array = array_intersect_key($options_array, array_flip($selected_array));
 		} else {
 			$intersect_array=array();
 		}
 
-		if (count ( $options_array ) > 0) {
-			foreach ( $options_array as $keyoption => $valoption ) {
+		if (count($options_array) > 0) {
+			foreach ($options_array as $keyoption => $valoption) {
 				// If key is in intersect table then it have to e selected
-				if (count ( $intersect_array ) > 0) {
+				$selected = '';
+			    if (count ( $intersect_array ) > 0) {
 					if (array_key_exists ( $keyoption, $intersect_array )) {
-						$selected = ' selected="selected" ';
-					} else {
-						$selected = '';
+						$selected = ' selected="selected"';
 					}
 				}
-
-				$return .= '<option ' . $selected . ' value="' . $keyoption . '">' . $valoption . '</option>';
+				$return .= '<option' . $selected . ' value="' . $keyoption . '">' . $valoption . '</option>';
 			}
 		}
 
@@ -455,8 +455,8 @@ class FormAdvTargetEmailing extends Form
 	 * selectAdvtargetemailingTemplate
 	 *
 	 * @param string $htmlname control name
-	 * @param number $selected  defaut selected
-	 * @param number $showempty empty lines
+	 * @param integer $selected  defaut selected
+	 * @param integer $showempty empty lines
 	 *
 	 * @return	string HTML combo
 	 */

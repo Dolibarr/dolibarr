@@ -76,19 +76,17 @@ if ($action == 'add') {
 		
 		$res = $object->create($user);
 		
-		if ($res == 0) {
-		} else {
-			if ($res == - 3) {
-				$error = 1;
-				$action = "create";
-			}
-			if ($res == - 4) {
-				$error = 2;
-				$action = "create";
-			}
+		if ($res == - 3) {
+			$error = 1;
+			$action = "create";
+		}
+		if ($res == - 4) {
+			$error = 2;
+			$action = "create";
 		}
 	}
-	Header("Location: account.php");
+	header("Location: account.php");
+	exit;
 } else if ($action == 'edit') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
@@ -134,7 +132,8 @@ if ($action == 'add') {
 		$result = $object->delete($user);
 		
 		if ($result > 0) {
-			Header("Location: account.php");
+			header("Location: account.php");
+			exit;
 		}
 	}
 	

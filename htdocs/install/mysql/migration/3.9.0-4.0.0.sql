@@ -35,6 +35,7 @@ ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NO
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
@@ -405,6 +406,20 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NULL;
 
 ALTER TABLE llx_product ADD COLUMN default_vat_code varchar(10) after cost_price;
+
+CREATE TABLE llx_categorie_account
+(
+  fk_categorie  integer NOT NULL,
+  fk_account    integer NOT NULL,
+  import_key    varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_account ADD PRIMARY KEY pk_categorie_account (fk_categorie, fk_account);
+ALTER TABLE llx_categorie_account ADD INDEX idx_categorie_account_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_account ADD INDEX idx_categorie_account_fk_account (fk_account);
+
+ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_fk_account FOREIGN KEY (fk_account) REFERENCES llx_bank_account (rowid);
 
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;

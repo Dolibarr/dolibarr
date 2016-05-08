@@ -3041,6 +3041,7 @@ class Product extends CommonObject
 	function get_sousproduits_arbo()
 	{
 		//$parent = $this->getParent();
+	    $parent=array();
 		$parent[$this->label]=array(0 => $this->id);
 
 		foreach($parent as $key => $value)		// key=label, value[0]=id

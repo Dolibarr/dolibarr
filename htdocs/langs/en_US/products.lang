@@ -325,3 +325,6 @@ ProductVolume=Volume for 1 product
 WeightUnits=Weight unit
 VolumeUnits=Volume unit
 SizeUnits=Size unit
+DeleteProductBuyPrice=Delete buying price
+ConfirmDeleteProductBuyPrice=Are you sure you want to delete this buying price?
+
