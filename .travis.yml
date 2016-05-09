@@ -104,6 +104,11 @@ install:
   echo
 
 - |
+  echo "Installing PHP httpful"
+  composer require nategood/httpful ^0.2.20
+  echo
+
+- |
   echo "Adding Composer binaries to the path"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
