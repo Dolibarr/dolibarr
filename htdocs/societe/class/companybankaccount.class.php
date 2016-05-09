@@ -64,7 +64,7 @@ class CompanyBankAccount extends Account
      * @param   User   $user		User
      * @return	int					<0 if KO, >= 0 if OK
      */
-    function create($user='')
+    function create(User $user='')
     {
         $now=dol_now();
 
@@ -205,7 +205,7 @@ class CompanyBankAccount extends Account
      *	@param	User	$user	User deleting
      *  @return int         	<0 if KO, >0 if OK
      */
-    function delete($user='')
+    function delete(User $user='')
     {
         global $conf;
 
