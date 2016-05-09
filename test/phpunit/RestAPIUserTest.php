@@ -53,6 +53,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
     protected $savuser;
     protected $savlangs;
     protected $savdb;
+    protected $api_key;
 
     /**
      * Constructor
@@ -104,6 +105,18 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
+        $api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
+        $login='admin';
+        $password='admin';
+        // Call the WebService method and store its result in $result.
+			  $req = Request::init();
+			  $req->mime("application/json");
+			  $req->method("GET");
+			  $req->uri("$api_url/login?login=$login&password=$password");
+        $res = $req->send();
+        $this->assertEquals($res->code,200);
+        $this->api_key = $res->body->success->token;
+        print __METHOD__." api_key: $this->api_key \n";
 
         print __METHOD__."\n";
     }
@@ -120,30 +133,28 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
 
 
     /**
-     * testWSUserGetUser
+     * testRestGetUser
      *
      * @return int
      */
-    public function testRestAdminLogin()
+    public function testRestGetUser()
     {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-        $api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
-        $login='admin';
-        $password='admin';
-        // Call the WebService method and store its result in $result.
-        $result='';
-        $parameters = array('authentication'=>$authentication,'ref'=>'admin');
-			  $req = Request::init();
-			  $req->mime("application/json");
-			  $req->method("GET");
-			  $req->uri("$api_url/login?login=$login&password=$password");
-        $res = $req->send();
-        $this->assertEquals($res->code,200);
-        $api_key = $res->body->success->token;
+      global $conf,$user,$langs,$db;
+      $req = Request::init();
+      $req->mime("application/json");
+      $req->method("GET");
+      $req->uri("$api_url/user/10??api_key=$this->api_key");
+      $res = $req->send();
+      print __METHOD__."code: $res->code";
+      $this->assertEquals($res->code,404);
+      $req = Request::init();
+      $req->mime("application/json");
+      $req->method("GET");
+      $req->uri("$api_url/user/1??api_key=$this->api_key");
+      $res = $req->send();
+      print __METHOD__."code: $res->code";
+      $this->assertEquals($res->code,200);
+      $this->assertEquals($res->body->login,"admin");
     }
 
 }
