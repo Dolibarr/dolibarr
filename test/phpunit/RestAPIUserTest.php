@@ -108,12 +108,6 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
         $api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
         $login='admin';
         $password='admin';
-        // run whthout json parsing
-        $req = Request::init();
-        $req->method("GET");
-        $req->uri("$api_url/login?login=$login&password=$password");
-        $res = $req->send();
-        print __METHOD__." body: $res->body \n";
         // Call the API login method to save api_key for this test class
         $req = Request::init();
         $req->mime("application/json");
