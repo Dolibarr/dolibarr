@@ -1006,7 +1006,7 @@ class Societe extends CommonObject
         global $langs;
         global $conf;
 
-        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4)) return -1;
 
         $sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
