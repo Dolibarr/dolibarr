@@ -130,6 +130,7 @@ before_script:
   echo
   echo "Set timezone"
   echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  sed -i -e 's/^display_errors = On$/display_errors = Off/g' ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
   if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ]; then
     echo
     echo "Enabling APC for PHP <= 5.4"
