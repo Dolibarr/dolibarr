@@ -295,9 +295,8 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see log file.
-  set -e
+  # set -e - avoid script interruption https://docs.travis-ci.com/user/customizing-the-build/#Breaking-the-Build
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
-  set +e
 
 - |
   #echo "Output dolibarr.log"
