@@ -1980,6 +1980,18 @@ class Product extends CommonObject
 			$this->stats_expedition['nb']=$obj->nb;
 			$this->stats_expedition['rows']=$obj->nb_rows;
 			$this->stats_expedition['qty']=$obj->qty?$obj->qty:0;
+			// check if child of product
+			$parents = $this->getFather();
+			foreach($parents as $pa_id => $parent)
+			{
+				$prod = new Product($this->db);
+				$prod->fetch($parent['id']);
+				$prod->load_stats_sending($socid,$filtrestatut);
+				$this->stats_expedition['customers']+=$prod->stats_expedition['customers'];
+				$this->stats_expedition['nb']+=$prod->stats_expedition['nb'];
+				$this->stats_expedition['rows']+=$prod->stats_expedition['rows'];
+				$this->stats_expedition['qty']+=($prod->stats_expedition['qty'] * $parent['qty']);
+			}
 			return 1;
 		}
 		else
