@@ -8,7 +8,7 @@
 	convertWarningsToExceptions="true"
 	colors="true"
 	processIsolation="false"
-	stopOnFailure="true"
+	stopOnFailure="false"
 	syntaxCheck="true">
 	<php>
 		<ini name="max_execution_time" value="1800"/>
