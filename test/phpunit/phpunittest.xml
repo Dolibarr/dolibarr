@@ -11,9 +11,10 @@
 	stopOnFailure="false"
 	syntaxCheck="true">
 	<php>
-		<ini name="max_execution_time" value="1800"/>
-		<ini name="max_input_time" value="1800"/>
-        <ini name="memory_limit" value="4G" />
+	  <ini name="max_execution_time" value="1800"/>
+	  <ini name="max_input_time" value="1800"/>
+	  <ini name="display_errors" value="false"/>
+          <ini name="memory_limit" value="4G" />
         <!-- Also don't forget to change suhosin.memory_limit=4G -->
 	</php>
 	<filter>
