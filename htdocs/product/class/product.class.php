@@ -1825,6 +1825,18 @@ class Product extends CommonObject
 			$this->stats_propale['nb']=$obj->nb;
 			$this->stats_propale['rows']=$obj->nb_rows;
 			$this->stats_propale['qty']=$obj->qty?$obj->qty:0;
+			// check if child of product
+			$parents = $this->getFather();
+			foreach($parents as $pa_id => $parent)
+			{
+				$prod = new Product($this->db);
+				$prod->fetch($parent['id']);
+				$prod->load_stats_propale($socid);
+				$this->stats_propale['customers']+=$prod->stats_propale['customers'];
+				$this->stats_propale['nb']+=$prod->stats_propale['nb'];
+				$this->stats_propale['rows']+=$prod->stats_propale['rows'];
+				$this->stats_propale['qty']+=($prod->stats_propale['qty'] * $parent['qty']);
+			}
 			return 1;
 		}
 		else
@@ -1868,6 +1880,18 @@ class Product extends CommonObject
 			$this->stats_commande['nb']=$obj->nb;
 			$this->stats_commande['rows']=$obj->nb_rows;
 			$this->stats_commande['qty']=$obj->qty?$obj->qty:0;
+			// check if child of product
+			$parents = $this->getFather();
+			foreach($parents as $pa_id => $parent)
+			{
+				$prod = new Product($this->db);
+				$prod->fetch($parent['id']);
+				$prod->load_stats_commande($socid,$filtrestatut);
+				$this->stats_commande['customers']+=$prod->stats_commande['customers'];
+				$this->stats_commande['nb']+=$prod->stats_commande['nb'];
+				$this->stats_commande['rows']+=$prod->stats_commande['rows'];
+				$this->stats_commande['qty']+=($prod->stats_commande['qty'] * $parent['qty']);
+			}
 			return 1;
 		}
 		else
@@ -2040,6 +2064,18 @@ class Product extends CommonObject
 			$this->stats_contrat['nb']=$obj->nb;
 			$this->stats_contrat['rows']=$obj->nb_rows;
 			$this->stats_contrat['qty']=$obj->qty?$obj->qty:0;
+			// check if child of product
+			$parents = $this->getFather();
+			foreach($parents as $pa_id => $parent)
+			{
+				$prod = new Product($this->db);
+				$prod->fetch($parent['id']);
+				$prod->load_stats_contrat($socid);
+				$this->stats_contrat['customers']+=$prod->stats_contrat['customers'];
+				$this->stats_contrat['nb']+=$prod->stats_contrat['nb'];
+				$this->stats_contrat['rows']+=$prod->stats_contrat['rows'];
+				$this->stats_contrat['qty']+=($prod->stats_contrat['qty'] * $parent['qty']);
+			}
 			return 1;
 		}
 		else
@@ -2082,6 +2118,18 @@ class Product extends CommonObject
 			$this->stats_facture['nb']=$obj->nb;
 			$this->stats_facture['rows']=$obj->nb_rows;
 			$this->stats_facture['qty']=$obj->qty?$obj->qty:0;
+			// check if child of product
+			$parents = $this->getFather();
+			foreach($parents as $pa_id => $parent)
+			{
+				$prod = new Product($this->db);
+				$prod->fetch($parent['id']);
+				$prod->load_stats_facture($socid);
+				$this->stats_facture['customers']+=$prod->stats_facture['customers'];
+				$this->stats_facture['nb']+=$prod->stats_facture['nb'];
+				$this->stats_facture['rows']+=$prod->stats_facture['rows'];
+				$this->stats_facture['qty']+=($prod->stats_facture['qty'] * $parent['qty']);
+			}
 			return 1;
 		}
 		else
