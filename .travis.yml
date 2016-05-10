@@ -316,15 +316,14 @@ after_success:
 after_failure:
 - |
   echo Failure
-  # Remove set -e to execute this part
-  
+  # Remove set -e from previous steps to execute this part
   echo "Debugging informations"
   # Apache log file
   sudo cat /var/log/apache2/error.log
   if [ "$DEBUG" = true ]; then
     # Upgrade log files
     cat *.log
-    # Dolibarr log file
+    # Dolibarr log file (this leads to huge output not handled by travis)
     cat documents/dolibarr.log
     # MariaDB log file
     sudo cat /var/log/mysql/error.log
@@ -332,6 +331,6 @@ after_failure:
     echo
   else
     # Last lines of Dolibarr log file
-    tail -500f documents/dolibarr.log
+    tail -500 documents/dolibarr.log
   fi
 
