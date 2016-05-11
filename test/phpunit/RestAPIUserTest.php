@@ -146,14 +146,14 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req->method("GET");
       $req->uri("$this->api_url/user/10?api_key=$this->api_key");
       $res = $req->send();
-      print __METHOD__." HTTP code for unexisting user: $res->code";
+      print __METHOD__." HTTP code for unexisting user: $res->code\n";
       $this->assertEquals($res->code,404);
       $req = Request::init();
       $req->mime("application/json");
       $req->method("GET");
       $req->uri("$this->api_url/user/1?api_key=$this->api_key");
       $res = $req->send();
-      print __METHOD__." HTTP code for existing user: $res->code";
+      print __METHOD__." HTTP code for existing user: $res->code\n";
       $this->assertEquals($res->code,200);
       $this->assertEquals($res->body->login,"admin");
     }
@@ -171,18 +171,23 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req->body(json_encode($body));
       $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
-      print __METHOD__." HTTP code for creating incomplete user: $res->code";
+      print __METHOD__." HTTP code for creating incomplete user: $res->code\n";
       $this->assertEquals($res->code,401);
-      print __METHOD__." : ".json_encode($res->body);
+      print __METHOD__." : ".json_encode($res->body)."\n";
       // create regular user
       $req = Request::init();
       $req->mime("application/json");
       $req->method("POST");
-      $body['login'] = "testRestUser";
+      $body = (object) array(
+        "lastname"=>"testRestUser",
+        "login"=>"testRestUser",
+        "password"=>"testRestPassword",
+        "email"=>"test@restuser.com"
+      );
       $req->body(json_encode($body));
       $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
-      print __METHOD__." HTTP code for creating user: $res->code";
+      print __METHOD__." HTTP code for creating user: $res->code\n";
       $this->assertEquals($res->code,200);
       // attempt to create duplicated user
       $req = Request::init();
@@ -191,7 +196,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req->body(json_encode($body));
       $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
-      print __METHOD__." HTTP code for creating duplicate user: $res->code";
+      print __METHOD__." HTTP code for creating duplicate user: $res->code\n";
       $this->assertEquals($res->code,500);
       print __METHOD__." : ".json_encode($res->body);
     }
