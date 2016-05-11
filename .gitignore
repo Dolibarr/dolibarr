@@ -19,6 +19,7 @@ Thumbs.db
 # Vagrant generated files
 .vagrant
 # Composer installed repositories
+composer.lock
 /htdocs/includes/**/.git
 # Composer autoloader and unwanted files
 htdocs/includes/autoload.php
