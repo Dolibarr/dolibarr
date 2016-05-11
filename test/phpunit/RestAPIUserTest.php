@@ -53,6 +53,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
     protected $savuser;
     protected $savlangs;
     protected $savdb;
+    protected $api_url;
     protected $api_key;
 
     /**
@@ -105,14 +106,14 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
         $user=$this->savuser;
         $langs=$this->savlangs;
         $db=$this->savdb;
-        $api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
+        $this->api_url=DOL_MAIN_URL_ROOT.'/api/index.php';
         $login='admin';
         $password='admin';
         // Call the API login method to save api_key for this test class
         $req = Request::init();
         $req->mime("application/json");
         $req->method("GET");
-        $req->uri("$api_url/login?login=$login&password=$password");
+        $req->uri("$this->api_url/login?login=$login&password=$password");
         $res = $req->send();
         $this->assertEquals($res->code,200);
         $this->api_key = $res->body->success->token;
@@ -143,14 +144,14 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req = Request::init();
       $req->mime("application/json");
       $req->method("GET");
-      $req->uri("$api_url/user/10?api_key=$this->api_key");
+      $req->uri("$this->api_url/user/10?api_key=$this->api_key");
       $res = $req->send();
       print __METHOD__." HTTP code for unexisting user: $res->code";
       $this->assertEquals($res->code,404);
       $req = Request::init();
       $req->mime("application/json");
       $req->method("GET");
-      $req->uri("$api_url/user/1?api_key=$this->api_key");
+      $req->uri("$this->api_url/user/1?api_key=$this->api_key");
       $res = $req->send();
       print __METHOD__." HTTP code for existing user: $res->code";
       $this->assertEquals($res->code,200);
@@ -158,20 +159,41 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
     }
 
     public function testRestCreateUser() {
-      $req = Request::init();
-      $req->mime("application/json");
-      $req->method("POST");
+      // attemp to create without mandatory fields :
       $body = (object)array(
         "lastname"=>"testRestUser",
-        "login"=>"testRestUser",
         "password"=>"testRestPassword",
         "email"=>"test@restuser.com"
       );
+      $req = Request::init();
+      $req->mime("application/json");
+      $req->method("POST");
       $req->body(json_encode($body);
-      $req->uri("$api_url/user?api_key=$this->api_key");
+      $req->uri("$this->api_url/user?api_key=$this->api_key");
+      $res = $req->send();
+      print __METHOD__." HTTP code for creating incomplete user: $res->code";
+      $this->assertEquals($res->code,500);
+      print __METHOD__." : ".json_encode($res->body);
+      // create regular user
+      $req = Request::init();
+      $req->mime("application/json");
+      $req->method("POST");
+      $body['login'] = "testRestUser";
+      $req->body(json_encode($body);
+      $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
       print __METHOD__." HTTP code for creating user: $res->code";
       $this->assertEquals($res->code,200);
+      // attempt to create duplicated user
+      $req = Request::init();
+      $req->mime("application/json");
+      $req->method("POST");
+      $req->body(json_encode($body);
+      $req->uri("$this->api_url/user?api_key=$this->api_key");
+      $res = $req->send();
+      print __METHOD__." HTTP code for creating duplicate user: $res->code";
+      $this->assertEquals($res->code,500);
+      print __METHOD__." : ".json_encode($res->body);
     }
 
 }
