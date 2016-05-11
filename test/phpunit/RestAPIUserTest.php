@@ -160,7 +160,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
 
     public function testRestCreateUser() {
       // attemp to create without mandatory fields :
-      $body = (object)array(
+      $body = (object) array(
         "lastname"=>"testRestUser",
         "password"=>"testRestPassword",
         "email"=>"test@restuser.com"
