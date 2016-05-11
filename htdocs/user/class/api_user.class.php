@@ -136,9 +136,9 @@ class UserApi extends DolibarrApi
    */
   function post($request_data = NULL) {
     // check user authorization
-    if(! DolibarrApiAccess::$user->rights->user->creer) {
-       throw new RestException(401, "User creation not allowed");
-    }
+    //if(! DolibarrApiAccess::$user->rights->user->creer) {
+    //   throw new RestException(401, "User creation not allowed");
+    //}
     // check mandatory fields
     if (!isset($request_data["login"]))
 				throw new RestException(400, "login field missing");

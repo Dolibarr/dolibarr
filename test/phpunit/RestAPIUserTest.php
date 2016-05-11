@@ -172,7 +172,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
       print __METHOD__." HTTP code for creating incomplete user: $res->code\n";
-      $this->assertEquals($res->code,401);
+      $this->assertEquals($res->code,400);
       print __METHOD__." : ".json_encode($res->body)."\n";
       // create regular user
       $req = Request::init();
