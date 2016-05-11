@@ -438,6 +438,7 @@ ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);
  
 ALTER TABLE llx_element_resources ADD COLUMN duree real;          -- total duration of using ressource
 
+UPDATE llx_element_resources SET resource_type = 'dolresource' WHERE resource_type = 'resource';
 
 CREATE TABLE llx_advtargetemailing
 (
