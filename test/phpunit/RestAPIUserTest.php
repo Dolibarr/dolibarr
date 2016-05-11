@@ -168,7 +168,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req = Request::init();
       $req->mime("application/json");
       $req->method("POST");
-      $req->body(json_encode($body);
+      $req->body(json_encode($body));
       $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
       print __METHOD__." HTTP code for creating incomplete user: $res->code";
@@ -179,7 +179,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req->mime("application/json");
       $req->method("POST");
       $body['login'] = "testRestUser";
-      $req->body(json_encode($body);
+      $req->body(json_encode($body));
       $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
       print __METHOD__." HTTP code for creating user: $res->code";
@@ -188,7 +188,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req = Request::init();
       $req->mime("application/json");
       $req->method("POST");
-      $req->body(json_encode($body);
+      $req->body(json_encode($body));
       $req->uri("$this->api_url/user?api_key=$this->api_key");
       $res = $req->send();
       print __METHOD__." HTTP code for creating duplicate user: $res->code";
