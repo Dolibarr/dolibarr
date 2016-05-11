@@ -143,16 +143,16 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $req = Request::init();
       $req->mime("application/json");
       $req->method("GET");
-      $req->uri("$api_url/user/10??api_key=$this->api_key");
+      $req->uri("$api_url/user/10?api_key=$this->api_key");
       $res = $req->send();
-      print __METHOD__."code: $res->code";
+      print __METHOD__." HTTP code for unexisting user: $res->code";
       $this->assertEquals($res->code,404);
       $req = Request::init();
       $req->mime("application/json");
       $req->method("GET");
-      $req->uri("$api_url/user/1??api_key=$this->api_key");
+      $req->uri("$api_url/user/1?api_key=$this->api_key");
       $res = $req->send();
-      print __METHOD__."code: $res->code";
+      print __METHOD__." HTTP code for existing user: $res->code";
       $this->assertEquals($res->code,200);
       $this->assertEquals($res->body->login,"admin");
     }
