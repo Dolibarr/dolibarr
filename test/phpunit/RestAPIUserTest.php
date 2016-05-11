@@ -157,4 +157,21 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertEquals($res->body->login,"admin");
     }
 
+    public function testRestCreateUser() {
+      $req = Request::init();
+      $req->mime("application/json");
+      $req->method("POST");
+      $body = (object)array(
+        "lastname"=>"testRestUser",
+        "login"=>"testRestUser",
+        "password"=>"testRestPassword",
+        "email"=>"test@restuser.com"
+      );
+      $req->body(json_encode($body);
+      $req->uri("$api_url/user?api_key=$this->api_key");
+      $res = $req->send();
+      print __METHOD__." HTTP code for creating user: $res->code";
+      $this->assertEquals($res->code,200);
+    }
+
 }

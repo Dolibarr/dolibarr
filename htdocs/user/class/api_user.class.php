@@ -114,7 +114,6 @@ class UserApi extends DolibarrApi
     if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
       throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
     }
-    // Check mandatory fields
     $login = $request_data["login"];
     $password = $request_data["password"];
     $result = $this->useraccount->create_from_contact($contact,$login,$password);
@@ -124,7 +123,41 @@ class UserApi extends DolibarrApi
     // password parameter not used in create_from_contact
     $this->useraccount->setPassword($this->useraccount,$password);
     return $result;
-	}
+  }
+
+  /**
+   * Create user account
+   *
+   * @param array $request_data New user data
+   *
+   * @return int
+   * 
+   * @url POST user/
+   */
+  function post($request_data = NULL) {
+    // check user authorization
+    if(! DolibarrApiAccess::$user->rights->user->creer) {
+       throw new RestException(401, "User creation not allowed");
+    }
+    // check mandatory fields
+    if (!isset($request_data["login"]))
+				throw new RestException(400, "login field missing");
+    if (!isset($request_data["password"]))
+				throw new RestException(400, "password field missing");
+    if (!isset($request_data["lastname"]))
+      throw new RestException(400, "lastname field missing");
+    //assign field values
+		foreach ($request_data as $field => $value)
+    {
+      $this->useraccount->$field = $value;
+    }
+    $result = $this->useraccount->create(DolibarrApiAccess::$user);
+    if ($result <=0) {
+      throw new RestException(500, "User not created : ".$this->useraccount->error);
+    }
+    // TODO maybe return a structured object
+    return $result;
+  }
 
 	/**
 	 * Update account
