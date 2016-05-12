@@ -84,14 +84,14 @@ if (empty($reshook))
     if ($action == 'close')
     {
         $object->status = Opensurveysondage::STATUS_CLOSED;
-        $object->update();
+        $object->update($user);
     }
     
     // Reopend
     if ($action == 'reopen')
     {
         $object->status = Opensurveysondage::STATUS_VALIDATED;
-        $object->update();
+        $object->update($user);
     }
     
     // Update

@@ -59,7 +59,7 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 <div class="conteneur_img_droite">
 
 <div class="menu_principal hideonsmartphone">
-<div class="logo"><?php print '<img class="logopos" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?></div>
+<div class="logo"><?php print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">'; ?></div>
 </div>
 
 <div class="contenu">
