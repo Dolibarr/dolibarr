@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur    <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo  <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin          <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Juanjo Menent          <jmenent@2byte.es>
@@ -127,7 +127,7 @@ $arrayfields=array(
     'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'c.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
-    'e.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
+    'c.facture'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -673,6 +673,12 @@ if ($resql)
         $var=!$var;
         print '<tr '.$bc[$var].'>';
 
+        $notshippable=0;
+        $warning = 0;
+        $text_info='';
+        $text_warning='';
+        $nbprod=0;
+                
         if (! empty($arrayfields['c.ref']['checked']))
         {
             print '<td class="nowrap">';
@@ -694,17 +700,11 @@ if ($resql)
             print '</td>';
     		
             // Show shippable Icon (create subloop, so may be slow)
-            if ($conf->stock->enabled) 
+            if ($conf->stock->enabled)
             {
-                $langs->load("stocks");
-                if (($obj->fk_statut > 0) && ($obj->fk_statut < 3))
-                {
-                    $notshippable=0;
-                    $warning = 0;
-                    $text_info='';
-                    $text_warning='';
-                    $nbprod=0;
-                    
+            	$langs->load("stocks");
+	            if (($obj->fk_statut > 0) && ($obj->fk_statut < 3))
+    	        {
                     $numlines = count($generic_commande->lines); // Loop on each line of order
                     for ($lig=0; $lig < $numlines; $lig++) 
                     {
@@ -712,17 +712,19 @@ if ($resql)
                         {
                             $nbprod++; // order contains real products
                             $generic_product->id = $generic_commande->lines[$lig]->fk_product;
+
+                            // Get local and virtual stock and store it into cache
                             if (empty($productstat_cache[$generic_commande->lines[$lig]->fk_product])) {
-                                $generic_product->load_stock();
-                                $generic_product->load_virtual_stock();
+                                $generic_product->load_stock('nobatch');
+                                //$generic_product->load_virtual_stock();   Already included into load_stock
                                 $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_reel;
                                 $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
                             } else {
                                 $generic_product->stock_reel = $productstat_cache[$generic_commande->lines[$lig]->fk_product]['stock_reel'];
                                 $generic_product->stock_theorique = $productstat_cachevirtual[$generic_commande->lines[$lig]->fk_product]['stock_reel'] = $generic_product->stock_theorique;
                             }
-                            
-                            if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code is when this option is not set, setting it create strange result
+
+                            if (empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST))  // Default code. Default is when this option is not set, setting it create strange result
                             {
                                 $text_info .= $generic_commande->lines[$lig]->qty.' X '.$generic_commande->lines[$lig]->ref.'&nbsp;'.dol_trunc($generic_commande->lines[$lig]->product_label, 25);
                                 $text_info .= ' - '.$langs->trans("Stock").': '.$generic_product->stock_reel;
@@ -795,7 +797,7 @@ if ($resql)
                 {
                     print $form->textwithtooltip('',$text_info,2,1,$text_icon,'',2);
                 }
-                if ($warning) {
+                if ($warning) {     // Always false in default mode
                     print $form->textwithtooltip('', $langs->trans('NotEnoughForAllOrders').'<br>'.$text_warning, 2, 1, img_picto('', 'error'),'',2);
                 }
                 print '</td>';
@@ -989,6 +991,7 @@ if ($resql)
         if (! empty($arrayfields['c.facture']['checked']))
         {
             print '<td align="center">'.yn($obj->billed).'</td>';
+            if (! $i) $totalarray['nbfield']++;
         }
         
         // Action column

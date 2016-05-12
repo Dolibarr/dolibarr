@@ -832,7 +832,10 @@ class Societe extends CommonObject
             $sql .= ",prefix_comm = ".(! empty($this->prefix_comm)?"'".$this->db->escape($this->prefix_comm)."'":"null");
 
             $sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
-            $sql .= ",fk_stcomm='".$this->stcomm_id."'";
+            if (isset($this->stcomm_id))
+            {
+                $sql .= ",fk_stcomm='".$this->stcomm_id."'";
+            }
             $sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
             $sql .= ",fk_forme_juridique = ".(! empty($this->forme_juridique_code)?"'".$this->db->escape($this->forme_juridique_code)."'":"null");
@@ -848,7 +851,7 @@ class Societe extends CommonObject
             $sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->db->escape($this->barcode)."'":"null");
             $sql .= ",default_lang = ".(! empty($this->default_lang)?"'".$this->db->escape($this->default_lang)."'":"null");
             $sql .= ",logo = ".(! empty($this->logo)?"'".$this->db->escape($this->logo)."'":"null");
-            $sql .= ",outstanding_limit= '".($this->outstanding_limit!=''?$this->outstanding_limit:'null')."'";
+            $sql .= ",outstanding_limit= ".($this->outstanding_limit!=''?$this->outstanding_limit:'null');
             $sql .= ",fk_prospectlevel='".$this->fk_prospectlevel."'";
 
             $sql .= ",webservices_url = ".(! empty($this->webservices_url)?"'".$this->db->escape($this->webservices_url)."'":"null");

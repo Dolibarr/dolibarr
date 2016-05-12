@@ -109,8 +109,10 @@ class Product extends CommonObject
 	var $localtax1_type;
 	var $localtax2_type;
 	
-	//! Stock
+	//! Stock real
 	var $stock_reel;
+	//! Stock virtual
+	var $stock_theorique;
 	//! Cost price
 	var $cost_price;
 	//! Average price value for product entry into stock (PMP)
@@ -1416,7 +1418,7 @@ class Product extends CommonObject
 
 		$id=$this->id;
 
-		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr," newdefaultvatcode=".$newdefaultvatcode);
+		dol_syslog(get_class($this)."::update_price id=".$id." newprice=".$newprice." newpricebase=".$newpricebase." newminprice=".$newminprice." level=".$level." npr=".$newnpr." newdefaultvatcode=".$newdefaultvatcode);
 
 		// Clean parameters
 		if (empty($this->tva_tx))  $this->tva_tx=0;
@@ -1848,7 +1850,7 @@ class Product extends CommonObject
                     }
                 }
 
-				// We should not load stock at each fetch. If someone need stock, he must call load_stock after fetch.
+				// We should not load stock during the fetch. If someone need stock of product, he must call load_stock after fetching product.
 				//$res=$this->load_stock();
 				// instead we just init the stock_warehouse array
 				$this->stock_warehouse = array();
@@ -2845,7 +2847,7 @@ class Product extends CommonObject
 
 				//print "XXX We add id=".$id." - label=".$label." - nb=".$nb." - multiply=".$multiply." fullpath=".$compl_path.$label."\n";
 				$this->fetch($id);		// Load product
-				$this->load_stock();	// Load stock
+				$this->load_stock('nobatch,novirtual');	// Load stock to get true this->stock_reel
 				$this->res[]= array(
 					'id'=>$id,					// Id product
 					'id_parent'=>$id_parent,
@@ -2954,6 +2956,7 @@ class Product extends CommonObject
 			$prods = array ();
 			while ($record = $this->db->fetch_array($res))
 			{
+				// $record['id'] = $record['rowid'] = id of father
 				$prods[$record['id']]['id'] = $record['rowid'];
 				$prods[$record['id']]['ref'] = $record['ref'];
 				$prods[$record['id']]['label'] = $record['label'];
@@ -2973,44 +2976,14 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Return all direct parent products fo current product
-	 *
-	 *  @return 	array prod
-	 *  @see		getFather
-	 */
-	function getParent()
-	{
-		$sql = "SELECT p.rowid, p.label as label, p.ref as ref, pa.fk_product_pere as id, p.fk_product_type, pa.qty";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_association as pa,";
-		$sql.= " ".MAIN_DB_PREFIX."product as p";
-		$sql.= " WHERE p.rowid = pa.fk_product_pere";
-		$sql.= " AND p.rowid = ".$this->id;
-
-		$res = $this->db->query($sql);
-		if ($res)
-		{
-			$prods = array ();
-			while ($record = $this->db->fetch_array($res))
-			{
-				$prods[$this->db->escape($record['label'])] = array(0=>$record['id']);
-			}
-			return $prods;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
 	 *  Return childs of product $id
 	 *
 	 * 	@param		int		$id					Id of product to search childs of
 	 *  @param		int		$firstlevelonly		Return only direct child
+	 *  @param		int		$level				Level of recursing call (start to 1)
 	 *  @return     array       				Prod
 	 */
-	function getChildsArbo($id, $firstlevelonly=0)
+	function getChildsArbo($id, $firstlevelonly=0, $level=1)
 	{
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -3019,13 +2992,18 @@ class Product extends CommonObject
 		$sql.= " AND pa.fk_product_pere = ".$id;
 		$sql.= " AND pa.fk_product_fils != ".$id;	// This should not happens, it is to avoid infinite loop if it happens
 
-		dol_syslog(get_class($this).'::getChildsArbo', LOG_DEBUG);
+		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
+		
+		// Protection against infinite loop
+		if ($level > 30) return array();
+		
 		$res  = $this->db->query($sql);
 		if ($res)
 		{
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
+				// TODO Add check to not add ne record if already added
 				$prods[$rec['rowid']]= array(
 					0=>$rec['id'],
 					1=>$rec['qty'],
@@ -3037,7 +3015,7 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly))
 				{
-					$listofchilds=$this->getChildsArbo($rec['id']);
+					$listofchilds=$this->getChildsArbo($rec['id'], 0, $level + 1);
 					foreach($listofchilds as $keyChild => $valueChild)
 					{
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
@@ -3062,10 +3040,13 @@ class Product extends CommonObject
 	 */
 	function get_sousproduits_arbo()
 	{
-		$parent = $this->getParent();
+		//$parent = $this->getParent();
+	    $parent=array();
+		$parent[$this->label]=array(0 => $this->id);
+
 		foreach($parent as $key => $value)		// key=label, value[0]=id
 		{
-			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)
+			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)	// Warning. getChildsArbo can gell getChildsArbo recursively.
 			{
 				$parent[$key][$keyChild] = $valueChild;
 			}
@@ -3339,15 +3320,18 @@ class Product extends CommonObject
 
 	/**
 	 *    Load information about stock of a product into stock_reel, stock_warehouse[] (including stock_warehouse[idwarehouse]->detail_batch for batch products)
+	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id. 
 	 *
-	 *    @return     	int             < 0 if KO, > 0 if OK
-	 *    @see			load_virtual_stock, getBatchInfo
+	 *    @param      string   $option     '', 'nobatch' = Do not load batch information, 'novirtual' = Do not load virtual stock
+	 *    @return     int                  < 0 if KO, > 0 if OK
+	 *    @see		  load_virtual_stock, getBatchInfo
 	 */
-	function load_stock()
+	function load_stock($option='')
 	{
 		$this->stock_reel = 0;
 		$this->stock_warehouse = array();
-
+		$this->stock_theorique = 0;
+		
 		$sql = "SELECT ps.rowid, ps.reel, ps.fk_entrepot";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= ", ".MAIN_DB_PREFIX."entrepot as w";
@@ -3369,14 +3353,17 @@ class Product extends CommonObject
 					$this->stock_warehouse[$row->fk_entrepot] = new stdClass();
 					$this->stock_warehouse[$row->fk_entrepot]->real = $row->reel;
 					$this->stock_warehouse[$row->fk_entrepot]->id = $row->rowid;
-					if ($this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
+					if ((! preg_match('/nobatch/', $option)) && $this->hasbatch()) $this->stock_warehouse[$row->fk_entrepot]->detail_batch=Productbatch::findAll($this->db,$row->rowid,1);
 					$this->stock_reel+=$row->reel;
 					$i++;
 				}
 			}
 			$this->db->free($result);
 
-			$this->load_virtual_stock();		// This also load stats_commande_fournisseur, ...
+			if (! preg_match('/novirtual/', $option)) 
+			{
+			    $this->load_virtual_stock();		// This also load stats_commande_fournisseur, ...
+			}
 
 			return 1;
 		}
@@ -3388,7 +3375,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *    Load information about objects that are delat between physical and virtual stock of a product
+	 *    Load value ->stock_theorique of a product. Property this->id must be defined.
+	 *    This function need a lot of load. If you use it on list, use a cache to execute it one for each product id. 
 	 *
 	 *    @return   int             < 0 if KO, > 0 if OK
 	 *    @see		load_stock, getBatchInfo
@@ -3712,7 +3700,7 @@ class Product extends CommonObject
     			}
             }
 
-			if ($size==1 || $size='small')
+			if ($size==1 || $size=='small')
 			{
 				if ($nbbyrow > 0)
 				{

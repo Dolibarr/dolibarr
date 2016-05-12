@@ -167,6 +167,8 @@ class DolibarrApiInit extends DolibarrApi
 	 */
 	public function login($login, $password, $entity = 0) {
 
+	    global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
+	    
 		// Authentication mode
 		if (empty($dolibarr_main_authentication))
 			$dolibarr_main_authentication = 'http,dolibarr';

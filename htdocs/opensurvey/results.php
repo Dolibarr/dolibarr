@@ -432,7 +432,7 @@ print '<table class="border" width="100%">';
 $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 // Ref
-print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';

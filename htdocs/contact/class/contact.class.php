@@ -107,6 +107,47 @@ class Contact extends CommonObject
 		$this->db = $db;
 		$this->statut = 1;	// By default, status is enabled
 	}
+	
+	/**
+	 *  Load indicators into this->nb for board
+	 *
+	 *  @return     int         <0 if KO, >0 if OK
+	 */
+	function load_state_board()
+	{
+		global $user;
+	
+		$this->nb=array();
+		$clause = "WHERE";
+	
+		$sql = "SELECT count(sp.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as sp";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (sp.fk_soc = s.rowid)";
+		if (!$user->rights->societe->client->voir && !$user->societe_id)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
+		}
+		$sql.= ' '.$clause.' s.entity IN ('.getEntity($this->element, 1).')';
+	
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["contacts"]=$obj->nb;
+			}
+			$this->db->free($resql);
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Add a contact into database

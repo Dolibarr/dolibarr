@@ -188,8 +188,8 @@ $tabsql[27]= "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREF
 $tabsql[28]= "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 $tabsql[29]= "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30]= "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
-$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.fk_pays as country_id, c.code as country_code, c.label as country, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s, ".MAIN_DB_PREFIX."c_country as c WHERE s.fk_pays=c.rowid and c.active=1";
-$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
+$tabsql[31]= "SELECT s.rowid as rowid, pcg_version, s.label, s.active FROM ".MAIN_DB_PREFIX."accounting_system as s";
+$tabsql[32]= "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.sens, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
 $tabsql[33]= "SELECT rowid, pos, code, label, active FROM ".MAIN_DB_PREFIX."c_hrm_department";
 $tabsql[34]= "SELECT rowid, pos, code, label, c_level, active FROM ".MAIN_DB_PREFIX."c_hrm_function";
 
@@ -226,7 +226,7 @@ $tabsqlsort[28]="country ASC, code ASC";
 $tabsqlsort[29]="position ASC";
 $tabsqlsort[30]="code ASC";
 $tabsqlsort[31]="pcg_version ASC";
-$tabsqlsort[32]="code ASC, label ASC";
+$tabsqlsort[32]="position ASC";
 $tabsqlsort[33]="code ASC";
 $tabsqlsort[34]="code ASC";
 
@@ -262,8 +262,8 @@ $tabfield[27]= "code,libelle";
 $tabfield[28]= "code,label,affect,delay,newbymonth,country_id,country";
 $tabfield[29]= "code,label,percent,position";
 $tabfield[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-$tabfield[31]= "pcg_version,country_id,country,label";
-$tabfield[32]= "code,label,range,position,country_id,country";
+$tabfield[31]= "pcg_version,label";
+$tabfield[32]= "code,label,range_account,sens,category_type,formula,position,country_id,country";
 $tabfield[33]= "code,label";
 $tabfield[34]= "code,label";
 
@@ -299,8 +299,8 @@ $tabfieldvalue[27]= "code,libelle";
 $tabfieldvalue[28]= "code,label,affect,delay,newbymonth,country";
 $tabfieldvalue[29]= "code,label,percent,position";
 $tabfieldvalue[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-$tabfieldvalue[31]= "pcg_version,country,label";
-$tabfieldvalue[32]= "code,label,range_account,position,country";
+$tabfieldvalue[31]= "pcg_version,label";
+$tabfieldvalue[32]= "code,label,range_account,sens,category_type,formula,position,country";
 $tabfieldvalue[33]= "code,label";
 $tabfieldvalue[34]= "code,label";
 
@@ -336,8 +336,8 @@ $tabfieldinsert[27]= "code,libelle";
 $tabfieldinsert[28]= "code,label,affect,delay,newbymonth,fk_country";
 $tabfieldinsert[29]= "code,label,percent,position";
 $tabfieldinsert[30]= "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
-$tabfieldinsert[31]= "pcg_version,fk_pays,label";
-$tabfieldinsert[32]= "code,label,range_account,position,fk_country";
+$tabfieldinsert[31]= "pcg_version,label";
+$tabfieldinsert[32]= "code,label,range_account,sens,category_type,formula,position,fk_country";
 $tabfieldinsert[33]= "code,label";
 $tabfieldinsert[34]= "code,label";
 
@@ -524,6 +524,7 @@ if ($id == 11)
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
 			'facture'           => $langs->trans('Bill'),
+			'resource'           => $langs->trans('Resource'),
 //			'facture_fourn'     => $langs->trans('SupplierBill'),
 			'fichinter'         => $langs->trans('InterventionCard')
 	);
@@ -585,6 +586,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         if ($value == 'localtax1' && empty($_POST['localtax1_type'])) continue;
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ($value == 'color' && empty($_POST['color'])) continue;
+		if ($value == 'formula' && empty($_POST['formula'])) continue;
         if ((! isset($_POST[$value]) || $_POST[$value]=='')
         	&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy')))  // Fields that are not mandatory
 		)
@@ -605,6 +607,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
             if ($fieldnamekey == 'unicode') $fieldnamekey = 'Unicode';
             if ($fieldnamekey == 'deductible') $fieldnamekey = 'Deductible';
             if ($fieldnamekey == 'sortorder') $fieldnamekey = 'SortOrder';
+			if ($fieldnamekey == 'category_type') $fieldnamekey = 'Calculated';
 
             setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
         }
@@ -999,6 +1002,9 @@ if ($id)
 	        if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
             if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
 			if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
+			if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
+			if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
+			if ($fieldlist[$field]=='formula')         { $valuetoshow=$langs->trans("Formula"); }
 
             if ($id == 2)	// Special cas for state page
             {
@@ -1064,7 +1070,7 @@ if ($id)
         }
         print '</td>';
         print "</tr>";
-        
+
         if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates')
         {
         	print '<tr><td colspan="8">* '.$langs->trans("AvailableVariables").": ";
@@ -1167,6 +1173,9 @@ if ($id)
 	            if ($fieldlist[$field]=='short_label')     { $valuetoshow=$langs->trans("ShortLabel"); }
             	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
 				if ($fieldlist[$field]=='range_account')   { $valuetoshow=$langs->trans("Range"); }
+				if ($fieldlist[$field]=='sens')            { $valuetoshow=$langs->trans("Sens"); }
+				if ($fieldlist[$field]=='category_type')   { $valuetoshow=$langs->trans("Calculated"); }
+				if ($fieldlist[$field]=='formula')         { $valuetoshow=$langs->trans("Formula"); }
 
                 // Affiche nom du champ
                 if ($showfield)
@@ -1248,7 +1257,7 @@ if ($id)
                                     $valuetoshow=($key != "Country".strtoupper($obj->country_code)?$obj->country_code." - ".$key:$obj->country);
                                 }
                             }
-                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm' || $fieldlist[$field] == 'deductible') {
+                            else if ($fieldlist[$field]=='recuperableonly' || $fieldlist[$field]=='fdm' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
                                 $valuetoshow=yn($valuetoshow);
                                 $align="center";
                             }
@@ -1618,7 +1627,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			print 'user<input type="hidden" name="type" value="user">';
 			print '</td>';
 		}
-		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm' || $fieldlist[$field] == 'deductible') {
+		elseif ($fieldlist[$field] == 'recuperableonly' || $fieldlist[$field] == 'fdm' || $fieldlist[$field] == 'deductible' || $fieldlist[$field] == 'category_type') {
 			print '<td>';
 			print $form->selectyesno($fieldlist[$field],(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''),1);
 			print '</td>';
@@ -1697,7 +1706,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			if ($fieldlist[$field]=='position') $size='size="4" ';
 			if ($fieldlist[$field]=='libelle') $size='centpercent';
 			if ($fieldlist[$field]=='tracking') $class='centpercent';
-			if ($fieldlist[$field]=='sortorder') $size='size="2" ';
+			if ($fieldlist[$field]=='sortorder' || $fieldlist[$field]=='sens' || $fieldlist[$field]=='category_type') $size='size="2" ';
 			print '<input type="text" '.$size.' class="flat'.($class?' '.$class:'').'" value="'.(isset($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'" name="'.$fieldlist[$field].'">';
 			print '</td>';
 		}

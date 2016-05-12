@@ -1415,6 +1415,7 @@ class CommandeFournisseur extends CommonOrder
 
             $subprice = price2num($pu,'MU');
 
+            // TODO We should use here $this->line=new CommandeFournisseurLigne($this->db); and $this->line->insert(); to work loke other object (proposal, order, invoice)
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
             $sql.= " (fk_commande, label, description, date_start, date_end,";
             $sql.= " fk_product, product_type,";

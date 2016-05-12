@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ delete from llx_accounting_system;
 -- Descriptif des plans comptables FR PCG99-ABREGE
 --
 
-INSERT INTO llx_accounting_system (rowid, pcg_version, fk_pays, label, active) VALUES (1,'PCG99-ABREGE', 1, 'The simple accountancy french plan', 1);
+INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (1,'PCG99-ABREGE', 'The simple accountancy french plan', 1);
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  1,'PCG99-ABREGE','CAPIT', 'CAPITAL', '101', '1401', 'Capital', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  2,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '105', '1401', 'Ecarts de réévaluation', '1');
@@ -150,7 +150,7 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 -- Descriptif des plans comptables FR PCG99-BASE
 --
 
-INSERT INTO llx_accounting_system (rowid, pcg_version, fk_pays, label, active) VALUES (2,'PCG99-BASE', 1, 'The base accountancy french plan', 1);
+INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (2,'PCG99-BASE', 'The base accountancy french plan', 1);
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (103,'PCG99-BASE','CAPIT', 'XXXXXX',   '10','1501', 'Capital  et réserves', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (104,'PCG99-BASE','CAPIT', 'CAPITAL', '101', '103', 'Capital', '1');
@@ -500,7 +500,7 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 -- Descriptif des plans comptables BE PCMN-BASE
 --
 
-INSERT INTO llx_accounting_system (rowid, pcg_version, fk_pays, label, active) VALUES (3, 'PCMN-BASE', '2', 'The base accountancy belgium plan', '1');
+INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (3, 'PCMN-BASE', 'The base accountancy belgium plan', '1');
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (439, 'PCMN-BASE', 'CAPIT', 'XXXXXX', '10', '1351', 'Capital', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (440, 'PCMN-BASE', 'CAPIT', 'XXXXXX', '100', '439', 'Capital souscrit ou capital personnel', '1');
@@ -1425,7 +1425,7 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 -- Descriptif des plans comptables ES PCG08-PYME
 --
 
-INSERT INTO llx_accounting_system (rowid, pcg_version, fk_pays, label, active) VALUES (4, 'PCG08-PYME', '4', 'The PYME accountancy spanish plan', '1');
+INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (4, 'PCG08-PYME', 'The PYME accountancy spanish plan', '1');
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4001,'PCG08-PYME','FINANCIACION', 'XXXXXX', '1', '', 'Financiación básica', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4002,'PCG08-PYME','ACTIVO',  'XXXXXX', '2', '', 'Activo no corriente', '1');

@@ -18,6 +18,7 @@
  use Luracast\Restler\RestException;
  
  require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for product object
@@ -164,6 +165,91 @@ class ProductApi extends DolibarrApi
             throw new RestException(404, 'No product found');
         }
 		return $obj_ret;
+    }
+
+
+    /**
+     * List products in a category
+     * 
+     * Get a list of products
+     * 
+     * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+     * @param int		$category		Use this param to filter list by category
+     * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
+     * @param mixed     $to_buy     Filter products to nuy (1) or not to buy (0)  
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return array Array of product objects
+     *
+     * @url	GET /product/list/category/{category}
+     */
+    function getByCategory($mode=0, $category=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        global $db, $conf;
+        
+        $obj_ret = array();
+        
+        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
+
+        $sql = "SELECT rowid, ref, ref_ext";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p, ";
+        $sql.= MAIN_DB_PREFIX."categorie_product as c";
+        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+
+        // Select products of given category
+        $sql.= " AND c.fk_categorie = ".$db->escape($category);
+        $sql.= " AND c.fk_product = p.rowid ";
+		
+        // Show products
+        if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
+        // Show services
+        if ($mode == 2) $sql.= " AND p.fk_product_type = 1";
+        // Show product on sell
+        if ($to_sell) $sql.= " AND p.to_sell = ".$db->escape($to_sell);
+        // Show product on buy
+        if ($to_buy) $sql.= " AND p.to_nuy = ".$db->escape($to_nuy);
+
+        $nbtotalofrecords = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+            $result = $db->query($sql);
+            $nbtotalofrecords = $db->num_rows($result);
+        }
+
+        $sql.= $db->order($sortfield, $sortorder);
+        if ($limit)	{
+            if ($page < 0)
+            {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+
+            $sql.= $db->plimit($limit + 1, $offset);
+        }
+
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows($result);
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($result);
+                $product_static = new Product($db);
+                if($product_static->fetch($obj->rowid)) {
+                    $obj_ret[] = parent::_cleanObjectDatas($product_static);
+                }
+                $i++;
+            }
+        }
+        else {
+            throw new RestException(503, 'Error when retrieve product list');
+        }
+        if( ! count($obj_ret)) {
+            throw new RestException(404, 'No product found');
+        }
+        return $obj_ret;
     }
     
     /**

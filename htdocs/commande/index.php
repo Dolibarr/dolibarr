@@ -216,6 +216,11 @@ if (! empty($conf->commande->enabled))
 				$i++;
 			}
 		}
+		else
+		{
+			$var=!$var;
+			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
+		}
 		print "</table><br>";
 	}
 }

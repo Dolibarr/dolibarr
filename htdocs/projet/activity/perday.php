@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010      François Legastelois <flegastelois@teclib.com>
  *
@@ -192,9 +192,10 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     	foreach($timespent_duration as $key => $val)
     	{
 	        $object->fetch($key);
-		    $object->progress = GETPOST($key . 'progress', 'int');
+		    $object->progress = GETPOST($key.'progress', 'int');
 	        $object->timespent_duration = $val;
 	        $object->timespent_fk_user = $user->id;
+	        $object->timespent_note = GETPOST($key.'note');
 	        if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
 	        {
 	        	$object->timespent_date = dol_mktime(GETPOST($key."hour"),GETPOST($key."min"),0,$monthofday,$dayofday,$yearofday);
@@ -385,6 +386,7 @@ if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("T
 else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
 print '<td align="center">'.$langs->trans("HourStart").'</td>';
 print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
+print '<td>'.$langs->trans("Note").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to

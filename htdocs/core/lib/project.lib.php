@@ -666,6 +666,11 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
 				print '</td>';
 
+				print '<td align="right">';
+				print '<textarea name="'.$lines[$i]->id.'note" rows="2" id="note">';
+				print '</textarea>';
+				print '</td>';
+				
 				print "</tr>\n";
 			}
 

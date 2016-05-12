@@ -149,6 +149,8 @@ FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
 ## Export
 Exports=Exports
@@ -174,6 +176,9 @@ OptionModeProductBuyDesc=Show all products with no accounting account defined fo
 
 ## Dictionary
 Range=Range of accounting account
+Sens=Sens
+Calculated=Calculated
+Formula=Formula
 
 ## Error
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country

@@ -75,6 +75,7 @@ if ($action == 'update')
             $menu->perms=$_POST['perms'];
             $menu->target=$_POST['target'];
             $menu->user=$_POST['user'];
+            $menu->fk_menu=$_POST['fk_menu'];
             $result=$menu->update($user);
             if ($result > 0)
             {
@@ -275,6 +276,8 @@ if ($action == 'create')
     print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     // Id
@@ -368,8 +371,10 @@ if ($action == 'create')
 
     print '</table>';
 
+    dol_fiche_end();
+    
     // Boutons
-    print '<br><div class="center">';
+    print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -387,6 +392,8 @@ elseif ($action == 'edit')
     print '<input type="hidden" name="handler_origine" value="'.$menu_handler.'">';
     print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
 
+    dol_fiche_head();
+    
     print '<table class="border" width="100%">';
 
     $menu = new Menubase($db);
@@ -416,9 +423,9 @@ elseif ($action == 'edit')
 
     // MenuId Parent
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent').'</td>';
+    print '<td><input type="text" name="fk_menu" value="'.$menu->fk_menu.'" size=10></td>';
     //$menu_handler
     //print '<td><input type="text" size="50" name="handler" value="all"></td>';
-    print '<td>'.$menu->fk_menu.'</td>';
     print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
 
     // Niveau
@@ -454,8 +461,10 @@ elseif ($action == 'edit')
 
     print '</table>';
 
+    dol_fiche_end();
+    
     // Bouton
-    print '<br><div class="center">';
+    print '<div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

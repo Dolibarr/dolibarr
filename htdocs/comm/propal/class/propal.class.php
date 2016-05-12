@@ -780,7 +780,7 @@ class Propal extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-        global $langs,$conf,$mysoc,$hookmanager;
+        global $conf,$hookmanager;
         $error=0;
 
         $now=dol_now();
@@ -1080,7 +1080,7 @@ class Propal extends CommonObject
      */
     function createFromClone($socid=0)
     {
-        global $db, $user,$langs,$conf,$hookmanager;
+        global $user,$conf,$hookmanager;
 
 		dol_include_once('/projet/class/project.class.php');
 
@@ -1214,7 +1214,6 @@ class Propal extends CommonObject
      */
     function fetch($rowid,$ref='')
     {
-        global $conf;
 
         $sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
         $sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
@@ -1508,7 +1507,7 @@ class Propal extends CommonObject
     {
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    	global $conf,$langs;
+    	global $conf;
 
         $error=0;
         $now=dol_now();
@@ -1868,7 +1867,6 @@ class Propal extends CommonObject
      */
     function reopen($user, $statut, $note='', $notrigger=0)
     {
-        global $langs,$conf;
 
         $this->statut = $statut;
         $error=0;
@@ -1979,7 +1977,7 @@ class Propal extends CommonObject
                		$outputlangs->setDefaultLang($newlang);
                	}
                	//$ret=$object->fetch($id);    // Reload to get new records
-	               $this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	               $this->generateDocument($modelpdf, $outputlangs);
             }
 
             // Call trigger
@@ -2082,7 +2080,7 @@ class Propal extends CommonObject
      */
     function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
     {
-        global $conf,$user;
+        global $user;
 
         $ga = array();
 
@@ -2247,7 +2245,7 @@ class Propal extends CommonObject
      */
     function delete($user, $notrigger=0)
     {
-        global $conf,$langs;
+        global $conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error=0;
@@ -2610,7 +2608,7 @@ class Propal extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $langs;
 
         // Charge tableau des produits prodids
         $prodids = array();
@@ -2696,7 +2694,7 @@ class Propal extends CommonObject
      */
     function load_state_board()
     {
-        global $conf, $user;
+        global $user;
 
         $this->nb=array();
         $clause = "WHERE";
@@ -2741,7 +2739,7 @@ class Propal extends CommonObject
      */
     function getNextNumRef($soc)
     {
-        global $conf, $db, $langs;
+        global $conf,$langs;
         $langs->load("propal");
 
         if (! empty($conf->global->PROPALE_ADDON))
@@ -2942,7 +2940,7 @@ class Propal extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("propale");
 
@@ -3196,7 +3194,7 @@ class PropaleLigne  extends CommonObjectLine
      */
     function insert($notrigger=0)
     {
-        global $conf,$langs,$user;
+        global $conf,$user;
 
         $error=0;
 
@@ -3332,7 +3330,7 @@ class PropaleLigne  extends CommonObjectLine
      */
     function delete()
     {
-        global $conf,$langs,$user;
+        global $conf,$user;
 
         $error=0;
         $this->db->begin();
@@ -3383,7 +3381,7 @@ class PropaleLigne  extends CommonObjectLine
      */
     function update($notrigger=0)
     {
-        global $conf,$langs,$user;
+        global $conf,$user;
 
         $error=0;
 

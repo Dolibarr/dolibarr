@@ -139,3 +139,7 @@ WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn=Source warehouse must
 InventoryCodeShort=Inv./Mov. code
 NoPendingReceptionOnSupplierOrder=No pending reception due to open supplier order
 ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
+OpenAll=Open for all actions
+OpenInternal=Open for internal actions
+OpenShipping=Open for shippings
+OpenDispatch=Open for dispatch

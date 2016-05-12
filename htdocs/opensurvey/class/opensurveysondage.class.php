@@ -56,6 +56,7 @@ class Opensurveysondage extends CommonObject
 
 	var $titre;
 	var $date_fin='';
+	var $status=1;
 	var $format;
 	var $mailsonde;
 
@@ -73,6 +74,22 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $allow_spy;
 
+	
+	/**
+	 * Draft status (not used)
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated/Opened status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Closed
+	 */
+	const STATUS_CLOSED = 2;
+	
+	
+	
     /**
      *  Constructor
      *
@@ -115,6 +132,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= "fk_user_creat,";
 		$sql.= "titre,";
 		$sql.= "date_fin,";
+		$sql.= "status,";
 		$sql.= "format,";
 		$sql.= "mailsonde,";
 		$sql.= "allow_comments,";
@@ -127,6 +145,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->escape($this->titre)."',";
 		$sql.= " '".$this->db->idate($this->date_fin)."',";
+		$sql.= " ".$this->status.",";
 		$sql.= " '".$this->db->escape($this->format)."',";
 		$sql.= " ".$this->db->escape($this->mailsonde).",";
 		$sql.= " ".$this->db->escape($this->allow_comments).",";
@@ -190,6 +209,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.titre,";
 		$sql.= " t.date_fin,";
+		$sql.= " t.status,";
 		$sql.= " t.format,";
 		$sql.= " t.mailsonde,";
 		$sql.= " t.allow_comments,";
@@ -217,6 +237,7 @@ class Opensurveysondage extends CommonObject
 				$this->nom_admin = $obj->nom_admin;
 				$this->titre = $obj->titre;
 				$this->date_fin = $this->db->jdate($obj->date_fin);
+				$this->status = $obj->status;
 				$this->format = $obj->format;
 				$this->mailsonde = $obj->mailsonde;
 				$this->allow_comments = $obj->allow_comments;
@@ -274,6 +295,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " nom_admin=".(isset($this->nom_admin)?"'".$this->db->escape($this->nom_admin)."'":"null").",";
 		$sql.= " titre=".(isset($this->titre)?"'".$this->db->escape($this->titre)."'":"null").",";
 		$sql.= " date_fin=".(dol_strlen($this->date_fin)!=0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
+		$sql.= " status=".(isset($this->status)?"'".$this->db->escape($this->status)."'":"null").",";
 		$sql.= " format=".(isset($this->format)?"'".$this->db->escape($this->format)."'":"null").",";
 		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
 		$sql.= " allow_comments=".$this->db->escape($this->allow_comments).",";
@@ -291,15 +313,12 @@ class Opensurveysondage extends CommonObject
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+	            // Call triggers
+	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('OPENSURVEY_MODIFY',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
 	    	}
 		}
 
@@ -321,17 +340,16 @@ class Opensurveysondage extends CommonObject
 		}
     }
 
-
- 	/**
-	 *  Delete object in database
-	 *
+    /**
+     *  Delete object in database
+     *
      *	@param  User	$user        		User that deletes
      *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
      *  @param	string	$numsondage			Num sondage admin to delete
-	 *  @return	int					 		<0 if KO, >0 if OK
-	 */
-	function delete($user, $notrigger, $numsondage)
-	{
+     *  @return	int					 		<0 if KO, >0 if OK
+     */
+    function delete($user, $notrigger, $numsondage)
+    {
 		global $conf, $langs;
 		$error=0;
 
@@ -428,12 +446,13 @@ class Opensurveysondage extends CommonObject
 		$this->id=0;
 
 		$this->id_sondage='';
-		$this->commentaires='';
+		$this->commentaires='Comment of the specimen survey';
 		$this->mail_admin='';
 		$this->nom_admin='';
-		$this->titre='';
-		$this->date_fin='';
-		$this->format='';
+		$this->titre='This is a specimen survey';
+		$this->date_fin=dol_now()+3600*24*10;
+		$this->status=1;
+		$this->format='classic';
 		$this->mailsonde='';
 	}
 
@@ -518,10 +537,74 @@ class Opensurveysondage extends CommonObject
 		$this->mail_admin = trim($this->mail_admin);
 		$this->nom_admin = trim($this->nom_admin);
 		$this->titre = trim($this->titre);
+		$this->status = trim($this->status);
 		$this->format = trim($this->format);
 		$this->mailsonde = ($this->mailsonde ? 1 : 0);
 		$this->allow_comments = ($this->allow_comments ? 1 : 0);
 		$this->allow_spy = ($this->allow_spy ? 1 : 0);
 		$this->sujet = trim($this->sujet);
 	}
+	
+	
+	/**
+	 *	Return status label of Order
+	 *
+	 *	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@return     string      		Libelle
+	 */
+	function getLibStatut($mode)
+	{
+	    return $this->LibStatut($this->status,$mode);
+	}
+	
+	/**
+	 *	Return label of status
+	 *
+	 *	@param		int		$status      	  Id statut
+	 *	@param      int		$mode        	  0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return     string					  Label of status
+	 */
+	function LibStatut($status,$mode)
+	{
+	    global $langs, $conf;
+	
+	    //print 'x'.$status.'-'.$billed;
+	    if ($mode == 0)
+	    {
+	        if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
+	    }
+	    elseif ($mode == 1)
+	    {
+	        if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
+	    }
+	    elseif ($mode == 2)
+	    {
+	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'),'statut1').' '.$langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6').' '.$langs->trans('Closed');
+	    }
+	    elseif ($mode == 3)
+	    {
+	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0');
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'),'statut1');
+	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6');
+	    }
+	    elseif ($mode == 4)
+	    {
+	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened').$billedtext,'statut1').' '.$langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6').' '.$langs->trans('Closed');
+	    }
+	    elseif ($mode == 5)
+	    {
+	        if ($status==self::STATUS_DRAFT) return '<span class="hideonsmartphone">'.$langs->trans('Draft').' </span>'.img_picto($langs->trans('Draft'),'statut0');
+	        if ($status==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('Opened').' </span>'.img_picto($langs->trans('Opened'),'statut1');
+	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
+	    }
+	}
+	
 }
