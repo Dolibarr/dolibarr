@@ -53,6 +53,7 @@ $object = new Fiscalyear($db);
 $date_start = dol_mktime(0, 0, 0, GETPOST('fiscalyearmonth', 'int'), GETPOST('fiscalyearday', 'int'), GETPOST('fiscalyearyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('fiscalyearendmonth', 'int'), GETPOST('fiscalyearendday', 'int'), GETPOST('fiscalyearendyear', 'int'));
 
+
 /*
  * Actions
  */
@@ -143,10 +144,8 @@ llxHeader();
 
 $form = new Form($db);
 
-/*
- * Action create
- */
-if ($action == 'create') {
+if ($action == 'create') 
+{
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -172,7 +171,7 @@ if ($action == 'create') {
 	
 	// Statut
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans("Statut") . '</td>';
+	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
 	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
 	print '</td></tr>';
@@ -205,7 +204,7 @@ if ($action == 'create') {
 			
 			// Ref
 			print "<tr>";
-			print '<td width="25%">' . $langs->trans("Ref") . '</td><td>';
+			print '<td class="titlefield">' . $langs->trans("Ref") . '</td><td>';
 			print $object->ref;
 			print '</td></tr>';
 			
