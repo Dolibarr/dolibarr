@@ -2897,7 +2897,7 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  reconstruit l'arborescence des categories sous la forme d'un tableau
+	 *  reconstruit l'arborescence des produits sous la forme d'un tableau
 	 *
 	 *	@param		int		$multiply		Because each sublevel must be multiplicated by parent nb
 	 *  @return 	array 					$this->res
@@ -2940,7 +2940,6 @@ class Product extends CommonObject
 	 *  Return all Father products fo current product
 	 *
 	 *  @return 	array 		Array of product
-	 *  @see		getParent
 	 */
 	function getFather()
 	{
@@ -2985,6 +2984,8 @@ class Product extends CommonObject
 	 */
 	function getChildsArbo($id, $firstlevelonly=0, $level=1)
 	{
+		global $alreadyfound;
+		
 		$sql = "SELECT p.rowid, p.label as label, pa.qty as qty, pa.fk_product_fils as id, p.fk_product_type, pa.incdec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= ", ".MAIN_DB_PREFIX."product_association as pa";
@@ -2994,6 +2995,7 @@ class Product extends CommonObject
 
 		dol_syslog(get_class($this).'::getChildsArbo id='.$id.' level='.$level, LOG_DEBUG);
 		
+		if ($level == 1) $alreadyfound=array($id=>1);	// We init array of found object to start of tree, so if we found it later (should not happened), we stop immediatly
 		// Protection against infinite loop
 		if ($level > 30) return array();
 		
@@ -3003,9 +3005,14 @@ class Product extends CommonObject
 			$prods = array();
 			while ($rec = $this->db->fetch_array($res))
 			{
-				// TODO Add check to not add ne record if already added
+				if (! empty($alreadyfound[$rec['rowid']])) 
+				{
+					dol_syslog(get_class($this).'::getChildsArbo the product id='.$rec['rowid'].' was already found at a higher level in tree. We discard to avoid infinite loop', LOG_WARNING);
+					continue;
+				}
+				$alreadyfound[$rec['rowid']]=1;
 				$prods[$rec['rowid']]= array(
-					0=>$rec['id'],
+					0=>$rec['rowid'],
 					1=>$rec['qty'],
 					2=>$rec['fk_product_type'],
 					3=>$this->db->escape($rec['label']),
@@ -3015,7 +3022,7 @@ class Product extends CommonObject
 				//$prods[$this->db->escape($rec['label'])]= array(0=>$rec['id'],1=>$rec['qty']);
 				if (empty($firstlevelonly))
 				{
-					$listofchilds=$this->getChildsArbo($rec['id'], 0, $level + 1);
+					$listofchilds=$this->getChildsArbo($rec['rowid'], 0, $level + 1);
 					foreach($listofchilds as $keyChild => $valueChild)
 					{
 						$prods[$rec['rowid']]['childs'][$keyChild] = $valueChild;
@@ -3040,16 +3047,11 @@ class Product extends CommonObject
 	 */
 	function get_sousproduits_arbo()
 	{
-		//$parent = $this->getParent();
 	    $parent=array();
-		$parent[$this->label]=array(0 => $this->id);
 
-		foreach($parent as $key => $value)		// key=label, value[0]=id
+		foreach($this->getChildsArbo($this->id) as $keyChild => $valueChild)	// Warning. getChildsArbo can call getChildsArbo recursively. Starting point is $value[0]=id of product
 		{
-			foreach($this->getChildsArbo($value[0]) as $keyChild => $valueChild)	// Warning. getChildsArbo can gell getChildsArbo recursively.
-			{
-				$parent[$key][$keyChild] = $valueChild;
-			}
+			$parent[$this->label][$keyChild] = $valueChild;
 		}
 		foreach($parent as $key => $value)		// key=label, value is array of childs
 		{

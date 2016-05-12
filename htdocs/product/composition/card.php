@@ -235,8 +235,9 @@ if ($id > 0 || ! empty($ref))
 
 
 		$prodsfather = $object->getFather(); 		// Parent Products
-		$object->get_sousproduits_arbo();			// Load $object->sousprod
-		$prods_arbo=$object->get_arbo_each_prod();
+		$object->get_sousproduits_arbo();			// Load $object->sousprods
+		$prods_arbo=$object->get_arbo_each_prod();		
+		
 		$nbofsubsubproducts=count($prods_arbo);		// This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id,1);
 		$nbofsubproducts=count($prodschild);		// This include only first level of childs
@@ -379,10 +380,10 @@ if ($id > 0 || ! empty($ref))
 
 						print '</tr>'."\n";
 					}
-					else 	// By default, we do not show this. It makes screen very difficult to understand
+					else
 					{
 						$hide='';
-						if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide=' hideobject';
+						if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide=' hideobject';	// By default, we do not show this. It makes screen very difficult to understand
 
 						$class=($class=='impair')?'pair':'impair';
 						print '<tr class="'.$class.$hide.'" id="sub-'.$value['id_parent'].'">';
@@ -394,9 +395,13 @@ if ($id > 0 || ! empty($ref))
 						print $productstatic->getNomUrl(1,'composition').'</td>';
 						print '<td>'.$productstatic->label.'</td>';
 
+						// Best buying price
 						print '<td>&nbsp;</td>';
 						print '<td>&nbsp;</td>';
-
+						// Best selling price
+						print '<td>&nbsp;</td>';
+						print '<td>&nbsp;</td>';
+						
 						if (! empty($conf->stock->enabled)) print '<td></td>';	// Real stock
 						print '<td align="center">'.$value['nb'].'</td>';
 						print '<td>&nbsp;</td>';
