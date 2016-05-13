@@ -49,6 +49,7 @@ $search_zip=GETPOST("search_zip");
 $search_town=GETPOST("search_town");
 $search_state=GETPOST("search_state");
 $search_country=GETPOST("search_country");
+$search_phone=GETPOST("search_phone");
 $type=GETPOST("type");
 $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
@@ -104,6 +105,7 @@ $arrayfields=array(
     'd.address'=>array('label'=>$langs->trans("Address"), 'checked'=>0),
     'd.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
     'd.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
+	'd.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>0),
     'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
     /*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
@@ -151,6 +153,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_town="";
 	$search_state="";
 	$search_country='';
+	$search_phone='';
 	$search_morphy="";
 	$search_categ="";
 	$catid="";
@@ -290,6 +293,7 @@ if ($resql)
 	if ($search_zip != '') $param.= "&search_zip=".urlencode($search_zip);
 	if ($search_state != '') $param.= "&search_state=".urlencode($search_state);
 	if ($search_country != '') $param.= "&search_country=".urlencode($search_country);
+	if ($search_phone != '') $param.= "&search_phone=".urlencode($search_phone);
 	if ($filter)         $param.="&filter=".urlencode($filter);
 	if ($type > 0)       $param.="&type=".urlencode($type);
 	if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
@@ -361,6 +365,7 @@ if ($resql)
 	if (! empty($arrayfields['d.town']['checked']))           print_liste_field_titre($arrayfields['d.town']['label'],$_SERVER["PHP_SELF"],'d.town','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($langs->trans("StateShort"),$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.phone']['checked']))          print_liste_field_titre($arrayfields['d.phone']['label'],$_SERVER["PHP_SELF"],'d.phone','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.email']['checked']))          print_liste_field_titre($arrayfields['d.email']['label'],$_SERVER["PHP_SELF"],'d.email','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.datefin']['checked']))        print_liste_field_titre($arrayfields['d.datefin']['label'],$_SERVER["PHP_SELF"],'d.datefin','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
@@ -469,6 +474,12 @@ if ($resql)
 	    print '<td class="liste_titre" align="center">';
 	    print $form->select_country($search_country,'search_country','',0,'maxwidth100');
 	    print '</td>';
+	}
+	// Phone pro
+	if (! empty($arrayfields['d.phone']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_phone" value="'.$search_phone.'" size="5"></td>';
 	}
 	// Email
 	if (! empty($arrayfields['d.email']['checked'])) 
@@ -653,6 +664,14 @@ if ($resql)
 		    print '<td align="center">';
 		    $tmparray=getCountry($obj->country,'all');
 		    print $tmparray['label'];
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Phone pro
+		if (! empty($arrayfields['d.phone']['checked'])) 
+		{
+			print '<td class="nocellnopadd">';
+		    print $obj->phone;
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		}
