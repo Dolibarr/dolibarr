@@ -11,57 +11,70 @@ namespace Luracast\Restler;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class Scope
 {
     public static $classAliases = array(
 
         //Core
-        'Restler' => 'Luracast\Restler\Restler',
+        'Restler'            => 'Luracast\Restler\Restler',
 
         //Format classes
-        'AmfFormat' => 'Luracast\Restler\Format\AmfFormat',
-        'JsFormat' => 'Luracast\Restler\Format\JsFormat',
-        'JsonFormat' => 'Luracast\Restler\Format\JsonFormat',
-        'HtmlFormat' => 'Luracast\Restler\Format\HtmlFormat',
-        'PlistFormat' => 'Luracast\Restler\Format\PlistFormat',
-        'UploadFormat' => 'Luracast\Restler\Format\UploadFormat',
-        'UrlEncodedFormat' => 'Luracast\Restler\Format\UrlEncodedFormat',
-        'XmlFormat' => 'Luracast\Restler\Format\XmlFormat',
-        'YamlFormat' => 'Luracast\Restler\Format\YamlFormat',
-        'CsvFormat' => 'Luracast\Restler\Format\CsvFormat',
-        'TsvFormat' => 'Luracast\Restler\Format\TsvFormat',
+        'AmfFormat'          => 'Luracast\Restler\Format\AmfFormat',
+        'JsFormat'           => 'Luracast\Restler\Format\JsFormat',
+        'JsonFormat'         => 'Luracast\Restler\Format\JsonFormat',
+        'HtmlFormat'         => 'Luracast\Restler\Format\HtmlFormat',
+        'PlistFormat'        => 'Luracast\Restler\Format\PlistFormat',
+        'UploadFormat'       => 'Luracast\Restler\Format\UploadFormat',
+        'UrlEncodedFormat'   => 'Luracast\Restler\Format\UrlEncodedFormat',
+        'XmlFormat'          => 'Luracast\Restler\Format\XmlFormat',
+        'YamlFormat'         => 'Luracast\Restler\Format\YamlFormat',
+        'CsvFormat'          => 'Luracast\Restler\Format\CsvFormat',
+        'TsvFormat'          => 'Luracast\Restler\Format\TsvFormat',
 
         //Filter classes
-        'RateLimit' => 'Luracast\Restler\Filter\RateLimit',
+        'RateLimit'          => 'Luracast\Restler\Filter\RateLimit',
 
         //UI classes
-        'Forms' => 'Luracast\Restler\UI\Forms',
-        'Nav' => 'Luracast\Restler\UI\Nav',
-        'Emmet' => 'Luracast\Restler\UI\Emmet',
-        'T' => 'Luracast\Restler\UI\Tags',
+        'Forms'              => 'Luracast\Restler\UI\Forms',
+        'Nav'                => 'Luracast\Restler\UI\Nav',
+        'Emmet'              => 'Luracast\Restler\UI\Emmet',
+        'T'                  => 'Luracast\Restler\UI\Tags',
 
         //API classes
-        'Resources' => 'Luracast\Restler\Resources',
+        'Resources'          => 'Luracast\Restler\Resources',
+        'Explorer'           => 'Luracast\Restler\Explorer',
 
         //Cache classes
         'HumanReadableCache' => 'Luracast\Restler\HumanReadableCache',
-        'ApcCache' => 'Luracast\Restler\ApcCache',
+        'ApcCache'           => 'Luracast\Restler\ApcCache',
+        'MemcacheCache'      => 'Luracast\Restler\MemcacheCache',
 
         //Utility classes
-        'Object' => 'Luracast\Restler\Data\Object',
-        'String' => 'Luracast\Restler\Data\String',
-        'Arr' => 'Luracast\Restler\Data\Arr',
+        'Object'             => 'Luracast\Restler\Data\Object',
+        'Text'               => 'Luracast\Restler\Data\Text',
+        'Arr'                => 'Luracast\Restler\Data\Arr',
 
         //Exception
-        'RestException' => 'Luracast\Restler\RestException'
+        'RestException'      => 'Luracast\Restler\RestException'
     );
+    /**
+     * @var null|Callable adding a resolver function that accepts
+     * the class name as the parameter and returns an instance of the class
+     * as a singleton. Allows the use of your favourite DI container
+     */
+    public static $resolver = null;
     public static $properties = array();
     protected static $instances = array();
     protected static $registry = array();
 
-    public static function register($name, Callable $function, $singleton = true)
+    /**
+     * @param string   $name
+     * @param callable $function
+     * @param bool     $singleton
+     */
+    public static function register($name, $function, $singleton = true)
     {
         static::$registry[$name] = (object)compact('function', 'singleton');
     }
@@ -82,8 +95,19 @@ class Scope
         } elseif (!empty(static::$registry[$name])) {
             $function = static::$registry[$name]->function;
             $r = $function();
-            if (static::$registry[$name]->singleton)
+            if (static::$registry[$name]->singleton) {
                 static::$instances[$name] = (object)array('instance' => $r);
+            }
+        } elseif (is_callable(static::$resolver) && false === stristr($name, 'Luracast\Restler')) {
+            $fullName = $name;
+            if (isset(static::$classAliases[$name])) {
+                $fullName = static::$classAliases[$name];
+            }
+            /** @var Callable $function */
+            $function = static::$resolver;
+            $r = $function($fullName);
+            static::$instances[$name] = (object)array('instance' => $r);
+            static::$instances[$name]->initPending = true;
         } else {
             $fullName = $name;
             if (isset(static::$classAliases[$name])) {
@@ -100,10 +124,10 @@ class Scope
                         $properties = Util::nestedValue(
                             $m, 'class', $fullName,
                             CommentParser::$embeddedDataName
-                        ) ? : (Util::nestedValue(
+                        ) ?: (Util::nestedValue(
                             $m, 'class', $shortName,
                             CommentParser::$embeddedDataName
-                        ) ? : array());
+                        ) ?: array());
                     } else {
                         static::$instances[$name]->initPending = true;
                     }
@@ -117,7 +141,7 @@ class Scope
         ) {
             static::$instances[$name]->authVerified = true;
             $r->__setAuthenticationStatus
-                (static::get('Restler')->_authenticated);
+            (static::get('Restler')->_authenticated);
         }
         if (isset(static::$instances[$name]->initPending)) {
             $m = Util::nestedValue(static::get('Restler'), 'apiMethodInfo', 'metadata');
@@ -126,17 +150,18 @@ class Scope
                 $shortName = Util::getShortName($name);
             } else {
                 $shortName = $name;
-                if (isset(static::$classAliases[$name]))
+                if (isset(static::$classAliases[$name])) {
                     $fullName = static::$classAliases[$name];
+                }
             }
             if ($m) {
                 $properties = Util::nestedValue(
                     $m, 'class', $fullName,
                     CommentParser::$embeddedDataName
-                ) ? : (Util::nestedValue(
+                ) ?: (Util::nestedValue(
                     $m, 'class', $shortName,
                     CommentParser::$embeddedDataName
-                ) ? : array());
+                ) ?: array());
                 unset(static::$instances[$name]->initPending);
                 $initialized = false;
             }

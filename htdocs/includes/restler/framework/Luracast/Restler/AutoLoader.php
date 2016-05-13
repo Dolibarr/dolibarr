@@ -12,7 +12,7 @@ namespace Luracast\Restler {
  * @subpackage helper
  * @author     Nick Lombard <github@jigsoft.co.za>
  * @copyright  2012 Luracast
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class AutoLoader
 {
@@ -307,8 +307,6 @@ class AutoLoader
      */
     private function alias($className, $currentClass)
     {
-        if ($className == 'Luracast\Restler\string') return;
-        if ($className == 'Luracast\Restler\mixed') return;
         if ($className != $currentClass
             && false !== strpos($className, $currentClass))
                 if (!class_exists($currentClass, false)
