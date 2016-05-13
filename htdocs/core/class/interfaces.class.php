@@ -77,7 +77,7 @@ class Interfaces
         $modules = array();
         $orders = array();
 		$i=0;
-
+		
 		$dirtriggers=array_merge(array('/core/triggers'),$conf->modules_parts['triggers']);
         foreach($dirtriggers as $reldir)
         {
@@ -100,9 +100,9 @@ class Interfaces
 						$part3=$reg[3];
 
                         $nbfile++;
-
+                        
                         $modName = "Interface".ucfirst($reg[3]);
-                        //print "file=$file"; print "modName=$modName"; exit;
+                        //print "file=$file - modName=$modName\n";
                         if (in_array($modName,$modules))
                         {
                             $langs->load("errors");
@@ -111,9 +111,17 @@ class Interfaces
                         }
                         else
                         {
-                            include_once $newdir.'/'.$file;
+                            try {
+                                //print 'Todo for '.$modName." : ".$newdir.'/'.$file."\n";
+                                include_once $newdir.'/'.$file;
+                                //print 'Done for '.$modName."\n";
+                            }
+                            catch(Exception $e)
+                            {
+                                dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERROR);
+                            }
                         }
-
+                        
                         // Check if trigger file is disabled by name
                         if (preg_match('/NORUN$/i',$file)) continue;
                         // Check if trigger file is for a particular module
@@ -142,7 +150,7 @@ class Interfaces
         }
 
         asort($orders);
-
+        
         // Loop on each trigger
         foreach ($orders as $key => $value)
         {
