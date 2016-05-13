@@ -319,8 +319,7 @@ if ($action == 'add' && $user->rights->contrat->creer)
 									$label = $lines[$i]->product_label;
 								}
 
-								if ($conf->global->PRODUIT_DESC_IN_FORM)
-									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
+								$desc = ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
 							}
 							else {
 							    $desc = dol_htmlentitiesbr($lines[$i]->desc);
