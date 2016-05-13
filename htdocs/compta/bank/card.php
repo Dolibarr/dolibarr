@@ -350,9 +350,9 @@ if ($action == 'create')
     if ($conf->categorie->enabled) 
     {
         print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
-        $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+        $cate_arbo = $form->select_all_categories('account', '', 'parent', 64, 0, 1);
         $c = new Categorie($db);
-        $cats = $c->containing($account->id,Categorie::TYPE_ACCOUNT);
+        $cats = $c->containing($account->id,'account');
         foreach($cats as $cat) {
             $arrayselected[] = $cat->id;
         }
@@ -868,9 +868,9 @@ else
         if ($conf->categorie->enabled) 
         {
             print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
-            $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+            $cate_arbo = $form->select_all_categories('account', '', 'parent', 64, 0, 1);
             $c = new Categorie($db);
-            $cats = $c->containing($object->id,Categorie::TYPE_ACCOUNT);
+            $cats = $c->containing($object->id,'account');
             foreach($cats as $cat) {
                 $arrayselected[] = $cat->id;
             }

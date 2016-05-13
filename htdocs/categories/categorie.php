@@ -48,40 +48,40 @@ $dbtablename = '';
 
 // For categories on third parties
 if (! empty($socid)) $id = $socid;
-if (! isset($type)) $type = Categorie::TYPE_PRODUCT;
-if ($type == Categorie::TYPE_SUPPLIER || $type == Categorie::TYPE_CUSTOMER) $socid = $id;
+if (! isset($type)) $type = 'product';
+if ($type == 'supplier' || $type == 'customer') $socid = $id;
 
 if ($id || $ref)
 {
-	if ($type == Categorie::TYPE_PRODUCT) {
+	if ($type == 'product') {
 		$elementtype = 'product';
 		$objecttype = 'produit|service&categorie';
 		$objectid = isset($id)?$id:(isset($ref)?$ref:'');
 		$dbtablename = 'product';
 		$fieldid = isset($ref)?'ref':'rowid';
 	}
-	elseif ($type == Categorie::TYPE_SUPPLIER) {
+	elseif ($type == 'supplier') {
 		$elementtype = 'fournisseur';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($id)?$id:(isset($socid)?$socid:'');
 		$dbtablename = '&societe';
 		$fieldid = 'rowid';
 	}
-	elseif ($type == Categorie::TYPE_CUSTOMER) {
+	elseif ($type == 'customer') {
 		$elementtype = 'societe';
 		$objecttype = 'societe&categorie';
 		$objectid = isset($id)?$id:(isset($socid)?$socid:'');
 		$dbtablename = '&societe';
 		$fieldid = 'rowid';
 	}
-	elseif ($type == Categorie::TYPE_MEMBER) {
+	elseif ($type == 'member') {
 		$elementtype = 'member';
 		$objecttype = 'adherent&categorie';
 		$objectid = isset($id)?$id:(isset($ref)?$ref:'');
 		$dbtablename = 'adherent';
 		$fieldid = ! empty($ref)?'ref':'rowid';
 	}
-	elseif ($type == Categorie::TYPE_CONTACT) {
+	elseif ($type == 'contact') {
 		$elementtype = 'societe';
 		$objecttype = 'contact';
 		$objectid = isset($id)?$id:(isset($ref)?$ref:'');
@@ -111,34 +111,34 @@ if (empty($reshook))
 	// Remove element from category
 	if ($removecat > 0)
 	{
-		if ($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer))
+		if ($type == 'product' && ($user->rights->produit->creer || $user->rights->service->creer))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$object = new Product($db);
 			$result = $object->fetch($id, $ref);
 			$elementtype = 'product';
 		}
-		if ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
+		if ($type == 'supplier' && $user->rights->societe->creer)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 			$object = new Fournisseur($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'fournisseur';
 		}
-		if ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
+		if ($type == 'customer' && $user->rights->societe->creer)
 		{
 			$object = new Societe($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'societe';
 		}
-		if ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
+		if ($type == 'member' && $user->rights->adherent->creer)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$object = new Adherent($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'member';
 		}
-		if ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer)
+		if ($type == 'contact' && $user->rights->societe->creer)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 			$object = new Contact($db);
@@ -158,34 +158,34 @@ if (empty($reshook))
 	// Add object into a category
 	if ($parent > 0)
 	{
-		if ($type == Categorie::TYPE_PRODUCT && ($user->rights->produit->creer || $user->rights->service->creer))
+		if ($type == 'product' && ($user->rights->produit->creer || $user->rights->service->creer))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$object = new Product($db);
 			$result = $object->fetch($id, $ref);
 			$elementtype = 'product';
 		}
-		if ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
+		if ($type == 'supplier' && $user->rights->societe->creer)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 			$object = new Fournisseur($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'fournisseur';
 		}
-		if ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
+		if ($type == 'customer' && $user->rights->societe->creer)
 		{
 			$object = new Societe($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'societe';
 		}
-		if ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
+		if ($type == 'member' && $user->rights->adherent->creer)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$object = new Adherent($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'member';
 		}
-		if ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer)
+		if ($type == 'contact' && $user->rights->societe->creer)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 			$object = new Contact($db);
@@ -322,15 +322,15 @@ if ($socid)
 
 	dol_fiche_end();
 
-	if ($soc->client) formCategory($db,$soc,2,$socid,$user->rights->societe->creer);
+	if ($soc->client) formCategory($db,$soc,'customer',$socid,$user->rights->societe->creer);
 
 	if ($soc->client && $soc->fournisseur) print '<br><br>';
 
-	if ($soc->fournisseur) formCategory($db,$soc,1,$socid,$user->rights->societe->creer);
+	if ($soc->fournisseur) formCategory($db,$soc,'supplier',$socid,$user->rights->societe->creer);
 }
 else if ($id || $ref)
 {
-	if ($type == Categorie::TYPE_PRODUCT)
+	if ($type == 'product')
 	{
 		$langs->load("products");
 
@@ -380,10 +380,10 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$product,0,$socid,($user->rights->produit->creer || $user->rights->service->creer));
+		formCategory($db,$product,'product',$socid,($user->rights->produit->creer || $user->rights->service->creer));
 	}
 
-	if ($type == Categorie::TYPE_MEMBER)
+	if ($type == 'member')
 	{
 		$langs->load("members");
 
@@ -459,9 +459,9 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$member,3,0,$user->rights->adherent->creer);
+		formCategory($db,$member,'member',0,$user->rights->adherent->creer);
 	}
-	if ($type == Categorie::TYPE_CONTACT)
+	if ($type == 'contact')
 	{
 		$langs->load("contact");
 
@@ -605,7 +605,7 @@ else if ($id || $ref)
 
 		dol_fiche_end();
 
-		formCategory($db,$object,4,$socid, $user->rights->societe->creer);
+		formCategory($db,$object,'contact',$socid, $user->rights->societe->creer);
 	}
 }
 
@@ -624,16 +624,16 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 {
 	global $user,$langs,$form,$bc;
 
-	if ($typeid == Categorie::TYPE_PRODUCT)     $title = $langs->trans("ProductsCategoriesShort");
-	if ($typeid == Categorie::TYPE_SUPPLIER)    $title = $langs->trans("SuppliersCategoriesShort");
-	if ($typeid == Categorie::TYPE_CUSTOMER)    $title = $langs->trans("CustomersProspectsCategoriesShort");
-	if ($typeid == Categorie::TYPE_MEMBER)      $title = $langs->trans("MembersCategoriesShort");
-	if ($typeid == Categorie::TYPE_CONTACT)     $title = $langs->trans("ContactCategoriesShort");
+	if ($typeid == 'product')     $title = $langs->trans("ProductsCategoriesShort");
+	if ($typeid == 'supplier')    $title = $langs->trans("SuppliersCategoriesShort");
+	if ($typeid == 'customer')    $title = $langs->trans("CustomersProspectsCategoriesShort");
+	if ($typeid == 'member')      $title = $langs->trans("MembersCategoriesShort");
+	if ($typeid == 'contact')     $title = $langs->trans("ContactCategoriesShort");
 
 	$linktocreate='';
 	if ($showclassifyform && $user->rights->categorie->creer)
 	{
-		$linktocreate='<a href="'.DOL_URL_ROOT.'/categories/card.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid==Categorie::TYPE_SUPPLIER||$typeid==Categorie::TYPE_CUSTOMER)?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
+		$linktocreate='<a href="'.DOL_URL_ROOT.'/categories/card.php?action=create&amp;origin='.$object->id.'&type='.$typeid.'&urlfrom='.urlencode($_SERVER["PHP_SELF"].'?'.(($typeid=='supplier'||$typeid=='customer')?'socid':'id').'='.$object->id.'&type='.$typeid).'">';
 		$linktocreate.=$langs->trans("CreateCat").' ';
 		$linktocreate.=img_picto($langs->trans("Create"),'filenew');
 		$linktocreate.="</a>";
@@ -668,11 +668,11 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 
 	if (count($cats) > 0)
 	{
-		if ($typeid == Categorie::TYPE_PRODUCT)     $title=$langs->trans("ProductIsInCategories");
-		if ($typeid == Categorie::TYPE_SUPPLIER)    $title=$langs->trans("CompanyIsInSuppliersCategories");
-		if ($typeid == Categorie::TYPE_CUSTOMER)    $title=$langs->trans("CompanyIsInCustomersCategories");
-		if ($typeid == Categorie::TYPE_MEMBER)      $title=$langs->trans("MemberIsInCategories");
-		if ($typeid == Categorie::TYPE_CONTACT)     $title=$langs->trans("ContactIsInCategories");
+		if ($typeid == 'product')     $title=$langs->trans("ProductIsInCategories");
+		if ($typeid == 'supplier')    $title=$langs->trans("CompanyIsInSuppliersCategories");
+		if ($typeid == 'customer')    $title=$langs->trans("CompanyIsInCustomersCategories");
+		if ($typeid == 'member')      $title=$langs->trans("MemberIsInCategories");
+		if ($typeid == 'contact')     $title=$langs->trans("ContactIsInCategories");
 		print "\n";
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$title.':</td></tr>';
@@ -693,11 +693,11 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 				// Link to delete from category
 				print '<td align="right">';
 				$permission=0;
-				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
-				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
-				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
-				if ($typeid == Categorie::TYPE_CONTACT)     $permission=$user->rights->societe->creer;
+				if ($typeid == 'product')     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == 'supplier')    $permission=$user->rights->societe->creer;
+				if ($typeid == 'customer')    $permission=$user->rights->societe->creer;
+				if ($typeid == 'member')      $permission=$user->rights->adherent->creer;
+				if ($typeid == 'contact')     $permission=$user->rights->societe->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removecat=".$cat->id."'>";
@@ -721,11 +721,11 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	}
 	else
 	{
-		if ($typeid == Categorie::TYPE_PRODUCT)     $title=$langs->trans("ProductHasNoCategory");
-		if ($typeid == Categorie::TYPE_SUPPLIER)    $title=$langs->trans("CompanyHasNoCategory");
-		if ($typeid == Categorie::TYPE_CUSTOMER)    $title=$langs->trans("CompanyHasNoCategory");
-		if ($typeid == Categorie::TYPE_MEMBER)      $title=$langs->trans("MemberHasNoCategory");
-		if ($typeid == Categorie::TYPE_CONTACT)     $title=$langs->trans("ContactHasNoCategory");
+		if ($typeid == 'product')     $title=$langs->trans("ProductHasNoCategory");
+		if ($typeid == 'supplier')    $title=$langs->trans("CompanyHasNoCategory");
+		if ($typeid == 'customer')    $title=$langs->trans("CompanyHasNoCategory");
+		if ($typeid == 'member')      $title=$langs->trans("MemberHasNoCategory");
+		if ($typeid == 'contact')     $title=$langs->trans("ContactHasNoCategory");
 		print $title;
 		print "<br/>";
 	}

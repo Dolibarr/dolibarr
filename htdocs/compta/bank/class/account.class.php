@@ -911,7 +911,7 @@ class Account extends CommonObject
         // Get current categories
         require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
         $c = new Categorie($this->db);
-        $existing = $c->containing($this->id, Categorie::TYPE_ACCOUNT, 'id');
+        $existing = $c->containing($this->id, 'account', 'id');
 
         // Diff
         if (is_array($existing)) {

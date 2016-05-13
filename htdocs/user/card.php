@@ -1081,7 +1081,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) 
 	{
 		print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, 'parent', null, null, 1 );
+		$cate_arbo = $form->select_all_categories( 'user', null, 'parent', null, null, 1 );
 		print $form->multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
 			null, '90%' );
 		print "</td></tr>";
@@ -2220,7 +2220,7 @@ else
 		{
 			print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td>';
 			print '<td>';
-			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+			$cate_arbo = $form->select_all_categories( 'contact', null, null, null, null, 1 );
 			$c = new Categorie( $db );
 			$cats = $c->containing( $object->id, 'user' );
 			foreach ($cats as $cat) {

@@ -657,7 +657,7 @@ else
 			// Categories
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
 				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, 'parent', null, null, 1 );
+				$cate_arbo = $form->select_all_categories( 'contact', null, 'parent', null, null, 1 );
 				print $form->multiselectarray( 'contcats', $cate_arbo, GETPOST( 'contcats', 'array' ), null, null, null,
 					null, '90%' );
 				print "</td></tr>";
@@ -912,7 +912,7 @@ else
 			if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
 				print '<tr><td>' . fieldLabel( 'Categories', 'contcats' ) . '</td>';
 				print '<td colspan="3">';
-				$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
+				$cate_arbo = $form->select_all_categories( 'contact', null, null, null, null, 1 );
 				$c = new Categorie( $db );
 				$cats = $c->containing( $object->id, 'contact' );
 				foreach ($cats as $cat) {
