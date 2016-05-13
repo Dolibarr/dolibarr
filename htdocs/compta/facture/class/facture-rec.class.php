@@ -760,8 +760,6 @@ class FactureRec extends CommonInvoice
 		$arraynow=dol_getdate($now);
 		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		parent::initAsSpecimen($option);
-
 		$this->usenewprice = 1;
 	}
 

@@ -125,16 +125,16 @@ class FactureRecTest extends PHPUnit_Framework_TestCase
     public function testFactureRecCreate()
     {
     	global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+      $conf=$this->savconf;
+      $user=$this->savuser;
+      $langs=$this->savlangs;
+      $db=$this->savdb;
 
-		$localobjectinv=new Facture($this->savdb);
-		$localobjectinv->initAsSpecimen();
-		$localobjectinv->create($user);
+      $localobjectinv=new Facture($this->savdb);
+      $localobjectinv->initAsSpecimen();
+      $localobjectinv->create($user);
 
-		$localobject=new FactureRec($this->savdb);
+      $localobject=new FactureRec($this->savdb);
     	$localobject->initAsSpecimen();
     	$result=$localobject->create($user, $localobjectinv->id);
 

@@ -197,6 +197,9 @@ class AllTests
         require_once dirname(__FILE__).'/WebservicesUserTest.php';
         $suite->addTestSuite('WebservicesUserTest');
 
+        require_once dirname(__FILE__).'/RestAPIUserTest.php';
+        $suite->addTestSuite('RestAPIUserTest');
+
         require_once dirname(__FILE__).'/ExportTest.php';
         $suite->addTestSuite('ExportTest');
         require_once dirname(__FILE__).'/ImportTest.php';

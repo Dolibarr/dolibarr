@@ -104,6 +104,11 @@ install:
   echo
 
 - |
+  echo "Installing PHP httpful"
+  composer require nategood/httpful ^0.2.20
+  echo
+
+- |
   echo "Adding Composer binaries to the path"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
@@ -125,6 +130,7 @@ before_script:
   echo
   echo "Set timezone"
   echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
+  sed -i -e 's/^display_errors = On$/display_errors = Off/g' ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
   if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ]; then
     echo
     echo "Enabling APC for PHP <= 5.4"
@@ -290,9 +296,8 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see log file.
-  set -e
-  #phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
-  set +e
+  # set -e - avoid script interruption https://docs.travis-ci.com/user/customizing-the-build/#Breaking-the-Build
+  phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
 
 - |
   #echo "Output dolibarr.log"
@@ -312,19 +317,21 @@ after_success:
 after_failure:
 - |
   echo Failure
-  # This part of code seems to be never executed, error or not ???
-  echo "Debugging informations"
-  # Upgrade log files
-  cat *.log
+  # Remove set -e from previous steps to execute this part
   echo "Debugging informations"
   # Apache log file
   sudo cat /var/log/apache2/error.log
-  # Dolibarr log file
-  cat documents/dolibarr.log
   if [ "$DEBUG" = true ]; then
+    # Upgrade log files
+    cat *.log
+    # Dolibarr log file (this leads to huge output not handled by travis)
+    cat documents/dolibarr.log
     # MariaDB log file
     sudo cat /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
+  else
+    # Last lines of Dolibarr log file
+    tail -500 documents/dolibarr.log
   fi
 

@@ -160,7 +160,7 @@ class SqlTest extends PHPUnit_Framework_TestCase
                 print __METHOD__." Result for checking we don't have back quote = ".$result."\n";
                 $this->assertTrue($result===false, 'Found back quote into '.$file.'. Bad.');
 
-                $result=strpos($filecontent,'int(');
+                $result=strpos($filecontent,' int(');
                 print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
                 $this->assertTrue($result===false, 'Found int(x) instead of integer into '.$file.'. Bad.');
 
