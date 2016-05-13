@@ -239,8 +239,8 @@ if (empty($reshook))
 	if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 	{
 		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
-		
-		if ($object->update() < 0) {
+
+		if ($object->update($user) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -461,7 +461,7 @@ if (empty($reshook))
 	                            break;
 	                        }
 	                    }
-	                    
+
 	                    // Now reload line
 	                    $object->fetch_lines();
 	                }
@@ -482,7 +482,7 @@ if (empty($reshook))
 	            {
 	                $error++;
 	            }
-	            
+
 	            if (! $error)
 	            {
         	        // If some invoice's lines already known
@@ -520,7 +520,7 @@ if (empty($reshook))
 	        {
 	            $langs->load("errors");
 	            $db->rollback();
-	            
+
 		        setEventMessages($object->error, $object->errors, 'errors');
 	            $action='create';
 	            $_GET['socid']=$_POST['socid'];
@@ -1325,7 +1325,7 @@ if ($action == 'create')
     print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 
     dol_fiche_head();
-    
+
     print '<table class="border" width="100%">';
 
     // Ref
@@ -2099,7 +2099,7 @@ else
 
        	global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
 		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
-		
+
 		// Show object lines
 		if (! empty($object->lines))
 			$ret = $object->printObjectLines($action, $societe, $mysoc, $lineid, 1);
@@ -2140,15 +2140,15 @@ else
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 			                                                                                          // modified by hook
-			if (empty($reshook)) 
+			if (empty($reshook))
 			{
-	
+
 			    // Modify a validated invoice with no payments
 				if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $action != 'edit' && $object->getSommePaiement() == 0 && $user->rights->fournisseur->facture->creer)
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans('Modify').'</a>';
 				}
-	
+
 	 	 		// Reopen a standard paid invoice
 	            if (($object->type == FactureFournisseur::TYPE_STANDARD || $object->type == FactureFournisseur::TYPE_REPLACEMENT) && ($object->statut == 2 || $object->statut == 3))				// A paid invoice (partially or completely)
 	            {
@@ -2161,7 +2161,7 @@ else
 	                    print '<span class="butActionRefused" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('ReOpen').'</span>';
 	                }
 	            }
-	
+
 	            // Send by mail
 	            if (($object->statut == FactureFournisseur::STATUS_VALIDATED || $object->statut == FactureFournisseur::STATUS_CLOSED))
 	            {
@@ -2171,23 +2171,23 @@ else
 	                }
 	                else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 	            }
-	
-	
+
+
 	            // Make payments
 	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
 	            {
 	                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create &amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
 	            }
-	
+
 	            // Classify paid
 	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
 	            {
 	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid"';
 	                print '>'.$langs->trans('ClassifyPaid').'</a>';
-	
+
 	                //print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a>';
 	            }
-	
+
 	            // Validate
 	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_DRAFT)
 	            {
@@ -2206,13 +2206,13 @@ else
 	                    }
 	                }
 	            }
-	
+
 	            // Clone
 	            if ($action != 'edit' && $user->rights->fournisseur->facture->creer)
 	            {
 	                print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=clone&amp;socid='.$object->socid.'">'.$langs->trans('ToClone').'</a>';
 	            }
-	
+
 	            // Delete
 	            if ($action != 'edit' && $user->rights->fournisseur->facture->supprimer)
 	            {
@@ -2224,17 +2224,17 @@ else
 	            }
 	            print '</div>';
 	            print '<br>';
-	
+
 	            if ($action != 'edit')
 	            {
 					print '<div class="fichecenter"><div class="fichehalfleft">';
 	            	//print '<table width="100%"><tr><td width="50%" valign="top">';
 	                //print '<a name="builddoc"></a>'; // ancre
-	
+
 	                /*
 	                 * Documents generes
 	                */
-	
+
 	                $ref=dol_sanitizeFileName($object->ref);
 	                $subdir = get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
 	                $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($object->id,2,0,0,$object,'invoice_supplier').$ref;
@@ -2242,27 +2242,27 @@ else
 	                $genallowed=$user->rights->fournisseur->facture->creer;
 	                $delallowed=$user->rights->fournisseur->facture->supprimer;
 	                $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF)?'':$conf->global->INVOICE_SUPPLIER_ADDON_PDF));
-	
+
 	                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
 	                $somethingshown=$formfile->numoffiles;
-	
+
 					// Linked object block
 					$somethingshown = $form->showLinkedObjectBlock($object);
-	
+
 					// Show links to link elements
 					$linktoelem = $form->showLinkToObjectBlock($object,array('supplier_order'));
 					if ($linktoelem) print '<br>'.$linktoelem;
-	
-	
+
+
 					print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	                //print '</td><td valign="top" width="50%">';
 	                //print '<br>';
-	
+
 	                // List of actions on element
 	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	                $formactions=new FormActions($db);
 	                $somethingshown=$formactions->showactions($object,'invoice_supplier',$socid);
-	
+
 					print '</div></div></div>';
 	                //print '</td></tr></table>';
 	            }
