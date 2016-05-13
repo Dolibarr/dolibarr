@@ -20,7 +20,7 @@
         "mike42/escpos-php": "dev-master",
         "mobiledetect/mobiledetectlib": "2.8.17",
         "phpoffice/phpexcel": "1.8.1",
-        "restler/framework": "^3.0",
+        "restler/framework": "3.0.0-RC6",
         "tecnickcom/tcpdf": "6.2.12"
     },
     "require-dev": {

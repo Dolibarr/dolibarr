@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
  * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	array	$menu			Object Menu to return back list of menu entries
- * @param	int		$noout			Disable output (Initialise &$menu only).
+ * @param	int		$noout			1=Disable output (Initialise &$menu only).
  * @return	int						0
  */
 function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
@@ -50,6 +50,19 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 
 	if (empty($noout)) print_start_menu_array();
 
+	// Show/Hide vertical menu
+	if (GETPOST('testhidemenu') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+	{
+    	$showmode=1;
+    	$classname = 'class="tmenu"';
+    	$idsel='home';
+	
+    	if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
+    	if (empty($noout)) print_text_menu_entry($langs->trans("XXX"), 1, '#', $id, $idsel, $classname, $atarget);
+    	if (empty($noout)) print_end_menu_entry($showmode);
+    	$menu->add('#', $langs->trans("XXX"), 0, $showmode, $atarget, "xxx", '');
+	}
+	
 	// Home
 	$showmode=1;
 	$classname="";
@@ -463,7 +476,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		print '</div>'."\n";
 	}
 
-	if (is_array($moredata) && ! empty($moredata['searchform']))
+	if (is_array($moredata) && ! empty($moredata['searchform']) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
         print "\n";
         print "<!-- Begin SearchForm -->\n";
