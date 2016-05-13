@@ -50,6 +50,7 @@ $search_town=GETPOST("search_town");
 $search_state=GETPOST("search_state");
 $search_country=GETPOST("search_country");
 $search_phone=GETPOST("search_phone");
+$search_phone_perso=GETPOST("search_phone_perso");
 $type=GETPOST("type");
 $search_email=GETPOST("search_email");
 $search_categ = GETPOST("search_categ",'int');
@@ -106,6 +107,7 @@ $arrayfields=array(
     'd.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
     'd.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
 	'd.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>0),
+	'd.phone_perso'=>array('label'=>$langs->trans("PhonePerso"), 'checked'=>0),
     'state.nom'=>array('label'=>$langs->trans("State"), 'checked'=>0),
 	'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
     /*'d.note_public'=>array('label'=>$langs->trans("NotePublic"), 'checked'=>0),
@@ -154,6 +156,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_state="";
 	$search_country='';
 	$search_phone='';
+	$search_phone_perso='';
 	$search_morphy="";
 	$search_categ="";
 	$catid="";
@@ -294,6 +297,7 @@ if ($resql)
 	if ($search_state != '') $param.= "&search_state=".urlencode($search_state);
 	if ($search_country != '') $param.= "&search_country=".urlencode($search_country);
 	if ($search_phone != '') $param.= "&search_phone=".urlencode($search_phone);
+	if ($search_phone_perso != '') $param.= "&search_phone_perso=".urlencode($search_phone_perso);
 	if ($filter)         $param.="&filter=".urlencode($filter);
 	if ($type > 0)       $param.="&type=".urlencode($type);
 	if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
@@ -366,6 +370,7 @@ if ($resql)
 	if (! empty($arrayfields['state.nom']['checked']))        print_liste_field_titre($langs->trans("StateShort"),$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titre($langs->trans("Country"),$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.phone']['checked']))          print_liste_field_titre($arrayfields['d.phone']['label'],$_SERVER["PHP_SELF"],'d.phone','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['d.phone_perso']['checked']))          print_liste_field_titre($arrayfields['d.phone_perso']['label'],$_SERVER["PHP_SELF"],'d.phone_perso','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.email']['checked']))          print_liste_field_titre($arrayfields['d.email']['label'],$_SERVER["PHP_SELF"],'d.email','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['d.datefin']['checked']))        print_liste_field_titre($arrayfields['d.datefin']['label'],$_SERVER["PHP_SELF"],'d.datefin','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
@@ -481,6 +486,12 @@ if ($resql)
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" name="search_phone" value="'.$search_phone.'" size="5"></td>';
 	}
+	// Phone perso
+	if (! empty($arrayfields['d.phone_perso']['checked'])) 
+	{
+		print '<td class="liste_titre" align="left">';
+		print '<input class="flat" type="text" name="search_phone_perso" value="'.$search_phone_perso.'" size="5"></td>';
+	}
 	// Email
 	if (! empty($arrayfields['d.email']['checked'])) 
 	{
@@ -573,7 +584,7 @@ if ($resql)
 		} else {
 			$companyname=$obj->company;
 		}
-
+var_dump($obj);exit;
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
 		
@@ -672,6 +683,14 @@ if ($resql)
 		{
 			print '<td class="nocellnopadd">';
 		    print $obj->phone;
+		    print '</td>';
+		    if (! $i) $totalarray['nbfield']++;
+		}
+		// Phone perso
+		if (! empty($arrayfields['d.phone_perso']['checked'])) 
+		{
+			print '<td class="nocellnopadd">';
+		    print $obj->phone_perso;
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		}
