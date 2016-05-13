@@ -583,12 +583,13 @@ class MouvementStock extends CommonObject
 			{
 				//print "Avant ".$pdluo->qty." Apres ".($pdluo->qty + $qty)."<br>";
 				$pdluo->qty += $qty;
-				if ($pdluo->qty == 0) 
-				{
-					$result=$pdluo->delete(0,1);
-				} else {
+				// product_batch line never delete (tracability feature)
+//				if ($pdluo->qty == 0) 
+//				{
+//					$result=$pdluo->delete(0,1);
+//				} else {
 					$result=$pdluo->update(0,1);
-				}
+//				}
 			}
 			else					// product_batch record not found
 			{
