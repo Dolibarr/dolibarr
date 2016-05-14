@@ -45,6 +45,11 @@ if (! $user->rights->banque->consolidate) accessforbidden();
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('account', 'int');
 
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="dateo";
+
 
 /*
  * Actions
@@ -147,7 +152,7 @@ $sql.= ", bc.ref";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bordereau_cheque as bc ON bc.rowid=b.fk_bordereau';
 $sql.= " WHERE rappro=0 AND fk_account=".$acct->id;
-$sql.= " ORDER BY dateo ASC";
+$sql.= " ORDER BY $sortfield $sortorder";
 $sql.= " LIMIT 1000";	// Limit to avoid page overload
 
 /// ajax adjust value date
@@ -231,17 +236,21 @@ if ($resql)
 
     print '<br>';
 
-    print '<table class="liste" width="100%">';
-    print '<tr class="liste_titre">'."\n";
-    print '<td align="center">'.$langs->trans("DateOperationShort").'</td>';
-    print '<td align="center">'.$langs->trans("DateValueShort").'</td>';
-    print '<td>'.$langs->trans("Type").'</td>';
-    print '<td>'.$langs->trans("Description").'</td>';
-    print '<td align="right" width="60" class="nowrap">'.$langs->trans("Debit").'</td>';
-    print '<td align="right" width="60" class="nowrap">'.$langs->trans("Credit").'</td>';
-    print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
-    print '<td align="center" width="60" class="nowrap">'.$langs->trans("ToConciliate").'</td>';
-    print "</tr>\n";
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">'."\n";
+    	$paramlist='';
+	$paramlist.="&account=".$acct->id;
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">'."\n";
+	print_liste_field_titre($langs->trans("DateOperationShort"),$_SERVER["PHP_SELF"],"b.dateo","",$paramlist,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("DateValueShort"),$_SERVER["PHP_SELF"],"b.datev","",$paramlist,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"b.fk_type","",$paramlist,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"b.label","",$paramlist,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Debit"),$_SERVER["PHP_SELF"],"b.amount","",$paramlist,' width="60 align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Credit"),$_SERVER["PHP_SELF"],"b.amount","",$paramlist,' width="60 align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"","",$paramlist,' width="80 align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ToConciliate"),$_SERVER["PHP_SELF"],"","",$paramlist,' align="center" width="80" ',$sortfield,$sortorder);
+    	print "</tr>\n";
 
 
     $i = 0;
