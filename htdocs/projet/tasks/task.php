@@ -489,31 +489,38 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Actions
-			*/
-			print '<div class="tabsAction">';
+ 			 */
+			
+		    print '<div class="tabsAction">';
 
-			// Modify
-			if ($user->rights->projet->creer)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
-			}
-
-			// Delete
-			if ($user->rights->projet->supprimer && ! $object->hasChildren())
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-			}
-
-			print '</div>';
-
+		    $parameters = array();
+		    $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		    // modified by hook
+		    if (empty($reshook))
+		    {
+				// Modify
+				if ($user->rights->projet->creer)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+				}
+	
+				// Delete
+				if ($user->rights->projet->supprimer && ! $object->hasChildren())
+				{
+					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+				}
+	
+				print '</div>';
+		    }
+		    
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 			print '<a name="builddoc"></a>'; // ancre
 
@@ -529,8 +536,6 @@ if ($id > 0 || ! empty($ref))
 			$var=true;
 
 			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
-
-
 
 			print '</td></tr></table>';
 		}

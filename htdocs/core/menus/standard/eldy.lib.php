@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
  * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	array	$menu			Object Menu to return back list of menu entries
- * @param	int		$noout			Disable output (Initialise &$menu only).
+ * @param	int		$noout			1=Disable output (Initialise &$menu only).
  * @return	int						0
  */
 function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
@@ -50,6 +50,19 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 
 	if (empty($noout)) print_start_menu_array();
 
+	// Show/Hide vertical menu
+	if (GETPOST('testhidemenu') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+	{
+    	$showmode=1;
+    	$classname = 'class="tmenu"';
+    	$idsel='home';
+	
+    	if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
+    	if (empty($noout)) print_text_menu_entry($langs->trans("XXX"), 1, '#', $id, $idsel, $classname, $atarget);
+    	if (empty($noout)) print_end_menu_entry($showmode);
+    	$menu->add('#', $langs->trans("XXX"), 0, $showmode, $atarget, "xxx", '');
+	}
+	
 	// Home
 	$showmode=1;
 	$classname="";
@@ -463,7 +476,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		print '</div>'."\n";
 	}
 
-	if (is_array($moredata) && ! empty($moredata['searchform']))
+	if (is_array($moredata) && ! empty($moredata['searchform']) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
         print "\n";
         print "<!-- Begin SearchForm -->\n";
@@ -513,11 +526,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
 				$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
 				
-				if (! empty($conf->accounting->enabled))
-				{
-					$newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=home", $langs->trans("Fiscalyear"),1);
-				}
-
 				$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
 				$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
 				$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
@@ -994,8 +1002,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				// Admin
 				$langs->load("admin");
-			    if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Fiscalyear"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
 				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Chartofaccounts"),1,$user->rights->accounting->chartofaccount, '', $mainmenu, 'chartofaccount');
+				if (preg_match('/accountancy/',$leftmenu)) $newmenu->add("/accountancy/admin/fiscalyear.php?mainmenu=accountancy&leftmenu=accountancy_admin", $langs->trans("Fiscalyear"),1,$user->rights->accounting->fiscalyear, '', $mainmenu, 'fiscalyear');
 			}
 
 			// Accountancy (simple)
@@ -1049,13 +1057,18 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire, '', $mainmenu, 'bank');
 
 				$newmenu->add("/compta/bank/card.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
-				$newmenu->add("/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
-
 				$newmenu->add("/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
 				$newmenu->add("/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
 
 				$newmenu->add("/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
 			}
+
+            if (! empty($conf->categorie->enabled)) {
+                $langs->load("categories");
+                //$newmenu->add("/compta/bank/categ.php",$langs->trans("Rubriques"),1,$user->rights->banque->configurer);
+                $newmenu->add("/categories/index.php?type=5",$langs->trans("Rubriques"),0,$user->rights->categorie->creer, '', $mainmenu, 'tags');
+                $newmenu->add("/categories/card.php?action=create&amp;type=5",$langs->trans("NewCategory"),1,$user->rights->categorie->creer);
+            }
 
 			// Prelevements
 			if (! empty($conf->prelevement->enabled))

@@ -12,7 +12,7 @@ use Luracast\Restler\Format\JsonFormat;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class Redirect
 {
@@ -32,11 +32,13 @@ class Redirect
         /** @var $r Restler */
         $r = Scope::get('Restler');
         $base = $r->getBaseUrl() . '/';
-        if (0 !== strpos($url, 'http'))
+        if (0 !== strpos($url, 'http')) {
             $url = $base . $url;
+        }
         if (!empty($flashData) || $base . $r->url !== $url || Util::getRequestMethod() != 'GET') {
-            if ($r->responseFormat instanceof JsonFormat)
+            if ($r->responseFormat instanceof JsonFormat) {
                 return array('redirect' => $url);
+            }
             if (!empty($params)) {
                 $url .= '?' . http_build_query($params);
             }
@@ -48,6 +50,19 @@ class Redirect
             header("Location: $url");
             die('');
         }
+
         return array();
+    }
+
+    /**
+     * Redirect back to the previous page
+     *
+     * Makes use of http referrer for redirection
+     *
+     * @return array
+     */
+    public static function back()
+    {
+        return static::to($_SERVER['HTTP_REFERER']);
     }
 }

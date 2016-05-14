@@ -37,15 +37,9 @@ function admin_accounting_prepare_head(AccountingAccount $object=null)
 	$head = array ();
 
 	$head[$h][0] = dol_buildpath('/accountancy/admin/index.php', 1);
-	$head[$h][1] = $langs->trans("Configuration");
+	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h ++;
-
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/journal.php';
 	$head[$h][1] = $langs->trans("Journaux");
@@ -53,9 +47,15 @@ function admin_accounting_prepare_head(AccountingAccount $object=null)
 	$h ++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/export.php';
-	$head[$h][1] = $langs->trans("Export");
+	$head[$h][1] = $langs->trans("ExportOptions");
 	$head[$h][2] = 'export';
 	$h ++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+	// $this->tabs = array('entity:-tabname); to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin', 'remove');
 

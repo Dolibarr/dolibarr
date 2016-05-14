@@ -852,142 +852,147 @@ else
      * Boutons actions
      */
     print '<div class="tabsAction">';
-
-    if ($action != "edit" )
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	                                                                                          // modified by hook
+    if (empty($reshook))
     {
-        // Modify
-        if ($object->statut != 2 && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
-            }
-        }
-
-    	// Validate
-        if ($object->statut == 0 && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
-            }
-        }
-
-        // Close
-        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
-            }
-        }
-
-        // Reopen
-        if ($object->statut == 2 && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
-            }
-        }
-
-        // Add button to create objects from project 
-        if (! empty($conf->global->PROJECT_SHOW_CREATE_OBJECT_BUTTON))
-        {
-            if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
-            {
-                $langs->load("propal");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
-            }
-            if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
-            {
-                $langs->load("orders");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateOrder").'</a></div>';
-            }
-            if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
-            {
-                $langs->load("bills");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
-            }
-            if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
-            {
-                $langs->load("supplier_proposal");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a></div>';
-            }
-            if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->creer)
-            {
-                $langs->load("suppliers");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a></div>';
-            }
-            if (! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->creer)
-            {
-                $langs->load("suppliers");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a></div>';
-            }
-            if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
-            {
-                $langs->load("interventions");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a></div>';
-            }
-            if (! empty($conf->contrat->enabled) && $user->rights->contrat->creer)
-            {
-                $langs->load("contracts");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddContract").'</a></div>';
-            }
-            if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
-            {
-                $langs->load("expensereports");
-                $langs->load("trips");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
-            }
-            if (! empty($conf->don->enabled) && $user->rights->don->creer)
-            {
-                $langs->load("donations");
-                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddDonation").'</a></div>';
-            }
-        }
-        
-        // Clone
-        if ($user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
-            }
-        }
-
-        // Delete
-        if ($user->rights->projet->supprimer)
-        {
-            if ($userDelete > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
-            }
-        }
+	    if ($action != "edit" )
+	    {
+	        // Modify
+	        if ($object->statut != 2 && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
+	            }
+	        }
+	
+	    	// Validate
+	        if ($object->statut == 0 && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
+	            }
+	        }
+	
+	        // Close
+	        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
+	            }
+	        }
+	
+	        // Reopen
+	        if ($object->statut == 2 && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
+	            }
+	        }
+	
+	        // Add button to create objects from project 
+	        if (! empty($conf->global->PROJECT_SHOW_CREATE_OBJECT_BUTTON))
+	        {
+	            if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
+	            {
+	                $langs->load("propal");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+	            }
+	            if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
+	            {
+	                $langs->load("orders");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateOrder").'</a></div>';
+	            }
+	            if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
+	            {
+	                $langs->load("bills");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+	            }
+	            if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
+	            {
+	                $langs->load("supplier_proposal");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a></div>';
+	            }
+	            if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->creer)
+	            {
+	                $langs->load("suppliers");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a></div>';
+	            }
+	            if (! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->creer)
+	            {
+	                $langs->load("suppliers");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a></div>';
+	            }
+	            if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
+	            {
+	                $langs->load("interventions");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a></div>';
+	            }
+	            if (! empty($conf->contrat->enabled) && $user->rights->contrat->creer)
+	            {
+	                $langs->load("contracts");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddContract").'</a></div>';
+	            }
+	            if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
+	            {
+	                $langs->load("expensereports");
+	                $langs->load("trips");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
+	            }
+	            if (! empty($conf->don->enabled) && $user->rights->don->creer)
+	            {
+	                $langs->load("donations");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddDonation").'</a></div>';
+	            }
+	        }
+	        
+	        // Clone
+	        if ($user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
+	            }
+	        }
+	
+	        // Delete
+	        if ($user->rights->projet->supprimer)
+	        {
+	            if ($userDelete > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
+	            }
+	        }
+         }
     }
 
     print "</div>";

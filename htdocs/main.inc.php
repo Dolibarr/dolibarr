@@ -563,7 +563,11 @@ if (! defined('NOLOGIN'))
 	        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
 	        if ($reshook < 0) $error++;
 
-            header('Location: '.DOL_URL_ROOT.'/index.php');
+	        $paramsurl=array();
+	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
+	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
+	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+            header('Location: '.DOL_URL_ROOT.'/index.php'.($count(paramsurl)?'?'.join('&',$paramsurl):''));
             exit;
         }
     }
@@ -617,7 +621,11 @@ if (! defined('NOLOGIN'))
 	        $reshook=$hookmanager->executeHooks('afterLoginFailed',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
 	        if ($reshook < 0) $error++;
 
-            header('Location: '.DOL_URL_ROOT.'/index.php');
+	        $paramsurl=array();
+	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
+	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
+	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
+            header('Location: '.DOL_URL_ROOT.'/index.php'.($count(paramsurl)?'?'.join('&',$paramsurl):''));
             exit;
         }
         else
@@ -756,6 +764,11 @@ if (! GETPOST('nojs'))   // If javascript was not disabled on URL
 	}
 }
 else $conf->use_javascript_ajax=0;
+// Set MAIN_OPTIMIZEFORTEXTBROWSER
+if (GETPOST('textbrowser') || ! empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))   // If text browser was enabled on URL
+{
+    $conf->global->MAIN_OPTIMIZEFORTEXTBROWSER=1;
+}
 
 // Set terminal output option according to conf->browser.
 if (GETPOST('dol_hide_leftmenu') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
@@ -866,7 +879,7 @@ else
     define('ROWS_9',8);
 }
 
-$heightforframes=52;
+$heightforframes=48;
 
 // Init menu manager
 if (! defined('NOREQUIREMENU'))
@@ -1006,9 +1019,9 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$favicon=dol_buildpath('/theme/'.$conf->theme.'/img/favicon.ico',1);
         if (! empty($conf->global->MAIN_FAVICON_URL)) $favicon=$conf->global->MAIN_FAVICON_URL;
         print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="top" title="'.$langs->trans("Home").'" href="'.(DOL_URL_ROOT?DOL_URL_ROOT:'/').'">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+        if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && ! GETPOST('textbrowser')) print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
         // Displays title
         $appli=constant('DOL_APPLICATION_TITLE');
@@ -1357,6 +1370,9 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     global $dolibarr_main_authentication, $dolibarr_main_demo;
     global $hookmanager,$menumanager;
 
+    $searchform='';
+    $bookmarks='';
+    
     // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('toprightmenu'));
 
@@ -1457,18 +1473,18 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		else $toprightmenu.=$result;	// For backward compatibility
 
 	    // Link to print main content area
-	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->browser->phone))
+	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
 	    {
 	        $qs=$_SERVER["QUERY_STRING"];
 	        $qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	        $text.='</a>';
-	        $toprightmenu.=Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
+	        $toprightmenu.=@Form::textwithtooltip('',$langs->trans("PrintContentArea"),2,1,$text,'login_block_elem',2);
 	    }
 
 	    // Link to Dolibarr wiki pages
-	    if (empty($conf->global->MAIN_HELP_DISABLELINK))
+	    if (empty($conf->global->MAIN_HELP_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	    {
 	        $langs->load("help");
 
@@ -1501,12 +1517,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	            //if ($mode == 'wiki') $text.=' ('.dol_trunc(strtr($helppage,'_',' '),8).')';
 	            $text.='</a>';
 	            //$toprightmenu.='</div>'."\n";
-	            $toprightmenu.=Form::textwithtooltip('',$title,2,1,$text,'login_block_elem',2);
+	            $toprightmenu.=@Form::textwithtooltip('',$title,2,1,$text,'login_block_elem',2);
 	        }
 	    }
 
 		// Logout link
-	    $toprightmenu.=Form::textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
+	    $toprightmenu.=@Form::textwithtooltip('',$logouthtmltext,2,1,$logouttext,'login_block_elem',2);
 
 	    $toprightmenu.='</div>';
 

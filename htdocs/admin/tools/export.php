@@ -318,7 +318,7 @@ function backup_tables($outputfile, $tables='*')
 	            $columns = count($row);
 	            for($j=0; $j<$columns; $j++) {
 	                // Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)
-	                if ($row[$j] == null and !is_string($row[$j])) {
+	                if ($row[$j] == null && !is_string($row[$j])) {
 	                    // IMPORTANT: if the field is NULL we set it NULL
 	                    $row[$j] = 'NULL';
 	                } elseif(is_string($row[$j]) && $row[$j] == '') {

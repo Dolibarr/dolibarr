@@ -96,36 +96,74 @@ class UserApi extends DolibarrApi
 	function createFromContact($contactid, $request_data = NULL) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 			//throw new RestException(401);
-    //}
+        //}
+        
+        if (!isset($request_data["login"]))
+    				throw new RestException(400, "login field missing");
+        if (!isset($request_data["password"]))
+    				throw new RestException(400, "password field missing");
+        if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+          throw new RestException(401);
+        }
+    		$contact = new Contact($this->db);
+        $contact->fetch($contactid);
+        if ($contact->id <= 0) {
+          throw new RestException(404, 'Contact not found');
+        }
     
-    if (!isset($request_data["login"]))
-				throw new RestException(400, "login field missing");
-    if (!isset($request_data["password"]))
-				throw new RestException(400, "password field missing");
-    if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
-      throw new RestException(401);
-    }
-		$contact = new Contact($this->db);
-    $contact->fetch($contactid);
-    if ($contact->id <= 0) {
-      throw new RestException(404, 'Contact not found');
-    }
-
-    if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
-      throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
-    }
-    // Check mandatory fields
-    $login = $request_data["login"];
-    $password = $request_data["password"];
-    $result = $this->useraccount->create_from_contact($contact,$login,$password);
-    if ($result <= 0) {
-      throw new RestException(500, "User not created");
-    }
-    // password parameter not used in create_from_contact
-    $this->useraccount->setPassword($this->useraccount,$password);
-    return $result;
+        if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
+          throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+        }
+        // Check mandatory fields
+        $login = $request_data["login"];
+        $password = $request_data["password"];
+        $result = $this->useraccount->create_from_contact($contact,$login,$password);
+        if ($result <= 0) {
+          throw new RestException(500, "User not created");
+        }
+        // password parameter not used in create_from_contact
+        $this->useraccount->setPassword($this->useraccount,$password);
+        
+        return $result;
 	}
-
+	
+	
+	/**
+	 * Create user account
+	 *
+	 * @param array $request_data New user data
+	 * @return int
+	 *
+	 * @url POST user/
+	 */
+	function post($request_data = NULL) {
+	    // check user authorization
+	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
+	    //   throw new RestException(401, "User creation not allowed");
+	    //}
+	    // check mandatory fields
+	    /*if (!isset($request_data["login"]))
+	        throw new RestException(400, "login field missing");
+	    if (!isset($request_data["password"]))
+	        throw new RestException(400, "password field missing");
+	    if (!isset($request_data["lastname"]))
+	         throw new RestException(400, "lastname field missing");*/
+	    //assign field values
+        $xxx=var_export($request_data, true);
+        dol_syslog("xxx=".$xxx);
+        foreach ($request_data as $field => $value)
+	    {
+	          $this->useraccount->$field = $value;
+	    }
+	    
+        $result = $this->useraccount->create(DolibarrApiAccess::$user);
+	    if ($result <=0) {
+	         throw new RestException(500, "User not created : ".$this->useraccount->error);
+	    }
+	    return array('id'=>$result);
+    }                
+	
+    
 	/**
 	 * Update account
 	 *
@@ -159,8 +197,35 @@ class UserApi extends DolibarrApi
 		if ($this->useraccount->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
 			return $this->get($id);
 
-		return false;
-	}
+        return false;
+    }
+
+    /**
+	 * add user to group
+	 *
+	 * @param   int     $id User ID
+	 * @param   int     $group Group ID
+	 * @return  int
+     * 
+	 * @url	GET user/{id}/setGroup/{group}
+	 */
+	function setGroup($id,$group) {
+		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
+			//throw new RestException(401);
+		//}
+        $result = $this->useraccount->fetch($id);
+        if (!$result)
+        {
+          throw new RestException(404, 'User not found');
+        }
+    
+        if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
+        {
+          throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+        }
+    
+        return $this->useraccount->SetInGroup($group,1);
+    }
 
 	/**
 	 * Delete account

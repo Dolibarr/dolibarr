@@ -908,7 +908,8 @@ class Translate
 	}
 
 	/**
-	 *	Return a currency code into its symbol
+	 *	Return a currency code into its symbol. 
+	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code
 	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.

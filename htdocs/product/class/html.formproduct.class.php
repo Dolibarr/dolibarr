@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,20 +54,20 @@ class FormProduct
 	 *
 	 * @param	int		$fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
 	 * @param	string	$batch			    Add quantity of batch stock in label for product with batch name batch, batch name precedes batch_id. Nothing if ''.
-	 * @param	int		$fk_product_batch	Add quantity of batch stock in label for product with batch id fk_product_batch. Nothing if 0.
+	 * @param	int		$status		      	additional filter on status other then 1
 	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product=0, $batch = '', $fk_product_batch=0, $sumStock = true)
+	function loadWarehouses($fk_product=0, $batch = '', $status=null, $sumStock = true)
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
 
-		$sql = "SELECT e.rowid, e.label";
+		$sql = "SELECT e.rowid, e.label, e.description";
 		if (!empty($fk_product)) 
 		{
-			if (!empty($fk_product_batch) || !empty($batch)) 
+			if (!empty($batch)) 
 			{
 				$sql.= ", pb.qty as stock";
 			}
@@ -87,13 +88,18 @@ class FormProduct
 			if (!empty($batch)) 
             {
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.batch = '".$batch."'";
-            } else if (!empty($fk_product_batch))
-			{
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb on pb.fk_product_stock = ps.rowid AND pb.rowid = '".$fk_product_batch."'";
-			}
+            }
 		}
 		$sql.= " WHERE e.entity IN (".getEntity('stock', 1).")";
-		$sql.= " AND e.statut = 1";
+		if (!empty($status))
+		{
+			$sql.= " AND e.statut IN (1, ".$status.")";
+		}
+		else
+		{
+			$sql.= " AND e.statut = 1";
+		}
+		
 		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description";
 		$sql.= " ORDER BY e.label";
 
@@ -127,7 +133,7 @@ class FormProduct
 	 *
 	 *  @param	int		$selected       Id of preselected warehouse ('' for no value, 'ifone'=select value if one value otherwise no value)
 	 *  @param  string	$htmlname       Name of html select html
-	 *  @param  string	$filtertype     For filter
+	 *  @param  string	$filtertype     For filter, additional filter on status other then 1
 	 *  @param  int		$empty			1=Can be empty, 0 if not
 	 * 	@param	int		$disabled		1=Select is disabled
 	 * 	@param	int		$fk_product		Add quantity of stock in label for product with id fk_product. Nothing if 0.
@@ -142,11 +148,11 @@ class FormProduct
 	{
 		global $conf,$langs,$user;
 
-		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product",LOG_DEBUG);
+		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filtertype, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
 		
 		$out='';
 		
-		$this->loadWarehouses($fk_product);
+		$this->loadWarehouses($fk_product, '', + $filtertype); // filter on numeric status
 		$nbofwarehouses=count($this->cache_warehouses);
 
 		if ($conf->use_javascript_ajax && ! $forcecombo)

@@ -82,7 +82,7 @@ class FormAccounting
             $sql.= " ORDER BY c.label ASC";
         }
 
-        dol_syslog("Form::select_accounting_category", LOG_DEBUG);
+        dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
         $resql=$db->query($sql);
         if ($resql)
         {

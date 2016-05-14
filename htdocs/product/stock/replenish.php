@@ -69,6 +69,15 @@ if (!$sortorder) {
     $sortorder = 'ASC';
 }
 
+// Define virtualdiffersfromphysical
+$virtualdiffersfromphysical=0;
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+{
+    $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+}
+
 
 /*
  * Actions
@@ -226,22 +235,6 @@ if ($action == 'order' && isset($_POST['valid']))
  */
 
 $form = new Form($db);
-
-$virtualdiffersfromphysical=0;
-if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) 
-	|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED) 
-	|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
-{
-	$virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
-}
-
-$usevirtualstock=-1;
-if ($virtualdiffersfromphysical)
-{
-	$usevirtualstock=(! empty($conf->global->STOCK_USE_VIRTUAL_STOCK)?1:0);
-	if ($mode=='virtual') $usevirtualstock=1;
-	if ($mode=='physical') $usevirtualstock=0;
-}
 
 $title = $langs->trans('Status');
 
@@ -559,7 +552,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
 		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
 
-		print '<td class="nowrap">'.$prod->getNomUrl(1, '', 16).'</td>';
+		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" ></td>';
 

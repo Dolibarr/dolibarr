@@ -13,7 +13,7 @@ $out .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 $out .= '<input type="hidden" name="action" value="add_element_resource">';
 $out .= '<input type="hidden" name="element" value="'.$element.'">';
 $out .= '<input type="hidden" name="element_id" value="'.$element_id.'">';
-$out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_type) ? 'resource' : $resource_type).'">';
+$out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_type) ? 'dolresource' : $resource_type).'">';
 
 
 // Place

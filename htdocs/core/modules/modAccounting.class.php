@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ class modAccounting extends DolibarrModules
 		$this->description = "Advanced accounting management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
@@ -273,7 +274,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][0] = 50440;
 		$this->rights[$r][1] = 'Manage chart of accounts';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'chartofaccount';
 		$this->rights[$r][5] = '';
 		$r++;

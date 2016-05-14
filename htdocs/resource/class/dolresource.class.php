@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2013-2015	Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 /**
  *	DAO Resource object
  */
-class Resource extends CommonObject
+class Dolresource extends CommonObject
 {
-	var $element='resource';			//!< Id that identify managed objects
+	var $element='dolresource';			//!< Id that identify managed objects
 	var $table_element='resource';	//!< Name of table without prefix where object is stored
 
 	var $resource_id;
@@ -414,7 +414,7 @@ class Resource extends CommonObject
     			while ($i < $num)
     			{
     				$obj = $this->db->fetch_object($resql);
-    				$line = new Resource($this->db);
+    				$line = new Dolresource($this->db);
     				$line->id						=	$obj->rowid;
     				$line->ref						=	$obj->ref;
     				$line->description				=	$obj->description;
@@ -488,7 +488,7 @@ class Resource extends CommonObject
    				while ($i < $num)
    				{
    					$obj = $this->db->fetch_object($resql);
-   					$line = new Resource($this->db);
+   					$line = new Dolresource($this->db);
    					$line->id				=	$obj->rowid;
    					$line->resource_id		=	$obj->resource_id;
    					$line->resource_type	=	$obj->resource_type;
@@ -574,7 +574,7 @@ class Resource extends CommonObject
     			while ($i < $num)
     			{
     				$obj = $this->db->fetch_object($resql);
-    				$line = new Resource($this->db);
+    				$line = new Dolresource($this->db);
     				$line->id				=	$obj->rowid;
     				$line->resource_id		=	$obj->resource_id;
     				$line->resource_type	=	$obj->resource_type;

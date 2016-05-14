@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2006-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2011-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
@@ -90,6 +90,7 @@ class Expedition extends CommonObject
 	var $date_creation;
 	var $date_valid;
 
+	var $meths;
 	var $listmeths;			// List of carriers
 
 	/**
@@ -119,7 +120,7 @@ class Expedition extends CommonObject
 	 */
 	function getNextNumRef($soc)
 	{
-		global $db, $langs, $conf;
+		global $langs, $conf;
 		$langs->load("sendings");
 
 	    if (!empty($conf->global->EXPEDITION_ADDON_NUMBER))
@@ -156,7 +157,7 @@ class Expedition extends CommonObject
 			}
 			else
 			{
-				dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+				dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
         }
@@ -176,7 +177,7 @@ class Expedition extends CommonObject
 	 */
 	function create($user, $notrigger=0)
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $hookmanager;
 
 		$now=dol_now();
 
@@ -664,7 +665,7 @@ class Expedition extends CommonObject
 			$langs->load("agenda");
 
 			// Loop on each product line to add a stock movement
-			// TODO possibilite d'expedier a partir d'une propale ou autre origine
+			// TODO in future, shipment lines may not be linked to order line
 			$sql = "SELECT cd.fk_product, cd.subprice,";
 			$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
@@ -738,7 +739,7 @@ class Expedition extends CommonObject
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
+            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);     // TODO Add option in workflow module on this trigger to close order if sum of shipment = product to ship of order
             if ($result < 0) { $error++; }
             // End call triggers
 		}
@@ -878,16 +879,14 @@ class Expedition extends CommonObject
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 
-				$product_type=$product->type;
 				if ($entrepot_id > 0) {
-                    $product->load_stock();
-				    $product_stock = $product->stock_warehouse[$entrepot_id]->real;
+					$product->load_stock();
+					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
 				}
-				else 
-				{
-				    $product_stock = $product->stock_reel;
-				}
-				
+				else
+					$product_stock = $product->stock_reel;
+
+				$product_type=$product->type;
 				if ($product_type == 0 && $product_stock < $qty)
 				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');
@@ -980,7 +979,7 @@ class Expedition extends CommonObject
      */
     function update($user=null, $notrigger=0)
     {
-    	global $conf, $langs;
+    	global $conf;
 		$error=0;
 
 		// Clean parameters
@@ -1534,7 +1533,7 @@ class Expedition extends CommonObject
 	 */
 	function initAsSpecimen()
 	{
-		global $user,$langs,$conf;
+		global $langs;
 
 		$now=dol_now();
 
@@ -1646,7 +1645,7 @@ class Expedition extends CommonObject
 	function fetch_delivery_methods()
 	{
 		global $langs;
-		$meths = array();
+		$this->meths = array();
 
 		$sql = "SELECT em.rowid, em.code, em.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
@@ -1795,11 +1794,11 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as invoiced
+	 *	Classify the shipping as closed
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
-	function set_billed()
+	function setClosed()
 	{
 		global $conf,$langs,$user;
 
@@ -1809,13 +1808,11 @@ class Expedition extends CommonObject
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			//TODO: Add option/checkbox to set order billed if 100% of order is shipped
+			// TODO: Add option/checkbox to set order billed if 100% of order is shipped
 			$this->statut=2;
-			$this->billed=1;
-			
-			
-			// If stock increment is done on sending (recommanded choice)
-			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLASSIFY_BILLED))
+
+			// If stock increment is done on closing
+			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 	
@@ -1892,6 +1889,32 @@ class Expedition extends CommonObject
 				}
 			}
 			
+
+			return 1;
+		}
+		else
+		{
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *	Classify the shipping as invoiced (used when WORKFLOW_BILL_ON_SHIPMENT is on)
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function set_billed()
+	{
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1';    // TODO Update only billed
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->statut=2;
+			$this->billed=1;
 			return 1;
 		}
 		else
@@ -2021,7 +2044,7 @@ class Expedition extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("sendings");
 

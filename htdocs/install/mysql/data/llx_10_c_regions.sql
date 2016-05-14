@@ -294,3 +294,5 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  232, 23208, '', 0, 'Nor-Oriental', 1);
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  232, 23209, '', 0, 'Zuliana', 1);
 
+-- Regions Peru (id country=181)
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18101, '', 0, 'Perú', 1);

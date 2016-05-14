@@ -14,7 +14,7 @@ use Luracast\Restler\RestException;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
 class JsonFormat extends Format
 {
@@ -57,37 +57,60 @@ class JsonFormat extends Format
         if (is_null(self::$unEscapedUnicode)) {
             self::$unEscapedUnicode = $this->charset == 'utf-8';
         }
+
         $options = 0;
+
         if ((PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION >= 4) // PHP >= 5.4
             || PHP_MAJOR_VERSION > 5 // PHP >= 6.0
         ) {
-            if ($humanReadable) $options |= JSON_PRETTY_PRINT;
-            if (self::$unEscapedSlashes) $options |= JSON_UNESCAPED_SLASHES;
-            if (self::$bigIntAsString) $options |= JSON_BIGINT_AS_STRING;
-            if (self::$unEscapedUnicode) $options |= JSON_UNESCAPED_UNICODE;
-            return json_encode(
-                Object::toArray($data, true), $options
-            );
+
+            if ($humanReadable) {
+                $options |= JSON_PRETTY_PRINT;
+            }
+
+            if (self::$unEscapedSlashes) {
+                $options |= JSON_UNESCAPED_SLASHES;
+            }
+
+            if (self::$bigIntAsString) {
+                $options |= JSON_BIGINT_AS_STRING;
+            }
+
+            if (self::$unEscapedUnicode) {
+                $options |= JSON_UNESCAPED_UNICODE;
+            }
+
+            $result = json_encode(Object::toArray($data, true), $options);
+            $this->handleJsonError();
+
+            return $result;
         }
 
         $result = json_encode(Object::toArray($data, true));
-        if ($humanReadable) $result = $this->formatJson($result);
-        if (self::$unEscapedUnicode) {
-            $result = preg_replace_callback('/\\\u(\w\w\w\w)/',
-                function($matches)
-                {
-                    if (function_exists('mb_convert_encoding'))
-                	{
-                		return mb_convert_encoding(pack('H*', $matches[1]), 'UTF-8', 'UTF-16BE');	
-                	}
-                	else
-                	{
-                		return iconv('UTF-16BE','UTF-8',pack('H*', $matches[1]));
-                	}
-                }
-                , $result);
+        $this->handleJsonError();
+
+        if ($humanReadable) {
+            $result = $this->formatJson($result);
         }
-        if (self::$unEscapedSlashes) $result = str_replace('\/', '/', $result);
+
+        if (self::$unEscapedUnicode) {
+            $result = preg_replace_callback(
+                '/\\\u(\w\w\w\w)/',
+                function ($matches) {
+                    if (function_exists('mb_convert_encoding')) {
+                        return mb_convert_encoding(pack('H*', $matches[1]), 'UTF-8', 'UTF-16BE');
+                    } else {
+                        return iconv('UTF-16BE', 'UTF-8', pack('H*', $matches[1]));
+                    }
+                },
+                $result
+            );
+        }
+
+        if (self::$unEscapedSlashes) {
+            $result = str_replace('\/', '/', $result);
+        }
+
         return $result;
     }
 
@@ -102,39 +125,21 @@ class JsonFormat extends Format
             } else {
                 $data = preg_replace(
                     '/:\s*(\-?\d+(\.\d+)?([e|E][\-|\+]\d+)?)/',
-                    ': "$1"', $data
+                    ': "$1"',
+                    $data
                 );
             }
         }
-        $decoded = json_decode($data, $options);
-        if (function_exists('json_last_error')) {
-            switch (json_last_error()) {
-                case JSON_ERROR_NONE :
-                    return Object::toArray($decoded);
-                    break;
-                case JSON_ERROR_DEPTH :
-                    $message = 'maximum stack depth exceeded';
-                    break;
-                case JSON_ERROR_STATE_MISMATCH :
-                    $message = 'underflow or the modes mismatch';
-                    break;
-                case JSON_ERROR_CTRL_CHAR :
-                    $message = 'unexpected control character found';
-                    break;
-                case JSON_ERROR_SYNTAX :
-                    $message = 'malformed JSON';
-                    break;
-                case JSON_ERROR_UTF8 :
-                    $message = 'malformed UTF-8 characters, possibly ' .
-                        'incorrectly encoded';
-                    break;
-                default :
-                    $message = 'unknown error';
-                    break;
-            }
-            throw new RestException (400, 'Error parsing JSON, ' . $message);
-        } elseif (strlen($data) && $decoded === null || $decoded === $data) {
-            throw new RestException (400, 'Error parsing JSON');
+
+        try {
+            $decoded = json_decode($data, $options);
+            $this->handleJsonError();
+        } catch (\RuntimeException $e) {
+            throw new RestException(400, $e->getMessage());
+        }
+
+        if (strlen($data) && $decoded === null || $decoded === $data) {
+            throw new RestException(400, 'Error parsing JSON');
         }
 
         return Object::toArray($decoded);
@@ -206,5 +211,52 @@ class JsonFormat extends Format
 
         return $newJson;
     }
-}
 
+    /**
+     * Throws an exception if an error occurred during the last JSON encoding/decoding
+     *
+     * @return void
+     * @throws \RuntimeException
+     */
+    protected function handleJsonError()
+    {
+        if (function_exists('json_last_error_msg') && json_last_error() !== JSON_ERROR_NONE) {
+
+            // PHP >= 5.5.0
+
+            $message = json_last_error_msg();
+
+        } elseif (function_exists('json_last_error')) {
+
+            // PHP >= 5.3.0
+
+            switch (json_last_error()) {
+                case JSON_ERROR_NONE:
+                    break;
+                case JSON_ERROR_DEPTH:
+                    $message = 'maximum stack depth exceeded';
+                    break;
+                case JSON_ERROR_STATE_MISMATCH:
+                    $message = 'underflow or the modes mismatch';
+                    break;
+                case JSON_ERROR_CTRL_CHAR:
+                    $message = 'unexpected control character found';
+                    break;
+                case JSON_ERROR_SYNTAX:
+                    $message = 'malformed JSON';
+                    break;
+                case JSON_ERROR_UTF8:
+                    $message = 'malformed UTF-8 characters, possibly ' .
+                        'incorrectly encoded';
+                    break;
+                default:
+                    $message = 'unknown error';
+                    break;
+            }
+        }
+
+        if (isset($message)) {
+            throw new \RuntimeException('Error encoding/decoding JSON: '. $message);
+        }
+    }
+}

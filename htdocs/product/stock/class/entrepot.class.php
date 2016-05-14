@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,18 +35,45 @@ class Entrepot extends CommonObject
 {
 	public $element='stock';
 	public $table_element='entrepot';
+	
+	/**
+	 * Warehouse closed, inactive
+	 */
+	const STATUS_CLOSED = 0;
+	
+	/**
+	 * Warehouse open and operations for customer shipping, supplier dispatch, internal stock transfers/corrections allowed.
+	 */
+	const STATUS_OPEN_ALL = 1;
+	
+	/**
+	 * Warehouse open and operations for stock transfers/corrections allowed (not for customer shipping and supplier dispatch).
+	 */
+	const STATUS_OPEN_INTERNAL = 2;
+	
+	/**
+	 * Warehouse open and operations for customer shipping and internal stock transfers/corrections allowed (not for supplier dispatch).
+	 */
+	const STATUS_OPEN_SHIPPING = 3;
+	
+	/**
+	 * Warehouse open and operations for supplier dispatch internal stock transfers/corrections allowed (not for customer shipping).
+	 */
+	const STATUS_OPEN_DISPATCH = 4;
+	
 
 	var $libelle;
 	var $description;
-	//! Statut 1 pour ouvert, 0 pour ferme
 	var $statut;
 	var $lieu;
 	var $address;
 	//! Code Postal
 	var $zip;
 	var $town;
-
-
+	
+	// List of short language codes for status
+	var $statuts = array();
+	
 	/**
 	 *  Constructor
 	 *
@@ -53,11 +81,22 @@ class Entrepot extends CommonObject
 	 */
 	function __construct($db)
 	{
+		global $conf;
 		$this->db = $db;
 
-		// List of short language codes for status
-		$this->statuts[0] = 'Closed2';
-		$this->statuts[1] = 'Opened';
+		$this->statuts[self::STATUS_CLOSED] = 'Closed2';
+		if ($conf->global->ENTREPOT_EXTRA_STATUS)
+		{
+			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
+			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
+			$this->statuts[self::STATUS_OPEN_SHIPPING] = 'OpenShipping';
+			$this->statuts[self::STATUS_OPEN_DISPATCH] = 'OpenDispatch';
+		}
+		else
+		{
+			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
+		}
+		
 	}
 
 	/**
@@ -455,42 +494,40 @@ class Entrepot extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
+		
 		$langs->load('stocks');
+		
+		$picto = 'statut5';
+		$label = $langs->trans($this->statuts[$statut]);
+		
 
 		if ($mode == 0)
 		{
-			$prefix='';
-			if ($statut == 0) return $langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return $langs->trans($this->statuts[$statut]);
+			return $label;
 		}
 		if ($mode == 1)
 		{
-			$prefix='Short';
-			if ($statut == 0) return $langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return $langs->trans($this->statuts[$statut]);
+			return $label;
 		}
 		if ($mode == 2)
 		{
-			$prefix='Short';
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut > 0) $picto = 'statut4';
+			return img_picto($label, $picto).' '.$label;
 		}
 		if ($mode == 3)
 		{
-			$prefix='Short';
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut5');
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut > 0) $picto = 'statut4';
+			return img_picto($label, $picto).' '.$label;
 		}
 		if ($mode == 4)
 		{
-			if ($statut == 0) return img_picto($langs->trans($this->statuts[$statut]),'statut5').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut == 1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut > 0) $picto = 'statut4';
+			return img_picto($label, $picto).' '.$label;
 		}
 		if ($mode == 5)
 		{
-			$prefix='Short';
-			if ($statut == 0) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut5');
-			if ($statut == 1) return $langs->trans($this->statuts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut > 0) $picto = 'statut4';
+			return $label.' '.img_picto($label, $picto);
 		}
 	}
 

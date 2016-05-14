@@ -984,9 +984,16 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					$element = 'supplier_proposal';
-					$subelement = 'supplier_proposal';
-
+					if ($origin == 'order' || $origin == 'commande')
+					{
+                        $element = $subelement = 'commande';
+                    }
+                    else
+                    {
+						$element = 'supplier_proposal';
+						$subelement = 'supplier_proposal';
+					}
+					
 					$object->origin = $origin;
 					$object->origin_id = $originid;
 
@@ -1046,35 +1053,41 @@ if (empty($reshook))
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
 								}
-								
-								$res = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								/*if ($productsupplier->id > 0)
-								{
-								    $res = $productsupplier->fetch($productsupplier->id);
-								}*/
-								
-								$result = $object->addline(
-									$desc,
-									$lines[$i]->subprice,
-									$lines[$i]->qty,
-									$lines[$i]->tva_tx,
-									$lines[$i]->localtax1_tx,
-									$lines[$i]->localtax2_tx,
-									$lines[$i]->fk_product,
-									$productsupplier->product_fourn_price_id,
-									$productsupplier->ref_fourn,
-									$lines[$i]->remise_percent,
-									'HT',
-									0,
-									$lines[$i]->product_type,
-									'',
-									'',
-									null,
-									null,
-									array(),
-									$lines[$i]->fk_unit
-								);
 
+								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								if ($result>0) 
+								{
+								    $tva_tx = $lines[$i]->tva_tx;
+								    
+								    if ($origin=="commande")
+								    {
+					                    $soc=new societe($db);
+					                    $soc->fetch($socid);
+					                    $tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $productsupplier->product_fourn_price_id);
+								    }
+					                                
+									$result = $object->addline(
+										$desc,
+										$lines[$i]->subprice,
+										$lines[$i]->qty,
+										$tva_tx,
+										$lines[$i]->localtax1_tx,
+										$lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product,
+										$productsupplier->product_fourn_price_id,
+										$productsupplier->ref_supplier,
+										$lines[$i]->remise_percent,
+										'HT',
+										0,
+										$lines[$i]->product_type,
+										'',
+										'',
+										null,
+										null,
+										array(),
+										$lines[$i]->fk_unit
+									);
+								}
 								if ($result < 0) {
 									$error++;
 									break;
@@ -2771,15 +2784,17 @@ elseif (! empty($object->id))
 		/**
 		 * Boutons actions
 		 */
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		// modified by hook
-		if (empty($reshook))
+	    
+		if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
 		{
-			if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
-			{
-				print '<div	 class="tabsAction">';
+			print '<div	class="tabsAction">';
 
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+			// modified by hook
+			if (empty($reshook))
+			{
+				
 				// Validate
 				if ($object->statut == 0 && $num > 0)
 				{
@@ -2961,9 +2976,11 @@ elseif (! empty($object->id))
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
 
-				print "</div>";
 			}
+		
+			print "</div>";
 		}
+
 		print "<br>";
 
 

@@ -8,6 +8,7 @@ Calendar=Calendar
 Calendars=Calendars
 LocalAgenda=Internal calendar
 ActionsOwnedBy=Event owned by 
+ActionsOwnedByShort=Owner 
 AffectedTo=Assigned to
 DoneBy=Done by
 Event=Event

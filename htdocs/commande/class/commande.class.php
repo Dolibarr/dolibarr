@@ -3,12 +3,13 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2012-2014 Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -203,7 +204,7 @@ class Commande extends CommonOrder
 	 */
     function getNextNumRef($soc)
     {
-        global $db, $langs, $conf;
+        global $langs, $conf;
         $langs->load("order");
 
         if (! empty($conf->global->COMMANDE_ADDON))
@@ -238,7 +239,7 @@ class Commande extends CommonOrder
             }
             else
 			{
-            	dol_print_error($db,get_class($this)."::getNextNumRef ".$obj->error);
+            	dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
             	return "";
             }
         }
@@ -499,7 +500,6 @@ class Commande extends CommonOrder
      */
     function set_reopen($user)
     {
-        global $conf,$langs;
         $error=0;
 
         if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED)
@@ -559,7 +559,7 @@ class Commande extends CommonOrder
      */
     function cloture($user)
     {
-        global $conf, $langs;
+        global $conf;
 
         $error=0;
 
@@ -696,7 +696,7 @@ class Commande extends CommonOrder
      */
     function create($user, $notrigger=0)
     {
-        global $conf,$langs,$mysoc,$hookmanager;
+        global $conf,$langs;
         $error=0;
 
         // Clean parameters
@@ -970,7 +970,7 @@ class Commande extends CommonOrder
      */
     function createFromClone($socid=0)
     {
-        global $conf,$user,$langs,$hookmanager;
+        global $user,$hookmanager;
 
         $error=0;
 
@@ -1060,7 +1060,7 @@ class Commande extends CommonOrder
      */
     function createFromProposal($object)
     {
-        global $db, $conf,$user,$langs,$hookmanager;
+        global $conf,$user,$hookmanager;
 
 		dol_include_once('/core/class/extrafields.class.php');
 
@@ -1133,7 +1133,7 @@ class Commande extends CommonOrder
         // get extrafields from original line
 		$object->fetch_optionals($object->id);
 
-		$e = new ExtraFields($db);
+		$e = new ExtraFields($this->db);
 		$element_extrafields = $e->fetch_name_optionals_label($this->element);
 
 		foreach($object->array_options as $options_key => $value) {
@@ -1494,7 +1494,6 @@ class Commande extends CommonOrder
      */
     function fetch($id, $ref='', $ref_ext='', $ref_int='')
     {
-        global $conf;
 
         // Check parameters
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
@@ -1850,10 +1849,9 @@ class Commande extends CommonOrder
      *  Note: For a dedicated shipment, the fetch_lines load the qty_asked and qty_shipped. This function return qty_shipped cuulated for order
      *   
      *	@param      int		$filtre_statut      Filter on status
-     *  @param		int		$fk_product			Filter on a product
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
-    function loadExpeditions($filtre_statut=-1, $fk_product=0)
+    function loadExpeditions($filtre_statut=-1)
     {
         $this->expeditions = array();
 
@@ -1982,7 +1980,6 @@ class Commande extends CommonOrder
      */
     function deleteline($lineid)
     {
-        global $user;
 
         if ($this->statut == self::STATUS_DRAFT)
         {
@@ -2261,7 +2258,7 @@ class Commande extends CommonOrder
      */
     function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
     {
-        global $conf,$user;
+        global $user;
 
         $ga = array();
 
@@ -2429,7 +2426,7 @@ class Commande extends CommonOrder
 	 */
 	function classifyBilled(User $user)
 	{
-		global $conf, $user, $langs;
+		global $user;
         $error = 0;
 
 		$this->db->begin();
@@ -2516,7 +2513,7 @@ class Commande extends CommonOrder
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null)
     {
-        global $conf, $mysoc;
+        global $conf, $mysoc, $langs;
 
         dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2584,6 +2581,26 @@ class Commande extends CommonOrder
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new OrderLine($this->db);
             $line->fetch($rowid);
+
+            if (!empty($line->fk_product))
+            {
+                $product=new Product($this->db);
+                $result=$product->fetch($line->fk_product);
+                $product_type=$product->type;
+
+                if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty)
+                {
+                    $this->error=$langs->trans('ErrorStockIsNotEnough');
+                    dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
+                    $this->db->rollback();
+                    unset($_POST['productid']);
+                    unset($_POST['tva_tx']);
+                    unset($_POST['price_ht']);
+                    unset($_POST['qty']);
+                    unset($_POST['buying_price']);
+                    return self::STOCK_NOT_ENOUGH_FOR_ORDER;
+                }
+            }
 
             $staticline = clone $line;
 
@@ -2677,7 +2694,6 @@ class Commande extends CommonOrder
 	 */
 	function update($user=null, $notrigger=0)
 	{
-		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -3184,7 +3200,7 @@ class Commande extends CommonOrder
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $langs;
 
         dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -3266,7 +3282,7 @@ class Commande extends CommonOrder
      */
     function load_state_board()
     {
-        global $conf, $user;
+        global $user;
 
         $this->nb=array();
         $clause = "WHERE";

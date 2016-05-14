@@ -933,7 +933,22 @@ else
 	print '<input type="submit" class="button" name="PROJECT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
 }
-print '</tr></table></form>';
+print '</tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
+
+print '<td align="center" width="300">';
+echo ajax_constantonoff('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY');
+print '</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '</tr>';
+
+print '</table></form>';
+
+
+
 
 llxFooter();
 $db->close();

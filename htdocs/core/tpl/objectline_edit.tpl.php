@@ -255,12 +255,15 @@ $coldisplay=-1; // We remove first td
 
 <script type="text/javascript">
 
-<?php
-if (! empty($conf->margin->enabled))
+jQuery(document).ready(function()
 {
-?>
-	jQuery(document).ready(function()
-	{
+	jQuery("#price_ht").keyup(function() { jQuery("#price_ttc").val(''); });
+	jQuery("#price_ttc").keyup(function() { jQuery("#price_ht").val(''); });
+
+    <?php
+    if (! empty($conf->margin->enabled))
+    {
+    ?>
 		/* Add rule to clear margin when we change some data, so when we change sell or buy price, margin will be recalculated after submitting form */
 		jQuery("#tva_tx").click(function() {						/* somtimes field is a text, sometimes a combo */
 			jQuery("input[name='np_marginRate']:first").val('');
@@ -323,86 +326,10 @@ if (! empty($conf->margin->enabled))
 			$('#buying_price').show();
 		}
 		}, 'json');
-
-		/* Add rules to reset price_ht from margin info */
-		<?php
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
-		{
-		?>
-			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
-			$("input[name='np_marginRate']:first").blur(function(e) {
-				return checkEditLine(e, "np_marginRate");
-			});*/
-		<?php
-		}
-		if (! empty($conf->global->DISPLAY_MARK_RATES) && !empty($conf->global->MARGIN_RESET_HT_FROM_MARGIN_FIELD))
-		{
-		?>
-			/* Disabled. We must be able to click on button 'cancel'. Check must be done only on button 'save'.
-			$("input[name='np_markRate']:first").blur(function(e) {
-				return checkEditLine(e, "np_markRate");
-			});*/
-		<?php
-		}
-	?>
-	});
-
-
-	/* If margin rate field empty, do nothing. */
-	/* Force content of price_ht to 0 or if a discount is set, recalculate it from margin rate */
-	/* TODO This function seems no more used */
-	function checkEditLine(e, npRate)
-	{
-		var buying_price = $("input[name='buying_price']:first");
-		var remise = $("input[name='remise_percent']:first");
-
-		var rate = $("input[name='"+npRate+"']:first");
-		if (rate.val() == '' || (typeof rate.val()) == 'undefined' ) return true;
-
-		if (! $.isNumeric(rate.val().replace(' ','').replace(',','.')))
-		{
-			alert('<?php echo $langs->transnoentitiesnoconv("rateMustBeNumeric"); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
-		if (npRate == "np_markRate" && rate.val() > 100)
-		{
-			alert('<?php echo $langs->transnoentitiesnoconv("markRateShouldBeLesserThan100"); ?>');
-			e.stopPropagation();
-			setTimeout(function () { rate.focus() }, 50);
-			return false;
-		}
-
-		var price = 0;
-		remisejs=price2numjs(remise.val());
-
-		if (remisejs != 100)
-		{
-			bpjs=price2numjs(buying_price.val());
-			ratejs=price2numjs(rate.val());
-			/* console.log(npRate+" - "+bpjs+" - "+ratejs); */
-
-			if (npRate == "np_marginRate")
-				price = ((bpjs * (1 + (ratejs / 100))) / (1 - remisejs / 100));
-			else if (npRate == "np_markRate")
-			{
-				if (ratejs != 100)	// If markRate is 100, it means buying price is 0, so it is not possible to retreive price from it and markRate. We keep it unchange
-				{
-					price = ((bpjs / (1 - (ratejs / 100))) / (1 - remisejs / 100));
-				}
-				else price=$("input[name='price_ht']:first").val();
-			}
-		}
-		/* console.log("new price ht = "+price); */
-		$("input[name='price_ht']:first").val(price);	// TODO Must use a function like php price to have here a formated value
-
-		return true;
-	}
-
-<?php
-}
-?>
+    <?php
+    }
+    ?>
+});
 
 </script>
 <!-- END PHP TEMPLATE objectline_edit.tpl.php -->

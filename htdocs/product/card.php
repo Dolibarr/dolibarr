@@ -8,12 +8,12 @@
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2011-2015	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
+ * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1435,7 +1435,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '</td>';
-                if (($action != 'editbarcodetype') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcodetype') && ! empty($user->rights->produit->creer) && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype')
@@ -1456,7 +1456,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '</td>';
-                if (($action != 'editbarcode') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcode') && ! empty($user->rights->produit->creer) && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
@@ -1477,22 +1477,24 @@ else
 
             // Accountancy sell code
 			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
             print $langs->trans("ProductAccountancySellCode");
-            print '</td>';
-			print '</tr></table>';
             print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_sell);
-            print '</td></tr>';
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->accountancy_code_sell);
+            } else {
+				print $object->accountancy_code_sell;
+			}
+			print '</td></tr>';
 
             // Accountancy buy code
 			print '<tr><td class="nowrap">';
-            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
             print $langs->trans("ProductAccountancyBuyCode");
-            print '</td>';
-			print '</tr></table>';
             print '</td><td colspan="2">';
-			print length_accountg($object->accountancy_code_buy);
+			if (! empty($conf->accounting->enabled)) {
+				print length_accountg($object->accountancy_code_buy);
+            } else {
+				print $object->accountancy_code_buy;
+			}
             print '</td></tr>';
 
             // Status (to sell)

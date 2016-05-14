@@ -135,6 +135,7 @@ class HookManager
 			$method,
 			array(
 				'addMoreActionsButtons',
+			    'addSearchEntry',
 				'addStatisticLine',
 				'deleteFile',
 				'doActions',

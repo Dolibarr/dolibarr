@@ -123,7 +123,7 @@ class FormVentilation extends Form
 			$options[$select_value_out] = $label;
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty);
+		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
 		$this->db->free($resql);
 		return $out;
 	}
@@ -264,7 +264,7 @@ class FormVentilation extends Form
 
 		// Build select
 		$out = ajax_combobox($htmlname, $event);
-		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty);
+		$out .= Form::selectarray($htmlname, $aux_account, $selectid, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
 
 		return $out;
 	}

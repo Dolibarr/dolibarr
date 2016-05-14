@@ -27,7 +27,7 @@ PHPExcel               1.8.1         LGPL-2.1+                   Yes            
 php-iban               1.4.7         LGPL-3+                     Yes             Parse and validate IBAN (and IIBAN) bank account information in PHP
 PHPoAuthLib            0.8.2         MIT License                 Yes             Library to provide oauth1 and oauth2 to different service
 PHPPrintIPP            1.3           GPL-2+                      Yes             Library to send print IPP requests
-Restler                3.0           LGPL-3+                     Yes             Library to develop REST Web services
+Restler                3.0.0RC6      LGPL-3+                     Yes             Library to develop REST Web services
 TCPDF                  6.2.12        LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP

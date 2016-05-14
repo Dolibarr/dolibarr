@@ -7,13 +7,14 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012-2014 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012-2015 Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2012      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013      Cedric Gross          <c.gross@kreiz-it.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,24 +281,27 @@ class Facture extends CommonInvoice
 
 			$this->socid 		     = $_facrec->socid;
 			
+			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
 			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
-			$this->fk_account        = $_facrec->fk_account;
-			$this->cond_reglement_id = $_facrec->cond_reglement_id;
-			$this->mode_reglement_id = $_facrec->mode_reglement_id;
+			$this->note_public       = GETPOST('note_public') ? GETPOST('note_public') : $_facrec->note_public;
+			$this->note_private      = GETPOST('note_private') ? GETPOST('note_private') : $_facrec->note_private;
+			$this->modelpdf          = GETPOST('model') ? GETPOST('model') : $_facrec->modelpdf;
+			$this->cond_reglement_id = GETPOST('cond_reglement_id') > 0 ? GETPOST('cond_reglement_id') : $_facrec->cond_reglement_id;
+			$this->mode_reglement_id = GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $_facrec->mode_reglement_id;
+			$this->fk_account        = GETPOST('fk_account') > 0 ? GETPOST('fk_account') : $_facrec->fk_account;
+				
+			// Fields always coming from template
 			$this->remise_absolue    = $_facrec->remise_absolue;
 			$this->remise_percent    = $_facrec->remise_percent;
 			$this->fk_incoterms		 = $_facrec->fk_incoterms;
 			$this->location_incoterms= $_facrec->location_incoterms;
 
-			$this->note_public       = $_facrec->note_public;
-			$this->note_private      = $_facrec->note_private;
-			
 			// Clean parameters
 			if (! $this->type) $this->type = self::TYPE_STANDARD;
 			$this->ref_client=trim($this->ref_client);
 			$this->note_public=trim($this->note_public);
 			$this->note_private=trim($this->note_private);
-		    $this->note_private=dol_concatdesc($facture->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
+		    $this->note_private=dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 		    
 			//if (! $this->remise) $this->remise = 0;
 			if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
@@ -730,7 +734,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromClone($socid=0)
 	{
-		global $conf,$user,$langs,$hookmanager;
+		global $user,$hookmanager;
 
 		$error=0;
 
@@ -845,7 +849,7 @@ class Facture extends CommonInvoice
 	 */
 	function createFromOrder($object)
 	{
-		global $conf,$user,$langs,$hookmanager;
+		global $user,$hookmanager;
 
 		$error=0;
 
@@ -1285,7 +1289,6 @@ class Facture extends CommonInvoice
 	 */
 	function update($user=null, $notrigger=0)
 	{
-		global $conf, $langs;
 		$error=0;
 
 		// Clean parameters
@@ -1678,7 +1681,6 @@ class Facture extends CommonInvoice
 	 */
 	function set_paid($user,$close_code='',$close_note='')
 	{
-		global $conf,$langs;
 		$error=0;
 
 		if ($this->paye != 1)
@@ -1736,7 +1738,6 @@ class Facture extends CommonInvoice
 	 */
 	function set_unpaid($user)
 	{
-		global $conf,$langs;
 		$error=0;
 
 		$this->db->begin();
@@ -1786,9 +1787,6 @@ class Facture extends CommonInvoice
 	 */
 	function set_canceled($user,$close_code='',$close_note='')
 	{
-		global $conf,$langs;
-
-		$error=0;
 
 		dol_syslog(get_class($this)."::set_canceled rowid=".$this->id, LOG_DEBUG);
 
@@ -2459,6 +2457,7 @@ class Facture extends CommonInvoice
 	 */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva, $txlocaltax1=0, $txlocaltax2=0, $price_base_type='HT', $info_bits=0, $type= self::TYPE_STANDARD, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $situation_percent=0, $fk_unit = null)
 	{
+		global $conf,$user;
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
@@ -2537,6 +2536,19 @@ class Facture extends CommonInvoice
 			$line = new FactureLigne($this->db);
 			$line->fetch($rowid);
 
+			if (!empty($line->fk_product))
+			{
+				$product=new Product($this->db);
+				$result=$product->fetch($line->fk_product);
+				$product_type=$product->type;
+
+				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE) && $product_type == 0 && $product->stock_reel < $qty) {
+					$this->error=$langs->trans('ErrorStockIsNotEnough');
+					$this->db->rollback();
+					return -3;
+				}
+			}
+
 			$staticline = clone $line;
 
 			$line->oldline = $staticline;
@@ -2589,7 +2601,7 @@ class Facture extends CommonInvoice
 				$this->line->array_options=$array_options;
 			}
 
-			$result=$this->line->update();
+			$result=$this->line->update($user);
 			if ($result > 0)
 			{
 				// Reorder if child line
@@ -2650,7 +2662,7 @@ class Facture extends CommonInvoice
 	 */
 	function update_percent($line, $percent)
 	{
-	    global $mysoc;
+	    global $mysoc,$user;
 	    
 		include_once(DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php');
 
@@ -2663,7 +2675,7 @@ class Facture extends CommonInvoice
 		$line->total_ttc = $tabprice[2];
 		$line->total_localtax1 = $tabprice[9];
 		$line->total_localtax2 = $tabprice[10];
-		$line->update();
+		$line->update($user);
 		$this->update_price(1);
 		$this->db->commit();
 	}
@@ -2676,7 +2688,6 @@ class Facture extends CommonInvoice
 	 */
 	function deleteline($rowid)
 	{
-		global $langs, $conf;
 
 		dol_syslog(get_class($this)."::deleteline rowid=".$rowid, LOG_DEBUG);
 
@@ -2914,7 +2925,7 @@ class Facture extends CommonInvoice
 	 */
 	function getNextNumRef($soc,$mode='next')
 	{
-		global $conf, $db, $langs;
+		global $conf, $langs;
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
@@ -2976,7 +2987,7 @@ class Facture extends CommonInvoice
 			 * set up mask.
 			 */
 			if ($mode != 'last' && !$numref) {
-				dol_print_error($db,"Facture::getNextNumRef ".$obj->error);
+				dol_print_error($this->db,"Facture::getNextNumRef ".$obj->error);
 				return "";
 			}
 
@@ -3290,7 +3301,6 @@ class Facture extends CommonInvoice
 	 */
 	function demande_prelevement($fuser, $amount=0)
 	{
-		global $langs;
 
 		$error=0;
 
@@ -3510,7 +3520,7 @@ class Facture extends CommonInvoice
 	 */
 	function initAsSpecimen($option='')
 	{
-		global $user,$langs,$conf;
+		global $langs;
 
 		$now=dol_now();
 		$arraynow=dol_getdate($now);
@@ -3695,7 +3705,7 @@ class Facture extends CommonInvoice
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("bills");
 
@@ -3795,7 +3805,6 @@ class Facture extends CommonInvoice
 	 */
 	function setFinal()
 	{
-		global $conf, $langs, $user;
 		
         $this->db->begin();
         
@@ -4259,7 +4268,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	function update($user='',$notrigger=0)
 	{
-		global $user,$langs,$conf;
+		global $user,$conf;
 
 		$error=0;
 
@@ -4385,9 +4394,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	function delete()
 	{
-		global $conf,$langs,$user;
-
-		$error=0;
+		global $user;
 
 		$this->db->begin();
 

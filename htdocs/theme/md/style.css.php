@@ -1913,7 +1913,7 @@ span.butAction, span.butActionDelete {
     background-repeat: repeat-x    
 }
    
-.butActionDelete {
+.butActionDelete, .buttonDelete {
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 	background-color: #cc6d00;
@@ -2988,18 +2988,26 @@ td.hidden {
 
 .websitebar {
 	border-bottom: 1px solid #888;
-	height: 30px; 
+	background: #eee;
+}
+.websitebar .button, .websitebar .buttonDelete 
+{
+	padding: 2px 4px 2px 4px !important;
+	margin: 2px 4px 2px 4px  !important;
+    line-height: normal;
 }
 .websiteselection {
 	display: inline-block;
 	padding-left: 10px;
 	vertical-align: middle; 
-	margin-bottom: 5px;
 	line-height: 29px;
 }
 .websitetools {
 	float: right;
 	padding-top: 2px;
+}
+.websiteiframenoborder {
+	border: 0px;
 }
 
 

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,8 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->chartofaccount)
 	accessforbidden();
 
+// Load variable for pagination
+$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'sortorder');
 $limit = GETPOST('limit') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -55,7 +58,7 @@ $page = GETPOST("page", 'int');
 if ($page == - 1) {
 	$page = 0;
 }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield)
@@ -63,12 +66,30 @@ if (! $sortfield)
 if (! $sortorder)
 	$sortorder = "ASC";
 
-if ($action == 'delete') {
-	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
-	print $formconfirm;
-}
-
 $accounting = new AccountingAccount($db);
+
+
+/*
+ * Actions
+ */
+
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction')) { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+	$search_account = "";
+	$search_label = "";
+	$search_accountparent = "";
+	$search_pcgtype = "";
+	$search_pcgsubtype = "";
+}
 
 if ($action == 'disable') {
 	if ($accounting->fetch($id)) {
@@ -89,20 +110,17 @@ if ($action == 'disable') {
 	}
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-	$search_account = "";
-	$search_label = "";
-	$search_accountparent = "";
-	$search_pcgtype = "";
-	$search_pcgsubtype = "";
-}
 
 /*
  * View
- *
  */
+
 llxHeader('', $langs->trans("ListAccounts"));
+
+if ($action == 'delete') {
+	$formconfirm = $html->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
+	print $formconfirm;
+}
 
 $pcgver = $conf->global->CHARTOFACCOUNTS;
 
@@ -128,8 +146,16 @@ if (strlen(trim($search_pcgtype))) {
 if (strlen(trim($search_pcgsubtype))) {
 	$sql .= " AND aa.pcg_subtype like '%" . $search_pcgsubtype . "%'";
 }
-
 $sql .= $db->order($sortfield, $sortorder);
+
+// Count total nb of records
+$nbtotalofrecords = 0;
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}	
+
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
@@ -138,7 +164,15 @@ $result = $db->query($sql);
 if ($result) {
 	$num = $db->num_rows($result);
 	
-	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num);
+    $params='';
+	if ($search_account != "") $params.= '&amp;search_account='.urlencode($search_account);
+	if ($search_label != "") $params.= '&amp;search_label='.urlencode($search_label);
+	if ($search_accountparent != "") $params.= '&amp;search_accountparent='.urlencode($search_accountparent);
+	if ($search_pcgtype != "") $params.= '&amp;search_pcgtype='.urlencode($search_pcgtype);
+	if ($search_pcgsubtype != "") $params.= '&amp;search_pcgsubtype='.urlencode($search_pcgsubtype);
+    if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
 	
 	$i = 0;
 	
@@ -147,19 +181,20 @@ if ($result) {
 	print '<br/>';
 	
 	print '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
+	print '<a class="butAction" href="./categories.php">' . $langs->trans("ApplyMassCategories") . '</a>';
 	// print '<a class="butAction" href="./importaccounts.php">' . $langs->trans("ImportAccount") . '</a>';
 	// print '<a class="butAction" href="./productaccount.php">' . $langs->trans("CheckProductAccountancyCode") . '</a>';
 	print '<br/><br/>';
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("AccountNumber"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "aa.label", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Accountparent"), $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Activated"), $_SERVER["PHP_SELF"], "aa.active", "", $param, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("AccountNumber"), $_SERVER["PHP_SELF"], "aa.account_number", "", $params, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Label"), $_SERVER["PHP_SELF"], "aa.label", "", $params, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Accountparent"), $_SERVER["PHP_SELF"], "aa.account_parent", "", $params, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $params, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $params, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Activated"), $_SERVER["PHP_SELF"], "aa.active", "", $params, "", $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $params, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';

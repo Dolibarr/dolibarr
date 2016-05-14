@@ -89,21 +89,6 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='p.date_livraison';
 if (! $sortorder) $sortorder='DESC';
 
-if (GETPOST("button_removefilter") || GETPOST("button_removefilter_x"))	// Both tests are required to be compatible with all browsers
-{
-    $search_categ='';
-    $search_user='';
-    $search_sale='';
-    $search_ref='';
-    $search_societe='';
-    $search_montant_ht='';
-    $search_author='';
-    $year='';
-    $month='';
-	$viewstatut='';
-	$object_statut='';
-}
-
 if($object_statut != '')
 $viewstatut=$object_statut;
 
@@ -127,10 +112,68 @@ $hookmanager->initHooks(array('supplier_proposallist'));
  * Actions
  */
 
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction')) { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $search_categ='';
+    $search_user='';
+    $search_sale='';
+    $search_ref='';
+    $search_societe='';
+    $search_montant_ht='';
+    $search_author='';
+    $year='';
+    $month='';
+    $viewstatut='';
+    $object_statut='';
+}
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
+{
+    // Mass actions. Controls on number of lines checked
+    $maxformassaction=1000;
+    if (! empty($massaction) && count($toselect) < 1)
+    {
+        $error++;
+        setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
+    }
+    if (! $error && count($toselect) > $maxformassaction)
+    {
+        setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
+        $error++;
+    }
+
+    // Action to delete
+    /*
+    if ($action == 'confirm_delete')
+    {
+        $result=$object->delete($user);
+        if ($result > 0)
+        {
+            // Delete OK
+            setEventMessages("RecordDeleted", null, 'mesgs');
+            header("Location: ".dol_buildpath('/mymodule/list.php',1));
+            exit;
+        }
+        else
+        {
+            if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
+            else setEventMessages($object->error,null,'errors');
+        }
+    }*/
+}
 
 
 
