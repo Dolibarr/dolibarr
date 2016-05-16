@@ -237,15 +237,11 @@ if ($action == 'export_csv') {
 	else
 	{
 		$accountancyexport = new AccountancyExport($db);
-		AccountancyExport::downloadFile();
 		$accountancyexport->export($object->lines);
 		if (!empty($accountancyexport->errors)) {
 			setEventMessages('', $accountancyexport->errors, 'errors');
 		}
-		else {
-			Header("Location: list.php");
-			exit;
-		}
+		exit;
 	}
 }
 

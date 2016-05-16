@@ -113,6 +113,8 @@ class AccountancyExport
 	public function export(&$TData) {
 		global $conf, $langs;
 
+		self::downloadFile();
+
 		switch ($conf->global->ACCOUNTING_EXPORT_MODELCSV) {
 			case self::$EXPORT_TYPE_NORMAL :
 				$this->exportNormal($TData);
@@ -140,8 +142,7 @@ class AccountancyExport
 				break;
 		}
 
-		if (empty($this->errors))
-			self::downloadFile();
+
 	}
 
 	/**
