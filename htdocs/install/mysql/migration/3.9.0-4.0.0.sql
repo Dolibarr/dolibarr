@@ -454,3 +454,9 @@ CREATE TABLE llx_advtargetemailing
 )ENGINE=InnoDB;
 
 ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);
+
+
+
+-- At end
+ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
+

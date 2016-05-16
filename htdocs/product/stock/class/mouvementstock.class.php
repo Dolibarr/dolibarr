@@ -65,9 +65,10 @@ class MouvementStock extends CommonObject
 	 *	@param		date	$sellby			sell-by date
 	 *	@param		string	$batch			batch number
 	 *	@param		boolean	$skip_batch		If set to true, stock movement is done without impacting batch record
+	 * 	@param		int		$id_product_batch	Id product_batch (when skip_batch is flase and we already know which record of product_batch to use)
 	 *	@return		int						<0 if KO, 0 if fk_product is null, >0 if OK
 	 */
-	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_batch=false)
+	function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0, $label='', $inventorycode='', $datem='',$eatby='',$sellby='',$batch='',$skip_batch=false, $id_product_batch=0)
 	{
 		global $conf, $langs;
 
@@ -125,9 +126,14 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
-			// If a serial number is provided, we check that sellby and eatby match already existing serial
-			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".MAIN_DB_PREFIX."product_batch as pb, ".MAIN_DB_PREFIX."product_stock as ps";
-			$sql.= " WHERE pb.fk_product_stock = ps.rowid AND ps.fk_product = ".$fk_product." AND pb.batch = '".$this->db->escape($batch)."'";
+			// FIXME Code not complete to implement this
+			// Check table llx_product_lot from batchnumber for same product
+			// If found and eatby/sellby defined into table and provided and differs, return error
+			// If found and eatby/sellby not defined into table and provided, we update table
+			// If found and eatby/sellby defined into table and not provided, we take value from table
+			// If not found, we add record
+			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".MAIN_DB_PREFIX."product_lot as pb";
+			$sql.= " WHERE pb.fk_product = ".$fk_product." AND pb.batch = '".$this->db->escape($batch)."'";
             dol_syslog(get_class($this)."::_create scan serial for this product to check if eatby and sellby match", LOG_DEBUG);
             $resql = $this->db->query($sql);
             if ($resql)
@@ -310,8 +316,15 @@ class MouvementStock extends CommonObject
 			// Update detail stock for batch product
 			if (! $error && ! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
 			{
-				$param_batch=array('fk_product_stock' =>$fk_product_stock, 'eatby'=>$eatby, 'sellby'=>$sellby, 'batchnumber'=>$batch);
-				$result=$this->_create_batch($param_batch, $qty);
+				if ($id_product_batch > 0)
+				{
+				    $result=$this->createBatch($id_product_batch, $qty);
+				}
+				else
+				{
+			        $param_batch=array('fk_product_stock' =>$fk_product_stock, 'batchnumber'=>$batch);
+				    $result=$this->createBatch($param_batch, $qty);
+				}
 				if ($result<0) $error++;
 			}
 
@@ -436,24 +449,14 @@ class MouvementStock extends CommonObject
 	 *	@param		date	$eatby			eat-by date
 	 *	@param		date	$sellby			sell-by date
 	 *	@param		string	$batch			batch number
+	 * 	@param		int		$id_product_batch	Id product_batch
 	 * 	@return		int						<0 if KO, >0 if OK
 	 */
-	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='', $eatby='', $sellby='', $batch='')
+	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='', $eatby='', $sellby='', $batch='', $id_product_batch=0)
 	{
-		return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem, $eatby, $sellby, $batch, true);
-	}
+	    $skip_batch = empty($conf->productbatch->enabled);
 
-	/**
-	 *	Decrease stock for batch record
-	 *
-	 * 	@param		int		$id_stock_dluo		Id product_dluo
-	 * 	@param		int		$qty				Quantity
-	 * 	@return		int							<0 if KO, >0 if OK
-	 */
-	function livraison_batch($id_stock_dluo, $qty)
-	{
-		$ret=$this->_create_batch($id_stock_dluo, (0 - $qty));
-		return $ret;
+	    return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
 	}
 
 	/**
@@ -527,16 +530,18 @@ class MouvementStock extends CommonObject
 	}
 
 	/**
-	 * Create or update batch record (update table llx_product_batch)
+	 * Create or update batch record (update table llx_product_batch). No check is done here, done by parent.
 	 *
-	 * @param	array|int	$dluo	Could be either 
-	 *                              - int if row id of product_batch table
-	 *                              - or complete array('fk_product_stock'=>, 'eatby'=>, 'sellby'=> , 'batchnumber'=>)
-	 * @param	int			$qty	Quantity of product with batch number. May be a negative amount.
-	 * @return 	int   				<0 if KO, else return productbatch id
+	 * @param	array|int	$dluo	      Could be either 
+	 *                                     - int if row id of product_batch table
+	 *                                     - or complete array('fk_product_stock'=>, 'batchnumber'=>)
+	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
+	 * @return 	int   				      <0 if KO, else return productbatch id
 	 */
-	function _create_batch($dluo, $qty)
+	private function createBatch($dluo, $qty)
 	{
+	    global $user;
+	    
 		$pdluo=new Productbatch($this->db);
 
 		$result=0;
@@ -548,7 +553,7 @@ class MouvementStock extends CommonObject
 			if (empty($pdluo->id))
 			{
 				// We didn't find the line. May be it was deleted before by a previous move in same transaction.
-				$this->error = 'Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on samewarehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.';
+				$this->error = 'Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on same warehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.';
 				$this->errors[] = $this->error;
 				$result = -2;
 			}
@@ -558,21 +563,19 @@ class MouvementStock extends CommonObject
 			if (isset($dluo['fk_product_stock'])) 
 			{
 				$vfk_product_stock=$dluo['fk_product_stock'];
-				$veatby = $dluo['eatby'];
-				$vsellby = $dluo['sellby'];
 				$vbatchnumber = $dluo['batchnumber'];
 				
-				$result = $pdluo->find($vfk_product_stock,$veatby,$vsellby,$vbatchnumber);
+				$result = $pdluo->find($vfk_product_stock,'','',$vbatchnumber);  // Search on batch number only (eatby and sellby are deprecated here)
 			}
 			else 
 			{
-				dol_syslog(get_class($this)."::_create_batch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
 				$result = -1;
 			}
 		} 
 		else
 		{
-			dol_syslog(get_class($this)."::_create_batch error invalid param dluo".$error, LOG_ERR);
+			dol_syslog(get_class($this)."::createBatch error invalid param dluo".$error, LOG_ERR);
 			$result = -1;
 		}
 
@@ -585,9 +588,9 @@ class MouvementStock extends CommonObject
 				$pdluo->qty += $qty;
 				if ($pdluo->qty == 0) 
 				{
-					$result=$pdluo->delete(0,1);
+					$result=$pdluo->delete($user,1);
 				} else {
-					$result=$pdluo->update(0,1);
+					$result=$pdluo->update($user,1);
 				}
 			}
 			else					// product_batch record not found
@@ -598,7 +601,7 @@ class MouvementStock extends CommonObject
 				$pdluo->sellby = $vsellby;
 				$pdluo->batch = $vbatchnumber;
 				
-				$result=$pdluo->create(0,1);
+				$result=$pdluo->create($user,1);
 				if ($result < 0)
 				{
 					$this->error=$pdluo->error;
