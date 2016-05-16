@@ -148,7 +148,7 @@ class AccountancyExport
 	/**
 	 * Export format : Normal
 	 *
-	 * @param unknown $TData data
+	 * @param array $objectLines data
 	 *
 	 * @return void
 	 */
@@ -170,7 +170,7 @@ class AccountancyExport
 	/**
 	 * Export format : CEGID
 	 *
-	 * @param unknown $TData data
+	 * @param array $objectLines data
 	 *
 	 * @return void
 	 */
@@ -193,7 +193,7 @@ class AccountancyExport
 	/**
 	 * Export format : COALA
 	 *
-	 * @param unknown $TData data
+	 * @param array $objectLines data
 	 *
 	 * @return void
 	 */
@@ -217,7 +217,7 @@ class AccountancyExport
 	/**
 	 * Export format : BOB50
 	 *
-	 * @param unknown $TData data
+	 * @param array $objectLines data
 	 *
 	 * @return void
 	 */
@@ -252,7 +252,7 @@ class AccountancyExport
 	/**
 	 * Export format : CIEL
 	 *
-	 * @param unknown $TData data
+	 * @param array $TData data
 	 *
 	 * @return void
 	 */
@@ -290,7 +290,7 @@ class AccountancyExport
 	/**
 	 * Export format : Quadratus
 	 *
-	 * @param unknown $TData data
+	 * @param array $TData data
 	 *
 	 * @return void
 	 */
@@ -340,7 +340,7 @@ class AccountancyExport
 	/**
 	 * Export format : Normal
 	 *
-	 * @param unknown $TData data
+	 * @param array $objectLines data
 	 *
 	 * @return void
 	 */
