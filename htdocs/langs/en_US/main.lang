@@ -784,6 +784,7 @@ SetRef=Set ref
 Select2ResultFoundUseArrows=
 Select2NotFound=No result found
 Select2Enter=Enter
+Select2MoreCharacter=or more character
 Select2MoreCharacters=or more characters
 Select2LoadingMoreResults=Loading more results...
 Select2SearchInProgress=Search in progress...
