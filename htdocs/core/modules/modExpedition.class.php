@@ -83,7 +83,7 @@ class modExpedition extends DolibarrModules
 		// Constants
 		$this->const = array();
 		$r=0;
-		
+
 		$this->const[$r][0] = "EXPEDITION_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "rouget";
@@ -125,14 +125,14 @@ class modExpedition extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		$this->const[$r][0] = "MAIN_SUBMODULE_EXPEDITION";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "1";
 		$this->const[$r][3] = "Enable shipments";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		// Boxes
 		$this->boxes = array();
 
@@ -224,8 +224,13 @@ class modExpedition extends DolibarrModules
 
 		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$shipment=new Commande($this->db);
-		$idcontacts=join(',',array_keys($shipment->liste_type_contact('external','',0,0,'')));
-		
+		$contact_shipment=$shipment->liste_type_contact('external','',0,0,'');
+		if (is_array($contact_shipment) && count($contact_shipment)>0) {
+			$idcontacts=join(',',array_keys($shipment->liste_type_contact('external','',0,0,'')));
+		} else {
+			$idcontacts=0;
+		}
+
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Shipments';	// Translation key (used only if key ExportDataset_xxx_z not found)
@@ -237,7 +242,7 @@ class modExpedition extends DolibarrModules
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','d.nom'=>'company','co.label'=>'company','co.code'=>'company','s.fk_pays'=>'company','s.phone'=>'company','s.siren'=>'company','s.ape'=>'company','s.siret'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','c.rowid'=>"shipment",'c.ref'=>"shipment",'c.ref_customer'=>"shipment",'c.fk_soc'=>"shipment",'c.date_creation'=>"shipment",'c.date_delivery'=>"shipment",'c.tracking_number'=>'shipment','c.height'=>"shipment",'c.width'=>"shipment",'c.size'=>'shipment','c.size_units'=>'shipment','c.weight'=>"shipment",'c.weight_units'=>'shipment','c.fk_statut'=>"shipment",'c.note_public'=>"shipment",'ed.rowid'=>'shipment_line','cd.description'=>'shipment_line','ed.qty'=>"shipment_line",'p.rowid'=>'product','p.ref'=>'product','p.label'=>'product','p.weight'=>'product','p.weight_units'=>'product','p.volume'=>'product','p.volume_units'=>'product');
 		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) $this->export_entities_array[$r]+=array('sp.rowid'=>'contact','sp.lastname'=>'contact','sp.firstname'=>'contact','sp.note_public'=>'contact');
 		$this->export_dependencies_array[$r]=array('shipment_line'=>'ed.rowid','product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) 
+		if ($idcontacts && ! empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT))
 		{
 		    $keyforselect='socpeople'; $keyforelement='contact'; $keyforaliasextra='extra3';
 		    include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';

@@ -236,91 +236,17 @@ if ($action == 'export_csv') {
 	}
 	else
 	{
-		if (in_array($conf->global->ACCOUNTING_EXPORT_MODELCSV, array(5,6))) // TODO remove the conditional and keep the code in the "else"
-		{
-			$accountancyexport = new AccountancyExport($db);
-			$accountancyexport->export($object->lines);
-			if (!empty($accountancyexport->errors)) setEventMessages('', $accountancyexport->errors, 'errors');
-			else exit;
+		$accountancyexport = new AccountancyExport($db);
+		AccountancyExport::downloadFile();
+		$accountancyexport->export($object->lines);
+		if (!empty($accountancyexport->errors)) {
+			setEventMessages('', $accountancyexport->errors, 'errors');
+		}
+		else {
+			Header("Location: list.php");
+			exit;
 		}
 	}
-
-
-	// TODO remove next 3 lines and foreach to implement the AccountancyExport method for each model
-	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
-	$journal = 'bookkepping';
-	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
-	
-	foreach ( $object->lines as $line ) {
-
-		if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
-			$sep = ";";
-			// Model Cegid Expert Export
-			$date = dol_print_date($line->doc_date, '%d%m%Y');
-			print $date . $sep;
-			print $line->code_journal . $sep;
-			print length_accountg($line->numero_compte) . $sep;
-			print ' ' . $sep;
-			print $line->sens . $sep;
-			print price($line->montant) . $sep;
-			print dol_trunc($line->label_compte, 32) . $sep;
-			print $line->doc_ref . $sep;
-			print "\n";
-		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) {
-
-			// Std export
-			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
-			print $date . $sep;
-			print $line->doc_ref . $sep;
-			print length_accountg($line->numero_compte) . $sep;
-			print length_accounta($line->code_tiers) . $sep;
-			print price($line->debit) . $sep;
-			print price($line->credit) . $sep;
-			print $line->code_journal . $sep;
-			print "\n";
-		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 3) {
-
-			// Coala export
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
-			print $date . $sep;
-			print $line->code_journal . $sep;
-			print length_accountg($line->numero_compte) . $sep;
-			print $line->piece_num . $sep;
-			print $line->doc_ref . $sep;
-			print price($line->debit) . $sep;
-			print price($line->credit) . $sep;
-			print 'E' . $sep;
-			print length_accountg($line->code_tiers) . $sep;
-			print "\n";
-		} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 4) {
-
-			// Bob50
-			print $line->piece_num . $sep;
-			$date = dol_print_date($line->doc_date, '%d/%m/%Y');
-			print $date . $sep;
-
-			if (empty($line->code_tiers)) {
-				print 'G' . $sep;
-				print length_accounta($line->numero_compte) . $sep;
-			} else {
-				if (substr($line->numero_compte,0,3)=='411') {
-					print 'C' . $sep;
-				}
-				if (substr($line->numero_compte,0,3)=='401') {
-					print 'F' . $sep;
-				}
-				print length_accountg($line->code_tiers) . $sep;
-
-			}
-
-			print price($line->debit) . $sep;
-			print price($line->credit) . $sep;
-			print dol_trunc($line->label_compte, 32) . $sep;
-			print "\n";
-		}
-	}
-	
-	exit;
 }
 
 /*
