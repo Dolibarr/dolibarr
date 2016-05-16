@@ -35,6 +35,7 @@ create table llx_product
 
   label						varchar(255) NOT NULL,
   description				text,
+    description				text,
   note_public				text,
   note						text,
   customcode                varchar(32),                    -- Optionnal custom code

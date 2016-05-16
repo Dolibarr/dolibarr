@@ -66,11 +66,16 @@ class Product extends CommonObject
 	 * @var string
 	 */
 	var $label;
-    /**
-     * Product descripion
-     * @var string
-     */
+	/**
+	 * Product descripion
+	 * @var string
+	 */
 	var $description;
+	/**
+	 * Product supplier descripion
+	 * @var string
+	 */
+	var $description_supplier;
 
 	/**
 	 * Check TYPE constants
@@ -628,6 +633,7 @@ class Product extends CommonObject
 		$this->ref = dol_string_nospecial(trim($this->ref));
 		$this->label = trim($this->label);
 		$this->description = trim($this->description);
+		$this->description_supplier = trim($this->description_supplier);
 		$this->note = (isset($this->note) ? trim($this->note) : null);
 		$this->weight = price2num($this->weight);
 		$this->weight_units = trim($this->weight_units);
@@ -731,6 +737,7 @@ class Product extends CommonObject
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->volume_units."'" : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->seuil_stock_alerte."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
+			$sql.= ", description_supplier = '" . $this->db->escape($this->description_supplier) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
 			$sql.= ", customcode = '" .        $this->db->escape($this->customcode) ."'";
 	        $sql.= ", fk_country = " . ($this->country_id > 0 ? $this->country_id : 'null');
@@ -1015,14 +1022,16 @@ class Product extends CommonObject
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
 					$sql2.= " SET label='".$this->db->escape($this->label)."',";
 					$sql2.= " description='".$this->db->escape($this->description)."',";
+					$sql2.= " description_supplier='".$this->db->escape($this->description_supplier)."',";
 					$sql2.= " note='".$this->db->escape($this->note)."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
-					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, description_supplier, note)";
 					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
 					$sql2.= "','".$this->db->escape($this->description);
+					$sql2.= "','".$this->db->escape($this->description_supplier);
 					$sql2.= "','".$this->db->escape($this->note)."')";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs key = current_lang = '.$key);
@@ -1046,19 +1055,21 @@ class Product extends CommonObject
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
 					$sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
 					$sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."',";
+					$sql2.= " description_supplier='".$this->db->escape($this->multilangs["$key"]["description_supplier"])."',";
 					$sql2.= " note='".$this->db->escape($this->multilangs["$key"]["note"])."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
-					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, description_supplier, note)";
 					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["label"]);
 					$sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"]);
+					$sql2.= "','".$this->db->escape($this->multilangs["$key"]["description_supplier"]);
 					$sql2.= "','".$this->db->escape($this->multilangs["$key"]["note"])."')";
 				}
 
 				// on ne sauvegarde pas des champs vides
-				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
+				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["description_supplier"] || $this->multilangs["$key"]["note"] )
 				dol_syslog(get_class($this).'::setMultiLangs key = '.$key);
 				if (! $this->db->query($sql2))
 				{
@@ -1185,7 +1196,7 @@ class Product extends CommonObject
 
 		$current_lang = $langs->getDefaultLang();
 
-		$sql = "SELECT lang, label, description, note";
+		$sql = "SELECT lang, label, description, description_supplier, note";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id;
 
@@ -1199,11 +1210,13 @@ class Product extends CommonObject
 				{
 					$this->label		= $obj->label;
 					$this->description	= $obj->description;
+					$this->description_supplier	= $obj->description_supplier;
 					$this->note			= $obj->note;
 
 				}
 				$this->multilangs["$obj->lang"]["label"]		= $obj->label;
 				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
+				$this->multilangs["$obj->lang"]["description_supplier"]	= $obj->description_supplier;
 				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
 			}
 			return 1;
@@ -1613,7 +1626,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, ref_ext, label, description, description_supplier, url, note, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
@@ -1641,6 +1654,7 @@ class Product extends CommonObject
 				$this->ref_ext					= $obj->ref_ext;
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
+				$this->description_supplier		= $obj->description_supplier;
 				$this->url						= $obj->url;
 				$this->note						= $obj->note;
 
@@ -3931,6 +3945,7 @@ class Product extends CommonObject
         $this->ref = 'PRODUCT_SPEC';
         $this->label = 'PRODUCT SPECIMEN';
         $this->description = 'PRODUCT SPECIMEN '.dol_print_date($now,'dayhourlog');
+		$this->description_supplier = 'PRODUCT SPECIMEN SUPPLIER '.dol_print_date($now,'dayhourlog');
         $this->specimen=1;
         $this->country_id=1;
         $this->tosell=1;
