@@ -334,7 +334,7 @@ class MouvementStock extends CommonObject
 				}
 			}
 			
-		    // If stock is now 0, we can remove entry into llx_stock_product, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
+		    // If stock is now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
 		    // having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
 		    $sql="DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
 		    $resql=$this->db->query($sql);
