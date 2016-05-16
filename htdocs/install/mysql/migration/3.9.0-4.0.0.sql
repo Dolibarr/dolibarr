@@ -454,3 +454,6 @@ CREATE TABLE llx_advtargetemailing
 )ENGINE=InnoDB;
 
 ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);
+
+ALTER TABLE llx_product ADD COLUMN description_supplier text AFTER description;
+ALTER TABLE llx_product_lang ADD COLUMN description_supplier text AFTER description;
