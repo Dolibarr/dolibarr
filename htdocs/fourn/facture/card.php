@@ -740,7 +740,7 @@ if (empty($reshook))
 
 	            $label = $productsupplier->label;
 
-	            $desc = $productsupplier->description;
+	            $desc = $productsupplier->description_supplier;
 	            if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 	            $tva_tx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);

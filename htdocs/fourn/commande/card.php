@@ -363,7 +363,7 @@ if (empty($reshook))
 
 	    		$label = $productsupplier->label;
 
-	    		$desc = $productsupplier->description;
+	    		$desc = $productsupplier->description_supplier;
 	    		if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 	    		$type = $productsupplier->type;
