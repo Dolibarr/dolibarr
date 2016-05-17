@@ -4297,7 +4297,7 @@ class Form
         		}
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');
-        		$return.= (empty($defaultcode) && $rate['nprtva']) ? ' *': '';         // We show the *  (old behaviour only if new vat code is not used)
+        		$return.= (empty($rate['code']) && $rate['nprtva']) ? ' *': '';         // We show the *  (old behaviour only if new vat code is not used)
         		
         		$return.= '</option>';
         	}

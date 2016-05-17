@@ -186,9 +186,9 @@ function societe_prepare_head(Societe $object)
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
         $head[$h][1] = $langs->trans("Events");
-        $head[$h][1].= ' / ';
+        $head[$h][1].= '/';
     }
-    $head[$h][1].= $langs->trans("Info");
+    $head[$h][1].= $langs->trans("Agenda");
     $head[$h][2] = 'agenda';
     $h++;
     

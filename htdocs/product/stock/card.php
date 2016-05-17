@@ -185,7 +185,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
 
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
 
@@ -209,7 +209,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Country
-	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';

@@ -82,7 +82,9 @@ if ($id > 0 || ! empty($ref))
 		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'margin', $titre, 0, $picto);
 
-        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
         
         print '<div class="fichecenter">';

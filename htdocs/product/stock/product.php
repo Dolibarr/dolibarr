@@ -405,7 +405,9 @@ if ($id > 0 || $ref)
 
 		dol_htmloutput_events();
 
-        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
         print '<div class="fichecenter">';
         
@@ -746,12 +748,13 @@ if ($resql)
 			        print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
 		            print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 			        print '</table></form>';
+			        print '</td></tr>';
 			    }
 			    else
 				{
                     print "\n".'<tr><td align="right">';
                     print img_picto($langs->trans("Tranfer"),'uparrow','class="hideonsmartphone"').' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockTransfer").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockTransfer").'</a>';
 					// Disabled, because edition of stock content must use the "Correct stock menu".
 					// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
                     //print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';

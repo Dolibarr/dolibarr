@@ -266,7 +266,8 @@ if ($resql)
     $num = $db->num_rows($resql);
     
     $params='';
-	if ($search_field1 != '') $params.= '&amp;search_field1='.urlencode($search_field1);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($search_field1 != '') $params.= '&amp;search_field1='.urlencode($search_field1);
 	if ($search_field2 != '') $params.= '&amp;search_field2='.urlencode($search_field2);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
     // Add $param from extra fields

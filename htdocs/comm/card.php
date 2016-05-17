@@ -233,11 +233,6 @@ if ($id > 0)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
-	// Alias name (commercial, trademark or alias name)
-	print '<tr><td class="titelfield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-	print $object->name_alias;
-	print "</td></tr>";
-
 	// Prospect/Customer
 	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';
 	print $object->getLibCustProspStatut();
