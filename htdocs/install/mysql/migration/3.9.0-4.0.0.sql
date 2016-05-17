@@ -430,8 +430,6 @@ ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_fk_account
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
 
--- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
-
 ALTER TABLE llx_resource ADD COLUMN asset_number    varchar(255) after ref;
 ALTER TABLE llx_resource ADD COLUMN datec           datetime DEFAULT NULL;
 ALTER TABLE llx_resource ADD COLUMN date_valid      datetime DEFAULT NULL;
@@ -468,6 +466,9 @@ update llx_product_batch set batch = '000000' where batch = 'Undefined';
 update llx_product_lot set batch = '000000' where batch = 'Undefined';
 update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
 
--- At end
+-- At end (higher risk of error)
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
 ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
+
 
