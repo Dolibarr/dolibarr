@@ -378,7 +378,7 @@ print '</td>';
 if ($conf->productbatch->enabled)
 {
 	print '<td>';
-	print '<input type="text" name="batch" value="'.$batch.'">';
+	print '<input type="text" name="batch" size="10" value="'.$batch.'">';
 	print '</td>';
 }
 // In warehouse
@@ -390,7 +390,7 @@ print '<td>';
 print $formproduct->selectWarehouses($id_tw,'id_tw','',1);
 print '</td>';
 // Qty
-print '<td align="center"><input type="text" size="4" class="flat" name="qty" value="'.$qty.'"></td>';
+print '<td align="center"><input type="text" size="3" class="flat" name="qty" value="'.$qty.'"></td>';
 // Button to add line
 print '<td align="right"><input type="submit" class="button" name="addline" value="'.dol_escape_htmltag($titletoadd).'"></td>';
 
