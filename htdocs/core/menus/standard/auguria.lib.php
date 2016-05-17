@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
- * @param  	array	$tabMenu       If array with menu entries already loaded, we put this array here (in most cases, it's empty)
- * @param	array	$menu			Object Menu to return back list of menu entries
+ * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param	Menu	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			Disable output (Initialise &$menu only).
  * @return	int						0
  */
