@@ -141,8 +141,6 @@ class AccountancyExport
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
 		}
-
-
 	}
 
 	/**
