@@ -721,7 +721,7 @@ class Product extends CommonObject
                     }
                 }
             }
-            
+
 	        // For automatic creation
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 

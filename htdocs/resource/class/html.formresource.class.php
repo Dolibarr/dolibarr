@@ -98,6 +98,7 @@ class FormResource
     		// Construct $out and $outarray
     		$out.= '<select id="'.$htmlname.'" class="flat minwidth200" name="'.$htmlname.'">'."\n";
     		if ($showempty) $out.= '<option value="-1">&nbsp;</option>'."\n";
+
     		$num = count($resourcestat->lines);
 
     		//var_dump($resourcestat->lines);
