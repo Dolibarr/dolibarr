@@ -1876,7 +1876,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<input type="hidden" name="action" value="addin">';
 
-	    print load_fiche_titre($langs->trans("Add"),'','');
+	    print load_fiche_titre($langs->trans("AddToDraft"),'','');
 		
 		dol_fiche_head('');
 

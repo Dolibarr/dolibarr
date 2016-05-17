@@ -829,7 +829,8 @@ class Product extends CommonObject
 							$res = @rename($olddir, $newdir);
 							if (! $res)
 							{
-								$this->error='ErrorFailToMoveDir';
+							    $langs->load("errors");
+								$this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
 								$error++;
 							}
 						}

@@ -137,6 +137,7 @@ Disabled=Disabled
 Add=Add
 AddLink=Add link
 RemoveLink=Remove link
+AddToDraft=Add to draft
 Update=Update
 AddActionToDo=Add event to do
 AddActionDone=Add event done
