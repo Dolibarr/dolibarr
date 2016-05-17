@@ -73,6 +73,7 @@ class MouvementStock extends CommonObject
 		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
@@ -140,24 +141,53 @@ class MouvementStock extends CommonObject
             {
             	$num = $this->db->num_rows($resql);
             	$i=0;
-            	while ($i < $num)
+            	if ($num > 0)
             	{
-            		$obj = $this->db->fetch_object($resql);
-            		if ($this->db->jdate($obj->eatby) != $eatby)
-            		{
-						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby));
-						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby)), LOG_ERR);
-						$this->db->rollback();
-            			return -3;
-            		}
-            		if ($this->db->jdate($obj->sellby) != $sellby)
-            		{
-						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby));
-						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby)), LOG_ERR);
-						$this->db->rollback();
-            			return -3;
-            		}
-            		$i++;
+                	while ($i < $num)
+                	{
+                		$obj = $this->db->fetch_object($resql);
+                        if ($obj->eatby)
+                        {
+                            if ($eatby)
+                            {
+                        		if ($this->db->jdate($obj->eatby) != $eatby)  // If found and eatby/sellby defined into table and provided and differs, return error
+                                {
+                                    $this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby));
+                                    dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby)), LOG_ERR);
+                                    $this->db->rollback();
+                                    return -3;
+                                }
+                            }
+                        }
+                        if ($obj->sellby)
+                        {
+                            if ($sellby)
+                            {
+                                if ($this->db->jdate($obj->sellby) != $sellby) // If found and eatby/sellby defined into table and provided and differs, return error
+                        		{
+            						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby));
+            						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby)), LOG_ERR);
+            						$this->db->rollback();
+                        			return -3;
+                        		}
+                            }
+                        }
+                		$i++;
+                	}
+            	}
+            	else
+            	{
+            	    $productlot = new Productlot($this->db);
+            	    $productlot->fk_product = $fk_product;
+            	    $productlot->batch = $batch;
+            	    $result = $productlot->create($user);
+            	    if (! $result)
+            	    {
+            	        $this->error = $productlot->error;
+            	        $this->errors = $productlot->errors;
+            	        $this->db->rollback();
+            	        return -4;
+            	    }
             	}
             }
             else

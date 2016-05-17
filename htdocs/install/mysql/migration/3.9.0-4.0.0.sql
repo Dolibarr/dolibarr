@@ -39,18 +39,22 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after dat
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
+-- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
-  rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
-  fk_product integer NOT NULL,
-  batch varchar(30) NOT NULL,
-  eatby datetime DEFAULT NULL,
-  sellby datetime DEFAULT NULL,
-  note_public  text,
-  note_private text,
-  qty double NOT NULL DEFAULT 0,
-  import_key varchar(14) DEFAULT NULL
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer,
+  fk_product      integer NOT NULL,				-- Id of product
+  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  eatby           date DEFAULT NULL,			-- Eatby date
+  sellby          date DEFAULT NULL, 			-- Sellby date
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer
 ) ENGINE=InnoDB;
+
+DROP TABLE llx_stock_serial; 
 
 ALTER TABLE llx_product ADD COLUMN note_public text;
 ALTER TABLE llx_user ADD COLUMN note_public text;

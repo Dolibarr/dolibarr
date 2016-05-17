@@ -456,8 +456,8 @@ if ($id > 0)
     }
 
 	// Categories
-	if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
-		print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
 		print '<td colspan="3">';
 		print $form->showCategories( $object->id, 'customer', 1 );
 		print "</td></tr>";
