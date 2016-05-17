@@ -760,8 +760,120 @@ class FactureRec extends CommonInvoice
 		$arraynow=dol_getdate($now);
 		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		parent::initAsSpecimen($option);
+		$prodids = array();
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product";
+		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_prods = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_prods)
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
+		}
 
+		// Initialize parameters
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$this->socid = 1;
+		$this->date = $nownotime;
+		$this->date_lim_reglement = $nownotime + 3600 * 24 *30;
+		$this->cond_reglement_id   = 1;
+		$this->cond_reglement_code = 'RECEP';
+		$this->date_lim_reglement=$this->calculate_date_lim_reglement();
+		$this->mode_reglement_id   = 0;		// Not forced to show payment mode CHQ + VIR
+		$this->mode_reglement_code = '';	// Not forced to show payment mode CHQ + VIR
+		$this->note_public='This is a comment (public)';
+		$this->note_private='This is a comment (private)';
+		$this->note='This is a comment (private)';
+		$this->fk_incoterms=0;
+		$this->location_incoterms='';
+
+		if (empty($option) || $option != 'nolines')
+		{
+			// Lines
+			$nbp = 5;
+			$xnbp = 0;
+			while ($xnbp < $nbp)
+			{
+				$line=new FactureLigne($this->db);
+				$line->desc=$langs->trans("Description")." ".$xnbp;
+				$line->qty=1;
+				$line->subprice=100;
+				$line->tva_tx=19.6;
+				$line->localtax1_tx=0;
+				$line->localtax2_tx=0;
+				$line->remise_percent=0;
+				if ($xnbp == 1)        // Qty is negative (product line)
+				{
+					$prodid = mt_rand(1, $num_prods);
+					$line->fk_product=$prodids[$prodid];
+					$line->qty=-1;
+					$line->total_ht=-100;
+					$line->total_ttc=-119.6;
+					$line->total_tva=-19.6;
+				}
+				else if ($xnbp == 2)    // UP is negative (free line)
+				{
+					$line->subprice=-100;
+					$line->total_ht=-100;
+					$line->total_ttc=-119.6;
+					$line->total_tva=-19.6;
+					$line->remise_percent=0;
+				}
+				else if ($xnbp == 3)    // Discount is 50% (product line)
+				{
+					$prodid = mt_rand(1, $num_prods);
+					$line->fk_product=$prodids[$prodid];
+					$line->total_ht=50;
+					$line->total_ttc=59.8;
+					$line->total_tva=9.8;
+					$line->remise_percent=50;
+				}
+				else    // (product line)
+				{
+					$prodid = mt_rand(1, $num_prods);
+					$line->fk_product=$prodids[$prodid];
+					$line->total_ht=100;
+					$line->total_ttc=119.6;
+					$line->total_tva=19.6;
+					$line->remise_percent=00;
+				}
+
+				$this->lines[$xnbp]=$line;
+				$xnbp++;
+
+				$this->total_ht       += $line->total_ht;
+				$this->total_tva      += $line->total_tva;
+				$this->total_ttc      += $line->total_ttc;
+			}
+			$this->revenuestamp = 0;
+
+			// Add a line "offered"
+			$line=new FactureLigne($this->db);
+			$line->desc=$langs->trans("Description")." (offered line)";
+			$line->qty=1;
+			$line->subprice=100;
+			$line->tva_tx=19.6;
+			$line->localtax1_tx=0;
+			$line->localtax2_tx=0;
+			$line->remise_percent=100;
+			$line->total_ht=0;
+			$line->total_ttc=0;    // 90 * 1.196
+			$line->total_tva=0;
+			$prodid = mt_rand(1, $num_prods);
+			$line->fk_product=$prodids[$prodid];
+
+			$this->lines[$xnbp]=$line;
+			$xnbp++;
+		}
+		
 		$this->usenewprice = 1;
 	}
 
