@@ -638,7 +638,7 @@ if (! empty($conf->expensereport->enabled))
 		$column='p.date_valid';
 		
 	} else {
-		$sql = "SELECT p.rowid, p.ref, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
@@ -654,7 +654,7 @@ if (! empty($conf->expensereport->enabled))
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 
-		$sql.= " GROUP BY p.rowid, p.ref, u.firstname, u.lastname, dm";
+		$sql.= " GROUP BY u.rowid";
 		$sql.= " ORDER BY p.ref";
 
 		dol_syslog("get expense report outcome");
@@ -677,7 +677,7 @@ if (! empty($conf->expensereport->enabled))
 					$var = !$var;
 					print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/card.php?id=".$obj->rowid."\">".$obj->ref.' ('.$obj->firstname." ".$obj->lastname.")</a></td>\n";
+					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
 					print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
