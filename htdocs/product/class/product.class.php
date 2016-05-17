@@ -666,25 +666,45 @@ class Product extends CommonObject
                 $org->fetch($this->id);
                 $this->oldcopy=$org;
             }
-            // test if batch management is activated on existing product
+            
+            // Test if batch management is activated on existing product
+            // If yes, we create missing entries into product_batch
             if ($this->hasbatch() && !$this->oldcopy->hasbatch())
             {
+                $valueforundefinedlot = 'Undefined';
+
+                dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
+
                 $this->load_stock();
-                foreach ($this->stock_warehouse as $idW => $ObjW)
+                foreach ($this->stock_warehouse as $idW => $ObjW)   // For each warehouse where we have stocks defined for this product (for each lines in product_stock)
                 {
                     $qty_batch = 0;
-                    foreach ($ObjW->detail_batch as $detail)
+                    foreach ($ObjW->detail_batch as $detail)    // Each lines of detail in product_batch of the current $ObjW = product_stock
                     {
+                        if ($detail->batch == $valueforundefinedlot || $detail->batch == 'Undefined') 
+                        {
+                            // We discard this line, we will create it later
+                            $sqlclean="DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE batch in('Undefined', '".$valueforundefinedlot."') AND fk_product_stock = ".$ObjW->id;
+                            $result = $this->db->query($sqlclean);
+                            if (! $result)
+                            {
+                                dol_print_error($this->db);
+                                exit;
+                            }
+                            continue;
+                        }
+                    
                         $qty_batch += $detail->qty;
                     }
-                    // Quantities in batch details are not same same as stock quantity
-                    // So we add a default batch record
+                    // Quantities in batch details are not same as stock quantity,
+                    // so we add a default batch record to complete and get same qty in parent and child table
                     if ($ObjW->real <> $qty_batch)
                     {
                         $ObjBatch = new Productbatch($this->db);
-                        $ObjBatch->batch = $langs->trans('BatchDefaultNumber');
-                        $ObjBatch->qty = $ObjW->real - $qty_batch;
+                        $ObjBatch->batch = $valueforundefinedlot; 
+                        $ObjBatch->qty = ($ObjW->real - $qty_batch);
                         $ObjBatch->fk_product_stock = $ObjW->id;
+
                         if ($ObjBatch->create($user,1) < 0)
                         {
                             $error++;
@@ -693,6 +713,7 @@ class Product extends CommonObject
                     }
                 }
             }
+
 	        // For automatic creation
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
