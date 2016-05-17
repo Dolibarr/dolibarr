@@ -360,7 +360,7 @@ class DoliDBMssql extends DoliDB
                             $query_comp[]=$fld->COLUMN_NAME." IS NOT NULL";
                         }
                     }
-                    if ($query_comp)
+                    if (! empty($query_comp))
                         $query.=" WHERE ".implode(" AND ",$query_comp);
                 }
     		}
