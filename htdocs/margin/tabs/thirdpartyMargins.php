@@ -95,11 +95,6 @@ if ($socid > 0)
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
     
-    // Alias names (commercial, trademark or alias names)
-    print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td>';
-    print $object->name_alias;
-    print "</td></tr>";
-
     if ($object->client)
     {
         print '<tr><td class="titlefield">';
