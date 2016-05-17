@@ -124,7 +124,7 @@ if ($result) {
 	$i = 0;
 	while ( $i < $num ) {
 		$obj = $db->fetch_object($result);
-		// contr�les
+		// contrôles
 		$compta_soc = (! empty($obj->code_compta_fournisseur)) ? $obj->code_compta_fournisseur : $cptfour;
 		$compta_prod = $obj->compte;
 		if (empty($compta_prod)) {
