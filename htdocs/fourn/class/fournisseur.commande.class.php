@@ -1126,7 +1126,7 @@ class CommandeFournisseur extends CommonOrder
 	            // insert products details into database
 	            for ($i=0;$i<$num;$i++)
 	            {
-	                $result = $this->addline(
+	                $result = $this->addline(              // This include test on qty if option SUPPLIERORDER_WITH_NOPRICEDEFINED is not set
 	                    $this->lines[$i]->desc,
 	                    $this->lines[$i]->subprice,
 	                    $this->lines[$i]->qty,
@@ -1306,11 +1306,11 @@ class CommandeFournisseur extends CommonOrder
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0.0, $txlocaltax2=0.0, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0.0, $price_base_type='HT', $pu_ttc=0.0, $type=0, $info_bits=0, $notrigger=false, $date_start=null, $date_end=null, $array_options=0, $fk_unit=null)
     {
-        global $langs,$mysoc, $conf;
+        global $langs,$mysoc,$conf;
 
         $error = 0;
 
-        dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2. $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type, $fk_unit");
+        dol_syslog(get_class($this)."::addline $desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $fk_prod_fourn_price, $fourn_ref, $remise_percent, $price_base_type, $pu_ttc, $type, $fk_unit");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         // Clean parameters
@@ -1350,39 +1350,44 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->begin();
 
-            if ($fk_prod_fourn_price > 0)
+            if ($fk_product > 0)
             {
-                $prod = new Product($this->db, $fk_product);
-                if ($prod->fetch($fk_product) > 0)
+                if (empty($conf->global->SUPPLIERORDER_WITH_NOPRICEDEFINED))
                 {
-                    $result=$prod->get_buyprice($fk_prod_fourn_price,$qty,$fk_product,$fourn_ref);
-                    if ($result > 0)
+                    // Check quantity is enough
+                    dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." fourn_ref=".$fourn_ref);
+                    $prod = new Product($this->db, $fk_product);
+                    if ($prod->fetch($fk_product) > 0)
                     {
-                        $label = $prod->libelle;
-                        $pu    = $prod->fourn_pu;
-                        $ref   = $prod->ref_fourn;
-                        $product_type = $prod->type;
+                        $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, $fourn_ref);   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$fourn_ref
+                        if ($result > 0)
+                        {
+                            $label = $prod->libelle;
+                            $pu    = $prod->fourn_pu;
+                            $ref   = $prod->ref_fourn;
+                            $product_type = $prod->type;
+                        }
+                        if ($result == 0 || $result == -1)
+                        {
+                            $langs->load("errors");
+                            $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+                            $this->db->rollback();
+                            dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
+                            return -1;
+                        }
+                        if ($result < -1)
+                        {
+                            $this->error=$prod->error;
+                            $this->db->rollback();
+                            dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
+                            return -1;
+                        }
                     }
-                    if ($result == 0 || $result == -1)
-                    {
-                        $langs->load("errors");
-                        $this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
-                        $this->db->rollback();
-                        dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
-                        return -1;
-                    }
-                    if ($result < -1)
-                    {
+                    else
+    				{
                         $this->error=$prod->error;
-                        $this->db->rollback();
-                        dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
                         return -1;
                     }
-                }
-                else
-				{
-                    $this->error=$prod->error;
-                    return -1;
                 }
             }
             else
@@ -1449,7 +1454,6 @@ class CommandeFournisseur extends CommonOrder
 			$sql.= ", ".$multicurrency_total_ttc;
             $sql.= ")";
 
-            dol_syslog(get_class($this)."::addline", LOG_DEBUG);
             $resql=$this->db->query($sql);
             //print $sql;
             if ($resql)
