@@ -54,6 +54,8 @@ CREATE TABLE llx_product_lot (
   import_key    integer
 ) ENGINE=InnoDB;
 
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
+
 DROP TABLE llx_stock_serial; 
 
 ALTER TABLE llx_product ADD COLUMN note_public text;
@@ -460,6 +462,11 @@ CREATE TABLE llx_advtargetemailing
 ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);
 
 
+update llx_product_batch set batch = '000000' where batch = 'Non d&eacute;fini';
+update llx_product_batch set batch = '000000' where batch = 'Non défini';
+update llx_product_batch set batch = '000000' where batch = 'Undefined';
+update llx_product_lot set batch = '000000' where batch = 'Undefined';
+update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
 
 -- At end
 ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);

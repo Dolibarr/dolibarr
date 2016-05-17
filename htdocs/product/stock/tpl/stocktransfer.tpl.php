@@ -88,7 +88,16 @@
 		{
 			print '<tr>';
 			print '<td'.($object->element == 'stock'?'': ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="5">';
-			print '<input type="text" name="batch_number" size="40"'.($pdluoid > 0 ? ' disabled':'').' value="'.(GETPOST('batch_number')?GETPOST('batch_number'):$pdluo->batch).'">';			// If form was opened for a specific pdluoid, field is disabled
+			if ($pdluoid > 0)
+			{
+                // If form was opened for a specific pdluoid, field is disabled
+                print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number')?GETPOST('batch_number'):$pdluo->batch).'">';
+			    print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number')?GETPOST('batch_number'):$pdluo->batch).'">';
+			}
+			else
+			{
+			    print '<input type="text" name="batch_number" size="40" value="'.(GETPOST('batch_number')?GETPOST('batch_number'):$pdluo->batch).'">';
+			}
 			print '</td>';
 			print '</tr><tr>';
 			print '<td>'.$langs->trans("l_eatby").'</td><td>';

@@ -273,6 +273,10 @@ if ($action == "transfert_stock" && ! $cancel)
 						$eatby,$sellby,$batch,
 						GETPOST('inventorycode')
 					);
+					if ($result1 < 0) $error++;
+				}
+				if (! $error)
+				{
 					// Add stock
 					$result2=$object->correct_stock_batch(
 						$user,
@@ -284,31 +288,39 @@ if ($action == "transfert_stock" && ! $cancel)
 						$eatby,$sellby,$batch,
 						GETPOST('inventorycode')
 					);
+					if ($result2 < 0) $error++;
 				}
 			}
 			else
 			{
-				// Remove stock
-				$result1=$object->correct_stock(
-					$user,
-					GETPOST("id_entrepot"),
-					GETPOST("nbpiece"),
-					1,
-					GETPOST("label"),
-					$pricesrc,
-					GETPOST('inventorycode')
-				);
-
-				// Add stock
-				$result2=$object->correct_stock(
-					$user,
-					GETPOST("id_entrepot_destination"),
-					GETPOST("nbpiece"),
-					0,
-					GETPOST("label"),
-					$pricedest,
-					GETPOST('inventorycode')
-				);
+				if (! $error)
+				{
+    			    // Remove stock
+    				$result1=$object->correct_stock(
+    					$user,
+    					GETPOST("id_entrepot"),
+    					GETPOST("nbpiece"),
+    					1,
+    					GETPOST("label"),
+    					$pricesrc,
+    					GETPOST('inventorycode')
+    				);
+    				if ($result1 < 0) $error++;
+				}
+				if (! $error)
+				{
+    				// Add stock
+    				$result2=$object->correct_stock(
+    					$user,
+    					GETPOST("id_entrepot_destination"),
+    					GETPOST("nbpiece"),
+    					0,
+    					GETPOST("label"),
+    					$pricedest,
+    					GETPOST('inventorycode')
+    				);
+    				if ($result2 < 0) $error++;
+				}
 			}
 			if (! $error && $result1 >= 0 && $result2 >= 0)
 			{
@@ -589,7 +601,7 @@ if ($id > 0 || $ref)
 	if ($action == "correction")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
-		print '<br>';
+		print '<br><br>';
 	}
 
 	/*
@@ -598,7 +610,7 @@ if ($id > 0 || $ref)
 	if ($action == "transfert")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
-		print '<br>';
+		print '<br><br>';
 	}
 
 	/*
@@ -657,10 +669,10 @@ if (empty($action) && $object->id)
 
 
 /*
- * Stock detail (by warehouse). Do not go down into batch.
+ * Stock detail (by warehouse). May go down into batch details.
  */
 
-print '<br><table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="40%" colspan="4">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td align="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
@@ -726,14 +738,14 @@ if ($resql)
 		if (price2num($object->pmp)) $totalwithpmp += $obj->reel;
 		$totalvalue = $totalvalue + ($object->pmp*$obj->reel);
         $totalvaluesell = $totalvaluesell + ($object->price*$obj->reel);
-		//Batch Detail
+		// Batch Detail
 		if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 		{
-			$details=Productbatch::findAll($db,$obj->product_stock_id);
+			$details=Productbatch::findAll($db, $obj->product_stock_id, 0, $object->id);
 			if ($details<0) dol_print_error($db);
 			foreach ($details as $pdluo)
 			{
-			    if ( $action == 'editline' && GETPOST('lineid','int')==$pdluo->id )
+			    if ($action == 'editline' && GETPOST('lineid','int') == $pdluo->id)
 			    { //Current line edit
 			        print "\n".'<tr><td colspan="9">';
 			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';

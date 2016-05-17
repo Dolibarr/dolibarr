@@ -607,7 +607,8 @@ class Product extends CommonObject
     }
 
 	/**
-	 *	Update a record into database
+	 *	Update a record into database.
+	 *  If batch flag is set to on, we create records into llx_product_batch
 	 *
 	 *	@param	int		$id         Id of product
 	 *	@param  User	$user       Object user making update
@@ -672,25 +673,46 @@ class Product extends CommonObject
                 $org->fetch($this->id);
                 $this->oldcopy=$org;
             }
-            // test if batch management is activated on existing product
+            
+            // Test if batch management is activated on existing product
+            // If yes, we create missing entries into product_batch
             if ($this->hasbatch() && !$this->oldcopy->hasbatch())
             {
+                //$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
+                $valueforundefinedlot = '000000';
+
+                dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
+
                 $this->load_stock();
-                foreach ($this->stock_warehouse as $idW => $ObjW)
+                foreach ($this->stock_warehouse as $idW => $ObjW)   // For each warehouse where we have stocks defined for this product (for each lines in product_stock)
                 {
                     $qty_batch = 0;
-                    foreach ($ObjW->detail_batch as $detail)
+                    foreach ($ObjW->detail_batch as $detail)    // Each lines of detail in product_batch of the current $ObjW = product_stock
                     {
+                        if ($detail->batch == $valueforundefinedlot || $detail->batch == 'Undefined') 
+                        {
+                            // We discard this line, we will create it later
+                            $sqlclean="DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE batch in('Undefined', '".$valueforundefinedlot."') AND fk_product_stock = ".$ObjW->id;
+                            $result = $this->db->query($sqlclean);
+                            if (! $result)
+                            {
+                                dol_print_error($this->db);
+                                exit;
+                            }
+                            continue;
+                        }
+                    
                         $qty_batch += $detail->qty;
                     }
-                    // Quantities in batch details are not same same as stock quantity
-                    // So we add a default batch record
+                    // Quantities in batch details are not same as stock quantity,
+                    // so we add a default batch record to complete and get same qty in parent and child table
                     if ($ObjW->real <> $qty_batch)
                     {
                         $ObjBatch = new Productbatch($this->db);
-                        $ObjBatch->batch = $langs->trans('BatchDefaultNumber');
-                        $ObjBatch->qty = $ObjW->real - $qty_batch;
+                        $ObjBatch->batch = $valueforundefinedlot; 
+                        $ObjBatch->qty = ($ObjW->real - $qty_batch);
                         $ObjBatch->fk_product_stock = $ObjW->id;
+
                         if ($ObjBatch->create($user,1) < 0)
                         {
                             $error++;
@@ -699,6 +721,7 @@ class Product extends CommonObject
                     }
                 }
             }
+            
 	        // For automatic creation
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
@@ -744,6 +767,7 @@ class Product extends CommonObject
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
 			$sql.= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
+			// stock field is not here because it is a denormalized value from product_stock.
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -1597,7 +1621,7 @@ class Product extends CommonObject
      *  @param	int		$ignore_expression  Ignores the math expression for calculating price and uses the db value instead
 	 *  @return int     					<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id='', $ref='', $ref_ext='', $ignore_expression = 0)
+	function fetch($id='', $ref='', $ref_ext='', $ignore_expression=0)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 

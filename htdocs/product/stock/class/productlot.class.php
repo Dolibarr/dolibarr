@@ -56,14 +56,15 @@ class Productlot extends CommonObject
 	/**
 	 */
 	
-	public $tms = '';
+	public $entity;
 	public $fk_product;
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
-	public $note_public;
-	public $note_private;
-	public $qty;
+	public $datec = '';
+	public $tms = '';
+	public $fk_user_creat;
+	public $fk_user_modif;
 	public $import_key;
 
 	/**
@@ -96,20 +97,20 @@ class Productlot extends CommonObject
 
 		// Clean parameters
 		
+		if (isset($this->entity)) {
+			 $this->entity = trim($this->entity);
+		}
 		if (isset($this->fk_product)) {
 			 $this->fk_product = trim($this->fk_product);
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
-		if (isset($this->note_public)) {
-			 $this->note_public = trim($this->note_public);
+		if (isset($this->fk_user_creat)) {
+			 $this->fk_user_creat = trim($this->fk_user_creat);
 		}
-		if (isset($this->note_private)) {
-			 $this->note_private = trim($this->note_private);
-		}
-		if (isset($this->qty)) {
-			 $this->qty = trim($this->qty);
+		if (isset($this->fk_user_modif)) {
+			 $this->fk_user_modif = trim($this->fk_user_modif);
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -123,26 +124,28 @@ class Productlot extends CommonObject
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
 		
+		$sql.= 'entity,';
 		$sql.= 'fk_product,';
 		$sql.= 'batch,';
 		$sql.= 'eatby,';
 		$sql.= 'sellby,';
-		$sql.= 'note_public,';
-		$sql.= 'note_private,';
-		$sql.= 'qty';
+		$sql.= 'datec,';
+		$sql.= 'fk_user_creat,';
+		$sql.= 'fk_user_modif,';
 		$sql.= 'import_key';
 
 		
 		$sql .= ') VALUES (';
 		
+		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->fk_product)?'NULL':$this->fk_product).',';
 		$sql .= ' '.(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").',';
 		$sql .= ' '.(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").',';
 		$sql .= ' '.(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").',';
-		$sql .= ' '.(! isset($this->note_public)?'NULL':"'".$this->db->escape($this->note_public)."'").',';
-		$sql .= ' '.(! isset($this->note_private)?'NULL':"'".$this->db->escape($this->note_private)."'").',';
-		$sql .= ' '.(! isset($this->qty)?'NULL':"'".$this->qty."'").',';
-		$sql .= ' '.(! isset($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'");
+		$sql .= ' '."'".$this->db->idate(dol_now())."'".',';
+		$sql .= ' '.(! isset($this->fk_user_creat)?'NULL':$this->fk_user_creat).',';
+		$sql .= ' '.(! isset($this->fk_user_modif)?'NULL':$this->fk_user_modif).',';
+		$sql .= ' '.(! isset($this->import_key)?'NULL':$this->import_key);
 
 		
 		$sql .= ')';
@@ -197,14 +200,15 @@ class Productlot extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		
-		$sql .= " t.tms,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
-		$sql .= " t.note_public,";
-		$sql .= " t.note_private,";
-		$sql .= " t.qty,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key";
 
 		
@@ -223,14 +227,15 @@ class Productlot extends CommonObject
 
 				$this->id = $obj->rowid;
 				
-				$this->tms = $this->db->jdate($obj->tms);
+				$this->entity = $obj->entity;
 				$this->fk_product = $obj->fk_product;
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
-				$this->note_public = $obj->note_public;
-				$this->note_private = $obj->note_private;
-				$this->qty = $obj->qty;
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->tms = $this->db->jdate($obj->tms);
+				$this->fk_user_creat = $obj->fk_user_creat;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->import_key = $obj->import_key;
 
 				
@@ -269,14 +274,15 @@ class Productlot extends CommonObject
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
 		
-		$sql .= " t.tms,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
-		$sql .= " t.note_public,";
-		$sql .= " t.note_private,";
-		$sql .= " t.qty,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key";
 
 		
@@ -310,14 +316,15 @@ class Productlot extends CommonObject
 
 				$line->id = $obj->rowid;
 				
-				$line->tms = $this->db->jdate($obj->tms);
+				$line->entity = $obj->entity;
 				$line->fk_product = $obj->fk_product;
 				$line->batch = $obj->batch;
 				$line->eatby = $this->db->jdate($obj->eatby);
 				$line->sellby = $this->db->jdate($obj->sellby);
-				$line->note_public = $obj->note_public;
-				$line->note_private = $obj->note_private;
-				$line->qty = $obj->qty;
+				$line->datec = $this->db->jdate($obj->datec);
+				$line->tms = $this->db->jdate($obj->tms);
+				$line->fk_user_creat = $obj->fk_user_creat;
+				$line->fk_user_modif = $obj->fk_user_modif;
 				$line->import_key = $obj->import_key;
 
 				
@@ -351,20 +358,20 @@ class Productlot extends CommonObject
 
 		// Clean parameters
 		
+		if (isset($this->entity)) {
+			 $this->entity = trim($this->entity);
+		}
 		if (isset($this->fk_product)) {
 			 $this->fk_product = trim($this->fk_product);
 		}
 		if (isset($this->batch)) {
 			 $this->batch = trim($this->batch);
 		}
-		if (isset($this->note_public)) {
-			 $this->note_public = trim($this->note_public);
+		if (isset($this->fk_user_creat)) {
+			 $this->fk_user_creat = trim($this->fk_user_creat);
 		}
-		if (isset($this->note_private)) {
-			 $this->note_private = trim($this->note_private);
-		}
-		if (isset($this->qty)) {
-			 $this->qty = trim($this->qty);
+		if (isset($this->fk_user_modif)) {
+			 $this->fk_user_modif = trim($this->fk_user_modif);
 		}
 		if (isset($this->import_key)) {
 			 $this->import_key = trim($this->import_key);
@@ -378,15 +385,16 @@ class Productlot extends CommonObject
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
 		
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
+		$sql .= ' entity = '.(isset($this->entity)?$this->entity:"null").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product)?$this->fk_product:"null").',';
 		$sql .= ' batch = '.(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").',';
 		$sql .= ' eatby = '.(! isset($this->eatby) || dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').',';
 		$sql .= ' sellby = '.(! isset($this->sellby) || dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').',';
-		$sql .= ' note_public = '.(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").',';
-		$sql .= ' note_private = '.(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").',';
-		$sql .= ' qty = '.(isset($this->qty)?$this->qty:"null").',';
-		$sql .= ' import_key = '.(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
+		$sql .= ' datec = '.(! isset($this->datec) || dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').',';
+		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
+		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat)?$this->fk_user_creat:"null").',';
+		$sql .= ' fk_user_modif = '.(isset($this->fk_user_modif)?$this->fk_user_modif:"null").',';
+		$sql .= ' import_key = '.(isset($this->import_key)?$this->import_key:"null");
 
         
 		$sql .= ' WHERE rowid=' . $this->id;
@@ -626,14 +634,15 @@ class Productlot extends CommonObject
 	{
 		$this->id = 0;
 		
-		$this->tms = '';
+		$this->entity = '';
 		$this->fk_product = '';
 		$this->batch = '';
 		$this->eatby = '';
 		$this->sellby = '';
-		$this->note_public = '';
-		$this->note_private = '';
-		$this->qty = '';
+		$this->datec = '';
+		$this->tms = '';
+		$this->fk_user_creat = '';
+		$this->fk_user_modif = '';
 		$this->import_key = '';
 
 		
@@ -654,14 +663,15 @@ class ProductlotLine
 	 * @var mixed Sample line property 1
 	 */
 	
-	public $tms = '';
+	public $entity;
 	public $fk_product;
 	public $batch;
 	public $eatby = '';
 	public $sellby = '';
-	public $note_public;
-	public $note_private;
-	public $qty;
+	public $datec = '';
+	public $tms = '';
+	public $fk_user_creat;
+	public $fk_user_modif;
 	public $import_key;
 
 	/**

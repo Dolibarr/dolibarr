@@ -20,7 +20,7 @@
  *   	\file       stock/productlot_list.php
  *		\ingroup    stock
  *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2016-05-17 10:33
+ *					Initialy built by build_class_from_table on 2016-05-17 12:22
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -59,12 +59,12 @@ $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 
 
+$search_entity=GETPOST('search_entity','int');
 $search_fk_product=GETPOST('search_fk_product','int');
 $search_batch=GETPOST('search_batch','alpha');
-$search_note_public=GETPOST('search_note_public','alpha');
-$search_note_private=GETPOST('search_note_private','alpha');
-$search_qty=GETPOST('search_qty','alpha');
-$search_import_key=GETPOST('search_import_key','alpha');
+$search_fk_user_creat=GETPOST('search_fk_user_creat','int');
+$search_fk_user_modif=GETPOST('search_fk_user_modif','int');
+$search_import_key=GETPOST('search_import_key','int');
 
 
 $search_myfield=GETPOST('search_myfield');
@@ -109,11 +109,11 @@ if (($id > 0 || ! empty($ref)) && $action != 'add')
 // Definition of fields for list
 $arrayfields=array(
     
+'t.entity'=>array('label'=>$langs->trans("Fieldentity"), 'checked'=>1),
 't.fk_product'=>array('label'=>$langs->trans("Fieldfk_product"), 'checked'=>1),
 't.batch'=>array('label'=>$langs->trans("Fieldbatch"), 'checked'=>1),
-'t.note_public'=>array('label'=>$langs->trans("Fieldnote_public"), 'checked'=>1),
-'t.note_private'=>array('label'=>$langs->trans("Fieldnote_private"), 'checked'=>1),
-'t.qty'=>array('label'=>$langs->trans("Fieldqty"), 'checked'=>1),
+'t.fk_user_creat'=>array('label'=>$langs->trans("Fieldfk_user_creat"), 'checked'=>1),
+'t.fk_user_modif'=>array('label'=>$langs->trans("Fieldfk_user_modif"), 'checked'=>1),
 't.import_key'=>array('label'=>$langs->trans("Fieldimport_key"), 'checked'=>1),
 
     
@@ -152,11 +152,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	
+$search_entity='';
 $search_fk_product='';
 $search_batch='';
-$search_note_public='';
-$search_note_private='';
-$search_qty='';
+$search_fk_user_creat='';
+$search_fk_user_modif='';
 $search_import_key='';
 
 	
@@ -235,14 +235,15 @@ jQuery(document).ready(function() {
 $sql = "SELECT";
 $sql.= " t.rowid,";
 
-		$sql .= " t.tms,";
+		$sql .= " t.entity,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.batch,";
 		$sql .= " t.eatby,";
 		$sql .= " t.sellby,";
-		$sql .= " t.note_public,";
-		$sql .= " t.note_private,";
-		$sql .= " t.qty,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
 		$sql .= " t.import_key";
 
 
@@ -257,11 +258,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " WHERE 1 = 1";
 //$sql.= " WHERE u.entity IN (".getEntity('mytable',1).")";
 
+if ($search_entity) $sql.= natural_search("entity",$search_entity);
 if ($search_fk_product) $sql.= natural_search("fk_product",$search_fk_product);
 if ($search_batch) $sql.= natural_search("batch",$search_batch);
-if ($search_note_public) $sql.= natural_search("note_public",$search_note_public);
-if ($search_note_private) $sql.= natural_search("note_private",$search_note_private);
-if ($search_qty) $sql.= natural_search("qty",$search_qty);
+if ($search_fk_user_creat) $sql.= natural_search("fk_user_creat",$search_fk_user_creat);
+if ($search_fk_user_modif) $sql.= natural_search("fk_user_modif",$search_fk_user_modif);
 if ($search_import_key) $sql.= natural_search("import_key",$search_import_key);
 
 
@@ -306,11 +307,11 @@ if ($resql)
     $params='';
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     
+if ($search_entity != '') $params.= '&amp;search_entity='.urlencode($search_entity);
 if ($search_fk_product != '') $params.= '&amp;search_fk_product='.urlencode($search_fk_product);
 if ($search_batch != '') $params.= '&amp;search_batch='.urlencode($search_batch);
-if ($search_note_public != '') $params.= '&amp;search_note_public='.urlencode($search_note_public);
-if ($search_note_private != '') $params.= '&amp;search_note_private='.urlencode($search_note_private);
-if ($search_qty != '') $params.= '&amp;search_qty='.urlencode($search_qty);
+if ($search_fk_user_creat != '') $params.= '&amp;search_fk_user_creat='.urlencode($search_fk_user_creat);
+if ($search_fk_user_modif != '') $params.= '&amp;search_fk_user_modif='.urlencode($search_fk_user_modif);
 if ($search_import_key != '') $params.= '&amp;search_import_key='.urlencode($search_import_key);
 
 	
@@ -389,11 +390,11 @@ if ($search_import_key != '') $params.= '&amp;search_import_key='.urlencode($sea
     // Fields title search
 	print '<tr class="liste_titre">';
 	
+if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="10"></td>';
 if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_product" value="'.$search_fk_product.'" size="10"></td>';
 if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="10"></td>';
-if (! empty($arrayfields['t.note_public']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_note_public" value="'.$search_note_public.'" size="10"></td>';
-if (! empty($arrayfields['t.note_private']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_note_private" value="'.$search_note_private.'" size="10"></td>';
-if (! empty($arrayfields['t.qty']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_qty" value="'.$search_qty.'" size="10"></td>';
+if (! empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
+if (! empty($arrayfields['t.fk_user_modif']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_modif" value="'.$search_fk_user_modif.'" size="10"></td>';
 if (! empty($arrayfields['t.import_key']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_import_key" value="'.$search_import_key.'" size="10"></td>';
 
 	

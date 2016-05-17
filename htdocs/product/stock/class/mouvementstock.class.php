@@ -117,7 +117,6 @@ class MouvementStock extends CommonObject
 		// Test if product require batch data. If yes, and there is not, we throw an error.
 		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
 		{
-			//if (empty($batch) && empty($eatby) && empty($sellby))
 			if (empty($batch))
 			{
 				$this->errors[]=$langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->name);
@@ -130,8 +129,9 @@ class MouvementStock extends CommonObject
 			// FIXME Code not complete to implement this
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
-			// If found and eatby/sellby not defined into table and provided, we update table
 			// If found and eatby/sellby defined into table and not provided, we take value from table
+			// If found and eatby/sellby not defined into table and provided, we update table
+			// If found and eatby/sellby not defined into table and not provided, we do nothing
 			// If not found, we add record
 			$sql = "SELECT pb.rowid, pb.batch, pb.eatby, pb.sellby FROM ".MAIN_DB_PREFIX."product_lot as pb";
 			$sql.= " WHERE pb.fk_product = ".$fk_product." AND pb.batch = '".$this->db->escape($batch)."'";
@@ -158,6 +158,27 @@ class MouvementStock extends CommonObject
                                     return -3;
                                 }
                             }
+                            else
+                            {
+                                $eatby = $obj->eatby; // If found and eatby/sellby defined into table and not provided, we take value from table
+                            }
+                        }
+                        else
+                        {
+                            if ($eatby) // If found and eatby/sellby not defined into table and provided, we update table
+                            {
+                                $productlot = new Productlot($this->db);
+                                $result = $productlot->fetch($obj->rowid);
+                                $productlot->eatby = $eatby;
+                                $result = $productlot->update($user);
+                                if ($result <= 0)
+                                {
+                                    $this->error = $productlot->error;
+                                    $this->errors = $productlot->errors;
+                                    $this->db->rollback();
+                                    return -5;
+                                }                            
+                            }
                         }
                         if ($obj->sellby)
                         {
@@ -171,8 +192,30 @@ class MouvementStock extends CommonObject
                         			return -3;
                         		}
                             }
+                            else
+                            {
+                                $sellby = $obj->sellby; // If found and eatby/sellby defined into table and not provided, we take value from table
+                            }
                         }
-                		$i++;
+                	    else
+                        {
+                            if ($sellby) // If found and eatby/sellby not defined into table and provided, we update table
+                            {
+                                $productlot = new Productlot($this->db);
+                                $result = $productlot->fetch($obj->rowid);
+                                $productlot->sellby = $sellby;
+                                $result = $productlot->update($user);
+                                if ($result <= 0)
+                                {
+                                    $this->error = $productlot->error;
+                                    $this->errors = $productlot->errors;
+                                    $this->db->rollback();
+                                    return -5;
+                                }
+                            }
+                        }
+                        
+                        $i++;
                 	}
             	}
             	else
@@ -181,7 +224,7 @@ class MouvementStock extends CommonObject
             	    $productlot->fk_product = $fk_product;
             	    $productlot->batch = $batch;
             	    $result = $productlot->create($user);
-            	    if (! $result)
+            	    if ($result <= 0)
             	    {
             	        $this->error = $productlot->error;
             	        $this->errors = $productlot->errors;
@@ -367,7 +410,7 @@ class MouvementStock extends CommonObject
 				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET p.pmp = ".$newpmp.", ";
 				$sql.= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock ps WHERE ps.fk_product = p.rowid)";
 				$sql.= " WHERE rowid = ".$fk_product;
-				print $sql;
+				
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)

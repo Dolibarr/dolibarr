@@ -20,7 +20,7 @@
  *   	\file       stock/productlot_card.php
  *		\ingroup    stock
  *		\brief      This file is an example of a php page
- *					Initialy built by build_class_from_table on 2016-05-17 10:33
+ *					Initialy built by build_class_from_table on 2016-05-17 12:22
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
@@ -57,12 +57,12 @@ $backtopage = GETPOST('backtopage');
 $myparam	= GETPOST('myparam','alpha');
 
 
+$search_entity=GETPOST('search_entity','int');
 $search_fk_product=GETPOST('search_fk_product','int');
 $search_batch=GETPOST('search_batch','alpha');
-$search_note_public=GETPOST('search_note_public','alpha');
-$search_note_private=GETPOST('search_note_private','alpha');
-$search_qty=GETPOST('search_qty','alpha');
-$search_import_key=GETPOST('search_import_key','alpha');
+$search_fk_user_creat=GETPOST('search_fk_user_creat','int');
+$search_fk_user_modif=GETPOST('search_fk_user_modif','int');
+$search_import_key=GETPOST('search_import_key','int');
 
 
 
@@ -114,12 +114,12 @@ if (empty($reshook))
 
 		/* object_prop_getpost_prop */
 		
+	$object->entity=GETPOST('entity','int');
 	$object->fk_product=GETPOST('fk_product','int');
 	$object->batch=GETPOST('batch','alpha');
-	$object->note_public=GETPOST('note_public','alpha');
-	$object->note_private=GETPOST('note_private','alpha');
-	$object->qty=GETPOST('qty','alpha');
-	$object->import_key=GETPOST('import_key','alpha');
+	$object->fk_user_creat=GETPOST('fk_user_creat','int');
+	$object->fk_user_modif=GETPOST('fk_user_modif','int');
+	$object->import_key=GETPOST('import_key','int');
 
 		
 
@@ -161,12 +161,12 @@ if (empty($reshook))
 		$error=0;
 
 		
+	$object->entity=GETPOST('entity','int');
 	$object->fk_product=GETPOST('fk_product','int');
 	$object->batch=GETPOST('batch','alpha');
-	$object->note_public=GETPOST('note_public','alpha');
-	$object->note_private=GETPOST('note_private','alpha');
-	$object->qty=GETPOST('qty','alpha');
-	$object->import_key=GETPOST('import_key','alpha');
+	$object->fk_user_creat=GETPOST('fk_user_creat','int');
+	$object->fk_user_modif=GETPOST('fk_user_modif','int');
+	$object->import_key=GETPOST('import_key','int');
 
 		
 
@@ -262,11 +262,11 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// 
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.GETPOST('entity').'"></td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.GETPOST('fk_product').'"></td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.GETPOST('batch').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldnote_public").'</td><td><input class="flat" type="text" name="note_public" value="'.GETPOST('note_public').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldnote_private").'</td><td><input class="flat" type="text" name="note_private" value="'.GETPOST('note_private').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldqty").'</td><td><input class="flat" type="text" name="qty" value="'.GETPOST('qty').'"></td></tr>';
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td><input class="flat" type="text" name="fk_user_creat" value="'.GETPOST('fk_user_creat').'"></td></tr>';
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_modif").'</td><td><input class="flat" type="text" name="fk_user_modif" value="'.GETPOST('fk_user_modif').'"></td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><td><input class="flat" type="text" name="import_key" value="'.GETPOST('import_key').'"></td></tr>';
 
 	print '</table>'."\n";
@@ -295,11 +295,11 @@ if (($id || $ref) && $action == 'edit')
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// 
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.$object->entity.'"></td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.$object->fk_product.'"></td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.$object->batch.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldnote_public").'</td><td><input class="flat" type="text" name="note_public" value="'.$object->note_public.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldnote_private").'</td><td><input class="flat" type="text" name="note_private" value="'.$object->note_private.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldqty").'</td><td><input class="flat" type="text" name="qty" value="'.$object->qty.'"></td></tr>';
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td><input class="flat" type="text" name="fk_user_creat" value="'.$object->fk_user_creat.'"></td></tr>';
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_modif").'</td><td><input class="flat" type="text" name="fk_user_modif" value="'.$object->fk_user_modif.'"></td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><td><input class="flat" type="text" name="import_key" value="'.$object->import_key.'"></td></tr>';
 
 	print '</table>';
@@ -330,11 +330,11 @@ if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// 
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td>$object->entity</td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td>$object->fk_product</td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td>$object->batch</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldnote_public").'</td><td>$object->note_public</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldnote_private").'</td><td>$object->note_private</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldqty").'</td><td>$object->qty</td></tr>';
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td>$object->fk_user_creat</td></tr>';
+print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_modif").'</td><td>$object->fk_user_modif</td></tr>';
 print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><td>$object->import_key</td></tr>';
 
 	print '</table>';

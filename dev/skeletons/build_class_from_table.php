@@ -259,7 +259,7 @@ foreach($property as $key => $prop)
 	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= '".$prop['field'];
-		if ($i <= count($property)-$no_output_field) $varprop.=",";
+		if ($i < (count($property)-$no_output_field)) $varprop.=",";
 		$varprop.="';";
 		$varprop.="\n";
 	}
