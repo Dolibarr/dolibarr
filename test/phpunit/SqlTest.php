@@ -162,7 +162,7 @@ class SqlTest extends PHPUnit_Framework_TestCase
 
                 $result=strpos($filecontent,'int(');
                 print __METHOD__." Result for checking we don't have 'int(' instead of 'integer' = ".$result."\n";
-                $this->assertTrue($result===false, 'Found int(x) instead of integer into '.$file.'. Bad.');
+                $this->assertTrue($result===false, 'Found int(x) or tinyint(x) instead of integer or tinyint into '.$file.'. Bad.');
 
                 $result=strpos($filecontent,'ON DELETE CASCADE');
                 print __METHOD__." Result for checking we don't have 'ON DELETE CASCADE' = ".$result."\n";
