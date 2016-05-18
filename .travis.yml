@@ -250,7 +250,9 @@ script:
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
   set -e
-  parallel-lint --exclude htdocs/includes --blame .
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
+    parallel-lint --exclude htdocs/includes --blame .
+  fi
   set +e
   echo
 
