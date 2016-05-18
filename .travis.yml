@@ -288,6 +288,7 @@ script:
   echo
   #cat $TRAVIS_BUILD_DIR/upgrade390400-2.log
   #cat /tmp/dolibarr_install.log
+  cat htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
   
 - |
   echo "Unit testing"
