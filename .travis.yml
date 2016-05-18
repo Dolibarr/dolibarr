@@ -75,13 +75,14 @@ before_install:
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
   phpenv config-rm xdebug.ini
   echo
-  rm $TRAVIS_BUILD_DIR/composer.json
-  rm $TRAVIS_BUILD_DIR/composer.lock
 
 install:
 - |
   echo "Updating Composer"
+  rm $TRAVIS_BUILD_DIR/composer.json
+  rm $TRAVIS_BUILD_DIR/composer.lock
   composer self-update
+  composer -n config vendor-dir htdocs/includes
   echo
 
 - |
