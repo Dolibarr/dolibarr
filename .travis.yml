@@ -110,7 +110,7 @@ install:
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
   echo PATH=$PATH
-  ls $PATH
+  ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   
 
 before_script:
