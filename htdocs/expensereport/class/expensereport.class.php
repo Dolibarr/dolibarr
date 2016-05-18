@@ -2,6 +2,7 @@
 /* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,6 +150,7 @@ class ExpenseReport extends CommonObject
         $sql.= ",paid";
         $sql.= ",note_public";
         $sql.= ",note_private";
+        $sql.= ",entity";
         $sql.= ") VALUES(";
         $sql.= "'(PROV)'";
         $sql.= ", ".$this->total_ht;
@@ -165,6 +167,7 @@ class ExpenseReport extends CommonObject
         $sql.= ", 0";
         $sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
         $sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
+        $sql.= ", ".$conf->entity;
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
