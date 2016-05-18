@@ -75,28 +75,26 @@ before_install:
   cp ~/.phpenv/versions/$PHP_VERSION_NAME/etc/conf.d/xdebug.ini /tmp/xdebug.ini
   phpenv config-rm xdebug.ini
   echo
+  rm $TRAVIS_BUILD_DIR/composer.json
+  rm $TRAVIS_BUILD_DIR/composer.lock
 
 install:
 - |
   echo "Updating Composer"
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
-    composer self-update
-  fi
+  composer self-update
   echo
 
 - |
   echo "Installing Parallel Lint"
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
-    composer -n require jakub-onderka/php-parallel-lint ^0
-    composer -n require jakub-onderka/php-console-highlighter ^0
-  fi
+  composer -n require jakub-onderka/php-parallel-lint ^0
+  composer -n require jakub-onderka/php-console-highlighter ^0
   echo
 
 - |
   echo "Installing PHP Unit"
-  #if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
-  #  composer -n require phpunit/phpunit ^4
-  #fi
+  if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
+    composer -n require phpunit/phpunit ^4
+  fi
   if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
     composer -n require phpunit/phpunit ^5
   fi
@@ -104,9 +102,7 @@ install:
 
 - |
   echo "Installing PHP CodeSniffer"
-  #if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
-  #  composer -n require squizlabs/php_codesniffer ^2
-  #fi
+  composer -n require squizlabs/php_codesniffer ^2
   echo
 
 - |
@@ -250,9 +246,7 @@ script:
   echo "Checking PHP syntax errors"
   # Ensure we catch errors
   set -e
-  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
-    parallel-lint --exclude htdocs/includes --blame .
-  fi
+  parallel-lint --exclude htdocs/includes --blame .
   set +e
   echo
 
