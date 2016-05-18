@@ -103,11 +103,6 @@ install:
   composer require squizlabs/php_codesniffer ^2
   echo
 
-- |
-  echo "Adding Composer binaries to the path"
-  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
-  echo
-
 before_script:
 - |
   echo Start travis
@@ -286,9 +281,8 @@ script:
   cd -
   set +e
   echo
-  echo Log for upgrade2.php 3.9.0 4.0.0 MAIN_MODULE_API
-  cat $TRAVIS_BUILD_DIR/upgrade390400-2.log
-  cat /tmp/dolibarr_install.log
+  #cat $TRAVIS_BUILD_DIR/upgrade390400-2.log
+  #cat /tmp/dolibarr_install.log
   
 - |
   echo "Unit testing"
