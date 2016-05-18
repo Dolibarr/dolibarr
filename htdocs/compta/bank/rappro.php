@@ -236,10 +236,9 @@ if ($resql)
 
     print '<br>';
 
-	print '<table class="liste" width="100%">';
-	print '<tr class="liste_titre">'."\n";
-    	$paramlist='';
+   	$paramlist='';
 	$paramlist.="&account=".$acct->id;
+	
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">'."\n";
 	print_liste_field_titre($langs->trans("DateOperationShort"),$_SERVER["PHP_SELF"],"b.dateo","",$paramlist,'align="center"',$sortfield,$sortorder);
@@ -248,9 +247,9 @@ if ($resql)
 	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"b.label","",$paramlist,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Debit"),$_SERVER["PHP_SELF"],"b.amount","",$paramlist,' width="60 align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Credit"),$_SERVER["PHP_SELF"],"b.amount","",$paramlist,' width="60 align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"","",$paramlist,' width="80 align="center"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"","",$paramlist,' width="80 align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ToConciliate"),$_SERVER["PHP_SELF"],"","",$paramlist,' align="center" width="80" ',$sortfield,$sortorder);
-    	print "</tr>\n";
+    print "</tr>\n";
 
 
     $i = 0;
