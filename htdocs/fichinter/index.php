@@ -120,7 +120,7 @@ if ($resql)
     foreach ($listofstatus as $status)
     {
         $dataseries[]=array('label'=>$fichinterstatic->LibStatut($status,$bool,1),'data'=>(isset($vals[$status.$bool])?(int) $vals[$status.$bool]:0));
-        if ($status==3 && $bool==false) $bool=true;
+        if ($status==3 && ! $bool) $bool=true;
         else $bool=false;
     }
     if ($conf->use_javascript_ajax)
@@ -144,7 +144,7 @@ if ($resql)
             print '</a>';
             print '</td>';
             print "</tr>\n";
-            if ($status==3 && $bool==false) $bool=true;
+            if ($status==3 && ! $bool) $bool=true;
             else $bool=false;
         }
     }

@@ -116,8 +116,15 @@ JQUERYFILETREE:
 RESTLER:
 --------
 
-   if ($className == 'Luracast\Restler\string') return;
-   if ($className == 'Luracast\Restler\mixed') return;
+* Add 2 lines into function     
+	private function alias($className, $currentClass)
+    {
+		...
+to get 
 
-
+	private function alias($className, $currentClass)
+    {
+        if ($className == 'Luracast\Restler\string') return;
+        if ($className == 'Luracast\Restler\mixed') return;
+		...
         

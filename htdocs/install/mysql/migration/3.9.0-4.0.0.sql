@@ -39,18 +39,24 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after dat
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
+-- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
-  rowid integer AUTO_INCREMENT PRIMARY KEY,
-  tms timestamp,
-  fk_product integer NOT NULL,
-  batch varchar(30) NOT NULL,
-  eatby datetime DEFAULT NULL,
-  sellby datetime DEFAULT NULL,
-  note_public  text,
-  note_private text,
-  qty double NOT NULL DEFAULT 0,
-  import_key varchar(14) DEFAULT NULL
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer,
+  fk_product      integer NOT NULL,				-- Id of product
+  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  eatby           date DEFAULT NULL,			-- Eatby date
+  sellby          date DEFAULT NULL, 			-- Sellby date
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer
 ) ENGINE=InnoDB;
+
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
+
+DROP TABLE llx_stock_serial; 
 
 ALTER TABLE llx_product ADD COLUMN note_public text;
 ALTER TABLE llx_user ADD COLUMN note_public text;
@@ -358,8 +364,8 @@ CREATE TABLE llx_c_accounting_category (
   code 				varchar(16) NOT NULL,
   label 			varchar(255) NOT NULL,
   range_account		varchar(255) NOT NULL,
-  sens 				tinyint(1) NOT NULL DEFAULT '0', -- For international accounting  0 : credit - debit / 1 : debit - credit
-  category_type		tinyint(1) NOT NULL DEFAULT '0', -- Field calculated or not
+  sens 				tinyint NOT NULL DEFAULT '0', -- For international accounting  0 : credit - debit / 1 : debit - credit
+  category_type		tinyint NOT NULL DEFAULT '0', -- Field calculated or not
   formula			varchar(255) NOT NULL,			 -- Example : 1 + 2 (rowid of the category)
   position    		integer DEFAULT 0,
   fk_country 		integer DEFAULT NULL,			 -- This category is dedicated to a country
@@ -424,8 +430,6 @@ ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_fk_account
 -- Delete old deprecated field
 ALTER TABLE llx_product_stock DROP COLUMN pmp;
 
--- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
-
 ALTER TABLE llx_resource ADD COLUMN asset_number    varchar(255) after ref;
 ALTER TABLE llx_resource ADD COLUMN datec           datetime DEFAULT NULL;
 ALTER TABLE llx_resource ADD COLUMN date_valid      datetime DEFAULT NULL;
@@ -454,3 +458,17 @@ CREATE TABLE llx_advtargetemailing
 )ENGINE=InnoDB;
 
 ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);
+
+
+update llx_product_batch set batch = '000000' where batch = 'Non d&eacute;fini';
+update llx_product_batch set batch = '000000' where batch = 'Non défini';
+update llx_product_batch set batch = '000000' where batch = 'Undefined';
+update llx_product_lot set batch = '000000' where batch = 'Undefined';
+update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
+
+-- At end (higher risk of error)
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
+
+

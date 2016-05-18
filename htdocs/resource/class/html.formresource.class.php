@@ -89,15 +89,16 @@ class FormResource
 
     	if ($resourcestat)
     	{
-    		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT) && ! $forcecombo)
+    		if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->RESOURCE_USE_SEARCH_TO_SELECT) && ! $forcecombo)
     		{
-    			//$minLength = (is_numeric($conf->global->COMPANY_USE_SEARCH_TO_SELECT)?$conf->global->COMPANY_USE_SEARCH_TO_SELECT:2);
-    			$out.= ajax_combobox($htmlname, $event, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+    			//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
+    			$out.= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
     		}
 
     		// Construct $out and $outarray
-    		$out.= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">'."\n";
-    		if ($showempty) $out.= '<option value="-1"></option>'."\n";
+    		$out.= '<select id="'.$htmlname.'" class="flat minwidth200" name="'.$htmlname.'">'."\n";
+    		if ($showempty) $out.= '<option value="-1">&nbsp;</option>'."\n";
+
     		$num = count($resourcestat->lines);
 
     		//var_dump($resourcestat->lines);
@@ -106,9 +107,11 @@ class FormResource
     		{
     			while ( $i < $num)
     			{
-    				$label=$langs->trans(ucfirst($resourcestat->lines[$i]->element)).' : ';
-    				$label.=$resourcestat->lines[$i]->ref?$resourcestat->lines[$i]->ref:''.$resourcestat->lines[$i]->label;
-
+    			    $resourceclass=ucfirst($resourcestat->lines[$i]->element);
+    			    
+    				$label=$resourcestat->lines[$i]->ref?$resourcestat->lines[$i]->ref:''.$resourcestat->lines[$i]->label;
+    				if ($resourceclass != 'Dolresource') $label.=' ('.$langs->trans($resourceclass).')';
+    				
     				if ($selected > 0 && $selected == $resourcestat->lines[$i]->id)
     				{
     					$out.= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';

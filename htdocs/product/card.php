@@ -1409,7 +1409,9 @@ else
             $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
-            dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+            $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+            
+            dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
             
             
             print '<div class="fichecenter">';
@@ -1874,7 +1876,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<input type="hidden" name="action" value="addin">';
 
-	    print load_fiche_titre($langs->trans("Add"),'','');
+	    print load_fiche_titre($langs->trans("AddToDraft"),'','');
 		
 		dol_fiche_head('');
 

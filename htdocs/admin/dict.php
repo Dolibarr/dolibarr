@@ -1553,7 +1553,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+	if (! empty($conf->accounting->enabled)) $formaccountancy = new FormVentilation($db);
 
 	foreach ($fieldlist as $field => $value)
 	{

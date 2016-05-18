@@ -607,7 +607,8 @@ class Product extends CommonObject
     }
 
 	/**
-	 *	Update a record into database
+	 *	Update a record into database.
+	 *  If batch flag is set to on, we create records into llx_product_batch
 	 *
 	 *	@param	int		$id         Id of product
 	 *	@param  User	$user       Object user making update
@@ -672,25 +673,46 @@ class Product extends CommonObject
                 $org->fetch($this->id);
                 $this->oldcopy=$org;
             }
-            // test if batch management is activated on existing product
+            
+            // Test if batch management is activated on existing product
+            // If yes, we create missing entries into product_batch
             if ($this->hasbatch() && !$this->oldcopy->hasbatch())
             {
+                //$valueforundefinedlot = 'Undefined';  // In previous version, 39 and lower
+                $valueforundefinedlot = '000000';
+
+                dol_syslog("Flag batch of product id=".$this->id." is set to ON, so we will create missing records into product_batch");
+
                 $this->load_stock();
-                foreach ($this->stock_warehouse as $idW => $ObjW)
+                foreach ($this->stock_warehouse as $idW => $ObjW)   // For each warehouse where we have stocks defined for this product (for each lines in product_stock)
                 {
                     $qty_batch = 0;
-                    foreach ($ObjW->detail_batch as $detail)
+                    foreach ($ObjW->detail_batch as $detail)    // Each lines of detail in product_batch of the current $ObjW = product_stock
                     {
+                        if ($detail->batch == $valueforundefinedlot || $detail->batch == 'Undefined') 
+                        {
+                            // We discard this line, we will create it later
+                            $sqlclean="DELETE FROM ".MAIN_DB_PREFIX."product_batch WHERE batch in('Undefined', '".$valueforundefinedlot."') AND fk_product_stock = ".$ObjW->id;
+                            $result = $this->db->query($sqlclean);
+                            if (! $result)
+                            {
+                                dol_print_error($this->db);
+                                exit;
+                            }
+                            continue;
+                        }
+                    
                         $qty_batch += $detail->qty;
                     }
-                    // Quantities in batch details are not same same as stock quantity
-                    // So we add a default batch record
+                    // Quantities in batch details are not same as stock quantity,
+                    // so we add a default batch record to complete and get same qty in parent and child table
                     if ($ObjW->real <> $qty_batch)
                     {
                         $ObjBatch = new Productbatch($this->db);
-                        $ObjBatch->batch = $langs->trans('BatchDefaultNumber');
-                        $ObjBatch->qty = $ObjW->real - $qty_batch;
+                        $ObjBatch->batch = $valueforundefinedlot; 
+                        $ObjBatch->qty = ($ObjW->real - $qty_batch);
                         $ObjBatch->fk_product_stock = $ObjW->id;
+
                         if ($ObjBatch->create($user,1) < 0)
                         {
                             $error++;
@@ -699,6 +721,7 @@ class Product extends CommonObject
                     }
                 }
             }
+
 	        // For automatic creation
 	        if ($this->barcode == -1) $this->barcode = $this->get_barcode($this,$this->barcode_type_code);
 
@@ -744,6 +767,7 @@ class Product extends CommonObject
 	        $sql.= ", price_autogen = " . (!$this->price_autogen ? 0 : 1);
 			$sql.= ", fk_price_expression = ".($this->fk_price_expression != 0 ? $this->fk_price_expression : 'NULL');
 			$sql.= ", fk_user_modif = ".($user->id > 0 ? $user->id : 'NULL');
+			// stock field is not here because it is a denormalized value from product_stock.
 			$sql.= " WHERE rowid = " . $id;
 
 			dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -805,7 +829,8 @@ class Product extends CommonObject
 							$res = @rename($olddir, $newdir);
 							if (! $res)
 							{
-								$this->error='ErrorFailToMoveDir';
+							    $langs->load("errors");
+								$this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
 								$error++;
 							}
 						}
@@ -1290,21 +1315,21 @@ class Product extends CommonObject
 	 *  @param     	double	$qty                Quantity asked
 	 *	@param		int		$product_id			Filter on a particular product id
 	 * 	@param		string	$fourn_ref			Filter on a supplier ref
-	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 si ok mais rien trouve, id_product si ok et trouve. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
+	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 */
 	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
 		global $conf;
 		$result = 0;
 
-		// We do select by searching with qty and prodfournprice
+		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
 		if ($qty) $sql.= " AND pfp.quantity <= ".$qty;
 
-		dol_syslog(get_class($this)."::get_buyprice", LOG_DEBUG);
+		dol_syslog(get_class($this)."::get_buyprice first search by prodfournprice/qty", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1333,9 +1358,9 @@ class Product extends CommonObject
 				$result=$obj->fk_product;
 				return $result;
 			}
-			else
+			else // If not found
 			{
-				// We do same select again but searching with qty, ref and id product
+				// We do a second search by doing a select again but searching with qty, ref and id product
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
 				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -1345,7 +1370,7 @@ class Product extends CommonObject
 				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 
-				dol_syslog(get_class($this)."::get_buyprice", LOG_DEBUG);
+				dol_syslog(get_class($this)."::get_buyprice second search from qty/ref/product_id", LOG_DEBUG);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
@@ -1597,7 +1622,7 @@ class Product extends CommonObject
      *  @param	int		$ignore_expression  Ignores the math expression for calculating price and uses the db value instead
 	 *  @return int     					<0 if KO, 0 if not found, >0 if OK
 	 */
-	function fetch($id='', $ref='', $ref_ext='', $ignore_expression = 0)
+	function fetch($id='', $ref='', $ref_ext='', $ignore_expression=0)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
@@ -2287,6 +2312,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.rowid = d.fk_facture";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		else $sql.=" AND d.fk_product > 0";
 		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND f.fk_soc = s.rowid";
 		$sql.= " AND f.entity IN (".getEntity('facture', 1).")";
@@ -2319,6 +2345,7 @@ class Product extends CommonObject
         if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE f.rowid = d.fk_facture_fourn";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		else $sql.=" AND d.fk_product > 0";
 		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND f.fk_soc = s.rowid";
 		$sql.= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
@@ -2351,6 +2378,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE p.rowid = d.fk_propal";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		else $sql.=" AND d.fk_product > 0";
 		if ($filteronproducttype >= 0) $sql.= " AND prod.rowid = d.fk_product AND prod.fk_product_type =".$filteronproducttype;
 		$sql.= " AND p.fk_soc = s.rowid";
 		$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
@@ -2362,6 +2390,38 @@ class Product extends CommonObject
 		return $this->_get_stats($sql,$mode);
 	}
 
+	/**
+	 *  Return nb of units or proposals in which product is included
+	 *
+	 *  @param  	int		$socid                   Limit count on a particular third party id
+	 * 	@param		string	$mode		             'byunit'=number of unit, 'bynumber'=nb of entities
+	 *  @param      int     $filteronproducttype     0=To filter on product only, 1=To filter on services only
+	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 */
+	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1)
+	{
+		global $conf;
+		global $user;
+
+		$sql = "SELECT sum(d.qty), date_format(p.date_valid, '%Y%m')";
+		if ($mode == 'bynumber') $sql.= ", count(DISTINCT p.rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as d, ".MAIN_DB_PREFIX."supplier_proposal as p, ".MAIN_DB_PREFIX."societe as s";
+        if ($filteronproducttype >= 0) $sql.=", ".MAIN_DB_PREFIX."product as prod";		
+		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " WHERE p.rowid = d.fk_supplier_proposal";
+		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		else $sql.=" AND d.fk_product > 0";
+		if ($filteronproducttype >= 0) $sql.= " AND prod.rowid = d.fk_product AND prod.fk_product_type =".$filteronproducttype;
+		$sql.= " AND p.fk_soc = s.rowid";
+		$sql.= " AND p.entity IN (".getEntity('propal', 1).")";
+		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
+		$sql.= " GROUP BY date_format(p.date_valid,'%Y%m')";
+		$sql.= " ORDER BY date_format(p.date_valid,'%Y%m') DESC";
+
+		return $this->_get_stats($sql,$mode);
+	}
+	
 	/**
 	 *  Return nb of units or orders in which product is included
 	 *
@@ -2381,6 +2441,7 @@ class Product extends CommonObject
         if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		else $sql.=" AND d.fk_product > 0";
 		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND c.fk_soc = s.rowid";
 		$sql.= " AND c.entity IN (".getEntity('commande', 1).")";
@@ -2411,6 +2472,7 @@ class Product extends CommonObject
 		if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE c.rowid = d.fk_commande";
 		if ($this->id > 0) $sql.= " AND d.fk_product =".$this->id;
+		else $sql.=" AND d.fk_product > 0";
 		if ($filteronproducttype >= 0) $sql.= " AND p.rowid = d.fk_product AND p.fk_product_type =".$filteronproducttype;
 		$sql.= " AND c.fk_soc = s.rowid";
 		$sql.= " AND c.entity IN (".getEntity('commande_fournisseur', 1).")";
@@ -2594,6 +2656,8 @@ class Product extends CommonObject
 
 		$now=dol_now();
 
+    	dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
+    	
 		if ($ref_fourn)
 		{
     		$sql = "SELECT rowid, fk_product";
@@ -2603,7 +2667,6 @@ class Product extends CommonObject
     		$sql.= " AND fk_product != ".$this->id;
     		$sql.= " AND entity = ".$conf->entity;
 
-    		dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
     		$resql=$this->db->query($sql);
     		if ($resql)
     		{
@@ -2627,7 +2690,6 @@ class Product extends CommonObject
 		$sql.= " AND fk_product = ".$this->id;
 		$sql.= " AND entity = ".$conf->entity;
 
-		dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2656,7 +2718,6 @@ class Product extends CommonObject
 				$sql.= ", 0";
 				$sql.= ")";
 
-				dol_syslog(get_class($this)."::add_fournisseur", LOG_DEBUG);
 				if ($this->db->query($sql))
 				{
 					$this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");

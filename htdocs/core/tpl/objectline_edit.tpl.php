@@ -117,7 +117,7 @@ $coldisplay=-1; // We remove first td
 	}
 
 	$coldisplay++;
-	print '<td align="right"><input type="text" class="flat" size="8" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
+	print '<td align="right"><input type="text" class="flat" size="5" id="price_ht" name="price_ht" value="' . (isset($line->pu_ht)?price($line->pu_ht,0,'',0):price($line->subprice,0,'',0)) . '"';
 	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
 

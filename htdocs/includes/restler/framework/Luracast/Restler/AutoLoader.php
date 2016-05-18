@@ -307,6 +307,10 @@ class AutoLoader
      */
     private function alias($className, $currentClass)
     {
+        // DOL_LDR 
+        if ($className == 'Luracast\Restler\string') return;
+        if ($className == 'Luracast\Restler\mixed') return;
+        
         if ($className != $currentClass
             && false !== strpos($className, $currentClass))
                 if (!class_exists($currentClass, false)

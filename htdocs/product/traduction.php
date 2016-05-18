@@ -185,7 +185,9 @@ if ($action == 'edit')
 
     dol_fiche_head($head, 'translation', $titre, 0, $picto);
     
-    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 	
 	if (! empty($object->multilangs))
 	{
@@ -227,7 +229,9 @@ else
 {
     dol_fiche_head($head, 'translation', $titre, 0, $picto);
     
-    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    
+    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
     
     $cnt_trans = 0;
 	if (! empty($object->multilangs))

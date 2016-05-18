@@ -114,7 +114,7 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
         $url=$this->api_url.'/login?login='.$login.'&password='.$password;
         // Call the API login method to save api_key for this test class
         $result=getURLContent($url, 'GET', '', 1, array());
-        //print __METHOD__." result = ".var_export($result, true)."\n";
+        print __METHOD__." result = ".var_export($result, true)."\n";
         print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
         $this->assertEquals($result['curl_error_no'],'');
         $object=json_decode($result['content'], true);

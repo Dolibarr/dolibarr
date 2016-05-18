@@ -722,8 +722,16 @@ if ($rowid > 0)
     }
     else
     {
-        print $langs->trans("SubscriptionNotReceived");
-        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    if (! $adht->cotisation)
+	    {
+	     	print $langs->trans("SubscriptionNotRecorded");
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    }
+	    else
+	    {
+	    	print $langs->trans("SubscriptionNotReceived");
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    }
     }
     print '</td></tr>';
 

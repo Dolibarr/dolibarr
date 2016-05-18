@@ -255,7 +255,8 @@ if ($resql)
 	$formProduct->loadWarehouses();
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
-	$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1;
+	$colspan_warehouse = 1;
+	if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) { $colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1; }
 	
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	

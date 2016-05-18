@@ -233,11 +233,6 @@ if ($id > 0)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border" width="100%">';
 
-	// Alias name (commercial, trademark or alias name)
-	print '<tr><td class="titelfield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-	print $object->name_alias;
-	print "</td></tr>";
-
 	// Prospect/Customer
 	print '<tr><td width="30%">'.$langs->trans('ProspectCustomer').'</td><td width="70%" colspan="3">';
 	print $object->getLibCustProspStatut();
@@ -461,8 +456,8 @@ if ($id > 0)
     }
 
 	// Categories
-	if (!empty( $conf->categorie->enabled ) && !empty( $user->rights->categorie->lire )) {
-		print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire)) {
+		print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
 		print '<td colspan="3">';
 		print $form->showCategories( $object->id, 'customer', 1 );
 		print "</td></tr>";
