@@ -1,0 +1,5 @@
+
+To upgrade a lib with composer:
+
+composer update --no-dev --no-autoloader --dry-run ccampbell/chromephp
+
