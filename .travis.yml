@@ -79,13 +79,17 @@ before_install:
 install:
 - |
   echo "Updating Composer"
-  composer self-update
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
+    composer self-update
+  fi
   echo
 
 - |
   echo "Installing Parallel Lint"
-  composer -n require jakub-onderka/php-parallel-lint ^0
-  composer -n require jakub-onderka/php-console-highlighter ^0
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
+    composer -n require jakub-onderka/php-parallel-lint ^0
+    composer -n require jakub-onderka/php-console-highlighter ^0
+  fi
   echo
 
 - |
@@ -100,13 +104,17 @@ install:
 
 - |
   echo "Installing PHP CodeSniffer"
-  composer -n require squizlabs/php_codesniffer ^2
+  if [ "$TRAVIS_PHP_VERSION" = '5.6' ]; then
+    composer -n require squizlabs/php_codesniffer ^2
+  fi
   echo
 
 - |
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
+  cat htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
+  
 
 before_script:
 - |
@@ -288,7 +296,6 @@ script:
   echo
   #cat $TRAVIS_BUILD_DIR/upgrade390400-2.log
   #cat /tmp/dolibarr_install.log
-  cat htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
   
 - |
   echo "Unit testing"
