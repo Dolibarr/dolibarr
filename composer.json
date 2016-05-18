@@ -15,9 +15,9 @@
     "require": {
         "php": ">=5.3.0",
         "ext-curl": "*",
-        "ccampbell/chromephp": "^4.1",
+        "ccampbell/chromephp": "4.1.0",
         "ckeditor/ckeditor": "dev-full/stable",
-        "mike42/escpos-php": "dev-master",
+        "mike42/escpos-php": "1.2.1",
         "mobiledetect/mobiledetectlib": "2.8.17",
         "phpoffice/phpexcel": "1.8.1",
         "restler/framework": "3.0.0-RC6",
