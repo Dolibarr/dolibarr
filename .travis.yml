@@ -109,7 +109,8 @@ install:
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
-  cat htdocs/includes/restler/framework/Luracast/Restler/AutoLoader.php
+  echo PATH=$PATH
+  ls $PATH
   
 
 before_script:
