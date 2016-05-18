@@ -103,6 +103,11 @@ install:
   composer require squizlabs/php_codesniffer ^2
   echo
 
+- |
+  echo "Adding path of binaries tools installed by composer to the PATH"
+  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
+  echo
+
 before_script:
 - |
   echo Start travis
