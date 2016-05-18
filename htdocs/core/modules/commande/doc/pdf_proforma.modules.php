@@ -64,13 +64,14 @@ class pdf_proforma extends pdf_einstein
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
+	 *  @param	string		$titlekey		Translation key to show as title of document
 	 *  @return	void
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="InvoiceProForma")
 	{
 		global $conf,$langs,$hookmanager;
 
-		parent::_pagehead($pdf, $object, $showaddress, $outputlangs, "InvoiceProForma");
+		parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
 	}
 
 }
