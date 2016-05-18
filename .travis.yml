@@ -82,6 +82,7 @@ install:
   rm $TRAVIS_BUILD_DIR/composer.json
   rm $TRAVIS_BUILD_DIR/composer.lock
   composer self-update
+  composer -n init
   composer -n config vendor-dir htdocs/includes
   echo
 
@@ -110,8 +111,6 @@ install:
   echo "Adding path of binaries tools installed by composer to the PATH"
   export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
   echo
-  echo PATH=$PATH
-  ls $TRAVIS_BUILD_DIR/htdocs/includes/bin
   
 
 before_script:
