@@ -286,7 +286,9 @@ script:
   cd -
   set +e
   echo
-
+  echo Log for upgrade2.php 3.9.0 4.0.0 MAIN_MODULE_API
+  cat $TRAVIS_BUILD_DIR/upgrade390400-2.log
+  
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see log file.
