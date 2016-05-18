@@ -84,23 +84,23 @@ install:
 
 - |
   echo "Installing Parallel Lint"
-  composer -n require --no-update jakub-onderka/php-parallel-lint ^0
-  composer -n require --no-update jakub-onderka/php-console-highlighter ^0
+  composer -n require jakub-onderka/php-parallel-lint ^0
+  composer -n require jakub-onderka/php-console-highlighter ^0
   echo
 
 - |
   echo "Installing PHP Unit"
   if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
-    composer -n require --no-update phpunit/phpunit ^4
+    composer -n require phpunit/phpunit ^4
   fi
   if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
-    composer -n require --no-update phpunit/phpunit ^5
+    composer -n require phpunit/phpunit ^5
   fi
   echo
 
 - |
   echo "Installing PHP CodeSniffer"
-  composer -n require --no-update squizlabs/php_codesniffer ^2
+  composer -n require squizlabs/php_codesniffer ^2
   echo
 
 - |
