@@ -49,7 +49,7 @@ class pdf_proforma extends pdf_einstein
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-	    
+
 		parent::__construct($db);
 
 		$this->name = "proforma";
@@ -66,7 +66,7 @@ class pdf_proforma extends pdf_einstein
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
 	 */
-	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
+	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="InvoiceProForma")
 	{
 		global $conf,$langs,$hookmanager;
 
