@@ -875,7 +875,7 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
-	padding: 0px 5px 0px 5px;
+	padding: 0px 5px 0px 3px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
