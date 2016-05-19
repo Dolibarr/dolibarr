@@ -139,7 +139,7 @@ if ($permission) {
 } 
 ?>
 
-	<form class="tagtr liste_titre formnoborder">
+	<form class="tagtr liste_titre liste_titre_add formnoborder">
 		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>
