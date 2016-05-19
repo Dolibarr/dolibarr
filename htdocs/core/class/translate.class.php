@@ -857,9 +857,10 @@ class Translate
         //print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
 		// Check if a translation is available (this can call getTradFromKey)
-		if ($this->transnoentitiesnoconv($key) != $key)
+		$tmp=$this->transnoentitiesnoconv($key);
+		if ($tmp != $key && $tmp != 'ErrorBadValueForParamNotAString')
 		{
-			return $this->transnoentitiesnoconv($key);    // Found in language array
+			return $tmp;    // Found in language array
 		}
 
 		// Check in cache
