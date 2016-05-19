@@ -654,7 +654,7 @@ if (! empty($conf->expensereport->enabled))
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 
-		$sql.= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m')";
+		$sql.= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
 		$sql.= " ORDER BY p.ref";
 
 		dol_syslog("get expense report outcome");
