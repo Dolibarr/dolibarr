@@ -832,7 +832,7 @@ div#tmenu_tooltip {
 div.tmenusep {
 <?php if ($disableimages) { ?>
 	display: none;
-<? } ?>
+<?php } ?>
 }
 
 div.tmenudiv {
@@ -1783,27 +1783,30 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
 	border-bottom: 0px !important;
+	/*
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
+	*/
 
 	background-image: none !important;
 }
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
-	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	margin: 0 0.2em 0 0.2em !important;
 
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
-	border-top: 1px solid #BBB !important;
-
+	border-top: 2px solid #111 !important;
+	/*
+	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
+	*/
 }
 a.tab:hover
 {
@@ -2202,7 +2205,15 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
+/*
 #tablelines tr.liste_titre:first-child td, form.formnoborder div, tr.liste_titre.trnoborder td {
+    border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
+*/
+.liste_titre_add td
+{
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;

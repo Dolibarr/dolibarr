@@ -878,7 +878,7 @@ div#tmenu_tooltip {
 div.tmenusep {
 <?php if ($disableimages) { ?>
 	display: none;
-<? } ?>
+<?php } ?>
 }
 
 div.tmenudiv {
