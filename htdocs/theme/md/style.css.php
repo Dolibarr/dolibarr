@@ -1805,18 +1805,19 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
+
+	border-right: 1px solid #AAA !important;
+	border-left: 1px solid #AAA !important;
+	border-top: 2px solid #111 !important;
+	/*
 	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 
-	border-right: 1px solid #AAA !important;
-	border-left: 1px solid #AAA !important;
-	border-top: 1px solid #BBB !important;
-
 	-moz-border-radius:3px 3px 0px 0px;
 	-webkit-border-radius:3px 3px 0px 0px;
 	border-radius:3px 3px 0px 0px;
-
+	*/
 }
 a.tab:hover
 {

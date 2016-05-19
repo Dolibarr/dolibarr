@@ -1142,17 +1142,15 @@ form#login {
 
 	background-color: #FFFFFF;
 
-	-moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
+	-moz-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
+	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
+	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	/*-moz-box-shadow: 3px 2px 20px #CCC;
     -webkit-box-shadow: 3px 2px 20px #CCC;
     box-shadow: 3px 2px 20px #CCC;*/
 
 	border-radius: 5px;
 	border:solid 1px rgba(80,80,80,.4);
-
-	border-top:solid 1px #f8f8f8;
 }
 .login_main_message {
 	text-align: center;
@@ -2212,7 +2210,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
     border-top-style: solid;
 }
 */
-.liste_titre_add td
+.liste_titre_add td, .liste_titre_add .tagtd
 {
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
