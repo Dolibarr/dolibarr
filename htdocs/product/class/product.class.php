@@ -2998,7 +2998,7 @@ class Product extends CommonObject
 
 
 	/**
-	 *  Return all Father products fo current product
+	 *  Return all parent products for current product (first level only)
 	 *
 	 *  @return 	array 		Array of product
 	 */
