@@ -792,12 +792,12 @@ img.photoref {
 /* ============================================================================== */
 
 <?php
-$minwidthtmenu=66;		/* minimul widht for one top menu entry */
+$minwidthtmenu=66;		/* minimum width for one top menu entry */
 $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
 div#id-top {
@@ -814,7 +814,7 @@ div#id-top {
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.1)), color-stop(1, rgba(0,0,0,.4)) );
 	<?php } ?>
 	<?php if ($disableimages) { ?>
-	height: 28px;
+	height: 34px;
 	<?php } else { ?>
 	height: <?php print $heightmenu2; ?>px;
 	<?php } ?>
@@ -827,6 +827,12 @@ div#tmenu_tooltip {
 <?php } else { ?>
 	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
 <?php } ?>
+}
+
+div.tmenusep {
+<?php if ($disableimages) { ?>
+	display: none;
+<? } ?>
 }
 
 div.tmenudiv {
@@ -933,12 +939,13 @@ div.tmenuleft
 }
 div.tmenucenter
 {
-	padding-top: <?php print $disableimages?'4':'2'; ?>px;
 	padding-left: 0px;
 	padding-right: 0px;
 	<?php if ($disableimages) { ?>
-	height: 24px;
+	padding-top: 8px;
+	height: 26px;
 	<?php } else { ?>
+	padding-top: 2px;
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
     width: 100%;
@@ -948,7 +955,12 @@ div.menu_titre {
 }
 .mainmenuaspan
 {
+<?php if ($disableimages) { ?>
+	padding-left: 4px;
+	padding-right: 2px;
+<?php } else { ?>
 	padding-right: 4px;
+<?php } ?>
 }
 
 div.mainmenu {
@@ -1185,7 +1197,7 @@ div.login_block {
 	position: absolute;
 	text-align: right;
 	<?php print $right; ?>: 5px;
-	top: 3px;
+	top: 2px;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
@@ -4229,8 +4241,11 @@ img.demothumb {
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 8; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.7, 0) + 8; ?>px)
 {
+	div.mainmenu {
+		height: 23px;
+	}
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
   		text-overflow: clip;
@@ -4245,11 +4260,16 @@ img.demothumb {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: 570px)
+@media only screen and (max-width: 605px)
 {
 	/* Reduce login top right info */
 	.usertextatoplogin {
 		display: none;
+	}
+	.help {
+	<?php if ($disableimages) {  ?>
+		display: none;
+	<?php } ?>
 	}
 	div#tmenu_tooltip {
 	<?php if (GETPOST("optioncss") == 'print') {  ?>
@@ -4259,13 +4279,19 @@ img.demothumb {
 	<?php } ?>
 	}
 	div.login_block {
-		top: 4px;
-		max-width: 82px;
+		top: 2px;
+		<?php if ($disableimages) {  ?>
+			max-width: 100px;
+		<?php } else { ?>
+			max-width: 82px;
+		<?php } ?>
 	}
     li.tmenu, li.tmenusel {
         min-width: 30px;
     }
-
+	div.mainmenu {
+		height: 23px;
+	}
 	div.tmenucenter {
   		text-overflow: clip;
 	}

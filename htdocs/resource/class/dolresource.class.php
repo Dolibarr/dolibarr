@@ -757,14 +757,16 @@ class Dolresource extends CommonObject
     }
 
 
-    /*
+    /**
      * Return an array with resources linked to the element
-     *
-     *
+     * 
+     * @param string    $element        Element
+     * @param int       $element_id     Id
+     * @param string    $resource_type  Type
+     * @return array                    Aray of resources
      */
     function getElementResources($element,$element_id,$resource_type='')
     {
-
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';

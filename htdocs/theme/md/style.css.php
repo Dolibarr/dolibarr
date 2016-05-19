@@ -843,12 +843,12 @@ img.photoref {
 /* ============================================================================== */
 
 <?php
-$minwidthtmenu=66;
+$minwidthtmenu=66;      /* minimum width for one top menu entry */
 $heightmenu=48;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_MD_DISABLE_IMAGE)) { $heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_MD_DISABLE_IMAGE)) { $heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
 div#tmenu_tooltip {
@@ -873,6 +873,12 @@ div#tmenu_tooltip {
 <?php } else { ?>
 	/* padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px; */
 <?php } ?>
+}
+
+div.tmenusep {
+<?php if ($disableimages) { ?>
+	display: none;
+<? } ?>
 }
 
 div.tmenudiv {
@@ -972,7 +978,10 @@ li.tmenusel, li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
 .tmenuend .tmenuleft { width: 0px; }
-/* .tmenuend { display: none; } */
+/* .tmenuend { display: none; } We keep tmenuend it to show background for rest of line */
+.tmenuend .tmenucenter {
+    width: 1px;
+}
 div.tmenuleft
 {
 	float: <?php print $left; ?>;
@@ -987,10 +996,15 @@ div.tmenuleft
 }
 div.tmenucenter
 {
-	padding-top: <?php echo $disableimages?'10':'2'; ?>px;
 	padding-left: 0px;
 	padding-right: 0px;
+	<?php if ($disableimages) { ?>
+	padding-top: 10px;
+	height: 26px;
+	<?php } else { ?>
+	padding-top: 2px;
     height: <?php print $heightmenu; ?>px;
+	<?php } ?>
     width: 100%;
 }
 div.menu_titre {
@@ -998,7 +1012,12 @@ div.menu_titre {
 }
 .mainmenuaspan
 {
+<?php if ($disableimages) { ?>
+	padding-left: 4px;
+	padding-right: 2px;
+<?php } else { ?>
 	padding-right: 4px;
+<?php } ?>
 }
 
 div.mainmenu {
@@ -4072,6 +4091,7 @@ img.demothumb {
 
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
+/* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
 @media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 200; ?>px)
 {
@@ -4119,10 +4139,6 @@ img.demothumb {
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
-	/* Reduce login top right info */
-	.usertextatoplogin {
-		display: none;
-	}
 	div#tmenu_tooltip {
 	<?php if (GETPOST("optioncss") == 'print') {  ?>
 		display:none;
@@ -4130,10 +4146,6 @@ img.demothumb {
 		/* padding-<?php echo $right; ?>: 78px; */
 	<?php } ?>
 	}
-	div.login_block {
-		top: 9px;
-	}
-
     li.tmenu, li.tmenusel {
         min-width: 30px;
     }

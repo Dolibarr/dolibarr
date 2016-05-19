@@ -1991,7 +1991,10 @@ class User extends CommonObject
             if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
         }
 
-        $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        
+        if ($option == 'leave') $link.= '<a href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$this->id.'"';
+        else $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
