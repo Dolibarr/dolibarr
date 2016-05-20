@@ -1875,7 +1875,7 @@ class Expedition extends CommonObject
 			$this->billed=0;
 			
 			// Call trigger
-			$result=$this->call_trigger('SHIPPING_REOPENED',$user);
+			$result=$this->call_trigger('SHIPPING_REOPEN',$user);
 			if ($result < 0) {
 				return -1;
 			}
