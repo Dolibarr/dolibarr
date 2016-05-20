@@ -1806,6 +1806,14 @@ class Expedition extends CommonObject
 		{
 			// TODO: Add option/checkbox to set order billed if 100% of order is shipped
 			$this->statut=2;
+			
+			// Call trigger
+			$result=$this->call_trigger('SHIPPING_CLOSED',$user);
+			if ($result < 0) { 
+				return -1;
+			}
+			// End call triggers
+			
 			return 1;
 		}
 		else
@@ -1831,6 +1839,15 @@ class Expedition extends CommonObject
 		{
 			$this->statut=2;
 			$this->billed=1;
+			
+			// Call trigger
+			$result=$this->call_trigger('SHIPPING_BILLED',$user);
+			if ($result < 0) { 
+				return -1; 
+			}
+			// End call triggers
+						
+			
 			return 1;
 		}
 		else
@@ -1856,6 +1873,13 @@ class Expedition extends CommonObject
 		{
 			$this->statut=1;
 			$this->billed=0;
+			
+			// Call trigger
+			$result=$this->call_trigger('SHIPPING_REOPENED',$user);
+			if ($result < 0) {
+				return -1;
+			}
+			
 			return 1;
 		}
 		else
