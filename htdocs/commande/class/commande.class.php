@@ -464,6 +464,12 @@ class Commande extends CommonOrder
                     }
                 }
 
+                if (!$error) {
+                	// Call trigger
+                	$result=$this->call_trigger('ORDER_SETDRAFT',$user);
+                	if ($result < 0) $error++;
+                }
+                
                 if (!$error)
                 {
                     $this->statut=self::STATUS_DRAFT;
