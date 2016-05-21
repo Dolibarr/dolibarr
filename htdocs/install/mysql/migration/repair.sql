@@ -71,7 +71,7 @@ DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product
 DROP TABLE tmp_llx_product_batch;
 DROP TABLE tmp_llx_product_batch2;
 CREATE TABLE tmp_llx_product_batch AS select fk_product_stock, eatby, sellby, batch, SUM(qty) as qty, COUNT(rowid) as nb FROM llx_product_batch GROUP BY fk_product_stock, eatby, sellby, batch HAVING COUNT(rowid) > 1;
-CREATE TABLE tmp_llx_product_batch2 AS select pb.rowid, pb.fk_product_stock, pb.eatby, pb.sellby, pb.batch, pb.qty from llx_product_batch as pb, tmp_llx_product_batch as tpb where pb.fk_product_stock = tpb.fk_product_stock and COALESCE(pb.eatby, '') = COALESCE(tpb.eatby,'') and COALESCE(pb.sellby, '') = COALESCE(tpb.sellby, '') and pb.batch = tpb.batch
+CREATE TABLE tmp_llx_product_batch2 AS select pb.rowid, pb.fk_product_stock, pb.eatby, pb.sellby, pb.batch, pb.qty from llx_product_batch as pb, tmp_llx_product_batch as tpb where pb.fk_product_stock = tpb.fk_product_stock and COALESCE(pb.eatby, '') = COALESCE(tpb.eatby,'') and COALESCE(pb.sellby, '') = COALESCE(tpb.sellby, '') and pb.batch = tpb.batch;
 --select * from tmp_llx_product_batch;
 --select * from tmp_llx_product_batch2;
 DELETE FROM llx_product_batch WHERE rowid IN (select rowid FROM tmp_llx_product_batch2);
