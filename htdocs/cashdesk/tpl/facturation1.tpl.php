@@ -203,7 +203,7 @@ $langs->load("cashdesk");
 			?>
 				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
-			print $langs->trans("DateEcheance").' :';
+			print $langs->trans("DateDue").' :';
 			print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
 			print '</div>';
 			?>

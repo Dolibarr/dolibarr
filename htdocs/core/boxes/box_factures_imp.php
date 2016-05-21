@@ -96,7 +96,7 @@ class box_factures_imp extends ModeleBoxes
 				$now=dol_now();
 
 				$line = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateDue')).': %s)';
 
 				while ($line < $num)
 				{
