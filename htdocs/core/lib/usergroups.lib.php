@@ -465,6 +465,8 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	}
 	else
 	{
+	    $default='515870';
+	    if ($conf->theme == 'md') $default='5A3278';
 	    $var=!$var;
 	    print '<tr '.$bc[$var].'>';
 	    print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
@@ -479,7 +481,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 			if ($color) print '<input type="text" class="colorthumb" disabled="disabled" style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
 			else print $langs->trans("Default");
 	   	}
-    	print ' &nbsp; ('.$langs->trans("Default").': <strong>515870</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+    	print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
 	}
 	
