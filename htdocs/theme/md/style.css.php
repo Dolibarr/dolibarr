@@ -1453,7 +1453,7 @@ td.barre_select {
 td.photo {
 	background: #F4F4F4;
 	color: #000000;
-    border: 1px solid #b3c5cc;
+    border: 1px solid #bbb;
 }
 
 /* ============================================================================== */
