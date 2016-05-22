@@ -60,7 +60,6 @@ use \Luracast\Restler\Defaults;
 $api = new DolibarrApi($db);
 
 $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
-$api->r->addAPIClass('DolibarrApiInit',''); // Just for url root page
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 

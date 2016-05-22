@@ -51,7 +51,6 @@ use \Luracast\Restler\Defaults;
 $api = new DolibarrApi($db);
 
 $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
-$api->r->addAPIClass('DolibarrApiInit',''); // Just for url root page
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
@@ -149,7 +148,6 @@ llxHeader();
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
 
-
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
@@ -165,19 +163,34 @@ print $message;
 print '<br>';
 print '<br>';
 
+$oldclass='';
+
 print $langs->trans("ListOfAvailableAPIs").':<br>';
 foreach($listofapis['v1'] as $key => $val)
 {
     if ($key == 'login') continue;
     if ($key)
     {
-        //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
-        $url=$urlwithroot.'/api/index.php/'.$key;
-        $url.='?api_key=token';
-        print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-        
+        foreach($val as $method => $val2)
+        {
+            $newclass=$val2['className'];
+            if ($oldclass != $newclass) 
+            {
+                print "\n<br>\n".$langs->trans("Class").': '.$newclass.'<br>'."\n";
+                $oldclass = $newclass;
+            }
+            //print $key.' - '.$val['classname'].' - '.$val['fullpath']." - ".DOL_MAIN_URL_ROOT.'/api/index.php/'.strtolower(preg_replace('/Api$/','',$val['classname']))."/xxx<br>\n";
+            $url=$urlwithroot.'/api/index.php/'.$key;
+            $url.='?api_key=token';
+            print img_picto('','object_globe.png').' '.$method.' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
+        }        
     }
 }
+
+print '<br>';
+print '<br>';
+print $langs->trans("OnlyActiveElementsAreExposed", DOL_URL_ROOT.'/admin/modules.php');
+
 
 llxFooter();
 $db->close();
