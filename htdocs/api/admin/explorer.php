@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,11 +20,7 @@
  * 	\defgroup   api     Module DolibarrApi
  *  \brief      API loader
  *				Search files htdocs/<module>/class/api_<module>.class.php
- *  \file       htdocs/api/indexphp
- *
- *	@todo	User authentication with api_key
- *
- *
+ *  \file       htdocs/api/admin/explorer.php
  */
 
 require_once '../../main.inc.php';
@@ -169,11 +166,15 @@ print $langs->trans("ListOfAvailableAPIs").':<br>';
 foreach($listofapis['v1'] as $key => $val)
 {
     if ($key == 'login') continue;
+    
     if ($key)
     {
         foreach($val as $method => $val2)
         {
             $newclass=$val2['className'];
+
+            if (preg_match('/restler/i', $newclass)) continue;
+            
             if ($oldclass != $newclass) 
             {
                 print "\n<br>\n".$langs->trans("Class").': '.$newclass.'<br>'."\n";
