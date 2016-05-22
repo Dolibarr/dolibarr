@@ -48,14 +48,13 @@ class Categorie extends CommonObject
 	const TYPE_CUSTOMER = 2;
 	const TYPE_MEMBER = 3;
 	const TYPE_CONTACT = 4;
-	const TYPE_USER = 4;  // categorie contact and user are same
-    // bank account
-    const TYPE_ACCOUNT = 5;
+	const TYPE_USER = 4;    // categorie contact and user are same !
+    const TYPE_ACCOUNT = 5; // bank account
 
 	/**
 	 * @var array ID mapping from type string
 	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
+	 * @note This array should be remove in future, once previous constants are moved to the string value.
 	 */
 	private $MAP_ID = array(
 		'product'  => 0,
@@ -1274,14 +1273,12 @@ class Categorie extends CommonObject
 	 * Should be named getListOfCategForObject
 	 *
 	 * @param   int    $id   Id of element
-	 * @param   string $type Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode
-	 *                       (0, 1, 2, ...) is deprecated.
+	 * @param   string $type Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
 	 * @param   string $mode 'object'=Get array of fetched category instances, 'label'=Get array of category
 	 *                       labels, 'id'= Get array of category IDs
-	 *
 	 * @return  mixed        Array of category objects or < 0 if KO
 	 */
-	function containing($id,$type,$mode='object')
+	function containing($id, $type, $mode='object')
 	{
 		$cats = array();
 

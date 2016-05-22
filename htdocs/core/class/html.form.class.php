@@ -3145,7 +3145,7 @@ class Form
     /**
      *    Return list of categories having choosed type
      *
-     *    @param	int		$type				Type de categories (0=product, 1=supplier, 2=customer, 3=member)
+     *    @param	int		$type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
      *    @param    string	$selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
      *    @param    string	$htmlname			HTML field name
      *    @param    int		$maxlength      	Maximum length for labels
@@ -3161,6 +3161,12 @@ class Form
 
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
         
+		// For backward compatibility
+		if (is_numeric($type))
+		{
+		    dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
+		}
+		
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
