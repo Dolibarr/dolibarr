@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 $langs->load("errors");
 $langs->load("admin");
 
-$mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):(isset($_SESSION['mode'])?$_SESSION['mode']:0);
+$mode=GETPOST('mode', 'alpha')?GETPOST('mode', 'alpha'):0;
 $action=GETPOST('action','alpha');
 $value=GETPOST('value', 'alpha');
 $page_y=GETPOST('page_y','int');
@@ -106,8 +106,6 @@ if (GETPOST('buttonreset'))
  */
 
 $form = new Form($db);
-
-$_SESSION["mode"]=$mode;
 
 $help_url='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('',$langs->trans("Setup"),$help_url);
