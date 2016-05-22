@@ -1536,7 +1536,7 @@ class Commande extends CommonOrder
                 $this->id					= $obj->rowid;
                 $this->ref					= $obj->ref;
                 $this->ref_client			= $obj->ref_client;
-                $this->ref_customer			= $obj->ref_customer;
+                $this->ref_customer			= $obj->ref_client;
                 $this->ref_ext				= $obj->ref_ext;
                 $this->ref_int				= $obj->ref_int;
                 $this->socid				= $obj->fk_soc;
