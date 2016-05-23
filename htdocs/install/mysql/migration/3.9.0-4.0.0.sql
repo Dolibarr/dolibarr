@@ -463,8 +463,14 @@ ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (na
 update llx_product_batch set batch = '000000' where batch = 'Non d&eacute;fini';
 update llx_product_batch set batch = '000000' where batch = 'Non défini';
 update llx_product_batch set batch = '000000' where batch = 'Undefined';
+
+update llx_product_batch set batch = '000000' where batch = '';
+update llx_product_batch set batch = '000000' where batch = '';
+update llx_product_batch set batch = '000000' where batch = '';
+
 update llx_product_lot set batch = '000000' where batch = 'Undefined';
 update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
+
 
 -- At end (higher risk of error)
 

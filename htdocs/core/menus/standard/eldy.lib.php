@@ -51,16 +51,16 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	if (empty($noout)) print_start_menu_array();
 
 	// Show/Hide vertical menu
-	if (GETPOST('testhidemenu') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+	if (GETPOST('testmenuhider') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
     	$showmode=1;
     	$classname = 'class="tmenu"';
-    	$idsel='home';
+    	$idsel='menu';
 	
     	if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
-    	if (empty($noout)) print_text_menu_entry($langs->trans("XXX"), 1, '#', $id, $idsel, $classname, $atarget);
+    	if (empty($noout)) print_text_menu_entry('', 1, '#', $id, $idsel, $classname, $atarget);
     	if (empty($noout)) print_end_menu_entry($showmode);
-    	$menu->add('#', $langs->trans("XXX"), 0, $showmode, $atarget, "xxx", '');
+    	$menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
 	}
 	
 	// Home

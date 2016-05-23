@@ -95,7 +95,7 @@ class box_factures extends ModeleBoxes
 				$now=dol_now();
 
 				$line = 0;
-				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateEcheance')).': %s)';
+				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 while ($line < $num) {
                     $objp = $db->fetch_object($result);
@@ -118,7 +118,7 @@ class box_factures extends ModeleBoxes
 
 					$late = '';
 					if ($facturestatic->hasDelay()) {
-                        $late = img_warning(sprintf($l_due_date,dol_print_date($datelimite,'day')));
+                        $late = img_warning(sprintf($l_due_date, dol_print_date($datelimite,'day')));
                     }
 
                     $this->info_box_contents[$line][] = array(

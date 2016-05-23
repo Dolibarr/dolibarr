@@ -263,7 +263,7 @@ if ($action == 'edit')	// Edit
     print '</td></tr>';
 	
 	$var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
 	print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS);
 	print '</td></tr>';
 

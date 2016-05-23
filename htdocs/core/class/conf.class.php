@@ -123,8 +123,6 @@ class Conf
 	 */
 	function setValues($db)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::setValues");
 
 		/*
@@ -205,17 +203,19 @@ class Conf
 
 		    $db->free($resql);
 		}
-	        // Include local constants files and fetch their values to the corresponding database constants
-	        if(! empty($this->global->LOCAL_CONSTS_FILES)) {
-	            $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
-	            foreach ($filesList as $file) {
-	                $file=dol_sanitizeFileName($file);
-	                include_once DOL_DOCUMENT_ROOT . "/$file/{$file}_consts.php";
-	                foreach ($file2bddconsts as $key=>$value) {
-	                    $conf->global->$key=constant($value);
-	                }
-	            }
-	        }
+		
+        // Include other local consts.php files and fetch their values to the corresponding database constants
+        if (! empty($this->global->LOCAL_CONSTS_FILES)) {
+            $filesList = explode(":", $this->global->LOCAL_CONSTS_FILES);
+            foreach ($filesList as $file) {
+                $file=dol_sanitizeFileName($file);
+                include_once DOL_DOCUMENT_ROOT . "/".$file."/".$file."_consts.php";
+                foreach ($file2bddconsts as $key=>$value) {
+                    $this->global->$key=constant($value);
+                }
+            }
+        }
+
 		//var_dump($this->modules);
 		//var_dump($this->modules_parts['theme']);
 
@@ -398,7 +398,7 @@ class Conf
 			unset($this->global->PROJECT_USE_SEARCH_TO_SELECT);
 		}
 
-		if (! empty($conf->productbatch->enabled))
+		if (! empty($this->productbatch->enabled))
 		{
 			$this->global->STOCK_CALCULATE_ON_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
@@ -419,7 +419,7 @@ class Conf
         $this->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS = 1;
 
         // MAIN_HTML_TITLE
-        if (! isset($conf->global->MAIN_HTML_TITLE)) $conf->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';
+        if (! isset($this->global->MAIN_HTML_TITLE)) $this->global->MAIN_HTML_TITLE='noapp,thirdpartynameonly,contactnameonly,projectnameonly';
         
 		// conf->liste_limit = constante de taille maximale des listes
 		if (empty($this->global->MAIN_SIZE_LISTE_LIMIT)) $this->global->MAIN_SIZE_LISTE_LIMIT=25;
@@ -446,7 +446,7 @@ class Conf
 		// conf->mailing->email_from = email pour envoi par Dolibarr des mailings
 		$this->mailing->email_from=$this->email_from;
 		if (! empty($this->global->MAILING_EMAIL_FROM))	$this->mailing->email_from=$this->global->MAILING_EMAIL_FROM;
-		if (! isset($conf->global->MAIN_EMAIL_ADD_TRACK_ID)) $conf->global->MAIN_EMAIL_ADD_TRACK_ID=1;
+		if (! isset($this->global->MAIN_EMAIL_ADD_TRACK_ID)) $this->global->MAIN_EMAIL_ADD_TRACK_ID=1;
 		
         // Format for date (used by default when not found or not searched in lang)
         $this->format_date_short="%d/%m/%Y";            // Format of day with PHP/C tags (strftime functions)
@@ -579,7 +579,7 @@ class Conf
         		throw new Exception('Log handler does not extend LogHandlerInterface');
         	}
 
-        	if (empty($conf->loghandlers[$handler])) $this->loghandlers[$handler]=$loghandlerinstance;
+        	if (empty($this->loghandlers[$handler])) $this->loghandlers[$handler]=$loghandlerinstance;
         }
 	}
 }

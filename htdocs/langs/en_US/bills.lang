@@ -222,7 +222,6 @@ RelatedCommercialProposals=Related commercial proposals
 RelatedRecurringCustomerInvoices=Related recurring customer invoices
 MenuToValid=To valid
 DateMaxPayment=Payment due before
-DateEcheance=Due date limit
 DateInvoice=Invoice date
 NoInvoice=No invoice
 ClassifyBill=Classify invoice

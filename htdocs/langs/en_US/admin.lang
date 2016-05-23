@@ -423,7 +423,12 @@ AllBarcodeReset=All barcode values have been removed
 NoBarcodeNumberingTemplateDefined=No numbering barcode template enabled into barcode module setup.
 NoRecordWithoutBarcodeDefined=No record with no barcode value defined.
 EnableFileCache=Enable file cache
-
+ShowDetailsInPDFPageFoot=Add more details into footer of PDF files, like your company address, or manager names (to complete professional ids, capital and VAT number).
+NoDetails=No more details in footer
+DisplayCompanyInfo=Display company address
+DisplayCompanyManager=Display manager names
+DisplayCompanyInfoAndManagers=Display company and manager names 
+  
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users and groups management
