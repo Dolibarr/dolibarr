@@ -1798,6 +1798,10 @@ class Expedition extends CommonObject
 	function setClosed()
 	{
 
+		$error=0;
+		
+		$this->db->begin();
+		
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
@@ -1810,15 +1814,23 @@ class Expedition extends CommonObject
 			// Call trigger
 			$result=$this->call_trigger('SHIPPING_CLOSED',$user);
 			if ($result < 0) { 
-				return -1;
+				$error++;
 			}
-			// End call triggers
 			
+		} else {
+			$error++;
+			$this->errors[]=$this->db->lasterror;
+		}
+		
+		if (empty($error)) {
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
+			$this->db->rollback();
 			dol_print_error($this->db);
+			
 			return -1;
 		}
 	}
@@ -1830,6 +1842,9 @@ class Expedition extends CommonObject
 	 */
 	function set_billed()
 	{
+		$error=0;
+		
+		$this->db->begin();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2, billed=1';    // TODO Update only billed
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
@@ -1843,16 +1858,23 @@ class Expedition extends CommonObject
 			// Call trigger
 			$result=$this->call_trigger('SHIPPING_BILLED',$user);
 			if ($result < 0) { 
-				return -1; 
+				$error++;
 			}
-			// End call triggers
-						
 			
+		} else {
+			$error++;
+			$this->errors[]=$this->db->lasterror;
+		}
+		
+		if (empty($error)) {
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
+			$this->db->rollback();
 			dol_print_error($this->db);
+			
 			return -1;
 		}
 	}
@@ -1865,6 +1887,10 @@ class Expedition extends CommonObject
 	function reOpen()
 	{
 
+		$error=0;
+		
+		$this->db->begin();
+		
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=1';
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
@@ -1877,14 +1903,23 @@ class Expedition extends CommonObject
 			// Call trigger
 			$result=$this->call_trigger('SHIPPING_REOPEN',$user);
 			if ($result < 0) {
-				return -1;
+				$error++;
 			}
 			
+		} else {
+			$error++;
+			$this->errors[]=$this->db->lasterror;
+		}
+		
+		if (empty($error)) {
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
+			$this->db->rollback();
 			dol_print_error($this->db);
+			
 			return -1;
 		}
 	}
