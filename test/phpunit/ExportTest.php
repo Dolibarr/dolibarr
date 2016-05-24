@@ -149,21 +149,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
+        $this->assertEquals($expectedresult,$result);
 
         $model='tsv';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
+        $this->assertEquals($expectedresult,$result);
 
         $model='excel';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
+        $this->assertEquals($expectedresult,$result);
 
         return true;
     }
@@ -200,21 +200,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
     	// Build export file
     	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
-    	$this->assertEquals($result,$expectedresult);
+    	$this->assertEquals($expectedresult,$result);
 
     	$model='tsv';
 
     	// Build export file
     	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
-    	$this->assertEquals($result,$expectedresult);
+    	$this->assertEquals($expectedresult,$result);
 
     	$model='excel';
 
     	// Build export file
     	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
-    	$this->assertEquals($result,$expectedresult);
+    	$this->assertEquals($expectedresult,$result);
 */
     	return true;
     }
@@ -259,9 +259,9 @@ class ExportTest extends PHPUnit_Framework_TestCase
         	$sql = "";
 			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 			$expectedresult=1;
-	        $this->assertEquals($result, $expectedresult, 'Call build_file to export '.$exportfile.' failed');
+	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
 	        $result=dol_is_file($exportfile);
-	        $this->assertTrue($result, $expectedresult, 'File '.$exportfile.' not found');
+	        $this->assertTrue($result, 'File '.$exportfile.' not found');
         }
 
         return true;

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c2b53c577364dbe3a56137043081b511",
-    "content-hash": "8f7a86cfbc13f45e13b73c49531818cb",
+    "hash": "f666a32d1a59518b8ecc55899e829e79",
+    "content-hash": "8d110e7d8fca6eca1aa814ee35d0032b",
     "packages": [
         {
             "name": "ccampbell/chromephp",
@@ -56,12 +56,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/ckeditor/ckeditor-releases.git",
-                "reference": "e3eb254641c4c349ffc19e49bd4a1a6831b5b6d0"
+                "reference": "4a7a6d717f9a408fa8f9ea53ef2dba4d64b83e91"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/e3eb254641c4c349ffc19e49bd4a1a6831b5b6d0",
-                "reference": "e3eb254641c4c349ffc19e49bd4a1a6831b5b6d0",
+                "url": "https://api.github.com/repos/ckeditor/ckeditor-releases/zipball/4a7a6d717f9a408fa8f9ea53ef2dba4d64b83e91",
+                "reference": "4a7a6d717f9a408fa8f9ea53ef2dba4d64b83e91",
                 "shasum": ""
             },
             "type": "library",
@@ -89,27 +89,28 @@
                 "text",
                 "wysiwyg"
             ],
-            "time": "2016-03-31 16:19:25"
+            "time": "2016-05-12 15:36:04"
         },
         {
             "name": "mike42/escpos-php",
-            "version": "dev-master",
+            "version": "v1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mike42/escpos-php.git",
-                "reference": "96f05cbf460f5b67c2184ee4e91aedfbcedeb788"
+                "reference": "cfea4c4fc95516ac953e1e5b623f854632afa2ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mike42/escpos-php/zipball/96f05cbf460f5b67c2184ee4e91aedfbcedeb788",
-                "reference": "96f05cbf460f5b67c2184ee4e91aedfbcedeb788",
+                "url": "https://api.github.com/repos/mike42/escpos-php/zipball/cfea4c4fc95516ac953e1e5b623f854632afa2ee",
+                "reference": "cfea4c4fc95516ac953e1e5b623f854632afa2ee",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "4.5.*"
+                "phpunit/phpunit": "4.5.*",
+                "squizlabs/php_codesniffer": "2.*"
             },
             "type": "library",
             "autoload": {
@@ -152,7 +153,7 @@
                 "print",
                 "receipt"
             ],
-            "time": "2016-03-27 23:08:27"
+            "time": "2016-04-25 01:14:07"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -267,17 +268,17 @@
         },
         {
             "name": "restler/framework",
-            "version": "3.0.0",
+            "version": "3.0.0-RC6",
             "target-dir": "Luracast/Restler",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Luracast/Restler-Framework.git",
-                "reference": "6ee10b3e5dbc6376916fed55ec2340a37cce436b"
+                "reference": "bfe1139b233852b745c6a0ec14d7244ceb3b3fc6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Luracast/Restler-Framework/zipball/6ee10b3e5dbc6376916fed55ec2340a37cce436b",
-                "reference": "6ee10b3e5dbc6376916fed55ec2340a37cce436b",
+                "url": "https://api.github.com/repos/Luracast/Restler-Framework/zipball/bfe1139b233852b745c6a0ec14d7244ceb3b3fc6",
+                "reference": "bfe1139b233852b745c6a0ec14d7244ceb3b3fc6",
                 "shasum": ""
             },
             "require": {
@@ -286,23 +287,14 @@
             "replace": {
                 "luracast/restler": "3.*"
             },
-            "require-dev": {
-                "bshaffer/oauth2-server-php": "v1.0",
-                "luracast/explorer": "*",
-                "mustache/mustache": "dev-master",
-                "rodneyrehm/plist": "dev-master",
-                "symfony/yaml": "*",
-                "twig/twig": "v1.13.0",
-                "zendframework/zendamf": "dev-master"
-            },
             "suggest": {
-                "bshaffer/oauth2-server-php": "Restler can provide OAuth2 authentication using this library (see require-dev for details)",
-                "luracast/explorer": "Restler's very own api explorer (see require-dev for details)",
-                "mustache/mustache": "Restler can render HtmlView using mustache/handlebar templates (see require-dev for details)",
-                "rodneyrehm/plist": "Restler supports tho Apple plist xml format (see require-dev for details)",
-                "symfony/yaml": "Restler can produce content in yaml format as well (see require-dev for details)",
-                "twig/twig": "Restler can render HtmlView using twig templates (see require-dev for details)",
-                "zendframework/zendamf": "Support for the amf document format  (see require-dev for details)"
+                "bshaffer/oauth2-server-php": "If you want to use OAuth2 for authentication",
+                "illuminate/view": "If you want to use laravel blade templates with Html format",
+                "mustache/mustache": "If you want to use mustache/handlebar templates with Html format",
+                "rodneyrehm/plist": "If you need Apple plist binary/xml format",
+                "symfony/yaml": "If you need YAML format",
+                "twig/twig": "If you want to use twig templates with Html format",
+                "zendframework/zendamf": "If you need AMF format"
             },
             "type": "library",
             "extra": {
@@ -323,10 +315,6 @@
                 {
                     "name": "Luracast",
                     "email": "arul@luracast.com"
-                },
-                {
-                    "name": "Nick nickl- Lombard",
-                    "email": "github@jigsoft.co.za"
                 }
             ],
             "description": "Just the Restler Framework without the tests and examples",
@@ -337,7 +325,7 @@
                 "rest",
                 "server"
             ],
-            "time": "2015-08-04 07:52:49"
+            "time": "2016-02-28 15:57:37"
         },
         {
             "name": "tecnickcom/tcpdf",
@@ -408,7 +396,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "ckeditor/ckeditor": 20,
-        "mike42/escpos-php": 20
+        "restler/framework": 5
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -102,7 +102,9 @@ if ($id > 0 || ! empty($ref))
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$product,$action);    // Note that $action and $object may have been modified by hook
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+        
+		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
         print '<div class="fichecenter">';
         

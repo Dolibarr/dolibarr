@@ -190,7 +190,7 @@ foreach($listofstatus as $status)
         print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
         print "</tr>\n";
     }
-    if ($status==4 && $bool==false) $bool=true;
+    if ($status==4 && ! $bool) $bool=true;
     else $bool=false;
 }
 if (! empty($conf->use_javascript_ajax))
@@ -210,7 +210,7 @@ foreach($listofstatus as $status)
     	print '<tr '.$bc[$var].'>';
     	print '<td>'.$staticcontratligne->LibStatut($status,0,($bool?1:0)).'</td>';
     	print '<td align="right"><a href="services.php?mode='.$status.($bool?'&filter=expired':'').'">'.($nb[$status.$bool]?$nb[$status.$bool]:0).' '.$staticcontratligne->LibStatut($status,3,($bool?1:0)).'</a></td>';
-    	if ($status==4 && $bool==false) $bool=true;
+    	if ($status==4 && ! $bool) $bool=true;
     	else $bool=false;
         print "</tr>\n";
     }

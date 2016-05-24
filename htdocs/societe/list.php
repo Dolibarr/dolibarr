@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015       Florian Henry      		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +203,7 @@ if (empty($reshook))
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $search_nom='';
-    $search_categ='';
+    $search_categ=0;
     $search_sale='';
 	$search_barcode="";
     $search_customer_code='';
@@ -360,20 +361,20 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+// We'll need this table joined to the select in order to filter by categ
+if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We'll need this table joined to the select in order to filter by categ
 $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-// We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)           $sql.= " AND s.rowid = ".$socid;
 if ($search_sale)     $sql.= " AND s.rowid = sc.fk_soc";        // Join for the needed table to filter by sale
-if ($search_categ)    $sql.= " AND s.rowid = cs.fk_soc";   // Join for the needed table to filter by categ
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
 if ($search_sale)     $sql.= " AND sc.fk_user = ".$db->escape($search_sale);
-if ($search_categ)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ > 0)    $sql.= " AND cs.fk_categorie = ".$db->escape($search_categ);
+if ($search_categ == -2)  $sql.= " AND cs.fk_categorie IS NULL";
 if ($search_all)      $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_nom)      $sql.= natural_search("s.nom",$search_nom);
 if ($search_nom_only) $sql.= natural_search("s.nom",$search_nom_only);
@@ -439,7 +440,7 @@ if ($resql)
 	$param='';
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sall != '') $param .= "&amp;sall=".urlencode($sall);
- 	if ($search_categ != '') $param.='&amp;search_categ='.urlencode($search_categ);
+ 	if ($search_categ > 0) $param.='&amp;search_categ='.urlencode($search_categ);
  	if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
 	if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);
 	if ($search_town != '') $param.= "&amp;search_town=".urlencode($search_town);

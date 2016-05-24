@@ -54,7 +54,7 @@ ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
 ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
 ALTER TABLE llx_askpricesupplier_extrafields RENAME TO llx_supplier_proposal_extrafields;
 ALTER TABLE llx_askpricesupplierdet_extrafields RENAME TO llx_supplier_proposaldet_extrafields;
-ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_asksupplierprice fk_supplier_proposal integer NOT NULL;
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
 
 -- Fix bad data
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
@@ -607,3 +607,6 @@ INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (14
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1482,  148, '7','0','VAT reduced rate',1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1483,  148, '5','0','VAT super-reduced rate', 1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1484,  148, '0','0','VAT Rate 0', 1);
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+

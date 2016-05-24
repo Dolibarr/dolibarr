@@ -23,8 +23,8 @@ CREATE TABLE llx_c_accounting_category (
   code 				varchar(16) NOT NULL,
   label 			varchar(255) NOT NULL,
   range_account		varchar(255) NOT NULL,
-  sens 				tinyint(1) NOT NULL DEFAULT '0', -- For international accounting  0 : credit - debit / 1 : debit - credit
-  category_type		tinyint(1) NOT NULL DEFAULT '0', -- Field calculated or not
+  sens 				tinyint NOT NULL DEFAULT '0',    -- For international accounting  0 : credit - debit / 1 : debit - credit
+  category_type		tinyint NOT NULL DEFAULT '0',    -- Field calculated or not
   formula			varchar(255) NOT NULL,			 -- Example : 1 + 2 (rowid of the category)
   position    		integer DEFAULT 0,
   fk_country 		integer DEFAULT NULL,			 -- This category is dedicated to a country

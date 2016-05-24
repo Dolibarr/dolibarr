@@ -63,6 +63,7 @@ $setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
 $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
+$enablemodules=GETPOST("enablemodules",'',3)?GETPOST("enablemodules",'',3):(empty($argv[3])?'':$argv[3]);
 
 $langs->load('admin');
 $langs->load('install');
@@ -84,9 +85,9 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-if (! $versionfrom && ! $versionto)
+if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto || preg_match('/version/', $versionto)))
 {
-	print 'Error: Parameter versionfrom or versionto missing.'."\n";
+	print 'Error: Parameter versionfrom or versionto missing or having a bad format.'."\n";
 	print 'Upgrade must be ran from cmmand line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
@@ -416,6 +417,21 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         	migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
+        
+        // Can force activation of some module during migration with third paramater = MAIN_MODULE_XXX,MAIN_MODULE_YYY,...
+        if ($enablemodules)
+        {
+            // Reload modules (this must be always and only into last targeted version)
+            $listofmodules=array();
+            $tmplistofmodules=explode(',', $enablemodules);
+            foreach($tmplistofmodules as $value)
+            {
+                $listofmodules[$value]='newboxdefonly';
+            }
+            migrate_reload_modules($db,$langs,$conf,$listofmodules,1);
+        }
+        
+        
         print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
 
         // On commit dans tous les cas.
@@ -3776,11 +3792,12 @@ function migrate_delete_old_dir($db,$langs,$conf)
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
  * @param	array		$listofmodule	List of modules
+ * @param   int         $force          1=Reload module even if not already loaded
  * @return	void
  */
-function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
+function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 {
-    dolibarr_install_syslog("upgrade2::migrate_reload_modules");
+    dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force);
 
     // If no info is provided, we reload all modules with mode newboxdefonly.
     if (count($listofmodule) == 0)
@@ -3805,7 +3822,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 
     foreach($listofmodule as $moduletoreload => $reloadmode)
     {
-    	if (empty($moduletoreload) || empty($conf->global->$moduletoreload)) continue;
+    	if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && ! $force)) continue; // Discard reload if module not enabled
 
     	$mod=null;
     	
@@ -3819,7 +3836,17 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 	            $mod->init($reloadmode);
 	        }
 	    }
-        if ($moduletoreload == 'MAIN_MODULE_BARCODE')
+        if ($moduletoreload == 'MAIN_MODULE_API')
+	    {
+	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Rest API module");
+	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modApi.class.php';
+	        if ($res) {
+	            $mod=new modApi($db);
+	            //$mod->remove('noboxes');
+	            $mod->init($reloadmode);
+	        }
+	    }
+	    if ($moduletoreload == 'MAIN_MODULE_BARCODE')
     	{
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Barcode module");
 	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modBarcode.class.php';
@@ -3974,7 +4001,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
 		{	    
     		print '<tr><td colspan="4">';
         	print '<b>'.$langs->trans('Upgrade').'</b>: ';
-        	print $langs->trans('MigrationReloadModule')." ".$mod->getName();
+        	print $langs->trans('MigrationReloadModule').' '.$mod->getName();  // We keep getName outside of trans because getName is already encoded/translated
         	print "<!-- (".$reloadmode.") -->";
         	print "<br>\n";
         	print '</td></tr>';

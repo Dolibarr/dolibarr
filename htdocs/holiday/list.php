@@ -288,7 +288,7 @@ print '<table class="noborder" width="100%;">';
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cp.rowid","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateCreateCP"),$_SERVER["PHP_SELF"],"cp.date_create","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Employe"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"cp.fk_user","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("ValidatorCP"),$_SERVER["PHP_SELF"],"cp.fk_validator","",'','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
@@ -405,7 +405,7 @@ if (! empty($holiday->holiday))
 		print $holidaystatic->getNomUrl(1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
-		print '<td>'.$userstatic->getNomUrl('1').'</td>';
+		print '<td>'.$userstatic->getNomUrl('1', 'leave').'</td>';
 		print '<td>'.$approbatorstatic->getNomUrl('1').'</td>';
 		print '<td>';
 		$label=$alltypeleaves[$infos_CP['fk_type']]['label'];

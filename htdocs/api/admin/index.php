@@ -100,19 +100,6 @@ print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
 $url=DOL_MAIN_URL_ROOT.'/api/admin/explorer.php';
 print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 
-// API endpoint
-/*print '<u>'.$langs->trans("ApiEndPointIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/api/index.php/xxx/list';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-$url=DOL_MAIN_URL_ROOT.'/api/xxx/list.json';
-print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-*/
-
-print '<br>';
-print '<br>';
-print $langs->trans("OnlyActiveElementsAreExposed", DOL_URL_ROOT.'/admin/modules.php');
-
-
 
 llxFooter();
 $db->close();

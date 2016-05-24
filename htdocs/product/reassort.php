@@ -255,7 +255,8 @@ if ($resql)
 	$formProduct->loadWarehouses();
 	$warehouses_list = $formProduct->cache_warehouses;
 	$nb_warehouse = count($warehouses_list);
-	$colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1;
+	$colspan_warehouse = 1;
+	if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE)) { $colspan_warehouse = $nb_warehouse > 1 ? $nb_warehouse+1 : 1; }
 	
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
@@ -267,19 +268,16 @@ if ($resql)
 	print_liste_field_titre($langs->trans("StockLimit"), $_SERVER["PHP_SELF"], "p.seuil_stock_alerte",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DesiredStock"), $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PhysicalStock"), $_SERVER["PHP_SELF"], "stock_physique",$param,"",'align="right"',$sortfield,$sortorder);
-	
-	/*
-	 * Details per warehouse
-	 */
-	 
-	if($nb_warehouse>1) {
-		
-		foreach($warehouses_list as &$wh) {
-			print_liste_field_titre($wh['label'], '', '','','','align="right"');
+	// Details per warehouse
+	if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE))	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
+	{
+		if ($nb_warehouse>1) {
+			foreach($warehouses_list as &$wh) {
+				print_liste_field_titre($wh['label'], '', '','','','align="right"');
+			}
+			
 		}
-		
 	} 
-	
 	if ($virtualdiffersfromphysical) print_liste_field_titre($langs->trans("VirtualStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
@@ -309,8 +307,8 @@ if ($resql)
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre" colspan="'.$colspan_warehouse.'">&nbsp;</td>';
 	print '<td class="liste_titre" align="right">';
-    	$searchpitco=$form->showFilterAndCheckAddButtons(0);
-    	print $searchpitco;
+   	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+   	print $searchpitco;
 	print '</td>';
 	print '</tr>';
 
@@ -349,19 +347,17 @@ if ($resql)
 		print $objp->stock_physique;
 		print '</td>';
 		
-		/*
-		* Details per warehouse
-		*/
-		 
-		if($nb_warehouse>1) {
-			
-			foreach($warehouses_list as &$wh) {
-				
-				print '<td align="right">';
-				print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
-				print '</td>';
-			}
-			
+		// Details per warehouse
+		if (! empty($conf->global->STOCK_DETAIL_ON_WAREHOUSE))	// TODO This should be moved into the selection of fields on page product/list (page product/stock will be removed and replaced with product/list with its own context)
+		{
+			if($nb_warehouse>1) {
+				foreach($warehouses_list as &$wh) {
+					
+					print '<td align="right">';
+					print empty($product->stock_warehouse[$wh['id']]->real) ? '0' : $product->stock_warehouse[$wh['id']]->real;
+					print '</td>';
+				}
+			}			
 		} 
 		
 			

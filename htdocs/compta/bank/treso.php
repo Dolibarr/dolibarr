@@ -118,7 +118,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("DateEcheance").'</td>';
+	print '<td>'.$langs->trans("DateDue").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td align="right">'.$langs->trans("Debit").'</td>';

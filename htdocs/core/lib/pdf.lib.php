@@ -373,7 +373,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *   	@param  Societe		$targetcompany		Target company object
  *      @param  Contact		$targetcontact		Target contact object
  * 		@param	int			$usecontact			Use contact instead of company
- * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails': target but include also phone/fax/email/url)
+ * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  Object      $object             Object we want to build document for
  * 		@return	string							String with full address
  */
@@ -420,7 +420,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     		}
     	}
     
-    	if ($mode == 'target' || $mode == 'targetwithdetails')
+    	if ($mode == 'target' || preg_match('/targetwithdetails/',$mode))
     	{
     		if ($usecontact)
     		{
@@ -439,19 +439,31 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
     			}
     
-    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails')
+    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/',$mode))
     			{
     				// Phone
-    				if (! empty($targetcontact->phone_pro) || ! empty($targetcontact->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
-    				if (! empty($targetcontact->phone_pro)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
-    				if (! empty($targetcontact->phone_pro) && ! empty($targetcontact->phone_mobile)) $stringaddress .= " / ";
-    				if (! empty($targetcontact->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/',$mode))
+    			    {
+        				if (! empty($targetcontact->phone_pro) || ! empty($targetcontact->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
+        				if (! empty($targetcontact->phone_pro)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
+        				if (! empty($targetcontact->phone_pro) && ! empty($targetcontact->phone_mobile)) $stringaddress .= " / ";
+        				if (! empty($targetcontact->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
+    			    }
     				// Fax
-    				if ($targetcontact->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/',$mode))
+    			    {
+                        if ($targetcontact->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
+    			    }
     				// EMail
-    				if ($targetcontact->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/',$mode))
+    			    {
+                        if ($targetcontact->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
+    			    }
     				// Web
-    				if ($targetcontact->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/',$mode))
+    			    {
+                        if ($targetcontact->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+    			    }
     			}
     		}
     		else
@@ -460,19 +472,31 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     			// Country
     			if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
     
-    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails')
+    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/',$mode))
     			{
     				// Phone
-    				if (! empty($targetcompany->phone) || ! empty($targetcompany->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
-    				if (! empty($targetcompany->phone)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
-    				if (! empty($targetcompany->phone) && ! empty($targetcompany->phone_mobile)) $stringaddress .= " / ";
-    				if (! empty($targetcompany->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/',$mode))
+    			    {
+    			    	if (! empty($targetcompany->phone) || ! empty($targetcompany->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
+	    				if (! empty($targetcompany->phone)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
+    					if (! empty($targetcompany->phone) && ! empty($targetcompany->phone_mobile)) $stringaddress .= " / ";
+    					if (! empty($targetcompany->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
+    			    }
     				// Fax
-    				if ($targetcompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/',$mode))
+    			    {
+    			    	if ($targetcompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
+    			    }
     				// EMail
-    				if ($targetcompany->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcompany->email);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/',$mode))
+    			    {
+    			    	if ($targetcompany->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcompany->email);
+    			    }
     				// Web
-    				if ($targetcompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcompany->url);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/',$mode))
+    			    {
+    			    	if ($targetcompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcompany->url);
+    			    }
     			}
     		}
     
@@ -507,17 +531,29 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
     			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
     		}
-
+    		if (! empty($conf->global->MAIN_PROFID5_IN_ADDRESS) && ! empty($targetcompany->idprof5))
+    		{
+    		    $tmp=$outputlangs->transcountrynoentities("ProfId5",$targetcompany->country_code);
+    		    if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    		    $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID6_IN_ADDRESS) && ! empty($targetcompany->idprof6))
+    		{
+    		    $tmp=$outputlangs->transcountrynoentities("ProfId6",$targetcompany->country_code);
+    		    if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    		    $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
+    		}
+    		
     		// Public note
     		if (! empty($conf->global->MAIN_PUBLIC_NOTE_IN_ADDRESS))
     		{
     		    if ($mode == 'source' && ! empty($sourcecompany->note_public))
         		{
-        		    $stringaddress.="\n".$sourcecompany->note_public;
+        		    $stringaddress.="\n".dol_string_nohtmltag($sourcecompany->note_public);
         		}
-        		if (($mode == 'target' || $mode == 'targetwithdetails') && ! empty($targetcompany->note_public))
+        		if (($mode == 'target' || preg_match('/targetwithdetails/',$mode)) && ! empty($targetcompany->note_public))
         		{
-        		    $stringaddress.="\n".$targetcompany->note_public;
+        		    $stringaddress.="\n".dol_string_nohtmltag($targetcompany->note_public);
         		}
     		}
     	}
@@ -602,10 +638,10 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
  */
 function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default_font_size=10)
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
-
 	global $mysoc, $conf;
 
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
+	
 	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
 	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
 	$pdf->SetXY($curx, $cury);
@@ -683,7 +719,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
-			}
+    		}
     
     		$curx=$savcurx;
     		$cury+=8;
@@ -730,7 +766,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 
 	// Use correct name of bank id according to country
 	$ibankey = FormBank::getIBANLabel($account);
-	
+
 	if (! empty($account->iban))
 	{
 		//Remove whitespaces to ensure we are dealing with the format we expect
@@ -771,7 +807,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height (no more used)
  * 	@param	Object		$object			Object shown in PDF
- * 	@param	int			$showdetails	Show company details into footer. This param seems to not be used by standard version. (1=Show address, 2=Show managers, 3=Both)
+ * 	@param	int			$showdetails	Show company adress details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
  * 	@return	int							Return height of bottom margin including footer text
  */
@@ -803,7 +839,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	// First line of company infos
 	$line1=""; $line2=""; $line3=""; $line4="";
 
-	if ($showdetails == 1 || $showdetails == 3)
+		if ($showdetails == 1 || $showdetails == 3)
 	{
 		// Company name
 		if ($fromcompany->name)
@@ -1606,7 +1642,7 @@ function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  *  @param	HookManager	$hookmanager		Hook manager instance
- *  @return	string
+ *  @return	string							Value for unit cell
  */
 function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
 {

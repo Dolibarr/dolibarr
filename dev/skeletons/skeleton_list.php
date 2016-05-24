@@ -266,7 +266,8 @@ if ($resql)
     $num = $db->num_rows($resql);
     
     $params='';
-	if ($search_field1 != '') $params.= '&amp;search_field1='.urlencode($search_field1);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($search_field1 != '') $params.= '&amp;search_field1='.urlencode($search_field1);
 	if ($search_field2 != '') $params.= '&amp;search_field2='.urlencode($search_field2);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
     // Add $param from extra fields
@@ -280,7 +281,7 @@ if ($resql)
     print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
 
 
-	print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';

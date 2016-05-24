@@ -124,6 +124,7 @@ Int=Int
 DateAndTime=Date and time
 PublicMemberCard=Member public card
 MemberNotOrNoMoreExpectedToSubscribe=Member not or no more expected to subscribe
+SubscriptionNotRecorded=Subscription not recorded
 AddSubscription=Create subscription
 ShowSubscription=Show subscription
 MemberModifiedInDolibarr=Member modified in Dolibarr

@@ -986,8 +986,8 @@ else
 	    print '<td colspan="3"><input type="text" size="60" name="name_alias" id="name_alias_input" value="'.$object->name_alias.'" size="32"></td></tr>';
 
         // Prospect/Customer
-        print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
-	    print '<td width="25%" class="maxwidthonsmartphone">';
+        print '<tr><td class="titlefieldcreate">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
+	    print '<td class="maxwidthonsmartphone">';
 	    $selected=isset($_POST['client'])?GETPOST('client'):$object->client;
         print '<select class="flat" name="client" id="customerprospect">';
         if (GETPOST("type") == '') print '<option value="-1"></option>';
@@ -997,7 +997,7 @@ else
         print '<option value="0"'.((string) $selected == '0'?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
 
-        print '<td width="25%">'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
+        print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
         $tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
@@ -1494,7 +1494,7 @@ else
 			}
 			
             // Name
-            print '<tr><td width="25%">'.fieldLabel('ThirdPartyName','name',1).'</td>';
+            print '<tr><td class="titlefield">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
 
 	        // Alias names (commercial, trademark or alias names)
@@ -1519,8 +1519,8 @@ else
             }
 
             // Prospect/Customer
-            print '<tr><td width="25%">'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
-	        print '<td width="25%"><select class="flat" name="client" id="customerprospect">';
+            print '<tr><td>'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
+	        print '<td><select class="flat" name="client" id="customerprospect">';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';

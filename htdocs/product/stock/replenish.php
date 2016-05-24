@@ -75,13 +75,15 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
 {
     $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
+$usevirtualstock=0;
+if ($mode == 'virtual') $usevirtualstock=1;
 
 
 /*
  * Actions
  */
 
-if (isset($_POST['button_removefilter']) || isset($_POST['valid']))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter") || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
     $sref = '';
     $snom = '';

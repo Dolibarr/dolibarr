@@ -1005,7 +1005,7 @@ else
 
                 print '<td>'.$langs->trans("User").'</td>';
         		print '<td>';
-        		print $userRequest->getNomUrl(1);
+        		print $userRequest->getNomUrl(1, 'leave');
         		print '</td></tr>';
 
 		        // Type

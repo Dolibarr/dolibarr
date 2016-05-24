@@ -189,7 +189,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->firstname=$obj->firstname;
                 print '<tr '.$bc[$var].'>';
                 print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
-                print '<td>'.$userstatic->getNomUrl(1).'</td>';
+                print '<td>'.$userstatic->getNomUrl(1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
                 
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';

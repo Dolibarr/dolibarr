@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013-2016	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -145,7 +145,7 @@ $arrayfields=array(
     'p.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>($contextpage != 'servicelist'), 'enabled'=>(! empty($conf->barcode->enabled))),
     'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
-	'p.sellprice'=>array('label'=>$titlesellprice, 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
+	'p.sellprice'=>array('label'=>$langs->trans("SellingPrice"), 'checked'=>1, 'enabled'=>empty($conf->global->PRODUIT_MULTIPRICES)),
     'p.minbuyprice'=>array('label'=>$langs->trans("BuyingPriceMinShort"), 'checked'=>1, 'enabled'=>(! empty($user->rights->fournisseur->lire))),
 	'p.seuil_stock_alerte'=>array('label'=>$langs->trans("StockLimit"), 'checked'=>0, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
     'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(! empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service')),
@@ -282,7 +282,7 @@ else
 	$sql.=$hookmanager->resPrint;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-    $sql.= ' p.datec, p.tms';
+    $sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy';
 	// Add fields from extrafields
     foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 	// Add fields from hooks
@@ -425,7 +425,7 @@ else
 
 			$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
             $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-    		
+
             print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     		print '<tr class="liste_titre">';
     		if (! empty($arrayfields['p.ref']['checked']))  print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"],"p.ref","",$param,"",$sortfield,$sortorder);

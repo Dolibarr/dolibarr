@@ -193,10 +193,10 @@ if ($action == 'delete')
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 }
 
-print '<table border="0" width="100%" class="border">';
+print '<table width="100%" class="border">';
 
 // Path of category
-print '<tr><td width="20%" class="notopnoleft">';
+print '<tr><td class="titlefield notopnoleft">';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 print $langs->trans("Ref").'</td><td>';
 print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';

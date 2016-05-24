@@ -79,7 +79,7 @@ if (empty($search_date_start)) {
 if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
-	$sortfield = "t.rowid";
+	$sortfield = "t.numero_compte";
 
 $options = '';
 $filter = array ();
@@ -100,9 +100,11 @@ if (! empty($search_accountancy_code_end)) {
 	$options .= '&amp;search_accountancy_code_end=' . $search_accountancy_code_end;
 }
 
+
 /*
  * Action
  */
+
 if ($action == 'export_csv') {
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 	$journal = 'bookkepping';
@@ -149,22 +151,34 @@ else {
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result);
-	
+
 	print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<div class="tabsAction">' . "\n";
 	print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';
 	print '</div>';
 
-	print '<div class="liste_titre">';
-	print $langs->trans('DateStart') . ': ';
-	print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
-	print $langs->trans('DateEnd') . ': ';
-	print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
-	print '</div>';
+	$moreforfilter='';
 
-	print '<table class="noborder" width="100%">';
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('DateStart') . ': ';
+	$moreforfilter.=$form->select_date($search_date_start, 'date_start', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter.=$langs->trans('DateEnd') . ': ';
+	$moreforfilter.=$form->select_date($search_date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
+	$moreforfilter.='</div>';
+
+	if (! empty($moreforfilter))
+	{
+		print '<div class="liste_titre liste_titre_bydiv centpercent">';
+		print $moreforfilter;
+    	$parameters=array();
+    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	    print $hookmanager->resPrint;
+	    print '</div>';
+	}
+
+	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);

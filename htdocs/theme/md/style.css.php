@@ -80,9 +80,9 @@ $dol_use_jmobile=$conf->dol_use_jmobile;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 // Colors
-$colorbackhmenu1='0,0,80';      // topmenu
+$colorbackhmenu1='90,50,120';      // topmenu
 $colorbackvmenu1='255,255,255';      // vmenu
-$colortopbordertitle1='40,40,40';    // top border of tables-lists title
+$colortopbordertitle1='';           // top border of tables-lists title. not defined = default to colorbackhmenu1
 $colorbacktitle1='230,230,230';      // title of tables-lists
 $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
@@ -103,7 +103,7 @@ $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEM
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
-if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='50,50,60';
+if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_TOPMENU_BACK1='90,50,120';
 if (! isset($conf->global->THEME_ELDY_BACKTITLE1)) $conf->global->THEME_ELDY_BACKTITLE1=$colorbacktitle1;
 if (! isset($conf->global->THEME_ELDY_USE_HOVER)) $conf->global->THEME_ELDY_USE_HOVER=='238,246,252';
 if (! isset($conf->global->THEME_ELDY_TEXTTITLENOTAB)) $conf->global->THEME_ELDY_TEXTTITLENOTAB=$colortexttitlenotab;
@@ -126,8 +126,8 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
-//var_dump($conf->global->THEME_ELDY_BACKBODY);
-//var_dump($user->conf->THEME_ELDY_BACKTITLE1);
+
+
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackvmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$user->conf->THEME_ELDY_VERMENU_BACK1);
@@ -146,13 +146,15 @@ $colortext           =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty(
 $colortextlink       =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TEXTLINK)     ?$colortext:$conf->global->THEME_ELDY_TEXTLINK)              :(empty($user->conf->THEME_ELDY_TEXTLINK)?$colortextlink:$user->conf->THEME_ELDY_TEXTLINK);
 $fontsize            =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE1)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE1)             :(empty($user->conf->THEME_ELDY_FONT_SIZE1)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE1);
 $fontsizesmaller     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_FONT_SIZE2)   ?$fontsize:$conf->global->THEME_ELDY_FONT_SIZE2)             :(empty($user->conf->THEME_ELDY_FONT_SIZE2)?$fontsize:$user->conf->THEME_ELDY_FONT_SIZE2);
-
 // Hover color
 $colorbacklinepairhover=((! isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '0')?'':($conf->global->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$conf->global->THEME_ELDY_USE_HOVER));
 if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
+
+$colortopbordertitle1=$colorbackhmenu1;
+
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
@@ -834,7 +836,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: 2px solid #888;
+	border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>);;
 }
 
 
@@ -843,12 +845,12 @@ img.photoref {
 /* ============================================================================== */
 
 <?php
-$minwidthtmenu=66;
+$minwidthtmenu=66;      /* minimum width for one top menu entry */
 $heightmenu=48;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_MD_DISABLE_IMAGE)) { $heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_MD_DISABLE_IMAGE)) { $heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
 div#tmenu_tooltip {
@@ -872,6 +874,12 @@ div#tmenu_tooltip {
 	display:none;
 <?php } else { ?>
 	/* padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px; */
+<?php } ?>
+}
+
+div.tmenusep {
+<?php if ($disableimages) { ?>
+	display: none;
 <?php } ?>
 }
 
@@ -972,7 +980,10 @@ li.tmenusel, li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
 .tmenuend .tmenuleft { width: 0px; }
-/* .tmenuend { display: none; } */
+/* .tmenuend { display: none; } We keep tmenuend it to show background for rest of line */
+.tmenuend .tmenucenter {
+    width: 1px;
+}
 div.tmenuleft
 {
 	float: <?php print $left; ?>;
@@ -987,10 +998,15 @@ div.tmenuleft
 }
 div.tmenucenter
 {
-	padding-top: <?php echo $disableimages?'10':'2'; ?>px;
 	padding-left: 0px;
 	padding-right: 0px;
+	<?php if ($disableimages) { ?>
+	padding-top: 10px;
+	height: 26px;
+	<?php } else { ?>
+	padding-top: 2px;
     height: <?php print $heightmenu; ?>px;
+	<?php } ?>
     width: 100%;
 }
 div.menu_titre {
@@ -998,7 +1014,12 @@ div.menu_titre {
 }
 .mainmenuaspan
 {
+<?php if ($disableimages) { ?>
+	padding-left: 4px;
+	padding-right: 2px;
+<?php } else { ?>
 	padding-right: 4px;
+<?php } ?>
 }
 
 div.mainmenu {
@@ -1060,6 +1081,11 @@ div.mainmenu.hrm {
 
 div.mainmenu.members {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
+}
+
+div.mainmenu.menu {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png',1) ?>);
+	top: 7px;
 }
 
 div.mainmenu.products {
@@ -1432,7 +1458,7 @@ td.barre_select {
 td.photo {
 	background: #F4F4F4;
 	color: #000000;
-    border: 1px solid #b3c5cc;
+    border: 1px solid #bbb;
 }
 
 /* ============================================================================== */
@@ -1786,18 +1812,19 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
+
+	border-right: 1px solid #AAA !important;
+	border-left: 1px solid #AAA !important;
+	border-top: 2px solid #111 !important;
+	/*
 	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 
-	border-right: 1px solid #AAA !important;
-	border-left: 1px solid #AAA !important;
-	border-top: 1px solid #BBB !important;
-
 	-moz-border-radius:3px 3px 0px 0px;
 	-webkit-border-radius:3px 3px 0px 0px;
 	border-radius:3px 3px 0px 0px;
-
+	*/
 }
 a.tab:hover
 {
@@ -3019,19 +3046,19 @@ table.cal_month    { border-spacing: 0px; }
 table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
-.cal_current_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
+.cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
-.cal_other_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B !important; border-right: 0; }
+.cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { opacity: 0.6; background: #EAEAEA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { opacity: 0.6; background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 3px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding: 0px; }
 .cal_impair        { background: #F8F8F8; }
@@ -3518,9 +3545,9 @@ div.dolEventError h1, div.dolEventError h2 {
 /* ============================================================================== */
 
 .divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, google-visualization-geomap-embed-2 {
-    -moz-box-shadow: 0px 0px 10px #AAA;
+/*    -moz-box-shadow: 0px 0px 10px #AAA;
     -webkit-box-shadow: 0px 0px 10px #AAA;
-    box-shadow: 0px 0px 10px #AAA;
+    box-shadow: 0px 0px 10px #AAA; */
 }
 
 
@@ -4039,7 +4066,7 @@ img.demothumb {
 
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
 }
 ::-webkit-scrollbar-button {
     background: #aaa
@@ -4072,6 +4099,7 @@ img.demothumb {
 
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
+/* disableimages = <?php echo $disableimages; ?> */
 /* rule to reduce top menu - 1st reduction */
 @media only screen and (max-width:  <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 200; ?>px)
 {
@@ -4119,10 +4147,6 @@ img.demothumb {
 /* rule to reduce top menu - 3rd reduction */
 @media only screen and (max-width: 570px)
 {
-	/* Reduce login top right info */
-	.usertextatoplogin {
-		display: none;
-	}
 	div#tmenu_tooltip {
 	<?php if (GETPOST("optioncss") == 'print') {  ?>
 		display:none;
@@ -4130,10 +4154,6 @@ img.demothumb {
 		/* padding-<?php echo $right; ?>: 78px; */
 	<?php } ?>
 	}
-	div.login_block {
-		top: 9px;
-	}
-
     li.tmenu, li.tmenusel {
         min-width: 30px;
     }

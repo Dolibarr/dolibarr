@@ -164,6 +164,7 @@ Modelcsv_COALA=Export towards Sage Coala
 Modelcsv_bob50=Export towards Sage BOB 50
 Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -182,3 +183,4 @@ Formula=Formula
 
 ## Error
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page

@@ -551,6 +551,14 @@ if ($id == 25)
 	if ($conf->fournisseur->enabled) $elementList['order_supplier_send']=$langs->trans('MailToSendSupplierOrder');
 	if ($conf->fournisseur->enabled) $elementList['invoice_supplier_send']=$langs->trans('MailToSendSupplierInvoice');
 	if ($conf->societe->enabled) $elementList['thirdparty']=$langs->trans('MailToThirdparty');
+
+	$parameters=array('elementList'=>$elementList);
+	$reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
+	if ($reshook == 0) {
+		foreach ($hookmanager->resArray as $item => $value) {
+			$elementList[$item] = $value;
+		}
+	}
 }
 
 // Define localtax_typeList (used for dictionary "llx_c_tva")
@@ -1553,7 +1561,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
-	if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
+	if (! empty($conf->accounting->enabled)) $formaccountancy = new FormVentilation($db);
 
 	foreach ($fieldlist as $field => $value)
 	{

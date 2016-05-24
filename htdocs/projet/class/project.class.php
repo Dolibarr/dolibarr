@@ -297,7 +297,8 @@ class Project extends CommonObject
 							$res=dol_move($olddir, $newdir);
 							if (! $res)
                 			{
-                				$this->error='ErrorFailToMoveDir';
+							    $langs->load("errors");
+								$this->error=$langs->trans('ErrorFailToRenameDir',$olddir,$newdir);
                 				$error++;
                 			}
                 		}

@@ -124,8 +124,6 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
     $conf->global->THEME_ELDY_FONT_SIZE1='13';
     $conf->global->THEME_ELDY_FONT_SIZE2='11';
 }
-//var_dump($conf->global->THEME_ELDY_BACKBODY);
-//var_dump($user->conf->THEME_ELDY_BACKTITLE1);
 
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -152,6 +150,9 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
 {
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
+
+$colortopbordertitle1=$colorbackhmenu1;
+
 
 // Set text color to black or white
 $tmppart=explode(',',$colorbackhmenu1);
@@ -783,7 +784,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: 2px solid #888;
+	border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
 
@@ -792,12 +793,12 @@ img.photoref {
 /* ============================================================================== */
 
 <?php
-$minwidthtmenu=66;		/* minimul widht for one top menu entry */
+$minwidthtmenu=66;		/* minimum width for one top menu entry */
 $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; }
+if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
 div#id-top {
@@ -814,7 +815,7 @@ div#id-top {
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.1)), color-stop(1, rgba(0,0,0,.4)) );
 	<?php } ?>
 	<?php if ($disableimages) { ?>
-	height: 28px;
+	height: 34px;
 	<?php } else { ?>
 	height: <?php print $heightmenu2; ?>px;
 	<?php } ?>
@@ -826,6 +827,12 @@ div#tmenu_tooltip {
 	display:none;
 <?php } else { ?>
 	padding-<?php echo $right; ?>: <?php echo ($maxwidthloginblock - 10); ?>px;
+<?php } ?>
+}
+
+div.tmenusep {
+<?php if ($disableimages) { ?>
+	display: none;
 <?php } ?>
 }
 
@@ -869,7 +876,7 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 }
 a.tmenusel:link, a.tmenusel:visited, a.tmenusel:hover, a.tmenusel:active {
 	font-weight: normal;
-	padding: 0px 5px 0px 5px;
+	padding: 0px 5px 0px 3px;
 	margin: 0px 0px 0px 0px;
 	white-space: nowrap;
 	color: #<?php echo $colortextbackhmenu; ?>;
@@ -933,12 +940,13 @@ div.tmenuleft
 }
 div.tmenucenter
 {
-	padding-top: <?php print $disableimages?'4':'2'; ?>px;
 	padding-left: 0px;
 	padding-right: 0px;
 	<?php if ($disableimages) { ?>
-	height: 24px;
+	padding-top: 8px;
+	height: 26px;
 	<?php } else { ?>
+	padding-top: 2px;
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
     width: 100%;
@@ -948,7 +956,12 @@ div.menu_titre {
 }
 .mainmenuaspan
 {
+<?php if ($disableimages) { ?>
+	padding-left: 4px;
+	padding-right: 2px;
+<?php } else { ?>
 	padding-right: 4px;
+<?php } ?>
 }
 
 div.mainmenu {
@@ -1010,6 +1023,11 @@ div.mainmenu.hrm {
 
 div.mainmenu.members {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
+}
+
+div.mainmenu.menu {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png',1) ?>);
+	top: 7px;
 }
 
 div.mainmenu.products {
@@ -1130,17 +1148,15 @@ form#login {
 
 	background-color: #FFFFFF;
 
-	-moz-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	-webkit-box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	box-shadow: 0 4px 23px 5px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
+	-moz-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
+	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
+	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(60,60,60,0.15);
 	/*-moz-box-shadow: 3px 2px 20px #CCC;
     -webkit-box-shadow: 3px 2px 20px #CCC;
     box-shadow: 3px 2px 20px #CCC;*/
 
 	border-radius: 5px;
 	border:solid 1px rgba(80,80,80,.4);
-
-	border-top:solid 1px #f8f8f8;
 }
 .login_main_message {
 	text-align: center;
@@ -1185,7 +1201,7 @@ div.login_block {
 	position: absolute;
 	text-align: right;
 	<?php print $right; ?>: 5px;
-	top: 3px;
+	top: 2px;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
@@ -1434,7 +1450,7 @@ td.barre_select {
 td.photo {
 	background: #F4F4F4;
 	color: #000000;
-    border: 1px solid #b3c5cc;
+    border: 1px solid #bbb;
 }
 
 /* ============================================================================== */
@@ -1771,27 +1787,30 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
 	border-bottom: 0px !important;
+	/*
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
+	*/
 
 	background-image: none !important;
 }
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
-	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
-	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	margin: 0 0.2em 0 0.2em !important;
 
 	border-right: 1px solid #AAA !important;
 	border-left: 1px solid #AAA !important;
-	border-top: 1px solid #BBB !important;
-
+	border-top: 2px solid rgb(<?php echo $colortopbordertitle1; ?>) !important;
+	/*
+	box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	-moz-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
+	-webkit-box-shadow: 0 -1px 4px rgba(0,0,0,.1);
 	-moz-border-radius:4px 4px 0 0;
     -webkit-border-radius: 4px 4px 0 0;
 	border-radius: 4px 4px 0 0;
+	*/
 }
 a.tab:hover
 {
@@ -2164,7 +2183,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: 1px;
+	border-top-width: 2px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2190,7 +2209,15 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
+/*
 #tablelines tr.liste_titre:first-child td, form.formnoborder div, tr.liste_titre.trnoborder td {
+    border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
+*/
+.liste_titre_add td, .liste_titre_add .tagtd
+{
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
@@ -2522,7 +2549,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: 1px;
+	border-top-width: 2px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
     
@@ -3142,19 +3169,19 @@ table.cal_month    { border-spacing: 0px;  }
 table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
-.cal_current_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
+.cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
 .cal_other_month   { border-top: 0; border-left: solid 1px #C0C0C0; border-right: 0; border-bottom: solid 1px #C0C0C0; }
-.cal_other_month_peruserleft { border-top: 0; border-left: solid 3px #6C7C7B !important; border-right: 0; }
+.cal_other_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B !important; border-right: 0; }
 .cal_current_month_right { border-right: solid 1px #E0E0E0; }
 .cal_other_month_right   { border-right: solid 1px #C0C0C0; }
 .cal_other_month   { opacity: 0.6; background: #EAEAEA; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past_month    { opacity: 0.6; background: #EEEEEE; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_current_month { background: #FFFFFF; border-left: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 3px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_current_month_peruserleft { background: #FFFFFF; border-left: solid 2px #6C7C7B; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today         { background: #FDFDF0; border-left: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_today_peruser { background: #FDFDF0; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
-.cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 3px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
+.cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding: 0px; }
 .cal_impair        { background: #F8F8F8; }
@@ -3642,9 +3669,9 @@ div.dolEventError h1, div.dolEventError h2 {
 /* ============================================================================== */
 
 .divmap, #google-visualization-geomap-embed-0, #google-visualization-geomap-embed-1, #google-visualization-geomap-embed-2 {
-    -moz-box-shadow: 0px 0px 10px #AAA;
+/*    -moz-box-shadow: 0px 0px 10px #AAA;
     -webkit-box-shadow: 0px 0px 10px #AAA;
-    box-shadow: 0px 0px 10px #AAA;
+    box-shadow: 0px 0px 10px #AAA; */
 }
 
 
@@ -4229,8 +4256,11 @@ img.demothumb {
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 8; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.7, 0) + 8; ?>px)
 {
+	div.mainmenu {
+		height: 23px;
+	}
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
   		text-overflow: clip;
@@ -4245,11 +4275,16 @@ img.demothumb {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: 570px)
+@media only screen and (max-width: 605px)
 {
 	/* Reduce login top right info */
 	.usertextatoplogin {
 		display: none;
+	}
+	.help {
+	<?php if ($disableimages) {  ?>
+		display: none;
+	<?php } ?>
 	}
 	div#tmenu_tooltip {
 	<?php if (GETPOST("optioncss") == 'print') {  ?>
@@ -4259,13 +4294,19 @@ img.demothumb {
 	<?php } ?>
 	}
 	div.login_block {
-		top: 4px;
-		max-width: 82px;
+		top: 2px;
+		<?php if ($disableimages) {  ?>
+			max-width: 100px;
+		<?php } else { ?>
+			max-width: 82px;
+		<?php } ?>
 	}
     li.tmenu, li.tmenusel {
         min-width: 30px;
     }
-
+	div.mainmenu {
+		height: 23px;
+	}
 	div.tmenucenter {
   		text-overflow: clip;
 	}

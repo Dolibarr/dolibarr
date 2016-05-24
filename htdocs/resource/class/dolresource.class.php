@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
  */
 class Dolresource extends CommonObject
 {
-	var $element='resource';			//!< Id that identify managed objects
+	var $element='dolresource';			//!< Id that identify managed objects
 	var $table_element='resource';	//!< Name of table without prefix where object is stored
 
 	var $resource_id;
@@ -757,14 +757,16 @@ class Dolresource extends CommonObject
     }
 
 
-    /*
+    /**
      * Return an array with resources linked to the element
-     *
-     *
+     * 
+     * @param string    $element        Element
+     * @param int       $element_id     Id
+     * @param string    $resource_type  Type
+     * @return array                    Aray of resources
      */
     function getElementResources($element,$element_id,$resource_type='')
     {
-
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';

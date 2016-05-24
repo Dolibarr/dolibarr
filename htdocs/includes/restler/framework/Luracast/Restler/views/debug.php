@@ -64,7 +64,7 @@ if ($success && isset($api)) {
 } else {
     if (isset($response['error']['message'])) {
         $icon = '<icon class="denied"></icon>';
-        $title = end(explode(':',$response['error']['message']));
+        $title = end(explode(':',$response['error']['message'],2));
     } else {
         $icon = '<icon class="warning"></icon>';
         $title = 'No Matching Resource';

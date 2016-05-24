@@ -216,7 +216,7 @@ class ProductFournisseur extends Product
 
         $this->db->begin();
 
-        if ($this->product_fourn_price_id)
+        if ($this->product_fourn_price_id > 0)
         {
 	  		$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql.= " SET fk_user = " . $user->id." ,";
@@ -237,7 +237,7 @@ class ProductFournisseur extends Product
 			$sql.= " WHERE rowid = ".$this->product_fourn_price_id;
 			// TODO Add price_base_type and price_ttc
 
-			dol_syslog(get_class($this).'::update_buyprice', LOG_DEBUG);
+			dol_syslog(get_class($this).'::update_buyprice update knowing id of line = product_fourn_price_id = '.$this->product_fourn_price_id, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -249,7 +249,7 @@ class ProductFournisseur extends Product
 				if (empty($error))
 				{
 					$this->db->commit();
-					return 0;
+					return $this->product_fourn_price_id;
 				}
 				else
 				{
@@ -267,94 +267,88 @@ class ProductFournisseur extends Product
 
         else
         {
-	        	// Delete price for this quantity
-	        	$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price";
-          		$sql.= " WHERE fk_soc = ".$fourn->id." AND ref_fourn = '".$this->db->escape($ref_fourn)."' AND quantity = ".$qty." AND entity = ".$conf->entity;
-				dol_syslog(get_class($this).'::update_buyprice', LOG_DEBUG);
-	        	$resql=$this->db->query($sql);
-				if ($resql)
-		  		{
-		            // Add price for this quantity to supplier
-		            $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price(";
-		            $sql.= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, info_bits, entity, delivery_time_days,supplier_reputation)";
-		            $sql.= " values('".$this->db->idate($now)."',";
-		            $sql.= " ".$this->id.",";
-		            $sql.= " ".$fourn->id.",";
-		            $sql.= " '".$this->db->escape($ref_fourn)."',";
-		            $sql.= " ".$user->id.",";
-		            $sql.= " ".$buyprice.",";
-		            $sql.= " ".$qty.",";
-					$sql.= " ".$remise_percent.",";
-					$sql.= " ".$remise.",";
-		            $sql.= " ".$unitBuyPrice.",";
-		            $sql.= " ".$tva_tx.",";
-		            $sql.= " ".$charges.",";
-		            $sql.= " ".$unitCharges.",";
-		            $sql.= " ".$availability.",";
-		            $sql.= " ".$newnpr.",";
-		            $sql.= $conf->entity.",";
-		            $sql.= $delivery_time_days.",";
-			    $sql.= (empty($supplier_reputation) ? 'NULL' :  "'".$this->db->escape($supplier_reputation)."'");
-			    $sql.=")";
-
-		            dol_syslog(get_class($this)."::update_buyprice", LOG_DEBUG);
-		            if (! $this->db->query($sql))
-		            {
-		                $error++;
-		            }
-
-		            if (! $error  && !empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
-		            {
-		                // Add record into log table
-		                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
-		                $sql.= "datec, fk_product_fournisseur,fk_user,price,quantity)";
-		                $sql.= "values('".$this->db->idate($now)."',";
-		                $sql.= " ".$this->product_fourn_id.",";
-		                $sql.= " ".$user->id.",";
-		                $sql.= " ".price2num($buyprice).",";
-		                $sql.= " ".$qty;
-		                $sql.=")";
-
-		                $resql=$this->db->query($sql);
-		                if (! $resql)
-		                {
-		                    $error++;
-		                }
-		            }
-
-
-		            if (! $error)
-		            {
-                        // Call trigger
-                        $result=$this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_CREATE',$user);
-                        if ($result < 0) $error++;
+            dol_syslog(get_class($this) . '::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
+            
+            // Delete price for this quantity
+            $sql = "DELETE FROM  " . MAIN_DB_PREFIX . "product_fournisseur_price";
+            $sql .= " WHERE fk_soc = " . $fourn->id . " AND ref_fourn = '" . $this->db->escape($ref_fourn) . "' AND quantity = " . $qty . " AND entity = " . $conf->entity;
+            $resql = $this->db->query($sql);
+            if ($resql) {
+                // Add price for this quantity to supplier
+                $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price(";
+                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, info_bits, entity, delivery_time_days,supplier_reputation)";
+                $sql .= " values('" . $this->db->idate($now) . "',";
+                $sql .= " " . $this->id . ",";
+                $sql .= " " . $fourn->id . ",";
+                $sql .= " '" . $this->db->escape($ref_fourn) . "',";
+                $sql .= " " . $user->id . ",";
+                $sql .= " " . $buyprice . ",";
+                $sql .= " " . $qty . ",";
+                $sql .= " " . $remise_percent . ",";
+                $sql .= " " . $remise . ",";
+                $sql .= " " . $unitBuyPrice . ",";
+                $sql .= " " . $tva_tx . ",";
+                $sql .= " " . $charges . ",";
+                $sql .= " " . $unitCharges . ",";
+                $sql .= " " . $availability . ",";
+                $sql .= " " . $newnpr . ",";
+                $sql .= $conf->entity . ",";
+                $sql .= $delivery_time_days . ",";
+                $sql .= (empty($supplier_reputation) ? 'NULL' : "'" . $this->db->escape($supplier_reputation) . "'");
+                $sql .= ")";
+                
+                $idinserted = 0;
+                
+                $resql = $this->db->query($sql);
+                if ($resql) {
+                    $idinserted = $this->db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
+                }
+                else {
+                    $error++;
+                }
+                
+                if (! $error && ! empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG)) {
+                    // Add record into log table
+                    $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(";
+                    $sql .= "datec, fk_product_fournisseur,fk_user,price,quantity)";
+                    $sql .= "values('" . $this->db->idate($now) . "',";
+                    $sql .= " " . $this->product_fourn_id . ",";
+                    $sql .= " " . $user->id . ",";
+                    $sql .= " " . price2num($buyprice) . ",";
+                    $sql .= " " . $qty;
+                    $sql .= ")";
+                    
+                    $resql = $this->db->query($sql);
+                    if (! $resql) {
+                        $error++;
+                    }
+                }
+                
+                if (! $error) {
+                    // Call trigger
+                    $result = $this->call_trigger('SUPPLIER_PRODUCT_BUYPRICE_CREATE', $user);
+                    if ($result < 0)
+                        $error++;
                         // End call triggers
-
-        				if (empty($error))
-        				{
-        					$this->db->commit();
-        					return 0;
-        				}
-        				else
-        				{
-        					$this->db->rollback();
-        					return -1;
-        				}
-		            }
-		            else
-		            {
-		                $this->error=$this->db->error()." sql=".$sql;
-		                $this->db->rollback();
-		                return -2;
-		            }
-		        }
-		        else
-		        {
-		            $this->error=$this->db->error()." sql=".$sql;
-		            $this->db->rollback();
-		            return -1;
-		        }
-		    }
+                    
+                    if (empty($error)) {
+                        $this->db->commit();
+                        return $idinserted;
+                    } else {
+                        $this->db->rollback();
+                        return -1;
+                    }
+                } else {
+                    $this->error = $this->db->lasterror() . " sql=" . $sql;
+                    $this->db->rollback();
+                    return -2;
+                }
+            } else {
+                $this->error = $this->db->lasterror() . " sql=" . $sql;
+                $this->db->rollback();
+                return - 1;
+            }
+        }
     }
 
     /**

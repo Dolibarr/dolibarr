@@ -367,7 +367,7 @@ if (! empty($search_movement))      $sql.= " AND m.label LIKE '%".$db->escape($s
 if (! empty($search_inventorycode)) $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
 if (! empty($search_product_ref))   $sql.= " AND p.ref LIKE '%".$db->escape($search_product_ref)."%'";
 if (! empty($search_product))       $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
-if (! empty($search_warehouse))     $sql.= " AND e.label LIKE '%".$db->escape($search_warehouse)."%'";
+if (! empty($search_warehouse))     $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
 if (! empty($search_user))          $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 if (! empty($search_batch))         $sql.= " AND m.batch LIKE '%".$db->escape($search_batch)."%'";
 
@@ -702,7 +702,8 @@ if ($resql)
     if (! $id > 0) 
     {
         print '<td class="liste_titre" align="left">';
-        print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
+        //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
+        print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1);
         print '</td>';
     }
     // Author

@@ -88,7 +88,7 @@ class box_factures_fourn_imp extends ModeleBoxes
 				$num = $db->num_rows($result);
 
 				$line = 0;
-				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
+				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 $facturestatic = new FactureFournisseur($db);
 

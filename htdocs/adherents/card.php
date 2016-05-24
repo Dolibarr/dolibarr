@@ -1376,17 +1376,12 @@ else
 			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
 		}
 
-		/*
-		 * Confirm add in spip
-		 */
+		// Confirm add in spip
 		if ($action == 'add_spip')
 		{
 			print $form->formconfirm("card.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
-
-		/*
-		 * Confirm removed from spip
-		 */
+		// Confirm removed from spip
 		if ($action == 'del_spip')
 		{
 			print $form->formconfirm("card.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
@@ -1551,8 +1546,16 @@ else
         }
         else
         {
-            print $langs->trans("SubscriptionNotReceived");
-            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        if (! $adht->cotisation)
+	        {
+	        	print $langs->trans("SubscriptionNotRecorded");
+		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        }
+	        else
+	        {
+	            print $langs->trans("SubscriptionNotReceived");
+	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        }
         }
         print '</td></tr>';
 

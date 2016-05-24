@@ -1409,7 +1409,9 @@ else
             $picto=($object->type== Product::TYPE_SERVICE?'service':'product');
             dol_fiche_head($head, 'card', $titre, 0, $picto);
 
-            dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+            $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+            
+            dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
             
             
             print '<div class="fichecenter">';
@@ -1435,7 +1437,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeType");
                 print '</td>';
-                if (($action != 'editbarcodetype') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcodetype') && ! empty($user->rights->produit->creer) && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcodetype')
@@ -1456,7 +1458,7 @@ else
                 print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
                 print $langs->trans("BarcodeValue");
                 print '</td>';
-                if (($action != 'editbarcode') && ! empty($user->rights->barcode->creer)) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
+                if (($action != 'editbarcode') && ! empty($user->rights->produit->creer) && $createbarcode) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$object->id.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
                 print '</tr></table>';
                 print '</td><td colspan="2">';
                 if ($action == 'editbarcode')
@@ -1874,7 +1876,7 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     	print '<input type="hidden" name="action" value="addin">';
 
-	    print load_fiche_titre($langs->trans("Add"),'','');
+	    print load_fiche_titre($langs->trans("AddToDraft"),'','');
 		
 		dol_fiche_head('');
 

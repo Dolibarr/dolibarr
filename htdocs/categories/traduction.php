@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("categories");
 $langs->load("languages");
@@ -143,6 +144,7 @@ llxHeader("","",$langs->trans("Translation"));
 
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
+$formother = new FormOther($db);
 
 if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
@@ -159,8 +161,8 @@ print '<table class="border" width="100%">';
 
 // Reference
 print '<tr>';
-print '<td width="20%" class="notopnoleft">';
-$ways = $object->print_all_ways();
+print '<td class="titlefield notopnoleft">';
+$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 print $langs->trans("Ref").'</td><td>';
 print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 foreach ($ways as $way)
@@ -171,9 +173,15 @@ print '</td>';
 print '</tr>';
 
 // Description
-print '<tr><td width="20%" class="notopnoleft">';
+print '<tr><td class="notopnoleft tdtop">';
 print $langs->trans("Description").'</td><td>';
 print dol_htmlentitiesbr($object->description);
+print '</td></tr>';
+
+// Color
+print '<tr><td class="notopnoleft">';
+print $langs->trans("Color").'</td><td>';
+print $formother->showColor($object->color);
 print '</td></tr>';
 
 print '</table>';
@@ -194,8 +202,8 @@ if ($action == 'edit')
 		{
 			print "<br><b><u>".$langs->trans('Language_'.$key)." :</u></b><br>";
 			print '<table class="border" width="100%">';
-			print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
-			print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
+			print '<tr><td class="fieldtitlecreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$object->multilangs[$key]["label"].'"></td></tr>';
+			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 			$doleditor->Create();
 			print '</td></tr>';
@@ -205,7 +213,7 @@ if ($action == 'edit')
 		}
 	}
 
-	print '<br /><div class="center">';
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -225,9 +233,9 @@ else
 			$s=picto_from_langcode($key);
 			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b><br>";
 			print '<table class="border" width="100%">';
-			print '<tr><td width="15%">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
-			print '<tr><td width="15%">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
-			print '<tr><td width="15%">'.$langs->trans('Note').'</td><td>'.$object->multilangs[$key]["note"].'</td></tr>';
+			print '<tr><td class="fieldtitlecreate>'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
+			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
+			print '<tr><td>'.$langs->trans('Note').'</td><td>'.$object->multilangs[$key]["note"].'</td></tr>';
 			print '</table>';
 		}
 	}
@@ -271,11 +279,11 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Translation').'</td><td>';
+	print '<tr><td class="fieldtitlecreate fieldrequired">'.$langs->trans('Translation').'</td><td>';
     print $formadmin->select_language('','forcelangprod',0,$object->multilangs);
 	print '</td></tr>';
-	print '<tr><td valign="top" width="15%" class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
-	print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle" size="40"></td></tr>';
+	print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 	$doleditor = new DolEditor('desc', '', '', 160, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 3, 80);
 	$doleditor->Create();
 	print '</td></tr>';
@@ -283,7 +291,7 @@ if ($action == 'add' && ($user->rights->produit->creer || $user->rights->service
 	print '</tr>';
 	print '</table>';
 
-	print '<br><div class="center">';
+	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

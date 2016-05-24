@@ -29,6 +29,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
 $langs->load("categories");
@@ -90,6 +91,7 @@ if ($action == 'addthumb' && $_GET["file"])
 llxHeader("","",$langs->trans("Categories"));
 
 $form = new Form($db);
+$formother = new FormOther($db);
 
 if ($object->id)
 {
@@ -117,8 +119,8 @@ if ($object->id)
 	print '<table class="border" width="100%">';
 
 	// Path of category
-	print '<tr><td width="20%" class="notopnoleft">';
-	$ways = $object->print_all_ways();
+	print '<tr><td class="titlefield notopnoleft">';
+	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 	print $langs->trans("Ref").'</td><td>';
 	print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 	foreach ($ways as $way)
@@ -128,55 +130,17 @@ if ($object->id)
 	print '</td></tr>';
 
 	// Description
-	print '<tr><td width="20%" class="notopnoleft">';
+	print '<tr><td class="notopnoleft">';
 	print $langs->trans("Description").'</td><td>';
 	print dol_htmlentitiesbr($object->description);
 	print '</td></tr>';
 
-	// Visibility
-	/*		if ($type == 0 && ! empty($conf->global->CATEGORY_ASSIGNED_TO_A_CUSTOMER))
-	 {
-	if ($object->socid)
-	{
-	$soc = new Societe($db);
-	$soc->fetch($object->socid);
-
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("AssignedToTheCustomer").'</td><td>';
-	print $soc->getNomUrl(1);
+	// Color
+	print '<tr><td class="notopnoleft">';
+	print $langs->trans("Color").'</td><td>';
+	print $formother->showColor($object->color);
 	print '</td></tr>';
-
-	$catsMeres = $object->get_meres ();
-
-	if ($catsMeres < 0)
-	{
-	dol_print_error();
-	}
-	else if (count($catsMeres) > 0)
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	}
-	else
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	}
-	else
-	{
-	print '<tr><td width="20%" class="notopnoleft">';
-	print $langs->trans("CategoryContents").'</td><td>';
-	print ($object->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
-	print '</td></tr>';
-	}
-	*/
-
+	
 	print "</table>\n";
 
 	print "</div>\n";
