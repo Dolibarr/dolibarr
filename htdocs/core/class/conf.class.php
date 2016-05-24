@@ -378,6 +378,8 @@ class Conf
 
 		// Set some default values
 
+		$this->global->MAIN_ACTIVATE_HTML5=1;
+		
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
