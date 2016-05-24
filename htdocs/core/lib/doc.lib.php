@@ -152,3 +152,34 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
 	return $libelleproduitservice;
 }
 
+/**
+ *  Return line field translated in outputlangs
+ *
+ *  @param  Line        $line                Current line object
+ *  @param  string      $field               Field to translate (product_ref, product_label...)
+ *  @param  Translate   $outputlangs         Object langs for output
+ *  @return string                           Translated field
+ */
+function doc_gettranslatedfield($line, $field, $outputlangs){
+    global $db, $conf;
+
+    // use the current field value
+    $value = empty($line->$field)?'':$line->$field;
+
+    // and try to translate it
+    if (! empty($conf->global->MAIN_MULTILANGS))
+    {
+    	$idprod=$line->fk_product;
+    	$prodser = new Product($db);
+
+	if ($idprod)
+	{
+		$prodser->fetch($idprod);
+	        if (! empty($prodser->multilangs[$outputlangs->defaultlang][$field]))
+	        {
+	            $value=$prodser->multilangs[$outputlangs->defaultlang][$field];
+	        }
+	}
+    }
+    return $value;
+}
