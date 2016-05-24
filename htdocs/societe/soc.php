@@ -974,11 +974,11 @@ else
         if ($conf->use_javascript_ajax)
         {
             print '<tr class="individualline"><td>'.fieldLabel('FirstName','firstname').'</td>';
-	        print '<td><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
-            print '<td colspan=2>&nbsp;</td></tr>';
-            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td>';
+	        print '<td colspan="3"><input type="text" size="60" name="firstname" id="firstname" value="'.$object->firstname.'"></td>';
+            print '</tr>';
+            print '<tr class="individualline"><td>'.fieldLabel('UserTitle','civility_id').'</td><td colspan="3">';
             print $formcompany->select_civility($object->civility_id).'</td>';
-            print '<td colspan=2>&nbsp;</td></tr>';
+            print '</tr>';
         }
 
         // Alias names (commercial, trademark or alias names)
