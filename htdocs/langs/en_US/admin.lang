@@ -1204,6 +1204,8 @@ SuggestPaymentByChequeToAddress=Suggest payment by cheque to
 FreeLegalTextOnInvoices=Free text on invoices
 WatermarkOnDraftInvoices=Watermark on draft invoices (none if empty)
 PaymentsNumberingModule=Payments numbering model
+SuppliersPayment=Suppliers payments
+SupplierPaymentSetup=Suppliers payments setup
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 CreateForm=Create forms

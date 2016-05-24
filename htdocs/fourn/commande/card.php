@@ -2076,7 +2076,6 @@ elseif (! empty($object->id))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
-
 	if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="2">';
@@ -2096,6 +2095,9 @@ elseif (! empty($object->id))
 		$usehourmin='day';
 		if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin='dayhour';
 		print $object->date_livraison ? dol_print_date($object->date_livraison, $usehourmin) : '&nbsp;';
+		if ($object->hasDelay() && ! empty($object->date_livraison)) {
+		    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
+		}
 	}
 	print '</td></tr>';
 

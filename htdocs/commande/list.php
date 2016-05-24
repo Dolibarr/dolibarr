@@ -72,7 +72,7 @@ $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 
 // Security check
-$id = (GETPOST('orderid')?GETPOST('orderid'):GETPOST('id','int'));
+$id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'commande', $id,'');
 
@@ -124,6 +124,9 @@ $arrayfields=array(
     'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
     'c.date_commande'=>array('label'=>$langs->trans("OrderDateShort"), 'checked'=>1),
     'c.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
+    'c.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
+    'c.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
+    'c.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
     'c.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     'c.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'c.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -220,7 +223,7 @@ llxHeader('',$langs->trans("Orders"),$help_url);
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
-$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
+$sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= ' c.rowid, c.ref, c.total_ht, c.tva as total_tva, c.total_ttc, c.ref_client,';
@@ -253,6 +256,7 @@ if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_produc
 if ($socid > 0) $sql.= ' AND s.rowid = '.$socid;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
+if ($search_ref_customer) $sql.= natural_search('c.ref_client', $search_ref_customer);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($billed != '' && $billed >= 0) $sql.=' AND c.facture = '.$billed;
 if ($viewstatut <> '')
@@ -310,7 +314,6 @@ if ($search_state) $sql.= natural_search("state.nom",$search_state);
 if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_company) $sql .= natural_search('s.nom', $search_company);
-if ($search_ref_customer) $sql.= natural_search('c.ref_client', $search_ref_customer);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
@@ -348,7 +351,7 @@ $sql.= $db->plimit($limit + 1,$offset);
 $resql = $db->query($sql);
 if ($resql)
 {
-	if ($socid)
+	if ($socid > 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($socid);
@@ -393,6 +396,8 @@ if ($resql)
 	if ($search_user > 0) 		$param.='&search_user='.$search_user;
 	if ($search_sale > 0) 		$param.='&search_sale='.$search_sale;
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
+	if ($search_total_vat != '') $param.='&search_total_vat='.$search_total_vat;
+	if ($search_total_ttc != '') $param.='&search_total_ttc='.$search_total_ttc;
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
@@ -479,7 +484,7 @@ if ($resql)
 	if (! empty($arrayfields['c.date_commande']['checked']))  print_liste_field_titre($arrayfields['c.date_commande']['label'],$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.date_delivery']['checked']))  print_liste_field_titre($arrayfields['c.date_delivery']['label'],$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.total_ht']['checked']))       print_liste_field_titre($arrayfields['c.total_ht']['label'],$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['c.tva']['checked']))            print_liste_field_titre($arrayfields['c.tva']['label'],$_SERVER["PHP_SELF"],'c.total_vat','',$param, 'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['c.total_vat']['checked']))            print_liste_field_titre($arrayfields['c.total_vat']['label'],$_SERVER["PHP_SELF"],'c.tva','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'],$_SERVER["PHP_SELF"],'c.total_ttc','',$param, 'align="right"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -642,7 +647,7 @@ if ($resql)
     	print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4);
 	    print '</td>';
 	}
-	// Status
+	// Status billed
 	if (! empty($arrayfields['c.facture']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="right">';
@@ -929,10 +934,10 @@ if ($resql)
         // Amount VAT
         if (! empty($arrayfields['c.total_vat']['checked']))
         {
-            print '<td align="right">'.price($obj->total_vat)."</td>\n";
+            print '<td align="right">'.price($obj->total_tva)."</td>\n";
             if (! $i) $totalarray['nbfield']++;
 		    if (! $i) $totalarray['totalvatfield']=$totalarray['nbfield'];
-		    $totalarray['totalvat'] += $obj->total_vat;
+		    $totalarray['totalvat'] += $obj->total_tva;
         }
         // Amount TTC
         if (! empty($arrayfields['c.total_ttc']['checked']))
