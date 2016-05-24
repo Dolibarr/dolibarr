@@ -161,7 +161,7 @@ function doc_getlinedesc($line,$outputlangs,$hideref=0,$hidedesc=0,$issupplierli
  *  @return string                           Translated field
  */
 function doc_gettranslatedfield($line, $field, $outputlangs){
-    global $conf;
+    global $db, $conf;
 
     // use the current field value
     $value = empty($line->$field)?'':$line->$field;
@@ -169,9 +169,17 @@ function doc_gettranslatedfield($line, $field, $outputlangs){
     // and try to translate it
     if (! empty($conf->global->MAIN_MULTILANGS))
     {
-        if (! empty($line->multilangs[$outputlangs->defaultlang][$field])){
-            $value=$line->multilangs[$outputlangs->defaultlang][$field];
-        }
+    	$idprod=$line->fk_product;
+    	$prodser = new Product($db);
+
+	if ($idprod)
+	{
+		$prodser->fetch($idprod);
+	        if (! empty($prodser->multilangs[$outputlangs->defaultlang][$field]))
+	        {
+	            $value=$prodser->multilangs[$outputlangs->defaultlang][$field];
+	        }
+	}
     }
     return $value;
 }
