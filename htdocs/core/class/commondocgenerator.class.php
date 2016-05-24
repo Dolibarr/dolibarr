@@ -427,10 +427,10 @@ abstract class CommonDocGenerator
 
 		$resarray= array(
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
-			'line_product_ref'=>$line->product_ref,
-			'line_product_label'=>$line->product_label,
-                        'line_product_type'=>$line->product_type,
-			'line_desc'=>$line->desc,
+			'line_product_ref'=>doc_gettranslatedfield($line,'product_ref',$outputlangs),
+			'line_product_label'=>doc_gettranslatedfield($line,'product_label',$outputlangs),
+                        'line_product_type'=>doc_gettranslatedfield($line,'product_type',$outputlangs),
+			'line_desc'=>doc_gettranslatedfield($line,'desc',$outputlangs),
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 			'line_up'=>price2num($line->subprice),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
