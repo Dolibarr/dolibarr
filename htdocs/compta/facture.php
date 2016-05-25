@@ -1935,7 +1935,7 @@ if ($action == 'create')
 		$dateinvoice		= (empty($dateinvoice)?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$dateinvoice);		// Do not set 0 here (0 for a date is 1970)
 	}
 
-	$absolute_discount = $soc->getAvailableDiscounts();
+	if(!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();
 
 	if (! empty($conf->use_javascript_ajax))
 	{
