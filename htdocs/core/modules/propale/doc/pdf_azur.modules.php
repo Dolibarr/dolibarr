@@ -710,7 +710,7 @@ class pdf_azur extends ModelePDFPropales
 										if (file_exists($infile) && is_readable($infile)) {
 											$pagecount = $pdf->setSourceFile($infile);
 											for($i = 1; $i <= $pagecount; $i ++) {
-												$tplIdx = $pdf->importPage(1);
+												$tplIdx = $pdf->importPage($i);
 												if ($tplIdx!==false) {
 													$s = $pdf->getTemplatesize($tplIdx);
 													$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
