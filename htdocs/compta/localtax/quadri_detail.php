@@ -196,8 +196,8 @@ $total = 0;
 $i=0;
 
 // Load arrays of datas
-$x_coll= local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell', $local);
-$x_paye = local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy', $local);
+$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 
 echo '<table class="noborder" width="100%">';
@@ -637,6 +637,5 @@ else
 	$i++;
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

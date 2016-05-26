@@ -333,7 +333,7 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 
 	if ($result > 0)
 	{
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))  // TODO Translate this so we can remove condition
 		{
 			// Send mail
 
@@ -390,6 +390,7 @@ if ($action == "confirm_save_from_refuse" && GETPOST("confirm") == "yes" && $id 
 						else
 						{
 							$mesg=$mailfile->error;
+							setEventMessages($mesg, null, 'errors');
 						}
 						// END - Send mail
 					}
@@ -438,7 +439,7 @@ if ($action == "confirm_approve" && GETPOST("confirm") == "yes" && $id > 0 && $u
 
 	if ($result > 0)
 	{
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))  // TODO Translate this so we can remove condition
 		{
 			// Send mail
 
@@ -542,7 +543,7 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 
 	if ($result > 0)
 	{
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))  // TODO Translate this so we can remove condition
 		{
 			// Send mail
 
@@ -583,7 +584,6 @@ if ($action == "confirm_refuse" && GETPOST('confirm')=="yes" && $id > 0 && $user
 				else
 				{
 					setEventMessages($langs->trans("ErrorFailedToSendMail",$emailFrom,$emailTo), null, 'errors');
-					$mesg="Impossible d'envoyer l'email.";
 				}
 				// END - Send mail
 			}
@@ -627,7 +627,7 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_
 
 		if ($result > 0)
 		{
-			if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+			if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))     // TODO Translate this so we can remove condition
 			{
 				// Send mail
 
@@ -667,6 +667,7 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_
 					else
 					{
 						$mesg="Impossible d'envoyer l'email.";
+						setEventMessages($mesg, null, 'errors');
 					}
 					// END - Send mail
 				}
@@ -756,7 +757,7 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 
 	if ($result > 0)
 	{
-		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
+		if (! empty($conf->global->DEPLACEMENT_TO_CLEAN)) // TODO Translate this so we can remove condition
 		{
 			// Send mail
 
@@ -806,9 +807,8 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 			endif;
 
 			else:
-
-			$mesg="Impossible d'envoyer l'email.";
-
+                $mesg="Impossible d'envoyer l'email.";
+                setEventMessages($mesg, null, 'errors');
 			endif;
 			// END - Send mail
 		}
@@ -921,7 +921,7 @@ if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 	$total_ht = $object_ligne->total_ht;
 	$total_tva = $object_ligne->total_tva;
 
-	$result=$object->deleteline(GETPOST("rowid"));
+	$result=$object->deleteline(GETPOST("rowid"), $user);
 	if ($result >= 0)
 	{
 		if ($result > 0)
@@ -961,7 +961,6 @@ if ($action == "updateligne" )
 
 	$rowid = $_POST['rowid'];
 	$type_fees_id = GETPOST('fk_c_type_fees');
-	$object_ligne->vatrate = price2num(GETPOST('vatrate'));
 	$projet_id = $fk_projet;
 	$comments = GETPOST('comments');
 	$qty = GETPOST('qty');
@@ -983,6 +982,7 @@ if ($action == "updateligne" )
 
 	if (! $error)
 	{
+	    // TODO Use update method of ExpenseReportLine
 		$result = $object->updateline($rowid, $type_fees_id, $projet_id, $vatrate, $comments, $qty, $value_unit, $date, $id);
 		if ($result >= 0)
 		{
@@ -1077,29 +1077,6 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $formproject = new FormProjets($db);
 $projecttmp = new Project($db);
-
-if (! empty($conf->global->DEPLACEMENT_TO_CLEAN))
-{
-	if(!empty($_GET['mesg']))
-	{
-		$text_mesg = explode(",",$_GET['mesg']);
-
-		foreach($text_mesg as $text)
-		{
-			$mesg.= "- ".$langs->trans($text)."<br />";
-		}
-
-		print "<div class=\"error\" style=\"font-size:15px;background-color:#FFB3B3;\">";
-		print $langs->trans("LINE_NOT_ADDED")."<br />";
-		print $mesg;
-		print "</div>";
-	}
-	else
-	{
-		if ($mesg) print "<div class=\"error\" style=\"font-size:16px;background-color:red;\">".$mesg."</div>";
-	}
-}
-
 
 // Create
 if ($action == 'create')
@@ -1625,7 +1602,7 @@ else
 				$sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
 				$sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
-				$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
+				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
 				$sql.= ' WHERE fde.fk_expensereport = '.$object->id;
 
@@ -1691,7 +1668,7 @@ else
     								}
     								print '</td>';
 								}
-								print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper($objp->type_fees_libelle)).'</td>';
+								print '<td style="text-align:center;">'.$langs->trans("TF_".strtoupper(empty($objp->type_fees_libelle)?'OTHER':$objp->type_fees_libelle)).'</td>';
 								print '<td style="text-align:left;">'.$objp->comments.'</td>';
 								print '<td style="text-align:right;">'.vatrate($objp->vatrate,true).'</td>';
 								print '<td style="text-align:right;">'.price($objp->value_unit).'</td>';

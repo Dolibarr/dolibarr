@@ -130,6 +130,7 @@ AssociatedProductsAbility=Activate the package feature
 AssociatedProducts=Package product
 AssociatedProductsNumber=Number of products composing this package product
 ParentProductsNumber=Number of parent packaging product
+ParentProducts=Parent products
 IfZeroItIsNotAVirtualProduct=If 0, this product is not a package product
 IfZeroItIsNotUsedByVirtualProduct=If 0, this product is not used by any package product
 EditAssociate=Associate
