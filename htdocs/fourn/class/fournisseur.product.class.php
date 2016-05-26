@@ -466,6 +466,7 @@ class ProductFournisseur extends Product
                 $prodfourn->product_fourn_price_id	= $record["product_fourn_pri_id"];
                 $prodfourn->product_fourn_id		= $record["product_fourn_id"];
                 $prodfourn->fourn_ref				= $record["ref_fourn"];
+                $prodfourn->ref_supplier			= $record["ref_fourn"];
                 $prodfourn->fourn_price				= $record["price"];
                 $prodfourn->fourn_qty				= $record["quantity"];
 				$prodfourn->fourn_remise_percent	= $record["remise_percent"];
