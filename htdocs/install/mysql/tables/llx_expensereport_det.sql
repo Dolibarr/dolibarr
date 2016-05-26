@@ -45,7 +45,7 @@ CREATE TABLE llx_expensereport_det
    multicurrency_subprice       double(24,8) DEFAULT 0,
    multicurrency_total_ht       double(24,8) DEFAULT 0,
    multicurrency_total_tva      double(24,8) DEFAULT 0,
-   multicurrency_total_ttc      double(24,8) DEFAULT 0;
+   multicurrency_total_ttc      double(24,8) DEFAULT 0,
    fk_facture					integer DEFAULT 0,				-- ID of customer invoice line if expense is rebilled to a customer  		        
    rang							integer DEFAULT 0,				-- position of line
    import_key					varchar(14)
