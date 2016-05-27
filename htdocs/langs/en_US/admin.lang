@@ -411,6 +411,7 @@ RefreshPhoneLink=Refresh link
 LinkToTest=Clickable link generated for user <strong>%s</strong> (click phone number to test)
 KeepEmptyToUseDefault=Keep empty to use default value
 DefaultLink=Default link
+SetAsDefault=Set as default
 ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
 ExternalModule=External module - Installed into directory %s
 BarcodeInitForThirdparties=Mass barcode init for thirdparties

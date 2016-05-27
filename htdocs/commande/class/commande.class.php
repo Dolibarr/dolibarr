@@ -1394,6 +1394,11 @@ class Commande extends CommonOrder
                 return -2;
             }
         }
+        else
+        {
+            dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+            return -3;
+        }
     }
 
 

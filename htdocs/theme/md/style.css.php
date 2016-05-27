@@ -1723,7 +1723,7 @@ div.tabs {
     clear:both;
 	height:100%;
 }
-div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser */
+div.tabsElem { margin-top: 6px; }		/* To avoid overlap of tabs when not browser */
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
@@ -1788,7 +1788,7 @@ a.tabTitle {
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 5px 12px 5px;
+	padding: 7px 12px 7px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
