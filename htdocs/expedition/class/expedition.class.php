@@ -282,13 +282,6 @@ class Expedition extends CommonObject
 					{
 						$error++;
 					}
-
-					// TODO uniformiser les statuts
-					$ret = $this->setStatut(2,$this->origin_id,$this->origin);
-					if (! $ret)
-					{
-						$error++;
-					}
 				}
 				
 				// Actions on extra fields (by external module or standard code)
@@ -702,7 +695,7 @@ class Expedition extends CommonObject
 					{
 						// line without batch detail
 						
-						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref));
 						if ($result < 0) {
 							$error++; 
@@ -714,8 +707,8 @@ class Expedition extends CommonObject
 					{
 						// line with batch detail
 						
-						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
-					    // ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
+						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
+					    // Note: ->fk_origin_stock = id into table llx_product_batch (may be rename into llx_product_stock_batch in another version)
 						$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentValidatedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch, $obj->fk_origin_stock);
 						if ($result < 0) {
 							$error++; 
@@ -731,12 +724,22 @@ class Expedition extends CommonObject
 				$this->error=$this->db->error();
 				return -2;
 			}
+			
+			// TODO Close order if check box "close order if remain to ship is 0" is on and if sum of all validated shipment = products or order to ship (because we are in case of stock movement on shipment validation)
+			
+		}
+
+		// Change status of order to "shipment in process"
+		$ret = $this->setStatut(Commande::STATUS_SHIPMENTONPROCESS, $this->origin_id, $this->origin);
+		if (! $ret)
+		{
+		    $error++;
 		}
 		
 		if (! $error && ! $notrigger)
 		{
             // Call trigger
-            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);     // TODO Add option in workflow module on this trigger to close order if sum of shipment = product to ship of order
+            $result=$this->call_trigger('SHIPPING_VALIDATE',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 		}

@@ -621,6 +621,8 @@ if ($resql)
         					$userstatic->lastname=$val['lastname'];
         					$userstatic->firstname=$val['firstname'];
         					$userstatic->email=$val['email'];
+        					$userstatic->statut=$val['statut'];
+        					$userstatic->entity=$val['entity'];
         					print $userstatic->getNomUrl(1);
         					$j++;
         					if ($j < $nbofsalesrepresentative) print ', ';
