@@ -725,7 +725,7 @@ class Expedition extends CommonObject
 				return -2;
 			}
 			
-			// TODO Close order if check box "close order if remain to ship is 0" is on and if sum of all validated shipment = products or order to ship (because we are in case of stock movement on shipment validation)
+			// FIXME Set status of order to "delivered" if check box "set order as delivered if remain to ship is 0" is on and if sum of all validated shipment = products or order to ship (because we are in case of stock movement on shipment validation)
 			
 		}
 
