@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2008       Matteli
- * Copyright (C) 2011-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2011-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -567,7 +567,7 @@ if (! defined('NOLOGIN'))
 	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
 	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
 	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
-            header('Location: '.DOL_URL_ROOT.'/index.php'.($count(paramsurl)?'?'.join('&',$paramsurl):''));
+            header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
     }
@@ -625,7 +625,7 @@ if (! defined('NOLOGIN'))
 	        if (GETPOST('textbrowser')) $paramsurl[]='textbrowser='.GETPOST('textbrowser','int');
 	        if (GETPOST('nojs')) $paramsurl[]='nojs='.GETPOST('nojs','int');
 	        if (GETPOST('lang')) $paramsurl[]='lang='.GETPOST('lang','alpha');
-            header('Location: '.DOL_URL_ROOT.'/index.php'.($count(paramsurl)?'?'.join('&',$paramsurl):''));
+            header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl)?'?'.implode('&',$paramsurl):''));
             exit;
         }
         else

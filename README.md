@@ -151,7 +151,7 @@ Administrator, user, developer and translator's documentations are available alo
 
 ## CONTRIBUTING
 
-See file [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/CONTRIBUTING.md)
+See file [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)
 
 ## CREDITS
 
