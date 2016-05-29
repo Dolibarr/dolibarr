@@ -55,7 +55,6 @@ if (empty($conf->global->MAIN_MODULE_API))
     exit;
 }
 
-use \Luracast\Restler\Defaults;
 
 $api = new DolibarrApi($db);
 

@@ -15,9 +15,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Luracast\Restler\Restler;
 use Luracast\Restler\RestException;
-use Luracast\Restler\Defaults;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
