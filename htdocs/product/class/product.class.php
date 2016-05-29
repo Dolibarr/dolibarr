@@ -1353,7 +1353,8 @@ class Product extends CommonObject
                 }
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
-				$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
+				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
+				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$result=$obj->fk_product;
 				return $result;
