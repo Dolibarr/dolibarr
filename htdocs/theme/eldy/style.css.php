@@ -307,7 +307,7 @@ span.timesheetalreadyrecorded input {
 select.flat, form.flat select {
 	font-weight: normal;
 }
-.optiongrey {
+.optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
 .opacityhigh {
@@ -587,6 +587,13 @@ div.myavailability {
 .minheight40 { min-height: 40px; }
 .titlefield { width: 25%; }
 .titlefieldcreate { width: 20%; }
+
+/* Force values for small screen */
+@media only screen and (max-width: 1400px)
+{
+	.titlefield { width: 30% !important; }
+	.titlefieldcreate { width: 30% !important; }
+}
 
 /* Force values for small screen */
 @media only screen and (max-width: 570px)
@@ -1779,7 +1786,7 @@ a.tabTitle {
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 7px 12px 7px;
+	padding: 7px 9px 7px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;

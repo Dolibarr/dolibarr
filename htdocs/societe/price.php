@@ -158,11 +158,6 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">';
 
-// Alias names (commercial, trademark or alias names)
-print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-print $object->name_alias;
-print "</td></tr>";
-
 if (! empty($conf->global->SOCIETE_USEPREFIX)) // Old not used prefix field
 {
 	print '<tr><td>' . $langs->trans('Prefix') . '</td><td colspan="3">' . $object->prefix_comm . '</td></tr>';
