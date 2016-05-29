@@ -761,6 +761,8 @@ class FactureRec extends CommonInvoice
 		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
 		$prodids = array();
+		$num_prods = 0;
+		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE entity IN (".getEntity('product', 1).")";

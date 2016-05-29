@@ -2778,7 +2778,7 @@ function dol_print_error($db='',$error='',$errors=null)
 			if (empty($msg)) continue;
 			if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 			{
-				$out.="<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+				$out.="<b>".$langs->trans("Message").":</b> ".dol_escape_htmltag($msg)."<br>\n" ;
 			}
 			else                        // Mode CLI
 			{
