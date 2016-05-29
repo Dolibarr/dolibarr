@@ -119,6 +119,7 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'ORDER_CANCEL':
 		    case 'ORDER_SENTBYMAIL':
 		    case 'ORDER_CLASSIFY_BILLED':
+		    case 'ORDER_SETDRAFT':
 		    case 'LINEORDER_INSERT':
 		    case 'LINEORDER_UPDATE':
 		    case 'LINEORDER_DELETE':
@@ -258,6 +259,9 @@ class InterfaceDemo extends DolibarrTriggers
 		    case 'SHIPPING_MODIFY':
 		    case 'SHIPPING_VALIDATE':
 		    case 'SHIPPING_SENTBYMAIL':
+		    case 'SHIPPING_BILLED':
+		    case 'SHIPPING_CLOSED':
+		    case 'SHIPPING_REOPEN':
 		    case 'SHIPPING_DELETE':
 		        dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			    break;
