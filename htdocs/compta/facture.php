@@ -312,6 +312,15 @@ if (empty($reshook))
 		if ($result < 0) dol_print_error($db, $object->error);
 	}
 
+	else if ($action == 'setdate_pointoftax' && $user->rights->facture->creer)
+	{
+		$object->fetch($id);
+		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+	    $object->date_pointoftax=$date_pointoftax;
+		$result = $object->update($user);
+		if ($result < 0) dol_print_error($db, $object->error);
+	}
+	
 	else if ($action == 'setconditions' && $user->rights->facture->creer)
 	{
 		$object->fetch($id);
@@ -702,12 +711,15 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 			}
 
+			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			
 			if (! $error) {
 				// This is a replacement invoice
 				$result = $object->fetch($_POST['fac_replacement']);
 				$object->fetch_thirdparty();
 
 				$object->date				= $dateinvoice;
+				$object->date_pointoftax	= $date_pointoftax;
 				$object->note_public		= trim($_POST['note_public']);
 				$object->note				= trim($_POST['note']);
 				$object->ref_client			= $_POST['ref_client'];
@@ -752,11 +764,14 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Date")), null, 'errors');
 			}
 
+			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			
 			if (! $error)
 			{
 				$object->socid				= GETPOST('socid','int');
 				$object->number				= $_POST['facnumber'];
 				$object->date				= $dateinvoice;
+				$object->date_pointoftax	= $date_pointoftax;
 				$object->note_public		= trim($_POST['note_public']);
 				$object->note				= trim($_POST['note']);
 				$object->ref_client			= $_POST['ref_client'];
@@ -858,12 +873,15 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			}
 
+			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			
 			if (! $error)
 			{
 				$object->socid			= GETPOST('socid','int');
 				$object->type           = $_POST['type'];
 				$object->number         = $_POST['facnumber'];
-				$object->date           = $dateinvoice;
+				$object->date            = $dateinvoice;
+				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public	= trim($_POST['note_public']);
 				$object->note_private   = trim($_POST['note_private']);
 				$object->ref_client     = $_POST['ref_client'];
@@ -904,6 +922,8 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 			}
 
+			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			
 			if (! $error)
 			{
 				// Si facture standard
@@ -911,6 +931,7 @@ if (empty($reshook))
 				$object->type				= GETPOST('type');
 				$object->number				= $_POST['facnumber'];
 				$object->date				= $dateinvoice;
+				$object->date_pointoftax	= $date_pointoftax;
 				$object->note_public		= trim($_POST['note_public']);
 				$object->note_private		= trim($_POST['note_private']);
 				$object->ref_client			= $_POST['ref_client'];
@@ -1203,7 +1224,7 @@ if (empty($reshook))
 				{   // If some invoice's lines coming from page
 					$id = $object->create($user);
 
-					for($i = 1; $i <= $NBLINES; $i ++) {
+					for ($i = 1; $i <= $NBLINES; $i ++) {
 						if ($_POST['idprod' . $i]) {
 							$product = new Product($db);
 							$product->fetch($_POST['idprod' . $i]);
@@ -1224,6 +1245,8 @@ if (empty($reshook))
 				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("Date")) . '</div>';
 			}
 
+			$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+			
 			if (!($_POST['situations'] > 0)) {
 				$error++;
 				$mesg = '<div class="error">' . $langs->trans("ErrorFieldRequired", $langs->trans("InvoiceSituation")) . '</div>';
@@ -1248,6 +1271,7 @@ if (empty($reshook))
 
 				$object->fetch_thirdparty();
 				$object->date = $datefacture;
+				$object->date_pointoftax = $date_pointoftax;
 				$object->note_public = trim($_POST['note_public']);
 				$object->note = trim($_POST['note']);
 				$object->ref_client = $_POST['ref_client'];
@@ -2396,6 +2420,15 @@ if ($action == 'create')
 	print $form->select_date($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
 	print '</td></tr>';
 
+	// Date point of tax
+	if (! empty($conf->global->INVOICE_POINTOFTAX_DATE))
+	{
+		print '<tr><td class="fieldrequired">' . $langs->trans('DatePointOfTax') . '</td><td colspan="2">';
+		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
+		print $form->select_date($date_pointoftax?$date_pointoftax:-1, 'date_pointoftax', '', '', '', "add", 1, 1, 1);
+		print '</td></tr>';
+	}
+		
 	// Payment term
 	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
 	$form->select_conditions_paiements(isset($_POST['cond_reglement_id']) ? $_POST['cond_reglement_id'] : $cond_reglement_id, 'cond_reglement_id');
@@ -3459,6 +3492,24 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print '</td></tr>';
+
+	if (! empty($conf->global->INVOICE_POINTOFTAX_DATE))
+	{
+		// Date invoice
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print $langs->trans('DatePointOfTax');
+		print '</td>';
+		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_pointoftax&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		if ($action == 'editdate_pointoftax') {
+			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_pointoftax, 'date_pointoftax');
+		} else {
+			print dol_print_date($object->date_pointoftax, 'daytext');
+		}
+		print '</td></tr>';
+	}	
 
 	// Conditions de reglement
 	print '<tr><td>';

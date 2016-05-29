@@ -223,6 +223,7 @@ RelatedRecurringCustomerInvoices=Related recurring customer invoices
 MenuToValid=To valid
 DateMaxPayment=Payment due before
 DateInvoice=Invoice date
+DatePointOfTax=Point of tax
 NoInvoice=No invoice
 ClassifyBill=Classify invoice
 SupplierBillsToPay=Unpaid supplier invoices
