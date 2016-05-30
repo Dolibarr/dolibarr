@@ -157,10 +157,6 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToLi
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-print '<div class="underbanner clearboth"></div>';
-
-print '<br>';
-
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
 print "<br>\n";
 
