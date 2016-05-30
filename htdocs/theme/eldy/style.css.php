@@ -1786,7 +1786,7 @@ a.tabTitle {
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 7px 9px 7px;
+	padding: 8px 9px 8px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -2234,9 +2234,10 @@ table.liste tr, table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 	min-height: 20px;
 }
-table.liste th, table.noborder th {
+table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
 	padding: 10px 2px 10px 3px;			/* t r b l */
 }
+tr.box_titre .nobordernopadding td { padding: 0px ! important; }
 table.liste td, table.noborder td, div.noborder form, div.noborder form div {
 	padding: 5px 2px 5px 3px;			/* t r b l */
 }
@@ -2732,11 +2733,11 @@ tr.box_titre {
 
 	/* TO MATCH ELDY */
 	<?php if ($usegradienttitle) { ?>
-	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
-	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
-	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
-	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.3) 100%);
+	background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
+	background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
+	background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
+	background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(<?php echo $colorbacktitle1; ?>,0.4) 100%);
 	<?php } else { ?>
 	background: rgb(<?php echo $colorbacktitle1; ?>);
 	<?php } ?>
