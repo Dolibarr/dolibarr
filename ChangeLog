@@ -14,8 +14,57 @@ make a Dolibarr upgrade.
 
 ***** ChangeLog for 4.0 compared to 3.9.* *****
 For users:
+NEW: #3510 : Standardize module
+NEW: #3510 : Working
+NEW: #3767 Allow changing multiple prices of a product at once
+NEW: #4972 Translated Charges sociales (type 0) and Charges sociales (type 1) in reports page
+NEW: Accountancy Add a way to initialize chart of accounts
+NEW: Accountancy - Add category to manage the display of the income statement and the balance sheet
+NEW: Accountancy - Add Result page & review
+NEW: Accountancy - Drop old table not used (Informations are already presents in llx_accounting_bookkeeping)
+NEW: Accountancy - Prepare multiple journals
+NEW: Accountancy Use clean_account to remove 0 at the right when we create an account in chart of accounts
+NEW: Add a filter field to restrict list of member when doing a LDAP list request. Use also this filter into ldap command line script making sync from ldap to dolibarr.
+NEW: Add a new method for margin calculation. Added margin on "cost price" to margin on WAP price and margin on "best supplier price".
+NEW: Add a new widget $form->selectArrayAjax() to use combo list with content coming from an Ajax URL.
+NEW: Add an explanation message on shipment page to explain you can't make shipment if order is not validated
+NEW: Add a parameter on graph function to show a generic graph when no data are available.
+NEW: Add a refresh button on page list of direct print jobs.
+NEW: Add a tool for developers to purge database with no loose of setup
+NEW: Add cancel button on thirdparty create page
+NEW: Add css on column of detail lines to allow module to easily manipulate fields.
+NEW: Add date_rum into table of thirdparty bank account.
+NEW: Added Malta VAT into migration script
+NEW: Add expense report into accountancy report
+NEW: Add Expense report to approve into workboard 
+NEW: Selection of boxes is moved on top of page
+NEW: Add fields into llx_cronjobs to be able to use job table to queue one shot jobs.
+NEW: Add filter on a keyword, status and nature into list of modules
+NEW: Add filter on status on shipments
+NEW: Add hidden option BANK_DISABLE_CHECK_DEPOSIT to disable check deposit feature.
+NEW: Add hook pdf_build_address 
+NEW: Add option MAIN_PUBLIC_NOTE_IN_ADDRESS
+NEW: add $ID$ into extrafields management to allow use current object id on filter for select list from table and checkbox list from table
+NEW: Add index on invoice status 
+NEW: Add constant MAIN_LOGTOHTML to 0 into other setup by default to save time when we need to make debug on hosted instance.
+NEW: add info page on product card
+NEW: Add into about page, a sample text to use to promote new version release (visible only if version is last stable)
+NEW: Add list of billed
+NEW: Add Malta VAT into 3.9
+NEW: Add minimum stock and desired stock into import/export profiles. 
+NEW: Add state into thirdparty export fields
+NEW: Add more trackable events (create, submit and receive supplier order).
+NEW: add multicurency on customer order (module experimental)
+NEW: Add $object in parameter of pdf_build_address so we could include hook into the function.
+NEW: Add option MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN
 
 For developers:
+
+NEW: Add doActions hook method call in contract card
+NEW: Added doActions hooks to user cards
+NEW: #3876 Renamed Product::isservice and Product::isproduct to match PSR-2
+NEW: #3898 Remove deprecated Product::hidden property
+NEW: Add a checkbox to select/unselect all lines on page that support mass actions (like invoice list page)
 
 
 WARNING: 
