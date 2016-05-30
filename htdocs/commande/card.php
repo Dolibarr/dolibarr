@@ -1900,8 +1900,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			                                                     // invoice
 			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 		} else {
-			$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')";
-			$filtercreditnote = "fk_facture_source IS NOT NULL AND description <> '(DEPOSIT)'";
+			$filterabsolutediscount = "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')";
+			$filtercreditnote = "fk_facture_source IS NOT NULL AND description NOT LIKE '(DEPOSIT)%'";
 		}
 
 		// Relative and absolute discounts
