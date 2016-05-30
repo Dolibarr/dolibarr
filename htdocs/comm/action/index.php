@@ -48,7 +48,7 @@ $filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filt
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
-// If not choice done on calendar owner, we filter on user.
+// If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 {
 	$filtert=$user->id;
