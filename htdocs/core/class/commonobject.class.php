@@ -3751,8 +3751,11 @@ abstract class CommonObject
 						$object = new $InfoFieldList[0]($this->db);
 						if ($value)
 						{
-							$object->fetch(0,$value);
-							$this->array_options[$key]=$object->id;
+							if (GETPOST('action', 'alpha') != 'confirm_clone')
+							{
+								$object->fetch(0,$value);
+								$this->array_options[$key]=$object->id;
+							}
 						}
 						break;
                	}
