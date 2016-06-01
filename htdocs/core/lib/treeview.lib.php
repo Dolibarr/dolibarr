@@ -109,15 +109,17 @@ function tree_showpad(&$fulltree,$key,$silent=0)
  *  @param  int	    $pere   		Array with parent ids ('rowid'=>,'mainmenu'=>,'leftmenu'=>,'fk_mainmenu=>,'fk_leftmenu=>)
  *  @param  int	    $rang   		Level of element
  *  @param	string	$iddivjstree	Id to use for parent ul element
+ *  @param  int     $donoresetalreadyloaded     Do not reset global array $donoresetalreadyloaded used to avoid to go down on an aleady processed record
+ *  @param  int     $showfk         Show fk links to parent into label
  *  @return	void
  */
-function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
+function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree', $donoresetalreadyloaded=0, $showfk=0)
 {
     global $tree_recur_alreadyadded;
     
-    if ($rang == 0) $tree_recur_alreadyadded=array();
+    if ($rang == 0 && empty($donoresetalreadyloaded)) $tree_recur_alreadyadded=array();
     
-    if (empty($pere['rowid']))
+    if ($rang == 0)
 	{
 		// Test also done with jstree and dynatree (not able to have <a> inside label)
 		print '<script type="text/javascript" language="javascript">
@@ -161,7 +163,9 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 			}
 			print "\n".'<li '.($tab[$x]['statut']?' class="liuseractive"':'class="liuserdisabled"').'>';
 			print $tab[$x]['entry'];
-		    $tree_recur_alreadyadded[$tab[$x]['rowid']]=$rang;
+			if ($showfk) print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			//print ' -> A '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";
+		    $tree_recur_alreadyadded[$tab[$x]['rowid']]=($rang + 1);
 			// And now we search all its sons of lower level
 			tree_recur($tab,$tab[$x],$rang+1);
 			print '</li>';
@@ -173,7 +177,8 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 		    {
 		        if (! empty($tree_recur_alreadyadded[$tab[$x]['rowid']]))
 		        {
-                    dol_syslog('Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.', LOG_WARNING);
+		            dol_syslog('Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.', LOG_WARNING);
+		            //print 'Error, record with id '.$tab[$x]['rowid'].' seems to be a child of record with id '.$pere['rowid'].' but it was already output. Complete field "leftmenu" and "mainmenu" on ALL records to avoid ambiguity.';
                     continue;
 		        }
 		        
@@ -181,15 +186,17 @@ function tree_recur($tab, $pere, $rang, $iddivjstree='iddivjstree')
 		    }
 			print "\n".'<li '.($tab[$x]['statut']?' class="liuseractive"':'class="liuserdisabled"').'>';
 			print $tab[$x]['entry'];
-		    $tree_recur_alreadyadded[$tab[$x]['rowid']]=$rang;
+			if ($showfk) print '&nbsp; (fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].')';
+			//print ' -> B '.$tab[$x]['rowid'].' mainmenu='.$tab[$x]['mainmenu'].' leftmenu='.$tab[$x]['leftmenu'].' fk_mainmenu='.$tab[$x]['fk_mainmenu'].' fk_leftmenu='.$tab[$x]['fk_leftmenu'].'<br>'."\n";
+			$tree_recur_alreadyadded[$tab[$x]['rowid']]=($rang + 1);
 			// And now we search all its sons of lower level
-			//print 'Appel de tree_recur pour x='.$x.' rowid='.$tab[$x]['rowid']." fk_mainmenu pere = ".$tab[$x]['fk_mainmenu']." fk_leftmenu pere = ".$tab[$x]['fk_leftmenu']."<br>\n";
+			//print 'Call tree_recur for x='.$x.' rowid='.$tab[$x]['rowid']." fk_mainmenu pere = ".$tab[$x]['fk_mainmenu']." fk_leftmenu pere = ".$tab[$x]['fk_leftmenu']."<br>\n";
 		    tree_recur($tab,$tab[$x],$rang+1);
 			print '</li>';
 		}
 	}
 	if (! empty($ulprinted) && ! empty($pere['rowid'])) { print '</ul>'."\n"; }
 
-	if (empty($pere['rowid'])) print '</ul>';
+    if ($rang == 0) print '</ul>';
 }
 
