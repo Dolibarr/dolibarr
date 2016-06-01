@@ -1509,6 +1509,7 @@ MenuDeleted=Menu deleted
 TreeMenu=Tree menus
 Menus=Menus
 TreeMenuPersonalized=Personalized menus
+NotTopTreeMenuPersonalized=Personalized menus not linked to a top menu entry
 NewMenu=New menu
 MenuConf=Menus setup
 Menu=Selection of menu
