@@ -56,14 +56,14 @@
 		{
 			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Warehouse").'</td>';
 			print '<td width="20%">';
-			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')),'id_entrepot','',1);
+			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')), 'id_entrepot', '', 1);
 			print '</td>';
 		}
 		if ($object->element == 'stock')
 		{
 			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Product").'</td>';
 	        print '<td width="20%">';
-	        print $form->select_produits(GETPOST('product_id'),'product_id',(empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''));
+	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''));
 	        print '</td>';
 		}
 		print '<td width="20%">';

@@ -1603,7 +1603,7 @@ class Form
      *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
-     *  @param      int			$socid					Thirdparty Id
+     *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
      *  @return		void
      */
     function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0)
@@ -1662,7 +1662,7 @@ class Form
      *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param      int		$finished       Filter on finished field: 2=No filter
      *  @param      int		$outputmode     0=HTML select string, 1=Array
-     *  @param      int		$socid     		Thirdparty Id
+     *  @param      int		$socid     		Thirdparty Id (to get also price dedicated to this customer)
      *  @return     array    				Array of keys for json
      */
     function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0)
@@ -1673,7 +1673,7 @@ class Form
         $outarray=array();
 
         $sql = "SELECT ";
-        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock, p.fk_price_expression";
+        $sql.= " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock, p.fk_price_expression";
 
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
@@ -1860,6 +1860,7 @@ class Form
         $outref='';
         $outlabel='';
         $outdesc='';
+        $outbarcode='';
         $outtype='';
         $outprice_ht='';
         $outprice_ttc='';
@@ -1878,6 +1879,8 @@ class Form
         $outref=$objp->ref;
         $outlabel=$objp->label;
         $outdesc=$objp->description;
+        $outbarcode=$objp->barcode;
+        
         $outtype=$objp->fk_product_type;
         $outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration,0,dol_strlen($objp->duration)-1):'';
         $outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration,-1):'';
@@ -1891,12 +1894,16 @@ class Form
 			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
-        $opt.= $objp->ref.' - '.dol_trunc($label,$maxlengtharticle).' - ';
-
+        $opt.= $objp->ref;
+        if ($outbarcode) $opt.=' ('.$outbarcode.')';
+        $opt.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
+        
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
-        $outval.=$objRef.' - '.dol_trunc($label,$maxlengtharticle).' - ';
-
+        $outval.=$objRef;
+        if ($outbarcode) $outval.=' ('.$outbarcode.')';
+        $outval.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
+        
         $found=0;
 
         // Multiprice
