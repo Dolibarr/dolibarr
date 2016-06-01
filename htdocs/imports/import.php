@@ -44,7 +44,7 @@ $entitytoicon=array(
 	'order'=>'order' ,'order_line'=>'order',
 	'intervention'=>'intervention' ,'inter_line'=>'intervention',
 	'member'=>'user' ,'member_type'=>'group','subscription'=>'payment',
-	'tax'=>'generic' ,'tax_type'=>'generic',
+	'tax'=>'bill' ,'tax_type'=>'generic',
 	'account'=>'account',
 	'payment'=>'payment',
 	'product'=>'product','stock'=>'generic','warehouse'=>'stock',

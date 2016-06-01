@@ -115,6 +115,8 @@ UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_statu
 ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
 ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_chargesociales ADD COLUMN import_key varchar(14);
+
 --DROP TABLE llx_website_page;
 --DROP TABLE llx_website;
 CREATE TABLE llx_website
