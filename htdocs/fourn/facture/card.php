@@ -1352,7 +1352,7 @@ if ($action == 'create')
     }
     else
     {
-        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1',1);
+        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1','SelectThirdParty');
     }
     print '</td></tr>';
 
