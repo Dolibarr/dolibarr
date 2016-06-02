@@ -745,7 +745,7 @@ if ($resql)
                                 // stock order and stock order_supplier
                                 $stock_order=0;
                                 $stock_order_supplier=0;
-                                if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT))    // What about other options ?
+                                if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))    // What about other options ?
                                 {
                                     if (! empty($conf->commande->enabled))
                                     {
