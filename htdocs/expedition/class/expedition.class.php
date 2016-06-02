@@ -1800,6 +1800,7 @@ class Expedition extends CommonObject
 	 */
 	function setClosed()
 	{
+		global $conf,$langs,$user;
 
 		$error=0;
 		
@@ -1813,28 +1814,104 @@ class Expedition extends CommonObject
 		{
 			// TODO: Add option/checkbox to set order billed if 100% of order is shipped
 			$this->statut=2;
-			
-			// Call trigger
-			$result=$this->call_trigger('SHIPPING_CLOSED',$user);
-			if ($result < 0) { 
-				$error++;
+
+			// If stock increment is done on closing
+			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+	
+				$langs->load("agenda");
+	
+				// Loop on each product line to add a stock movement
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+				$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+				$sql.= " WHERE ed.fk_expedition = ".$this->id;
+				$sql.= " AND cd.rowid = ed.fk_origin_line";
+	
+				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$cpt = $this->db->num_rows($resql);
+					for ($i = 0; $i < $cpt; $i++)
+					{
+						$obj = $this->db->fetch_object($resql);
+						if (empty($obj->edbrowid))
+						{
+							$qty = $obj->qty;
+						}
+						else
+						{
+							$qty = $obj->edbqty;
+						}
+						if ($qty <= 0) continue;
+						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+	
+						$mouvS = new MouvementStock($this->db);
+						$mouvS->origin = &$this;
+						
+						if (empty($obj->edbrowid))
+						{
+							// line without batch detail
+							
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr",$numref));
+							if ($result < 0) {
+							    $this->error = $mouvS->error;
+							    $this->errors = $mouvS->errors;
+								$error++; break;
+							}
+						}
+						else
+						{
+							// line with batch detail
+							
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans("ShipmentClassifyClosedInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch, $obj->fk_origin_stock);
+							if ($result < 0) {
+							    $this->error = $mouvS->error;
+							    $this->errors = $mouvS->errors;
+							    $error++; break;
+							}
+						}
+					}
+				}
+				else
+				{
+					$this->error=$this->db->lasterror();
+					$error++;
+				}
 			}
 			
-		} else {
-			$error++;
-			$this->errors[]=$this->db->lasterror;
-		}
-		
-		if (empty($error)) {
-			$this->db->commit();
-			return 1;
+			// Call trigger
+			if (! $error)
+			{
+    			$result=$this->call_trigger('SHIPPING_CLOSED',$user);
+    			if ($result < 0) {
+    			    $error++;
+    			}
+			}
 		}
 		else
 		{
-			$this->db->rollback();
 			dol_print_error($this->db);
-			
-			return -1;
+            $error++;			
+		}
+		
+		if (! $error)
+		{
+		    $this->db->commit();
+		    return 1;
+		}
+		else
+		{
+		    $this->db->rollback();
+		    return -1;
 		}
 	}
 
@@ -1876,8 +1953,6 @@ class Expedition extends CommonObject
 		else
 		{
 			$this->db->rollback();
-			dol_print_error($this->db);
-			
 			return -1;
 		}
 	}
@@ -1889,6 +1964,7 @@ class Expedition extends CommonObject
 	 */
 	function reOpen()
 	{
+		global $conf,$langs,$user;
 
 		$error=0;
 		
@@ -1903,26 +1979,102 @@ class Expedition extends CommonObject
 			$this->statut=1;
 			$this->billed=0;
 			
-			// Call trigger
-			$result=$this->call_trigger('SHIPPING_REOPEN',$user);
-			if ($result < 0) {
-				$error++;
+			// If stock increment is done on closing
+			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+	
+				$langs->load("agenda");
+	
+				// Loop on each product line to add a stock movement
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				$sql = "SELECT cd.fk_product, cd.subprice,";
+				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
+				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";
+				$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
+				$sql.= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+				$sql.= " WHERE ed.fk_expedition = ".$this->id;
+				$sql.= " AND cd.rowid = ed.fk_origin_line";
+	
+				dol_syslog(get_class($this)."::valid select details", LOG_DEBUG);
+				$resql=$this->db->query($sql);
+				if ($resql)
+				{
+					$cpt = $this->db->num_rows($resql);
+					for ($i = 0; $i < $cpt; $i++)
+					{
+						$obj = $this->db->fetch_object($resql);
+						if (empty($obj->edbrowid))
+						{
+							$qty = $obj->qty;
+						}
+						else
+						{
+							$qty = $obj->edbqty;
+						}
+						if ($qty <= 0) continue;
+						dol_syslog(get_class($this)."::reopen expedition movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+	
+						//var_dump($this->lines[$i]);
+						$mouvS = new MouvementStock($this->db);
+						$mouvS->origin = &$this;
+						
+						if (empty($obj->edbrowid))
+						{
+							// line without batch detail
+							
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr",$numref));
+							if ($result < 0) {
+							    $this->error = $mouvS->error;
+							    $this->errors = $mouvS->errors;
+								$error++; break;
+							}
+						}
+						else
+						{
+							// line with batch detail
+							
+							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
+							$result=$mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr",$numref), '', $obj->eatby, $obj->sellby, $obj->batch, $obj->fk_origin_stock);
+							if ($result < 0) {
+							    $this->error = $mouvS->error;
+							    $this->errors = $mouvS->errors;
+							    $error++; break;
+							}
+						}
+					}
+				}
+				else
+				{
+					$this->error=$this->db->lasterror();
+					$error++;
+				}
 			}
 			
+			if (! $error)
+			{
+    			// Call trigger
+    			$result=$this->call_trigger('SHIPPING_REOPEN',$user);
+    			if ($result < 0) {
+    				$error++;
+    			}
+   			}
+		
 		} else {
 			$error++;
-			$this->errors[]=$this->db->lasterror;
+			$this->errors[]=$this->db->lasterror();
 		}
-		
-		if (empty($error)) {
+			
+		if (! $error) 
+		{
 			$this->db->commit();
 			return 1;
 		}
 		else
 		{
 			$this->db->rollback();
-			dol_print_error($this->db);
-			
 			return -1;
 		}
 	}

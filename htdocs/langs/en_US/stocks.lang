@@ -59,6 +59,7 @@ RuleForStockManagementIncrease=Rule for automatic stock management increase (man
 DeStockOnBill=Decrease real stocks on customers invoices/credit notes validation
 DeStockOnValidateOrder=Decrease real stocks on customers orders validation
 DeStockOnShipment=Decrease real stocks on shipping validation
+DeStockOnShipmentOnClosing=Decrease real stocks on shipping classification closed
 ReStockOnBill=Increase real stocks on suppliers invoices/credit notes validation
 ReStockOnValidateOrder=Increase real stocks on suppliers orders approbation
 ReStockOnDispatchOrder=Increase real stocks on manual dispatching into warehouses, after supplier order receiving
