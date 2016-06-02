@@ -139,7 +139,8 @@ NEW: Removed deprecated CommonObject::client property. Please use CommonObject::
 NEW: Removed unused FormOrder::selectSourcesCommande function
 NEW: Renamed ActionComm::add function to ActionComm::create
 NEW: Rename Form::select_date to Form::selectDate and Form::form_date to Form::formDate
-NEW: Rename path for generic medias files into '/medias' instead of fckeditor. Add location of medias into title of media browser of ckeditor. Work on website module
+NEW: Rename path for generiN
+NEW: More phpunit tests. Include some REST API into automatic tests.
 
 
 WARNING: 
