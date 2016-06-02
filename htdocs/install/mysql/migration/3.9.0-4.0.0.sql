@@ -481,6 +481,23 @@ update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
 -- At end (higher risk of error)
 
 -- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
 
+CREATE TABLE llx_oauth_token (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    service varchar(36),
+    token text,
+    fk_user integer,
+    fk_adherent integer,
+    entity integer
+)ENGINE=InnoDB;
 
+CREATE TABLE llx_oauth_state (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    service varchar(36),
+    state varchar(128),
+    fk_user integer,
+    fk_adherent integer,
+    entity integer
+)ENGINE=InnoDB;
