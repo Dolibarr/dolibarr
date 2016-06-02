@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-ProjectsArea=Projects Area
 PrivateProject=Projektansprechpartner
 MyProjectsDesc=Diese Ansicht ist auf Projekte beschränkt, zu denen Sie als Kontakt definiert sind (unabhängig vom Typ).
 ProjectsPublicDesc=Diese Ansicht zeigt alle für Sie sichtbaren Projekte.
@@ -17,4 +16,3 @@ ReOpenAProject=Öffne Projekt
 DoNotShowMyTasksOnly=Zeige auch die Aufgaben Anderer
 TypeContact_project_task_internal_TASKEXECUTIVE=Task Exekutive
 TypeContact_project_task_external_TASKEXECUTIVE=Task Exekutive
-OpportunityPonderatedAmountDesc=Opportunities amount weighted with probability

@@ -200,7 +200,6 @@ SendReminderBillByMail=Enviar o restante por e-mail
 RelatedCommercialProposals=Orçamentos relacionados
 MenuToValid=Validar
 DateMaxPayment=Pagamento antes do vencimento
-DateEcheance=Data limite do vencimento
 DateInvoice=Data da fatura
 NoInvoice=Nenhuma fatura
 ClassifyBill=Classificar fatura

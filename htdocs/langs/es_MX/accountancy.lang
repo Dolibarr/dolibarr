@@ -74,8 +74,3 @@ ErrorAccountancyCodeIsAlreadyUse=Error, no es posible eliminar ésta cuenta cont
 MvtNotCorrectlyBalanced=Movimiento balanceado incorrectamente. Crédito = %s. Débito = %s
 FicheVentilation=Ficha de desglose
 GeneralLedgerIsWritten=Las operaciones son escritas en el libro mayor
-ExportFormat=Formato de Exportación
-Textframe=Marco de texto
-Headercol=Nombre de columna en el encabezado del archivo
-Headername=Nombre del encabezado
-EnabledProduct=In Product

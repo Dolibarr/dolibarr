@@ -65,4 +65,3 @@ CronType_method=Chamar metodo da classe Dolibarr
 CronType_command=Comando Shell
 CronCannotLoadClass=Nao e possivel carregar a classe %s ou o objeto %s
 UseMenuModuleToolsToAddCronJobs=Vá ao menu "Principal - Módulo de ferramentas - Lista de trabalhos" para ver e editar a programação dos trabalhos.
-TaskDisabled=trabalho desativado

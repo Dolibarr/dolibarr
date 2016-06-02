@@ -21,15 +21,6 @@ NumMvts=Nombre de mouvement
 TotalVente=Chiffre d'affaires total avant taxes
 MvtNotCorrectlyBalanced=Le mouvement n'est pas correctement équilibré. Crédit = %s. Débit = %s
 GeneralLedgerIsWritten=Les opérations sont écrites dans le grand livre général
-ExportFormat=Format d'exportation
-Prefixname=Préfixe du fichier exporté
-Separate=Séparateur d'export
-Headercol=Nom de colonne dans l'entête du fichier
-Fieldname=Nom du champs
-Headername=Nom de l'entête
-EnabledProduct=En produits
-EnabledTiers=En tiers
-EnabledVat=En TPS/TVH
 InitAccountancy=Compabilité initiale
 InitAccountancyDesc=Cette page peut être utilisée pour initialiser un compte comptable sur les produits et services qui ne disposent pas de compte comptable défini pour les ventes et les achats . Vérifiez avant que l'installation du module de comptabilité est terminée.
 OptionModeProductSell=Mode de ventes
