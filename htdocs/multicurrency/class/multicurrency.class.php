@@ -512,9 +512,10 @@ class MultiCurrency extends CommonObject
 	 {
 	 	$sql = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
-		// FIXME Is this comptible with SQL ?
-		$sql.= ' WHERE m.code = "'.$db->escape($code).'" AND mc.date_sync >= ALL (SELECT date_sync FROM '.MAIN_DB_PREFIX.'multicurrency_rate)';
-		$sql.= " AND m.entity IN '".getEntity('multicurrency', 1)."'";
+		$sql.= ' WHERE m.code = "'.$db->escape($code).'"';
+		$sql.= " AND m.entity IN (".getEntity('multicurrency', 1).")";
+		$sql.= ' ORDER BY mc.date_sync DESC LIMIT 1';
+		
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
 		else return array(0, 1);
