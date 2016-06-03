@@ -125,9 +125,11 @@ if ($idprod > 0)
 		}
 	}
 
-	// Add price for pmp
-	$price=$producttmp->pmp;
-	$prices[] = array("id" => 'pmpprice', "price" => $price, "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));
+	if(!empty($conf->stock->enabled)) {
+		// Add price for pmp
+		$price=$producttmp->pmp;
+		$prices[] = array("id" => 'pmpprice', "price" => $price, "label" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency), "title" => $langs->trans("PMPValueShort").': '.price($price,0,$langs,0,0,-1,$conf->currency));
+	}
 }
 
 echo json_encode($prices);
