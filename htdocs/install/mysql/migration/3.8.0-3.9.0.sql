@@ -610,3 +610,4 @@ INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (14
 
 -- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
 
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
