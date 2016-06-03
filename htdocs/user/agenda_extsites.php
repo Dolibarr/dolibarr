@@ -104,17 +104,17 @@ if (empty($reshook)) {
 				break;
 			}
 
-	if (! $error)
-	{
-		$result=dol_set_user_param($db, $conf, $object, $tabparam);
-		if (! $result > 0) $error++;
-	}
+			$tabparam['AGENDA_EXT_NAME_'.$id.'_'.$i]=$name;
+			$tabparam['AGENDA_EXT_SRC_'.$id.'_'.$i]=$src;
+			$tabparam['AGENDA_EXT_OFFSETTZ_'.$id.'_'.$i]=$offsettz;
+			$tabparam['AGENDA_EXT_COLOR_'.$id.'_'.$i]=$color;
+			$tabparam['AGENDA_EXT_ENABLED_'.$id.'_'.$i]=$enabled;
 
 			$i ++;
 		}
 
 		if (!$error) {
-			$result = dol_set_user_param($db, $conf, $fuser, $tabparam);
+			$result = dol_set_user_param($db, $conf, $object, $tabparam);
 			if (!$result > 0) {
 				$error ++;
 			}
