@@ -307,9 +307,12 @@ class ExportCsv extends ModeleExports
 		//print $charset.' '.$newvalue."\n";
 
 		// Rule 1 CSV: No CR, LF in cells
+		$oldvalue=$newvalue;
 		$newvalue=str_replace("\r",'',$newvalue);
 		$newvalue=str_replace("\n",'\n',$newvalue);
-
+		if($oldvalue != $newvalue)
+			$addquote=1;
+		
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
 		if (preg_match('/"/',$newvalue))
 		{
