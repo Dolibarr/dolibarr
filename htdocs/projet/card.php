@@ -886,7 +886,7 @@ else
 	        }
 	
 	        // Close
-	        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
+	        if ($object->statut == 1 && $user->rights->projet->creer)
 	        {
 	            if ($userWrite > 0)
 	            {
@@ -981,9 +981,9 @@ else
 	        }
 	
 	        // Delete
-	        if ($user->rights->projet->supprimer)
+	        if ($user->rights->projet->supprimer || ($object->statut == 0 && $user->rights->projet->creer))
 	        {
-	            if ($userDelete > 0)
+	            if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 	            {
 	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 	            }
