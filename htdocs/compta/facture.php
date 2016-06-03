@@ -2036,7 +2036,7 @@ if ($action == 'create')
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
-	$absolute_discount = $soc->getAvailableDiscounts();
+	if(!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();
 
 	if (! empty($conf->use_javascript_ajax))
 	{

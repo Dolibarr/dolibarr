@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -199,7 +199,7 @@ if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (
 if ($filtert > 0 || $usergroup > 0)
 {
     $sql.= " AND (";
-    if ($filtert > 0) $sql.= "(ar.fk_element = ".$filtert." OR a.fk_user_action=".$filtert.")";
+    if ($filtert > 0) $sql.= "(ar.fk_element = ".$filtert." OR (ar.fk_element IS NULL AND a.fk_user_action=".$filtert."))";	// The OR is for backward compatibility
     if ($usergroup > 0) $sql.= ($filtert>0?" OR ":"")." ugu.fk_usergroup = ".$usergroup;
     $sql.= ")";
 }
@@ -368,7 +368,7 @@ if ($resql)
 		$actionstatic->type_code=$obj->type_code;
 		$actionstatic->type_label=$obj->type_label;
 		$actionstatic->label=$obj->label;
-		print $actionstatic->getNomUrl(1,28);
+		print $actionstatic->getNomUrl(1,36);
 		print '</td>';
 
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
