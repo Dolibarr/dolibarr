@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2016      Laurent Destailleur 	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,7 @@
 
 /**
  * \file		htdocs/core/modules/modAccounting.class.php
- * \ingroup		Accounting Expert
+ * \ingroup		Advanced accountancy
  * \brief		Module to activate Accounting Expert module
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
@@ -50,7 +51,7 @@ class modAccounting extends DolibarrModules
 		$this->description = "Advanced accounting management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
@@ -157,16 +158,19 @@ class modAccounting extends DolibarrModules
 				"yesno",
 				"1"
 		);
+		/*
 		$this->const[15] = array (
 				"ACCOUNTING_GROUPBYACCOUNT",
 				"yesno",
 				"1"
 		);
+		*/
 		$this->const[16] = array (
 				"ACCOUNTING_EXPORT_DATE",
 				"chaine",
 				"%d%m%Y"
 		);
+		/*
 		$this->const[17] = array (
 				"ACCOUNTING_EXPORT_PIECE",
 				"yesno",
@@ -192,6 +196,7 @@ class modAccounting extends DolibarrModules
 				"yesno",
 				"1" 
 		);
+		*/
 		$this->const[22] = array(
 				"ACCOUNTING_EXPENSEREPORT_JOURNAL",
 				"chaine",
@@ -269,7 +274,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][0] = 50440;
 		$this->rights[$r][1] = 'Manage chart of accounts';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'chartofaccount';
 		$this->rights[$r][5] = '';
 		$r++;

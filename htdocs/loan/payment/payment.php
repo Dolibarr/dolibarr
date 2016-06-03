@@ -200,7 +200,7 @@ if ($_GET["action"] == 'create')
 	print '<tr><td  width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
-	Form::selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	$form->select_date($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
 	print '</tr>';
 

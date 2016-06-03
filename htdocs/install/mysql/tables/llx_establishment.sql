@@ -19,7 +19,7 @@
 -- Structure de la table llx_establishment
 --
 
-CREATE TABLE IF NOT EXISTS llx_establishment (
+CREATE TABLE llx_establishment (
   rowid 			integer NOT NULL auto_increment PRIMARY KEY,
   entity 			integer NOT NULL DEFAULT 1,
   name				varchar(50),

@@ -99,7 +99,7 @@ $form = new Form($db);
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("CategorieRecursiv").'</td>';
-print '<td align="center" width="20">'. Form::textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
+print '<td align="center" width="20">'. $form->textwithpicto('',$langs->trans("CategorieRecursivHelp"),1,'help').'</td>';
 
 print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax)

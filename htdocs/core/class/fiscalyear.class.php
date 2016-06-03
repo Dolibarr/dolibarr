@@ -39,6 +39,7 @@ class Fiscalyear extends CommonObject
 	var $label;
 	var $date_start;
 	var $date_end;
+	var $datec;
 	var $statut;		// 0=open, 1=closed
 	var $entity;
 

@@ -207,7 +207,7 @@ if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GE
             $msgishtml,
             $errors_to,
         	'',
-        	$trackid	
+        	$trackid
         );
 
 		$result=$mailfile->sendfile();
@@ -259,6 +259,7 @@ $listofmethods=array();
 $listofmethods['mail']='PHP mail function';
 //$listofmethods['simplemail']='Simplemail class';
 $listofmethods['smtps']='SMTP/SMTPS socket library';
+$listofmethods['swiftmailer']='Swift Mailer socket library';
 
 
 if ($action == 'edit')
@@ -313,6 +314,20 @@ if ($action == 'edit')
                             jQuery("#smtp_server_mess").hide();
 			                jQuery("#smtp_port_mess").hide();
 						}
+                        if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
+                        {
+                            jQuery(".drag").show();
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
+                            jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").show();
+                            jQuery("#MAIN_MAIL_SMTP_PORT").show();
+                            jQuery("#smtp_server_mess").hide();
+                            jQuery("#smtp_port_mess").hide();
+                        }
                     }
                     initfields();
                     jQuery("#MAIN_MAIL_SENDMODE").change(function() {
@@ -343,7 +358,7 @@ if ($action == 'edit')
 	// Disable
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
-	print Form::selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
+	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
 	print '</td></tr>';
 
 	// Separator
@@ -357,14 +372,14 @@ if ($action == 'edit')
 	// SuperAdministrator access only
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 	{
-		print Form::selectarray('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
+		print $form->selectarray('MAIN_MAIL_SENDMODE',$listofmethods,$conf->global->MAIN_MAIL_SENDMODE);
 	}
 	else
 	{
 		$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 		if (empty($text)) $text = $langs->trans("Undefined");
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
-		print Form::textwithpicto($text,$htmltext,1,'superadmin');
+		print $form->textwithpicto($text,$htmltext,1,'superadmin');
 		print '<input type="hidden" name="MAIN_MAIL_SENDMODE" value="'.$conf->global->MAIN_MAIL_SENDMODE.'">';
 	}
 	print '</td></tr>';
@@ -396,7 +411,7 @@ if ($action == 'edit')
 		{
 			$text = ! empty($mainserver) ? $mainserver : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($text,$htmltext,1,'superadmin');
+			print $form->textwithpicto($text,$htmltext,1,'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" value="'.$mainserver.'">';
 		}
 	}
@@ -429,14 +444,14 @@ if ($action == 'edit')
 		{
 			$text = (! empty($mainport) ? $mainport : $smtpport);
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($text,$htmltext,1,'superadmin');
+			print $form->textwithpicto($text,$htmltext,1,'superadmin');
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" value="'.$mainport.'">';
 		}
 	}
 	print '</td></tr>';
 
 	// ID
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		$var=!$var;
 		$mainstmpid=(! empty($conf->global->MAIN_MAIL_SMTPS_ID)?$conf->global->MAIN_MAIL_SMTPS_ID:'');
@@ -449,14 +464,14 @@ if ($action == 'edit')
 		else
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,'superadmin');
+			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID,$htmltext,1,'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_ID" value="'.$mainstmpid.'">';
 		}
 		print '</td></tr>';
 	}
 
 	// PW
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		$var=!$var;
 		$mainsmtppw=(! empty($conf->global->MAIN_MAIL_SMTPS_PW)?$conf->global->MAIN_MAIL_SMTPS_PW:'');
@@ -469,7 +484,7 @@ if ($action == 'edit')
 		else
 		{
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
-			print Form::textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
+			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW,$htmltext,1,'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$mainsmtppw.'">';
 		}
 		print '</td></tr>';
@@ -478,11 +493,11 @@ if ($action == 'edit')
 	// TLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
 		{
-			print Form::selectyesno('MAIN_MAIL_EMAIL_TLS',(! empty($conf->global->MAIN_MAIL_EMAIL_TLS)?$conf->global->MAIN_MAIL_EMAIL_TLS:0),1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS',(! empty($conf->global->MAIN_MAIL_EMAIL_TLS)?$conf->global->MAIN_MAIL_EMAIL_TLS:0),1);
 		}
 		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 	}
@@ -492,11 +507,11 @@ if ($action == 'edit')
 	// STARTTLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
-	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps'))
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
 		{
-			print Form::selectyesno('MAIN_MAIL_EMAIL_STARTTLS',(! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS)?$conf->global->MAIN_MAIL_EMAIL_STARTTLS:0),1);
+			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS',(! empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS)?$conf->global->MAIN_MAIL_EMAIL_STARTTLS:0),1);
 		}
 		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 	}
@@ -581,14 +596,14 @@ else
 
 	// SMTPS ID
 	$var=!$var;
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
 	}
 
 	// SMTPS PW
 	$var=!$var;
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
 	}
@@ -596,7 +611,7 @@ else
 	// TLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		if (function_exists('openssl_open'))
 		{
@@ -610,7 +625,7 @@ else
 	// STARTTLS
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
-	if (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'smtps')
+	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		if (function_exists('openssl_open'))
 		{
@@ -704,9 +719,6 @@ else
 	if ($action == 'testconnect')
 	{
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
-
-		// If we use SSL/TLS
-		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('','','','');

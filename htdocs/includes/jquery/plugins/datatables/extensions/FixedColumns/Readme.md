@@ -1,20 +1,24 @@
 # FixedColumns
 
-When making use of DataTables' x-axis scrolling feature (`scrollX`), you may wish to fix the left or right most columns in place. This plug-in for DataTables provides exactly this option (for non-scrolling tables, please use the FixedHeader plug-in, which can fix headers, footers and columns). Key features include:
-
-* Freezes the left most column to the side of the table
-* Option to freeze two or more columns
-* Full integration with DataTables' scrolling options
+When making use of DataTables' x-axis scrolling feature (`scrollX`), you may wish to fix the left or right most columns in place. This extension for DataTables provides exactly this option (for non-scrolling tables, please use the FixedHeader extension, which can fix the header and footer).
 
 
 # Installation
 
-To use FixedColumns, first download DataTables ( http://datatables.net/download ) and place the unzipped FixedColumns package into a `extensions` directory in the DataTables package. This will allow the pages in the examples to operate correctly. To see the examples running, open the `examples` directory in your web-browser.
+To use FixedColumns the primary way to obtain the software is to use the [DataTables downloader](//datatables.net/download). You can also include the individual files from the [DataTables CDN](//cdn.datatables.net). See the [documentation](http://datatables.net/extensions/fixedcolumns/) for full details.
+
+## NPM and Bower
+
+If you prefer to use a package manager such as NPM or Bower, distribution repositories are available with software built from this repository under the name `datatables.net-fixedcolumns`. Styling packages for Bootstrap, Foundation and other styling libraries are also available by adding a suffix to the package name.
+
+Please see the DataTables [NPM](//datatables.net/download/npm) and [Bower](//datatables.net/download/bower) installation pages for further information. The [DataTables installation manual](//datatables.net/manual/installation) also has details on how to use package managers with DataTables.
 
 
 # Basic usage
 
-FixedColumns is initialised using the `$.fn.dataTable.FixedColumns()` constructor. For example:
+FixedColumns is initialised using the `fixedColumns` option in the DataTables constructor - a simple boolean `true` will enable the feature. Further options can be specified using this option as an object - see the documentation for details. DataTables' scrolling options should also be enabled to use this feature.
+
+Example:
 
 ```js
 $(document).ready(function() {
@@ -22,21 +26,19 @@ $(document).ready(function() {
 		scrollY:        "300px",
 		scrollX:        true,
 		scrollCollapse: true,
-		paging:         false
+		paging:         false,
+		fixedColumns:   true
 	} );
-
-	new $.fn.dataTable.FixedColumns( table );
 } );
 ```
 
 
 # Documentation / support
 
-* Documentation: http://datatables.net/extensions/FixedColumns/
-* DataTables support forums: http://datatables.net/forums
+* [Documentation](https://datatables.net/extensions/fixedcolumns/)
+* [DataTables support forums](http://datatables.net/forums)
 
 
 # GitHub
 
-If you fancy getting involved with the development of FixedColumns and help make it better, please refer to its GitHub repo: https://github.com/DataTables/FixedColumns
-
+If you fancy getting involved with the development of FixedColumns and help make it better, please refer to its [GitHub repo](https://github.com/DataTables/FixedColumns).

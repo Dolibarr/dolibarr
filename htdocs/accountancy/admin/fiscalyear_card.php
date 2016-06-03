@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,7 @@ $object = new Fiscalyear($db);
 
 $date_start = dol_mktime(0, 0, 0, GETPOST('fiscalyearmonth', 'int'), GETPOST('fiscalyearday', 'int'), GETPOST('fiscalyearyear', 'int'));
 $date_end = dol_mktime(0, 0, 0, GETPOST('fiscalyearendmonth', 'int'), GETPOST('fiscalyearendday', 'int'), GETPOST('fiscalyearendyear', 'int'));
+
 
 /*
  * Actions
@@ -143,10 +144,8 @@ llxHeader();
 
 $form = new Form($db);
 
-/*
- * Action create
- */
-if ($action == 'create') {
+if ($action == 'create') 
+{
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -162,19 +161,19 @@ if ($action == 'create') {
 	
 	// Date start
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-	print Form::selectDate(($date_start ? $date_start : ''), 'fiscalyear');
+	print $form->select_date(($date_start ? $date_start : ''), 'fiscalyear');
 	print '</td></tr>';
 	
 	// Date end
 	print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-	print Form::selectDate(($date_end ? $date_end : - 1), 'fiscalyearend');
+	print $form->select_date(($date_end ? $date_end : - 1), 'fiscalyearend');
 	print '</td></tr>';
 	
 	// Statut
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans("Statut") . '</td>';
+	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
-	print Form::selectarray('statut', $statut2label, GETPOST('statut'));
+	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
 	print '</td></tr>';
 	
 	print '</table>';
@@ -205,8 +204,8 @@ if ($action == 'create') {
 			
 			// Ref
 			print "<tr>";
-			print '<td width="20%">' . $langs->trans("Ref") . '</td><td>';
-			print $object->rowid;
+			print '<td class="titlefield">' . $langs->trans("Ref") . '</td><td>';
+			print $object->ref;
 			print '</td></tr>';
 			
 			// Label
@@ -216,17 +215,17 @@ if ($action == 'create') {
 			
 			// Date start
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateStart") . '</td><td>';
-			print Form::selectDate($object->date_start ? $object->date_start : - 1, 'fiscalyear');
+			print $form->select_date($object->date_start ? $object->date_start : - 1, 'fiscalyear');
 			print '</td></tr>';
 			
 			// Date end
 			print '<tr><td class="fieldrequired">' . $langs->trans("DateEnd") . '</td><td>';
-			print Form::selectDate($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
+			print $form->select_date($object->date_end ? $object->date_end : - 1, 'fiscalyearend');
 			print '</td></tr>';
 			
 			// Statut
 			print '<tr><td>' . $langs->trans("Statut") . '</td><td>';
-			print Form::selectarray('statut', $statut2label, $object->statut);
+			print $form->selectarray('statut', $statut2label, $object->statut);
 			print '</td></tr>';
 			
 			print '</table>';
@@ -245,41 +244,41 @@ if ($action == 'create') {
 			 * Confirm delete
 			 */
 			if ($action == 'delete') {
-				print Form::formconfirm($_SERVER["PHP_SELF"] . "?id=" . $id, $langs->trans("DeleteFiscalYear"), $langs->trans("ConfirmDeleteFiscalYear"), "confirm_delete");
+				print $form->formconfirm($_SERVER["PHP_SELF"] . "?id=" . $id, $langs->trans("DeleteFiscalYear"), $langs->trans("ConfirmDeleteFiscalYear"), "confirm_delete");
 			}
 			
 			dol_fiche_head($head, 'card', $langs->trans("FiscalYearCard"), 0, 'cron');
 			
 			print '<table class="border" width="100%">';
 			
-			$linkback = '<a href="' . DOL_URL_ROOT . '/admin/fiscalyear.php">' . $langs->trans("BackToList") . '</a>';
+			$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/fiscalyear.php">' . $langs->trans("BackToList") . '</a>';
 			
 			// Ref
 			print '<tr><td width="25%">' . $langs->trans("Ref") . '</td><td width="50%">';
-			print $object->rowid;
+			print $object->ref;
 			print '</td><td width="25%">';
 			print $linkback;
 			print '</td></tr>';
 			
 			// Label
 			print '<tr><td valign="top">';
-			print Form::editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print $form->editfieldkey("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
 			print '</td><td colspan="2">';
-			print Form::editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
+			print $form->editfieldval("Label", 'label', $object->label, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'alpha:32');
 			print "</td></tr>";
 			
 			// Date start
 			print '<tr><td>';
-			print Form::editfieldkey("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td><td colspan="2">';
-			print Form::editfieldval("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td></tr>';
 			
 			// Date end
 			print '<tr><td>';
-			print Form::editfieldkey("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td><td colspan="2">';
-			print Form::editfieldval("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td></tr>';
 			
 			// Statut

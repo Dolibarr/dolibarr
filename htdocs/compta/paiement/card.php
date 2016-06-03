@@ -185,7 +185,7 @@ dol_fiche_head($head, 'payment', $langs->trans("PaymentCustomerInvoice"), 0, 'pa
  */
 if ($action == 'delete')
 {
-	print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 
 }
 
@@ -195,7 +195,7 @@ if ($action == 'delete')
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+	print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 
 }
 
@@ -205,13 +205,13 @@ $linkback = '<a href="' . DOL_URL_ROOT . '/compta/paiement/list.php">' . $langs-
 
 
 // Ref
-print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">';
-print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
+print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 print '</td></tr>';
 
 // Date payment
-print '<tr><td>'.Form::editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
-print Form::editfieldval("Date",'datep',$object->date,$object,$user->rights->facture->paiement,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+print '<tr><td>'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
+print $form->editfieldval("Date",'datep',$object->date,$object,$user->rights->facture->paiement,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
@@ -219,16 +219,16 @@ $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$obje
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
 
 // Payment numero
-print '<tr><td>'.Form::editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-print Form::editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
 print '</td></tr>';
 
 // Amount
 print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td class="tdtop">'.Form::editfieldkey("Note",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
-print Form::editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea');
+print '<tr><td class="tdtop">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
+print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea');
 print '</td></tr>';
 
 $disable_delete = 0;

@@ -153,11 +153,11 @@ if ($result)
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';
-	print Form::selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
+	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 
@@ -190,7 +190,7 @@ if ($result)
             else
 			{
 				$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
-            	print Form::textwithtooltip($langs->trans("Variable"),$htmltext);
+            	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
 			}
             print '</td>';
             // Status
@@ -215,7 +215,7 @@ if ($result)
             else
     		{
     			$htmltext=$langs->trans("OptionMULTIPRICESIsOn");
-               	print Form::textwithtooltip($langs->trans("Variable"),$htmltext);
+               	print $form->textwithtooltip($langs->trans("Variable"),$htmltext);
     		}
             print '</td>';
             print '<td></td>';

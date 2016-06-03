@@ -72,7 +72,7 @@ foreach ($triggers as $trigger)
 	$text=$trigger['info'];
 	$text.="<br>\n<strong>".$langs->trans("File")."</strong>:<br>\n".$trigger['relpath'];
 	//$text.="\n".$langs->trans("ExternalModule",$trigger['isocreorexternal']);
-	print Form::textwithpicto('', $text);
+	print $form->textwithpicto('', $text);
 	print '</td>';
 	print '</tr>';
 }

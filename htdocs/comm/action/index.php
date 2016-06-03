@@ -48,7 +48,7 @@ $filtert = GETPOST("usertodo","int",3)?GETPOST("usertodo","int",3):GETPOST("filt
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 
-// If not choice done on calendar owner, we filter on user.
+// If not choice done on calendar owner (like on left menu link "Agenda"), we filter on user.
 if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 {
 	$filtert=$user->id;
@@ -360,6 +360,7 @@ $showextcals=$listofextcals;
 
 if (! empty($conf->use_javascript_ajax))	// If javascript on
 {
+    $s.='<!-- Div to calendars selectors -->'."\n";
 	$s.='<script type="text/javascript">' . "\n";
 	$s.='jQuery(document).ready(function () {' . "\n";
 	$s.='jQuery("#check_birthday").click(function() { jQuery(".family_birthday").toggle(); });' . "\n";
@@ -373,7 +374,7 @@ if (! empty($conf->use_javascript_ajax))	// If javascript on
 	$s.='</script>' . "\n";
 
 	// Local calendar
-	$s.='<div class="nowrap clear float"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	$s.='<div class="nowrap clear float minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
 
 	// External calendars
 	if (is_array($showextcals) && count($showextcals) > 0)

@@ -367,7 +367,7 @@ foreach($boxtoadd as $box)
 
     // Pour chaque position possible, on affiche un lien d'activation si boite non deja active pour cette position
     print '<td class="center">';
-    print Form::selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
+    print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
     print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
     print '</td>';
 
@@ -472,7 +472,7 @@ print '</tr>';
 if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
-    print Form::selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
+    print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
     print '</td>';
     print '</tr>';
 }

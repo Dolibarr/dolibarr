@@ -140,7 +140,7 @@ if (function_exists("imagecreatefrompng"))
 }
 else
 {
-    $desc = Form::textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
+    $desc = $form->textwithpicto('',$langs->transnoentities("EnableGDLibraryDesc"),1,'warning');
     print $desc;
 }
 print '</td></tr>';
@@ -187,7 +187,7 @@ $sessiontimeout=ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT=$sessiontimeout;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td align="right">';
-print Form::textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
+print $form->textwithpicto('',$langs->trans("SessionExplanation",ini_get("session.gc_probability"),ini_get("session.gc_divisor")));
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));

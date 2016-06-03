@@ -178,7 +178,7 @@ $price_expression_list = array(0 => $langs->trans("New")); //Put the new as firs
 foreach ($price_expression->list_price_expression() as $entry) {
 	$price_expression_list[$entry->id] = $entry->title;
 }
-print Form::selectarray('expression_selection', $price_expression_list, $eid);
+print $form->selectarray('expression_selection', $price_expression_list, $eid);
 print '</td></tr>';
 
 // Title input
@@ -197,7 +197,7 @@ foreach ($price_globals->listGlobalVariables() as $entry) {
 }
 
 //Price expression editor
-print '<tr><td class="fieldrequired">'.Form::textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
+print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PriceExpressionEditor"),$help_text,1).'</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor=new DolEditor('expression',isset($price_expression->expression)?$price_expression->expression:'','',300,'','',false,false,false,4,80);
 $doleditor->Create();

@@ -264,7 +264,7 @@ $nav.='<input type="hidden" name="begin_d" value="' . $begin_d . '">';
 $nav.='<input type="hidden" name="end_d" value="' . $end_d . '">';
 $nav.='<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
 
-$nav.=Form::selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
 
@@ -420,7 +420,7 @@ if ($filtert > 0 || $usergroup > 0)
 $sql.= ' ORDER BY fk_user_action, datep'; //fk_user_action
 //print $sql;
 
-dol_syslog("comm/action/index.php", LOG_DEBUG);
+dol_syslog("comm/action/peruser.php", LOG_DEBUG);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -564,7 +564,7 @@ echo '</form>';
 //print "begin_d=".$begin_d." end_d=".$end_d;
 
 
-echo '<table width="100%" class="nocellnopadd cal_month">';
+echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 echo '<tr class="liste_titre">';
 echo '<td></td>';
@@ -703,7 +703,9 @@ foreach ($usernames as $username)
 {
 	$var = ! $var;
 	echo "<tr>";
-	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">' . $username->getNomUrl(1). '</td>';
+	echo '<td class="cal_current_month cal_peruserviewname'.($var?' cal_impair':'').'">';
+	print $username->getNomUrl(-1,'',0,0,24,1,'');
+	print '</td>';
 	$tmpday = $sav;
 
 	// Lopp on each day of week

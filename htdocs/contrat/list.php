@@ -217,7 +217,7 @@ if ($resql)
 		$moreforfilter.='<div class="divsearchfield">';
 		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=Form::selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
 		$moreforfilter.='</div>';
 	}
     
@@ -267,7 +267,7 @@ if ($resql)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" colspan="5" align="right"></td>';
     print '<td>';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
     print "</tr>\n";
@@ -321,7 +321,7 @@ if ($resql)
         			print '</div>';
         		}
         	}
-        	else print $langs->trans("NoSalesRepresentativeAffected");
+        	//else print $langs->trans("NoSalesRepresentativeAffected");
         }
         else
         {

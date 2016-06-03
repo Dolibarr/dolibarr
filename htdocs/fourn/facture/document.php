@@ -72,7 +72,7 @@ if ($object->fetch($id, $ref))
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -101,7 +101,7 @@ if ($object->id > 0)
 	 */
 	if ($action == 'delete')
 	{
-		print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 
 	}
 
@@ -111,7 +111,7 @@ if ($object->id > 0)
 
 	// Ref
 	print '<tr><td width="30%" class="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td>';
 	print "</tr>\n";
 
@@ -164,8 +164,8 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td>'.Form::editfieldkey("Label",'label',$object->label,$object,0).'</td><td colspan="3">';
-	print Form::editfieldval("Label",'label',$object->label,$object,0);
+	print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,0).'</td><td colspan="3">';
+	print $form->editfieldval("Label",'label',$object->label,$object,0);
 	print '</td>';
 
 	// Status

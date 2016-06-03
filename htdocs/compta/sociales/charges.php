@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,7 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
+$object = new ChargeSociales($db);
 
 
 
@@ -49,19 +50,32 @@ $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 /* *************************************************************************** */
 
 // Classify paid
-if ($action == 'confirm_paid' && $confirm == 'yes')
+if ($action == 'confirm_paid' && $user->rights->tax->charges->creer && $confirm == 'yes')
 {
-	$chargesociales = new ChargeSociales($db);
-	$chargesociales->fetch($id);
-	$result = $chargesociales->set_paid($user);
+	$object->fetch($id);
+	$result = $object->set_paid($user);
+}
+
+if ($action == 'reopen' && $user->rights->tax->charges->creer) {
+    $result = $object->fetch($id);
+    if ($object->paye)
+    {
+        $result = $object->set_unpaid($user);
+        if ($result > 0) 
+        {
+            header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
+            exit();
+        } else {
+            setEventMessages($object->error, $object->errors, 'errors');
+        }
+    }
 }
 
 // Delete social contribution
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
-	$chargesociales=new ChargeSociales($db);
-	$chargesociales->fetch($id);
-	$result=$chargesociales->delete($user);
+	$object->fetch($id);
+	$result=$object->delete($user);
 	if ($result > 0)
 	{
 		header("Location: index.php");
@@ -69,7 +83,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 	}
 	else
 	{
-		setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -77,8 +91,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes')
 // Add social contribution
 if ($action == 'add' && $user->rights->tax->charges->creer)
 {
-	$dateech=@dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
-	$dateperiod=@dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
+	$dateech=dol_mktime(GETPOST('echhour'),GETPOST('echmin'),GETPOST('echsec'),GETPOST('echmonth'),GETPOST('echday'),GETPOST('echyear'));
+	$dateperiod=dol_mktime(GETPOST('periodhour'),GETPOST('periodmin'),GETPOST('periodsec'),GETPOST('periodmonth'),GETPOST('periodday'),GETPOST('periodyear'));
     $amount=price2num(GETPOST('amount'));
     $actioncode=GETPOST('actioncode');
 	if (! $dateech)
@@ -108,18 +122,16 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 	}
 	else
 	{
-		$chargesociales=new ChargeSociales($db);
+		$object->type=$actioncode;
+		$object->lib=GETPOST('label');
+		$object->date_ech=$dateech;
+		$object->periode=$dateperiod;
+		$object->amount=$amount;
 
-		$chargesociales->type=$actioncode;
-		$chargesociales->lib=GETPOST('label');
-		$chargesociales->date_ech=$dateech;
-		$chargesociales->periode=$dateperiod;
-		$chargesociales->amount=$amount;
-
-		$id=$chargesociales->create($user);
+		$id=$object->create($user);
 		if ($id <= 0)
 		{
-			setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='create';
 		}
 	}
@@ -153,18 +165,17 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->cr
 	}
     else
 	{
-        $chargesociales=new ChargeSociales($db);
-        $result=$chargesociales->fetch($id);
+        $result=$object->fetch($id);
 
-        $chargesociales->lib=GETPOST('label');
-        $chargesociales->date_ech=$dateech;
-        $chargesociales->periode=$dateperiod;
-        $chargesociales->amount=price2num($amount);
+        $object->lib=GETPOST('label');
+        $object->date_ech=$dateech;
+        $object->periode=$dateperiod;
+        $object->amount=price2num($amount);
 
-        $result=$chargesociales->update($user);
+        $result=$object->update($user);
         if ($result <= 0)
         {
-            setEventMessages($chargesociales->error, $chargesociales->errors, 'errors');
+            setEventMessages($object->error, $object->errors, 'errors');
         }
 	}
 }
@@ -178,7 +189,6 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 
 	$originalId = $id;
 
-	$object = new ChargeSociales($db);
 	$object->fetch($id);
 
 	if ($object->id > 0)
@@ -270,7 +280,7 @@ if ($action == 'create')
     print $langs->trans("PeriodEndDate");
     print '</td>';
    	print '<td>';
-    print Form::selectDate(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
+    print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print '</tr>';
     // Amount
@@ -286,7 +296,7 @@ if ($action == 'create')
     print $langs->trans("DateDue");
     print '</td>';
     print '<td>';
-    print Form::selectDate(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+    print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
 	print '</td>';
     print "</tr>\n";
 
@@ -315,8 +325,6 @@ if ($id > 0)
 	{
 		$head=tax_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
-
 		// Clone confirmation
 		if ($action === 'clone')
 		{
@@ -325,20 +333,20 @@ if ($id > 0)
 
 			);
 
-		    print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneTax'),$langs->trans('ConfirmCloneTax',$object->ref),'confirm_clone',$formclone,'yes');
+		    print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneTax'),$langs->trans('ConfirmCloneTax',$object->ref),'confirm_clone',$formclone,'yes');
 		}
 
 		// Confirmation de la suppression de la charge
 		if ($action == 'paid')
 		{
 			$text=$langs->trans('ConfirmPaySocialContribution');
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans('PaySocialContribution'),$text,"confirm_paid",'','',2);
 		}
 
 		if ($action == 'delete')
 		{
 			$text=$langs->trans('ConfirmDeleteSocialContribution');
-			print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
+			print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('DeleteSocialContribution'),$text,'confirm_delete','','',2);
 		}
 
 		if ($action == 'edit')
@@ -347,11 +355,14 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 
+		
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
+		
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
-		print Form::showrefnav($object,'id');
+		print '<tr><td class="fieldtitle">'.$langs->trans("Ref").'</td><td colspan="2">';
+		print $form->showrefnav($object,'id');
 		print "</td></tr>";
 
 		// Label
@@ -443,7 +454,7 @@ if ($id > 0)
 		print "<td>";
 		if ($action == 'edit')
 		{
-			print Form::selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
+			print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
 		}
 		else
 		{
@@ -455,7 +466,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print Form::selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
 		else {
@@ -478,9 +489,12 @@ if ($id > 0)
 
 		print '</table>';
 
+		dol_fiche_end();
+		
+		
 		if ($action == 'edit')
 		{
-			print '<br><div align="center">';
+			print '<div align="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -489,7 +503,6 @@ if ($id > 0)
 
 		if ($action == 'edit') print "</form>\n";
 
-		dol_fiche_end();
 
 
 		/*
@@ -499,6 +512,12 @@ if ($id > 0)
 		{
 			print "<div class=\"tabsAction\">\n";
 
+			// Reopen
+			if ($object->paye && $user->rights->tax->charges->creer)
+			{
+				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/charges.php",1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a>";
+			}
+			
 			// Edit
 			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{

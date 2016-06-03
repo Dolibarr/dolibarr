@@ -47,7 +47,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
+$result = restrictedArea($user, 'projet', $id,'projet&project');
 
 
 /*
@@ -164,7 +164,7 @@ if ($id > 0 || ! empty($ref))
 		$objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
 		$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 	}
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
 
 	// Label

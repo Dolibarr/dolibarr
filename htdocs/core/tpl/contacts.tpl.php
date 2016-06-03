@@ -54,7 +54,9 @@ $userstatic=new User($db);
 <!-- BEGIN PHP TEMPLATE CONTACTS -->
 <div class="tagtable centpercent noborder allwidth">
 
-<?php if ($permission) { ?>
+<?php 
+if ($permission) { 
+?>
 	<form class="tagtr liste_titre">
 		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
@@ -132,10 +134,12 @@ $userstatic=new User($db);
 		</div>
 	</form>
 
-<?php }
-	} ?>
+<?php 
+	}
+} 
+?>
 
-	<form class="tagtr liste_titre">
+	<form class="tagtr liste_titre liste_titre_add formnoborder">
 		<div class="tagtd"><?php echo $langs->trans("Nature"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("ThirdParty"); ?></div>
 		<div class="tagtd"><?php echo $langs->trans("Users").'/'.$langs->trans("Contacts"); ?></div>

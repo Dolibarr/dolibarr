@@ -225,9 +225,18 @@ if ($search_amount_all_tax != '')
 	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
 }
 
-if ($search_status != '')
+if ($search_status != '' && $search_status>=0)
 {
 	$sql.= " AND fac.fk_statut = ".$search_status;
+}
+if ($filter && $filter != -1)
+{
+	$aFilter = explode(',', $filter);
+	foreach ($aFilter as $fil)
+	{
+		$filt = explode(':', $fil);
+		$sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
+	}
 }
 
 $nbtotalofrecords = 0;
@@ -265,7 +274,7 @@ if ($resql)
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
 	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
+	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -338,10 +347,10 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('0'=>$langs->trans("Draft"),'1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
-	print Form::selectarray('filtre', $liststatus, $search_status, 1);
+	print $form->selectarray('filtre', $liststatus, $search_status, 1);
 	print '</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";

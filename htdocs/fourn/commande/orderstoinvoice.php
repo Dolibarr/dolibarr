@@ -239,10 +239,10 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 			
 			foreach($orders_id as $fk_supplier_order) {
 				$supplier_order = new CommandeFournisseur($db);
-				if($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) {
-					
-					if($supplier_order->classifyBilled()<0) {
-							
+				if ($supplier_order->fetch($fk_supplier_order)>0 && $supplier_order->statut == 5) 
+				{
+					if ($supplier_order->classifyBilled($user) < 0)
+					{
 						$db->rollback();
 						$action = 'create';
 						$_GET["origin"] = $_POST["origin"];
@@ -323,7 +323,7 @@ if ($action == 'create' && !$error) {
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
-	Form::selectDate('', '', '', '', '', "add", 1, 1);
+	$html->select_date('', '', '', '', '', "add", 1, 1);
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
@@ -364,7 +364,7 @@ if ($action == 'create' && !$error) {
 	print '<tr><td>' . $langs->trans('Model') . '</td>';
 	print '<td>';
 	$liste = ModelePDFSuppliersInvoices::liste_modeles($db);
-	print Form::selectarray('model', $liste, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
+	print $html->selectarray('model', $liste, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
 	print "</td></tr>";
 
 	// Public note
@@ -469,8 +469,8 @@ if (($action != 'create' && $action != 'add') && !$error) {
 		$num = $db->num_rows($resql);
 		print load_fiche_titre($title);
 		$i = 0;
-		$period = Form::selectDate($date_start, 'date_start', 0, 0, 1, '', 1, 0, 1) . ' - ' . Form::selectDate($date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
-		$periodely = Form::selectDate($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0, 1) . ' - ' . Form::selectDate($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0, 1);
+		$period = $html->select_date($date_start, 'date_start', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_end, 'date_end', 0, 0, 1, '', 1, 0, 1);
+		$periodely = $html->select_date($date_starty, 'date_start_dely', 0, 0, 1, '', 1, 0, 1) . ' - ' . $html->select_date($date_endy, 'date_end_dely', 0, 0, 1, '', 1, 0, 1);
 
 		if (! empty($socid)) {
 			// Company

@@ -198,10 +198,10 @@ if ($result)
 	}
 	print '<td class="liste_titre" align="right">';
 	$liststatus=$interventionstatic->statuts_short;
-	print Form::selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 	print '<td class="liste_titre" align="right">';
-	$searchpitco=Form::showFilterAndCheckAddButtons();
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
 	print $searchpitco;
 	print '</td>';
     print "</tr>\n";
@@ -227,10 +227,11 @@ if ($result)
 		$companystatic->client=$objp->client;
 		print $companystatic->getNomUrl(1,'',44);
 		print '</td>';
-        print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->description,20)).'</td>';
+        print '<td>'.dol_trunc(dolGetFirstLineOfText($objp->description),48).'</td>';
 		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
 		{
-			print '<td>'.dol_htmlentitiesbr(dol_trunc($objp->descriptiondetail,20)).'</td>';
+			//print '<td>'.dol_trunc(dol_escape_htmltag(dolGetFirstLineOfText($objp->descriptiondetail)),48).'</td>';
+			print '<td>'.dolGetFirstLineOfText($objp->descriptiondetail).'</td>';
 			print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
 			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
 		}

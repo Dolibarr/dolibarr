@@ -171,10 +171,10 @@ if ($action == 'edit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
-	print Form::textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '<td>';
-	print Form::textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '</tr>';
 
@@ -210,10 +210,10 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
-	print Form::textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("InternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '<td>';
-	print Form::textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
+	print $form->textwithpicto($langs->trans("ExternalUsers"),$langs->trans("InternalExternalDesc"));
 	print '</td>';
 	print '</tr>';
 

@@ -98,12 +98,14 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 					// Create thumbs of logo (Note that PDF use original file and not thumbs)
 					if ($isimage > 0)
 					{
-						// Create small thumbs for company (Ratio is near 16/9)
+					    // Create thumbs
+					    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get... 
+					    	
 						// Used on logon for example
 						$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-						if (preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
+						if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 						{
-							$imgThumbSmall = $reg[1];
+							$imgThumbSmall = $reg[1];    // Save only basename
 							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
 						}
 						else dol_syslog($imgThumbSmall);
@@ -111,9 +113,9 @@ if ( ($action == 'update' && empty($_POST["cancel"]))
 						// Create mini thumbs for company (Ratio is near 16/9)
 						// Used on menu or for setup page for example
 						$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$original_file, $maxwidthmini, $maxheightmini, '_mini', $quality);
-						if (preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
+						if (image_format_supported($imgThumbMini) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 						{
-							$imgThumbMini = $reg[1];
+							$imgThumbMini = $reg[1];     // Save only basename
 							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
 						}
 						else dol_syslog($imgThumbMini);
@@ -203,12 +205,14 @@ if ($action == 'addthumb')
 		// Create thumbs of logo
 		if ($isimage > 0)
 		{
-			// Create small thumbs for company (Ratio is near 16/9)
+		    // Create thumbs
+		    //$object->addThumbs($newfile);    // We can't use addThumbs here yet because we need name of generated thumbs to add them into constants. TODO Check if need such constants. We should be able to retreive value with get... 
+
 			// Used on logon for example
 			$imgThumbSmall = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthsmall, $maxheightsmall, '_small',$quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbSmall,$reg))
 			{
-				$imgThumbSmall = $reg[1];
+				$imgThumbSmall = $reg[1];   // Save only basename
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall,'chaine',0,'',$conf->entity);
 			}
 			else dol_syslog($imgThumbSmall);
@@ -218,7 +222,7 @@ if ($action == 'addthumb')
 			$imgThumbMini = vignette($conf->mycompany->dir_output.'/logos/'.$_GET["file"], $maxwidthmini, $maxheightmini, '_mini',$quality);
 			if (image_format_supported($imgThumbSmall) >= 0 && preg_match('/([^\\/:]+)$/i',$imgThumbMini,$reg))
 			{
-				$imgThumbMini = $reg[1];
+				$imgThumbMini = $reg[1];   // Save only basename
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini,'chaine',0,'',$conf->entity);
 			}
 			else dol_syslog($imgThumbMini);
@@ -608,7 +612,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		$opcions=array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"),$langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"),$langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
 
 		print '<tr><td align="left"></label for="clt1">'.$langs->trans("CalcLocaltax").'</label>: ';
-		print Form::selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
+		print $form->selectarray("clt1", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC1);
 		print '</td></tr>';
 		print "</table>";
 		print "</td></tr>\n";
@@ -650,7 +654,7 @@ if ($action == 'edit' || $action == 'updateedit')
 			print '</td></tr>';
 		}
 		print '<tr><td align="left"><label for="clt2">'.$langs->trans("CalcLocaltax").'</label>: ';
-		print Form::selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
+		print $form->selectarray("clt2", $opcions, $conf->global->MAIN_INFO_LOCALTAX_CALC2);
 		print '</td></tr>';
 		print "</table>";
 		print "</td></tr>\n";
@@ -727,7 +731,9 @@ else
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
 	print currency_name($conf->currency,1);
-	print ' ('.$langs->getCurrencySymbol($conf->currency).')';
+	print ' ('.$conf->currency;
+	print ($conf->currency != $langs->getCurrencySymbol($conf->currency) ? ' - '.$langs->getCurrencySymbol($conf->currency) : '');
+	print ')';
 	print '</td></tr>';
 
 	$var=!$var;
@@ -914,7 +920,7 @@ else
 				print '</script>';
 				print "\n";
 				$s.='<a href="#" onClick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-				$s = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+				$s = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 			}
 			else
 			{

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015  Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2016  Laurent Destailleur          <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/admin/payment.php
- *		\ingroup    facture
- *		\brief      Page to setup invoices payments
+ *      \file       htdocs/admin/supplier_payment.php
+ *		\ingroup    supplier
+ *		\brief      Page to setup supplier invoices payments
  */
 
 require '../main.inc.php';
@@ -30,6 +31,8 @@ $langs->load("admin");
 $langs->load("errors");
 $langs->load('other');
 $langs->load('bills');
+$langs->load('orders');
+
 
 if (! $user->admin) accessforbidden();
 
@@ -80,16 +83,18 @@ $form=new Form($db);
 $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SupplierPaymentSetup"),$linkback,'title_setup');
 
-print "<br />";
+print "<br>";
 
 $head = supplierorder_admin_prepare_head();
-dol_fiche_head($head, 'supplierpayment', $langs->trans("SupplierPayment"), 0, 'invoice');
+dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), 0, 'company');
 
 /*
  *  Numbering module
  */
 
-print load_fiche_titre($langs->trans("SupplierPaymentsNumberingModule"));
+if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
+    
+print load_fiche_titre($langs->trans("PaymentsNumberingModule"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -190,7 +195,7 @@ foreach ($dirmodels as $reldir)
                             }
 
                             print '<td align="center">';
-                            print Form::textwithpicto('',$htmltooltip,1,0);
+                            print $form->textwithpicto('',$htmltooltip,1,0);
 
                             if ($conf->global->PAYMENT_ADDON.'.php' == $file)  // If module is the one used, we show existing errors
                             {

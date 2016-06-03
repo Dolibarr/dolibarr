@@ -75,7 +75,7 @@ if ($object->fetch($id))
 /*
  * Actions
  */
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -126,7 +126,7 @@ if ($id > 0 || ! empty($ref))
 		{
 			dol_print_error('',$discount->error);
 		}
-		print Form::showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
 		print '</td></tr>';
 
 		// Ref customer

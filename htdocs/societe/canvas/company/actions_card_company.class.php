@@ -129,13 +129,13 @@ class ActionsCardCompany extends ActionsCardCommon
 			}
 
 			// Type
-			$this->tpl['select_companytype']	= Form::selectarray("typent_id",$formcompany->typent_array(0), $this->object->typent_id);
+			$this->tpl['select_companytype']	= $form->selectarray("typent_id",$formcompany->typent_array(0), $this->object->typent_id);
 
 			// Juridical Status
 			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code,$this->object->country_code);
 
 			// Workforce
-			$this->tpl['select_workforce'] = Form::selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
+			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
 
 			// VAT intra
 			$s='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
@@ -146,7 +146,7 @@ class ActionsCardCompany extends ActionsCardCommon
 				if ($conf->use_javascript_ajax)
 				{
 					$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-					$this->tpl['tva_intra'] =  Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+					$this->tpl['tva_intra'] =  $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 				}
 				else
 				{
@@ -163,7 +163,7 @@ class ActionsCardCompany extends ActionsCardCommon
 			// Confirm delete third party
 			if ($action == 'delete')
 			{
-				$this->tpl['action_delete'] = Form::formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
+				$this->tpl['action_delete'] = $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$this->object->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete",'',0,"1,action-delete");
 			}
 
 			for ($i=1; $i<=4; $i++)
@@ -185,7 +185,7 @@ class ActionsCardCompany extends ActionsCardCommon
 					if ($conf->use_javascript_ajax)
 					{
 						$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
-						$this->tpl['tva_intra'] = Form::textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+						$this->tpl['tva_intra'] = $form->textwithpicto($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 					}
 					else
 					{

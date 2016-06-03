@@ -605,7 +605,7 @@ if ($rowid > 0)
 		{
 		    $langs->load("errors");
 		    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
-		    print ' '.Form::textwithpicto('', $htmltext,1,'warning');
+		    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
 		}
 		print '</td></tr>';
 	}
@@ -722,8 +722,16 @@ if ($rowid > 0)
     }
     else
     {
-        print $langs->trans("SubscriptionNotReceived");
-        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    if (! $adht->cotisation)
+	    {
+	     	print $langs->trans("SubscriptionNotRecorded");
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    }
+	    else
+	    {
+	    	print $langs->trans("SubscriptionNotReceived");
+	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	    }
     }
     print '</td></tr>';
 
@@ -929,7 +937,7 @@ if ($rowid > 0)
 			// Create a form array
 			$formquestion=array(array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
 
 
@@ -974,7 +982,7 @@ if ($rowid > 0)
 				$datefrom=$object->datevalid;
             }
         }
-        print Form::selectDate($datefrom,'','','','',"cotisation",1,1,1);
+        print $form->select_date($datefrom,'','','','',"cotisation",1,1,1);
         print "</td></tr>";
 
         // Date end subscription
@@ -987,7 +995,7 @@ if ($rowid > 0)
             $dateto=-1;		// By default, no date is suggested
         }
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-        print Form::selectDate($dateto,'end','','','',"cotisation",1,0,1);
+        print $form->select_date($dateto,'end','','','',"cotisation",1,0,1);
         print "</td></tr>";
 
         if ($adht->cotisation)
@@ -1088,7 +1096,7 @@ if ($rowid > 0)
 
                 // Date of payment
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                print Form::selectDate(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1,1);
+                print $form->select_date(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1,1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');
@@ -1134,7 +1142,7 @@ if ($rowid > 0)
             $helpcontent.='<b>'.$langs->trans("MailText").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-            print Form::textwithpicto($tmp,$helpcontent,1,'help');
+            print $form->textwithpicto($tmp,$helpcontent,1,'help');
         }
         print '</td></tr>';
         print '</tbody>';

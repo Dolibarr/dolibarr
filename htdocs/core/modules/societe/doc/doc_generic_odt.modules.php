@@ -118,7 +118,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
-		$texte.= Form::textwithpicto($texttitle,$texthelp,1,'help','',1);
+		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
         $texte.= '<table><tr><td>';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->COMPANY_ADDON_PDF_ODT_PATH;
@@ -131,8 +131,26 @@ class doc_generic_odt extends ModeleThirdPartyDoc
         $texte.= '</table>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->COMPANY_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=$nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
 
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
+		
 		$texte.= '</td>';
 
 		$texte.= '<td valign="top" rowspan="2" class="hideonsmartphone">';

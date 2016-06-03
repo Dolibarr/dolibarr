@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012 Juanjo Menent 		<jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent 		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,12 +151,12 @@ if ($id > 0)
 
 	if (GETPOST('error','alpha')!='')
 	{
-		print '<div class="error">'.$bon->ReadError(GETPOST('error','alpha')).'</div>';
+		print '<div class="error">'.$bon->getErrorString(GETPOST('error','alpha')).'</div>';
 	}
 
 	/*if ($action == 'credite')
 	{
-		print Form::formconfirm("card.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
+		print $form->formconfirm("card.php?id=".$bon->id,$langs->trans("ClassCredited"),$langs->trans("ClassCreditedConfirm"),"confirm_credite",'',1,1);
 
 	}*/
 
@@ -214,10 +214,10 @@ if ($id > 0)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyTransmision").'</td></tr>';
 		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransData").'</td><td>';
-		print Form::selectDate('','','','','',"userfile",1,1);
+		print $form->select_date('','','','','',"userfile",1,1);
 		print '</td></tr>';
 		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans("TransMetod").'</td><td>';
-		print Form::selectarray("methode",$bon->methodes_trans);
+		print $form->selectarray("methode",$bon->methodes_trans);
 		print '</td></tr>';
 /*			print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
@@ -237,7 +237,7 @@ if ($id > 0)
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr '.$bc[false].'><td width="20%">'.$langs->trans('CreditDate').'</td><td>';
-		print Form::selectDate('','','','','',"infocredit",1,1);
+		print $form->select_date('','','','','',"infocredit",1,1);
 		print '</td></tr>';
 		print '</table>';
 		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
@@ -298,7 +298,7 @@ if ($id > 0)
 		$num = $db->num_rows($result);
 		$i = 0;
 
-		$urladd = "&amp;id=".$prev_id;
+		$urladd = "&amp;id=".$id;
 
 		print_barre_liste("", $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num);
 		print"\n<!-- debut table -->\n";

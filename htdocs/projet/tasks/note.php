@@ -126,7 +126,7 @@ if ($object->id > 0)
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 		}
-		print Form::showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
+		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
 		print '</td></tr>';
 
 		// Project
@@ -179,7 +179,7 @@ if ($object->id > 0)
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
+	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 	print '</td></tr>';
 
 	// Label

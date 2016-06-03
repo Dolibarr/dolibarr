@@ -165,7 +165,7 @@ if ($resql)
     // print '<input class="flat" size="10" type="text" name="search_amount" value="'.$search_amount.'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
     print "</tr>\n";

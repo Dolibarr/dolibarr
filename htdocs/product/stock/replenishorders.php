@@ -239,7 +239,7 @@ if ($resql)
          '<input type="text" class="flat" name="search_ttc" value="' . $sttc . '">'.
          '</td>'.
          '<td class="liste_titre">'.
-         Form::selectDate('', 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
+         $form->select_date('', 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
     $src = DOL_URL_ROOT . '/theme/' . $conf->theme . '/img/search.png';

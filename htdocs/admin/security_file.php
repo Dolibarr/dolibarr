@@ -114,9 +114,8 @@ llxHeader('',$langs->trans("Files"),$wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
-//print $langs->trans("FilesDesc")."<br>\n";
-//print "<br>\n";
-
+print $langs->trans("SecurityFilesDesc")."<br>\n";
+print "<br>\n";
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -151,7 +150,7 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
-print Form::textwithpicto('',$langs->trans("UMaskExplanation"));
+print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.htmlentities($conf->global->MAIN_UMASK).'">';

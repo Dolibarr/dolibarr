@@ -43,10 +43,10 @@ $langs->load("cashdesk");
 			<tr>
 			<!-- Affichage de la reference et de la designation -->
 			<td><input class="texte_ref" type="text" id ="txtRef" name="txtRef" value="<?php echo $obj_facturation->ref() ?>"
-				onchange="setSource('REF');"
-				onkeyup="verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
-				onfocus="this.select(); verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
-				onBlur="document.getElementById('resultats_dhtml').innerHTML = '';"/>
+				onchange="javascript: setSource('REF');"
+				onkeyup="javascript: verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
+				onfocus="javascript: this.select(); verifResultat('resultats_dhtml', this.value, <?php echo (isset($conf->global->BARCODE_USE_SEARCH_TO_SELECT) ? (int) $conf->global->BARCODE_USE_SEARCH_TO_SELECT : 1) ?>);"
+				onBlur="javascript: document.getElementById('resultats_dhtml').innerHTML = '';"/>
 			</td>
 			<td class="select_design">
             <?php /*
@@ -60,7 +60,7 @@ $langs->load("cashdesk");
             */
             ?>
 
-				<select id="selProduit" name="selProduit" onchange="setSource('LISTE');">
+				<select id="selProduit" name="selProduit" onchange="javascript: setSource('LISTE');">
 					<?php
                         print '<option value="0">'.$top_liste_produits.'</option>'."\n";
 
@@ -93,7 +93,7 @@ $langs->load("cashdesk");
 		</table>
 	</form>
 
-	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="return verifSaisie();">
+	<form id="frmQte" class="formulaire1" method="post" action="facturation_verif.php?action=ajout_article" onsubmit ="javascript: return verifSaisie();">
 		<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 		<table>
 			<tr><th><?php echo $langs->trans("Qty"); ?></th>
@@ -106,7 +106,7 @@ $langs->load("cashdesk");
             <th><?php echo $langs->trans("VATRate"); ?></th>
             </tr>
 			<tr>
-				<td><input class="texte1" type="text" id="txtQte" name="txtQte" value="1" onkeyup="modif();" onfocus="this.select();" />
+				<td><input class="texte1" type="text" id="txtQte" name="txtQte" value="1" onkeyup="javascript: modif();" onfocus="javascript: this.select();" />
 <?php print genkeypad("txtQte", "frmQte");?>
 				</td>
 				<!-- Affichage du stock pour l'article courant -->
@@ -115,10 +115,10 @@ $langs->load("cashdesk");
 				</td>
 				<!-- Show unit price -->
 				<?php // TODO Remove the disabled and use this value when adding product into cart ?>
-				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="modif();" disabled /></td>
+				<td><input class="texte1_off" type="text" name="txtPrixUnit" value="<?php echo price2num($obj_facturation->prix(), 'MU'); ?>" onchange="javascript: modif();" disabled /></td>
 				<td></td>
     			<!-- Choix de la remise -->
-    			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="modif();" onfocus="this.select();"/>
+    			<td><input class="texte1" type="text" id="txtRemise" name="txtRemise" value="0" onkeyup="javascript: modif();" onfocus="javascript: this.select();"/>
 					<?php print genkeypad("txtRemise", "frmQte");?>
     			</td>
     			<!-- Affichage du total HT -->
@@ -126,7 +126,7 @@ $langs->load("cashdesk");
                 <!-- Choix du taux de TVA -->
                 <td class="select_tva">
                 <?php //var_dump($tab_tva); ?>
-                <select name="selTva" onchange="modif();" >
+                <select name="selTva" onchange="javascript: modif();" >
                     <?php
                         $tva_tx = $obj_facturation->tva();  // Try to get a previously entered VAT rowid. First time, this will return empty.
 
@@ -151,7 +151,7 @@ $langs->load("cashdesk");
 </fieldset>
 
 <!-- ========================= Cadre "Amount" ============================= -->
-<form id="frmDifference" class="formulaire1" method="post" onsubmit="return verifReglement()" action="validation_verif.php?action=valide_achat">
+<form id="frmDifference"  class="formulaire1" method="post" onsubmit="javascript: return verifReglement()" action="validation_verif.php?action=valide_achat">
 	<input type="hidden" name="hdnChoix" value="" />
 	<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
 <fieldset class="cadre_facturation"><legend class="titre1"><?php echo $langs->trans("Amount"); ?></legend>
@@ -161,7 +161,7 @@ $langs->load("cashdesk");
 			<!-- Affichage du montant du -->
 			<td><input class="texte2_off" type="text" name="txtDu" value="<?php echo price2num($obj_facturation->prixTotalTtc(), 'MT'); ?>" disabled /></td>
 			<!-- Choix du montant encaisse -->
-			<td><input class="texte2" type="text" id="txtEncaisse" name="txtEncaisse" value="" onkeyup="verifDifference();" onfocus="this.select();" />
+			<td><input class="texte2" type="text" id="txtEncaisse" name="txtEncaisse" value="" onkeyup="javascript: verifDifference();" onfocus="javascript: this.select();" />
 <?php print genkeypad("txtEncaisse", "frmDifference");?>
 			</td>
 			<!-- Affichage du montant rendu -->
@@ -201,10 +201,10 @@ $langs->load("cashdesk");
 			print '<div class="clearboth">';
 			print '<div class="inline-block" style="margin: 6px;">';
 			?>
-				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="verifClic('DIF');" />
+				<input class="button bouton_mode_reglement" type="submit" name="btnModeReglement" value="<?php echo $langs->trans("Reported"); ?>" onclick="javascript: verifClic('DIF');" />
 			<?php
-			print $langs->trans("DateEcheance").' :';
-			print Form::selectDate(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
+			print $langs->trans("DateDue").' :';
+			print $form->select_date(-1,'txtDatePaiement',0,0,0,'paymentmode',1,0,1);
 			print '</div>';
 			?>
 		</div>

@@ -432,9 +432,9 @@ print '<table class="border" width="100%">';
 $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 // Ref
-print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print Form::showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
+print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';
 print '</tr>';
 
@@ -457,7 +457,7 @@ print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
-if ($action == 'edit') print Form::selectDate($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
+if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
 else print dol_print_date($object->date_fin,'day');
 print '</td></tr>';
 
@@ -527,7 +527,7 @@ if (GETPOST('ajoutsujet'))
 		print $langs->trans("AddNewColumn") .':<br><br>';
 		print $langs->trans("Title").' <input type="text" name="nouvellecolonne" size="40"><br>';
 		$tmparray=array('checkbox'=>$langs->trans("CheckBox"),'yesno'=>$langs->trans("YesNoList"),'foragainst'=>$langs->trans("PourContreList"));
-		print $langs->trans("Type").' '.Form::selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
+		print $langs->trans("Type").' '.$form->selectarray("typecolonne", $tmparray, GETPOST('typecolonne')).'<br><br>';
 		print '<input type="submit" class="button" name="ajoutercolonne" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
@@ -850,12 +850,12 @@ while ($compteur < $num)
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 				{
 					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
-					print Form::selectarray("choix".$i, $arraychoice, $car);
+					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 				{
 					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
-					print Form::selectarray("choix".$i, $arraychoice, $car);
+					print $form->selectarray("choix".$i, $arraychoice, $car);
 				}
 				print '</td>'."\n";
 			}
@@ -948,12 +948,12 @@ if (empty($testligneamodifier))
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 		{
 			$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
-			print Form::selectarray("choix".$i, $arraychoice);
+			print $form->selectarray("choix".$i, $arraychoice);
 		}
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 		{
 			$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
-			print Form::selectarray("choix".$i, $arraychoice);
+			print $form->selectarray("choix".$i, $arraychoice);
 		}
 		print '</td>'."\n";
 	}

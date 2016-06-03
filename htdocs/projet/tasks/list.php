@@ -66,7 +66,7 @@ $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('project');
+$extralabels = $extrafields->fetch_name_optionals_label('projet_task');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Security check
@@ -226,6 +226,7 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid,";
 $sql.= " ".MAIN_DB_PREFIX."projet_task as t";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as ef on (t.rowid = ef.fk_object)";
 if ($search_project_user > 0)
 {
     $sql.=", ".MAIN_DB_PREFIX."element_contact as ecp";
@@ -235,7 +236,7 @@ if ($search_task_user > 0)
     $sql.=", ".MAIN_DB_PREFIX."element_contact as ect";
 }
 $sql.= " WHERE t.fk_projet = p.rowid";
-$sql.= " AND p.entity IN (".getEntity('project').')';
+$sql.= " AND p.entity IN (".getEntity('project',1).')';
 if (! $user->rights->projet->all->lire) $sql.=" p.rowid IN (".join(',',$projectsListId).")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
@@ -275,6 +276,19 @@ if ($search_projectstatus >= 0) $sql .= " AND p.fk_statut = ".$db->escape($searc
 if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_project_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_project_user;
 if ($search_task_user > 0) $sql.= " AND ect.fk_c_type_contact IN (".join(',',array_keys($listoftaskcontacttype)).") AND ect.element_id = t.rowid AND ect.fk_socpeople = ".$search_task_user;
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
+}
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -380,7 +394,7 @@ if ($resql)
     }
     
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'" id="tablelines3">';
 
@@ -442,7 +456,7 @@ if ($resql)
         print '<td class="liste_titre">';
         $listofstatus=array(-1=>'&nbsp;');
         foreach($projectstatic->statuts_short as $key => $val) $listofstatus[$key]=$langs->trans($val);
-        print Form::selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
+        print $form->selectarray('search_projectstatus', $listofstatus, $search_projectstatus);
         print '</td>';
     }
     if (! empty($arrayfields['t.ref']['checked']))
@@ -479,14 +493,29 @@ if ($resql)
     if (! empty($arrayfields['t.duration_effective']['checked'])) print '<td></td>';
     if (! empty($arrayfields['t.progress_calculated']['checked'])) print '<td></td>';
     if (! empty($arrayfields['t.progress']['checked'])) print '<td></td>';
-    // Extra fields
-    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-    {
-        foreach($extrafields->attribute_label as $key => $val)
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+        foreach($extrafields->attribute_label as $key => $val) 
         {
-            if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+            if (! empty($arrayfields["ef.".$key]['checked']))
+            {
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+            	if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
+                print '</td>';
+            }
         }
-    }
+	}
     // Fields from hook
     $parameters=array('arrayfields'=>$arrayfields);
     $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -505,7 +534,7 @@ if ($resql)
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
     print '</tr>';

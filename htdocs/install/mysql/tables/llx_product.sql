@@ -35,6 +35,7 @@ create table llx_product
 
   label						varchar(255) NOT NULL,
   description				text,
+  note_public				text,
   note						text,
   customcode                varchar(32),                    -- Optionnal custom code
   fk_country                integer DEFAULT NULL,                        -- Optionnal id of original country
@@ -44,6 +45,7 @@ create table llx_product
   price_min_ttc				double(24,8) DEFAULT 0,
   price_base_type			varchar(3)   DEFAULT 'HT',
   cost_price			    double(24,8) DEFAULT NULL,      -- Cost price without tax. Can be used for margin calculation.
+  default_vat_code			varchar(10),	         		-- Same code than into table llx_c_tva (but no constraints). Should be used in priority to find default vat, npr, localtaxes for product.
   tva_tx					double(6,3),					-- Default VAT rate of product
   recuperableonly           integer NOT NULL DEFAULT '0',   -- French NPR VAT
   localtax1_tx				double(6,3)  DEFAULT 0,         -- 
@@ -77,7 +79,7 @@ create table llx_product
   surface_units				tinyint      DEFAULT NULL,
   volume					float        DEFAULT NULL,
   volume_units				tinyint      DEFAULT NULL,
-  stock						integer,						-- Current physical stock (dernormalized field)
+  stock						real,							-- Current physical stock (dernormalized field)
   pmp						double(24,8) DEFAULT 0 NOT NULL,		-- To store valuation of stock calculated using average price method, for this product
   fifo						double(24,8),							-- To store valuation of stock calculated using fifo method, for this product
   lifo						double(24,8),							-- To store valuation of stock calculated using lifo method, for this product

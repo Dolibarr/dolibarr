@@ -225,11 +225,11 @@ foreach ($syslogModules as $moduleName)
 	print '<td align="left">';
 	if ($module->getInfo())
 	{
-		print Form::textwithpicto('', $module->getInfo(), 1, 'help');
+		print $form->textwithpicto('', $module->getInfo(), 1, 'help');
 	}
 	if ($module->getWarning())
 	{
-		print Form::textwithpicto('', $module->getWarning(), 1, 'warning');
+		print $form->textwithpicto('', $module->getWarning(), 1, 'warning');
 	}
 	print '</td>';
 	print "</tr>\n";

@@ -152,7 +152,8 @@ if (empty($user->societe_id))
     $parameters=array();
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
+    $boxstat.=$hookmanager->resPrint;
+    
     if (empty($reshook))
     {
 	    // Condition to be checked for each display line dashboard
@@ -161,6 +162,7 @@ if (empty($user->societe_id))
 	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS),
 	    ! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
 	    ! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
+	    ! empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
 	    ! empty($conf->adherent->enabled) && $user->rights->adherent->lire,
 	    ! empty($conf->product->enabled) && $user->rights->produit->lire,
 	    ! empty($conf->service->enabled) && $user->rights->service->lire,
@@ -168,6 +170,7 @@ if (empty($user->societe_id))
 	    ! empty($conf->commande->enabled) && $user->rights->commande->lire,
 	    ! empty($conf->facture->enabled) && $user->rights->facture->lire,
 	    ! empty($conf->contrat->enabled) && $user->rights->contrat->activer,
+	    ! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->lire,
 		! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_ORDERS_STATS),
 		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
 		! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
@@ -180,6 +183,7 @@ if (empty($user->societe_id))
 	        DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
 	        DOL_DOCUMENT_ROOT."/societe/class/client.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.class.php",
+    	    DOL_DOCUMENT_ROOT."/contact/class/contact.class.php",
     	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
     	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
     	    DOL_DOCUMENT_ROOT."/product/class/service.class.php",
@@ -187,6 +191,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
     	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
     	    DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php",
+    	    DOL_DOCUMENT_ROOT."/fichinter/class/fichinter.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
     	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
@@ -198,6 +203,7 @@ if (empty($user->societe_id))
 	                   'Client',
 	                   'Client',
 	                   'Fournisseur',
+	                   'Contact',
 	                   'Adherent',
 	                   'Product',
 	                   'Service',
@@ -205,6 +211,7 @@ if (empty($user->societe_id))
 	                   'Commande',
 	                   'Facture',
 	                   'Contrat',
+	                   'Fichinter',
 	                   'CommandeFournisseur',
 	                   'FactureFournisseur',
             	       'SupplierProposal',
@@ -216,6 +223,7 @@ if (empty($user->societe_id))
 	                'customers',
 	                'prospects',
 	                'suppliers',
+	                'contacts',
 	                'members',
 	                'products',
 	                'services',
@@ -223,6 +231,7 @@ if (empty($user->societe_id))
 	                'orders',
 	                'invoices',
 	                'Contracts',
+	                'fichinters',
 	                'supplier_orders',
 	                'supplier_invoices',
 	                'askprice',
@@ -234,12 +243,14 @@ if (empty($user->societe_id))
 	                 'company',
 	                 'company',
 	                 'company',
+	                 'contact',
 	                 'user',
 	                 'product',
 	                 'service',
 	                 'propal',
 	                 'order',
 	                 'bill',
+	                 'order',
 	                 'order',
 	                 'order',
 	                 'bill',
@@ -252,6 +263,7 @@ if (empty($user->societe_id))
 	                  "ThirdPartyCustomersStats",
 	                  "ThirdPartyProspectsStats",
 	                  "Suppliers",
+	                  "Contacts",
 	                  "Members",
 	                  "Products",
 	                  "Services",
@@ -259,6 +271,7 @@ if (empty($user->societe_id))
 	                  "CustomersOrders",
 	                  "BillsCustomers",
 	                  "Contracts",
+	                  "Interventions",
 	                  "SuppliersOrders",
                       "SuppliersInvoices",
 	                  "SupplierProposalShort",
@@ -271,6 +284,7 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/societe/list.php?type=c',
     	    DOL_URL_ROOT.'/societe/list.php?type=p',
     	    DOL_URL_ROOT.'/societe/list.php?type=f',
+    	    DOL_URL_ROOT.'/contact/list.php',
     	    DOL_URL_ROOT.'/adherents/list.php?statut=1&mainmenu=members',
     	    DOL_URL_ROOT.'/product/list.php?type=0&mainmenu=products',
     	    DOL_URL_ROOT.'/product/list.php?type=1&mainmenu=products',
@@ -278,6 +292,7 @@ if (empty($user->societe_id))
     	    DOL_URL_ROOT.'/commande/list.php?mainmenu=commercial',
     	    DOL_URL_ROOT.'/compta/facture/list.php?mainmenu=accountancy',
     	    DOL_URL_ROOT.'/contrat/list.php',
+    	    DOL_URL_ROOT.'/fichinter/list.php',
     	    DOL_URL_ROOT.'/fourn/commande/list.php',
 	        DOL_URL_ROOT.'/fourn/facture/list.php',
 	        DOL_URL_ROOT.'/supplier_proposal/list.php',
@@ -289,6 +304,7 @@ if (empty($user->societe_id))
 	                    "companies",
 	                    "prospects",
 	                    "suppliers",
+	                    "companies",
 	                    "members",
 	                    "products",
 	                    "produts",
@@ -297,6 +313,7 @@ if (empty($user->societe_id))
             	        "bills",
             	        "supplier_proposal",
 						"contracts",
+						"interventions",
 						"trips",
 	                    "projects"
 	    );
@@ -355,7 +372,7 @@ $boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'
 $boxwork.='<tr class="liste_titre">';
 $boxwork.='<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
 $boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-$boxwork.='<th class="liste_titre" align="right">'.Form::textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
+$boxwork.='<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
 $boxwork.='<th class="liste_titre">&nbsp;</th>';
 //print '<th class="liste_titre" width="20">&nbsp;</th>';
 if ($showweather) $boxwork.='<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
@@ -464,7 +481,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 }
 
 // Number of cheque to send
-if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id)
+if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT))
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
     $board=new RemiseCheque($db);

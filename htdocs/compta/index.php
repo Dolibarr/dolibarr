@@ -5,6 +5,7 @@
  * Copyright (C) 2015 	   Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +199,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		}
 		else
 		{
-			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -214,7 +215,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
  */
 if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
 {
-	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.tva as total_tva, f.total_ttc, f.type";
+	$sql  = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
     $sql.= ", s.code_fournisseur";
@@ -274,7 +275,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		}
 		else
 		{
-			print '<tr colspan="3" '.$bc[$var].'><td>'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);

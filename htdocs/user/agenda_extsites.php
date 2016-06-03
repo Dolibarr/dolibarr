@@ -157,10 +157,6 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToLi
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-print '<div class="underbanner clearboth"></div>';
-
-print '<br>';
-
 print $langs->trans("AgendaExtSitesDesc")."<br>\n";
 print "<br>\n";
 
@@ -174,7 +170,7 @@ print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</td>';
-print "<td>".Form::textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
+print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
 print '<td align="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 

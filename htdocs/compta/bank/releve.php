@@ -131,7 +131,7 @@ if (empty($num))
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
-		print Form::showrefnav($object, 'ref', $linkback, 1, 'ref');
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label
@@ -325,7 +325,7 @@ else
 	$sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 	$sql.= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 	$sql.= " b.fk_bordereau,";
-    $sql.= " bc.number,";
+    $sql.= " bc.ref,";
 	$sql.= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
 	$sql.= ", ".MAIN_DB_PREFIX."bank as b";
@@ -376,7 +376,7 @@ else
             $link='';
             if ($objp->fk_bordereau>0) {
                 $remisestatic->id = $objp->fk_bordereau;
-                $remisestatic->ref = $objp->number;
+                $remisestatic->ref = $objp->ref;
                 $link = ' '.$remisestatic->getNomUrl(1);
             }
 			print '<td class="nowrap">'.$type_label.' '.($objp->num_chq?$objp->num_chq:'').$link.'</td>';

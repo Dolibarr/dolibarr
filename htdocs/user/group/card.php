@@ -64,6 +64,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
+$hookmanager->initHooks(array('groupcard','globalcard'));
 
 /**
  *  Action remove group
@@ -296,7 +297,7 @@ else
 		 */
 		if ($action == 'delete')
 		{
-			print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$object->name),"confirm_delete", '',0,1);
+			print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAGroup"),$langs->trans("ConfirmDeleteGroup",$object->name),"confirm_delete", '',0,1);
 		}
 
 		/*
@@ -312,7 +313,7 @@ else
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="2">';
-			print Form::showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
+			print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
 			print '</tr>';
 

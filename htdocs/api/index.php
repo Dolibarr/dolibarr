@@ -55,12 +55,10 @@ if (empty($conf->global->MAIN_MODULE_API))
     exit;
 }
 
-use \Luracast\Restler\Defaults;
 
 $api = new DolibarrApi($db);
 
 $api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
-$api->r->addAPIClass('DolibarrApiInit',''); // Just for url root page
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
@@ -141,6 +139,8 @@ foreach ($modulesdir as $dir)
 
 // TODO If not found, redirect to explorer
 
+
+// Call API (we suppose we found it)
 $api->r->handle();
 
 

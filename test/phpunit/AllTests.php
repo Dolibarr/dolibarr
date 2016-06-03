@@ -184,6 +184,9 @@ class AllTests
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
+        require_once dirname(__FILE__).'/RestAPIUserTest.php';
+        $suite->addTestSuite('RestAPIUserTest');
+ 
         require_once dirname(__FILE__).'/WebservicesProductsTest.php';
         $suite->addTestSuite('WebservicesProductsTest');
         require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';

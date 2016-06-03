@@ -232,7 +232,7 @@ if ($id > 0 || ! empty($ref))
 				$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
 				$projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 			}
-			print Form::showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
+			print $form->showrefnav($projectstatic,'project_ref',$linkback,1,'ref','ref','',$param.'&withproject=1');
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
@@ -338,12 +338,12 @@ if ($id > 0 || ! empty($ref))
 
 			// Date start
 			print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-			print Form::selectDate($object->date_start,'dateo',1,1,0,'',1,0,1);
+			print $form->select_date($object->date_start,'dateo',1,1,0,'',1,0,1);
 			print '</td></tr>';
 
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-			print Form::selectDate($object->date_end?$object->date_end:-1,'datee',1,1,0,'',1,0,1);
+			print $form->select_date($object->date_end?$object->date_end:-1,'datee',1,1,0,'',1,0,1);
 			print '</td></tr>';
 
 			// Planned workload
@@ -393,7 +393,7 @@ if ($id > 0 || ! empty($ref))
 
 			if ($action == 'delete')
 			{
-				print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
+				print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"].'&withproject='.$withproject,$langs->trans("DeleteATask"),$langs->trans("ConfirmDeleteATask"),"confirm_delete");
 			}
 
 			print '<table class="border" width="100%">';
@@ -408,7 +408,7 @@ if ($id > 0 || ! empty($ref))
 				$object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 			}
 			else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-			print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
+			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
 			print '</td>';
 			print '</tr>';
 
@@ -489,31 +489,38 @@ if ($id > 0 || ! empty($ref))
 		{
 			/*
 			 * Actions
-			*/
-			print '<div class="tabsAction">';
+ 			 */
+			
+		    print '<div class="tabsAction">';
 
-			// Modify
-			if ($user->rights->projet->creer)
-			{
-				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
-			}
-
-			// Delete
-			if ($user->rights->projet->supprimer && ! $object->hasChildren())
-			{
-				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
-			}
-			else
-			{
-				print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
-			}
-
-			print '</div>';
-
+		    $parameters = array();
+		    $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+		    // modified by hook
+		    if (empty($reshook))
+		    {
+				// Modify
+				if ($user->rights->projet->creer)
+				{
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
+				}
+	
+				// Delete
+				if ($user->rights->projet->supprimer && ! $object->hasChildren())
+				{
+					print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
+				}
+				else
+				{
+					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
+				}
+	
+				print '</div>';
+		    }
+		    
 			print '<table width="100%"><tr><td width="50%" valign="top">';
 			print '<a name="builddoc"></a>'; // ancre
 
@@ -529,8 +536,6 @@ if ($id > 0 || ! empty($ref))
 			$var=true;
 
 			$somethingshown=$formfile->show_documents('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
-
-
 
 			print '</td></tr></table>';
 		}

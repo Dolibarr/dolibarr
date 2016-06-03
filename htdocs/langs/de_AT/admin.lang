@@ -110,7 +110,6 @@ DelaysBeforeWarning=Benachrichtigungsverzögerungen
 DelaysOfToleranceBeforeWarning=Verspätungstoleranz vor Benachrichtigungen
 Delays_MAIN_DELAY_NOT_ACTIVATED_SERVICES=Verzögerungstoleranz (in Tagen) vor  Benachrichtigung über zu aktivierende Services
 Delays_MAIN_DELAY_RUNNING_SERVICES=Verzögerungstoleranz (in Tagen) vor Benachrichtigung zu überfälligen Services
-TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 DocumentModelOdt=Erstellen von Dokumentvorlagen im OpenDocuments-Format (.odt-Dateien für OpenOffice, KOffice, TextEdit, ...)
 WatermarkOnDraftInvoices=Wasserzeichen auf Rechnungsentwürfen (alle, falls leer)
 WatermarkOnDraftProposal=Wasserzeichen für Angebotsentwürfe (alle, falls leer)

@@ -153,6 +153,7 @@ if ($action == 'delete' && $user->rights->adherent->configurer)
 	exit;
 }
 
+
 /*
  * View
  */
@@ -200,7 +201,10 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '<td>'.dol_escape_htmltag($objp->libelle).'</td>';
 			print '<td align="center">'.yn($objp->cotisation).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			if ($user->rights->adherent->configurer)
+				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
+			else
+				print '<td align="right">&nbsp;</td>';
 			print "</tr>";
 			$i++;
 		}
@@ -233,18 +237,18 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 	print '<tbody>';
 
-	print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print Form::selectyesno("cotisation",1,1);
+	print $form->selectyesno("cotisation",1,1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-	print Form::selectyesno("vote",0,1);
+	print $form->selectyesno("vote",0,1);
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-	print '<textarea name="comment" wrap="soft" cols="60" rows="3"></textarea></td></tr>';
+	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -297,7 +301,7 @@ if ($rowid > 0)
 		// Ref
 		print '<tr><td width="15%">'.$langs->trans("Ref").'</td>';
 		print '<td>';
-		print Form::showrefnav($object, 'rowid', $linkback);
+		print $form->showrefnav($object, 'rowid', $linkback);
 		print '</td></tr>';
 
 		// Label
@@ -634,15 +638,15 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print Form::selectyesno("cotisation",$object->cotisation,1);
+		print $form->selectyesno("cotisation",$object->cotisation,1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-		print Form::selectyesno("vote",$object->vote,1);
+		print $form->selectyesno("vote",$object->vote,1);
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-		print '<textarea name="comment" wrap="soft" cols="90" rows="3">'.$object->note.'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';

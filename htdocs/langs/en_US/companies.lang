@@ -443,3 +443,5 @@ ErrorThirdpartiesMerge=There was an error when deleting the thirdparties. Please
 SaleRepresentativeLogin=Login of sale representative
 SaleRepresentativeFirstname=Firstname of sale representative
 SaleRepresentativeLastname=Lastname of sale representative
+ModelModulesContact=Document Models of contact
+ModelModulesThirdParties=Document models of third party

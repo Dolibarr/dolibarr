@@ -18,19 +18,13 @@ MenuTools=Tools
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Journals
 JournalFinancial=Financial journals
-Exports=Exports
-Export=Export
-Modelcsv=Model of export
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Select a model of export
-Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
 
 Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
 Addanaccount=Add an accounting account
 AccountAccounting=Accounting account
+AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 
@@ -90,6 +84,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Social journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
 ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
@@ -99,12 +94,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold servi
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
-Numerocompte=Account
 Code_tiers=Thirdparty
 Labelcompte=Label account
 Sens=Sens
 Codejournal=Journal
 NumPiece=Piece number
+AccountingCategory=Accounting category
 
 DelBookKeeping=Delete the records of the general ledger
 
@@ -154,20 +149,22 @@ FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Exports
+Export=Export
+Modelcsv=Model of export
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Select a model of export
+Modelcsv_normal=Classic export
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -177,3 +174,13 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+Sens=Sens
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page

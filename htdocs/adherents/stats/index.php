@@ -176,7 +176,7 @@ print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=false;
+$var=true;
 foreach ($data as $val)
 {
     $year = $val['year'];

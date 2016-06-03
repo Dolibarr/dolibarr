@@ -162,11 +162,6 @@ if ($result > 0)
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
-	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-	print $object->name_alias;
-	print "</td></tr>";
-
     // Prefix
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
@@ -244,21 +239,21 @@ if ($result > 0)
             $actions[$managedeventfornotification['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';
-        print Form::selectarray("contactid",$listofemails);
+        print $form->selectarray("contactid",$listofemails);
         print '</td>';
         print '<td>';
-        print Form::selectarray("actionid",$actions,'',1);
+        print $form->selectarray("actionid",$actions,'',1);
         print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));
-        print Form::selectarray("typeid",$type);
+        print $form->selectarray("typeid",$type);
         print '</td>';
         print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="4">';
+        print '<tr '.$bc[$var].'><td colspan="4" class="opacitymedium">';
         print $langs->trans("YouMustCreateContactFirst");
         print '</td></tr>';
     }

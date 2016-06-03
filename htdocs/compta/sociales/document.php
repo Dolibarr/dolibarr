@@ -73,7 +73,7 @@ $modulepart='tax';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -107,7 +107,7 @@ if ($object->id)
 
     // Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td>';
-	print Form::showrefnav($object,'id');
+	print $form->showrefnav($object,'id');
 	print "</td></tr>";
 
     // Label
@@ -130,7 +130,7 @@ if ($object->id)
     print "<td>";
     if ($action == 'edit')
     {
-        print Form::selectDate($object->periode, 'period', 0, 0, 0, 'charge', 1);
+        print $form->select_date($object->periode, 'period', 0, 0, 0, 'charge', 1);
     }
     else
     {
@@ -143,7 +143,7 @@ if ($object->id)
     if ($action == 'edit')
     {
         print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-        print Form::selectDate($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
+        print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
         print "</td></tr>";
     }
     else {

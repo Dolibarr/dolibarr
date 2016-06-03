@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
@@ -23,9 +23,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/index.php
- * \ingroup Accounting Expert
- * \brief Setup page to configure accounting expert module
+ * \file		htdocs/accountancy/admin/index.php
+ * \ingroup		Advanced accountancy
+ * \brief		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 
@@ -38,6 +38,7 @@ $langs->load("compta");
 $langs->load("bills");
 $langs->load("admin");
 $langs->load("accountancy");
+$langs->load("salaries");
 
 // Security check
 if (! $user->admin)
@@ -45,7 +46,7 @@ if (! $user->admin)
 
 $action = GETPOST('action', 'alpha');
 
-// Other parameters ACCOUNTING_*
+// Parameters ACCOUNTING_* and others
 $list = array (
 		'ACCOUNTING_LIMIT_LIST_VENTILATION',
 		'ACCOUNTING_LENGTH_DESCRIPTION', // adjust size displayed for lines description for dol_trunc
@@ -55,16 +56,19 @@ $list = array (
 );
 
 $list_account = array (
-		'ACCOUNTING_ACCOUNT_CUSTOMER',
 		'ACCOUNTING_ACCOUNT_SUPPLIER',
+		'ACCOUNTING_ACCOUNT_CUSTOMER',
+		'SALARIES_ACCOUNTING_ACCOUNT_PAYMENT',
 		'ACCOUNTING_PRODUCT_BUY_ACCOUNT',
 		'ACCOUNTING_PRODUCT_SOLD_ACCOUNT',
 		'ACCOUNTING_SERVICE_BUY_ACCOUNT',
 		'ACCOUNTING_SERVICE_SOLD_ACCOUNT',
 		'ACCOUNTING_VAT_BUY_ACCOUNT',
 		'ACCOUNTING_VAT_SOLD_ACCOUNT',
+		'ACCOUNTING_VAT_PAY_ACCOUNT',
 		'ACCOUNTING_ACCOUNT_SUSPENSE',
-		'ACCOUNTING_ACCOUNT_TRANSFER_CASH' 
+		'ACCOUNTING_ACCOUNT_TRANSFER_CASH',
+		'DONATION_ACCOUNTINGACCOUNT'
 );
 
 /*
@@ -215,10 +219,9 @@ print "<td>" . $langs->trans("Selectchartofaccounts") . "</td>";
 print "<td>";
 print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
 
-$sql = "SELECT rowid, pcg_version, fk_pays, label, active";
+$sql = "SELECT rowid, pcg_version, label, active";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
 $sql .= " WHERE active = 1";
-$sql .= " AND fk_pays = " . $mysoc->country_id;
 
 dol_syslog('accountancy/admin/index.php:: $sql=' . $sql);
 $resql = $db->query($sql);
@@ -234,7 +237,7 @@ if ($resql) {
 		
 		print '<option value="' . $row[0] . '"';
 		print $conf->global->CHARTOFACCOUNTS == $row[0] ? ' selected' : '';
-		print '>' . $row[1] . ' - ' . $row[3] . '</option>';
+		print '>' . $row[1] . ' - ' . $row[2] . '</option>';
 		
 		$i ++;
 	}

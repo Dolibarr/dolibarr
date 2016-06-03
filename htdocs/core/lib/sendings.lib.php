@@ -233,7 +233,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);
@@ -256,7 +256,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 					$text=$product_static->getNomUrl(1);
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
-					print Form::textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 
 					// Show range
 					print_date_range($objp->date_start,$objp->date_end);
@@ -277,7 +277,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 
 					if (! empty($objp->label)) {
 						$text.= ' <strong>'.$objp->label.'</strong>';
-						print Form::textwithtooltip($text,$objp->description,3,'','',$i);
+						print $form->textwithtooltip($text,$objp->description,3,'','',$i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}

@@ -83,7 +83,7 @@ print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
-print Form::selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
 print '<br>';
 print $langs->trans("ClickToDialUseTelLinkDesc");
 print '</td></tr>';

@@ -184,7 +184,7 @@ if ($action == 'edit')
 
 	$var=false;
 	print '<tr '.$bc[$var].'>';
-	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .Form::selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
+	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td>' .$form->selectyesno('MAIN_DISABLE_METEO',(empty($conf->global->MAIN_DISABLE_METEO)?0:1),1) . '</td></tr>';
 
 	print '</table>';
 

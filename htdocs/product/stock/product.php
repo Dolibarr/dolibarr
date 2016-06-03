@@ -185,7 +185,7 @@ if ($action == "correct_stock" && ! $cancel)
 // Transfer stock from a warehouse to another warehouse
 if ($action == "transfert_stock" && ! $cancel)
 {
-	if (! (GETPOST("id_entrepot_source",'int') > 0) || ! (GETPOST("id_entrepot_destination",'int') > 0))
+	if (! (GETPOST("id_entrepot",'int') > 0) || ! (GETPOST("id_entrepot_destination",'int') > 0))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
@@ -197,7 +197,7 @@ if ($action == "transfert_stock" && ! $cancel)
 		$error++;
 		$action='transfert';
 	}
-	if (GETPOST("id_entrepot_source",'int') == GETPOST("id_entrepot_destination",'int'))
+	if (GETPOST("id_entrepot",'int') == GETPOST("id_entrepot_destination",'int'))
 	{
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
@@ -225,11 +225,10 @@ if ($action == "transfert_stock" && ! $cancel)
 
 			$db->begin();
 
-			$object->load_stock();	// Load array product->stock_warehouse
+			$object->load_stock('novirtual');	// Load array product->stock_warehouse
 
 			// Define value of products moved
 			$pricesrc=0;
-			//if (isset($object->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$object->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
 			if (isset($object->pmp)) $pricesrc=$object->pmp;
 			$pricedest=$pricesrc;
 
@@ -255,7 +254,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				}
 				else
 				{
-					$srcwarehouseid=GETPOST('id_entrepot_source','int');
+					$srcwarehouseid=GETPOST('id_entrepot','int');
 					$batch=GETPOST('batch_number');
 					$eatby=$d_eatby;
 					$sellby=$d_sellby;
@@ -274,6 +273,10 @@ if ($action == "transfert_stock" && ! $cancel)
 						$eatby,$sellby,$batch,
 						GETPOST('inventorycode')
 					);
+					if ($result1 < 0) $error++;
+				}
+				if (! $error)
+				{
 					// Add stock
 					$result2=$object->correct_stock_batch(
 						$user,
@@ -285,31 +288,39 @@ if ($action == "transfert_stock" && ! $cancel)
 						$eatby,$sellby,$batch,
 						GETPOST('inventorycode')
 					);
+					if ($result2 < 0) $error++;
 				}
 			}
 			else
 			{
-				// Remove stock
-				$result1=$object->correct_stock(
-					$user,
-					GETPOST("id_entrepot_source"),
-					GETPOST("nbpiece"),
-					1,
-					GETPOST("label"),
-					$pricesrc,
-					GETPOST('inventorycode')
-				);
-
-				// Add stock
-				$result2=$object->correct_stock(
-					$user,
-					GETPOST("id_entrepot_destination"),
-					GETPOST("nbpiece"),
-					0,
-					GETPOST("label"),
-					$pricedest,
-					GETPOST('inventorycode')
-				);
+				if (! $error)
+				{
+    			    // Remove stock
+    				$result1=$object->correct_stock(
+    					$user,
+    					GETPOST("id_entrepot"),
+    					GETPOST("nbpiece"),
+    					1,
+    					GETPOST("label"),
+    					$pricesrc,
+    					GETPOST('inventorycode')
+    				);
+    				if ($result1 < 0) $error++;
+				}
+				if (! $error)
+				{
+    				// Add stock
+    				$result2=$object->correct_stock(
+    					$user,
+    					GETPOST("id_entrepot_destination"),
+    					GETPOST("nbpiece"),
+    					0,
+    					GETPOST("label"),
+    					$pricedest,
+    					GETPOST('inventorycode')
+    				);
+    				if ($result2 < 0) $error++;
+				}
 			}
 			if (! $error && $result1 >= 0 && $result2 >= 0)
 			{
@@ -391,6 +402,7 @@ if ($id > 0 || $ref)
 {
 	$object = new Product($db);
 	$result = $object->fetch($id,$ref);
+	
 	$object->load_stock();
 
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -405,7 +417,9 @@ if ($id > 0 || $ref)
 
 		dol_htmloutput_events();
 
-        dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
         print '<div class="fichecenter">';
         
@@ -471,26 +485,25 @@ if ($id > 0 || $ref)
 		}
 
         // Stock alert threshold
-        print '<tr><td>'.Form::editfieldkey("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
-        print Form::editfieldval("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer);
         print '</td></tr>';
 
         // Desired stock
-        print '<tr><td>'.Form::editfieldkey("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer).'</td><td colspan="2">';
-        print Form::editfieldval("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer);
         print '</td></tr>';
 
         // Real stock
-        $object->load_stock();
         $text_stock_options = '';
-        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)?$langs->trans("DeStockOnShipment").'<br>':'');
+        $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)?$langs->trans("DeStockOnShipment").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)?$langs->trans("DeStockOnValidateOrder").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_BILL)?$langs->trans("DeStockOnBill").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)?$langs->trans("ReStockOnBill").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)?$langs->trans("ReStockOnValidateOrder").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)?$langs->trans("ReStockOnDispatchOrder").'<br>':'');
         print '<tr><td>';
-        print Form::textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
+        print $form->textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
         print '</td>';
 		print '<td>'.$object->stock_reel;
 		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));
@@ -588,7 +601,7 @@ if ($id > 0 || $ref)
 	if ($action == "correction")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stockcorrection.tpl.php';
-		print '<br>';
+		print '<br><br>';
 	}
 
 	/*
@@ -597,7 +610,7 @@ if ($id > 0 || $ref)
 	if ($action == "transfert")
 	{
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
-		print '<br>';
+		print '<br><br>';
 	}
 
 	/*
@@ -656,10 +669,10 @@ if (empty($action) && $object->id)
 
 
 /*
- * Stock detail (by warehouse). Do not go down into batch.
+ * Stock detail (by warehouse). May go down into batch details.
  */
 
-print '<br><table class="noborder" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="40%" colspan="4">'.$langs->trans("Warehouse").'</td>';
 print '<td align="right">'.$langs->trans("NumberOfUnit").'</td>';
 print '<td align="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
@@ -677,7 +690,7 @@ if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 	print '</tr>';
 }
 
-$sql = "SELECT e.rowid, e.label, e.lieu, ps.reel, ps.pmp, ps.rowid as product_stock_id";
+$sql = "SELECT e.rowid, e.label, e.lieu, ps.reel, ps.rowid as product_stock_id, p.pmp";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product_stock as ps";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
@@ -703,9 +716,10 @@ if ($resql)
 		$entrepotstatic->id=$obj->rowid;
 		$entrepotstatic->libelle=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
+		$stock_real = round($obj->reel, 10);
 		print '<tr '.$bc[$var].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
-		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
+		print '<td align="right">'.$stock_real.($stock_real < 0 ?' '.img_warning():'').'</td>';
 		// PMP
 		print '<td align="right">'.(price2num($object->pmp)?price2num($object->pmp,'MU'):'').'</td>';
 		// Value purchase
@@ -724,34 +738,35 @@ if ($resql)
 		if (price2num($object->pmp)) $totalwithpmp += $obj->reel;
 		$totalvalue = $totalvalue + ($object->pmp*$obj->reel);
         $totalvaluesell = $totalvaluesell + ($object->price*$obj->reel);
-		//Batch Detail
+		// Batch Detail
 		if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 		{
-			$details=Productbatch::findAll($db,$obj->product_stock_id);
+			$details=Productbatch::findAll($db, $obj->product_stock_id, 0, $object->id);
 			if ($details<0) dol_print_error($db);
 			foreach ($details as $pdluo)
 			{
-			    if ( $action == 'editline' && GETPOST('lineid','int')==$pdluo->id )
+			    if ($action == 'editline' && GETPOST('lineid','int') == $pdluo->id)
 			    { //Current line edit
 			        print "\n".'<tr><td colspan="9">';
 			        print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder" width="100%"><tr><td width="10%"></td>';
 			        print '<td align="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 			        print '<td align="center" width="10%">';
-			        Form::selectDate($pdluo->eatby,'eatby','','',1,'',1,0,1);
+			        $form->select_date($pdluo->eatby,'eatby','','',1,'',1,0,1);
 			        print '</td>';
 			        print '<td align="center" width="10%">';
-			        Form::selectDate($pdluo->sellby,'sellby','','',1,'',1,0,1);
+			        $form->select_date($pdluo->sellby,'sellby','','',1,'',1,0,1);
 			        print '</td>';
 			        print '<td align="right" width="10%">'.$pdluo->qty.($pdluo->qty<0?' '.img_warning():'').'</td>';
 			        print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
 		            print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 			        print '</table></form>';
+			        print '</td></tr>';
 			    }
 			    else
 				{
                     print "\n".'<tr><td align="right">';
                     print img_picto($langs->trans("Tranfer"),'uparrow','class="hideonsmartphone"').' ';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockTransfer").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;id_entrepot='.$entrepotstatic->id.'&amp;action=transfert&amp;pdluoid='.$pdluo->id.'">'.$langs->trans("StockTransfer").'</a>';
 					// Disabled, because edition of stock content must use the "Correct stock menu".
 					// Do not use this, or data will be wrong (bad tracking of movement label, inventory code, ...
                     //print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;lineid='.$pdluo->id.'#'.$pdluo->id.'">';

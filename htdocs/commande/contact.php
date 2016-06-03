@@ -155,8 +155,8 @@ if ($id > 0 || ! empty($ref))
 		$linkback = '<a href="'.DOL_URL_ROOT.'/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
-		print '<tr><td width="18%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 		print "</td></tr>";
 
 		// Ref commande client
@@ -171,10 +171,10 @@ if ($id > 0 || ! empty($ref))
 		print '</tr>';
 
 		// Customer
-		if (is_null($object->client))	$object->fetch_thirdparty();
+		if (is_null($object->thirdparty))	$object->fetch_thirdparty();
 
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
 		// Delivery address
 		if (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))

@@ -170,7 +170,7 @@ class FormMail extends Form
     /**
      * Remove a file from the list of attached files (stored in SECTION array)
      *
-     * @param  	string	$keytodelete     Key in file array
+     * @param  	string	$keytodelete     Key in file array (0, 1, 2, ...)
      * @return	void
      */
     function remove_attached_files($keytodelete)
@@ -313,7 +313,7 @@ class FormMail extends Form
         	if (count($modelmail_array)>0)
         	{
 	        	$out.= '<div style="padding: 3px 0 3px 0">'."\n";
-	        	$out.= $langs->trans('SelectMailModel').': '.Form::selectarray('modelmailselected', $modelmail_array, 0, 1);
+	        	$out.= $langs->trans('SelectMailModel').': '.$this->selectarray('modelmailselected', $modelmail_array, 0, 1);
 	        	if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	        	$out.= ' &nbsp; ';
 	        	$out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
@@ -334,7 +334,7 @@ class FormMail extends Form
         	    $out.= ' &nbsp; ';
         	    $out.= '</div>';
         	}
-        	    
+
 
 
         	$out.= '<table class="border" width="100%">'."\n";
@@ -348,7 +348,7 @@ class FormMail extends Form
         		{
         			$help.=$key.' -> '.$langs->trans($val).'<br>';
         		}
-        		$out.= Form::textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help);
+        		$out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help);
         		$out.= "</td></tr>\n";
         	}
 
@@ -432,7 +432,7 @@ class FormMail extends Form
         	if (! empty($this->withto) || is_array($this->withto))
         	{
         		$out.= '<tr><td width="180">';
-        		if ($this->withtofree) $out.= Form::textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+        		if ($this->withtofree) $out.= $form->textwithpicto($langs->trans("MailTo"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		else $out.= $langs->trans("MailTo");
         		$out.= '</td><td>';
         		if ($this->withtoreadonly)
@@ -477,7 +477,7 @@ class FormMail extends Form
         			if (! empty($this->withto) && is_array($this->withto))
         			{
         				if (! empty($this->withtofree)) $out.= " ".$langs->trans("or")." ";
-        				$out.= Form::selectarray("receiver", $this->withto, GETPOST("receiver"), 1);
+        				$out.= $form->selectarray("receiver", $this->withto, GETPOST("receiver"), 1);
         			}
         			if (isset($this->withtosocid) && $this->withtosocid > 0) // deprecated. TODO Remove this. Instead, fill withto with array before calling method.
         			{
@@ -489,7 +489,7 @@ class FormMail extends Form
         					$liste[$key]=$value;
         				}
         				if ($this->withtofree) $out.= " ".$langs->trans("or")." ";
-        				$out.= Form::selectarray("receiver", $liste, GETPOST("receiver"), 1);
+        				$out.= $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -499,7 +499,7 @@ class FormMail extends Form
         	if (! empty($this->withtocc) || is_array($this->withtocc))
         	{
         		$out.= '<tr><td width="180">';
-        		$out.= Form::textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+        		$out.= $form->textwithpicto($langs->trans("MailCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if ($this->withtoccreadonly)
         		{
@@ -511,7 +511,7 @@ class FormMail extends Form
         			if (! empty($this->withtocc) && is_array($this->withtocc))
         			{
         				$out.= " ".$langs->trans("or")." ";
-        				$out.= Form::selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1);
+        				$out.= $form->selectarray("receivercc", $this->withtocc, GETPOST("receivercc"), 1);
         			}
         		}
         		$out.= "</td></tr>\n";
@@ -521,7 +521,7 @@ class FormMail extends Form
         	if (! empty($this->withtoccc) || is_array($this->withtoccc))
         	{
         		$out.= '<tr><td width="180">';
-        		$out.= Form::textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
+        		$out.= $form->textwithpicto($langs->trans("MailCCC"),$langs->trans("YouCanUseCommaSeparatorForSeveralRecipients"));
         		$out.= '</td><td>';
         		if (! empty($this->withtocccreadonly))
         		{
@@ -533,7 +533,7 @@ class FormMail extends Form
         			if (! empty($this->withtoccc) && is_array($this->withtoccc))
         			{
         				$out.= " ".$langs->trans("or")." ";
-        				$out.= Form::selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
+        				$out.= $form->selectarray("receiverccc", $this->withtoccc, GETPOST("receiverccc"), 1);
         			}
         		}
 
@@ -562,7 +562,7 @@ class FormMail extends Form
 					if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_SUPPLIER_PROPOSAL) && ! empty($this->param['models']) && $this->param['models'] == 'supplier_proposal_send') $defaultvaluefordeliveryreceipt=1;
         			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_ORDER) && ! empty($this->param['models']) && $this->param['models'] == 'order_send') $defaultvaluefordeliveryreceipt=1;
         			if (! empty($conf->global->MAIL_FORCE_DELIVERY_RECEIPT_INVOICE) && ! empty($this->param['models']) && $this->param['models'] == 'facture_send') $defaultvaluefordeliveryreceipt=1;
-        			$out.= Form::selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
+        			$out.= $form->selectyesno('deliveryreceipt', (isset($_POST["deliveryreceipt"])?$_POST["deliveryreceipt"]:$defaultvaluefordeliveryreceipt), 1);
         		}
 
         		$out.= "</td></tr>\n";
@@ -876,13 +876,13 @@ class FormMail extends Form
 	{
 		$ret=array();
 
-		$sql = "SELECT rowid, label, topic, content, lang";
+		$sql = "SELECT rowid, label, topic, content, lang, position";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
-		$sql.= $this->db->order("lang,label","ASC");
+		$sql.= $this->db->order("position,lang,label","ASC");
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -896,7 +896,7 @@ class FormMail extends Form
 				$line->id=$obj->rowid;
 				$line->label=$obj->label;
 				$line->topic=$obj->topic;
-				$line->content=$obj->lacontentbel;
+				$line->content=$obj->content;
 				$line->lang=$obj->lang;
 				$this->lines_model[]=$line;
 			}
@@ -920,6 +920,7 @@ class FormMail extends Form
 	 */
 	function setSubstitFromObject($object)
 	{
+		global $user;
 		$this->substit['__REF__'] = $object->ref;
 		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__REFCLIENT__'] = $object->ref_client;

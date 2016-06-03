@@ -70,6 +70,5 @@ DictionaryCanton=Estado/Provincia
 Upgrade=Actualizar
 MenuCompanySetup=Empresa/Fundación
 CompanyName=Nombre
-TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 EmptyNumRefModelDesc=El código es libre. Este código puede ser modificado en cualquier momento.
 LDAPFieldFirstName=Nombre(s)

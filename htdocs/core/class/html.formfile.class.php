@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2013	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2010-2016	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Charles-Fr BENKE	<charles.fr@benke.fr>
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
@@ -64,9 +64,9 @@ class FormFile
      *  @param  int		$size           Length of input file area
      *  @param	Object	$object			Object to use (when attachment is done on an element)
      *  @param	string	$options		Add an option column
-     *  @param	boolean	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
+     *  @param	integer	$useajax		Use fileupload ajax (0=never, 1=if enabled, 2=always whatever is option). 2 should never be used.
      *  @param	string	$savingdocmask	Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
-     *  @param	string	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
+     *  @param	integer	$linkfiles		1=Also add form to link files, 0=Do not show form to link files
      *  @param	string	$htmlname		Name and id of HTML form
      * 	@return	int						<0 if KO, >0 if OK
      */
@@ -227,16 +227,17 @@ class FormFile
      *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
      *      @param      int					$delallowed         Remove is allowed (1/0)
      *      @param      string				$modelselected      Model to preselect by default
-     *      @param      string				$allowgenifempty	Show warning if no model activated
-     *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+     *      @param      integer				$allowgenifempty	Show warning if no model activated
+     *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
      *      @param      int					$iconPDF            Show only PDF icon with link (1/0)
      * 		@param		int					$maxfilenamelength	Max length for filename shown
-     * 		@param		string				$noform				Do not output html form tags
+     * 		@param		integer				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
      * 		@param		string				$title				Title to show on top of form
      * 		@param		string				$buttonlabel		Label on submit button
      * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
      * 		@return		int										<0 if KO, number of shown files if OK
+     *      @deprecated                                         Use print xxx->showdocuments() instead.
      */
     function show_documents($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='')
     {
@@ -256,11 +257,11 @@ class FormFile
      *      @param      int					$genallowed         Generation is allowed (1/0 or array list of templates)
      *      @param      int					$delallowed         Remove is allowed (1/0)
      *      @param      string				$modelselected      Model to preselect by default
-     *      @param      string				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
-     *      @param      string				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+     *      @param      integer				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
+     *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
      *      @param      int					$iconPDF            Deprecated, see getDocumentsLink
      * 		@param		int					$maxfilenamelength	Max length for filename shown
-     * 		@param		string				$noform				Do not output html form tags
+     * 		@param		integer				$noform				Do not output html form tags
      * 		@param		string				$param				More param on http links
      * 		@param		string				$title				Title to show on top of form
      * 		@param		string				$buttonlabel		Label on submit button
@@ -274,7 +275,7 @@ class FormFile
 		if (0 !== $iconPDF) {
 			dol_syslog(__METHOD__ . ": passing iconPDF parameter is deprecated", LOG_WARNING);
 		}
-
+		
         global $langs, $conf, $user, $hookmanager;
         global $form, $bc;
 
@@ -286,7 +287,7 @@ class FormFile
         if (! empty($iconPDF)) {
         	return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
         }
-
+        
         $printer=0;
         if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur')))	// The direct print feature is implemented only for such elements
         {
@@ -445,7 +446,7 @@ class FormFile
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
                 {
-                    include_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/pdf/modules_chequereceipts.php';
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php';
                     $modellist=ModeleChequeReceipts::liste_modeles($this->db);
                 }
             }
@@ -502,28 +503,27 @@ class FormFile
 
             $out.= '<tr class="liste_titre">';
 
+            $addcolumforpicto=($delallowed || $printer || $morepicto);
+            $out.= '<th align="center" colspan="'.(3+($addcolumforpicto?'2':'1')).'" class="formdoc liste_titre maxwidthonsmartphone">';
+            
             // Model
             if (! empty($modellist))
             {
-                $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
                 $out.= '<span class="hideonsmartphone">'.$langs->trans('Model').' </span>';
                 if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
                 {
                     $arraykeys=array_keys($modellist);
                     $modelselected=$arraykeys[0];
                 }
-                $out.= Form::selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', '');
-                $out.= '</th>';
+                $out.= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+                $out.= ajax_combobox('model');
             }
             else
             {
-                $out.= '<th align="left" class="formdoc liste_titre">';
-                $out.= $langs->trans("Files");
-                $out.= '</th>';
+                $out.= '<div class="float">'.$langs->trans("Files").'</div>';
             }
 
             // Language code (if multilang)
-            $out.= '<th align="center" class="formdoc liste_titre maxwidthonsmartphone">';
             if (($allowgenifempty || (is_array($modellist) && count($modellist) > 0)) && $conf->global->MAIN_MULTILANGS && ! $forcenomultilang && (! empty($modellist) || $showempty))
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
@@ -537,12 +537,9 @@ class FormFile
             {
                 $out.= '&nbsp;';
             }
-            $out.= '</th>';
 
             // Button
-            $addcolumforpicto=($delallowed || $printer || $morepicto);
-            $out.= '<th align="center" colspan="'.($addcolumforpicto?'2':'1').'" class="formdocbutton liste_titre maxwidthonsmartphone">';
-            $genbutton = '<input class="button" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+            $genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
             $genbutton.= ' type="submit" value="'.$buttonlabel.'"';
             if (! $allowgenifempty && ! is_array($modellist) && empty($modellist)) $genbutton.= ' disabled';
             $genbutton.= '>';
@@ -579,8 +576,8 @@ class FormFile
         {
             $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
 
-            // Affiche en-tete tableau si non deja affiche
-            if (! empty($file_list) && ! $headershown)
+            // Show title of array if not already shown
+            if ((! empty($file_list) || $modulepart == 'massfilesarea') && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
@@ -863,11 +860,15 @@ class FormFile
 					{
 						$fileinfo = pathinfo($file['name']);
 						print '<td align="center">';
-						$minifile=$fileinfo['filename'].'_mini.'.strtolower($fileinfo['extension']);	// Thumbs are created with filename in lower case
 						if (image_format_supported($file['name']) > 0)
 						{
-							print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
-							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.'thumbs/'.$minifile).'" title="">';
+						    $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // Thumbs are created with filename in lower case and with .png extension
+						    //print $relativepath.'<br>';
+						    //print $file['path'].'/'.$minifile.'<br>';
+						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.'.$fileinfo['extension']); // For old thumbs
+						    //print $file['path'].'/'.$minifile.'<br>';
+						    print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
+							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
 						else print '&nbsp;';
@@ -927,7 +928,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'" class="opacitymedium">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -1301,7 +1302,7 @@ class FormFile
         }
         if ($nboflinks == 0)
         {
-            print '<tr ' . $bc[false] . '><td colspan="5">';
+            print '<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }

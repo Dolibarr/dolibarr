@@ -21,6 +21,9 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+-- Drop old table not used (Informations are already presents in llx_accounting_bookkeeping)
+DROP TABLE llx_accountingtransaction;
+DROP TABLE llx_accountingdebcred;
 
 -- Already into 3.9 but we do it again to be sure
 ALTER TABLE llx_product ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
@@ -32,6 +35,31 @@ ALTER TABLE llx_product_customer_price ADD COLUMN localtax2_type varchar(10)  NO
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax1_type varchar(10)  NOT NULL DEFAULT '0' after localtax1_tx; 
 ALTER TABLE llx_product_customer_price_log ADD COLUMN localtax2_type varchar(10)  NOT NULL DEFAULT '0' after localtax2_tx; 
 
+ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after date_fin;
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
+
+-- DROP TABLE llx_product_lot;
+CREATE TABLE llx_product_lot (
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer,
+  fk_product      integer NOT NULL,				-- Id of product
+  batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
+  eatby           date DEFAULT NULL,			-- Eatby date
+  sellby          date DEFAULT NULL, 			-- Sellby date
+  datec         datetime,
+  tms           timestamp,
+  fk_user_creat integer,
+  fk_user_modif integer,
+  import_key    integer
+) ENGINE=InnoDB;
+
+ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
+
+DROP TABLE llx_stock_serial; 
+
+ALTER TABLE llx_product ADD COLUMN note_public text;
+ALTER TABLE llx_user ADD COLUMN note_public text;
 
 ALTER TABLE llx_c_type_contact ADD COLUMN position integer NOT NULL DEFAULT 0;
 
@@ -43,6 +71,9 @@ ALTER TABLE llx_product ADD COLUMN width_units	tinyint      DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN height		float        DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN height_units tinyint      DEFAULT NULL;
 
+ALTER TABLE llx_product ADD COLUMN default_vat_code	varchar(10) after cost_price;
+
+ALTER TABLE llx_product MODIFY COLUMN stock	real;
 
 CREATE TABLE llx_categorie_user 
 (
@@ -77,24 +108,31 @@ ALTER TABLE llx_cronjob ADD COLUMN test varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
+ALTER TABLE llx_facture ADD COLUMN date_pointoftax date;
+
 UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
  
 ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
 ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
 
+ALTER TABLE llx_chargesociales ADD COLUMN import_key varchar(14);
+
+--DROP TABLE llx_website_page;
+--DROP TABLE llx_website;
 CREATE TABLE llx_website
 (
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	entity        integer DEFAULT 1,
-	shortname     varchar(24) NOT NULL,
+	ref		      varchar(24) NOT NULL,
 	description   varchar(255),
 	status		  integer,
+	fk_default_home integer,
     date_creation     datetime,
     date_modification datetime,
 	tms           timestamp
 ) ENGINE=innodb;
- 
-ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_shortname (shortname, entity);
+ALTER TABLE llx_website ADD COLUMN fk_default_home integer;
+ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 
 CREATE TABLE llx_website_page
 (
@@ -171,12 +209,12 @@ CREATE TABLE llx_multicurrency_rate
 	rowid integer AUTO_INCREMENT PRIMARY KEY, 
 	date_sync datetime DEFAULT NULL,  
 	rate double NOT NULL DEFAULT 0, 
-	fk_multicurrency integer NOT NULL, 
-	entity integer NOT NULL DEFAULT 1
+	fk_multicurrency integer NOT NULL 
 ) ENGINE=innodb;
 
 ALTER TABLE llx_societe ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_societe ADD COLUMN multicurrency_code varchar(255);
+ALTER TABLE llx_societe ADD COLUMN fk_shipping_method integer AFTER cond_reglement_supplier;
 
 ALTER TABLE llx_product_price ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_product_price ADD COLUMN multicurrency_code varchar(255);
@@ -279,18 +317,14 @@ ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ht double(24,8) DEFAUL
 ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_contratdet ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
-
-
 ALTER TABLE llx_paiement ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 
-ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) NOT NULL;
+ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_tva double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ttc double(24,8) DEFAULT 0 NOT NULL;
-
-
 
 ALTER TABLE llx_supplier_proposal ADD COLUMN fk_multicurrency integer;
 ALTER TABLE llx_supplier_proposal ADD COLUMN multicurrency_code varchar(255);
@@ -320,6 +354,150 @@ ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ht double(24,8)
 ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_facture	integer DEFAULT 0;
+
 ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
+
+DELETE FROM llx_menu where module='expensereport';
+
+ALTER TABLE llx_accounting_system DROP COLUMN fk_pays;
+ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
+
+CREATE TABLE llx_c_accounting_category (
+  rowid 			integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  code 				varchar(16) NOT NULL,
+  label 			varchar(255) NOT NULL,
+  range_account		varchar(255) NOT NULL,
+  sens 				tinyint NOT NULL DEFAULT '0', -- For international accounting  0 : credit - debit / 1 : debit - credit
+  category_type		tinyint NOT NULL DEFAULT '0', -- Field calculated or not
+  formula			varchar(255) NOT NULL,			 -- Example : 1 + 2 (rowid of the category)
+  position    		integer DEFAULT 0,
+  fk_country 		integer DEFAULT NULL,			 -- This category is dedicated to a country
+  active 			integer DEFAULT 1
+) ENGINE=innodb;
+
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
+
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1,'VTE',"Ventes de marchandises", '707xxx', 0, 0, '', '10', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2,'MAR',"Coût d'achats marchandises vendues", '603xxx | 607xxx | 609xxx', 0, 0, '', '20', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE',"Marge commerciale", '', 0, 1, '1 + 2', '30', 1, 1);
+
+UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = '';
+-- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent TYPE integer USING account_parent::integer;
+
+CREATE TABLE llx_accounting_journal
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  code       		varchar(32) NOT NULL,
+  label             varchar(128) NOT NULL,
+  nature			smallint DEFAULT 0 NOT NULL,			-- type of journals (Sale / purchase / bank / various operations)
+  active            smallint DEFAULT 0
+)ENGINE=innodb;
+
+ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (code);
+
+-- VMYSQL4.1 DROP INDEX uk_bordereau_cheque ON llx_bordereau_cheque;
+-- VPGSQL8.2 DROP INDEX uk_bordereau_cheque;
+ALTER TABLE llx_bordereau_cheque CHANGE COLUMN number ref VARCHAR(30) NOT NULL;
+CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
+
+
+ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
+
+-- Add more action to log
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_MODIFY','Project modified','Executed when a project is modified','project',141);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_DELETE','Project deleted','Executed when a project is deleted','project',142);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CREATE','Supplier order validated','Executed when a supplier order is validated','order_supplier',11);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_SUBMIT','Supplier order request submited','Executed when a supplier order is approved','order_supplier',12);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_RECEIVE','Supplier order request received','Executed when a supplier order is received','order_supplier',12);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CLASSIFY_BILLED','Supplier order set billed','Executed when a supplier order is set as billed','order_supplier',14);
+
+ALTER TABLE llx_product_fournisseur_price ADD supplier_reputation varchar(10) NULL;
+
+ALTER TABLE llx_product ADD COLUMN default_vat_code varchar(10) after cost_price;
+
+CREATE TABLE llx_categorie_account
+(
+  fk_categorie  integer NOT NULL,
+  fk_account    integer NOT NULL,
+  import_key    varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_categorie_account ADD PRIMARY KEY pk_categorie_account (fk_categorie, fk_account);
+ALTER TABLE llx_categorie_account ADD INDEX idx_categorie_account_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_account ADD INDEX idx_categorie_account_fk_account (fk_account);
+
+ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_account ADD CONSTRAINT fk_categorie_account_fk_account FOREIGN KEY (fk_account) REFERENCES llx_bank_account (rowid);
+
+-- Delete old deprecated field
+ALTER TABLE llx_product_stock DROP COLUMN pmp;
+
+ALTER TABLE llx_resource ADD COLUMN asset_number    varchar(255) after ref;
+ALTER TABLE llx_resource ADD COLUMN datec           datetime DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN date_valid      datetime DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_author  integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_modif   integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_user_valid   integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD COLUMN fk_statut       smallint NOT NULL DEFAULT '0';
+ALTER TABLE llx_resource ADD COLUMN import_key			varchar(14);
+ALTER TABLE llx_resource ADD COLUMN extraparams			varchar(255);	
+ 
+ALTER TABLE llx_element_resources ADD COLUMN duree real;          -- total duration of using ressource
+
+UPDATE llx_element_resources SET resource_type = 'dolresource' WHERE resource_type = 'resource';
+
+CREATE TABLE llx_advtargetemailing
+(
+  rowid integer NOT NULL auto_increment PRIMARY KEY,
+  name varchar(200) NOT NULL,
+  entity integer NOT NULL DEFAULT 1,
+  fk_mailing	integer NOT NULL,
+  filtervalue	text,
+  fk_user_author integer NOT NULL,
+  datec datetime NOT NULL,
+  fk_user_mod integer NOT NULL,
+  tms timestamp NOT NULL
+)ENGINE=InnoDB;
+
+ALTER TABLE llx_advtargetemailing ADD UNIQUE INDEX uk_advtargetemailing_name (name);
+
+
+update llx_product_batch set batch = '000000' where batch = 'Non d&eacute;fini';
+update llx_product_batch set batch = '000000' where batch = 'Non défini';
+update llx_product_batch set batch = '000000' where batch = 'Undefined';
+
+update llx_product_batch set batch = '000000' where batch = '';
+update llx_product_batch set batch = '000000' where batch = '';
+update llx_product_batch set batch = '000000' where batch = '';
+
+update llx_product_lot set batch = '000000' where batch = 'Undefined';
+update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
+
+
+-- At end (higher risk of error)
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
+
+CREATE TABLE llx_oauth_token (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    service varchar(36),
+    token text,
+    fk_user integer,
+    fk_adherent integer,
+    entity integer
+)ENGINE=InnoDB;
+
+CREATE TABLE llx_oauth_state (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    service varchar(36),
+    state varchar(128),
+    fk_user integer,
+    fk_adherent integer,
+    entity integer
+)ENGINE=InnoDB;

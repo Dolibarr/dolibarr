@@ -321,7 +321,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
     if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -434,7 +434,7 @@ if ($result)
     }
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
@@ -483,7 +483,7 @@ if ($result)
         print '<input class="flat" type="text" name="search_lastname" size="6" value="'.dol_escape_htmltag($search_lastname).'">';
         print '</td>';
     }
-    if (! empty($arrayfields['p.lastname']['checked']))
+    if (! empty($arrayfields['p.firstname']['checked']))
     {
         print '<td class="liste_titre">';
         print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
@@ -553,7 +553,7 @@ if ($result)
     {
         print '<td class="liste_titre" align="center">';
 	   $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-	   print Form::selectarray('search_priv',$selectarray,$search_priv,1);
+	   print $form->selectarray('search_priv',$selectarray,$search_priv,1);
 	   print '</td>';
     }
 	// Extra fields
@@ -587,7 +587,7 @@ if ($result)
     if (! empty($arrayfields['p.statut']['checked']))
     {
         print '<td class="liste_titre" align="center">';
-        print Form::selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
+        print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('ActivityCeased'),'1'=>$langs->trans('InActivity')),$search_status);
         print '</td>';
     }
     print '<td class="liste_titre" align="right">';

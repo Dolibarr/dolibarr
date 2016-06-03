@@ -255,7 +255,7 @@ if ($action == 'builddoc')	// En get ou en post
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
@@ -413,7 +413,7 @@ if ($action == 'create')    // Seems to no be used
 					$outputlangs = $langs;
 					$newlang='';
 					if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-					if (empty($newlang)) $newlang=$commande->client->default_lang;
+					if (empty($newlang)) $newlang=$commande->thirdparty->default_lang;
 					if (! empty($newlang))
 					{
 						$outputlangs = new Translate("",$conf);
@@ -438,7 +438,7 @@ if ($action == 'create')    // Seems to no be used
 
 				if (! empty($line->label)) {
 					$text.= ' <strong>'.$line->label.'</strong>';
-					print Form::textwithtooltip($text,$line->description,3,'','',$i);
+					print $form->textwithtooltip($text,$line->description,3,'','',$i);
 				} else {
 					print $text.' '.nl2br($line->description);
 				}
@@ -556,7 +556,7 @@ else
 			if ($action == 'delete')
 			{
 				$expedition_id = GETPOST("expid");
-				print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&expid='.$expedition_id.'&backtopage='.urlencode($backtopage),$langs->trans("DeleteDeliveryReceipt"),$langs->trans("DeleteDeliveryReceiptConfirm",$object->ref),'confirm_delete','','',1);
 
 			}
 
@@ -565,7 +565,7 @@ else
 			 */
 			if ($action == 'valid')
 			{
-				print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
+				print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans("ValidateDeliveryReceipt"),$langs->trans("ValidateDeliveryReceiptConfirm",$object->ref),'confirm_valid','','',1);
 
 			}
 
@@ -585,8 +585,8 @@ else
 				print '<tr><td width="20%">'.$langs->trans("RefSending").'</td>';
 				print '<td colspan="3">';
 				// Nav is hidden because on a delivery receipt of a shipment, if we go on next shipment, we may find no tab (a shipment may not have delivery receipt yet)
-				//print Form::showrefnav($expedition, 'refshipment', $linkback, 1, 'ref', 'ref');
-				print Form::showrefnav($expedition, 'refshipment', $linkback, 0, 'ref', 'ref');
+				//print $form->showrefnav($expedition, 'refshipment', $linkback, 1, 'ref', 'ref');
+				print $form->showrefnav($expedition, 'refshipment', $linkback, 0, 'ref', 'ref');
 				print '</td></tr>';
 			}
 
@@ -647,7 +647,7 @@ else
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="setdate_livraison">';
-				Form::selectDate($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
+				$form->select_date($object->date_delivery?$object->date_delivery:-1,'liv_',1,1,'',"setdate_livraison");
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
@@ -672,7 +672,7 @@ else
 		        print '<td colspan="3">';
 				if ($action != 'editincoterm')
 				{
-					print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+					print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 				}
 				else
 				{
@@ -755,7 +755,7 @@ else
 						$outputlangs = $langs;
 						$newlang='';
 						if (empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-						if (empty($newlang)) $newlang=$object->client->default_lang;
+						if (empty($newlang)) $newlang=$object->thirdparty->default_lang;
 						if (! empty($newlang))
 						{
 							$outputlangs = new Translate("",$conf);
@@ -777,7 +777,7 @@ else
 					$text.= ' - '.$label;
 					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($object->lines[$i]->description));
 					//print $description;
-					print Form::textwithtooltip($text,$description,3,'','',$i);
+					print $form->textwithtooltip($text,$description,3,'','',$i);
 					print_date_range($object->lines[$i]->date_start,$object->lines[$i]->date_end);
 					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
 					{
@@ -792,7 +792,7 @@ else
 
 					if (! empty($object->lines[$i]->label)) {
 						$text.= ' <strong>'.$object->lines[$i]->label.'</strong>';
-						print Form::textwithtooltip($text,$object->lines[$i]->description,3,'','',$i);
+						print $form->textwithtooltip($text,$object->lines[$i]->description,3,'','',$i);
 					} else {
 						print $text.' '.nl2br($object->lines[$i]->description);
 					}
@@ -887,7 +887,7 @@ else
 				$shipment->fetch($object->origin_id);
 
 				// Linked object block
-				$somethingshown = Form::showLinkedObjectBlock($shipment);
+				$somethingshown = $form->showLinkedObjectBlock($shipment);
 
 				// Show links to link elements
 				//$linktoelem = $form->showLinkToObjectBlock($shipment);

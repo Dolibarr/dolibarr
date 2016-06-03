@@ -857,9 +857,10 @@ class Translate
         //print 'param: '.$key.'-'.$keydatabase.'-'.$this->trans($key); exit;
 
 		// Check if a translation is available (this can call getTradFromKey)
-		if ($this->transnoentitiesnoconv($key) != $key)
+		$tmp=$this->transnoentitiesnoconv($key);
+		if ($tmp != $key && $tmp != 'ErrorBadValueForParamNotAString')
 		{
-			return $this->transnoentitiesnoconv($key);    // Found in language array
+			return $tmp;    // Found in language array
 		}
 
 		// Check in cache
@@ -908,7 +909,8 @@ class Translate
 	}
 
 	/**
-	 *	Return a currency code into its symbol
+	 *	Return a currency code into its symbol. 
+	 *  If mb_convert_encoding is not available, return currency code.
 	 *
 	 *  @param	string	$currency_code		Currency code
 	 *  @param	integer	$forceloadall		1=Force to load all currencies into cache. We know we need to use all of them. By default read and cache only required currency.

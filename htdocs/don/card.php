@@ -264,7 +264,7 @@ if ($action == 'builddoc')
 	$outputlangs = $langs;
 	$newlang='';
 	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id'])) $newlang=$_REQUEST['lang_id'];
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->client->default_lang;
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
 	if (! empty($newlang))
 	{
 		$outputlangs = new Translate("",$conf);
@@ -307,15 +307,15 @@ if ($action == 'create')
     if (! empty($conf->projet->enabled)) $nbrows++;
 
     // Date
-	print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Date").'</td><td>';
-	Form::selectDate($donation_date?$donation_date:-1,'','','','',"add",1,1);
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
+	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
     // Amount
     print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.GETPOST("amount").'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print Form::selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
+	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
 
 	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.GETPOST("societe").'" size="40"></td></tr>';
@@ -332,7 +332,7 @@ if ($action == 'create')
     print '</tr>';
 
 	// Country
-    print '<tr><td width="25%"><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
     print $form->select_country(GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id);
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     print '</td></tr>';
@@ -382,7 +382,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>\n";
 }
@@ -430,7 +434,7 @@ if (! empty($id) && $action == 'edit')
 
 	// Date
 	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
-	Form::selectDate($object->date,'','','','',"update");
+	$form->select_date($object->date,'','','','',"update");
 	print '</td>';
 
 	// Amount
@@ -446,7 +450,7 @@ if (! empty($id) && $action == 'edit')
 	}
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
-	print Form::selectyesno("public",1,1);
+	print $form->selectyesno("public",1,1);
 	print "</td>";
 	print "</tr>\n";
 
@@ -523,7 +527,7 @@ if (! empty($id) && $action != 'edit')
     if ($action == 'delete')
     {
         $text=$langs->trans("ConfirmDeleteADonation");
-        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteADonation"),$text,"confirm_delete",'','',1);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteADonation"),$text,"confirm_delete",'','',1);
     }
 
 	$result=$object->fetch($id);
@@ -551,7 +555,7 @@ if (! empty($id) && $action != 'edit')
 
 	// Ref
 	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
-	print Form::showrefnav($object, 'rowid', $linkback, 1, 'rowid', 'ref', '');
+	print $form->showrefnav($object, 'rowid', $linkback, 1, 'rowid', 'ref', '');
 	print '</td>';
 	print '</tr>';
 

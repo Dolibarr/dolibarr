@@ -453,13 +453,8 @@ if (empty($reshook)) {
 								if (!$result > 0) {
 									setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 								} else {
-									// Create small thumbs for company (Ratio is near 16/9)
-									// Used on logon for example
-									$imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-									// Create mini thumbs for company (Ratio is near 16/9)
-									// Used on menu or for setup page for example
-									$imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+            					    // Create thumbs
+            					    $object->addThumbs($newfile);					    
 								}
 							} else {
 								$error ++;
@@ -699,7 +694,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
        	print '<input type="hidden" name="action" value="adduserldap">';
         if (is_array($liste) && count($liste))
         {
-        	print Form::selectarray('users', $liste, '', 1);
+        	print $form->selectarray('users', $liste, '', 1);
         }
        	print '</td><td align="center">';
        	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
@@ -726,7 +721,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr>';
 
     // Lastname
-    print '<td class="titlefield"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
+    print '<td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td>';
     print '<td>';
     if (! empty($ldap_lastname))
     {
@@ -756,7 +751,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Employee
     print '<tr>';
     print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print Form::selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
+    print $form->selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
     print '</td></tr>';
 
     // Position/Job
@@ -769,7 +764,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr><td>'.$langs->trans("Gender").'</td>';
     print '<td>';
     $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-    print Form::selectarray('gender', $arraygender, GETPOST('gender'), 1);
+    print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
     print '</td></tr>';
 
     // Login
@@ -847,7 +842,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     {
         print '<tr><td>'.$langs->trans("Administrator").'</td>';
         print '<td>';
-        print Form::selectyesno('admin',GETPOST('admin'),1);
+        print $form->selectyesno('admin',GETPOST('admin'),1);
 
         if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
@@ -889,7 +884,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     // Type
     print '<tr><td>'.$langs->trans("Type").'</td>';
     print '<td>';
-    print Form::textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
+    print $form->textwithpicto($langs->trans("Internal"),$langs->trans("InternalExternalDesc"), 1, 'help', '', 0, 2);
     print '</td></tr>';
 
     // Address
@@ -1032,7 +1027,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	    // THM
 	    print '<tr><td>';
 		$text=$langs->trans("THM");
-		print Form::textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+		print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 	    print '</td>';
 	    print '<td>';
 	    print '<input size="8" type="text" name="thm" value="'.GETPOST('thm').'">';
@@ -1042,7 +1037,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	    // TJM
 	    print '<tr><td>';
 		$text=$langs->trans("TJM");
-		print Form::textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
+		print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 	    print '</td>';
 	    print '<td>';
 	    print '<input size="8" type="text" name="tjm" value="'.GETPOST('tjm').'">';
@@ -1087,7 +1082,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td>' . fieldLabel( 'Categories', 'usercats' ) . '</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories( Categorie::TYPE_USER, null, 'parent', null, null, 1 );
-		print Form::multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
+		print $form->multiselectarray( 'usercats', $cate_arbo, GETPOST( 'usercats', 'array' ), null, null, null,
 			null, '90%' );
 		print "</td></tr>";
 	}
@@ -1097,7 +1092,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print $langs->trans("Note");
     print '</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('note','','',180,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_4,90);
+    $doleditor=new DolEditor('note','','',120,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_3,90);
     $doleditor->Create();
     print "</td></tr>\n";
 
@@ -1199,7 +1194,7 @@ else
          */
         if ($action == 'password')
         {
-            print Form::formconfirm("card.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
+            print $form->formconfirm("card.php?id=$object->id",$langs->trans("ReinitPassword"),$langs->trans("ConfirmReinitPassword",$object->login),"confirm_password", '', 0, 1);
         }
 
         /*
@@ -1207,7 +1202,7 @@ else
          */
         if ($action == 'passwordsend')
         {
-            print Form::formconfirm("card.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
+            print $form->formconfirm("card.php?id=$object->id",$langs->trans("SendNewPassword"),$langs->trans("ConfirmSendNewPassword",$object->login),"confirm_passwordsend", '', 0, 1);
         }
 
         /*
@@ -1215,7 +1210,7 @@ else
          */
         if ($action == 'disable')
         {
-            print Form::formconfirm("card.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
+            print $form->formconfirm("card.php?id=$object->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$object->login),"confirm_disable", '', 0, 1);
         }
 
         /*
@@ -1223,7 +1218,7 @@ else
          */
         if ($action == 'enable')
         {
-            print Form::formconfirm("card.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
+            print $form->formconfirm("card.php?id=$object->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$object->login),"confirm_enable", '', 0, 1);
         }
 
         /*
@@ -1231,7 +1226,7 @@ else
          */
         if ($action == 'delete')
         {
-            print Form::formconfirm("card.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
+            print $form->formconfirm("card.php?id=$object->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$object->login),"confirm_delete", '', 0, 1);
         }
 
         /*
@@ -1324,11 +1319,11 @@ else
             print '<tr><td>'.$langs->trans("Administrator").'</td><td>';
             if (! empty($conf->multicompany->enabled) && $object->admin && ! $object->entity)
             {
-                print Form::textwithpicto(yn($object->admin),$langs->trans("SuperAdministratorDesc"),1,"superadmin");
+                print $form->textwithpicto(yn($object->admin),$langs->trans("SuperAdministratorDesc"),1,"superadmin");
             }
             else if ($object->admin)
             {
-                print Form::textwithpicto(yn($object->admin),$langs->trans("AdministratorDesc"),1,"admin");
+                print $form->textwithpicto(yn($object->admin),$langs->trans("AdministratorDesc"),1,"admin");
             }
             else
             {
@@ -1339,7 +1334,7 @@ else
             // Type
             print '<tr><td>';
             $text=$langs->trans("Type");
-            print Form::textwithpicto($text, $langs->trans("InternalExternalDesc"));
+            print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
             print '</td><td>';
             $type=$langs->trans("Internal");
             if ($object->societe_id > 0) $type=$langs->trans("External");
@@ -1379,7 +1374,7 @@ else
 	            // THM
 			    print '<tr><td>';
 			    $text=$langs->trans("THM");
-			    print Form::textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+			    print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 			    print '</td>';
 			    print '<td>';
 			    print ($object->thm!=''?price($object->thm,'',$langs,1,-1,-1,$conf->currency):'');
@@ -1389,7 +1384,7 @@ else
 	            // TJM
 			    print '<tr><td>';
 			    $text=$langs->trans("TJM");
-			    print Form::textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
+			    print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classtjm');
 			    print '</td>';
 			    print '<td>';
 			    print ($object->tjm!=''?price($object->tjm,'',$langs,1,-1,-1,$conf->currency):'');
@@ -1806,7 +1801,7 @@ else
 
             // Photo
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            print Form::showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
+            print $form->showphoto('userphoto',$object,100,0,$caneditfield,'photowithmargin','small');
             print '</td>';
 
             print '</tr>';
@@ -1828,7 +1823,7 @@ else
             // Employee
             print '<tr>';
             print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-            print Form::selectyesno("employee",$object->employee,1);
+            print $form->selectyesno("employee",$object->employee,1);
             print '</td></tr>';
 
             // Position/Job
@@ -1849,7 +1844,7 @@ else
     		print '<tr><td>'.$langs->trans("Gender").'</td>';
     		print '<td>';
     		$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-    		print Form::selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
+    		print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
     		print '</td></tr>';
 
             // Login
@@ -1879,7 +1874,7 @@ else
                 $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="off">';
                 if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
                 {
-                    $text=Form::textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
+                    $text=$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
                 }
             }
             else
@@ -1924,7 +1919,7 @@ else
                 	)
                 )
                 {
-                    print Form::selectyesno('admin',$object->admin,1);
+                    print $form->selectyesno('admin',$object->admin,1);
 
                     if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
                     {
@@ -1976,7 +1971,7 @@ else
                     $yn = yn($object->admin);
                     print '<input type="hidden" name="admin" value="'.$object->admin.'">';
                     print '<input type="hidden" name="superadmin" value="'.(empty($object->entity) ? 1 : 0).'">';
-                    if (! empty($conf->multicompany->enabled) && empty($object->entity)) print Form::textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
+                    if (! empty($conf->multicompany->enabled) && empty($object->entity)) print $form->textwithpicto($yn,$langs->trans("DontDowngradeSuperAdmin"),1,'warning');
                     else print $yn;
                 }
                 print '</td></tr>';
@@ -1989,7 +1984,7 @@ else
            	{
 	           	$type=$langs->trans("Internal");
     	       	if ($object->societe_id) $type=$langs->trans("External");
-        	   	print Form::textwithpicto($type,$langs->trans("InternalExternalDesc"));
+        	   	print $form->textwithpicto($type,$langs->trans("InternalExternalDesc"));
 	           	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
            	}
            	else
@@ -2160,7 +2155,7 @@ else
             	// THM
 			    print '<tr><td>';
 			    $text=$langs->trans("THM");
-			    print Form::textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
+			    print $form->textwithpicto($text, $langs->trans("THMDescription"), 1, 'help', 'classthm');
 			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="thm" value="'.price2num(GETPOST('thm')?GETPOST('thm'):$object->thm).'">';
@@ -2170,7 +2165,7 @@ else
 			    // TJM
 			    print '<tr><td>';
 			    $text=$langs->trans("TJM");
-			    print Form::textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
+			    print $form->textwithpicto($text, $langs->trans("TJMDescription"), 1, 'help', 'classthm');
 			    print '</td>';
 			    print '<td>';
 			    print '<input size="8" type="text" name="tjm" value="'.price2num(GETPOST('tjm')?GETPOST('tjm'):$object->tjm).'">';
@@ -2231,7 +2226,7 @@ else
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print Form::multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
+			print $form->multiselectarray( 'usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%' );
 			print "</td></tr>";
 		}
 

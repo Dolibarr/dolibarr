@@ -65,7 +65,7 @@ if ($_GET["id"])
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print Form::showrefnav($entrepot,'id','',1,'rowid','libelle');
+	print $form->showrefnav($entrepot,'id','',1,'rowid','libelle');
 	print '</td>';
 
 	print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';

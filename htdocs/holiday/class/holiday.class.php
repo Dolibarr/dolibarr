@@ -3,6 +3,7 @@
  * Copyright (C) 2012-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ class Holiday extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-        global $conf, $langs;
+        global $conf;
         $error=0;
 
         $now=dol_now();
@@ -137,7 +138,8 @@ class Holiday extends CommonObject
         $sql.= "statut,";
         $sql.= "fk_validator,";
         $sql.= "fk_type,";
-        $sql.= "fk_user_create";
+        $sql.= "fk_user_create,";
+        $sql.= "entity";
         $sql.= ") VALUES (";
         $sql.= "'".$this->fk_user."',";
         $sql.= " '".$this->db->idate($now)."',";
@@ -148,7 +150,8 @@ class Holiday extends CommonObject
         $sql.= " '1',";
         $sql.= " '".$this->fk_validator."',";
         $sql.= " '".$this->fk_type."',";
-        $sql.= " ".$user->id;
+        $sql.= " ".$user->id.",";
+        $sql.= " ".$conf->entity;
         $sql.= ")";
 
         $this->db->begin();
@@ -1219,7 +1222,7 @@ class Holiday extends CommonObject
             // List for Dolibarr users
             if ($type)
             {
-                $sql = "SELECT u.rowid, u.lastname, u.firstname";
+                $sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
                 if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
@@ -1250,11 +1253,15 @@ class Holiday extends CommonObject
                         $obj = $this->db->fetch_object($resql);
 
                         $tab_result[$i]['rowid'] = $obj->rowid;
-                        $tab_result[$i]['name'] = $obj->lastname;
+                        $tab_result[$i]['name'] = $obj->lastname;       // deprecated
                         $tab_result[$i]['lastname'] = $obj->lastname;
                         $tab_result[$i]['firstname'] = $obj->firstname;
-                        $tab_result[$i]['type'] = $obj->type;
-                        $tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
+                        $tab_result[$i]['gender'] = $obj->gender;
+                        $tab_result[$i]['status'] = $obj->statut;
+                        $tab_result[$i]['employee'] = $obj->employee;
+                        $tab_result[$i]['photo'] = $obj->photo;
+                        //$tab_result[$i]['type'] = $obj->type;
+                        //$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
                         $i++;
                     }
@@ -1264,7 +1271,7 @@ class Holiday extends CommonObject
                 else
 				{
                     // Erreur SQL
-                    $this->error="Error ".$this->db->lasterror();
+                    $this->errors[]="Error ".$this->db->lasterror();
                     return -1;
                 }
             }
@@ -1584,7 +1591,7 @@ class Holiday extends CommonObject
     /**
      * Select event
      *
-     * @return string|boolean		Select Html to select type of holiday
+     * @return string|false		Select Html to select type of holiday
      */
     function selectEventCP()
     {
@@ -1641,7 +1648,7 @@ class Holiday extends CommonObject
      * getValueEventCp
      *
      * @param 	int		$rowid		Row id
-     * @return string|boolean
+     * @return string|false
      */
     function getValueEventCp($rowid) {
 

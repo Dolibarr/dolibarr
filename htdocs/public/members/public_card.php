@@ -104,7 +104,7 @@ if ($id > 0)
 		{
 			$form = new Form($db);
 			print '<tr><td>URL Photo</td><td class="valeur">';
-			print Form::showphoto('memberphoto', $object, 64);
+			print $form->showphoto('memberphoto', $object, 64);
 			print '</td></tr>'."\n";
 		}
 		//  foreach($objecto->attribute_label as $key=>$value){

@@ -39,7 +39,7 @@
  *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
  *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat(Translate $outputlangs = null)
+function pdf_getFormat($outputlangs='')
 {
 	global $conf,$db;
 
@@ -77,7 +77,7 @@ function pdf_getFormat(Translate $outputlangs = null)
  *      @param	string		$format         Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
  *      @param  string		$pagetype       'P' or 'l'
- *      @return TCPDF						PDF object
+ *      @return TPDF						PDF object
  */
 function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
@@ -230,7 +230,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
  *      @param	Translate	$outputlangs    Output langs object
  *      @return string          			Name of font to use
  */
-function pdf_getPDFFont(Translate $outputlangs)
+function pdf_getPDFFont($outputlangs)
 {
 	global $conf;
 
@@ -253,7 +253,7 @@ function pdf_getPDFFont(Translate $outputlangs)
  *      @param	Translate	$outputlangs     Output langs object
  *      @return int				             Size of font to use
  */
-function pdf_getPDFFontSize(Translate $outputlangs)
+function pdf_getPDFFontSize($outputlangs)
 {
 	$size=10;                   // By default, for FPDI or ISO language on TCPDF
 	if (class_exists('TCPDF'))  // If TCPDF on, we can use an UTF8 one like DejaVuSans if required (slower)
@@ -295,10 +295,9 @@ function pdf_getHeightForLogo($logo, $url = false)
  * 
  * @param TCPDF     $pdf            PDF initialized object
  * @param string    $htmlcontent    HTML Contect
- * @return int
  * @see getStringHeight
  */
-function pdfGetHeightForHtmlContent(TCPDF $pdf, $htmlcontent)
+function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
 {
     // store current object
     $pdf->startTransaction();
@@ -359,7 +358,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
 	} else {
-		throw new InvalidArgumentException();
+		throw new InvalidArgumentException('Parameter 1=$thirdparty is not a Societe nor Contact');
 	}
 
 	return $outputlangs->convToOutputCharset($socname);
@@ -374,11 +373,11 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
  *   	@param  Societe		$targetcompany		Target company object
  *      @param  Contact		$targetcontact		Target contact object
  * 		@param	int			$usecontact			Use contact instead of company
- * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails': target but include also phone/fax/email/url)
+ * 		@param	int			$mode				Address type ('source', 'target', 'targetwithdetails', 'targetwithdetails_xxx': target but include also phone/fax/email/url)
  *      @param  Object      $object             Object we want to build document for
  * 		@return	string							String with full address
  */
-function pdf_build_address(Translate $outputlangs, Societe $sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source',$object=null)
+function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$targetcontact='',$usecontact=0,$mode='source',$object=null)
 {
 	global $conf, $hookmanager;
 
@@ -421,7 +420,7 @@ function pdf_build_address(Translate $outputlangs, Societe $sourcecompany,$targe
     		}
     	}
     
-    	if ($mode == 'target' || $mode == 'targetwithdetails')
+    	if ($mode == 'target' || preg_match('/targetwithdetails/',$mode))
     	{
     		if ($usecontact)
     		{
@@ -440,19 +439,31 @@ function pdf_build_address(Translate $outputlangs, Societe $sourcecompany,$targe
     				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
     			}
     
-    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails')
+    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/',$mode))
     			{
     				// Phone
-    				if (! empty($targetcontact->phone_pro) || ! empty($targetcontact->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
-    				if (! empty($targetcontact->phone_pro)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
-    				if (! empty($targetcontact->phone_pro) && ! empty($targetcontact->phone_mobile)) $stringaddress .= " / ";
-    				if (! empty($targetcontact->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/',$mode))
+    			    {
+        				if (! empty($targetcontact->phone_pro) || ! empty($targetcontact->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
+        				if (! empty($targetcontact->phone_pro)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_pro);
+        				if (! empty($targetcontact->phone_pro) && ! empty($targetcontact->phone_mobile)) $stringaddress .= " / ";
+        				if (! empty($targetcontact->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcontact->phone_mobile);
+    			    }
     				// Fax
-    				if ($targetcontact->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/',$mode))
+    			    {
+                        if ($targetcontact->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcontact->fax);
+    			    }
     				// EMail
-    				if ($targetcontact->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/',$mode))
+    			    {
+                        if ($targetcontact->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcontact->email);
+    			    }
     				// Web
-    				if ($targetcontact->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/',$mode))
+    			    {
+                        if ($targetcontact->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+    			    }
     			}
     		}
     		else
@@ -461,19 +472,31 @@ function pdf_build_address(Translate $outputlangs, Societe $sourcecompany,$targe
     			// Country
     			if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
     
-    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails')
+    			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/',$mode))
     			{
     				// Phone
-    				if (! empty($targetcompany->phone) || ! empty($targetcompany->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
-    				if (! empty($targetcompany->phone)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
-    				if (! empty($targetcompany->phone) && ! empty($targetcompany->phone_mobile)) $stringaddress .= " / ";
-    				if (! empty($targetcompany->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_phone/',$mode))
+    			    {
+    			    	if (! empty($targetcompany->phone) || ! empty($targetcompany->phone_mobile)) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ";
+	    				if (! empty($targetcompany->phone)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone);
+    					if (! empty($targetcompany->phone) && ! empty($targetcompany->phone_mobile)) $stringaddress .= " / ";
+    					if (! empty($targetcompany->phone_mobile)) $stringaddress .= $outputlangs->convToOutputCharset($targetcompany->phone_mobile);
+    			    }
     				// Fax
-    				if ($targetcompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_fax/',$mode))
+    			    {
+    			    	if ($targetcompany->fax) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$outputlangs->convToOutputCharset($targetcompany->fax);
+    			    }
     				// EMail
-    				if ($targetcompany->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcompany->email);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_email/',$mode))
+    			    {
+    			    	if ($targetcompany->email) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$outputlangs->convToOutputCharset($targetcompany->email);
+    			    }
     				// Web
-    				if ($targetcompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcompany->url);
+    			    if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/',$mode))
+    			    {
+    			    	if ($targetcompany->url) $stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcompany->url);
+    			    }
     			}
     		}
     
@@ -508,17 +531,29 @@ function pdf_build_address(Translate $outputlangs, Societe $sourcecompany,$targe
     			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
     			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
     		}
-
+    		if (! empty($conf->global->MAIN_PROFID5_IN_ADDRESS) && ! empty($targetcompany->idprof5))
+    		{
+    		    $tmp=$outputlangs->transcountrynoentities("ProfId5",$targetcompany->country_code);
+    		    if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    		    $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
+    		}
+    		if (! empty($conf->global->MAIN_PROFID6_IN_ADDRESS) && ! empty($targetcompany->idprof6))
+    		{
+    		    $tmp=$outputlangs->transcountrynoentities("ProfId6",$targetcompany->country_code);
+    		    if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
+    		    $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
+    		}
+    		
     		// Public note
     		if (! empty($conf->global->MAIN_PUBLIC_NOTE_IN_ADDRESS))
     		{
     		    if ($mode == 'source' && ! empty($sourcecompany->note_public))
         		{
-        		    $stringaddress.="\n".$sourcecompany->note_public;
+        		    $stringaddress.="\n".dol_string_nohtmltag($sourcecompany->note_public);
         		}
-        		if (($mode == 'target' || $mode == 'targetwithdetails') && ! empty($targetcompany->note_public))
+        		if (($mode == 'target' || preg_match('/targetwithdetails/',$mode)) && ! empty($targetcompany->note_public))
         		{
-        		    $stringaddress.="\n".$targetcompany->note_public;
+        		    $stringaddress.="\n".dol_string_nohtmltag($targetcompany->note_public);
         		}
     		}
     	}
@@ -531,12 +566,12 @@ function pdf_build_address(Translate $outputlangs, Societe $sourcecompany,$targe
 /**
  *   	Show header of page for PDF generation
  *
- *   	@param      TCPDF			$pdf     		Object PDF
+ *   	@param      PDF			$pdf     		Object PDF
  *      @param      Translate	$outputlangs	Object lang for output
  * 		@param		int			$page_height	Height of page
  *      @return	void
  */
-function pdf_pagehead(TCPDF $pdf, Translate $outputlangs,$page_height)
+function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 {
 	global $conf;
 
@@ -552,7 +587,7 @@ function pdf_pagehead(TCPDF $pdf, Translate $outputlangs,$page_height)
 /**
  *      Add a draft watermark on PDF files
  *
- *      @param	TCPDF      	$pdf           Object PDF
+ *      @param	PDF      	$pdf           Object PDF
  *      @param  Translate	$outputlangs	Object lang
  *      @param  int		    $h		        Height of PDF
  *      @param  int		    $w		        Width of PDF
@@ -560,7 +595,7 @@ function pdf_pagehead(TCPDF $pdf, Translate $outputlangs,$page_height)
  *      @param  string		$text           Text to show
  *      @return	void
  */
-function pdf_watermark(TCPDF $pdf, Translate $outputlangs, $h, $w, $unit, $text)
+function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 {
 	// Print Draft Watermark
 	if ($unit=='pt') $k=1;
@@ -592,7 +627,7 @@ function pdf_watermark(TCPDF $pdf, Translate $outputlangs, $h, $w, $unit, $text)
 /**
  *  Show bank informations for PDF generation
  *
- *  @param	TCPDF			$pdf            		Object PDF
+ *  @param	PDF			$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
@@ -601,10 +636,12 @@ function pdf_watermark(TCPDF $pdf, Translate $outputlangs, $h, $w, $unit, $text)
  *  @param	int			$default_font_size		Default font size
  *  @return	float                               The Y PDF position
  */
-function pdf_bank(TCPDF $pdf, Translate $outputlangs,$curx,$cury, Account $account,$onlynumber=0,$default_font_size=10)
+function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default_font_size=10)
 {
 	global $mysoc, $conf;
 
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
+	
 	$diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?3:$conf->global->PDF_DIFFSIZE_TITLE);
 	$diffsizecontent=(empty($conf->global->PDF_DIFFSIZE_CONTENT)?4:$conf->global->PDF_DIFFSIZE_CONTENT);
 	$pdf->SetXY($curx, $cury);
@@ -647,63 +684,41 @@ function pdf_bank(TCPDF $pdf, Translate $outputlangs,$curx,$cury, Account $accou
 		    // key = check control key used only when $usedetailedbban = 1
     		if (empty($onlynumber)) $pdf->line($curx+1, $cury+1, $curx+1, $cury+6);
     
-    		if ($usedetailedbban == 1)
-    		{
-    			$fieldstoshow=array('bank','desk','number','key');
-    			if ($conf->global->BANK_SHOW_ORDER_OPTION == 1) $fieldstoshow=array('bank','desk','key','number');
-    		}
-    		else if ($usedetailedbban == 2)
-    		{
-    			$fieldstoshow=array('bank','number');
-    		}
-    		else dol_print_error('','Value returned by function useDetailedBBAN not managed');
-    
-    		foreach ($fieldstoshow as $val)
-    		{
-    			if ($val == 'bank')
-    			{
-    				// Bank code
-    				$tmplength=18;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_banque), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankCode"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
-    			if ($val == 'desk')
-    			{
-    				// Desk
-    				$tmplength=18;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->code_guichet), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("DeskCode"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
-    			if ($val == 'number')
-    			{
-    				// Number
-    				$tmplength=24;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->number), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumber"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
-    			if ($val == 'key')
-    			{
-    				// Key
-    				$tmplength=13;
-    				$pdf->SetXY($curx, $cury+4);
-    				$pdf->SetFont('','',$default_font_size - 3);$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($account->cle_rib), 0, 'C', 0);
-    				$pdf->SetXY($curx, $cury+1);
-    				$curx+=$tmplength;
-    				$pdf->SetFont('','B',$default_font_size - 4);$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
-    				if (empty($onlynumber)) $pdf->line($curx, $cury+1, $curx, $cury+7);
-    			}
+
+			foreach ($account->getFieldsToShow() as $val)
+			{
+				$pdf->SetXY($curx, $cury+4);
+				$pdf->SetFont('','',$default_font_size - 3);
+
+				if ($val == 'BankCode') {
+					// Bank code
+					$tmplength = 18;
+					$content = $account->code_banque;
+				} elseif ($val == 'DeskCode') {
+					// Desk
+					$tmplength = 18;
+					$content = $account->code_guichet;
+				} elseif ($val == 'BankAccountNumber') {
+					// Number
+					$tmplength = 24;
+					$content = $account->number;
+				} elseif ($val == 'BankAccountNumberKey') {
+					// Key
+					$tmplength = 13;
+					$content = $account->cle_rib;
+				} else {
+					dol_print_error($this->db, 'Unexpected value for getFieldsToShow: '.$val);
+					break;
+				}
+
+				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', 0);
+				$pdf->SetXY($curx, $cury + 1);
+				$curx += $tmplength;
+				$pdf->SetFont('', 'B', $default_font_size - 4);
+				$pdf->MultiCell($tmplength, 3, $outputlangs->transnoentities($val), 0, 'C', 0);
+				if (empty($onlynumber)) {
+					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
+				}
     		}
     
     		$curx=$savcurx;
@@ -750,8 +765,8 @@ function pdf_bank(TCPDF $pdf, Translate $outputlangs,$curx,$cury, Account $accou
 	else if (! $usedetailedbban) $cury+=1;
 
 	// Use correct name of bank id according to country
-	$ibankey="IBANNumber";
-	if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
+	$ibankey = FormBank::getIBANLabel($account);
+
 	if (! empty($account->iban))
 	{
 		//Remove whitespaces to ensure we are dealing with the format we expect
@@ -784,19 +799,19 @@ function pdf_bank(TCPDF $pdf, Translate $outputlangs,$curx,$cury, Account $accou
 /**
  *  Show footer of page for PDF generation
  *
- *	@param	TCPDF			$pdf     		The PDF factory
+ *	@param	PDF			$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	Societe		$fromcompany	Object company
  * 	@param	int			$marge_basse	Margin bottom we use for the autobreak
  * 	@param	int			$marge_gauche	Margin left (no more used)
  * 	@param	int			$page_hauteur	Page height (no more used)
- * 	@param	object		$object			Object shown in PDF
- * 	@param	int			$showdetails	Show company details into footer. This param seems to not be used by standard version. (1=Show address, 2=Show managers, 3=Both)
+ * 	@param	Object		$object			Object shown in PDF
+ * 	@param	int			$showdetails	Show company adress details into footer (0=Nothing, 1=Show address, 2=Show managers, 3=Both)
  *  @param	int			$hidefreetext	1=Hide free text, 0=Show free text
  * 	@return	int							Return height of bottom margin including footer text
  */
-function pdf_pagefoot(TCPDF $pdf, Translate $outputlangs,$paramfreetext, Societe $fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object,$showdetails=0,$hidefreetext=0)
+function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_basse,$marge_gauche,$page_hauteur,$object,$showdetails=0,$hidefreetext=0)
 {
 	global $conf,$user;
 
@@ -824,7 +839,7 @@ function pdf_pagefoot(TCPDF $pdf, Translate $outputlangs,$paramfreetext, Societe
 	// First line of company infos
 	$line1=""; $line2=""; $line3=""; $line4="";
 
-	if ($showdetails)
+		if ($showdetails == 1 || $showdetails == 3)
 	{
 		// Company name
 		if ($fromcompany->name)
@@ -834,7 +849,7 @@ function pdf_pagefoot(TCPDF $pdf, Translate $outputlangs,$paramfreetext, Societe
 		// Address
 		if ($fromcompany->address)
 		{
-			$line1.=($line1?" - ":"").$fromcompany->address;
+			$line1.=($line1?" - ":"").str_replace("\n", ", ", $fromcompany->address);
 		}
 		// Zip code
 		if ($fromcompany->zip)
@@ -849,12 +864,12 @@ function pdf_pagefoot(TCPDF $pdf, Translate $outputlangs,$paramfreetext, Societe
 		// Phone
 		if ($fromcompany->phone)
 		{
-			$line1.=($line1?" - ":"").$outputlangs->transnoentities("Phone").": ".$fromcompany->phone;
+			$line2.=($line2?" - ":"").$outputlangs->transnoentities("Phone").": ".$fromcompany->phone;
 		}
 		// Fax
 		if ($fromcompany->fax)
 		{
-			$line1.=($line1?" - ":"").$outputlangs->transnoentities("Fax").": ".$fromcompany->fax;
+			$line2.=($line2?" - ":"").$outputlangs->transnoentities("Fax").": ".$fromcompany->fax;
 		}
 
 		// URL
@@ -868,7 +883,7 @@ function pdf_pagefoot(TCPDF $pdf, Translate $outputlangs,$paramfreetext, Societe
 			$line2.=($line2?" - ":"").$fromcompany->email;
 		}
 	}
-	if ($showdetails || ($fromcompany->country_code == 'DE'))
+	if ($showdetails == 2 || $showdetails == 3 || ($fromcompany->country_code == 'DE'))
 	{
 		// Managers
 		if ($fromcompany->managers)
@@ -1016,7 +1031,7 @@ function pdf_pagefoot(TCPDF $pdf, Translate $outputlangs,$paramfreetext, Societe
 /**
  *	Show linked objects for PDF generation
  *
- *	@param	TCPDF			$pdf				Object PDF
+ *	@param	PDF			$pdf				Object PDF
  *	@param	object		$object				Object
  *	@param  Translate	$outputlangs		Object lang
  *	@param  int			$posx				X
@@ -1027,7 +1042,7 @@ function pdf_pagefoot(TCPDF $pdf, Translate $outputlangs,$paramfreetext, Societe
  *	@param	string		$default_font_size	Font size
  *	@return	float                           The Y PDF position
  */
-function pdf_writeLinkedObjects(TCPDF $pdf,$object, Translate $outputlangs,$posx,$posy,$w,$h,$align,$default_font_size)
+function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$align,$default_font_size)
 {
 	$linkedobjects = pdf_getLinkedObjects($object,$outputlangs);
 	if (! empty($linkedobjects))
@@ -1053,8 +1068,8 @@ function pdf_writeLinkedObjects(TCPDF $pdf,$object, Translate $outputlangs,$posx
 /**
  *	Output line description into PDF
  *
- *  @param  TCPDF				$pdf               PDF object
- *	@param	object			$object				Object
+ *  @param  PDF				$pdf               PDF object
+ *	@param	Object			$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output
  *  @param  int				$w					Width
@@ -1066,7 +1081,7 @@ function pdf_writeLinkedObjects(TCPDF $pdf,$object, Translate $outputlangs,$posx
  * 	@param	int				$issupplierline		Is it a line for a supplier object ?
  * 	@return	string
  */
-function pdf_writelinedesc(TCPDF $pdf,$object,$i, Translate $outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0)
+function pdf_writelinedesc(&$pdf,$object,$i,$outputlangs,$w,$h,$posx,$posy,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
 	global $db, $conf, $langs, $hookmanager;
 
@@ -1096,7 +1111,7 @@ function pdf_writelinedesc(TCPDF $pdf,$object,$i, Translate $outputlangs,$w,$h,$
 /**
  *  Return line description translated in outputlangs and encoded into htmlentities and with <br>
  *
- *  @param  object		$object              Object
+ *  @param  Object		$object              Object
  *  @param  int			$i                   Current line number (0 = first line, 1 = second line, ...)
  *  @param  Translate	$outputlangs         Object langs for output
  *  @param  int			$hideref             Hide reference
@@ -1104,7 +1119,7 @@ function pdf_writelinedesc(TCPDF $pdf,$object,$i, Translate $outputlangs,$w,$h,$
  *  @param  int			$issupplierline      Is it a line for a supplier object ?
  *  @return string       				     String with line
  */
-function pdf_getlinedesc($object,$i, Translate $outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
+function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issupplierline=0)
 {
 	global $db, $conf, $langs;
 
@@ -1283,13 +1298,13 @@ function pdf_getlinedesc($object,$i, Translate $outputlangs,$hideref=0,$hidedesc
 /**
  *	Return line num
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlinenum($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlinenum($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1316,13 +1331,13 @@ function pdf_getlinenum($object,$i, Translate $outputlangs,$hidedetails=0)
 /**
  *	Return line product ref
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlineref($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineref($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1348,13 +1363,13 @@ function pdf_getlineref($object,$i, Translate $outputlangs,$hidedetails=0)
 /**
  *	Return line ref_supplier
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlineref_supplier($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineref_supplier($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1380,13 +1395,13 @@ function pdf_getlineref_supplier($object,$i, Translate $outputlangs,$hidedetails
 /**
  *	Return line vat rate
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlinevatrate($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlinevatrate($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1413,13 +1428,13 @@ function pdf_getlinevatrate($object,$i, Translate $outputlangs,$hidedetails=0)
 /**
  *	Return line unit price excluding tax
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlineupexcltax($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $conf, $hookmanager;
 
@@ -1453,13 +1468,13 @@ function pdf_getlineupexcltax($object,$i, Translate $outputlangs,$hidedetails=0)
 /**
  *	Return line unit price including tax
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no,	1 = yes, 2 = just special lines)
  *  @return	string
  */
-function pdf_getlineupwithtax($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1486,13 +1501,13 @@ function pdf_getlineupwithtax($object,$i, Translate $outputlangs,$hidedetails=0)
 /**
  *	Return line quantity
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  *  @return	string
  */
-function pdf_getlineqty($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineqty($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1520,13 +1535,13 @@ function pdf_getlineqty($object,$i, Translate $outputlangs,$hidedetails=0)
 /**
  *	Return line quantity asked
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlineqty_asked($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineqty_asked($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1554,13 +1569,13 @@ function pdf_getlineqty_asked($object,$i, Translate $outputlangs,$hidedetails=0)
 /**
  *	Return line quantity shipped
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlineqty_shipped($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineqty_shipped($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1588,13 +1603,13 @@ function pdf_getlineqty_shipped($object,$i, Translate $outputlangs,$hidedetails=
 /**
  *	Return line keep to ship quantity
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlineqty_keeptoship($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineqty_keeptoship($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1622,14 +1637,14 @@ function pdf_getlineqty_keeptoship($object,$i, Translate $outputlangs,$hidedetai
 /**
  *	Return line unit
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  *  @param	HookManager	$hookmanager		Hook manager instance
- *  @return	void
+ *  @return	string							Value for unit cell
  */
-function pdf_getlineunit($object, $i, Translate $outputlangs, $hidedetails = 0, $hookmanager = false)
+function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = false)
 {
 	global $langs;
 	
@@ -1665,13 +1680,13 @@ function pdf_getlineunit($object, $i, Translate $outputlangs, $hidedetails = 0, 
 /**
  *	Return line remise percent
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string
  */
-function pdf_getlineremisepercent($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlineremisepercent($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1701,14 +1716,14 @@ function pdf_getlineremisepercent($object,$i, Translate $outputlangs,$hidedetail
 /**
  * Return line percent
  *
- * @param object $object Object
+ * @param Object $object Object
  * @param int $i Current line number
  * @param Translate $outputlangs Object langs for output
  * @param int $hidedetails Hide details (0=no, 1=yes, 2=just special lines)
  * @param HookManager $hookmanager Hook manager instance
  * @return string
  */
-function pdf_getlineprogress($object, $i, Translate $outputlangs, $hidedetails = 0, HookManager $hookmanager = null)
+function pdf_getlineprogress($object, $i, $outputlangs, $hidedetails = 0, $hookmanager = null)
 {
 	$reshook=0;
     $result='';
@@ -1734,13 +1749,13 @@ function pdf_getlineprogress($object, $i, Translate $outputlangs, $hidedetails =
 /**
  *	Return line total excluding tax
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param  Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
  * 	@return	string							Return total of line excl tax
  */
-function pdf_getlinetotalexcltax($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $conf, $hookmanager;
 
@@ -1778,13 +1793,13 @@ function pdf_getlinetotalexcltax($object,$i, Translate $outputlangs,$hidedetails
 /**
  *	Return line total including tax
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	int			$i					Current line number
  *  @param 	Translate	$outputlangs		Object langs for output
  *  @param	int			$hidedetails		Hide value (0 = no, 1 = yes, 2 = just special lines)
  *  @return	string							Return total of line incl tax
  */
-function pdf_getlinetotalwithtax($object,$i, Translate $outputlangs,$hidedetails=0)
+function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
 	global $hookmanager;
 
@@ -1815,12 +1830,12 @@ function pdf_getlinetotalwithtax($object,$i, Translate $outputlangs,$hidedetails
 /**
  *	Return total quantity of products and/or services
  *
- *	@param	object		$object				Object
+ *	@param	Object		$object				Object
  *	@param	string		$type				Type
  *  @param  Translate	$outputlangs		Object langs for output
  * 	@return	integer
  */
-function pdf_getTotalQty($object,$type, Translate $outputlangs)
+function pdf_getTotalQty($object,$type,$outputlangs)
 {
 	global $hookmanager;
 
@@ -1867,7 +1882,7 @@ function pdf_getTotalQty($object,$type, Translate $outputlangs)
  * 	@param	Translate	$outputlangs	Object lang for output
  * 	@return	array                       Linked objects
  */
-function pdf_getLinkedObjects($object, Translate $outputlangs)
+function pdf_getLinkedObjects($object,$outputlangs)
 {
 	global $hookmanager;
 

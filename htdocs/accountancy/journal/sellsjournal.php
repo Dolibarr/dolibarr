@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2016	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014       Rapha�l Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/journal/sellsjournal.php
- * \ingroup 	Advanced accountancy
- * \brief 		Page with sells journal
+ * \file htdocs/accountancy/journal/sellsjournal.php
+ * \ingroup Advanced accountancy
+ * \brief Page with sells journal
  */
 require '../../main.inc.php';
 
@@ -118,6 +118,7 @@ if ($result) {
 	$tabfac = array ();
 	$tabht = array ();
 	$tabtva = array ();
+	$def_tva = array ();
 	$tabttc = array ();
 	$tabcompany = array ();
 
@@ -140,17 +141,20 @@ if ($result) {
 		$cpttva = (! empty($conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT)) ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef");
 		$compta_tva = (! empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
+
+		//Define array for display vat tx
+		$def_tva[$obj->rowid]=price($obj->tva_tx);
+
 		// Situation invoices handling
 		$line = new FactureLigne($db);
-		$line->fetch($obj->fdid); // id of line
-		$prev_progress = 0;
+		$line->fetch($obj->fdid);
+		$prev_progress = $line->get_prev_progress($obj->fdid);
 		if ($obj->type == Facture::TYPE_SITUATION) {
-		    // Avoid divide by 0
+			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
-		        $prev_progress = $line->get_prev_progress($obj->rowid);   // id of invoice
-			    $situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
 			}
 		} else {
 			$situation_ratio = 1;
@@ -194,6 +198,17 @@ if ($action == 'writebookkeeping') {
 	$error = 0;
 
 	foreach ( $tabfac as $key => $val ) {
+
+		$companystatic = new Societe($db);
+		$invoicestatic = new Facture($db);
+
+		$companystatic->id = $tabcompany[$key]['id'];
+		$companystatic->name = $tabcompany[$key]['name'];
+		$companystatic->client = $tabcompany[$key]['code_client'];
+
+		$invoicestatic->id = $key;
+		$invoicestatic->ref = $val["ref"];
+
 		foreach ( $tabttc[$key] as $k => $mt ) {
 			$bookkeeping = new BookKeeping($db);
 			$bookkeeping->doc_date = $val["date"];
@@ -204,7 +219,8 @@ if ($action == 'writebookkeeping') {
 			$bookkeeping->fk_docdet = $val["fk_facturedet"];
 			$bookkeeping->code_tiers = $tabcompany[$key]['code_client'];
 			$bookkeeping->numero_compte = $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER;
-			$bookkeeping->label_compte = $tabcompany[$key]['name'];
+			// $bookkeeping->label_compte = $tabcompany[$key]['name'];
+			$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers");
 			$bookkeeping->montant = $mt;
 			$bookkeeping->sens = ($mt >= 0) ? 'D' : 'C';
 			$bookkeeping->debit = ($mt >= 0) ? $mt : 0;
@@ -234,7 +250,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->fk_docdet = $val["fk_facturedet"];
 					$bookkeeping->code_tiers = '';
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = $accountingaccount->label;
+					$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . utf8_decode($accountingaccount->label);
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 					$bookkeeping->debit = ($mt < 0) ? $mt : 0;
@@ -264,7 +280,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->fk_docdet = $val["fk_facturedet"];
 				$bookkeeping->code_tiers = '';
 				$bookkeeping->numero_compte = $k;
-				$bookkeeping->label_compte = $langs->trans("VAT");
+				$bookkeeping->label_compte = utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT").' '.$def_tva[$key];
 				$bookkeeping->montant = $mt;
 				$bookkeeping->sens = ($mt < 0) ? 'D' : 'C';
 				$bookkeeping->debit = ($mt < 0) ? $mt : 0;
@@ -275,7 +291,7 @@ if ($action == 'writebookkeeping') {
 				$result = $bookkeeping->create($user);
 				if ($result < 0) {
 					$error ++;
-					setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
@@ -288,6 +304,7 @@ if ($action == 'writebookkeeping') {
 
 // Export
 if ($action == 'export_csv') {
+
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 	$sell_journal = $conf->global->ACCOUNTING_SELL_JOURNAL;
 
@@ -296,14 +313,16 @@ if ($action == 'export_csv') {
 	$companystatic = new Client($db);
 
 	// Model Cegid Expert Export
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2)
-	{
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 2) {
 		$sep = ";";
 
 		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
+
+			$invoicestatic->id = $key;
+			$invoicestatic->ref = $val["ref"];
 
 			$date = dol_print_date($db->jdate($val["date"]), '%d%m%Y');
 
@@ -314,7 +333,8 @@ if ($action == 'export_csv') {
 				print length_accounta(html_entity_decode($k)) . $sep;
 				print ($mt < 0 ? 'C' : 'D') . $sep;
 				print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-				print utf8_decode($companystatic->name) . $sep;
+				print utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . $sep;
+				// print utf8_decode($companystatic->name) . $sep;
 				print $val["ref"];
 				print "\n";
 			}
@@ -329,7 +349,8 @@ if ($action == 'export_csv') {
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
 					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print dol_trunc($accountingaccount_static->label, 32) . $sep;
+					print utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . utf8_decode(utf8_decode($accountingaccount_static->label)) . $sep;
+					// print dol_trunc($accountingaccount_static->label, 32) . $sep;
 					print $val["ref"];
 					print "\n";
 				}
@@ -344,18 +365,22 @@ if ($action == 'export_csv') {
 					print $sep;
 					print ($mt < 0 ? 'D' : 'C') . $sep;
 					print ($mt <= 0 ? price(- $mt) : $mt) . $sep;
-					print $langs->trans("VAT") . $sep;
+					print utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . $sep;
+					// print $langs->trans("VAT") . $sep;
 					print $val["ref"];
 					print "\n";
 				}
 			}
 		}
-	} else {
+	} elseif ($conf->global->ACCOUNTING_EXPORT_MODELCSV == 1) {
 		// Model Classic Export
 		foreach ( $tabfac as $key => $val ) {
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
+
+			$invoicestatic->id = $key;
+			$invoicestatic->ref = $val["ref"];
 
 			$date = dol_print_date($db->jdate($val["date"]), 'day');
 
@@ -363,8 +388,8 @@ if ($action == 'export_csv') {
 				print '"' . $date . '"' . $sep;
 				print '"' . $val["ref"] . '"' . $sep;
 				print '"' . length_accounta(html_entity_decode($k)) . '"' . $sep;
-				print '"' . utf8_decode(dol_trunc($companystatic->name,16)).' - ' . $companystatic->ref_client . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
-				//print '"' . utf8_decode($companystatic->name) . '"' . $sep;
+				print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . '"' . $sep;
+				// print '"' . utf8_decode($companystatic->name) . '"' . $sep;
 				print '"' . ($mt >= 0 ? price($mt) : '') . '"' . $sep;
 				print '"' . ($mt < 0 ? price(- $mt) : '') . '"';
 				print "\n";
@@ -379,8 +404,8 @@ if ($action == 'export_csv') {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-					print '"' . utf8_decode(dol_trunc($companystatic->name,16)).' - '. utf8_decode ( dol_trunc($accountingaccount->label, 32)) . '"' . $sep;
-					//print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
+					print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . utf8_decode(dol_trunc($accountingaccount->label, 32)) . '"' . $sep;
+					// print '"' . dol_trunc($accountingaccount->label, 32) . '"' . $sep;
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 					print "\n";
@@ -393,8 +418,8 @@ if ($action == 'export_csv') {
 					print '"' . $date . '"' . $sep;
 					print '"' . $val["ref"] . '"' . $sep;
 					print '"' . length_accountg(html_entity_decode($k)) . '"' . $sep;
-					print '"' . utf8_decode(dol_trunc($companystatic->name,16)).' - '. $langs->trans("VAT") . '"' . $sep;
-					//print '"' . $langs->trans("VAT") . '"' . $sep;
+					print '"' . utf8_decode(dol_trunc($companystatic->name, 16)) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . '"' . $sep;
+					// print '"' . $langs->trans("VAT") . '"' . $sep;
 					print '"' . ($mt < 0 ? price(- $mt) : '') . '"' . $sep;
 					print '"' . ($mt >= 0 ? price($mt) : '') . '"';
 					print "\n";
@@ -418,12 +443,16 @@ if ($action == 'export_csv') {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	else
 		$description .= $langs->trans("DepositsAreIncluded");
-	$period = Form::selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . Form::selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
+	$period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 	report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array (
 			'action' => ''
 	));
 
-	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 || $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
+		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabeld="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
+	} else {
+		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+	}
 
 	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 
@@ -479,9 +508,9 @@ if ($action == 'export_csv') {
 			$companystatic->name = $tabcompany[$key]['name'];
 			$companystatic->client = $tabcompany[$key]['code_client'];
 			print "<td>" . length_accounta($k);
-			//print "</td><td>" . $langs->trans("ThirdParty");
-			//print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
-			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref_client . ' - ' . $langs->trans("Code_tiers"). "</td>";
+			// print "</td><td>" . $langs->trans("ThirdParty");
+			// print ' (' . $companystatic->getNomUrl(0, 'customer', 16) . ')';
+			print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("Code_tiers") . "</td>";
 			print "</td><td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 			print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 		}
@@ -497,8 +526,8 @@ if ($action == 'export_csv') {
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
-				//print "<td>" . $accountingaccount->label . "</td>";
-				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16). ' - ' . $invoicestatic->ref_client  . ' - ' . utf8_decode ( utf8_decode ( $accountingaccount->label)) . "</td>";
+				// print "<td>" . $accountingaccount->label . "</td>";
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . utf8_decode(utf8_decode($accountingaccount->label)) . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";
@@ -512,8 +541,8 @@ if ($action == 'export_csv') {
 				print "<td>" . $date . "</td>";
 				print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
 				print "<td>" . length_accountg($k) . "</td>";
-				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16). ' - ' . $invoicestatic->ref_client .' - '. $langs->trans("VAT")  . "</td>";
-				//print "<td>" . $langs->trans("VAT") . "</td>";
+				print "<td>" . $companystatic->getNomUrl(0, 'customer', 16) . ' - ' . $invoicestatic->ref . ' - ' . $langs->trans("VAT") . ' '.$def_tva[$key]. "</td>";
+				// print "<td>" . $langs->trans("VAT") . "</td>";
 				print "<td align='right'>" . ($mt < 0 ? price(- $mt) : '') . "</td>";
 				print "<td align='right'>" . ($mt >= 0 ? price($mt) : '') . "</td>";
 				print "</tr>";

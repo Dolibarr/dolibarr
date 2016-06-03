@@ -7,6 +7,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -237,6 +238,31 @@ class Account extends CommonObject
             self::STATUS_CLOSED => $langs->trans("StatusAccountOpened")
         );
     }
+
+	/**
+	 * Shows the account number in the appropiate format
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		$string = '';
+
+		foreach ($this->getFieldsToShow() as $val) {
+
+			if ($val == 'BankCode') {
+				$string .= $this->code_banque.' ';
+			} elseif ($val == 'BankAccountNumber') {
+				$string .= $this->number.' ';
+			} elseif ($val == 'DeskCode') {
+				$string .= $this->code_guichet.' ';
+			} elseif ($val == 'BankAccountNumberKey') {
+				$string .= $this->cle_rib.' ';
+			}
+		}
+
+		return trim($string);
+	}
 
 
     /**
@@ -563,7 +589,7 @@ class Account extends CommonObject
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
 
-            $result=$this->update();
+            $result=$this->update($user);
             if ($result > 0)
             {
 				$accline = new AccountLine($this->db);
@@ -867,6 +893,49 @@ class Account extends CommonObject
         }
     }
 
+    /**
+     * Sets object to supplied categories.
+     *
+     * Deletes object from existing categories not supplied.
+     * Adds it to non existing supplied categories.
+     * Existing categories are left untouch.
+     *
+     * @param int[]|int $categories Category or categories IDs
+     */
+    public function setCategories($categories) {
+        // Handle single category
+        if (! is_array($categories)) {
+            $categories = array($categories);
+        }
+
+        // Get current categories
+        require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $c = new Categorie($this->db);
+        $existing = $c->containing($this->id, Categorie::TYPE_ACCOUNT, 'id');
+
+        // Diff
+        if (is_array($existing)) {
+            $to_del = array_diff($existing, $categories);
+            $to_add = array_diff($categories, $existing);
+        } else {
+            $to_del = array(); // Nothing to delete
+            $to_add = $categories;
+        }
+
+        // Process
+        foreach($to_del as $del) {
+            if ($c->fetch($del) > 0) {
+                $c->del_type($this, 'account');
+            }
+        }
+        foreach ($to_add as $add) {
+            if ($c->fetch($add) > 0) {
+                $c->add_type($this, 'account');
+            }
+        }
+
+        return;
+    }
 
     /**
      *  Delete bank account from database
@@ -1075,15 +1144,19 @@ class Account extends CommonObject
      */
     public static function countAccountToReconcile()
     {
-        global $db, $conf, $langs;
-    
-        if ($user->societe_id) return 0;   // protection pour eviter appel par utilisateur externe
+        global $db, $conf, $user;
+
+        //Protection against external users
+        if ($user->societe_id) {
+            return 0;
+        }
     
         $nb=0;
         
         $sql = "SELECT COUNT(ba.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
+        $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
         if (empty($conf->global->BANK_CAN_RECONCILIATE_CASHACCOUNT)) $sql.= " AND ba.courant != 2";
         $resql=$db->query($sql);
         if ($resql)
@@ -1229,6 +1302,83 @@ class Account extends CommonObject
     {
 
     }
+
+	/**
+	 * Returns the fields in order that this bank account should show to the user
+	 * Will return an array with the following values:
+	 * - BankAccountNumber
+	 * - BankCode
+	 * - BankAccountNumberKey
+	 * - DeskCode
+	 *
+	 * Some countries show less or more bank account properties to the user
+	 *
+	 * @return array
+	 * @see useDetailedBBAN
+	 */
+	public function getFieldsToShow()
+	{
+		//Get the required properties depending on the country
+		$detailedBBAN = $this->useDetailedBBAN();
+
+		if ($detailedBBAN == 0) {
+			return array(
+				'BankAccountNumber'
+			);
+		} elseif ($detailedBBAN == 2) {
+			return array(
+				'BankCode',
+				'BankAccountNumber'
+			);
+		}
+
+		//Get the order the properties are shown
+		return self::getAccountNumberOrder();
+	}
+
+	/**
+	 * Returns the components of the bank account in order.
+	 * Will return an array with the following values:
+	 * - BankAccountNumber
+	 * - BankCode
+	 * - BankAccountNumberKey
+	 * - DeskCode
+	 *
+	 * @return array
+	 */
+	public static function getAccountNumberOrder()
+	{
+		global $conf;
+
+		$fieldlists = array(
+			'BankCode',
+			'DeskCode',
+			'BankAccountNumber',
+			'BankAccountNumberKey'
+		);
+
+		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
+			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
+				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
+					$fieldlists = array(
+						'BankCode',
+						'DeskCode',
+						'BankAccountNumberKey',
+						'BankAccountNumber'
+					);
+				}
+			} else {
+				//Replace the old AccountNumber key with the new BankAccountNumber key
+				$fieldlists = explode(
+					' ',
+					preg_replace('/ ?[^Bank]AccountNumber ?/', 'BankAccountNumber',
+						$conf->global->BANK_SHOW_ORDER_OPTION)
+				);
+			}
+		}
+
+		return $fieldlists;
+	}
 
 
     /**

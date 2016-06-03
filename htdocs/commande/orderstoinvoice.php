@@ -220,7 +220,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 							{
 								if ($closeOrders)
 								{
-									$objectsrc->classifyBilled();
+									$objectsrc->classifyBilled($user);
 									$objectsrc->setStatut(3);
 								}
 								$lines = $objectsrc->lines;
@@ -420,14 +420,14 @@ if ($action == 'create' && !$error)
 	print '<tr height="18"><td width="16px" valign="middle">';
 	print '<input type="radio" name="type" value="0"'.(GETPOST('type')==0?' checked':'').'>';
 	print '</td><td valign="middle">';
-	$desc=Form::textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
+	$desc=$html->textwithpicto($langs->trans("InvoiceStandardAsk"),$langs->transnoentities("InvoiceStandardDesc"),1);
 	print $desc;
 	print '</td></tr>'."\n";
 	print '</table>';
 
 	// Date invoice
 	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
-	Form::selectDate('','','','','',"add",1,1);
+	$html->select_date('','','','','',"add",1,1);
 	print '</td></tr>';
 	// Payment term
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
@@ -469,7 +469,7 @@ if ($action == 'create' && !$error)
 	print '<td>';
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 	$liste=ModelePDFFactures::liste_modeles($db);
-	print Form::selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
+	print $html->selectarray('model',$liste,$conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";
 
 	// Public note
@@ -575,8 +575,8 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		$num = $db->num_rows($resql);
 		print load_fiche_titre($title);
 		$i = 0;
-		$period=Form::selectDate($date_start,'date_start',0,0,1,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,1,'',1,0,1);
-		$periodely=Form::selectDate($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.Form::selectDate($date_endy,'date_end_dely',0,0,1,'',1,0,1);
+		$period=$html->select_date($date_start,'date_start',0,0,1,'',1,0,1).' - '.$html->select_date($date_end,'date_end',0,0,1,'',1,0,1);
+		$periodely=$html->select_date($date_starty,'date_start_dely',0,0,1,'',1,0,1).' - '.$html->select_date($date_endy,'date_end_dely',0,0,1,'',1,0,1);
 
 		if (! empty($socid))
 		{

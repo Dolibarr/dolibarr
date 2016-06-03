@@ -69,7 +69,7 @@ if ($id > 0 || ! empty($ref))
 // Security check
 $socid=GETPOST('socid');
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $object->id);
+$result = restrictedArea($user, 'projet', $object->id,'projet&project');
 
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -454,27 +454,30 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Ref
     $suggestedref=($_POST["ref"]?$_POST["ref"]:$defaultref);
-    print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
-    print ' '.Form::textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+    print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td><input size="12" type="text" name="ref" value="'.$suggestedref.'">';
+    print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
     print '</td></tr>';
 
     // Label
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td><td><input size="80" type="text" name="title" value="'.GETPOST("title").'"></td></tr>';
 
     // Thirdparty
-    print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-    $filteronlist='';
-    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-   	$text=$form->select_thirdparty_list(GETPOST('socid','int'),'socid',$filteronlist,'SelectThirdParty',1);
-    if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+    if ($conf->societe->enabled)
     {
-    	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-    	print Form::textwithtooltip($text.' '.img_help(),$texthelp,1);
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+        $filteronlist='';
+        if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+       	$text=$form->select_thirdparty_list(GETPOST('socid','int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
+        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+        {
+        	$texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+        	print $form->textwithtooltip($text.' '.img_help(),$texthelp,1);
+        }
+        else print $text;
+        print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
+        print '</td></tr>';
     }
-    else print $text;
-    print ' <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
-    print '</td></tr>';
-
+    
     // Status
     if ($status != '')
     {
@@ -487,17 +490,17 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
     $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-    print Form::selectarray('public',$array,$object->public);
+    print $form->selectarray('public',$array,$object->public);
     print '</td></tr>';
 
     // Date start
     print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-    print Form::selectDate(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
+    print $form->select_date(($date_start?$date_start:''),'projectstart',0,0,0,'',1,0,1);
     print '</td></tr>';
 
     // Date end
     print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-    print Form::selectDate(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
+    print $form->select_date(($date_end?$date_end:-1),'projectend',0,0,0,'',1,0,1);
     print '</td></tr>';
 
     if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -529,7 +532,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
     print '<td>';
-    print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
+    print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$_POST["description"].'</textarea>';
     print '</td></tr>';
 
     // Other options
@@ -590,17 +593,17 @@ else
     // Confirmation validation
     if ($action == 'validate')
     {
-        print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
+        print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateProject'), $langs->trans('ConfirmValidateProject'), 'confirm_validate','',0,1);
     }
     // Confirmation close
     if ($action == 'close')
     {
-        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("CloseAProject"),$langs->trans("ConfirmCloseAProject"),"confirm_close",'','',1);
     }
     // Confirmation reopen
     if ($action == 'reopen')
     {
-        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ReOpenAProject"),$langs->trans("ConfirmReOpenAProject"),"confirm_reopen",'','',1);
     }
     // Confirmation delete
     if ($action == 'delete')
@@ -610,7 +613,7 @@ else
         $taskarray=$task->getTasksArray(0,0,$object->id,0,0);
         $nboftask=count($taskarray);
         if ($nboftask) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoRemoveTasks",$nboftask);
-        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAProject"),$text,"confirm_delete",'','',1);
     }
 
     // Clone confirmation
@@ -626,7 +629,7 @@ else
         	array('type' => 'checkbox', 'name' => 'clone_task_files',	'label' => $langs->trans("CloneTaskFiles"),         'value' => false)
         );
 
-        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
     }
 
 
@@ -647,9 +650,9 @@ else
 
         // Ref
         $suggestedref=$object->ref;
-        print '<tr><td class="fieldrequired" width="30%">'.$langs->trans("Ref").'</td>';
+        print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
         print '<td><input size="12" name="ref" value="'.$suggestedref.'">';
-        print ' '.Form::textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
+        print ' '.$form->textwithpicto('', $langs->trans("YouCanCompleteRef", $suggestedref));
         print '</td></tr>';
 
         // Label
@@ -657,18 +660,21 @@ else
         print '<td><input size="80" name="title" value="'.$object->title.'"></td></tr>';
 
         // Thirdparty
-        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-	    $filteronlist='';
-	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-        $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 1, 1);
-        $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-        print Form::textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-        print '</td></tr>';
-
+        if ($conf->societe->enabled)
+        {
+            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+    	    $filteronlist='';
+    	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
+            $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
+            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
+            print '</td></tr>';
+        }
+        
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
         $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-        print Form::selectarray('public',$array,$object->public);
+        print $form->selectarray('public',$array,$object->public);
         print '</td></tr>';
 
         // Status
@@ -676,7 +682,7 @@ else
 
         // Date start
         print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-        print Form::selectDate($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
+        print $form->select_date($object->date_start?$object->date_start:-1,'projectstart',0,0,0,'',1,0,1);
         print ' &nbsp; &nbsp; <input type="checkbox" name="reportdate" value="yes" ';
         if ($comefromclone){print ' checked ';}
 		print '/> '. $langs->trans("ProjectReportDate");
@@ -684,7 +690,7 @@ else
 
         // Date end
         print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-        print Form::selectDate($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
+        print $form->select_date($object->date_end?$object->date_end:-1,'projectend',0,0,0,'',1,0,1);
         print '</td></tr>';
 
     	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -715,7 +721,7 @@ else
 	    // Description
         print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
         print '<td>';
-        print '<textarea name="description" wrap="soft" cols="80" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
+        print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
         print '</td></tr>';
 
         // Other options
@@ -742,7 +748,7 @@ else
             $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
             $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
         }
-        print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td></tr>';
 
         // Label
@@ -846,90 +852,150 @@ else
      * Boutons actions
      */
     print '<div class="tabsAction">';
-
-    if ($action != "edit" )
+    $parameters = array();
+    $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+	                                                                                          // modified by hook
+    if (empty($reshook))
     {
-        // Modify
-        if ($object->statut != 2 && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
-            }
-        }
-
-    	// Validate
-        if ($object->statut == 0 && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
-            }
-        }
-
-        // Close
-        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
-            }
-        }
-
-        // Reopen
-        if ($object->statut == 2 && $user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
-            }
-        }
-
-        // Clone
-        if ($user->rights->projet->creer)
-        {
-            if ($userWrite > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
-            }
-        }
-
-        // Delete
-        if ($user->rights->projet->supprimer)
-        {
-            if ($userDelete > 0)
-            {
-                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
-            }
-            else
-            {
-                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
-            }
-        }
+	    if ($action != "edit" )
+	    {
+	        // Modify
+	        if ($object->statut != 2 && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a></div>';
+	            }
+	        }
+	
+	    	// Validate
+	        if ($object->statut == 0 && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a></div>';
+	            }
+	        }
+	
+	        // Close
+	        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a></div>';
+	            }
+	        }
+	
+	        // Reopen
+	        if ($object->statut == 2 && $user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a></div>';
+	            }
+	        }
+	
+	        // Add button to create objects from project 
+	        if (! empty($conf->global->PROJECT_SHOW_CREATE_OBJECT_BUTTON))
+	        {
+	            if (! empty($conf->propal->enabled) && $user->rights->propal->creer)
+	            {
+	                $langs->load("propal");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddProp").'</a></div>';
+	            }
+	            if (! empty($conf->commande->enabled) && $user->rights->commande->creer)
+	            {
+	                $langs->load("orders");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateOrder").'</a></div>';
+	            }
+	            if (! empty($conf->facture->enabled) && $user->rights->facture->creer)
+	            {
+	                $langs->load("bills");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("CreateBill").'</a></div>';
+	            }
+	            if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer)
+	            {
+	                $langs->load("supplier_proposal");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierProposal").'</a></div>';
+	            }
+	            if (! empty($conf->supplier_order->enabled) && $user->rights->fournisseur->commande->creer)
+	            {
+	                $langs->load("suppliers");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierOrder").'</a></div>';
+	            }
+	            if (! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->creer)
+	            {
+	                $langs->load("suppliers");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddSupplierInvoice").'</a></div>';
+	            }
+	            if (! empty($conf->ficheinter->enabled) && $user->rights->ficheinter->creer)
+	            {
+	                $langs->load("interventions");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddIntervention").'</a></div>';
+	            }
+	            if (! empty($conf->contrat->enabled) && $user->rights->contrat->creer)
+	            {
+	                $langs->load("contracts");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddContract").'</a></div>';
+	            }
+	            if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
+	            {
+	                $langs->load("expensereports");
+	                $langs->load("trips");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
+	            }
+	            if (! empty($conf->don->enabled) && $user->rights->don->creer)
+	            {
+	                $langs->load("donations");
+	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddDonation").'</a></div>';
+	            }
+	        }
+	        
+	        // Clone
+	        if ($user->rights->projet->creer)
+	        {
+	            if ($userWrite > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a></div>';
+	            }
+	        }
+	
+	        // Delete
+	        if ($user->rights->projet->supprimer)
+	        {
+	            if ($userDelete > 0)
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
+	            }
+	            else
+	            {
+	                print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a></div>';
+	            }
+	        }
+         }
     }
 
     print "</div>";
-    print "<br>\n";
 
     if ($action != 'presend')
     {
@@ -949,7 +1015,7 @@ else
 
         $somethingshown=$formfile->show_documents('project',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
-        print '</div></div class="fichehalfright">';
+        print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
         if (!empty($object->id))
         {
@@ -959,7 +1025,7 @@ else
 	        $somethingshown=$formactions->showactions($object,'project',$socid);
         }
 
-        print '</div>';
+        print '</div></div></div>';
     }
 
     // Hook to add more things on page

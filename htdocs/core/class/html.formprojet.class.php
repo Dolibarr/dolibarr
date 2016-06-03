@@ -91,7 +91,7 @@ class FormProjets
 			    if (class_exists('Form'))
 			    {
     			    if (empty($form)) $form=new Form($this->db);
-                    print Form::textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
+                    print $form->textwithpicto('', $langs->trans("ClosedProjectsAreHidden"));
 			    }
 			}
 		}
@@ -135,10 +135,10 @@ class FormProjets
 		// Search all projects
 		$sql = 'SELECT p.rowid, p.ref, p.title, p.fk_soc, p.fk_statut, p.public';
 		$sql.= ' FROM '.MAIN_DB_PREFIX .'projet as p';
-		$sql.= " WHERE p.entity = ".$conf->entity;
+		$sql.= " WHERE p.entity IN (".getEntity('project', 1).")";
 		if ($projectsListId !== false) $sql.= " AND p.rowid IN (".$projectsListId.")";
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
-		if ($socid > 0)  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
+		if ($socid > 0 && empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		if (!empty($filterkey)) {
 			$sql .= ' AND p.title LIKE "%'.$this->db->escape($filterkey).'%"';
 			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
@@ -188,7 +188,7 @@ class FormProjets
 							continue;
 						}
 
-						$labeltoshow=dol_trunc($obj->ref,18).' - '.$obj->title;
+						$labeltoshow=dol_trunc($obj->ref,18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						$labeltoshow.=' '.dol_trunc($obj->title,$maxlength);
@@ -204,7 +204,7 @@ class FormProjets
 							if ($discard_close == 2) $disabled=1;
 							$labeltoshow.=' - '.$langs->trans("Closed");
 						}
-						else if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+						else if ( empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 						{
 							$disabled=1;
 							$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
@@ -483,7 +483,7 @@ class FormProjets
 		if ($linkedtothirdparty) $sql.=", ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE ".$projectkey." is null";
 		if (! empty($socid) && $linkedtothirdparty) $sql.= " AND t.fk_soc=".$socid;
-		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity='.getEntity('project');
+		if (! in_array($table_element, array('expensereport_det'))) $sql.= ' AND t.entity IN ('.getEntity('project',1).')';
 		if ($linkedtothirdparty) $sql.=" AND s.rowid = t.fk_soc";
 		if ($sqlfilter) $sql.= " AND ".$sqlfilter;
 		$sql.= " ORDER BY ref DESC";

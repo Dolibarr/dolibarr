@@ -314,7 +314,7 @@ class PaiementFourn extends Paiement
 		// Si c'est le cas, on refuse le delete
 		if ($bank_line_id)
 		{
-			$accline = new AccountLine($this->db,$bank_line_id);
+			$accline = new AccountLine($this->db);
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{

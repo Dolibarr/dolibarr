@@ -2,7 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014-2016 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -472,7 +472,7 @@ $object = array(&$encaiss, &$encaiss_ttc, &$decaiss, &$decaiss_ttc);
 $parameters["mode"] = $modecompta;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addReportInfo',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 /*
  * Salaries
@@ -529,7 +529,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
-		$sql.= " AND p.fk_statut>5";
+		$sql.= " AND p.fk_statut>=5";
 
 		$column='p.date_valid';
 
@@ -540,7 +540,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
-		$sql.= " AND p.fk_statut=6";
+		$sql.= " AND p.fk_statut>=5";
 
 		$column='pe.datep';
 	}

@@ -81,7 +81,7 @@ $modulepart='contract';
 /*
  * Actions
  */
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -130,7 +130,7 @@ if ($object->id > 0)
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print Form::showrefnav($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
+	print $form->showrefnav($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
 	print '</td></tr>';
 
 	// Type

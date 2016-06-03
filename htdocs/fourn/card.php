@@ -138,11 +138,6 @@ if ($object->id > 0)
     print '<div class="underbanner clearboth"></div>';
 	print '<table width="100%" class="border">';
 
-	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield" width="25%">'.$langs->trans('AliasNameShort').'</td><td colspan="3">';
-	print $object->name_alias;
-	print "</td></tr>";
-
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
@@ -160,9 +155,9 @@ if ($object->id > 0)
 		$langs->load('compta');
         print '<tr>';
         print '<td>';
-        print Form::editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
+        print $form->editfieldkey("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
         print '</td><td colspan="3">';
-        print Form::editfieldval("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
+        print $form->editfieldval("SupplierAccountancyCode",'supplieraccountancycode',$object->code_compta_fournisseur,$object,$user->rights->societe->creer);
         print '</td>';
         print '</tr>';
 	}
@@ -236,7 +231,7 @@ if ($object->id > 0)
 	// Categories
 	if (! empty($conf->categorie->enabled))
 	{
-    	print '<tr><td>' . $langs->trans("Categories") . '</td>';
+    	print '<tr><td>' . $langs->trans("SuppliersCategoriesShort") . '</td>';
     	print '<td colspan="3">';
     	print $form->showCategories($object->id, 'supplier', 1);
     	print "</td></tr>";
@@ -523,15 +518,14 @@ if ($object->id > 0)
 	/*
 	 * Barre d'actions
 	 */
+	print '<div class="tabsAction">';
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
 	// modified by hook
 	if (empty($reshook))
 	{
-
-		print '<div class="tabsAction">';
-
-		if ($user->rights->fournisseur->commande->creer)
+	   if ($user->rights->fournisseur->commande->creer)
 		{
 			$langs->load("orders");
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddOrder").'</a>';
@@ -567,9 +561,11 @@ if ($object->id > 0)
             	print '<a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a>';
         	}
     	}
-
-		print '</div>';
-		print '<br>';
+	}
+	
+	print '</div>';
+	
+	print '<br>';
 
     	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
     	{
@@ -594,7 +590,6 @@ if ($object->id > 0)
         	// List of done actions
         	show_actions_done($conf,$langs,$db,$object);
     	}
-	}
 }
 else
 {

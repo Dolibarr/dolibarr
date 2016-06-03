@@ -17,7 +17,6 @@ RefProposal=Référence de la proposition commerciale
 SendPropalByMail=Envoyer proposition commerciale par courriel
 ErrorCantOpenDir=Impossible d'ouvrir le dossier
 DateEndPropal=Date de validité se terminant
-CloseAs=Set status to
 BuildBill=Construire facture
 ErrorPropalNotFound=Pas de proposition %s trouvées
 Estimate=Estimé :

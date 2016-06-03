@@ -67,7 +67,7 @@ if ($object->id > 0)
 {
 	$object->fetch_thirdparty();
 	$upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+	include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 }
 
 /*
@@ -106,7 +106,7 @@ if ($object->id > 0)
 
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-	print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','');
+	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 	print '</td></tr>';
 
 	// Ref client

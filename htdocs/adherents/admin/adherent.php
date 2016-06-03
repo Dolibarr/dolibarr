@@ -134,7 +134,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_LOGIN_NOT_REQUIRED">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentLoginRequired").'</td><td>';
-print Form::selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
+print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)?0:1),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
@@ -147,7 +147,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_MAIL_REQUIRED">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("AdherentMailRequired").'</td><td>';
-print Form::selectyesno('constvalue',(! empty($conf->global->ADHERENT_MAIL_REQUIRED)?$conf->global->ADHERENT_MAIL_REQUIRED:0),1);
+print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_MAIL_REQUIRED)?$conf->global->ADHERENT_MAIL_REQUIRED:0),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
@@ -160,7 +160,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="ADHERENT_DEFAULT_SENDINFOBYMAIL">';
 print '<tr '.$bc[$var].'><td>'.$langs->trans("MemberSendInformationByMailByDefault").'</td><td>';
-print Form::selectyesno('constvalue',(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL:0),1);
+print $form->selectyesno('constvalue',(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?$conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL:0),1);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
@@ -178,7 +178,7 @@ if (! empty($conf->banque->enabled)) $arraychoices['bankdirect']=$langs->trans("
 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['invoiceonly']=$langs->trans("MoreActionInvoiceOnly");
 if (! empty($conf->banque->enabled) && ! empty($conf->societe->enabled) && ! empty($conf->facture->enabled)) $arraychoices['bankviainvoice']=$langs->trans("MoreActionBankViaInvoice");
 print '<td>';
-print Form::selectarray('constvalue',$arraychoices,$conf->global->ADHERENT_BANK_USE,0);
+print $form->selectarray('constvalue',$arraychoices,$conf->global->ADHERENT_BANK_USE,0);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print '</td>';
@@ -197,7 +197,7 @@ if ($conf->facture->enabled)
 	if (! empty($conf->banque->enabled))
 	{
 		print '<td>';
-		print Form::selectarray('constvalue', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
+		print $form->selectarray('constvalue', array('0'=>$langs->trans("NoVatOnSubscription"),'defaultforfoundationcountry'=>$langs->trans("Default")), (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS)?'0':$conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS), 0);
 		print '</td><td align="center" width="80">';
 		print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 		print '</td>';

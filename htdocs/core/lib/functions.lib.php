@@ -718,8 +718,8 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	{
 		$limittitle=30;
 		$out.='<a class="tabTitle">';
-		if ($picto) $out.=img_picto('',($pictoisfullpath?'':'object_').$picto,'',$pictoisfullpath).' ';
-		$out.=dol_trunc($title,$limittitle);
+		if ($picto) $out.=img_picto($title,($pictoisfullpath?'':'object_').$picto,'',$pictoisfullpath).' ';
+		$out.='<span class="tabTitleText">'.dol_trunc($title,$limittitle).'</span>';
 		$out.='</a>';
 	}
 
@@ -908,9 +908,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else 
 	{
-        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.Form::showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
+        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
 	}
-	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.Form::showbarcode($object).'</div>';
+	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
 		$morehtmlright.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 	} 
@@ -947,7 +947,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref.='</div>';
 	}
-	print Form::showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
+	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlright);
 	print '</div>';
 	print '<div class="underrefbanner clearboth"></div>';
 }
@@ -958,6 +958,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
  * @param	string	$langkey		Translation key
  * @param 	string	$fieldkey		Key of the html select field the text refers to
  * @param	int		$fieldrequired	1=Field is mandatory
+ * @deprecated Form::editfieldkey
  */
 function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
 {
@@ -1873,17 +1874,25 @@ function dol_substr($string,$start,$length,$stringencoding='')
  *  @param		int		$showpercent	Show percent (with type='pie' only)
  *  @param		string	$url			Param to add an url to click values
  *  @param		int		$combineother	0=No combine, 0.05=Combine if lower than 5%
+ *  @param      int     $shownographyet Show graph to say there is not enough data
  *  @return		void
  *  @deprecated
  *  @see DolGraph
  */
-function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05)
+function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',$showpercent=0,$url='',$combineother=0.05,$shownographyet=0)
 {
 	dol_syslog(__FUNCTION__ . " is deprecated", LOG_WARNING);
 
 	global $conf,$langs;
 	global $theme_datacolor;    // To have var kept when function is called several times
 
+	if ($shownographyet)
+	{
+	    print '<div class="nographyet" style="width:'.$width.'px;height:'.$height.'px;"></div>';
+	    print '<div class="nographyettext">'.$langs->trans("NotEnoughDataYet").'</div>';
+	    return;
+	}
+	
 	if (empty($conf->use_javascript_ajax)) return;
 	$jsgraphlib='flot';
 	$datacolor=array();
@@ -2030,7 +2039,7 @@ function dol_print_graph($htmlid,$width,$height,$data,$showlegend=0,$type='pie',
 			});
 			</script>';
 		}
-		else print 'BadValueForPArameterType';
+		else print 'BadValueForParameterType';
 	}
 }
 
@@ -2415,16 +2424,16 @@ function img_info($titlealt = 'default')
  *	Show warning logo
  *
  *	@param	string	$titlealt   Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param  int		$float      If we must add style "float: right"
+ *	@param	string	$options	Add more attribute on img tag (For example 'style="float: right"'). If 1
  *	@return string      		Return img tag
  */
-function img_warning($titlealt = 'default', $float = 0)
+function img_warning($titlealt = 'default', $options = '')
 {
 	global $conf, $langs;
 
 	if ($titlealt == 'default') $titlealt = $langs->trans('Warning');
 
-	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($float ? ' style="float: right"' : ''));
+	return img_picto($titlealt, 'warning.png', 'class="pictowarning"'.($options ? ($options == '1' ? ' style="float: right"' : ' '.$options): ''));
 }
 
 /**
@@ -2766,10 +2775,10 @@ function dol_print_error($db='',$error='',$errors=null)
 
 		foreach($errors as $msg)
 		{
-			$msg=$langs->trans($msg);
+			if (empty($msg)) continue;
 			if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 			{
-				$out.="<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+				$out.="<b>".$langs->trans("Message").":</b> ".dol_escape_htmltag($msg)."<br>\n" ;
 			}
 			else                        // Mode CLI
 			{
@@ -2894,8 +2903,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
 		//print "&nbsp;";
-		$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-		$sortimg.= '<span class="nowrap">';
+		//$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
+		//$sortimg.= '<span class="nowrap">';
 
 		if (! $sortorder || $field != $sortfield)
 		{
@@ -2907,16 +2916,16 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 			if ($sortorder == 'DESC' ) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg.= img_up("Z-A",0);
+				$sortimg.= '<span class="nowrap">'.img_up("Z-A",0).'</span>';
 			}
 			if ($sortorder == 'ASC' ) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg.= img_down("A-Z",0);
+				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';
 			}
 		}
 
-		$sortimg.= '</span>';
+		//$sortimg.= '</span>';
 	}
 
 	$out.=$sortimg;
@@ -3419,28 +3428,29 @@ function price2num($amount,$rounding='',$alreadysqlnb=0)
  * @param   string      $type           'weight', 'volume', ...
  * @param   Translate   $outputlangs    Translate language object
  * @param   int         $round          -1 = non rounding, x = number of decimal
+ * @param   string      $forceunitoutput    'no' or numeric (-3, -6, ...) compared to $unit
  * @return  string                      String to show dimensions
  */
-function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1)
+function showDimensionInBestUnit($dimension, $unit, $type, $outputlangs, $round=-1, $forceunitoutput='no')
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
     
-    if ($dimension < 1/10000) 
+    if (($forceunitoutput == 'no' && $dimension < 1/10000) || (is_numeric($forceunitoutput) && $forceunitoutput == -6)) 
     {
         $dimension = $dimension * 1000000;
         $unit = $unit - 6; 
     }
-    elseif ($dimension < 1/10) 
+    elseif (($forceunitoutput == 'no' && $dimension < 1/10) || (is_numeric($forceunitoutput) && $forceunitoutput == -3))
     {
         $dimension = $dimension * 1000;
         $unit = $unit - 3; 
     }
-    elseif ($dimension > 100000000)
+    elseif (($forceunitoutput == 'no' && $dimension > 100000000) || (is_numeric($forceunitoutput) && $forceunitoutput == 6))
     {
         $dimension = $dimension / 1000000;
         $unit = $unit + 6;
     }
-    elseif ($dimension > 100000)
+    elseif (($forceunitoutput == 'no' && $dimension > 100000) || (is_numeric($forceunitoutput) && $forceunitoutput == 3))
     {
         $dimension = $dimension / 1000;
         $unit = $unit + 3;
@@ -3927,12 +3937,9 @@ function get_product_localtax_for_country($idprod, $local, $thirdparty_seller)
  *	@return float         				      	Taux de tva a appliquer, -1 si ne peut etre determine
  *  @see get_default_npr, get_default_localtax
  */
-function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
+function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
 	global $conf;
-
-	if (!is_object($thirdparty_seller)) return -1;
-	if (!is_object($thirdparty_buyer)) return -1;
 
 	// Note: possible values for tva_assuj are 0/1 or franchise/reel
 	$seller_use_vat=((is_numeric($thirdparty_seller->tva_assuj) && ! $thirdparty_seller->tva_assuj) || (! is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj=='franchise'))?0:1;
@@ -4010,7 +4017,7 @@ function get_default_tva($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idpr
  *	@return float       			        	0 or 1
  *  @see get_default_tva, get_default_localtax
  */
-function get_default_npr($thirdparty_seller, $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
+function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod=0, $idprodfournprice=0)
 {
 	global $db;
 
@@ -4279,12 +4286,36 @@ function dol_string_nohtmltag($StringHtml,$removelinefeed=1,$pagecodeto='UTF-8')
 
 
 /**
+ * Return first line of text. Cut will depends if content is HTML or not.
+ *
+ * @param 	string	$text		Input text
+ * @return	string				Output text
+ * @see dol_nboflines_bis
+ */
+function dolGetFirstLineOfText($text)
+{
+	if (dol_textishtml($text))
+	{
+		$firstline=preg_replace('/<br[^>]*>.*$/s','',$text);		// The s pattern modifier means the . can match newline characters
+		$firstline=preg_replace('/<div[^>]*>.*$/s','',$firstline);	// The s pattern modifier means the . can match newline characters
+		
+	}
+	else
+	{
+    	$firstline=preg_replace('/[\n\r].*/','',$text);
+	}
+    return $firstline.((strlen($firstline) != strlen($text))?'...':'');
+}
+
+
+/**
  * Replace CRLF in string with a HTML BR tag
  *
  * @param	string	$stringtoencode		String to encode
  * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
  * @param   bool	$forxml             false=Use <br>, true=Use <br />
  * @return	string						String encoded
+ * @see dol_nboflines, dolGetFirstLineOfText
  */
 function dol_nl2br($stringtoencode,$nl2brmode=0,$forxml=false)
 {
@@ -4422,7 +4453,7 @@ function dol_string_is_good_iso($s)
  *	@param	string	$s			String to check
  * 	@param	int     $maxchar	Not yet used
  *	@return	int					Number of lines
- *  @see	dol_nboflines_bis
+ *  @see	dol_nboflines_bis, dolGetFirstLineOfText
  */
 function dol_nboflines($s,$maxchar=0)
 {
@@ -4523,7 +4554,7 @@ function dol_textishtml($msg,$option=0)
 }
 
 /**
- *  Concat 2 descriptions (second one after first one with a new line separator if required)
+ *  Concat 2 descriptions with a new line between them (second operand after first one with appropriate new line separator)
  *  text1 html + text2 html => text1 + '<br>' + text2
  *  text1 html + text2 txt  => text1 + '<br>' + dol_nl2br(text2)
  *  text1 txt  + text2 html => dol_nl2br(text1) + '<br>' + text2

@@ -133,7 +133,7 @@ dol_fiche_head($head, $hselected, $langs->trans("DonationPayment"), 0, 'payment'
  */
 if ($action == 'delete')
 {
-	print Form::formconfirm('card.php?id='.$payment->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+	print $form->formconfirm('card.php?id='.$payment->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
 	
 }
 
@@ -143,7 +143,7 @@ if ($action == 'delete')
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	print Form::formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+	print $form->formconfirm('card.php?id='.$payment->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
 	
 }
 
@@ -153,7 +153,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td valign="top" width="20%">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print Form::showrefnav($payment,'id','',1,'rowid','id');
+print $form->showrefnav($payment,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date

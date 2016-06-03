@@ -158,7 +158,7 @@ print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_USE").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
-print Form::selectyesno('MAIN_PROXY_USE',$conf->global->MAIN_PROXY_USE,1);
+print $form->selectyesno('MAIN_PROXY_USE',$conf->global->MAIN_PROXY_USE,1);
 print '</td>';
 print '</tr>';
 

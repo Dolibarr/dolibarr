@@ -3,6 +3,17 @@
 -- when current version is 2.6.0 or higher. 
 --
 
+
+-- Replace xxx with your IP Address 
+-- bind-address        = xxx.xxx.xxx.xxx
+-- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
+-- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
+-- GRANT ALL ON *.* TO 'myuser'@'localhost';
+-- GRANT ALL ON *.* TO 'myuser'@'%';
+-- flush privileges;
+
+
+
 -- Requests to clean corrupted database
 
 
@@ -57,7 +68,35 @@ delete from llx_adherent_extrafields where fk_object not in (select rowid from l
 delete from llx_product_extrafields where fk_object not in (select rowid from llx_product);
 --delete from llx_societe_commerciaux where fk_soc not in (select rowid from llx_societe);
 
+
+-- Clean stocks
+
+-- Reference for qty is llx_product_stock (detail in llx_product_batch may be not complete)
+-- qty in llx_product may be not up to date
 update llx_product_batch set batch = '' where batch = 'Non d&eacute;fini';
+update llx_product_batch set batch = '' where batch = 'Non défini';
+
+DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product); 
+DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
+DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
+
+-- Merge splitted lines into one in table llx_product_batch 
+DROP TABLE tmp_llx_product_batch;
+DROP TABLE tmp_llx_product_batch2;
+CREATE TABLE tmp_llx_product_batch AS select fk_product_stock, eatby, sellby, batch, SUM(qty) as qty, COUNT(rowid) as nb FROM llx_product_batch GROUP BY fk_product_stock, eatby, sellby, batch HAVING COUNT(rowid) > 1;
+CREATE TABLE tmp_llx_product_batch2 AS select pb.rowid, pb.fk_product_stock, pb.eatby, pb.sellby, pb.batch, pb.qty from llx_product_batch as pb, tmp_llx_product_batch as tpb where pb.fk_product_stock = tpb.fk_product_stock and COALESCE(pb.eatby, '') = COALESCE(tpb.eatby,'') and COALESCE(pb.sellby, '') = COALESCE(tpb.sellby, '') and pb.batch = tpb.batch;
+--select * from tmp_llx_product_batch;
+--select * from tmp_llx_product_batch2;
+DELETE FROM llx_product_batch WHERE rowid IN (select rowid FROM tmp_llx_product_batch2);
+INSERT INTO llx_product_batch(fk_product_stock, eatby, sellby, batch, qty) SELECT fk_product_stock, eatby, sellby, batch, qty FROM tmp_llx_product_batch;
+
+DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
+DELETE FROM llx_product_batch WHERE qty = 0;
+
+
+-- Stock calculation on product
+UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
+
 
 -- Fix: delete category child with no category parent.
 drop table tmp_categorie;
@@ -110,12 +149,6 @@ insert into llx_c_actioncomm (id, code, type, libelle, module, position) values 
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 30, 'AC_SUP_ORD', 'systemauto', 'Send supplier order by email'		,'order_supplier',    9);
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values  (31, 'AC_SUP_INV', 'systemauto', 'Send supplier invoice by email'		,'invoice_supplier', 7);
 insert into llx_c_actioncomm (id, code, type, libelle, module, position) values ( 50, 'AC_OTH',     'system', 'Other'								,NULL, 5);
-
-
--- Stock calculation on product
-DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
-
-UPDATE llx_product p SET p.stock= (SELECT SUM(ps.reel) FROM llx_product_stock ps WHERE ps.fk_product = p.rowid);
 
 
 -- VMYSQL4.1 DELETE T1 FROM llx_boxes_def as T1, llx_boxes_def as T2 where T1.entity = T2.entity AND T1.file = T2.file AND T1.note = T2.note and T1.rowid > T2.rowid;
@@ -214,14 +247,6 @@ UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS
 -- List of product into 2 categories xxx: select cp.fk_product, count(cp.fk_product) as nb from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' group by fk_product having nb > 1;
 -- List of product with no category xxx yet: select rowid, ref from llx_product where rowid not in (select distinct cp.fk_product from llx_categorie_product as cp, llx_categorie as c where cp.fk_categorie = c.rowid and c.label like 'xxx-%' order by fk_product);
 
--- Replace xxx with your IP Address 
--- bind-address        = xxx.xxx.xxx.xxx
--- CREATE USER 'myuser'@'localhost' IDENTIFIED BY 'mypass';
--- CREATE USER 'myuser'@'%' IDENTIFIED BY 'mypass';
--- GRANT ALL ON *.* TO 'myuser'@'localhost';
--- GRANT ALL ON *.* TO 'myuser'@'%';
--- flush privileges;
-
 -- Fix type of product 2 does not exists
 update llx_propaldet set product_type = 1 where product_type = 2;
 update llx_commandedet set product_type = 1 where product_type = 2;
@@ -240,4 +265,11 @@ delete from llx_menu where menu_handler = 'smartphone';
 -- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
 update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid)
  
+
+-- Remove duplicate of shipment mode (keep the one with tracking defined)
+drop table tmp_c_shipment_mode;
+create table tmp_c_shipment_mode as (select code, tracking from llx_c_shipment_mode);
+DELETE FROM llx_c_shipment_mode where code IN (select code from tmp_c_shipment_mode WHERE tracking is NULL OR tracking = '') AND code IN (select code from tmp_c_shipment_mode WHERE tracking is NOT NULL AND tracking != '') AND (tracking IS NULL OR tracking = '');
+drop table tmp_c_shipment_mode;
+
 

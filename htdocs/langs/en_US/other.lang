@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
 SecurityCode=Security code
 Calendar=Calendar
+NumberingShort=N°
 Tools=Tools
 ToolsDesc=This area is dedicated to group miscellaneous tools not available into other menu entries.<br><br>Those tools can be reached from menu on the side.
 Birthday=Birthday
@@ -158,11 +159,13 @@ StatsByNumberOfEntities=Statistics in number of referring entities
 NumberOfProposals=Number of proposals on last 12 month
 NumberOfCustomerOrders=Number of customer orders on last 12 month
 NumberOfCustomerInvoices=Number of customer invoices on last 12 month
+NumberOfSupplierProposals=Number of supplier proposals on last 12 month
 NumberOfSupplierOrders=Number of supplier orders on last 12 month
 NumberOfSupplierInvoices=Number of supplier invoices on last 12 month
 NumberOfUnitsProposals=Number of units on proposals on last 12 month
 NumberOfUnitsCustomerOrders=Number of units on customer orders on last 12 month
 NumberOfUnitsCustomerInvoices=Number of units on customer invoices on last 12 month
+NumberOfUnitsSupplierProposals=Number of units on supplier proposals on last 12 month
 NumberOfUnitsSupplierOrders=Number of units on supplier orders on last 12 month
 NumberOfUnitsSupplierInvoices=Number of units on supplier invoices on last 12 month
 EMailTextInterventionAddedContact=A newintervention %s has been assigned to you.
@@ -228,6 +231,8 @@ MemberResiliatedInDolibarr=Member %s resiliated
 MemberDeletedInDolibarr=Member %s deleted
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added
 ShipmentValidatedInDolibarr=Shipment %s validated
+ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
 ShipmentDeletedInDolibarr=Shipment %s deleted
 ##### Export #####
 Export=Export

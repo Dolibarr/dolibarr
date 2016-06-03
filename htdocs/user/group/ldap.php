@@ -102,7 +102,7 @@ print '<table class="border" width="100%">';
 // Ref
 print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 print '<td colspan="2">';
-print Form::showrefnav($fgroup,'id','',$canreadperms);
+print $form->showrefnav($fgroup,'id','',$canreadperms);
 print '</td>';
 print '</tr>';
 
@@ -177,7 +177,7 @@ if ($result > 0)
 	//var_dump($records);
 
 	// Affichage arbre
-	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{

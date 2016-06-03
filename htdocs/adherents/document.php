@@ -76,7 +76,7 @@ $upload_dir = $conf->adherent->dir_output . "/" . get_exdir($object->id,2,0,1,$o
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -131,7 +131,7 @@ if ($id > 0)
         // Morphy
         print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td class="valeur" >'.$object->getmorphylib().'</td>';
         /*print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
-        print Form::showphoto('memberphoto',$object);
+        print $form->showphoto('memberphoto',$object);
         print '</td>';*/
         print '</tr>';
 

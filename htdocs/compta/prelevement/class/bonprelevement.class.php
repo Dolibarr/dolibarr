@@ -245,16 +245,18 @@ class BonPrelevement extends CommonObject
     }
 
     /**
-     *	Read errors
+     *	Return error string
      *
-     *  @param	int		$error 		id of error
-     *	@return	array 				Array of errors
+     *  @param	int		$error 		 Id of error
+     *	@return	string               Error string
      */
-    function ReadError($error)
+    function getErrorString($error)
     {
+        global $langs;
+        
         $errors = array();
 
-        $errors[1027] = "Date invalide";
+        $errors[1027] = $langs->trans("DateInvalid");
 
         return $errors[abs($error)];
     }
@@ -460,6 +462,7 @@ class BonPrelevement extends CommonObject
                         $paiement->amounts      = $amounts;
                         $paiement->paiementid   = 3; //
                         $paiement->num_paiement = $this->ref ;
+						$paiement->id_prelevement = $this->id ;
 
                         $paiement_id = $paiement->create($user);
                         if ($paiement_id < 0)

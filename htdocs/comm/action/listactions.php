@@ -142,7 +142,7 @@ $form=new Form($db);
 $userstatic=new User($db);
 
 $nav='';
-$nav.=Form::selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 
 $now=dol_now();
@@ -306,10 +306,11 @@ if ($resql)
 	if (! empty($conf->global->AGENDA_USE_EVENT_TYPE)) print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateStart"),$_SERVER["PHP_SELF"],"a.datep",$param,'','align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"a.datep2",$param,'','align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ActionsOwnedBy"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ActionsOwnedByShort"),$_SERVER["PHP_SELF"],"",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("");
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -320,18 +321,21 @@ if ($resql)
 	    //print '<td class="liste_titre"><input type="text" name="search_type" value="'.$search_type.'"></td>';
 	}
 	print '<td class="liste_titre" align="center">';
-	print Form::selectDate($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
+	print $form->select_date($datestart, 'datestart', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre" align="center">';
-	print Form::selectDate($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
+	print $form->select_date($dateend, 'dateend', 0, 0, 1, '', 1, 0, 1);
 	print '</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 	//print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-    print '</td>';
+    print '<td></td>';
+	// Action column
+	print '<td class="liste_titre" align="middle">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print $searchpitco;
+	print '</td>';
 	print "</tr>\n";
 
 	$contactstatic = new Contact($db);
@@ -371,7 +375,7 @@ if ($resql)
 		{
 		    $labeltype=$obj->type_code;
 		    if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
-		    print '<td>'.dol_trunc($labeltype,24).'</td>';   
+		    print '<td>'.dol_trunc($labeltype,28).'</td>';   
 		}
 		
 		// Start date
@@ -397,7 +401,7 @@ if ($resql)
 			$societestatic->id=$obj->socid;
 			$societestatic->client=$obj->client;
 			$societestatic->name=$obj->societe;
-			print $societestatic->getNomUrl(1,'',10);
+			print $societestatic->getNomUrl(1,'',28);
 		}
 		else print '&nbsp;';
 		print '</td>';
@@ -409,7 +413,7 @@ if ($resql)
 			$contactstatic->lastname=$obj->lastname;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-			print $contactstatic->getNomUrl(1,'',10);
+			print $contactstatic->getNomUrl(1,'',28);
 		}
 		else
 		{
@@ -428,8 +432,10 @@ if ($resql)
 		print '</td>';
 
 		// Status/Percent
-		print '<td align="right" class="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
+		print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent,6).'</td>';
 
+		print '<td></td>';
+		
 		print "</tr>\n";
 		$i++;
 	}

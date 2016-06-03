@@ -24,7 +24,6 @@ CustomerCodeModel=Kunden-Code-Modell
 SupplierCodeModel=Lieferanten-Code Modell
 ProfId1BR=CNPJ
 ProfId4DE=Steuernummer
-ProfId5MA=Id prof. 5 (C.I.C.E.)
 VATIntraShort=MwSt.-Nr.
 CustomerCard=Kundenkarte
 CustomerRelativeDiscountShort=Rabatt rel.

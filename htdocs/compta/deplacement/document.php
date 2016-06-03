@@ -72,7 +72,7 @@ $modulepart='trip';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -108,7 +108,7 @@ if ($object->id)
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	print Form::showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
+	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 
 	// Societe

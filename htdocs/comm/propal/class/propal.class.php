@@ -247,16 +247,16 @@ class Propal extends CommonObject
 
             $productdesc = $prod->description;
 
-            $tva_tx = get_default_tva($mysoc,$this->client,$prod->id);
-            $tva_npr = get_default_npr($mysoc,$this->client,$prod->id);
+            $tva_tx = get_default_tva($mysoc,$this->thirdparty,$prod->id);
+            $tva_npr = get_default_npr($mysoc,$this->thirdparty,$prod->id);
             if (empty($tva_tx)) $tva_npr=0;
-            $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->client,$tva_npr);
-            $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->client,$tva_npr);
+            $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->thirdparty,$tva_npr);
+            $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->thirdparty,$tva_npr);
 
             // multiprix
-            if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
+            if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
             {
-                $price = $prod->multiprices[$this->client->price_level];
+                $price = $prod->multiprices[$this->thirdparty->price_level];
             }
             else
             {
@@ -547,7 +547,7 @@ class Propal extends CommonObject
                 if (! empty($fk_parent_line)) $this->line_order(true,'DESC');
 
                 // Mise a jour informations denormalisees au niveau de la propale meme
-                $result=$this->update_price(1,'auto');	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
+                $result=$this->update_price(1,'auto',0,$mysoc);	// This method is designed to add line from user input so total calculation must be done using 'auto' mode.
                 if ($result > 0)
                 {
                     $this->db->commit();
@@ -780,7 +780,7 @@ class Propal extends CommonObject
      */
     function create($user, $notrigger=0)
     {
-        global $langs,$conf,$mysoc,$hookmanager;
+        global $conf,$hookmanager;
         $error=0;
 
         $now=dol_now();
@@ -1080,7 +1080,7 @@ class Propal extends CommonObject
      */
     function createFromClone($socid=0)
     {
-        global $db, $user,$langs,$conf,$hookmanager;
+        global $user,$conf,$hookmanager;
 
 		dol_include_once('/projet/class/project.class.php');
 
@@ -1214,7 +1214,6 @@ class Propal extends CommonObject
      */
     function fetch($rowid,$ref='')
     {
-        global $conf;
 
         $sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
         $sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
@@ -1508,7 +1507,7 @@ class Propal extends CommonObject
     {
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    	global $conf,$langs;
+    	global $conf;
 
         $error=0;
         $now=dol_now();
@@ -1868,7 +1867,6 @@ class Propal extends CommonObject
      */
     function reopen($user, $statut, $note='', $notrigger=0)
     {
-        global $langs,$conf;
 
         $this->statut = $statut;
         $error=0;
@@ -1975,11 +1973,11 @@ class Propal extends CommonObject
                	if (! empty($conf->global->MAIN_MULTILANGS))
                	{
                		$outputlangs = new Translate("",$conf);
-               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->client->default_lang);
+               		$newlang=(GETPOST('lang_id') ? GETPOST('lang_id') : $this->thirdparty->default_lang);
                		$outputlangs->setDefaultLang($newlang);
                	}
                	//$ret=$object->fetch($id);    // Reload to get new records
-	               $this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	               $this->generateDocument($modelpdf, $outputlangs);
             }
 
             // Call trigger
@@ -2037,9 +2035,10 @@ class Propal extends CommonObject
      */
     function classer_facturee()
     {
+        global $user;
 		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
 
-    	return $this->classifyBilled();
+    	return $this->classifyBilled($user);
     }
 
     /**
@@ -2081,7 +2080,7 @@ class Propal extends CommonObject
      */
     function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
     {
-        global $conf,$user;
+        global $user;
 
         $ga = array();
 
@@ -2246,7 +2245,7 @@ class Propal extends CommonObject
      */
     function delete($user, $notrigger=0)
     {
-        global $conf,$langs;
+        global $conf;
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
         $error=0;
@@ -2609,7 +2608,7 @@ class Propal extends CommonObject
      */
     function initAsSpecimen()
     {
-        global $user,$langs,$conf;
+        global $langs;
 
         // Charge tableau des produits prodids
         $prodids = array();
@@ -2695,7 +2694,7 @@ class Propal extends CommonObject
      */
     function load_state_board()
     {
-        global $conf, $user;
+        global $user;
 
         $this->nb=array();
         $clause = "WHERE";
@@ -2740,7 +2739,7 @@ class Propal extends CommonObject
      */
     function getNextNumRef($soc)
     {
-        global $conf, $db, $langs;
+        global $conf,$langs;
         $langs->load("propal");
 
         if (! empty($conf->global->PROPALE_ADDON))
@@ -2815,10 +2814,10 @@ class Propal extends CommonObject
             $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         if ($option == '') {
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'compta') {  // deprecated
-            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id. $get_params .$linkclose;
+            $link = '<a href="'.DOL_URL_ROOT.'/comm/propal/card.php?id='.$this->id. $get_params .$linkclose;
         }
         if ($option == 'expedition') {
             $link = '<a href="'.DOL_URL_ROOT.'/expedition/propal.php?id='.$this->id. $get_params .$linkclose;
@@ -2841,8 +2840,8 @@ class Propal extends CommonObject
 
     /**
      * 	Retrieve an array of propal lines
-     *
-     *	@return	int	<0 if ko, >0 if ok
+	 *
+	 * 	@return int		>0 if OK, <0 if KO
      */
     function getLinesArray()
     {
@@ -2941,7 +2940,7 @@ class Propal extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
-		global $conf,$user,$langs;
+		global $conf,$langs;
 
 		$langs->load("propale");
 
@@ -3195,7 +3194,7 @@ class PropaleLigne  extends CommonObjectLine
      */
     function insert($notrigger=0)
     {
-        global $conf,$langs,$user;
+        global $conf,$user;
 
         $error=0;
 
@@ -3331,7 +3330,7 @@ class PropaleLigne  extends CommonObjectLine
      */
     function delete()
     {
-        global $conf,$langs,$user;
+        global $conf,$user;
 
         $error=0;
         $this->db->begin();
@@ -3382,7 +3381,7 @@ class PropaleLigne  extends CommonObjectLine
      */
     function update($notrigger=0)
     {
-        global $conf,$langs,$user;
+        global $conf,$user;
 
         $error=0;
 

@@ -726,17 +726,17 @@ else
 		// Confirmation de la validation du mailing
 		if ($action == 'valid')
 		{
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valid",'','',1);
 		}
 		// Confirm reset
 		else if ($action == 'reset')
 		{
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$object->ref),"confirm_reset",'','',2);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("ResetMailing"),$langs->trans("ConfirmResetMailing",$object->ref),"confirm_reset",'','',2);
 		}
 		// Confirm delete
 		else if ($action == 'delete')
 		{
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(! empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''),$langs->trans("DeleteAMailing"),$langs->trans("ConfirmDeleteMailing"),"confirm_delete",'','',1);
 		}
 
 
@@ -783,7 +783,7 @@ else
                     }
 				    $text.=$langs->trans('ConfirmSendingEmailing').'<br>';
 					$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,270);
+					print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id,$langs->trans('SendMailing'),$text,'sendallconfirmed',$formquestion,'',1,270);
 				}
 			}
 
@@ -793,22 +793,22 @@ else
 
 			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 			print '<td colspan="3">';
-			print Form::showrefnav($object,'id', $linkback);
+			print $form->showrefnav($object,'id', $linkback);
 			print '</td></tr>';
 
 			// Description
-			print '<tr><td>'.Form::editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print Form::editfieldval("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
+			print '<tr><td>'.$form->editfieldkey("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailTitle",'titre',$object->titre,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// From
-			print '<tr><td>'.Form::editfieldkey("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print Form::editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
+			print '<tr><td>'.$form->editfieldkey("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailFrom",'email_from',$object->email_from,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Errors to
-			print '<tr><td>'.Form::editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
-			print Form::editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
+			print '<tr><td>'.$form->editfieldkey("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string').'</td><td colspan="3">';
+			print $form->editfieldval("MailErrorsTo",'email_errorsto',$object->email_errorsto,$object,$user->rights->mailing->creer && $object->statut < 3,'string');
 			print '</td></tr>';
 
 			// Status
@@ -826,12 +826,12 @@ else
 				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
 				{
 					$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-					print Form::textwithpicto($nbemail,$text,1,'warning');
+					print $form->textwithpicto($nbemail,$text,1,'warning');
 				}
 				else
 				{
 					$text=$langs->trans('NotEnoughPermissions');
-					print Form::textwithpicto($nbemail,$text,1,'warning');
+					print $form->textwithpicto($nbemail,$text,1,'warning');
 				}
 
 			}
@@ -864,7 +864,7 @@ else
 				array('type' => 'checkbox', 'name' => 'clone_receivers', 'label' => $langs->trans("CloneReceivers"), 'value' => 0)
 				);
 				// Paiement incomplet. On demande si motif = escompte ou autre
-				print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
+				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneEMailing'),$langs->trans('ConfirmCloneEMailing',$object->ref),'confirm_clone',$formquestion,'yes',2,240);
 			}
 
 			/*
@@ -948,7 +948,7 @@ else
 					}
 				}
 
-				print '<br><br></div>';
+				print '</div>';
 			}
 
 			// Affichage formulaire de TEST
@@ -1052,27 +1052,32 @@ else
 
 			print '<table class="border" width="100%">';
 
-			// Ref
-			print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">'.$object->id.'</td></tr>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
+
+			print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+			print '<td colspan="3">';
+			print $form->showrefnav($object,'id', $linkback);
+			print '</td></tr>';
+
 			// Topic
-			print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
+			print '<tr><td>'.$langs->trans("MailTitle").'</td><td colspan="3">'.$object->titre.'</td></tr>';
 			// From
-			print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
+			print '<tr><td>'.$langs->trans("MailFrom").'</td><td colspan="3">'.dol_print_email($object->email_from,0,0,0,0,1).'</td></tr>';
 			// To
-			print '<tr><td width="25%">'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
+			print '<tr><td>'.$langs->trans("MailErrorsTo").'</td><td colspan="3">'.dol_print_email($object->email_errorsto,0,0,0,0,1).'</td></tr>';
 
 			// Status
-			print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 
 			// Nb of distinct emails
-			print '<tr><td width="25%">';
+			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
 			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
 			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
 			{
 				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-				print Form::textwithpicto($nbemail,$text,1,'warning');
+				print $form->textwithpicto($nbemail,$text,1,'warning');
 			}
 			else
 			{

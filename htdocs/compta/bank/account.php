@@ -341,7 +341,7 @@ if ($id > 0 || ! empty($ref))
 	// Ref
 	print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref');
 	print '</td></tr>';
 
 	// Label
@@ -404,7 +404,7 @@ if ($id > 0 || ! empty($ref))
 	if ($action == 'delete')
 	{
 		$text=$langs->trans('ConfirmDeleteTransaction');
-		print Form::formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.GETPOST("rowid"),$langs->trans('DeleteTransaction'),$text,'confirm_delete');
+		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;rowid='.GETPOST("rowid"),$langs->trans('DeleteTransaction'),$text,'confirm_delete');
 
 	}
 
@@ -466,7 +466,7 @@ if ($id > 0 || ! empty($ref))
 
 		print '<tr '.$bc[false].'>';
 		print '<td class="nowrap" colspan="2">';
-		Form::selectDate($dateop,'op',0,0,0,'transaction');
+		$form->select_date($dateop,'op',0,0,0,'transaction');
 		print '</td>';
 		print '<td class="nowrap">';
 		$form->select_types_paiements((GETPOST('operation')?GETPOST('operation'):($object->courant == Account::TYPE_CASH ? 'LIQ' : '')),'operation','1,2',2,1);
@@ -521,9 +521,9 @@ if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-	$period_filter .= $langs->trans('From').'&nbsp;'.Form::selectDate($req_stdt,'req_stdt',0,0,1,null,1,1,1);
+	$period_filter .= $langs->trans('From').'&nbsp;'.$form->select_date($req_stdt,'req_stdt',0,0,1,null,1,0,1);
 	$period_filter .= '&nbsp;';
-	$period_filter .= $langs->trans('to').'&nbsp;'.Form::selectDate($req_enddt,'req_enddt',0,0,1,null,1,1,1);
+	$period_filter .= $langs->trans('to').'&nbsp;'.$form->select_date($req_enddt,'req_enddt',0,0,1,null,1,0,1);
 	
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$period_filter.'</td>';
@@ -539,7 +539,7 @@ if ($id > 0 || ! empty($ref))
 	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$req_credit.'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";

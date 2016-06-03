@@ -29,7 +29,8 @@ create table llx_chargesociales
   fk_type    integer NOT NULL,
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,
-  periode    date
+  periode    date,
+  import_key varchar(14)
 )ENGINE=innodb;
 
 -- 

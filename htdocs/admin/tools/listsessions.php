@@ -116,12 +116,12 @@ print '<br>';
 if ($action == 'purge')
 {
 	$formquestion=array();
-	print Form::formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'),'confirm_purge',$formquestion,'no',2);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'),'confirm_purge',$formquestion,'no',2);
 }
 else if ($action == 'lock')
 {
 	$formquestion=array();
-	print Form::formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions',$user->login),'confirm_lock',$formquestion,'no',1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions',$user->login),'confirm_lock',$formquestion,'no',1);
 }
 
 if ($savehandler == 'files')
@@ -150,7 +150,7 @@ if ($savehandler == 'files')
 
 		// ID
 		print '<td align="left" class="nowrap">';
-		if ("$key" == session_id()) print Form::textwithpicto($key,$langs->trans("YourSession"));
+		if ("$key" == session_id()) print $form->textwithpicto($key,$langs->trans("YourSession"));
 		else print $key;
 		print '</td>';
 

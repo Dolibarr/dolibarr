@@ -390,7 +390,7 @@ foreach ($dirproduct as $dirroot)
 
     			print '<td align="center">';
     			$s=$modCodeProduct->getToolTip($langs,null,-1);
-    			print Form::textwithpicto('',$s,1);
+    			print $form->textwithpicto('',$s,1);
     			print '</td>';
 
     			print '</tr>';
@@ -510,7 +510,7 @@ if ($resql)
         					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
         
         					print '<td align="center" class="nowrap">';
-        					print Form::textwithpicto('',$htmltooltip,1,0);
+        					print $form->textwithpicto('',$htmltooltip,1,0);
         					print '</td>';
         
         					// Preview
@@ -582,7 +582,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRIC
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
 if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) && (!empty($conf->global->PRODUIT_MULTIPRICES))) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES';
-print Form::selectarray("princingrule",$select_pricing_rules,$current_rule);
+print $form->selectarray("princingrule",$select_pricing_rules,$current_rule);
 print '</td><td align="right" rowspan="'.$rowspan.'" class="nohover">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
@@ -604,14 +604,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
-print Form::selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
+print $form->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
 print '</td>';
 print '</tr>';
 
 // Utilisation formulaire Ajax sur choix produit
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.Form::textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
+print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"),$langs->trans('UseSearchToSelectProductTooltip'),1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -627,7 +627,7 @@ else
 	    '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	    '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print Form::selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 	print '</td>';
 }
 print '</tr>';
@@ -646,7 +646,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
-print Form::selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print $form->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
 print '</td>';
 print '</tr>';
 
@@ -656,7 +656,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
 print '<td width="60" align="right">';
-print Form::selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
+print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
 print '</td>';
 print '</tr>';
 */
@@ -667,7 +667,7 @@ $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("UseUnits").'</td>';
 print '<td width="60" align="right">';
-print Form::selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
+print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
 print '</td>';
 print '</tr>';
 */
@@ -679,7 +679,7 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
-	print Form::selectyesno("activate_viewProdTextsInThirdpartyLanguage", (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)?$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE:0), 1);
+	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)?$conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE:0), 1);
 	print '</td>';
 	print '</tr>';
 }

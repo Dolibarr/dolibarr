@@ -1261,7 +1261,7 @@ class pdf_einstein extends ModelePDFCommandes
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
 			$posy=42;
@@ -1306,12 +1306,12 @@ class pdf_einstein extends ModelePDFCommandes
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+				$thirdparty = $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target', $object);
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target', $object);
 
 			// Show recipient
 			$widthrecbox=100;
@@ -1354,7 +1354,8 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		$showdetails=0;
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'ORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 

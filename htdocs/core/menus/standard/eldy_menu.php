@@ -144,7 +144,7 @@ class MenuManager
 
 		if ($mode == 'topnb')
 		{
-		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);  // no output
 		    return $this->menu->getNbOfVisibleMenuEntries();
 		}
 		    

@@ -286,7 +286,7 @@ if ($id > 0 || ! empty($ref))
 		// Ref
 		print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="2">';
-		print Form::showrefnav($commande,'ref','',1,'ref','ref');
+		print $form->showrefnav($commande,'ref','',1,'ref','ref');
 		print '</td>';
 		print '</tr>';
 
@@ -381,6 +381,7 @@ if ($id > 0 || ! empty($ref))
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product=p.rowid";
 			$sql.= " WHERE l.fk_commande = ".$commande->id;
+			if(empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND l.product_type = 0";
 			$sql.= " GROUP BY p.ref, p.label, p.tobatch, l.rowid, l.fk_product, l.subprice, l.remise_percent";	// Calculation of amount dispatched is done per fk_product so we must group by fk_product
 			$sql.= " ORDER BY p.ref, p.label";
 
@@ -510,11 +511,11 @@ if ($id > 0 || ! empty($ref))
 								print '</td>';
 								print '<td>';
 								$dlcdatesuffix=dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
-								Form::selectDate($dlcdatesuffix,'dlc'.$suffix,'','',1,"");
+								$form->select_date($dlcdatesuffix,'dlc'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td>';
 								$dluodatesuffix=dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
-								Form::selectDate($dluodatesuffix,'dluo'.$suffix,'','',1,"");
+								$form->select_date($dluodatesuffix,'dluo'.$suffix,'','',1,"");
 								print '</td>';
 								print '<td colspan="2">&nbsp</td>';		// Qty ordered + qty already dispatached
 							}

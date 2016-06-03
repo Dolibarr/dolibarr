@@ -10,6 +10,7 @@
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,12 +131,6 @@ abstract class CommonObject
 	 * @see fetch_thirdparty()
 	 */
 	public $thirdparty;
-	/**
-	 * @deprecated
-	 * @var Societe A related customer
-	 * @see thirdparty
-	 */
-	public $client;
 
 	/**
 	 * @var User A related user
@@ -234,12 +229,13 @@ abstract class CommonObject
 	public $mode_reglement_id;
 
 	/**
-	 * @var string Payment terms ID
+	 * @var int Payment terms ID
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
 	/**
-	 * @deprecated
+	 * @var int Payment terms ID
+	 * @deprecated Kept for compatibility
 	 * @see cond_reglement_id;
 	 */
 	public $cond_reglement;
@@ -1016,12 +1012,10 @@ abstract class CommonObject
         if ($idtofetch) {
             $thirdparty = new Societe($this->db);
             $result = $thirdparty->fetch($idtofetch);
-            $this->client = $thirdparty;  // deprecated
             $this->thirdparty = $thirdparty;
 
             // Use first price level if level not defined for third party
             if (!empty($conf->global->PRODUIT_MULTIPRICES) && empty($this->thirdparty->price_level)) {
-                $this->client->price_level = 1; // deprecated
                 $this->thirdparty->price_level = 1;
             }
 
@@ -1733,10 +1727,10 @@ abstract class CommonObject
      *  Save a new position (field rang) for details lines.
      *  You can choose to set position for lines with already a position or lines without any position defined.
      *
-     * 	@param		boolean		$renum				true to renum all already ordered lines, false to renum only not already ordered lines.
-     * 	@param		string		$rowidorder			ASC or DESC
-     * 	@param		boolean		$fk_parent_line		Table with fk_parent_line field or not
-     * 	@return		void
+     * 	@param		boolean		$renum			   True to renum all already ordered lines, false to renum only not already ordered lines.
+     * 	@param		string		$rowidorder		   ASC or DESC
+     * 	@param		boolean		$fk_parent_line    Table with fk_parent_line field or not
+     * 	@return		int                            <0 if KO, >0 if OK
      */
     function line_order($renum=false, $rowidorder='ASC', $fk_parent_line=true)
     {
@@ -1813,6 +1807,7 @@ abstract class CommonObject
 				dol_print_error($this->db);
 			}
 		}
+		return 1;
 	}
 
 	/**
@@ -2154,9 +2149,9 @@ abstract class CommonObject
      *  Must be called at end of methods addline or updateline.
      *
      *	@param	int		$exclspec          	>0 = Exclude special product (product_type=9)
-     *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force use total of rounding, '1'=Force use rounding of total
+     *  @param  string	$roundingadjust    	'none'=Do nothing, 'auto'=Use default method (MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND if defined, or '0'), '0'=Force mode total of rounding, '1'=Force mode rounding of total
      *  @param	int		$nodatabaseupdate	1=Do not update database. Update only properties of object.
-     *  @param	Societe	$seller				If roundingadjust is '0' or '1', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
+     *  @param	Societe	$seller				If roundingadjust is '0' or '1' or maybe 'auto', it means we recalculate total for lines before calculating total for object and for this, we need seller object.
      *	@return	int    			           	<0 if KO, >0 if OK
      */
     function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
@@ -2939,10 +2934,72 @@ abstract class CommonObject
         return price2num($total_discount);
     }
 
+    
+    /**
+     * Return into unit=0, the calculated total of weight and volume of all lines * qty
+     * Calculate by adding weight and volume of each product line, so properties ->volume/volume_units/weight/weight_units must be loaded on line.
+     *
+     * @return  array                           array('weight'=>...,'volume'=>...)
+     */
+    function getTotalWeightVolume()
+    {
+        $weightUnit=0;
+        $volumeUnit=0;
+        $totalWeight = '';
+        $totalVolume = '';
+        $totalOrdered = '';     // defined for shipment only
+        $totalToShip = '';      // defined for shipment only
+        
+        foreach ($this->lines as $line)
+        {
+        
+            $totalOrdered+=$line->qty_asked;    // defined for shipment only
+            $totalToShip+=$line->qty_shipped;   // defined for shipment only
+            
+            // Define qty, weight, volume, weight_units, volume_units
+            if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
+            else $qty=$line->qty;
+            $weight=$line->weight;
+            $volume=$line->volume;
+            $weight_units=$line->weight_units;
+            $volume_units=$line->volume_units;
+                        
+            $weightUnit=0;
+            $volumeUnit=0;
+            if (! empty($weight_units)) $weightUnit = $weight_units;
+            if (! empty($volume_units)) $volumeUnit = $volume_units;
+    
+            //var_dump($line->volume_units);
+            if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                $trueWeightUnit=pow(10, $weightUnit);
+                $totalWeight += $weight * $qty * $trueWeightUnit;
+            }
+            else
+            {
+                $totalWeight += $weight * $qty;   // This may be wrong if we mix different units
+            }
+            if ($volume_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
+            {
+                //print $line->volume."x".$line->volume_units."x".($line->volume_units < 50)."x".$volumeUnit;
+                $trueVolumeUnit=pow(10, $volumeUnit);
+                //print $line->volume;
+                $totalVolume += $volume * $qty * $trueVolumeUnit;
+            }
+            else
+            {
+                $totalVolume += $volume * $qty;   // This may be wrong if we mix different units
+            }
+        }
+        
+        return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
+    }    
+    
+    
     /**
      *	Set extra parameters
      *
-     *	@return	void
+     *	@return	int      <0 if KO, >0 if OK
      */
     function setExtraParameters()
     {
@@ -3029,7 +3086,7 @@ abstract class CommonObject
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_incoterms = ".($id_incoterm > 0 ? $id_incoterm : "null");
-			$sql.= ", location_incoterms = '".($id_incoterm > 0 ? $this->db->escape($location) : "null")."'";
+			$sql.= ", location_incoterms = ".($id_incoterm > 0 ? "'".$this->db->escape($location)."'" : "null");
             $sql.= " WHERE rowid = " . $this->id;
 			dol_syslog(get_class($this).'::setIncoterms', LOG_DEBUG);
             $resql=$this->db->query($sql);
@@ -3115,13 +3172,13 @@ abstract class CommonObject
      * Show linked object block.
      *
      * @return int <0 if KO, >0 if OK
-     * @deprecated 3.8 Use instead Form::showLinkedObjectBlock($object)
+     * @deprecated 3.8 Use instead $form->showLinkedObjectBlock($object)
      * @see Form::showLinkedObjectBlock
      */
     function showLinkedObjectBlock()
     {
     	global $form;
-    	return Form::showLinkedObjectBlock($this);
+    	return $form->showLinkedObjectBlock($this);
     }
 
 
@@ -3180,7 +3237,9 @@ abstract class CommonObject
 	 */
 	function printObjectLines($action, $seller, $buyer, $selected=0, $dateSelector=0)
 	{
-		global $conf, $hookmanager, $inputalsopricewithtax, $usemargins, $langs, $user;
+		global $conf, $hookmanager, $langs, $user;
+		// TODO We should not use global var for this !
+		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove;
 
 		// Define usemargins
 		$usemargins=0;
@@ -3210,18 +3269,18 @@ abstract class CommonObject
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
-		print '<td class="linecolqty" align="right" width="50">'.$langs->trans('Qty').'</td>';
+		print '<td class="linecolqty" align="right">'.$langs->trans('Qty').'</td>';
 
 		if($conf->global->PRODUCT_USE_UNITS)
 		{
-			print '<td class="linecoluseunit" align="left" width="50">'.$langs->trans('Unit').'</td>';
+			print '<td class="linecoluseunit" align="left">'.$langs->trans('Unit').'</td>';
 		}
 
 		// Reduction short
-		print '<td class="linecoldiscount" align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		print '<td class="linecoldiscount" align="right">'.$langs->trans('ReductionShort').'</td>';
 
 		if ($this->situation_cycle_ref) {
-			print '<td class="linecolcycleref" align="right" width="50">' . $langs->trans('Progress') . '</td>';
+			print '<td class="linecolcycleref" align="right">' . $langs->trans('Progress') . '</td>';
 		}
 
 		if ($usemargins && ! empty($conf->margin->enabled) && empty($user->societe_id))
@@ -3238,10 +3297,10 @@ abstract class CommonObject
 		}
 
 		// Total HT
-		print '<td class="linecolht" align="right" width="50">'.$langs->trans('TotalHTShort').'</td>';
+		print '<td class="linecolht" align="right">'.$langs->trans('TotalHTShort').'</td>';
 
 		// Multicurrency
-		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right" width="50">'.$langs->trans('TotalHTShortCurrency').'</td>';
+		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoltotalht_currency" align="right">'.$langs->trans('TotalHTShortCurrency').'</td>';
 
 		print '<td class="linecoledit"></td>';  // No width to allow autodim
 
@@ -3309,7 +3368,8 @@ abstract class CommonObject
 	function printObjectLine($action,$line,$var,$num,$i,$dateSelector,$seller,$buyer,$selected=0,$extrafieldsline=0)
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
-		global $form,$bc,$bcdd, $object_rights;
+		global $form,$bc,$bcdd;
+		global $object_rights, $disableedit, $disablemove;   // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
 
@@ -3848,7 +3908,7 @@ abstract class CommonObject
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
 	 *	@return		void
 	 */
-	function add_thumb($file)
+	function addThumbs($file)
 	{
 		global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini, $quality;
 
@@ -3880,15 +3940,15 @@ abstract class CommonObject
      * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
      * 4) Return value found into database (TODO No yet implemented)
      * 
-     * @param   string      $fieldname          Name of field
-     * @param   string      $alternatevalue     Alternate value to use
-     * @return  string                          Default value
+     * @param   string              $fieldname          Name of field
+     * @param   string              $alternatevalue     Alternate value to use
+     * @return  string|string[]                         Default value (can be an array if the GETPOST return an array)
      **/
 	function getDefaultCreateValueFor($fieldname, $alternatevalue=null)
     {
         global $conf, $_POST;
 
-        // If param is has been posted with use this value first.
+        // If param here has been posted, we use this value first.
         if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
         
         if (isset($alternatevalue)) return $alternatevalue;
@@ -3927,7 +3987,7 @@ abstract class CommonObject
     function call_trigger($trigger_name, $user)
     {
     	global $langs,$conf;
-
+    	
     	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     	$interface=new Interfaces($this->db);
     	$result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
@@ -4174,6 +4234,90 @@ abstract class CommonObject
         }
         else return 0;
     }
+    
+    /**
+     *	Update an exta field value for the current object.
+     *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+     *  This function delte record with all extrafields and insert them again from the array $this->array_options.
+     *
+     *  @param  string      $key    Key of the extrafield
+     *  @return int                 -1=error, O=did nothing, 1=OK
+     */
+    function updateExtraField($key)
+    {
+        global $conf,$langs;
+
+		$error=0;
+
+		if (! empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return 0;	// For avoid conflicts if trigger used
+
+        if (! empty($this->array_options) && isset($this->array_options["options_".$key]))
+        {
+            // Check parameters
+            $langs->load('admin');
+            require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+            $extrafields = new ExtraFields($this->db);
+            $target_extrafields=$extrafields->fetch_name_optionals_label($this->table_element);
+
+            $value=$this->array_options["options_".$key];
+            $attributeType  = $extrafields->attribute_type[$key];
+            $attributeLabel = $extrafields->attribute_label[$key];
+            $attributeParam = $extrafields->attribute_param[$key];
+            switch ($attributeType)
+            {
+                case 'int':
+                    if (!is_numeric($value) && $value!='')
+                    {
+                        $this->errors[]=$langs->trans("ExtraFieldHasWrongValue",$attributeLabel);
+                        return -1;
+                    }
+                    elseif ($value=='')
+                    {
+                        $this->array_options["options_".$key] = null;
+                    }
+                    break;
+                case 'price':
+                    $this->array_options["options_".$key] = price2num($this->array_options["options_".$key]);
+                    break;
+                case 'date':
+                    $this->array_options["options_".$key]=$this->db->idate($this->array_options["options_".$key]);
+                    break;
+                case 'datetime':
+                    $this->array_options["options_".$key]=$this->db->idate($this->array_options["options_".$key]);
+                    break;
+                case 'link':
+                    $param_list=array_keys($attributeParam ['options']);
+                    // 0 : ObjectName
+                    // 1 : classPath
+                    $InfoFieldList = explode(":", $param_list[0]);
+                    dol_include_once($InfoFieldList[1]);
+                    $object = new $InfoFieldList[0]($this->db);
+                    if ($value)
+                    {
+                        $object->fetch(0,$value);
+                        $this->array_options["options_".$key]=$object->id;
+                    }
+                    break;
+            }
+            
+            $this->db->begin();
+            $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key."='".$this->db->escape($this->array_options["options_".$key])."'";
+            $sql .= " WHERE fk_object = ".$this->id;
+            $resql = $this->db->query($sql);
+            if (! $resql)
+            {
+                $this->error=$this->db->lasterror();
+                $this->db->rollback();
+                return -1;
+            }
+            else
+            {
+                $this->db->commit();
+                return 1;
+            }
+        }
+        else return 0;
+    }
 
    /**
      * Function to show lines of extrafields with output datas
@@ -4318,7 +4462,10 @@ abstract class CommonObject
 	{
 		global $user;
 
-		return $user->rights->{$this->element};
+		$element = $this->element;
+		if ($element == 'facturerec') $element='facture';
+
+		return $user->rights->{$element};
 	}
 
 	/**
@@ -4329,7 +4476,7 @@ abstract class CommonObject
 	 * @param DoliDB 	$db 			Database handler
 	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
 	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
-	 * @param array 	$tables 		Tables that need to be changed
+	 * @param string[] 	$tables 		Tables that need to be changed
 	 * @return bool
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
@@ -4415,7 +4562,7 @@ abstract class CommonObject
 					$productFournisseur = new ProductFournisseur($this->db);
 					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0)
 					{
-						$buyPrice = $productFournisseur->fourn_price;
+						$buyPrice = $productFournisseur->fourn_unitprice;
 					}
 					else if ($result < 0)
 					{

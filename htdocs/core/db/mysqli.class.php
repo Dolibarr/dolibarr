@@ -532,8 +532,12 @@ class DoliDBMysqli extends DoliDB
     function DDLGetConnectId()
     {
         $resql=$this->query('SELECT CONNECTION_ID()');
-        $row=$this->fetch_row($resql);
-        return $row[0];
+        if ($resql)
+        {
+            $row=$this->fetch_row($resql);
+            return $row[0];
+        }
+        else return '?';
     }
 
     /**

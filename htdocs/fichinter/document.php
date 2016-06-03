@@ -72,7 +72,7 @@ $modulepart='fichinter';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -107,11 +107,11 @@ if ($object->id)
 
 	// Ref
 	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Societe
-	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
+	print "<tr><td>".$langs->trans("Company")."</td><td>".$object->thirdparty->getNomUrl(1)."</td></tr>";
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';

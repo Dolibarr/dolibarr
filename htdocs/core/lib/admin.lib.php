@@ -43,7 +43,10 @@ function versiontostring($versionarray)
 
 /**
  *	Compare 2 versions (stored into 2 arrays).
- *  For example, to check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  To check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 beta or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,0)) >= 0) is true if version is 4.0 final or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -343,7 +346,8 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
 					'DB_ERROR_NO_INDEX_TO_DROP',
 					'DB_ERROR_CANNOT_CREATE',    		// Qd contrainte deja existante
 					'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS'
+					'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
+            		'DB_ERROR_22P02'
 				);
                 if ($okerror == 'none') $okerrors=array();
 
@@ -925,7 +929,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
                                 foreach($objMod->dictionaries['tabcond'] as $val)        { $nbtabcond++; $tabcond[] = $val; }
                                 if (! empty($objMod->dictionaries['tabhelp']))       foreach($objMod->dictionaries['tabhelp'] as $val)       { $nbtabhelp++; $tabhelp[] = $val; }
                                 if (! empty($objMod->dictionaries['tabfieldcheck'])) foreach($objMod->dictionaries['tabfieldcheck'] as $val) { $nbtabfieldcheck++; $tabfieldcheck[] = $val; }
-                                
+
                                 if ($nbtabname != $nbtablib || $nbtablib != $nbtabsql || $nbtabsql != $nbtabsqlsort)
                                 {
                                     print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';
@@ -1156,7 +1160,7 @@ function form_constantes($tableau,$strictw3c=0)
                 {
                     $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
                 }
-                print Form::selectarray('constvalue'.(empty($strictw3c)?'':'[]'),$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
+                print $form->selectarray('constvalue'.(empty($strictw3c)?'':'[]'),$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
                 print '<input type="hidden" name="consttype" value="yesno">';
                 print '</td>';
             }
@@ -1179,7 +1183,7 @@ function form_constantes($tableau,$strictw3c=0)
                 }
                 else if ($obj->type == 'yesno')
                 {
-                    print Form::selectyesno('constvalue'.(empty($strictw3c)?'':'[]'),$obj->value,1);
+                    print $form->selectyesno('constvalue'.(empty($strictw3c)?'':'[]'),$obj->value,1);
                     print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="yesno">';
                 }
                 else

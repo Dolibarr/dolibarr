@@ -44,7 +44,7 @@ $entitytoicon=array(
 	'order'=>'order' ,'order_line'=>'order',
 	'intervention'=>'intervention' ,'inter_line'=>'intervention',
 	'member'=>'user' ,'member_type'=>'group','subscription'=>'payment',
-	'tax'=>'generic' ,'tax_type'=>'generic',
+	'tax'=>'bill' ,'tax_type'=>'generic',
 	'account'=>'account',
 	'payment'=>'payment',
 	'product'=>'product','stock'=>'generic','warehouse'=>'stock',
@@ -453,7 +453,7 @@ if ($step == 2 && $datatoimport)
 		print '<tr '.$bc[$var].'>';
 		print '<td width="16">'.img_picto_common($key,$objmodelimport->getPictoForKey($key)).'</td>';
     	$text=$objmodelimport->getDriverDescForKey($key);
-    	print '<td>'.Form::textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
+    	print '<td>'.$form->textwithpicto($objmodelimport->getDriverLabelForKey($key),$text).'</td>';
 		print '<td align="center"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$key.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a></td>';
 		// Action button
 		print '<td align="right">';
@@ -491,7 +491,7 @@ if ($step == 3 && $datatoimport)
 	 */
 	if ($action == 'delete')
 	{
-		print Form::formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?urlfile='.urlencode(GETPOST('urlfile')).'&step=3'.$param, $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', 0, 1);
 
 	}
 
@@ -522,7 +522,7 @@ if ($step == 3 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
     print '</td><td align="right" class="nowrap"><a href="'.DOL_URL_ROOT.'/imports/emptyexample.php?format='.$format.$param.'" target="_blank">'.$langs->trans("DownloadEmptyExample").'</a>';
 
 	print '</td></tr>';
@@ -739,7 +739,7 @@ if ($step == 4 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// Separator and enclosure
@@ -940,7 +940,7 @@ if ($step == 4 && $datatoimport)
 		}
 		$htmltext.=$langs->trans("FieldTitle").": <b>".$langs->trans($newlabel)."</b><br>";
 		$htmltext.=$langs->trans("Table")." -> ".$langs->trans("Field").': <b>'.$tablename." -> ".preg_replace('/^.*\./','',$code)."</b><br>";
-		print Form::textwithpicto($more,$htmltext);
+		print $form->textwithpicto($more,$htmltext);
 		print '</td>';
 
 		print '</tr>';
@@ -1142,6 +1142,7 @@ if ($step == 5 && $datatoimport)
 	// Load source fields in input file
 	$fieldssource=array();
 	$result=$obj->import_open_file($conf->import->dir_temp.'/'.$filetoimport,$langs);
+
 	if ($result >= 0)
 	{
 		// Read first line
@@ -1156,8 +1157,7 @@ if ($step == 5 && $datatoimport)
 		$obj->import_close_file();
 	}
 
-  // TODO, remove this, since it only works for csv
-	$nboflines=dol_count_nb_of_line($conf->import->dir_temp.'/'.$filetoimport);
+	$nboflines=$obj->import_get_nb_of_lines($conf->import->dir_temp.'/'.$filetoimport);
 
 	$param='&leftmenu=import&format='.$format.'&datatoimport='.$datatoimport.'&filetoimport='.urlencode($filetoimport).'&nboflines='.$nboflines.'&separator='.urlencode($separator).'&enclosure='.urlencode($enclosure);
 	$param2 = $param;  // $param2 = $param without excludefirstline and endatlinenb
@@ -1203,7 +1203,7 @@ if ($step == 5 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// Separator and enclosure
@@ -1247,7 +1247,7 @@ if ($step == 5 && $datatoimport)
 	else
 	{
 	    print '<input type="text" size="4" name="excludefirstline" value="'.$excludefirstline.'">';
-	    print Form::textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
+	    print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
 	print '</td></tr>';
 
@@ -1264,7 +1264,7 @@ if ($step == 5 && $datatoimport)
 	else
 	{
 	    print '<input type="text" size="4" name="endatlinenb" value="'.$endatlinenb.'">';
-	    print Form::textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
+	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
 	print '</td></tr>';
 	
@@ -1415,6 +1415,25 @@ if ($step == 5 && $datatoimport)
             print $langs->trans("ErrorFailedToOpenFile",$pathfile);
         }
 
+	    $error=0;
+	    
+	    // Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
@@ -1586,7 +1605,7 @@ if ($step == 6 && $datatoimport)
 	print '<tr><td width="25%">'.$langs->trans("SourceFileFormat").'</td>';
 	print '<td>';
     $text=$objmodelimport->getDriverDescForKey($format);
-    print Form::textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
+    print $form->textwithpicto($objmodelimport->getDriverLabelForKey($format),$text);
 	print '</td></tr>';
 
 	// File to import
@@ -1740,8 +1759,31 @@ if ($step == 6 && $datatoimport)
 	}
 
 	if (count($arrayoferrors) > 0) $db->rollback();	// We force rollback because this was errors.
-	else  $db->commit();	// We can commit if no errors.
-
+	else 
+	{
+	    $error=0;
+	    
+		// Run the sql after import if defined
+	    //var_dump($objimport->array_import_run_sql_after[0]);
+	    if (! empty($objimport->array_import_run_sql_after[0]) && is_array($objimport->array_import_run_sql_after[0]))
+	    {
+	        $i=0;
+	        foreach($objimport->array_import_run_sql_after[0] as $sqlafterimport)
+	        {
+	            $i++;
+	            $resqlafterimport=$db->query($sqlafterimport);
+	            if (! $resqlafterimport) 
+	            {
+			        $arrayoferrors['none'][]=array('lib'=>$langs->trans("Error running final request: ".$sqlafterimport));
+	                $error++;
+	            }
+	        }
+	    }
+	    
+	    if (! $error) $db->commit();	// We can commit if no errors.
+	    else $db->rollback();
+	}
+	    
     dol_fiche_end();
 
 

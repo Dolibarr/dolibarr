@@ -328,8 +328,7 @@ if (empty($reshook))
 										$label = $lines[$i]->product_label;
 									}
 	
-									if ($conf->global->PRODUIT_DESC_IN_FORM)
-										$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
+									$desc .= ($lines[$i]->desc && $lines[$i]->desc!=$lines[$i]->libelle)?dol_htmlentitiesbr($lines[$i]->desc):'';
 								}
 								else {
 								    $desc = dol_htmlentitiesbr($lines[$i]->desc);
@@ -360,7 +359,6 @@ if (empty($reshook))
 			                        $error++;
 			                        break;
 			                    }
-	
 							}
 		                }
 		            }
@@ -621,6 +619,7 @@ if (empty($reshook))
 				unset($_POST['type']);
 				unset($_POST['remise_percent']);
 				unset($_POST['price_ht']);
+				unset($_POST['multicurrency_price_ht']);
 				unset($_POST['price_ttc']);
 				unset($_POST['tva_tx']);
 				unset($_POST['product_ref']);
@@ -1061,7 +1060,7 @@ if ($action == 'create')
 
             $projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
-            $soc = $objectsrc->client;
+            $soc = $objectsrc->thirdparty;
 
             $note_private		= (! empty($objectsrc->note_private) ? $objectsrc->note_private : '');
             $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');
@@ -1148,7 +1147,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     print '<tr><td><span class="fieldrequired">'.$langs->trans("Date").'</span></td><td>';
-    Form::selectDate($datecontrat,'',0,0,'',"contrat");
+    $form->select_date($datecontrat,'',0,0,'',"contrat");
     print "</td></tr>";
 
     // Project
@@ -1189,7 +1188,11 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+    print '<div align="center">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+    print '</div>';
 
     if (is_object($objectsrc))
     {
@@ -1243,7 +1246,7 @@ else
          */
         if ($action == 'delete')
         {
-            print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
+            print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("DeleteAContract"),$langs->trans("ConfirmDeleteAContract"),"confirm_delete",'',0,1);
 
         }
 
@@ -1264,7 +1267,7 @@ else
 
         	$text=$langs->trans('ConfirmValidateContract',$numref);
 
-            print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
+            print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("ValidateAContract"),$text,"confirm_valid",'',0,1);
 
         }
 
@@ -1273,7 +1276,7 @@ else
          */
         if ($action == 'close')
         {
-            print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
+            print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CloseAContract"),$langs->trans("ConfirmCloseContract"),"confirm_close",'',0,1);
 
         }
 
@@ -1294,31 +1297,31 @@ else
         // Ref du contrat
         if (!empty($modCodeContract->code_auto)) {
 	        print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	        print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
+	        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	        print "</td></tr>";
         } else {
         	print '<tr>';
         	print '<td  width="20%">';
-        	print Form::editfieldkey("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
+        	print $form->editfieldkey("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
         	print '</td><td>';
-        	print Form::editfieldval("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
+        	print $form->editfieldval("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
         	print '</td>';
         	print '</tr>';
         }
 
         print '<tr>';
 		print '<td  width="20%">';
-		print Form::editfieldkey("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print Form::editfieldval("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
         
 		print '<tr>';
 		print '<td  width="20%">';
-		print Form::editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print Form::editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
+		print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td>';
 		print '</tr>';
 
@@ -1346,9 +1349,9 @@ else
         // Date
         print '<tr>';
 		print '<td  width="20%">';
-		print Form::editfieldkey("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer);
+		print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer);
 		print '</td><td>';
-		print Form::editfieldval("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer,'datehourpicker');
+		print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer,'datehourpicker');
 		print '</td>';
 		print '</tr>';
        /* print '<tr><td>'.$langs->trans("Date").'</td>';
@@ -1491,7 +1494,7 @@ else
 							$description = '';	// Already added into main visible desc
 						}
 
-                        echo Form::textwithtooltip($text,$description,3,'','',$cursorline,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
+                        echo $form->textwithtooltip($text,$description,3,'','',$cursorline,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
 
                         print '</td>';
                     }
@@ -1651,9 +1654,9 @@ else
                     print "<tr ".$bc[$var].">";
                     print '<td colspan="'.$colspan.'">';
                     print $langs->trans("DateStartPlanned").' ';
-                    Form::selectDate($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
+                    $form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
                     print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
-                    Form::selectDate($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
+                    $form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
                     print '</td>';
 
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
@@ -1691,7 +1694,7 @@ else
              */
             if ($action == 'deleteline' && ! $_REQUEST["cancel"] && $user->rights->contrat->creer && $object->lines[$cursorline-1]->id == GETPOST('rowid'))
             {
-                print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
+                print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("DeleteContractLine"),$langs->trans("ConfirmDeleteContractLine"),"confirm_deleteline",'',0,1);
                 if ($ret == 'html') print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
@@ -1711,7 +1714,7 @@ else
 				'text' => $langs->trans("ConfirmMoveToAnotherContractQuestion"),
                 array('type' => 'select', 'name' => 'newcid', 'values' => $arraycontractid));
 
-                $formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&lineid=".GETPOST('rowid'),$langs->trans("MoveToAnotherContract"),$langs->trans("ConfirmMoveToAnotherContract"),"confirm_move",$formquestion);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
@@ -1723,7 +1726,7 @@ else
                 $dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
-                $formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment),$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",dol_print_date($dateactstart,"%A %d %B %Y")),"confirm_active", '', 0, 1);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
@@ -1735,7 +1738,7 @@ else
                 $dateactstart = dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
                 $dateactend   = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
                 $comment      = GETPOST('comment');
-                $formForm::formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
+                $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService",dol_print_date($dateactend,"%A %d %B %Y")), "confirm_closeline", '', 0, 1);
                 print '<table class="notopnoleftnoright" width="100%"><tr '.$bc[$var].' height="6"><td></td></tr></table>';
             }
 
@@ -1824,11 +1827,11 @@ else
 
                 print '<tr '.$bc[$var].'>';
                 print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
-                print Form::selectDate($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
+                print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
                 print '<td class="nohover">'.$langs->trans("DateEndPlanned").'</td><td class="nohover">';
-                print Form::selectDate($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
+                print $form->select_date($dateactend,"end",$usehm,$usehm,'',"active",1,0,1);
                 print '</td>';
 
                 print '<td align="center nohover" rowspan="2" valign="middle" class="nohover">';
@@ -1881,7 +1884,7 @@ else
                     if ($objp->statut == 4)
                     {
                         print $langs->trans("DateEndReal").' ';
-                        print Form::selectDate($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1,1);
+                        print $form->select_date($dateactend,"end",$usehm,$usehm,($objp->date_fin_reelle>0?0:1),"closeline",1,1,1);
                     }
                 }
                 print '</td>';
@@ -2015,7 +2018,7 @@ else
         $somethingshown = $formfile->show_documents('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 		// Linked object block
-		$somethingshown = Form::showLinkedObjectBlock($object);
+		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object);

@@ -134,6 +134,24 @@ class modTax extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
 		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('tax',1).')';
+		
+		// Import Taxes
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]="ImportDataset_tax_1";	// Translation key
+		$this->import_icon[$r]='tax';
+		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('t'=>MAIN_DB_PREFIX.'chargesociales');
+		$this->import_fields_array[$r]=array('t.libelle'=>"Label*",'t.fk_type'=>"Type",
+		    't.amount'=>"Amount*",'t.date_ech'=>"DateDue*",'t.periode'=>"PeriodEndDate*"
+		);
+		
+		$this->import_convertvalue_array[$r]=array(
+		    't.fk_type'=>array('rule'=>'fetchidfromref','classfile'=>'/compta/sociales/class/cchargesociales.class.php','class'=>'Cchargesociales','method'=>'fetch','element'=>'Cchargesociales')
+		);
+		$this->import_examplevalues_array[$r]=array('t.libelle'=>"Social/fiscal contribution",'t.fk_type'=>"TAXPRO (must be id or code found into dictionary)",
+		    't.date_ech'=>"2016-01-01", 't.periode'=>"2016-01-01"
+		);
 	}
 
 

@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/export.php
- * \ingroup Accounting Expert
- * \brief Setup page to configure accounting expert module
+ * \file 		htdocs/accountancy/admin/export.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Setup page to configure accounting expert module
  */
 require '../../main.inc.php';
 
@@ -50,12 +50,14 @@ $main_option = array (
 
 $model_option = array (
 		'ACCOUNTING_EXPORT_SEPARATORCSV',
-		'ACCOUNTING_EXPORT_DATE',
+		'ACCOUNTING_EXPORT_DATE'
+		/*
 		'ACCOUNTING_EXPORT_PIECE',
 		'ACCOUNTING_EXPORT_GLOBAL_ACCOUNT',
 		'ACCOUNTING_EXPORT_LABEL',
 		'ACCOUNTING_EXPORT_AMOUNT',
-		'ACCOUNTING_EXPORT_DEVISE' 
+		'ACCOUNTING_EXPORT_DEVISE'
+		*/
 );
 
 /*
@@ -149,7 +151,7 @@ if (! $conf->use_javascript_ajax) {
 			'csv' => $langs->trans("csv"),
 			'txt' => $langs->trans("txt") 
 	);
-	print Form::selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
+	print $form->selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
 	
 	print '</td>';
 }
@@ -197,7 +199,7 @@ if (! $conf->use_javascript_ajax) {
 } else {
 	print '<td>';
 	$listmodelcsv = AccountancyExport::getType();
-	print Form::selectarray("modelcsv", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
+	print $form->selectarray("modelcsv", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
 	
 	print '</td>';
 }

@@ -106,7 +106,7 @@ if ($id > 0 || ! empty($ref))
 	// Ref
 	print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3">';
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Customer

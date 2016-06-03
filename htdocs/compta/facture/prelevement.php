@@ -167,7 +167,7 @@ if ($object->id > 0)
 	{
 		dol_print_error('',$discount->error);
 	}
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
 	print "</td></tr>";
 
 	// Ref customer
@@ -252,7 +252,7 @@ if ($object->id > 0)
 				{
 					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
 					$text2=$langs->trans("AbsoluteDiscountUse");
-					print Form::textwithpicto($text,$text2);
+					print $form->textwithpicto($text,$text2);
 				}
 			}
 		}
@@ -272,7 +272,7 @@ if ($object->id > 0)
 			if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
 			{
 				$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
-				print Form::textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
+				print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
 			}
 			else print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
 		}
@@ -300,7 +300,7 @@ if ($object->id > 0)
 	{
 		if ($action == 'editinvoicedate')
 		{
-			Form::formDate($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date,'invoicedate');
+			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date,'invoicedate');
 		}
 		else
 		{
@@ -351,7 +351,7 @@ if ($object->id > 0)
 	{
 		if ($action == 'editpaymentterm')
 		{
-			Form::formDate($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date_lim_reglement,'paymentterm');
+			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id,$object->date_lim_reglement,'paymentterm');
 		}
 		else
 		{

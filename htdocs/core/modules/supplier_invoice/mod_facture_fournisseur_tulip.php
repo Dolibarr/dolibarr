@@ -69,7 +69,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 
 		// Parametrage du prefix
 		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.Form::textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->SUPPLIER_INVOICE_TULIP_MASK.'">',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskinvoice" value="'.$conf->global->SUPPLIER_INVOICE_TULIP_MASK.'">',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 

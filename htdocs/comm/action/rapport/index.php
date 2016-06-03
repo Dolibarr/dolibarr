@@ -112,7 +112,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	
-	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit);
 
 	$i = 0;
 	print '<table class="noborder" width="100%">';

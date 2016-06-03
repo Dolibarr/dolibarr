@@ -193,7 +193,7 @@ if ($id)
     // Ref
     print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
     print '<td colspan="2">';
-    print Form::showrefnav($fgroup,'id','',$user->rights->user->user->lire || $user->admin);
+    print $form->showrefnav($fgroup,'id','',$user->rights->user->user->lire || $user->admin);
     print '</td>';
     print '</tr>';
 

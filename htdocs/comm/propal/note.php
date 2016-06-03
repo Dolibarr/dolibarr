@@ -84,7 +84,7 @@ if ($id > 0 || ! empty($ref))
 
 			// Ref
 			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
-			print Form::showrefnav($object,'ref',$linkback,1,'ref','ref','');
+			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 			print '</td></tr>';
 
 			// Ref client
@@ -99,10 +99,10 @@ if ($id > 0 || ! empty($ref))
 			print '</tr>';
 
 			// Customer
-			if ( is_null($object->client) )
+			if ( is_null($object->thirdparty) )
 				$object->fetch_thirdparty();
 			print "<tr><td>".$langs->trans("Company")."</td>";
-			print '<td colspan="3">'.$object->client->getNomUrl(1).'</td></tr>';
+			print '<td colspan="3">'.$object->thirdparty->getNomUrl(1).'</td></tr>';
 
 			// Discounts
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';

@@ -180,7 +180,7 @@ if (! $sourcecontent)
 }
 
 // Define output variables
-$outfile='out.'.$classmin.'.class.php';
+$outfile=$classmin.'.class.php';
 $targetcontent=$sourcecontent;
 
 // Substitute module name
@@ -259,7 +259,7 @@ foreach($property as $key => $prop)
 	if ($addfield)
 	{
 		$varprop.="\t\t\$sql.= '".$prop['field'];
-		if ($i <= count($property)-$no_output_field) $varprop.=",";
+		if ($i < (count($property)-$no_output_field)) $varprop.=",";
 		$varprop.="';";
 		$varprop.="\n";
 	}
@@ -455,9 +455,9 @@ else $error++;
 //--------------------------------------------------------------------
 
 $skeletonfiles=array(
-    $path.'skeleton_script.php' => 'out.'.$classmin.'_script.php', 
-    $path.'skeleton_list.php' => 'out.'.$classmin.'_list.php', 
-    $path.'skeleton_card.php' => 'out.'.$classmin.'_card.php'
+    $path.'skeleton_script.php' => $classmin.'_script.php', 
+    $path.'skeleton_list.php' => $classmin.'_list.php', 
+    $path.'skeleton_card.php' => $classmin.'_card.php'
     );
     
 foreach ($skeletonfiles as $skeletonfile => $outfile)
@@ -670,5 +670,5 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
 
 // -------------------- END OF BUILD_CLASS_FROM_TABLE SCRIPT --------------------
 
-print "You can now rename generated files by removing the 'out.' prefix in their name and store them into directory /yourmodule/class (for .class.php file) or /yourmodule.\n";
+print "You can now move generated files to store them into directory /yourmodule/class (for .class.php file) or /yourmodule.\n";
 return $error;

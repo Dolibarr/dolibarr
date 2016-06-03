@@ -195,7 +195,7 @@ print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda")." (".$langs->trans("Example").': http://yoursite/agenda/agenda.ics)</td>';
-print "<td>".Form::textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
+print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
 print '<td align="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 

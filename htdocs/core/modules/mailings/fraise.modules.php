@@ -63,7 +63,7 @@ class mailing_fraise extends MailingTargets
      *    array of SQL request that returns two field:
      *    One called "label", One called "nb".
      *
-     *    @return        array        Array with SQL requests
+     *    @return        string[]        Array with SQL requests
      */
     function getSqlArrayForStats()
     {
@@ -154,9 +154,9 @@ class mailing_fraise extends MailingTargets
         $s.='</select>';
         $s.='<br>';
         $s.=$langs->trans("DateEndSubscription").': &nbsp;';
-        $s.=$langs->trans("After").' > '.Form::selectDate(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("After").' > '.$form->select_date(-1,'subscriptionafter',0,0,1,'fraise',1,0,1,0);
         $s.=' &nbsp; ';
-        $s.=$langs->trans("Before").' < '.Form::selectDate(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
+        $s.=$langs->trans("Before").' < '.$form->select_date(-1,'subscriptionbefore',0,0,1,'fraise',1,0,1,0);
 
         return $s;
     }

@@ -162,7 +162,7 @@ class User extends CommonObject
 	 */
 	function fetch($id='', $login='',$sid='',$loadpersonalconf=1, $entity=-1)
 	{
-		global $langs, $conf, $user;
+		global $conf, $user;
 
 		// Clean parameters
 		$login=trim($login);
@@ -207,7 +207,10 @@ class User extends CommonObject
 		}
 		else  // The fetch was forced on an entity
 		{
-            $sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
+			if (!empty($conf->multicompany->enabled) && !empty($conf->multicompany->transverse_mode))
+				$sql.= " WHERE u.entity IS NOT NULL";    // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
+			else
+				$sql.= " WHERE u.entity IN (0, ".$conf->entity.")";
 		}
 
 		if ($sid)    // permet une recherche du user par son SID ActiveDirectory ou Samba
@@ -256,7 +259,7 @@ class User extends CommonObject
 
                 $this->country_id   = $obj->country_id;
                 $this->country_code = $obj->country_id?$obj->country_code:'';
-                $this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
+                //$this->country 		= $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
                 $this->state_id     = $obj->state_id;
                 $this->state_code   = $obj->state_code;
@@ -914,7 +917,7 @@ class User extends CommonObject
 		if (empty($this->login))
 		{
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorFieldRequired",$this->login);
+			$this->error = $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"));
 			return -1;
 		}
 
@@ -926,7 +929,7 @@ class User extends CommonObject
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
 		$sql.= " WHERE login ='".$this->db->escape($this->login)."'";
 		$sql.= " AND entity IN (0,".$this->db->escape($conf->entity).")";
-
+		
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -959,7 +962,7 @@ class User extends CommonObject
 						$this->db->rollback();
 						return -5;
 					}
-
+					
 					// Update minor fields
 					$result = $this->update($user,1,1);
 					if ($result < 0)
@@ -979,12 +982,12 @@ class User extends CommonObject
 						$entrepot->country_id = $mysoc->country_id;
 						$entrepot->create($user);
 					}
-
+					
 					if (! $notrigger)
 					{
                         // Call trigger
                         $result=$this->call_trigger('USER_CREATE',$user);
-            	        if ($result < 0) { $error++; }
+                        if ($result < 0) { $error++; }
                         // End call triggers
 					}
 
@@ -1988,7 +1991,10 @@ class User extends CommonObject
             if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
         }
 
-        $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        
+        if ($option == 'leave') $link.= '<a href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$this->id.'"';
+        else $link.= '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'"';
+        
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))

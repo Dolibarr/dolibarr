@@ -42,7 +42,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result = restrictedArea($user, 'projet', $id);
+$result = restrictedArea($user, 'projet', $id,'projet&project');
 
 $permissionnote=$user->rights->projet->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -91,7 +91,7 @@ if ($id > 0 || ! empty($ref))
 		$projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
 		$object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
 	}
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Label

@@ -3,8 +3,9 @@
  * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2004-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2014-2015	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +34,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formbank.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
+if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 
 $langs->load("banks");
 $langs->load("bills");
@@ -130,6 +132,10 @@ if ($_POST["action"] == 'add')
         $id = $account->create($user);
         if ($id > 0)
         {
+            // Category association
+            $categories = GETPOST('categories');
+            $account->setCategories($categories);
+
             $_GET["id"]=$id;            // Force chargement page en mode visu
         }
         else {
@@ -206,6 +212,10 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
         $result = $account->update($user);
         if ($result >= 0)
         {
+            // Category association
+            $categories = GETPOST('categories');
+            $account->setCategories($categories);
+
             $_GET["id"]=$_POST["id"];   // Force chargement page en mode visu
         }
         else
@@ -276,7 +286,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$account->ref).'" maxlength="12"></td></tr>';
 
 	// Label
@@ -286,7 +296,7 @@ if ($action == 'create')
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
 	print '<td colspan="3">';
-	$formbank->selectTypeOfBankAccount(isset($_POST["type"])?$_POST["type"]:1,"type");
+	$formbank->selectTypeOfBankAccount(isset($_POST["type"])?$_POST["type"]: Account::TYPE_CURRENT,"type");
 	print '</td></tr>';
 
 	// Currency
@@ -302,7 +312,7 @@ if ($action == 'create')
 	// Status
     print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
     print '<td colspan="3">';
-    print Form::selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+    print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
     print '</td></tr>';
 
     // Country
@@ -336,6 +346,20 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans("Web").'</td>';
 	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
 
+    // Tags-Categories
+    if ($conf->categorie->enabled) 
+    {
+        print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+        $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+        $c = new Categorie($db);
+        $cats = $c->containing($account->id,Categorie::TYPE_ACCOUNT);
+        foreach($cats as $cat) {
+            $arrayselected[] = $cat->id;
+        }
+        print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+        print "</td></tr>";
+    }
+
 	// Comment
 	print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
@@ -360,12 +384,12 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
 
 	// Sold
-	print '<tr><td width="25%">'.$langs->trans("InitialBankBalance").'</td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("InitialBankBalance").'</td>';
 	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="'.(GETPOST("solde")?GETPOST("solde"):price2num($account->solde)).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
 	print '<td colspan="3">';
-	Form::selectDate('', 're', 0, 0, 0, 'formsoc');
+	$form->select_date('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -377,79 +401,41 @@ if ($action == 'create')
 	print '</table>';
 	print '<br>';
 
-	if ($_POST["type"] == 0 || $_POST["type"] == 1)
+	if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT)
 	{
 		print '<table class="border" width="100%">';
 
 		// If bank account
-		print '<tr><td width="25%">'.$langs->trans("BankName").'</td>';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
 		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
 		print '</tr>';
 
 		// Show fields of bank account
-		$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-		if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-		{
-			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
+		foreach ($account->getFieldsToShow() as $val) {
+			if ($val == 'BankCode') {
+				$name = 'code_banque';
+				$size = 8;
+				$content = $account->code_banque;
+			} elseif ($val == 'DeskCode') {
+				$name = 'code_guichet';
+				$size = 8;
+				$content = $account->code_guichet;
+			} elseif ($val == 'BankAccountNumber') {
+				$name = 'number';
+				$size = 18;
+				$content = $account->number;
+			} elseif ($val == 'BankAccountNumberKey') {
+				$name = 'cle_rib';
+				$size = 3;
+				$content = $account->cle_rib;
 			}
-			else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
+
+			print '<td>'.$langs->trans($val).'</td>';
+			print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+			print '</tr>';
 		}
-		$fieldlistsarray=explode(' ',$fieldlists);
-
-		foreach($fieldlistsarray as $val)
-		{
-			if ($val == 'BankCode')
-			{
-				if ($account->useDetailedBBAN()  == 1)
-				{
-					print '<tr><td>'.$langs->trans("BankCode").'</td>';
-					print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-					print '</tr>';
-				}
-			}
-
-			if ($val == 'DeskCode')
-			{
-				if ($account->useDetailedBBAN()  == 1)
-				{
-					print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-					print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
-					print '</tr>';
-				}
-			}
-
-			if ($val == 'BankCode')
-			{
-				if ($account->useDetailedBBAN()  == 2)
-				{
-					print '<tr><td>'.$langs->trans("BankCode").'</td>';
-					print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-					print '</tr>';
-				}
-			}
-
-			if ($val == 'AccountNumber')
-			{
-				print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-				print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
-				print '</tr>';
-			}
-
-			if ($val == 'BankAccountNumberKey')
-			{
-				if ($account->useDetailedBBAN() == 1)
-				{
-					print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-					print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
-					print '</tr>';
-				}
-			}
-		}
-		$ibankey="IBANNumber";
+		$ibankey = FormBank::getIBANLabel($account);
 		$bickey="BICNumber";
-		if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 		if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 		// IBAN
@@ -483,14 +469,14 @@ if ($action == 'create')
     {
 		if (! empty($conf->accounting->enabled))
 		{
-			print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 			print '<td>';
 			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
 			print '</td></tr>';
 		}
 		else
 		{
-			print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
 		}
 	}
@@ -498,14 +484,14 @@ if ($action == 'create')
     {
 		if (! empty($conf->accounting->enabled))
 		{
-			print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 			print '<td>';
 			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
 			print '</td></tr>';
 		}
 		else
 		{
-			print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
 		}
 	}
@@ -558,7 +544,7 @@ else
 		*/
 		if ($action == 'delete')
 		{
-			print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$account->id,$langs->trans("DeleteAccount"),$langs->trans("ConfirmDeleteAccount"),"confirm_delete");
 
 		}
 
@@ -567,9 +553,9 @@ else
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3">';
-		print Form::showrefnav($account, 'ref', $linkback, 1, 'ref');
+		print $form->showrefnav($account, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label
@@ -628,6 +614,13 @@ else
 		if ($account->url) print '</a>';
 		print "</td></tr>\n";
 
+        // Categories
+        if($conf->categorie->enabled) {
+            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+            print $form->showCategories($account->id,'account',1);
+            print "</td></tr>";
+        }
+
 		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">'.dol_htmlentitiesbr($account->comment).'</td></tr>';
 
@@ -647,73 +640,28 @@ else
 		{
 			print '<table class="border" width="100%">';
 
-			print '<tr><td valign="top" width="25%">'.$langs->trans("BankName").'</td>';
+			print '<tr><td valign="top" class="titlefield">'.$langs->trans("BankName").'</td>';
 			print '<td colspan="3">'.$account->bank.'</td></tr>';
 
 			// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
-			}
-			$fieldlistsarray=explode(' ',$fieldlists);
-
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td colspan="3">'.$account->code_banque.'</td>';
-						print '</tr>';
-					}
-				}
-				if ($val == 'DeskCode')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-						print '<td colspan="3">'.$account->code_guichet.'</td>';
-						print '</tr>';
-					}
+			foreach ($account->getFieldsToShow() as $val) {
+				if ($val == 'BankCode') {
+					$content = $account->code_banque;
+				} elseif ($val == 'DeskCode') {
+					$content = $account->code_guichet;
+				} elseif ($val == 'BankAccountNumber') {
+					$content = $account->number;
+				} elseif ($val == 'BankAccountNumberKey') {
+					$content = $account->cle_rib;
 				}
 
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN() == 2)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td colspan="3">'.$account->code_banque.'</td>';
-						print '</tr>';
-					}
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					print '<tr><td>'.$langs->trans("BankAccountNumber").'</td>';
-					print '<td colspan="3">'.$account->number.'</td>';
-					print '</tr>';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<tr><td>'.$langs->trans("BankAccountNumberKey").'</td>';
-						print '<td colspan="3">'.$account->cle_rib.'</td>';
-						print '</tr>';
-					}
-				}
+				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<td colspan="3">'.$content.'</td>';
+				print '</tr>';
 			}
 
-			$ibankey="IBANNumber";
+			$ibankey = FormBank::getIBANLabel($account);
 			$bickey="BICNumber";
-			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
@@ -756,8 +704,14 @@ else
 
 		print '<table class="border" width="100%">';
 		// Accountancy code
-		print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-		print '<td colspan="3">'.length_accountg($account->account_number).'</td></tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3">';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($account->account_number).'</td></tr>';
+		} else {
+			print $account->account_number;
+		}
+		print '</td></tr>';
 
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))
@@ -833,7 +787,7 @@ else
         print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Ref").'</td>';
+		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
 		print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.(isset($_POST["ref"])?$_POST["ref"]:$account->ref).'"></td></tr>';
 
 		// Label
@@ -861,7 +815,7 @@ else
 		// Status
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
         print '<td colspan="3">';
-        print Form::selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+        print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
         print '</td></tr>';
 
 		// Country
@@ -910,6 +864,20 @@ else
         print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?$_POST["url"]:$account->url).'">';
         print '</td></tr>';
 
+        // Tags-Categories
+        if ($conf->categorie->enabled) 
+        {
+            print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+            $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
+            $c = new Categorie($db);
+            $cats = $c->containing($object->id,Categorie::TYPE_ACCOUNT);
+            foreach($cats as $cat) {
+                $arrayselected[] = $cat->id;
+            }
+            print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+            print "</td></tr>";
+        }
+
 		// Comment
 		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">';
@@ -929,80 +897,42 @@ else
 		print '</table>';
 		print '<br>';
 
-		if ($_POST["type"] == 0 || $_POST["type"] == 1)
+		if ($_POST["type"] == Account::TYPE_SAVINGS || $_POST["type"] == Account::TYPE_CURRENT)
 		{
 			print '<table class="border" width="100%">';
 
 			// If bank account
-			print '<tr><td width="25%">'.$langs->trans("BankName").'</td>';
+			print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
 			print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
 			print '</tr>';
 
 			// Show fields of bank account
-			$fieldlists='BankCode DeskCode AccountNumber BankAccountNumberKey';
-			if (! empty($conf->global->BANK_SHOW_ORDER_OPTION))
-			{
-				if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION))
-				{
-					if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') $fieldlists='BankCode DeskCode BankAccountNumberKey AccountNumber';
-				}
-				else $fieldlists=$conf->global->BANK_SHOW_ORDER_OPTION;
-			}
-			$fieldlistsarray=explode(' ',$fieldlists);
-
-			foreach($fieldlistsarray as $val)
-			{
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN()  == 1)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-						print '</tr>';
-					}
+			foreach ($account->getFieldsToShow() as $val) {
+				if ($val == 'BankCode') {
+					$name = 'code_banque';
+					$size = 8;
+					$content = $account->code_banque;
+				} elseif ($val == 'DeskCode') {
+					$name = 'code_guichet';
+					$size = 8;
+					$content = $account->code_guichet;
+				} elseif ($val == 'BankAccountNumber') {
+					$name = 'number';
+					$size = 18;
+					$content = $account->number;
+				} elseif ($val == 'BankAccountNumberKey') {
+					$name = 'cle_rib';
+					$size = 3;
+					$content = $account->cle_rib;
 				}
 
-				if ($val == 'DeskCode')
-				{
-					if ($account->useDetailedBBAN()  == 1)
-					{
-						print '<tr><td>'.$langs->trans("DeskCode").'</td>';
-						print '<td><input size="8" type="text" class="flat" name="code_guichet" value="'.$account->code_guichet.'"></td>';
-						print '</tr>';
-					}
-				}
-
-				if ($val == 'BankCode')
-				{
-					if ($account->useDetailedBBAN()  == 2)
-					{
-						print '<tr><td>'.$langs->trans("BankCode").'</td>';
-						print '<td><input size="8" type="text" class="flat" name="code_banque" value="'.$account->code_banque.'"></td>';
-						print '</tr>';
-					}
-				}
-
-				if ($val == 'AccountNumber')
-				{
-					print '<td>'.$langs->trans("BankAccountNumber").'</td>';
-					print '<td><input size="18" type="text" class="flat" name="number" value="'.$account->number.'"></td>';
-					print '</tr>';
-				}
-
-				if ($val == 'BankAccountNumberKey')
-				{
-					if ($account->useDetailedBBAN() == 1)
-					{
-						print '<td>'.$langs->trans("BankAccountNumberKey").'</td>';
-						print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.$account->cle_rib.'"></td>';
-						print '</tr>';
-					}
-				}
+				print '<tr><td>'.$langs->trans($val).'</td>';
+				print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+				print '</tr>';
 			}
 
-			$ibankey="IBANNumber";
+			$ibankey = FormBank::getIBANLabel($account);
 			$bickey="BICNumber";
-			if ($account->getCountryCode() == 'IN') $ibankey="IFSC";
 			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			// IBAN
@@ -1033,36 +963,20 @@ else
 		print '<table class="border" width="100%">';
 
 		// Accountancy code
-		if (! empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED))
-		{
-			if (! empty($conf->accounting->enabled))
-			{
-				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>';
-				print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
-				print '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST("account_number"):$account->account_number).'"></td></tr>';
-			}
+		$tdextra = ' class="titlefieldcreate"';
+
+		if (!empty($conf->global->MAIN_BANK_ACCOUNTANCY_CODE_ALWAYS_REQUIRED)) {
+			$tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
-		else
-		{
-			if (! empty($conf->accounting->enabled))
-			{
-				print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td>';
-				print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
-				print '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td width="25%">'.$langs->trans("AccountancyCode").'</td>';
-				print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST("account_number"):$account->account_number).'"></td></tr>';
-			}
+
+		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3">';
+		if (!empty($conf->accounting->enabled)) {
+			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
+		} else {
+			print '<input type="text" name="account_number" value="'.(GETPOST("account_number") ? GETPOST("account_number") : $account->account_number).'">';
 		}
+		print '</td></tr>';
 
 		// Accountancy journal
 		if (! empty($conf->accounting->enabled))

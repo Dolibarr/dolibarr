@@ -93,11 +93,17 @@ function project_prepare_head($object)
 		// Then tab for sub level of projet, i mean tasks
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Tasks");
+
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+		$taskstatic=new Task($db);
+		$nbTasks=count($taskstatic->getTasksArray(0, 0, $object->id, 0, 0));
+		if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
 		$head[$h][2] = 'tasks';
 		$h++;
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("Gantt");
+		if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
 		$head[$h][2] = 'gantt';
 		$h++;
 	}
@@ -116,7 +122,7 @@ function project_prepare_head($object)
  */
 function task_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 	$h = 0;
 	$head = array();
 
@@ -156,8 +162,10 @@ function task_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$listoffiles=dol_dir_list($filesdir,'files',1,'','thumbs');
-	$head[$h][1] = (count($listoffiles)?$langs->trans('DocumentsNb',count($listoffiles)):$langs->trans('Documents'));
+	$nbFiles = count(dol_dir_list($filesdir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'task_document';
 	$h++;
 
@@ -636,7 +644,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 
 				// Form to add new time
 				print '<td class="nowrap" align="center">';
-				$tableCell=Form::selectDate($preselectedday,$lines[$i]->id,1,1,2,"addtime",0,0,1,$disabledtask);
+				$tableCell=$form->select_date($preselectedday,$lines[$i]->id,1,1,2,"addtime",0,0,1,$disabledtask);
 				print $tableCell;
 				print '</td><td align="right">';
 
@@ -654,10 +662,15 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 				print '</td>';
 
 				print '<td align="right">';
-				if ((! $lines[$i]->public) && $disabledproject) print Form::textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
-				else if ($disabledtask) print Form::textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
+				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
+				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
 				print '</td>';
 
+				print '<td align="right">';
+				print '<textarea name="'.$lines[$i]->id.'note" rows="2" id="note">';
+				print '</textarea>';
+				print '</td>';
+				
 				print "</tr>\n";
 			}
 
@@ -828,8 +841,8 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 		        }
 
 				print '<td align="right">';
-				if ((! $lines[$i]->public) && $disabledproject) print Form::textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
-				else if ($disabledtask) print Form::textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
+				if ((! $lines[$i]->public) && $disabledproject) print $form->textwithpicto('',$langs->trans("YouAreNotContactOfProject"));
+				else if ($disabledtask) print $form->textwithpicto('',$langs->trans("TaskIsNotAffectedToYou"));
 				print '</td>';
 
 		        print "</tr>\n";
@@ -1098,7 +1111,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			print '<td class="liste_total" align="right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
-			print '<td class="liste_total" align="right">'.Form::textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1).'</td>';
+			print '<td class="liste_total" align="right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1).'</td>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS)) 
 		{

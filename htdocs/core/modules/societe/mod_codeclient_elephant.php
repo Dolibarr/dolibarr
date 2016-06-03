@@ -92,7 +92,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix customers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte.= '<td align="right">'.Form::textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER.'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value1" value="'.$conf->global->COMPANY_ELEPHANT_MASK_CUSTOMER.'"'.$disabled.'>',$tooltip,1,1).'</td>';
 
 		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"'.$disabled.'></td>';
 
@@ -100,7 +100,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix suppliers
 		$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte.= '<td align="right">'.Form::textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER.'"'.$disabled.'>',$tooltip,1,1).'</td>';
+		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="value2" value="'.$conf->global->COMPANY_ELEPHANT_MASK_SUPPLIER.'"'.$disabled.'>',$tooltip,1,1).'</td>';
 		$texte.= '</tr>';
 
 		$texte.= '</table>';

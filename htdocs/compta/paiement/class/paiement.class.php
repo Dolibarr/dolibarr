@@ -563,6 +563,18 @@ class Paiement extends CommonObject
                     }
                 }
 
+				// Add link 'WithdrawalPayment' in bank_url
+				if (! $error && $label == '(WithdrawalPayment)')
+				{
+					$result=$acc->add_url_line(
+						$bank_line_id,
+						$this->id_prelevement,
+						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
+						$this->num_paiement,
+						'withdraw'
+					);
+				}
+
 	            if (! $error && ! $notrigger)
 				{
 					// Appel des triggers
@@ -959,6 +971,17 @@ class Paiement extends CommonObject
 
 		$result='';
         $label = $langs->trans("ShowPayment").': '.$this->ref;
+	$arraybill = $this->getBillsArray();
+	if (count($arraybill) >0)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$facturestatic=new Facture($this->db);
+		foreach ($arraybill as $billid)
+		{
+			$facturestatic->fetch($billid);
+			$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
+		}
+	}
 
         $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';

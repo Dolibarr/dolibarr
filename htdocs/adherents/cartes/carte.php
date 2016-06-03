@@ -239,7 +239,7 @@ foreach(array_keys($_Avery_Labels) as $codecards)
 {
 	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
-print Form::selectarray('model',$arrayoflabels,(GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE),1,0,0);
+print $form->selectarray('model',$arrayoflabels,(GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE),1,0,0);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 print '<br>';
@@ -255,7 +255,7 @@ foreach(array_keys($_Avery_Labels) as $codecards)
 {
 	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
-print Form::selectarray('model',$arrayoflabels,(GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE),1,0,0);
+print $form->selectarray('model',$arrayoflabels,(GETPOST('model')?GETPOST('model'):$conf->global->ADHERENT_CARD_TYPE),1,0,0);
 print '<br>'.$langs->trans("Login").': <input size="10" type="text" name="foruserlogin" value="'.GETPOST('foruserlogin').'">';
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
@@ -272,7 +272,7 @@ foreach(array_keys($_Avery_Labels) as $codecards)
 {
 	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
-print Form::selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
+print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
 print '<br><input class="button" type="submit" value="'.$langs->trans("BuildDoc").'">';
 print '</form>';
 print '<br>';

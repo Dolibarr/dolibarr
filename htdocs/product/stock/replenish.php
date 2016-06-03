@@ -69,12 +69,23 @@ if (!$sortorder) {
     $sortorder = 'ASC';
 }
 
+// Define virtualdiffersfromphysical
+$virtualdiffersfromphysical=0;
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+{
+    $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+}
+$usevirtualstock=0;
+if ($mode == 'virtual') $usevirtualstock=1;
+
 
 /*
  * Actions
  */
 
-if (isset($_POST['button_removefilter']) || isset($_POST['valid']))
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter") || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
     $sref = '';
     $snom = '';
@@ -226,20 +237,6 @@ if ($action == 'order' && isset($_POST['valid']))
  */
 
 $form = new Form($db);
-
-$virtualdiffersfromphysical=0;
-if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
-{
-	$virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
-}
-
-$usevirtualstock=-1;
-if ($virtualdiffersfromphysical)
-{
-	$usevirtualstock=(! empty($conf->global->STOCK_USE_VIRTUAL_STOCK)?1:0);
-	if ($mode=='virtual') $usevirtualstock=1;
-	if ($mode=='physical') $usevirtualstock=0;
-}
 
 $title = $langs->trans('Status');
 
@@ -472,7 +469,7 @@ print '<td class="liste_titre">&nbsp;</td>'.
 	'<td class="liste_titre" align="right">&nbsp;</td>'.
 	'<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 print '</tr>';
@@ -557,7 +554,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
 		print '<td><input type="checkbox" class="check" name="'.$i.'"></td>';
 
-		print '<td class="nowrap">'.$prod->getNomUrl(1, '', 16).'</td>';
+		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
 		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" ></td>';
 

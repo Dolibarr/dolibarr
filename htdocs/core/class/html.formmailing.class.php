@@ -27,21 +27,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormMailing  extends Form
 {
-	public $db;
-	public $error;
 	public $errors=array();
-
-
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	*/
-	function __construct($db)
-	{
-		$this->db = $db;
-		return 1;
-	}
 
 	/**
 	 * Output a select with destinaries status
@@ -59,26 +45,14 @@ class FormMailing  extends Form
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 		$mailing = new Mailing($this->db);
 
-
-		$array = $mailing->statut_dest;
-		//Cannot use form->selectarray because empty value is defaulted to -1 in this method and we use here status -1...
-
-		$out = '<select name="'.$htmlname.'" class="flat">';
+		$options = array();
 
 		if ($show_empty) {
-			$out .= '<option value=""></option>';
+			$options[''] = '';
 		}
 
-		foreach($mailing->statut_dest as $id=>$status) {
-			if ($selectedid==$id)  {
-				$selected=" selected ";
-			}else {
-				$selected="";
-			}
-			$out .= '<option '.$selected.' value="'.$id.'">'.$langs->trans($status).'</option>';
-		}
+		$options = array_merge($options, $mailing->statut_dest);
 
-		$out .= '</select>';
-		return $out;
+		return Form::selectarray($htmlname, $options, $selectedid, 0, 0, 0, '', 1);
 	}
 }

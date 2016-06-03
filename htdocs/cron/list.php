@@ -160,13 +160,13 @@ $stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(),
 
 if ($action == 'delete')
 {
-    print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
 
 }
 
 if ($action == 'execute')
 {
-    print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 
 }
 
@@ -230,7 +230,7 @@ print '<td>&nbsp;</td>';
 print '<td>&nbsp;</td>';
 print '<td>&nbsp;</td>';
 print '<td class="liste_titre" align="center">';
-print Form::selectarray('status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $status, 1);
+print $form->selectarray('status', array('0'=>$langs->trans("Disabled"), '1'=>$langs->trans("Enabled"), '-2'=>$langs->trans("EnabledAndDisabled"), '2'=>$langs->trans("Archived")), $status, 1);
 print '</td><td class="liste_titre" align="right">';
 print '<input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
@@ -288,7 +288,7 @@ if ($num > 0)
 			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $line->params;
 			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($line->note);
 		}
-		print Form::textwithpicto($text, $texttoshow, 1);
+		print $form->textwithpicto($text, $texttoshow, 1);
 		print '</td>';
 
 		print '<td>';
@@ -340,19 +340,20 @@ if ($num > 0)
 		print '<td align="right" class="nowrap">';
 		if ($user->rights->cron->create)
 		{
-			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$line->id."&action=edit&backtourl=".urlencode($_SERVER["PHP_SELF"])."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
+			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$line->id."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"])."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{
-			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&status=".$status."&action=delete\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'),'delete')."</a> &nbsp;";
+			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&action=delete".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'),'delete')."</a> &nbsp;";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete')."</a> &nbsp; ";
 		}
 		if ($user->rights->cron->execute)
 		{
-			print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&status=".$status."&action=execute\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    if (!empty($line->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&action=execute".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"play")."</a>";
 		} else {
-			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"execute")."</a>";
+			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"play")."</a>";
 		}
 		print '</td>';
 

@@ -121,20 +121,16 @@ print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 print '<table class="border" width="100%">';
 
-// Alias names (commercial, trademark or alias names)
-print '<tr id="name_alias"><td class="titlefield"><label for="name_alias_input">'.$langs->trans('AliasNames').'</label></td>';
-print '<td colspan="3">'.$object->name_alias.'</td></tr>';
-
 if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 {
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
 }
 
 //if ($conf->agenda->enabled && $user->rights->agenda->myactions->read) $elementTypeArray['action']=$langs->transnoentitiesnoconv('Events');
 
 if ($object->client)
 {
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $langs->trans('CustomerCode').'</td><td colspan="3">';
 	print $object->code_client;
 	if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -155,7 +151,7 @@ if ($object->client)
 
 if ($object->fournisseur)
 {
-	print '<tr><td>';
+	print '<tr><td class="titlefield">';
 	print $langs->trans('SupplierCode').'</td><td colspan="3">';
 	print $object->code_fournisseur;
 	if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -280,47 +276,50 @@ if ($type_element == 'contract')
 	$thirdTypeSelect='customer';
 }
 
-$sql = $sql_select;
-$sql.= ' d.description as description,';
-if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
-if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
-if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
-$sql.= " s.rowid as socid ";
-if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
-if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
-$sql.= $where;
-if ($month > 0) {
-	if ($year > 0) {
-		$start = dol_mktime(0, 0, 0, $month, 1, $year);
-		$end = dol_time_plus_duree($start,1,'m') - 1;
-		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-	} else {
-		$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
-	}
-} else if ($year > 0) {
-	$start = dol_mktime(0, 0, 0, 1, 1, $year);
-	$end = dol_time_plus_duree($start,1,'y') - 1;
-	$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-}
-if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
-if ($sprod_fulldescr) 
+if ($sql_select)
 {
-    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    $sql.=")";
+	$sql = $sql_select;
+	$sql.= ' d.description as description,';
+	if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
+	if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
+	if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
+	$sql.= " s.rowid as socid ";
+	if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
+	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
+	$sql.= $where;
+	if ($month > 0) {
+		if ($year > 0) {
+			$start = dol_mktime(0, 0, 0, $month, 1, $year);
+			$end = dol_time_plus_duree($start,1,'m') - 1;
+			$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+		} else {
+			$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
+		}
+	} else if ($year > 0) {
+		$start = dol_mktime(0, 0, 0, 1, 1, $year);
+		$end = dol_time_plus_duree($start,1,'y') - 1;
+		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+	}
+	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
+	if ($sprod_fulldescr) 
+	{
+	    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    $sql.=")";
+	}
+	$sql.= $db->order($sortfield,$sortorder);
+	
+	$resql=$db->query($sql);
+	$totalnboflines = $db->num_rows($resql);
+	
+	$sql.= $db->plimit($limit + 1, $offset);
+	//print $sql;
 }
-$sql.= $db->order($sortfield,$sortorder);
-
-$resql=$db->query($sql);
-$totalnboflines = $db->num_rows($resql);
-
-$sql.= $db->plimit($limit + 1, $offset);
-//print $sql;
 
 // Define type of elements
-$typeElementString = Form::selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
+$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 $param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
 
@@ -367,7 +366,7 @@ if ($sql_select)
     print '<input class="flat" type="text" name="sprod_fulldescr" size="15" value="'.dol_escape_htmltag($sprod_fulldescr).'">';
     print '</td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
     print '</tr>';
@@ -489,7 +488,7 @@ if ($sql_select)
 		{
 			if ($objp->fk_product > 0) {
 
-				echo Form::textwithtooltip($text,$description,3,'','',$i,0,'');
+				echo $form->textwithtooltip($text,$description,3,'','',$i,0,'');
 
 				// Show range
 				echo get_date_range($objp->date_start, $objp->date_end);
@@ -509,7 +508,7 @@ if ($sql_select)
 
 					if (! empty($objp->label)) {
 						$text.= ' <strong>'.$objp->label.'</strong>';
-						echo Form::textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
+						echo $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i,0,'');
 					} else {
 						echo $text.' '.dol_htmlentitiesbr($objp->description);
 					}

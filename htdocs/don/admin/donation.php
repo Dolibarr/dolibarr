@@ -433,7 +433,7 @@ if (is_resource($handle))
                 $htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo,1,1);
                 $htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang,1,1);
                 print '<td align="center">';
-                print Form::textwithpicto('',$htmltooltip,-1,0);
+                print $form->textwithpicto('',$htmltooltip,-1,0);
                 print '</td>';
 
 				// Preview

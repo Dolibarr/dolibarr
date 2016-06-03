@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014 	   Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,9 +18,9 @@
  */
 
 /**
- * 		\file			htdocs/core/lib/account.lib.php
- * 		\ingroup		Accounting Expert
- * 		\brief			Library of accountancy functions
+ * 	\file		htdocs/core/lib/accounting.lib.php
+ * 	\ingroup	Advanced accountancy
+ * 	\brief		Library of accountancy functions
  */
 
 /**
@@ -37,15 +37,9 @@ function admin_accounting_prepare_head(AccountingAccount $object=null)
 	$head = array ();
 
 	$head[$h][0] = dol_buildpath('/accountancy/admin/index.php', 1);
-	$head[$h][1] = $langs->trans("Configuration");
+	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h ++;
-
-	// Show more tabs from modules
-	// Entries must be declared in modules descriptor with line
-	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
-	// $this->tabs = array('entity:-tabname); to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin');
 
 	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/journal.php';
 	$head[$h][1] = $langs->trans("Journaux");
@@ -53,9 +47,15 @@ function admin_accounting_prepare_head(AccountingAccount $object=null)
 	$h ++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/export.php';
-	$head[$h][1] = $langs->trans("Export");
+	$head[$h][1] = $langs->trans("ExportOptions");
 	$head[$h][2] = 'export';
 	$h ++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__'); to add new tab
+	// $this->tabs = array('entity:-tabname); to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'accounting_admin', 'remove');
 
@@ -120,7 +120,7 @@ function length_accountg($account)
 		// Clean parameters
 		$i = strlen($account);
 
-		if ($i >= 2) {
+		if ($i >= 1) {
 			while ( $i < $g ) {
 				$account .= '0';
 
@@ -152,7 +152,7 @@ function length_accounta($accounta)
 		// Clean parameters
 		$i = strlen($accounta);
 
-		if ($i >= 2) {
+		if ($i >= 1) {
 			while ( $i < $a ) {
 				$accounta .= '0';
 
@@ -166,41 +166,4 @@ function length_accounta($accounta)
 	} else {
 		return $accounta;
 	}
-}
-
-/**
- * Return accounting account with defined length for Sage Export Software
- *
- * @param 	string		$txt		Accounting account
- * @param	int			$len		Length
- * @param	int			$end		Number of characters
- *
- * @return	string          		Formated string
- */
-function length_exportsage($txt, $len, $end)
-{
-	// $txt = utf8_decode($txt);
-	// problem with this function, but we need to have the number of letter
-	if (strlen($txt) == $len) {
-		$res = $txt;
-	}
-
-	elseif (strlen($txt) > $len) {
-		$res = substr($txt, 0, $len);
-	}
-
-	else {
-		if ($end == 1) {
-			$res = $txt;
-		} else {
-			$res = "";
-		}
-		for($i = strlen($txt); $i <= ($len - 1); $i ++) {
-			$res .= " ";
-		}
-		if ($end == 0) {
-			$res .= $txt;
-		}
-	}
-	return $res;
 }

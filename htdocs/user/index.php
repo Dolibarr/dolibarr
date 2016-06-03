@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -201,7 +202,9 @@ if ($search_login != '')      $sql.= natural_search("u.login", $search_login);
 if ($search_lastname != '')   $sql.= natural_search("u.lastname", $search_lastname);
 if ($search_firstname != '')  $sql.= natural_search("u.firstname", $search_firstname);
 if ($search_gender != '' && $search_gender != '-1')     $sql.= " AND u.gender = '".$search_gender."'";
-if ($search_employee >= 0)    $sql.= natural_search("u.employee", $search_employee);
+if (is_numeric($search_employee) && $search_employee >= 0)    {
+	$sql .= ' AND u.employee = '.(int) $search_employee;
+}
 if ($search_accountancy_code != '')  $sql.= natural_search("u.accountancy_code", $search_accountancy_code);
 if ($search_email != '')  $sql.= natural_search("u.email", $search_email);
 if ($search_statut != '' && $search_statut >= 0) $sql.= " AND (u.statut=".$search_statut.")";
@@ -213,7 +216,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
     if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -270,7 +273,7 @@ if ($result)
     $moreforfilter='';
     
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	$selectedfields=Form::multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
     
     print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
     print '<tr class="liste_titre">';
@@ -326,13 +329,13 @@ if ($result)
     {
         print '<td>';
         $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-        print Form::selectarray('search_gender', $arraygender, $search_gender, 1);        
+        print $form->selectarray('search_gender', $arraygender, $search_gender, 1);        
         print '</td>';
     }
     if (! empty($arrayfields['u.employee']['checked']))
     {
         print '<td>';
-        print Form::selectyesno('search_employee', $search_employee, 1, false, 1);
+        print $form->selectyesno('search_employee', $search_employee, 1, false, 1);
         print '</td>';
     }
     if (! empty($arrayfields['u.accountancy_code']['checked']))
@@ -368,7 +371,22 @@ if ($result)
 	{
 	   foreach($extrafields->attribute_label as $key => $val) 
 	   {
-			if (! empty($arrayfields["ef.".$key]['checked'])) print '<td class="liste_titre"></td>';
+			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			{
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+    		    if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
+				print '</td>';
+			}
 	   }
 	}
     // Fields from hook
@@ -391,12 +409,12 @@ if ($result)
     {
         // Status
         print '<td class="liste_titre" align="center">';
-        print Form::selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+        print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
         print '</td>';
     }
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	

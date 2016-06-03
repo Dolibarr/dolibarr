@@ -549,7 +549,7 @@ class pdf_beluga extends ModelePDFProjects
 	 *  Show top header of page.
 	 *
 	 *  @param	PDF			$pdf     		Object PDF
-	 *  @param  Object		$object     	Object to show
+	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	void
@@ -611,14 +611,15 @@ class pdf_beluga extends ModelePDFProjects
 	 *   	Show footer of page. Need this->emetteur object
      *
 	 *   	@param	PDF			$pdf     			PDF
-	 * 		@param	Object		$object				Object to show
+	 * 		@param	Project		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
-	 *      @return	void
+	 *      @return	integer
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		$showdetails=0;
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PROJECT_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 }

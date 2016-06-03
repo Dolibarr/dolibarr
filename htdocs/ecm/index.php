@@ -427,7 +427,7 @@ print '</div>';
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
-	print Form::formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section.'&urlfile='.urlencode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile','','',1);
 
 }
 
@@ -481,7 +481,7 @@ print '</div>';
 // Confirmation de la suppression d'une ligne categorie
 if ($action == 'delete_section')
 {
-    print Form::formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
+    print $form->formconfirm($_SERVER["PHP_SELF"].'?section='.$section, $langs->trans('DeleteSection'), $langs->trans('ConfirmDeleteSection',$ecmdir->label), 'confirm_deletesection','','',1);
 
 }
 // End confirm
@@ -509,7 +509,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print img_picto_common('','treemenu/base.gif');
 	print '</td><td align="left">';
 	$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsManual").')';
-	print Form::textwithpicto($txt, $htmltooltip, 1, 'info');
+	print $form->textwithpicto($txt, $htmltooltip, 1, 'info');
 	print '</td>';
 	print '</tr></table></td>';
 	print '<td align="right">';
@@ -519,7 +519,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	print '<td align="right">&nbsp;</td>';
 	print '<td align="right">&nbsp;</td>';
 	print '<td align="center">';
-	//print Form::textwithpicto('',$htmltooltip,1,"info");
+	//print $form->textwithpicto('',$htmltooltip,1,"info");
 	print '</td>';
 	print '</tr>';
 
@@ -530,7 +530,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     	// Show filemanager tree
 	    print '<div id="filetree" class="ecmfiletree"></div>';
 
-	    if ($action == 'deletefile') print Form::formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
+	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
 	    print '</td></tr>';
     }
@@ -670,7 +670,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
     			$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.$val['cachenbofdoc'].'<br>';
     			if ($nbofsubdir) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
     			else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.$nbofsubdir.'<br>';
-    			print Form::textwithpicto('', $htmltooltip, 1, 'info');
+    			print $form->textwithpicto('', $htmltooltip, 1, 'info');
     			print "</td>";
 
     			print '</tr></table>';

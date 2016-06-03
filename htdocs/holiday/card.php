@@ -677,7 +677,7 @@ $cp = new Holiday($db);
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
+llxHeader('', $langs->trans('CPTitreMenu'));
 
 if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create')
 {
@@ -812,7 +812,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         	$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
 			$arraytypeleaves[$val['rowid']]=$labeltoshow;
         }
-        print Form::selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+        print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
         if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
         print '</tr>';
@@ -823,13 +823,13 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_debut_')) {
-            Form::selectDate(-1,'date_debut_');
+            $form->select_date(-1,'date_debut_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-            Form::selectDate($tmpdate,'date_debut_');
+            $form->select_date($tmpdate,'date_debut_');
         }
         print ' &nbsp; &nbsp; ';
-        print Form::selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
+        print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
         print '</td>';
         print '</tr>';
 
@@ -839,13 +839,13 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_fin_')) {
-            Form::selectDate(-1,'date_fin_');
+            $form->select_date(-1,'date_fin_');
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-            Form::selectDate($tmpdate,'date_fin_');
+            $form->select_date($tmpdate,'date_fin_');
         }
         print ' &nbsp; &nbsp; ';
-        print Form::selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
+        print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
         print '</td>';
         print '</tr>';
 
@@ -885,7 +885,7 @@ else
     {
         print '<div class="tabBar">';
         print $error;
-        print '<br /><br /><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
+        print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
         print '</div>';
     }
     else
@@ -949,33 +949,33 @@ else
                 {
                     if ($user->rights->holiday->delete)
                     {
-                        print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
+                        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
                     }
                 }
 
                 // Si envoi en validation
                 if ($action == 'sendToValidate' && $cp->statut == 1)
                 {
-                    print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
                 }
 
                 // Si validation de la demande
                 if ($action == 'valid')
                 {
-                    print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
                 }
 
                 // Si refus de la demande
                 if ($action == 'refuse')
                 {
                     $array_input = array(array('type'=>"text",'label'=> $langs->trans('DetailRefusCP'),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
                 }
 
                 // Si annulation de la demande
                 if ($action == 'cancel')
                 {
-                    print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
+                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$cp->id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
                 }
 
                 $head=holiday_prepare_head($cp);
@@ -994,18 +994,18 @@ else
                 print '<table class="border" width="100%">';
                 print '<tbody>';
 
-                $linkback='';
+                $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
 
                 print '<tr>';
-                print '<td width="25%">'.$langs->trans("Ref").'</td>';
+                print '<td class="titlefield">'.$langs->trans("Ref").'</td>';
                 print '<td>';
-                print Form::showrefnav($cp, 'id', $linkback, 1, 'rowid', 'ref');
+                print $form->showrefnav($cp, 'id', $linkback, 1, 'rowid', 'ref');
                 print '</td>';
                 print '</tr>';
 
                 print '<td>'.$langs->trans("User").'</td>';
         		print '<td>';
-        		print $userRequest->getNomUrl(1);
+        		print $userRequest->getNomUrl(1, 'leave');
         		print '</td></tr>';
 
 		        // Type
@@ -1035,9 +1035,9 @@ else
                     print '<tr>';
                     print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
-                    Form::selectDate($cp->date_debut,'date_debut_');
+                    $form->select_date($cp->date_debut,'date_debut_');
 			        print ' &nbsp; &nbsp; ';
-        			print Form::selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
+        			print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
                     print '</td>';
                     print '</tr>';
                 }
@@ -1057,9 +1057,9 @@ else
                     print '<tr>';
                     print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
-                    Form::selectDate($cp->date_fin,'date_fin_');
+                    $form->select_date($cp->date_fin,'date_fin_');
 			        print ' &nbsp; &nbsp; ';
-        			print Form::selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+        			print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
                     print '</td>';
                     print '</tr>';
                 }

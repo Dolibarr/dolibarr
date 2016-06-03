@@ -64,7 +64,7 @@ class HookManager
 	 *  class found into file /mymodule/class/actions_mymodule.class.php (if module has declared the context as a managed context).
 	 *  Then when a hook executeHooks('aMethod'...) is called, the method aMethod found into class will be executed.
 	 *
-	 *	@param	array	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
+	 *	@param	string[]	$arraycontext	    Array list of searched hooks tab/features. For example: 'thirdpartycard' (for hook methods into page card thirdparty), 'thirdpartydao' (for hook methods into Societe), ...
 	 *	@return	int							Always 1
 	 */
 	function initHooks($arraycontext)
@@ -135,6 +135,7 @@ class HookManager
 			$method,
 			array(
 				'addMoreActionsButtons',
+			    'addSearchEntry',
 				'addStatisticLine',
 				'deleteFile',
 				'doActions',

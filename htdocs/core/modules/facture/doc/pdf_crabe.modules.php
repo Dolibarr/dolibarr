@@ -1530,12 +1530,20 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetTextColor(0,0,60);
 		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateInvoice")." : " . dol_print_date($object->date,"day",false,$outputlangs), '', 'R');
 
+		if (! empty($conf->global->INVOICE_POINTOFTAX_DATE))
+		{
+			$posy+=4;
+			$pdf->SetXY($posx,$posy);
+			$pdf->SetTextColor(0,0,60);
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DatePointOfTax")." : " . dol_print_date($object->date_pointoftax,"day",false,$outputlangs), '', 'R');
+		}
+		
 		if ($object->type != 2)
 		{
 			$posy+=3;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateEcheance")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateDue")." : " . dol_print_date($object->date_lim_reglement,"day",false,$outputlangs,true), '', 'R');
 		}
 
 		if ($object->thirdparty->code_client)
@@ -1554,7 +1562,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->client);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
 			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
@@ -1602,12 +1610,12 @@ class pdf_crabe extends ModelePDFFactures
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+				$thirdparty = $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target',$object);
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target',$object);
 
 			// Show recipient
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
@@ -1650,7 +1658,8 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		$showdetails=0;
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'INVOICE_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 

@@ -356,13 +356,8 @@ if (empty($reshook))
 							}
 							else
 							{
-								// Create small thumbs for company (Ratio is near 16/9)
-								// Used on logon for example
-								$imgThumbSmall = vignette($newfile, $maxwidthsmall, $maxheightsmall, '_small', $quality);
-
-								// Create mini thumbs for company (Ratio is near 16/9)
-								// Used on menu or for setup page for example
-								$imgThumbMini = vignette($newfile, $maxwidthmini, $maxheightmini, '_mini', $quality);
+							    // Create thumbs
+							    $object->addThumbs($newfile);
 							}
 						}
 					}
@@ -807,7 +802,7 @@ else
 		$listetype=$adht->liste_array();
 		if (count($listetype))
 		{
-			print Form::selectarray("typeid", $listetype, GETPOST('typeid','int')?GETPOST('typeid','int'):$typeid, count($listetype)>1?1:0);
+			print $form->selectarray("typeid", $listetype, GETPOST('typeid','int')?GETPOST('typeid','int'):$typeid, count($listetype)>1?1:0);
 		} else {
 			print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
 		}
@@ -817,7 +812,7 @@ else
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
 		print '<tr><td class="fieldrequired">'.$langs->trans("Nature")."</td><td>\n";
-		print Form::selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
+		print $form->selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
 		print "</td>\n";
 
 		// Company
@@ -900,12 +895,12 @@ else
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		Form::selectDate(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
+		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-		print Form::selectyesno("public",$object->public,1);
+		print $form->selectyesno("public",$object->public,1);
 		print "</td></tr>\n";
 
 		// Categories
@@ -913,7 +908,7 @@ else
 		{
 			print '<tr><td>' . fieldLabel('Categories', 'memcars') . '</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
-			print Form::multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
+			print $form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
 			print "</td></tr>";
 		}
 
@@ -1054,12 +1049,12 @@ else
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Morale");
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
-		print Form::selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
+		print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 		print "</td>";
 
 		// Photo
 		print '<td align="center" class="hideonsmartphone" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-		print Form::showphoto('memberphoto',$object)."\n";
+		print $form->showphoto('memberphoto',$object)."\n";
 		if ($caneditfieldmember)
 		{
 			if ($object->photo) print "<br>\n";
@@ -1075,7 +1070,7 @@ else
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 		if ($user->rights->adherent->creer)
 		{
-			print Form::selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
+			print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
 		}
 		else
 		{
@@ -1154,12 +1149,12 @@ else
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-		Form::selectDate(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
+		$form->select_date(($object->birth ? $object->birth : -1),'birth','','',1,'formsoc');
 		print "</td></tr>\n";
 
 		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-		print Form::selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
+		print $form->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
 		print "</td></tr>\n";
 
 		// Categories
@@ -1173,7 +1168,7 @@ else
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print Form::multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 			print "</td></tr>";
 		}
 
@@ -1278,7 +1273,7 @@ else
 				if ($object->fk_soc > 0) $text.=$langs->trans("UserWillBeExternalUser");
 				else $text.=$langs->trans("UserWillBeInternalUser");
 			}
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrLogin"),$text,"confirm_create_user",$formquestion,'yes');
 		}
 
 		// Confirm create third party
@@ -1297,7 +1292,7 @@ else
 			// Create a form array
 			$formquestion=array(		array('label' => $langs->trans("NameToCreate"), 'type' => 'text', 'name' => 'companyname', 'value' => $name));
 
-			print Form::formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("CreateDolibarrThirdParty"),$langs->trans("ConfirmCreateThirdParty"),"confirm_create_thirdparty",$formquestion,1);
 		}
 
 		// Confirm validate member
@@ -1322,7 +1317,7 @@ else
 			$helpcontent.="<br>";
 			$helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
 			$helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
-			$label=Form::textwithpicto($tmp,$helpcontent,1,'help');
+			$label=$form->textwithpicto($tmp,$helpcontent,1,'help');
 
 			// Create form popup
 			$formquestion=array();
@@ -1333,13 +1328,13 @@ else
 			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
-			print Form::formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
 		}
 
 		// Confirm send card by mail
 		if ($action == 'sendinfo')
 		{
-			print Form::formconfirm("card.php?rowid=".$rowid,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail",$object->email),"confirm_sendinfo",'',0,1);
 		}
 
 		// Confirm terminate
@@ -1364,13 +1359,13 @@ else
 			$helpcontent.="<br>";
 			$helpcontent.='<b>'.$langs->trans("Content").'</b>:<br>';
 			$helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
-			$label=Form::textwithpicto($tmp,$helpcontent,1,'help');
+			$label=$form->textwithpicto($tmp,$helpcontent,1,'help');
 
 			// Cree un tableau formulaire
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print Form::formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
 		}
 
 		// Confirm remove member
@@ -1378,23 +1373,18 @@ else
 		{
 			$formquestion=array();
 			if ($backtopage) $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
-			print Form::formconfirm("card.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
+			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete",$formquestion,0,1);
 		}
 
-		/*
-		 * Confirm add in spip
-		 */
+		// Confirm add in spip
 		if ($action == 'add_spip')
 		{
-			print Form::formconfirm("card.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
+			print $form->formconfirm("card.php?rowid=".$rowid, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
-
-		/*
-		 * Confirm removed from spip
-		 */
+		// Confirm removed from spip
 		if ($action == 'del_spip')
 		{
-			print Form::formconfirm("card.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
+			print $form->formconfirm("card.php?rowid=$rowid", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
 		}
 
 		$rowspan=17;
@@ -1439,7 +1429,7 @@ else
 			{
 			    $langs->load("errors");
 			    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
-			    print ' '.Form::textwithpicto('', $htmltext,1,'warning');
+			    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
 			}
 			print '</td></tr>';
 		}
@@ -1556,8 +1546,16 @@ else
         }
         else
         {
-            print $langs->trans("SubscriptionNotReceived");
-            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        if (! $adht->cotisation)
+	        {
+	        	print $langs->trans("SubscriptionNotRecorded");
+		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        }
+	        else
+	        {
+	            print $langs->trans("SubscriptionNotReceived");
+	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	        }
         }
         print '</td></tr>';
 

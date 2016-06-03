@@ -225,6 +225,20 @@ if ($action=="setaddrefinlist") {
 	}
 }
 
+//Activate Ask For Preferred Shipping Method
+if ($action=="setaskforshippingmet") {
+	$setaskforshippingmet = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "SOCIETE_ASK_FOR_SHIPPING_METHOD", $setaskforshippingmet,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 //Activate ProfId mandatory
 if ($action == 'setprofidmandatory')
@@ -364,7 +378,7 @@ foreach ($dirsociete as $dirroot)
 
     			print '<td align="center">';
     			$s=$modCodeTiers->getToolTip($langs,null,-1);
-    			print Form::textwithpicto('',$s,1);
+    			print $form->textwithpicto('',$s,1);
     			print '</td>';
 
     			print '</tr>';
@@ -437,7 +451,7 @@ foreach ($dirsociete as $dirroot)
     			}
     			print '<td align="center">';
     			$s=$modCodeCompta->getToolTip($langs,null,-1);
-    			print Form::textwithpicto('',$s,1);
+    			print $form->textwithpicto('',$s,1);
     			print '</td>';
     			print "</tr>\n";
     		}
@@ -570,7 +584,7 @@ foreach ($dirsociete as $dirroot)
 					$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraft").': '.yn((! empty($module->option_draft_watermark)?$module->option_draft_watermark:''), 1, 1);
 
 					print '<td align="center" class="nowrap">';
-					print Form::textwithpicto('',$htmltooltip,1,0);
+					print $form->textwithpicto('',$htmltooltip,1,0);
 					print '</td>';
 
 					// Preview
@@ -710,7 +724,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
 // Utilisation formulaire Ajax sur choix societe
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.Form::textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectCompany"),$langs->trans('UseSearchToSelectCompanyTooltip'),1).' </td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -725,7 +739,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print Form::selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -734,7 +748,7 @@ print '</tr>';
 
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.Form::textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
+print '<td width="80%">'.$form->textwithpicto($langs->trans("DelaiedFullListToSelectContact"),$langs->trans('UseSearchToSelectContactTooltip'),1).'</td>';
 if (! $conf->use_javascript_ajax)
 {
 	print '<td class="nowrap" align="right" colspan="2">';
@@ -749,7 +763,7 @@ else
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print Form::selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -771,6 +785,26 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 else
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("AskForPreferredShippingMethod").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"),'switch_off');
 }
 print '</a></td>';

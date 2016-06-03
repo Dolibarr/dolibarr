@@ -72,7 +72,7 @@ $modulepart='holiday';
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -108,14 +108,14 @@ if ($object->id)
 	}
 
 
-    print '<table class="border" width="100%">';
+    print '<table class="border centpercent">';
 
-    $linkback='';
+    $linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
 
     print '<tr>';
-    print '<td width="25%">'.$langs->trans("Ref").'</td>';
+    print '<td class="titlefield">'.$langs->trans("Ref").'</td>';
     print '<td>';
-    print Form::showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref');
+    print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref');
     print '</td>';
     print '</tr>';
 
@@ -151,9 +151,9 @@ if ($object->id)
     	print '<tr>';
     	print '<td>'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
     	print '<td>';
-    	Form::selectDate($object->date_debut,'date_debut_');
+    	$form->select_date($object->date_debut,'date_debut_');
     	print ' &nbsp; &nbsp; ';
-    	print Form::selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
+    	print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):$starthalfday));
     	print '</td>';
     	print '</tr>';
     }
@@ -173,9 +173,9 @@ if ($object->id)
     	print '<tr>';
     	print '<td>'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
     	print '<td>';
-    	Form::selectDate($object->date_fin,'date_fin_');
+    	$form->select_date($object->date_fin,'date_fin_');
     	print ' &nbsp; &nbsp; ';
-    	print Form::selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
+    	print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):$endhalfday));
     	print '</td>';
     	print '</tr>';
     }

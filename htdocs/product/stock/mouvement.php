@@ -207,11 +207,10 @@ if ($action == "transfert_stock" && ! $cancel)
 
             $db->begin();
 
-            $product->load_stock();	// Load array product->stock_warehouse
+            $product->load_stock('novirtual');	// Load array product->stock_warehouse
 
             // Define value of products moved
             $pricesrc=0;
-            //if (isset($product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp)) $pricesrc=$product->stock_warehouse[GETPOST("id_entrepot_source")]->pmp;
             if (isset($product->pmp)) $pricesrc=$product->pmp;
             $pricedest=$pricesrc;
             
@@ -368,7 +367,7 @@ if (! empty($search_movement))      $sql.= " AND m.label LIKE '%".$db->escape($s
 if (! empty($search_inventorycode)) $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
 if (! empty($search_product_ref))   $sql.= " AND p.ref LIKE '%".$db->escape($search_product_ref)."%'";
 if (! empty($search_product))       $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
-if (! empty($search_warehouse))     $sql.= " AND e.label LIKE '%".$db->escape($search_warehouse)."%'";
+if (! empty($search_warehouse))     $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
 if (! empty($search_user))          $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 if (! empty($search_batch))         $sql.= " AND m.batch LIKE '%".$db->escape($search_batch)."%'";
 
@@ -428,7 +427,7 @@ if ($resql)
 
         // Ref
         print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-        print Form::showrefnav($entrepot, 'id', $linkback, 1, 'rowid', 'libelle');
+        print $form->showrefnav($entrepot, 'id', $linkback, 1, 'rowid', 'libelle');
         print '</td>';
 
         print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$entrepot->lieu.'</td></tr>';
@@ -528,89 +527,6 @@ if ($resql)
 		print '<br>';
 	}
 
-    /*
-     * Correct stock
-     */
-	/*
-    if ($action == "correction")
-    {
-        print load_fiche_titre($langs->trans("StockCorrection"));
-        print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="correct_stock">';
-        print '<table class="border" width="100%">';
-
-        // Product
-        print '<tr>';
-        print '<td width="20%">'.$langs->trans("Product").'</td>';
-        print '<td width="20%">';
-        print $form->select_produits(GETPOST('productid'),'product_id',(empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''));
-        print '</td>';
-        print '<td width="20%">';
-        print '<select name="mouvement" class="flat">';
-        print '<option value="0">'.$langs->trans("Add").'</option>';
-        print '<option value="1">'.$langs->trans("Delete").'</option>';
-        print '</select></td>';
-        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
-        print '</tr>';
-
-        // Label
-        print '<tr>';
-        print '<td width="20%">'.$langs->trans("Label").'</td>';
-        print '<td colspan="4">';
-        print '<input type="text" name="label" size="40" value="">';
-        print '</td>';
-        print '</tr>';
-
-        print '</table>';
-
-        print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-
-		print '</form>';
-    }
-
-    if ($action == "transfert")
-    {
-        print load_fiche_titre($langs->trans("Transfer"));
-        print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="transfert_stock">';
-        print '<table class="border" width="100%">';
-
-        print '<tr>';
-        print '<td width="20%">'.$langs->trans("Product").'</td>';
-        print '<td width="20%">';
-        print $form->select_produits(GETPOST('productid'),'product_id');
-        print '</td>';
-        print '<td width="20%">'.$langs->trans("WarehouseTarget").'</td><td width="20%">';
-        print $formproduct->selectWarehouses('','id_entrepot_destination','',1);
-        print '</td>';
-        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input name="nbpiece" size="10" value=""></td>';
-        print '</tr>';
-
-        // Label
-        print '<tr>';
-        print '<td width="20%">'.$langs->trans("Label").'</td>';
-        print '<td colspan="5">';
-        print '<input type="text" name="label" size="40" value="">';
-        print '</td>';
-        print '</tr>';
-
-        print '</table>';
-
-        print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans('Save').'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
-
-        print '</form>';
-    }
-	*/
 
     /* ************************************************************************** */
     /*                                                                            */
@@ -703,7 +619,8 @@ if ($resql)
     if (! $id > 0) 
     {
         print '<td class="liste_titre" align="left">';
-        print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
+        //print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
+        print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1);
         print '</td>';
     }
     // Author

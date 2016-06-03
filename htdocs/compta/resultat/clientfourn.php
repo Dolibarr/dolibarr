@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014 Raphaël Dourseanud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2014-2106 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2014	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry        <florian.henry@open-concept.pro>
  *
@@ -125,7 +125,7 @@ if ($modecompta=="CREANCES-DETTES")
     $name=$langs->trans("AnnualByCompaniesDueDebtMode");
 	$calcmode=$langs->trans("CalcModeDebt");
     $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=RECETTES-DEPENSES">','</a>').')';
-    $period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultDue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
@@ -137,8 +137,8 @@ else {
     $name=$langs->trans("AnnualByCompaniesInputOutputMode");
 	$calcmode=$langs->trans("CalcModeEngagement");
     $calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.(GETPOST("month")>0?'&month='.GETPOST("month"):'').'&modecompta=CREANCES-DETTES">','</a>').')';
-    //$period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',1,1,0,'',1,0,1);
-    $period=Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).' - '.Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1);
+    //$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',1,1,0,'',1,0,1);
+    $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
     //$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultInOut");
     $builddate=time();
@@ -382,7 +382,7 @@ print '</tr>';
  * Charges sociales non deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 0)</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributionsNondeductibles").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
@@ -456,7 +456,7 @@ print '</tr>';
  * Charges sociales deductibles
  */
 
-print '<tr><td colspan="4">'.$langs->trans("SocialContributions").' ('.$langs->trans("Type").' 1)</td></tr>';
+print '<tr><td colspan="4">'.$langs->trans("SocialContributionsDeductibles").'</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES')
 {
@@ -633,18 +633,18 @@ if (! empty($conf->expensereport->enabled))
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
-		$sql.= " AND p.fk_statut>5";
+		$sql.= " AND p.fk_statut>=5";
 		
 		$column='p.date_valid';
 		
 	} else {
-		$sql = "SELECT p.rowid, p.ref, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
-		$sql.= " AND p.fk_statut=6";
+		$sql.= " AND p.fk_statut>=5";
 		
 		$column='pe.datep';
 	}
@@ -654,7 +654,7 @@ if (! empty($conf->expensereport->enabled))
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 
-		$sql.= " GROUP BY p.rowid, p.ref, u.firstname, u.lastname, dm";
+		$sql.= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
 		$sql.= " ORDER BY p.ref";
 
 		dol_syslog("get expense report outcome");
@@ -677,7 +677,7 @@ if (! empty($conf->expensereport->enabled))
 					$var = !$var;
 					print "<tr ".$bc[$var]."><td>&nbsp;</td>";
 
-					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/card.php?id=".$obj->rowid."\">".$obj->ref.' ('.$obj->firstname." ".$obj->lastname.")</a></td>\n";
+					print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
 					if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount_ht).'</td>';
 					print '<td align="right">'.price(-$obj->amount_ttc).'</td>';
@@ -978,7 +978,7 @@ $parameters["date_end"] = $date_end;
 $parameters["bc"] = $bc;
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addBalanceLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 print $hookmanager->resPrint;
 
 if ($mysoc->tva_assuj != 'franchise')	// Assujeti

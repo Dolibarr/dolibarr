@@ -44,8 +44,10 @@ if (! empty($conf->supplier_proposal->enabled))
 	require DOL_DOCUMENT_ROOT . '/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->produit->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (!empty($conf->projet->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 require_once NUSOAP_PATH.'/nusoap.php';     // Include SOAP
 
 $langs->load('admin');
@@ -203,22 +205,33 @@ if (empty($reshook))
 
 	if ($action == 'reopen')	// no test on permission here, permission to use will depends on status
 	{
-	    if (in_array($object->statut, array(1, 2, 3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
+	    if (in_array($object->statut, array(1, 2, 3, 4, 5, 6, 7, 9)))
 	    {
 	        if ($object->statut == 1) $newstatus=0;	// Validated->Draft
 	        else if ($object->statut == 2) $newstatus=0;	// Approved->Draft
 	        else if ($object->statut == 3) $newstatus=2;	// Ordered->Approved
-	        else if ($object->statut == 5) $newstatus=4;	// Received->Received partially
+	        else if ($object->statut == 4) $newstatus=3;
+	        else if ($object->statut == 5)
+	        {
+	            //$newstatus=2;    // Ordered
+	            // TODO Can we set it to submited ?
+	            //$newstatus=3;  // Submited
+	            // TODO If there is at least one reception, we can set to Received->Received partially
+	            $newstatus=4;  // Received partially
+	            
+	        }
 	        else if ($object->statut == 6) $newstatus=2;	// Canceled->Approved
 	        else if ($object->statut == 7) $newstatus=3;	// Canceled->Process running
 	        else if ($object->statut == 9) $newstatus=1;	// Refused->Validated
             else $newstatus = 2;
             
+            //print "old status = ".$object->statut.' new status = '.$newstatus;
 	        $db->begin();
 
 	        $result = $object->setStatus($user, $newstatus);
 	        if ($result > 0)
 	        {
+	            // Currently the "Re-open" also remove the billed flag because there is no button "Set unpaid" yet.
 		        $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
 	        	$sql.= ' SET billed = 0';
 	        	$sql.= ' WHERE rowid = '.$object->id;
@@ -253,7 +266,7 @@ if (empty($reshook))
 	 */
 	if ($action == 'classifybilled' && $user->rights->fournisseur->commande->creer)
 	{
-		$ret=$object->classifyBilled();
+		$ret=$object->classifyBilled($user);
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -331,11 +344,14 @@ if (empty($reshook))
 	    // Ecrase $txtva  par celui du produit
 	    if ((GETPOST('prod_entry_mode') != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 	    {
-	    	$idprod=0;
 	    	$productsupplier = new ProductFournisseur($db);
 
-    		if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
-
+	    	if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+	    	{
+				$idprod=0;
+				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+			}
+			
 	    	if (GETPOST('idprodfournprice') > 0)
 	    	{
 	    		$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
@@ -459,6 +475,7 @@ if (empty($reshook))
 	    	unset($_POST['remise_percent']);
 	    	unset($_POST['pu']);
 	    	unset($_POST['price_ht']);
+			unset($_POST['multicurrency_price_ht']);
 	    	unset($_POST['price_ttc']);
 	    	unset($_POST['tva_tx']);
 	    	unset($_POST['label']);
@@ -967,9 +984,16 @@ if (empty($reshook))
        			// If creation from another object of another module (Example: origin=propal, originid=1)
 				if (! empty($origin) && ! empty($originid))
 				{
-					$element = 'supplier_proposal';
-					$subelement = 'supplier_proposal';
-
+					if ($origin == 'order' || $origin == 'commande')
+					{
+                        $element = $subelement = 'commande';
+                    }
+                    else
+                    {
+						$element = 'supplier_proposal';
+						$subelement = 'supplier_proposal';
+					}
+					
 					$object->origin = $origin;
 					$object->origin_id = $originid;
 
@@ -1029,35 +1053,41 @@ if (empty($reshook))
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_option = $lines[$i]->array_options;
 								}
-								
-								$res = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								/*if ($productsupplier->id > 0)
-								{
-								    $res = $productsupplier->fetch($productsupplier->id);
-								}*/
-								
-								$result = $object->addline(
-									$desc,
-									$lines[$i]->subprice,
-									$lines[$i]->qty,
-									$lines[$i]->tva_tx,
-									$lines[$i]->localtax1_tx,
-									$lines[$i]->localtax2_tx,
-									$lines[$i]->fk_product,
-									$productsupplier->product_fourn_price_id,
-									$productsupplier->ref_fourn,
-									$lines[$i]->remise_percent,
-									'HT',
-									0,
-									$lines[$i]->product_type,
-									'',
-									'',
-									null,
-									null,
-									array(),
-									$lines[$i]->fk_unit
-								);
 
+								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
+								if ($result>0) 
+								{
+								    $tva_tx = $lines[$i]->tva_tx;
+								    
+								    if ($origin=="commande")
+								    {
+					                    $soc=new societe($db);
+					                    $soc->fetch($socid);
+					                    $tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $productsupplier->product_fourn_price_id);
+								    }
+					                                
+									$result = $object->addline(
+										$desc,
+										$lines[$i]->subprice,
+										$lines[$i]->qty,
+										$tva_tx,
+										$lines[$i]->localtax1_tx,
+										$lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product,
+										$productsupplier->product_fourn_price_id,
+										$productsupplier->ref_supplier,
+										$lines[$i]->remise_percent,
+										'HT',
+										0,
+										$lines[$i]->product_type,
+										'',
+										'',
+										null,
+										null,
+										array(),
+										$lines[$i]->fk_unit
+									);
+								}
 								if ($result < 0) {
 									$error++;
 									break;
@@ -1170,12 +1200,12 @@ if (empty($reshook))
 	                // Recipient was provided from combo list
 	                if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
 	                {
-	                    $sendto = $object->client->email;
+	                    $sendto = $object->thirdparty->email;
 	                    $sendtoid = 0;
 	                }
 	                else	// Id du contact
 	                {
-	                    $sendto = $object->client->contact_get_property(GETPOST('receiver','alpha'),'email');
+	                    $sendto = $object->thirdparty->contact_get_property(GETPOST('receiver','alpha'),'email');
 	                    $sendtoid = GETPOST('receiver','alpha');
 	                }
 	            }
@@ -1556,7 +1586,7 @@ if ($action=='create')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 	// Third party
 	print '<tr><td class="fieldrequired">'.$langs->trans('Supplier').'</td>';
@@ -1569,7 +1599,7 @@ if ($action=='create')
 	}
 	else
 	{
-		print $form->select_company((empty($socid)?'':$socid),'socid','s.fournisseur = 1',1);
+		print $form->select_company((empty($socid)?'':$socid), 'socid', 's.fournisseur = 1', 'SelectThirdParty');
 	}
 	print '</td>';
 
@@ -1596,7 +1626,7 @@ if ($action=='create')
 	print '<td>';
 	$usehourmin=0;
 	if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin=1;
-	Form::selectDate($datelivraison?$datelivraison:-1,'liv_',$usehourmin,$usehourmin,'',"set");
+	$form->select_date($datelivraison?$datelivraison:-1,'liv_',$usehourmin,$usehourmin,'',"set");
 	print '</td></tr>';
 
     // Bank Account
@@ -1608,11 +1638,22 @@ if ($action=='create')
 	    print '</td></tr>';
     }
 
-	// Incoterms
+	// Project
+	if (! empty($conf->projet->enabled))
+	{
+		$formproject = new FormProjets($db);
+
+		$langs->load('projects');
+		print '<tr><td>' . $langs->trans('Project') . '</td><td colspan="2">';
+		$formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS)?$societe->id:-1), $projectid, 'projectid', 0, 0, 1, 1);
+		print '</td></tr>';
+	}
+
+    // Incoterms
 	if (!empty($conf->incoterm->enabled))
 	{
 		print '<tr>';
-		print '<td><label for="incoterm_id">'.Form::textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
+		print '<td><label for="incoterm_id">'.$form->textwithpicto($langs->trans("IncotermLabel"), $object->libelle_incoterms, 1).'</label></td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
         print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms)?$object->location_incoterms:''));
 		print '</td></tr>';
@@ -1692,7 +1733,11 @@ if ($action=='create')
 
     dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans('CreateDraft').'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print "</form>\n";
 
@@ -1733,7 +1778,7 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'delete')
 	{
-		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteOrder'), $langs->trans('ConfirmDeleteOrder'), 'confirm_delete', '', 0, 2);
 
 	}
 
@@ -1745,7 +1790,7 @@ elseif (! empty($object->id))
 				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1)
 		);
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id,$langs->trans('CloneOrder'),$langs->trans('ConfirmCloneOrder',$object->ref),'confirm_clone',$formquestion,'yes',1);
 
 	}
 
@@ -1779,7 +1824,7 @@ elseif (! empty($object->id))
 				$text.=$notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid, $object);
 			}
 
-			$formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ValidateOrder'), $text, 'confirm_valid', '', 0, 1);
 		}
 	}
 
@@ -1820,7 +1865,7 @@ elseif (! empty($object->id))
 			$text.=$notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
 		}
 
-		$formconfirm = Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("ApproveThisOrder"), $text, "confirm_".$action, $formquestion, 1, 1, 240);
 	}
 
 	/*
@@ -1828,7 +1873,7 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'refuse')
 	{
-		$formconfirm = Form::formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("DenyingThisOrder"),$langs->trans("ConfirmDenyingThisOrder",$object->ref),"confirm_refuse", '', 0, 1);
 
 	}
 
@@ -1837,7 +1882,7 @@ elseif (! empty($object->id))
 	 */
 	if ($action	== 'cancel')
 	{
-		$formconfirm = Form::formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id",$langs->trans("Cancel"),$langs->trans("ConfirmCancelThisOrder",$object->ref),"confirm_cancel", '', 0, 1);
 
 	}
 
@@ -1847,14 +1892,14 @@ elseif (! empty($object->id))
 	if ($action	== 'commande')
 	{
 		$date_com = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
-		$formconfirm = Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id."&datecommande=".$date_com."&methode=".$_POST["methodecommande"]."&comment=".urlencode($_POST["comment"]), $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dol_print_date($date_com,'day')),"confirm_commande",'',0,2);
 
 	}
 
 	// Confirmation to delete line
 	if ($action == 'ask_deleteline')
 	{
-		 $formconfirm = Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
+		 $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 	}
 
 	if (!$formconfirm)
@@ -1885,15 +1930,15 @@ elseif (! empty($object->id))
 	// Ref
 	print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="2">';
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td>';
 	print '</tr>';
 
 	// Ref supplier
 	print '<tr><td>';
-	print Form::editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
+	print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
 	print '</td><td colspan="2">';
-	print Form::editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
+	print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->fournisseur->commande->creer);
 	print '</td></tr>';
 
 	// Fournisseur
@@ -1999,9 +2044,9 @@ elseif (! empty($object->id))
 		print '</tr></table>';
 		print '</td><td colspan="5">';
 		if ($action == 'editmulticurrencyrate') {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx');
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
-			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none');
+			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'none', $object->multicurrency_code);
 		}
 		print '</td></tr>';
 	}
@@ -2031,7 +2076,6 @@ elseif (! empty($object->id))
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateDeliveryPlanned');
 	print '</td>';
-
 	if ($action != 'editdate_livraison') print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$object->id.'">'.img_edit($langs->trans('SetDeliveryDate'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="2">';
@@ -2042,7 +2086,7 @@ elseif (! empty($object->id))
 		print '<input type="hidden" name="action" value="setdate_livraison">';
 		$usehourmin=0;
 		if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin=1;
-		Form::selectDate($object->date_livraison?$object->date_livraison:-1,'liv_',$usehourmin,$usehourmin,'',"setdate_livraison");
+		$form->select_date($object->date_livraison?$object->date_livraison:-1,'liv_',$usehourmin,$usehourmin,'',"setdate_livraison");
 		print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 		print '</form>';
 	}
@@ -2051,6 +2095,9 @@ elseif (! empty($object->id))
 		$usehourmin='day';
 		if (! empty($conf->global->SUPPLIER_ORDER_USE_HOUR_FOR_DELIVERY_DATE)) $usehourmin='dayhour';
 		print $object->date_livraison ? dol_print_date($object->date_livraison, $usehourmin) : '&nbsp;';
+		if ($object->hasDelay() && ! empty($object->date_livraison)) {
+		    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
+		}
 	}
 	print '</td></tr>';
 
@@ -2099,7 +2146,7 @@ elseif (! empty($object->id))
         print '<td colspan="3">';
 		if ($action != 'editincoterm')
 		{
-			print Form::textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
+			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
 		}
 		else
 		{
@@ -2257,7 +2304,7 @@ elseif (! empty($object->id))
 				$text=$product_static->getNomUrl(1,'supplier');
 				$text.= ' - '.$product_static->libelle;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				print Form::textwithtooltip($text,$description,3,'','',$i);
+				print $form->textwithtooltip($text,$description,3,'','',$i);
 
 				// Show range
 				print_date_range($date_start,$date_end);
@@ -2337,7 +2384,7 @@ elseif (! empty($object->id))
 				$text=$product_static->getNomUrl(1,'supplier');
 				$text.= ' - '.$product_static->libelle;
 				$description=($conf->global->PRODUIT_DESC_IN_FORM?'':dol_htmlentitiesbr($line->description));
-				print Form::textwithtooltip($text,$description,3,'','',$i);
+				print $form->textwithtooltip($text,$description,3,'','',$i);
 
 				// Show range
 				print_date_range($date_start,$date_end);
@@ -2364,9 +2411,9 @@ elseif (! empty($object->id))
 
             print '<br>';
             print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-            print Form::selectDate($date_start,'date_start'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'',1,0,1);
+            print $form->select_date($date_start,'date_start'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'',1,0,1);
             print ' '.$langs->trans('to').' ';
-            print Form::selectDate($date_end,'date_end'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'',1,0,1);
+            print $form->select_date($date_end,'date_end'.$date_pf,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE,1,'',1,0,1);
 
 			print '</td>';
 			print '<td>';
@@ -2422,7 +2469,7 @@ elseif (! empty($object->id))
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
 			$newlang = $_REQUEST['lang_id'];
 		if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-			$newlang = $object->client->default_lang;
+			$newlang = $object->thirdparty->default_lang;
 
 		if (!empty($newlang))
 		{
@@ -2458,10 +2505,7 @@ elseif (! empty($object->id))
 		$formmail->fromid   = $user->id;
 		$formmail->fromname = $user->getFullName($langs);
 		$formmail->frommail = $user->email;
-		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
-		{
-			$formmail->trackid='sor'.$object->id;
-		}
+		$formmail->trackid='sor'.$object->id;
 		if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -2473,7 +2517,7 @@ elseif (! empty($object->id))
 		$formmail->withto=GETPOST("sendto")?GETPOST("sendto"):$liste;
 		$formmail->withtocc=$liste;
 		$formmail->withtoccc=(! empty($conf->global->MAIN_EMAIL_USECCC)?$conf->global->MAIN_EMAIL_USECCC:false);
-		$formmail->withtopic=$outputlangs->trans('SendOrderRef','__ORDERREF__');
+		$formmail->withtopic=$outputlangs->trans('SendOrderRef','__REF__');
 		$formmail->withfile=2;
 		$formmail->withbody=1;
 		$formmail->withdeliveryreceipt=1;
@@ -2482,6 +2526,7 @@ elseif (! empty($object->id))
 		$object->fetch_projet();
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
+		$formmail->substit['__ORDERREF__']=$object->ref;                  	// For backward compatibility
 		$formmail->substit['__ORDERSUPPLIERREF__']=$object->ref_supplier;	// For backward compatibility
 		$formmail->substit['__SUPPLIERORDERREF__']=$object->ref_supplier;
 
@@ -2741,15 +2786,17 @@ elseif (! empty($object->id))
 		/**
 		 * Boutons actions
 		 */
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
-		// modified by hook
-		if (empty($reshook))
+	    
+		if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
 		{
-			if ($user->societe_id == 0 && $action != 'editline' && $action != 'delete')
-			{
-				print '<div	 class="tabsAction">';
+			print '<div	class="tabsAction">';
 
+			$parameters = array();
+			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
+			// modified by hook
+			if (empty($reshook))
+			{
+				
 				// Validate
 				if ($object->statut == 0 && $num > 0)
 				{
@@ -2866,7 +2913,7 @@ elseif (! empty($object->id))
 				        }
 				    }
 				}
-				if (in_array($object->statut, array(3, 5, 6, 7, 9)) || ($object->statut == 4 && $object->billed))
+				if (in_array($object->statut, array(3, 4, 5, 6, 7, 9)))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
@@ -2931,9 +2978,11 @@ elseif (! empty($object->id))
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
 
-				print "</div>";
 			}
+		
+			print "</div>";
 		}
+
 		print "<br>";
 
 
@@ -2954,7 +3003,7 @@ elseif (! empty($object->id))
 		$somethingshown=$formfile->numoffiles;
 
 		// Linked object block
-		$somethingshown = Form::showLinkedObjectBlock($object);
+		$somethingshown = $form->showLinkedObjectBlock($object);
 		
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);
@@ -2978,7 +3027,7 @@ elseif (! empty($object->id))
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
 			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-			print Form::selectDate($date_com,'',1,1,'',"commande",1,0,1);
+			print $form->select_date($date_com,'',1,1,'',"commande",1,0,1);
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans("OrderMode").'</td><td>';
@@ -3005,7 +3054,7 @@ elseif (! empty($object->id))
 			print '<table class="border" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 			print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-			print Form::selectDate('','',1,1,'',"commande",1,0,1);
+			print $form->select_date('','',1,1,'',"commande",1,0,1);
 			print "</td></tr>\n";
 
 			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
@@ -3016,7 +3065,7 @@ elseif (! empty($object->id))
 			$liv['nev']	= $langs->trans("NeverReceived");
 			$liv['can']	= $langs->trans("Canceled");
 
-			print Form::selectarray("type",$liv);
+			print $form->selectarray("type",$liv);
 
 			print '</td></tr>';
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';
@@ -3029,7 +3078,7 @@ elseif (! empty($object->id))
         // List of actions on element
         include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
         $formactions=new FormActions($db);
-        $somethingshown=$formactions->showactions($object,'order_supplier',$socid);
+        $somethingshown=$formactions->showactions($object,'order_supplier',$socid,0,'listaction'.($genallowed?'largetitle':''));
 
 
 		// List of actions on element

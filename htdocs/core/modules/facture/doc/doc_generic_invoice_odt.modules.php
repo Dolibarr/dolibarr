@@ -134,7 +134,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texthelp.='<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp.=$langs->transnoentitiesnoconv("FullListOnOnlineDocumentation");    // This contains an url, we don't modify it
 
-		$texte.= Form::textwithpicto($texttitle,$texthelp,1,'help','',1);
+		$texte.= $form->textwithpicto($texttitle,$texthelp,1,'help','',1);
 		$texte.= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte.= '<textarea class="flat" cols="60" name="value1">';
 		$texte.=$conf->global->FACTURE_ADDON_PDF_ODT_PATH;
@@ -144,7 +144,24 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 		$texte.= '<br></div></div>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->FACTURE_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=count($listoffiles);
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
 
 		$texte.= '</td>';
 
@@ -274,14 +291,14 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					// On peut utiliser le nom de la societe du contact
 					if (! empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
 					else {
-			                        $socobject = $object->client;
+			                        $socobject = $object->thirdparty;
                         			// if we have a BILLING contact and we dont use it as recipient we store the contact object for later use
                         			$contactobject = $object->contact;
                     			}
 				}
 				else
 				{
-					$socobject=$object->client;
+					$socobject=$object->thirdparty;
 				}
 
 				// Fetch info for linked propal

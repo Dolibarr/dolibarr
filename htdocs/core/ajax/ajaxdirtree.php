@@ -194,7 +194,7 @@ if (file_exists($fullpathselecteddir))
     				$htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInDir").'</b>: '.((isset($val['cachenbofdoc']) && $val['cachenbofdoc'] >= 0)?$val['cachenbofdoc']:$langs->trans("NeedRefresh")).'<br>';
     				if ($nboffilesinsubdir > 0) $htmltooltip.='<b>'.$langs->trans("ECMNbOfFilesInSubDir").'</b>: '.$nboffilesinsubdir;
     				else $htmltooltip.='<b>'.$langs->trans("ECMNbOfSubDir").'</b>: '.($nbofsubdir >= 0 ? $nbofsubdir : $langs->trans("NeedRefresh")).'<br>';
-    				print Form::textwithpicto('',$htmltooltip,1,"info");
+    				print $form->textwithpicto('',$htmltooltip,1,"info");
     				print "</td>";
 
     				print "</tr></table>\n";

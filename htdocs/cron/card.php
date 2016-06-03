@@ -278,13 +278,13 @@ if ($conf->use_javascript_ajax)
 
 if ($action == 'delete')
 {
-	print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
 
 	$action='';
 }
 
 if ($action == 'execute'){
-	print Form::formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 
 	$action='';
 }
@@ -337,7 +337,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"module_name\" value=\"".$object->module_name."\" /> ";
 	print "</td>";
 	print "<td>";
-	print Form::textwithpicto('',$langs->trans("CronModuleHelp"),1,'help');
+	print $form->textwithpicto('',$langs->trans("CronModuleHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -346,7 +346,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"classesname\" value=\"".$object->classesname."\" /> ";
 	print "</td>";
 	print "<td>";
-	print Form::textwithpicto('',$langs->trans("CronClassFileHelp"),1,'help');
+	print $form->textwithpicto('',$langs->trans("CronClassFileHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -355,7 +355,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"objectname\" value=\"".$object->objectname."\" /> ";
 	print "</td>";
 	print "<td>";
-	print Form::textwithpicto('',$langs->trans("CronObjectHelp"),1,'help');
+	print $form->textwithpicto('',$langs->trans("CronObjectHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -364,7 +364,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"methodename\" value=\"".$object->methodename."\" /> ";
 	print "</td>";
 	print "<td>";
-	print Form::textwithpicto('',$langs->trans("CronMethodHelp"),1,'help');
+	print $form->textwithpicto('',$langs->trans("CronMethodHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -373,7 +373,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"20\" name=\"params\" value=\"".$object->params."\" /> ";
 	print "</td>";
 	print "<td>";
-	print Form::textwithpicto('',$langs->trans("CronArgsHelp"),1,'help');
+	print $form->textwithpicto('',$langs->trans("CronArgsHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -382,7 +382,7 @@ if (($action=="create") || ($action=="edit"))
 	print "<input type=\"text\" size=\"50\" name=\"command\" value=\"".$object->command."\" /> ";
 	print "</td>";
 	print "<td>";
-	print Form::textwithpicto('',$langs->trans("CronCommandHelp"),1,'help');
+	print $form->textwithpicto('',$langs->trans("CronCommandHelp"),1,'help');
 	print "</td>";
 	print "</tr>\n";
 
@@ -460,11 +460,11 @@ if (($action=="create") || ($action=="edit"))
 	print $langs->trans('CronDtStart')."</td><td>";
 	if(!empty($object->datestart))
 	{
-	    Form::selectDate($object->datestart,'datestart',1,1,'',"cronform");
+	    $form->select_date($object->datestart,'datestart',1,1,'',"cronform");
 	}
 	else
 	{
-	    Form::selectDate('','datestart',1,1,'',"cronform");
+	    $form->select_date('','datestart',1,1,'',"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -474,10 +474,10 @@ if (($action=="create") || ($action=="edit"))
 	print "<tr><td>";
 	print $langs->trans('CronDtEnd')."</td><td>";
 	if(!empty($object->dateend)){
-	    Form::selectDate($object->dateend,'dateend',1,1,'',"cronform");
+	    $form->select_date($object->dateend,'dateend',1,1,'',"cronform");
 	}
 	else{
-	    Form::selectDate(-1,'dateend',1,1,1,"cronform");
+	    $form->select_date(-1,'dateend',1,1,1,"cronform");
 	}
 	print "</td>";
 	print "<td>";
@@ -514,11 +514,11 @@ if (($action=="create") || ($action=="edit"))
 	print "</td><td>";
 	if(!empty($object->datenextrun))
 	{
-	    Form::selectDate($object->datenextrun,'datenextrun',1,1,'',"cronform");
+	    $form->select_date($object->datenextrun,'datenextrun',1,1,'',"cronform");
 	}
 	else
 	{
-	    Form::selectDate(-1,'datenextrun',1,1,'',"cronform");
+	    $form->select_date(-1,'datenextrun',1,1,'',"cronform");
 	}	
 	print "</td>";
     print "<td>";
@@ -554,7 +554,7 @@ else
 
 	print '<tr><td width="30%">';
 	print $langs->trans('CronId')."</td>";
-	print "<td>".Form::showrefnav($object, 'id', $linkback, 1, 'rowid', 'id', '', '', 0);
+	print "<td>".$form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'id', '', '', 0);
 	print "</td></tr>\n";
 
 	print '<tr><td>';
@@ -704,7 +704,7 @@ else
 	}
 	else if (empty($object->status))
 	{
-		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("TaskDisabled")).'">'.$langs->trans("CronExecute").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("JobDisabled")).'">'.$langs->trans("CronExecute").'</a>';
 	}
 	else {
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=execute&id='.$object->id.'">'.$langs->trans("CronExecute").'</a>';

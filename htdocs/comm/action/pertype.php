@@ -261,7 +261,7 @@ $nav.='<input type="hidden" name="begin_d" value="' . $begin_d . '">';
 $nav.='<input type="hidden" name="end_d" value="' . $end_d . '">';
 $nav.='<input type="hidden" name="showbirthday" value="' . $showbirthday . '">';
 
-$nav.=Form::selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
+$nav.=$form->select_date($dateselect, 'dateselect', 0, 0, 1, '', 1, 0, 1);
 $nav.=' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 $nav.='</form>';
 

@@ -108,7 +108,7 @@ if (preg_match('/^confirm/i',$choice))
 {
 	print '<br>';
 	$formquestion=array();
-	print Form::formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
 

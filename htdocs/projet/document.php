@@ -43,7 +43,7 @@ $mine 		= (GETPOST('mode','alpha') == 'mine' ? 1 : 0);
 // Security check
 $socid=0;
 if ($user->societe_id > 0) $socid=$user->societe_id;
-$result=restrictedArea($user,'projet',$id,'');
+$result=restrictedArea($user,'projet',$id,'projet&project');
 
 $object = new Project($db);
 
@@ -70,7 +70,7 @@ if (! $sortfield) $sortfield="name";
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -118,7 +118,7 @@ if ($object->id > 0)
         $projectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
         $object->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
     }
-	print Form::showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
 	// Label

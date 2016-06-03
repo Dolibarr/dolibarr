@@ -191,9 +191,9 @@ if ($resql)
 	$moreforfilter = '';
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('StartDate') . ' ';
-	$moreforfilter .= Form::selectDate($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
 	$moreforfilter .= ' - ';
-	$moreforfilter .= $langs->trans('EndDate') . ' ' . Form::selectDate($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= $langs->trans('EndDate') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
 	$moreforfilter .= '</div>';
 
 	if ($moreforfilter) 
@@ -223,7 +223,7 @@ if ($resql)
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="center">';
-    $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1, 8);
+    $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1);
     print '</td>';
     print '<td class="liste_titre"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
     print '<td class="liste_titre">';
@@ -238,7 +238,7 @@ if ($resql)
 	print '</td>';
 	print '<td></td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=Form::showFilterAndCheckAddButtons();
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
     print '</td>';
 	print "</tr>\n";

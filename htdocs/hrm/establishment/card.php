@@ -136,7 +136,7 @@ else if ($action == 'update')
 			$object->country_id     = $_POST["country_id"];
 			$object->fk_user_mod	= $user->id;
 
-			$result = $object->update();
+			$result = $object->update($user);
 
             if ($result > 0)
             {
@@ -224,7 +224,7 @@ if ($action == 'create')
     print '<tr>';
     print '<td>'.fieldLabel('Status','status',1).'</td>';
 	print '<td>';
-	print Form::selectarray('status',$status2label,GETPOST('status'));
+	print $form->selectarray('status',$status2label,GETPOST('status'));
     print '</td></tr>';
 
     print '</table>';
@@ -296,7 +296,7 @@ else if ($id)
 
 			// Status
 			print '<tr><td>'.fieldLabel('Status','status',1).'</td><td>';
-			print Form::selectarray('status',$status2label,$object->status);
+			print $form->selectarray('status',$status2label,$object->status);
 			print '</td></tr>';
 
             print '</table>';
@@ -318,7 +318,7 @@ else if ($id)
              */
             if ($action == 'delete')
             {
-                print Form::formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
+                print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
 
             }
 

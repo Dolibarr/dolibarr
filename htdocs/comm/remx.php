@@ -296,7 +296,7 @@ if ($socid > 0)
 
 	if ($_GET['action'] == 'remove')
 	{
-		print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$_GET["remid"], $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$_GET["remid"], $langs->trans('RemoveDiscount'), $langs->trans('ConfirmRemoveDiscount'), 'confirm_remove', '', 0, 1);
 	}
 
 	/*
@@ -341,22 +341,22 @@ if ($socid > 0)
 			$var = !$var;
 			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-			if ($obj->description == '(CREDIT_NOTE)')
+			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
-			elseif ($obj->description == '(DEPOSIT)')
+			elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
 			else
@@ -403,7 +403,7 @@ if ($socid > 0)
 				array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
 			);
 			$langs->load("dict");
-			print Form::formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'], $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+			print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'], $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount',price($showconfirminfo['amount_ttc']),$langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
 		}
 	}
 	else
@@ -500,22 +500,22 @@ if ($socid > 0)
 			$var = !$var;
 			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-			if ($obj->description == '(CREDIT_NOTE)')
+			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
-			elseif ($obj->description == '(DEPOSIT)')
+			elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
 			else

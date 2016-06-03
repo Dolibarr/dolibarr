@@ -63,6 +63,7 @@ if ($action == 'update')
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION",     $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS",     $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"],'chaine',0,'',$conf->entity);
 	
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -93,6 +94,13 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 $form=new Form($db);
 $formother=new FormOther($db);
 $formadmin=new FormAdmin($db);
+
+$arraydetailsforpdffoot = array(
+	0 => $langs->trans('NoDetails'),
+	1 => $langs->trans('DisplayCompanyInfo'),
+	2 => $langs->trans('DisplayManagersInfo'),
+	3 => $langs->trans('DisplayCompanyInfoAndManagers')
+);
 
 print load_fiche_titre($langs->trans("PDF"),'','title_setup');
 
@@ -139,7 +147,7 @@ if ($action == 'edit')	// Edit
     // Hide VAT Intra on address
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowVATIntaInAddress").'</td><td>';
-    print Form::selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS',(! empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))?$conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS:0,1);
+    print $form->selectyesno('MAIN_TVAINTRA_NOT_IN_ADDRESS',(! empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))?$conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS:0,1);
     print '</td></tr>';
 
     // Show prof id 1 in address into pdf
@@ -156,7 +164,7 @@ if ($action == 'edit')	// Edit
     if ($pid1)
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid1.'</td><td>';
-    	print Form::selectyesno('MAIN_PROFID1_IN_ADDRESS',isset($conf->global->MAIN_PROFID1_IN_ADDRESS)?$conf->global->MAIN_PROFID1_IN_ADDRESS:0,1,$noCountryCode);
+    	print $form->selectyesno('MAIN_PROFID1_IN_ADDRESS',isset($conf->global->MAIN_PROFID1_IN_ADDRESS)?$conf->global->MAIN_PROFID1_IN_ADDRESS:0,1,$noCountryCode);
     	print '</td></tr>';
     }
 
@@ -174,7 +182,7 @@ if ($action == 'edit')	// Edit
     if ($pid2)
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid2.'</td><td>';
-    	print Form::selectyesno('MAIN_PROFID2_IN_ADDRESS',isset($conf->global->MAIN_PROFID2_IN_ADDRESS)?$conf->global->MAIN_PROFID2_IN_ADDRESS:0,1,$noCountryCode);
+    	print $form->selectyesno('MAIN_PROFID2_IN_ADDRESS',isset($conf->global->MAIN_PROFID2_IN_ADDRESS)?$conf->global->MAIN_PROFID2_IN_ADDRESS:0,1,$noCountryCode);
     	print '</td></tr>';
     }
 
@@ -192,7 +200,7 @@ if ($action == 'edit')	// Edit
     if ($pid3)
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid3.'</td><td>';
-    	print Form::selectyesno('MAIN_PROFID3_IN_ADDRESS',isset($conf->global->MAIN_PROFID3_IN_ADDRESS)?$conf->global->MAIN_PROFID3_IN_ADDRESS:0,1,$noCountryCode);
+    	print $form->selectyesno('MAIN_PROFID3_IN_ADDRESS',isset($conf->global->MAIN_PROFID3_IN_ADDRESS)?$conf->global->MAIN_PROFID3_IN_ADDRESS:0,1,$noCountryCode);
     	print '</td></tr>';
     }
 
@@ -210,7 +218,7 @@ if ($action == 'edit')	// Edit
     if ($pid4)
     {
     	print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowProfIdInAddress").' - '.$pid4.'</td><td>';
-    	print Form::selectyesno('MAIN_PROFID4_IN_ADDRESS',isset($conf->global->MAIN_PROFID4_IN_ADDRESS)?$conf->global->MAIN_PROFID4_IN_ADDRESS:0,1,$noCountryCode);
+    	print $form->selectyesno('MAIN_PROFID4_IN_ADDRESS',isset($conf->global->MAIN_PROFID4_IN_ADDRESS)?$conf->global->MAIN_PROFID4_IN_ADDRESS:0,1,$noCountryCode);
     	print '</td></tr>';
     }
 
@@ -227,33 +235,37 @@ if ($action == 'edit')	// Edit
     // Hide any PDF informations
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideAnyVATInformationOnPDF").'</td><td>';
-	print Form::selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
+	print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))?$conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT:0,1);
     print '</td></tr>';
 
     //Desc
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDescOnPDF").'</td><td>';
-    print Form::selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC:0,1);
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DESC',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC:0,1);
     print '</td></tr>';
 
     //Ref
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideRefOnPDF").'</td><td>';
-    print Form::selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF:0,1);
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_REF',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF:0,1);
     print '</td></tr>';
 
     //Details
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("HideDetailsOnPDF").'</td><td>';
-    print Form::selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
+    print $form->selectyesno('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS',(! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS))?$conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS:0,1);
     print '</td></tr>';
 
  	// Place customer adress to the ISO location
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td>';
-	print Form::selectyesno('MAIN_PDF_USE_ISO_LOCATION',(! empty($conf->global->MAIN_PDF_USE_ISO_LOCATION))?$conf->global->MAIN_PDF_USE_ISO_LOCATION:0,1);
+	print $form->selectyesno('MAIN_PDF_USE_ISO_LOCATION',(! empty($conf->global->MAIN_PDF_USE_ISO_LOCATION))?$conf->global->MAIN_PDF_USE_ISO_LOCATION:0,1);
     print '</td></tr>';
-
+	
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td>';
+	print $form->selectarray('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', $arraydetailsforpdffoot, $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS);
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -404,7 +416,7 @@ else	// Show
 	print "<tr ".$bc[$var].">";
 	print '<td>';
 	$text = $langs->trans("ProtectAndEncryptPdfFiles");
-	$desc = Form::textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
+	$desc = $form->textwithpicto($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
 	print $desc;
 	print '</td>';
 	print '<td width="60">';
@@ -454,6 +466,11 @@ else	// Show
 	$var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("PlaceCustomerAddressToIsoLocation").'</td><td colspan="2">';
 	print yn($conf->global->MAIN_PDF_USE_ISO_LOCATION,1);
+	print '</td></tr>';
+	
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("ShowDetailsInPDFPageFoot").'</td><td colspan="2">';
+	print $arraydetailsforpdffoot[$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS];
 	print '</td></tr>';
 
 	print '</table>';

@@ -30,6 +30,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $langs->load("companies");
 
@@ -87,19 +88,14 @@ if ($socid)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-	print $object->name_alias;
-	print "</td></tr>";
-
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
 	if ($object->client)
 	{
-		print '<tr><td>';
+		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $object->code_client;
 		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -108,7 +104,7 @@ if ($socid)
 
 	if ($object->fournisseur)
 	{
-		print '<tr><td>';
+		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print $object->code_fournisseur;
 		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -117,6 +113,12 @@ if ($socid)
 
 	print '</table>';
 
+
+	print '<br>';
+ 
+	$object->info($socid);
+	print dol_print_object_info($object, 1);
+	
 	print '</div>';
 
 	dol_fiche_end();
@@ -158,16 +160,18 @@ if ($socid)
 
     print '</div>';
 
-    print '<br>';
-
-
-    print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
-
-    // List of todo actions
-    show_actions_todo($conf,$langs,$db,$object,null,0,1);
-
-    // List of done actions
-    show_actions_done($conf,$langs,$db,$object);
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        print '<br>';
+    
+        print load_fiche_titre($langs->trans("ActionsOnCompany"),'','');
+    
+        // List of todo actions
+        show_actions_todo($conf,$langs,$db,$object,null,0,1);
+    
+        // List of done actions
+        show_actions_done($conf,$langs,$db,$object);
+    }
 }
 
 

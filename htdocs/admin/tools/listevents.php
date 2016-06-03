@@ -61,11 +61,13 @@ $search_user = GETPOST("search_user");
 $search_desc = GETPOST("search_desc");
 $search_ua   = GETPOST("search_ua");
 
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+if (!isset($_REQUEST["date_startmonth"]) || $_REQUEST["date_startmonth"] > 0) $date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
+else $date_start=-1;
+if (!isset($_REQUEST["date_endmonth"]) || $_REQUEST["date_endmonth"] > 0) $date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+else $date_end=-1;
 
 // checks:if date_start>date_end  then date_end=date_start + 24 hours
-if ($date_start > $date_end) $date_end=$date_start+86400;
+if ($date_start > 0 && $date_end > 0 && $date_start > $date_end) $date_end=$date_start+86400;
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
@@ -93,6 +95,18 @@ if (empty($date_end))
  */
 
 $now=dol_now();
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+    $date_start=-1;
+    $date_end=-1;
+    $search_code='';
+    $search_ip='';
+    $search_user='';
+    $search_desc='';
+    $search_ua='';
+}
 
 // Purge audit events
 if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
@@ -152,12 +166,13 @@ $sql.= " u.login";
 $sql.= " FROM ".MAIN_DB_PREFIX."events as e";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
 $sql.= " WHERE e.entity IN (".getEntity('actioncomm', 1).")";
-$sql.= " AND e.dateevent >= '".$db->idate($date_start)."' AND e.dateevent <= '".$db->idate($date_end)."'";
-if ($search_code) { $usefilter++; $sql.=" AND e.type LIKE '%".$db->escape($search_code)."%'"; }
-if ($search_ip)   { $usefilter++; $sql.=" AND e.ip LIKE '%".$db->escape($search_ip)."%'"; }
-if ($search_user) { $usefilter++; $sql.=" AND u.login LIKE '%".$db->escape($search_user)."%'"; }
-if ($search_desc) { $usefilter++; $sql.=" AND e.description LIKE '%".$db->escape($search_desc)."%'"; }
-if ($search_ua)   { $usefilter++; $sql.=" AND e.user_agent LIKE '%".$db->escape($search_ua)."%'"; }
+if ($date_start > 0) $sql.= " AND e.dateevent >= '".$db->idate($date_start)."'";
+if ($date_end > 0)   $sql.= " AND e.dateevent <= '".$db->idate($date_end)."'";
+if ($search_code) { $usefilter++; $sql.=natural_search("e.type", $search_code, 0); }
+if ($search_ip)   { $usefilter++; $sql.=natural_search("e.ip", $search_ip, 0); }
+if ($search_user) { $usefilter++; $sql.=natural_search("u.login", $search_user, 0); }
+if ($search_desc) { $usefilter++; $sql.=natural_search("e.description", $search_desc, 0); }
+if ($search_ua)   { $usefilter++; $sql.=natural_search("e.user_agent", $search_ua, 0); }
 $sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($conf->liste_limit+1, $offset);
 //print $sql;
@@ -169,18 +184,23 @@ if ($result)
 
 	$param='';
 	if ($search_code) $param.='&search_code='.$search_code;
-	if ($search_ip) $param.='&search_ip='.$search_ip;
+	if ($search_ip)   $param.='&search_ip='.$search_ip;
 	if ($search_user) $param.='&search_user='.$search_user;
 	if ($search_desc) $param.='&search_desc='.$search_desc;
-	if ($search_ua) $param.='&search_ua='.$search_ua;
+	if ($search_ua)   $param.='&search_ua='.$search_ua;
 
-        $langs->load('withdrawals');
-	print_barre_liste($langs->trans("ListOfSecurityEvents").' : '.$num.' '.strtolower($langs->trans("Lines")), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, 'setup');
+    $langs->load('withdrawals');
+    if ($num)
+    {
+        $center='<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+    }
+    
+	print_barre_liste($langs->trans("ListOfSecurityEvents").' ('.$num.')', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, 0, 'setup');
 
 	if ($action == 'purge')
 	{
 		$formquestion=array();
-		print Form::formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
+		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'),'confirm_purge',$formquestion,'no',1);
 	}
 	
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
@@ -198,7 +218,7 @@ if ($result)
 	// Lignes des champs de filtres
 	print '<tr class="liste_titre">';
 
-	print '<td class="liste_titre" width="15%">'.Form::selectDate($date_start,'date_start',0,0,0,'',1,0,1).Form::selectDate($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
+	print '<td class="liste_titre" width="15%">'.$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).$form->select_date($date_end,'date_end',0,0,0,'',1,0,1).'</td>';
 
 	print '<td align="left" class="liste_titre">';
 	print '<input class="flat" type="text" size="10" name="search_code" value="'.$search_code.'">';
@@ -218,7 +238,8 @@ if ($result)
 	print '</td>';
 
 	print '<td align="right" class="liste_titre">';
-	print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print $searchpitco;
 	print '</td>';
 
 	print "</tr>\n";
@@ -270,7 +291,7 @@ if ($result)
 		// More informations
 		print '<td align="right">';
 		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent?$obj->user_agent:$langs->trans("Unknown"));
-		print Form::textwithpicto('',$htmltext);
+		print $form->textwithpicto('',$htmltext);
 		print '</td>';
 
 		print "</tr>\n";
@@ -284,13 +305,6 @@ if ($result)
 	}
 	print "</table></form>";
 	$db->free($result);
-
-	if ($num)
-	{
-		print '<div class="tabsAction">';
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
-		print '</div>';
-	}
 }
 else
 {
