@@ -239,16 +239,17 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+*/
+
 print '</table>';
 print '<br />';
-*/
 
 if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 {
 	$var=false;
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("CurrencyLayerAccount").'</td>'."\n";
+	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize")).'</td>'."\n";
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="right" width="100">';
 	print '<form id="form_sync" action="" method="POST">';
@@ -306,7 +307,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Currencies").'</td>'."\n";
+print '<td>'.$form->textwithpicto($langs->trans("CurrenciesUsed"), $langs->transnoentitiesnoconv("CurrenciesUsed_help_to_add")).'</td>'."\n";
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Rate").'</td>'."\n";
 
@@ -315,7 +316,6 @@ print '<tr '.$bc[$var].'>';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="add_currency">';
-//print '<td><input type="text" name="code" value="" size="5" placeholder="'.$langs->trans('code').'" /> - <input type="text" name="name" value="" size="35" placeholder="'.$langs->trans('name').'" /></td>';
 print '<td>'.$form->selectCurrency('', 'code').'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
