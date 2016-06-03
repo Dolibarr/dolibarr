@@ -666,7 +666,7 @@ class FactureRec extends CommonInvoice
 				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
 			    $facture->type = self::TYPE_STANDARD;
 			    $facture->brouillon = 1;
-			    $facture->date = $now;
+			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
 			    
 			    $invoiceidgenerated = $facture->create($user);       // This will also update fields of recurring invoice
