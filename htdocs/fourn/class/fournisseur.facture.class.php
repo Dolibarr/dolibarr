@@ -1708,8 +1708,11 @@ class FactureFournisseur extends CommonInvoice
     			$line->remise_percent=0;
 			}
 
-			$prodid = mt_rand(1, $num_prods);
-            $line->fk_product=$prodids[$prodid];
+            if ($num_prods > 0)
+            {
+				$prodid = mt_rand(1, $num_prods);
+            	$line->fk_product=$prodids[$prodid];
+            }
             $line->product_type=0;
 
             $this->lines[$xnbp]=$line;

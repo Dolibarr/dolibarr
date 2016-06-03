@@ -2674,9 +2674,12 @@ class Propal extends CommonObject
                 $line->remise_percent=00;
             }
 
-            $prodid = mt_rand(1, $num_prods);
-            $line->fk_product=$prodids[$prodid];
-
+            if ($num_prods > 0)
+            {
+            	$prodid = mt_rand(1, $num_prods);
+            	$line->fk_product=$prodids[$prodid];
+            }
+            
             $this->lines[$xnbp]=$line;
 
             $this->total_ht       += $line->total_ht;
