@@ -7,7 +7,7 @@ AddIntervention=Create intervention
 ListOfInterventions=List of interventions
 EditIntervention=Edit intervention
 ActionsOnFicheInter=Actions on intervention
-LastInterventions=Last %s interventions
+LastInterventions=Latest %s interventions
 AllInterventions=All interventions
 CreateDraftIntervention=Create draft
 CustomerDoesNotHavePrefix=Customer does not have a prefix
@@ -41,7 +41,7 @@ InterventionDeletedInDolibarr=Intervention %s deleted
 SearchAnIntervention=Search an intervention
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
-LastModifiedInterventions=Last %s modified interventions
+LastModifiedInterventions=Latest %s modified interventions
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
 TypeContact_fichinter_internal_INTERVENING=Intervening

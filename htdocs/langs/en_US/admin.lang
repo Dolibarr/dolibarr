@@ -993,9 +993,9 @@ Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed memb
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
 SetupDescription1=All parameters available in the setup area allow you to setup Dolibarr before starting using it.
-SetupDescription2=The 2 most important setup steps are the 2 first ones in the left setup menu, this means Company/foundation setup page and Modules setup page:
-SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because input information is used on Dolibarr displays and to modify Dolibarr behaviour (for example for features related to your country).
-SetupDescription4=Parameters in menu <a href="%s">Setup -> Modules</a> are required because Dolibarr is not a fixed ERP/CRM but a sum of several modules, all more or less independant. It's only after activating modules you're interesting in that you will see features appeared in menus.
+SetupDescription2=The two most important setup steps are the first two in the setup menu on the left: Company/foundation setup page and Modules setup page:
+SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because submitted data are used on Dolibarr displays and to customize the default behaviour of the software (for country-related features for example).
+SetupDescription4=Parameters in menu <a href="%s">Setup -> Modules</a> are required because Dolibarr is not a monolithic ERP/CRM but a collection of several modules, all more or less independent. New features will be added to menus for every module you'll enable.
 SetupDescription5=Other menu entries manage optional parameters.
 EventsSetup=Setup for events logs
 LogEvents=Security audit events
