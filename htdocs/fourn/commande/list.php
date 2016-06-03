@@ -132,7 +132,7 @@ if ($status)
     if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
     else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
 }
-if ($billed) $title.=' - '.$langs->trans("Billed");
+if ($billed > 0) $title.=' - '.$langs->trans("Billed");
 
 
 llxHeader('',$title);
