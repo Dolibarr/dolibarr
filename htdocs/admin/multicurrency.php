@@ -264,7 +264,6 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
-/* This property seems not used in code, so i comment it
 $var=!$var;
 print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->transnoentitiesnoconv("multicurrency_appCurrencySource").'</td>';
@@ -290,7 +289,7 @@ print '<input type="text" name="MULTICURRENCY_ALTERNATE_SOURCE" value="'.$conf->
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
-*/
+
 
 print '</table>';
 print '<br />';
