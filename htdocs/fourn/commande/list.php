@@ -252,7 +252,7 @@ if ($status)
     if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
     else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
 }
-if ($billed) $title.=' - '.$langs->trans("Billed");
+if ($billed > 0) $title.=' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url='';
