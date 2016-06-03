@@ -1452,12 +1452,10 @@ class CommandeFournisseur extends CommonOrder
             //print $sql;
             if ($resql)
             {
-                $this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande_fournisseurdet');
-
                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
 					$linetmp = new CommandeFournisseurLigne($this->db);
-					$linetmp->id=$this->rowid;
+					$linetmp->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'commande_fournisseurdet');
 					$linetmp->array_options = $array_options;
 					$result=$linetmp->insertExtraFields();
 					if ($result < 0)
