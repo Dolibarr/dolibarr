@@ -1006,7 +1006,6 @@ if (empty($reshook))
 								}
 
 								$idprod = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								$res = $productsupplier->fetch($idProductFourn);
 
 								$result = $object->addline(
 									$desc,
@@ -1017,7 +1016,7 @@ if (empty($reshook))
 									$lines[$i]->localtax2_tx,
 									$lines[$i]->fk_product,
 									$productsupplier->product_fourn_price_id,
-									$productsupplier->ref_fourn,
+									$productsupplier->fourn_ref,
 									$lines[$i]->remise_percent,
 									'HT',
 									0,
