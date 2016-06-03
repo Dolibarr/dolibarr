@@ -107,11 +107,18 @@ class MultiCurrency extends CommonObject
 	 */
 	public function create(User $user, $trigger = true)
 	{
-		global $conf;
+		global $conf,$langs;
 		
 		dol_syslog('Currency::create', LOG_DEBUG);
 
 		$error = 0;
+		
+		if (self::checkCodeAlreadyExists($this->code))
+		{
+			$error++;
+			$this->errors[] = $langs->trans('multicurrency_code_already_added');
+			return -1;
+		}
 		
 		if (empty($this->entity) || $this->entity <= 0) $this->entity = $conf->entity;
 		$now=date('Y-m-d H:i:s');
@@ -616,6 +623,21 @@ class MultiCurrency extends CommonObject
 			}	
 		}
 	}
+	
+	/**
+	 * Check in database if the current code already exists
+	 * 
+	 * @param	string	$code 	current code to search
+	 * @return	true if exists, false if not exists
+	 */
+	 public static function checkCodeAlreadyExists($code)
+	 {
+	 	global $db;
+		
+	 	$currency = new MultiCurrency($db);
+		if ($currency->fetch('', $code) > 0) return true;
+		else return false;
+	 }
 }
 
 /**
