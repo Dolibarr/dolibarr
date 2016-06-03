@@ -501,3 +501,5 @@ CREATE TABLE llx_oauth_state (
     fk_adherent integer,
     entity integer
 )ENGINE=InnoDB;
+
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
