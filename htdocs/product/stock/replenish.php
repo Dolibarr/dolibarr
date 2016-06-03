@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2015	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ if (!$sortorder) {
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
 {
     $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
