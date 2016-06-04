@@ -1806,7 +1806,6 @@ class FactureFournisseur extends CommonInvoice
         $object->date               = '';
         $object->date_echeance      = '';
         $object->ref_client         = '';
-        $object->libelle 			= $langs->trans("CopyOf").' '.$object->libelle;
         $object->close_code         = '';
         $object->close_note         = '';
 
