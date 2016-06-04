@@ -1563,3 +1563,4 @@ TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both custome
 IncludePath=Include path (defined into variable %s)
 NoModueToManageStockDecrease=No module able to manage automatic stock decrease has been activated. Stock decrease will be done on manual input only.
 NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.
+activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is missing, so module "%1$s" may not work correclty. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise
