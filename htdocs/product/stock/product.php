@@ -232,96 +232,117 @@ if ($action == "transfert_stock" && ! $cancel)
 			if (isset($object->pmp)) $pricesrc=$object->pmp;
 			$pricedest=$pricesrc;
 
-			if ($object->hasbatch())
+			$do_tranfer = true;
+			if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER))
 			{
-				$pdluo = new Productbatch($db);
-
-				if ($pdluoid > 0)
+				$fk_warehouse_source = GETPOST("id_entrepot");
+				$nb_unit = GETPOST("nbpiece",'int');
+				
+				if (empty($object->stock_warehouse[$fk_warehouse_source]->real) || $object->stock_warehouse[$fk_warehouse_source]->real < $nb_unit) 
 				{
-					$result=$pdluo->fetch($pdluoid);
-					if ($result)
+					$do_tranfer = false;
+					$result1 = $result2 = -1;
+					$action='';
+					$object->error = $langs->trans('qtyToTranferIsNotEnough');
+				}
+			}
+			
+			if ($do_tranfer)
+			{
+
+				if ($object->hasbatch())
+				{
+					$pdluo = new Productbatch($db);
+
+					if ($pdluoid > 0)
 					{
-						$srcwarehouseid=$pdluo->warehouseid;
-						$batch=$pdluo->batch;
-						$eatby=$pdluo->eatby;
-						$sellby=$pdluo->sellby;
+						$result=$pdluo->fetch($pdluoid);
+						if ($result)
+						{
+							$srcwarehouseid=$pdluo->warehouseid;
+							$batch=$pdluo->batch;
+							$eatby=$pdluo->eatby;
+							$sellby=$pdluo->sellby;
+						}
+						else
+						{
+							setEventMessages($pdluo->error, $pdluo->errors, 'errors');
+							$error++;
+						}
 					}
 					else
 					{
-						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
-						$error++;
+						$srcwarehouseid=GETPOST('id_entrepot','int');
+						$batch=GETPOST('batch_number');
+						$eatby=$d_eatby;
+						$sellby=$d_sellby;
+					}
+
+					if (! $error)
+					{
+						// Remove stock
+						$result1=$object->correct_stock_batch(
+							$user,
+							$srcwarehouseid,
+							GETPOST("nbpiece",'int'),
+							1,
+							GETPOST("label",'san_alpha'),
+							$pricesrc,
+							$eatby,$sellby,$batch,
+							GETPOST('inventorycode')
+						);
+						if ($result1 < 0) $error++;
+					}
+					if (! $error)
+					{
+						// Add stock
+						$result2=$object->correct_stock_batch(
+							$user,
+							GETPOST("id_entrepot_destination",'int'),
+							GETPOST("nbpiece",'int'),
+							0,
+							GETPOST("label",'san_alpha'),
+							$pricedest,
+							$eatby,$sellby,$batch,
+							GETPOST('inventorycode')
+						);
+						if ($result2 < 0) $error++;
 					}
 				}
 				else
 				{
-					$srcwarehouseid=GETPOST('id_entrepot','int');
-					$batch=GETPOST('batch_number');
-					$eatby=$d_eatby;
-					$sellby=$d_sellby;
+					if (! $error)
+					{
+	    			    // Remove stock
+	    				$result1=$object->correct_stock(
+	    					$user,
+	    					GETPOST("id_entrepot"),
+	    					GETPOST("nbpiece"),
+	    					1,
+	    					GETPOST("label"),
+	    					$pricesrc,
+	    					GETPOST('inventorycode')
+	    				);
+	    				if ($result1 < 0) $error++;
+					}
+					if (! $error)
+					{
+	    				// Add stock
+	    				$result2=$object->correct_stock(
+	    					$user,
+	    					GETPOST("id_entrepot_destination"),
+	    					GETPOST("nbpiece"),
+	    					0,
+	    					GETPOST("label"),
+	    					$pricedest,
+	    					GETPOST('inventorycode')
+	    				);
+	    				if ($result2 < 0) $error++;
+					}
 				}
 
-				if (! $error)
-				{
-					// Remove stock
-					$result1=$object->correct_stock_batch(
-						$user,
-						$srcwarehouseid,
-						GETPOST("nbpiece",'int'),
-						1,
-						GETPOST("label",'san_alpha'),
-						$pricesrc,
-						$eatby,$sellby,$batch,
-						GETPOST('inventorycode')
-					);
-					if ($result1 < 0) $error++;
-				}
-				if (! $error)
-				{
-					// Add stock
-					$result2=$object->correct_stock_batch(
-						$user,
-						GETPOST("id_entrepot_destination",'int'),
-						GETPOST("nbpiece",'int'),
-						0,
-						GETPOST("label",'san_alpha'),
-						$pricedest,
-						$eatby,$sellby,$batch,
-						GETPOST('inventorycode')
-					);
-					if ($result2 < 0) $error++;
-				}
 			}
-			else
-			{
-				if (! $error)
-				{
-    			    // Remove stock
-    				$result1=$object->correct_stock(
-    					$user,
-    					GETPOST("id_entrepot"),
-    					GETPOST("nbpiece"),
-    					1,
-    					GETPOST("label"),
-    					$pricesrc,
-    					GETPOST('inventorycode')
-    				);
-    				if ($result1 < 0) $error++;
-				}
-				if (! $error)
-				{
-    				// Add stock
-    				$result2=$object->correct_stock(
-    					$user,
-    					GETPOST("id_entrepot_destination"),
-    					GETPOST("nbpiece"),
-    					0,
-    					GETPOST("label"),
-    					$pricedest,
-    					GETPOST('inventorycode')
-    				);
-    				if ($result2 < 0) $error++;
-				}
-			}
+
 			if (! $error && $result1 >= 0 && $result2 >= 0)
 			{
 				$db->commit();
