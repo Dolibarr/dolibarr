@@ -328,10 +328,10 @@ if ($result) {
 		
 		$product_static = new Product($db);
 		
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		
 		print "</tr>";
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		// Ref produit as link
 		$product_static->ref = $obj->ref;
 		$product_static->id = $obj->rowid;

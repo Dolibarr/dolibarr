@@ -1914,7 +1914,7 @@ else
                 if ($user->admin								// Need to be admin to allow downgrade of an admin
                 && ($user->id != $object->id)                   // Don't downgrade ourself
                 && (
-                	(empty($conf->multicompany->enabled) && $nbAdmin > 1)
+                	(empty($conf->multicompany->enabled) && $nbAdmin >= 1)
                 	|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
                 	)
                 )

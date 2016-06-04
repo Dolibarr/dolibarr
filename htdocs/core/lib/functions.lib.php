@@ -902,8 +902,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',-$maxvisiblephotos,0,0,0,$width,0).'</div>';
         else 
         {
-			$nophoto='/public/theme/common/nophoto.png';
-            $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
+				$nophoto='';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			}
+			else {
+				$nophoto='/public/theme/common/nophoto.png';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
+            
         }
 	}
 	else 

@@ -89,7 +89,18 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
 {
 	// Note: If calling page was not into htdocs (index.php, ...), then this redirect will fails.
 	// There is no real solution, because the only way to know the apache url relative path is to have into conf file.
-	header("Location: install/index.php");
+	$TDir = explode('/', $_SERVER['PHP_SELF']);
+	$path = '';
+	$i = count($TDir);
+	while ($i--)
+	{
+		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
+		if (substr($TDir[$i], -4, 4) == '.php') continue;
+		
+		$path .= '../';
+	}
+	
+	header("Location: ".$path."install/index.php");
 	exit;
 }
 

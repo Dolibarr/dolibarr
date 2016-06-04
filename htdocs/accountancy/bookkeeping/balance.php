@@ -223,7 +223,7 @@ else {
 		if(empty($description)){
 			$link = '<a href="../admin/card.php?action=create&compte=' . length_accountg($line->numero_compte) . '">' . img_edit_add() .'</a>';
 		}
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 
 		print '<td>' . length_accountg($line->numero_compte) . '</td>';
 		print '<td>' . $description . '</td>';
