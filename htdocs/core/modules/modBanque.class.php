@@ -89,7 +89,7 @@ class modBanque extends DolibarrModules
 		$this->rights[$r][0] = 111; // id de la permission
 		$this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;

@@ -209,7 +209,7 @@ class modAdherent extends DolibarrModules
         $this->rights[$r][0] = 71;
         $this->rights[$r][1] = 'Read members\' card';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'lire';
 
         $r++;
@@ -244,7 +244,7 @@ class modAdherent extends DolibarrModules
         $this->rights[$r][0] = 78;
         $this->rights[$r][1] = 'Read subscriptions';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'cotisation';
         $this->rights[$r][5] = 'lire';
 

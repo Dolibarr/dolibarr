@@ -92,7 +92,7 @@ class modWebsites extends DolibarrModules
 
 		$this->rights[$r][0] = 10001;
 		$this->rights[$r][1] = 'Read website content';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 		$r++;
 

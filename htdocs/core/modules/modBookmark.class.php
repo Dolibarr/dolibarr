@@ -81,21 +81,21 @@ class modBookmark extends DolibarrModules
 		$this->rights[$r][0] = 331; // id de la permission
 		$this->rights[$r][1] = 'Lire les bookmarks'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 332; // id de la permission
 		$this->rights[$r][1] = 'Creer/modifier les bookmarks'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 333; // id de la permission
 		$this->rights[$r][1] = 'Supprimer les bookmarks'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (d�pr�ci� � ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par d�faut
 		$this->rights[$r][4] = 'supprimer';
 
 	}

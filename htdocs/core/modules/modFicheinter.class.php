@@ -99,7 +99,7 @@ class modFicheinter extends DolibarrModules
         $this->rights[$r][0] = 61;
         $this->rights[$r][1] = 'Lire les fiches d\'intervention';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'lire';
 
         $r++;
