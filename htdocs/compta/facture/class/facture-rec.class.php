@@ -962,6 +962,7 @@ class FactureRec extends CommonInvoice
         if ($this->db->query($sql))
         {
             $this->date_when = $date;
+            if ($increment_nb_gen_done>0) $_facrec->nb_gen_done++;
             return 1;
         }
         else
