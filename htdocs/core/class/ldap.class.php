@@ -160,57 +160,41 @@ class Ldap
 			return -1;
 		}
 
-		if (! function_exists('ldap_connect'))
+		if (! function_exists("ldap_connect"))
 		{
-			$this->error='Your PHP need extension ldap';
+			$this->error='LDAPFunctionsNotAvailableOnPHP';
 			dol_syslog(get_class($this)."::connect_bind ".$this->error, LOG_WARNING);
-		    return -1;
+			$return=-1;
 		}
-		
-		// Loop on each ldap server
-		foreach ($this->server as $key => $host)
+
+		if (empty($this->error))
 		{
-			if ($connected) break;
-			if (empty($host)) continue;
-
-			if (preg_match('/^ldap/',$host))
+			// Loop on each ldap server
+			foreach ($this->server as $key => $host)
 			{
-				$this->connection = ldap_connect($host);
-			}
-			else
-			{
-				$this->connection = ldap_connect($host,$this->serverPort);
-			}
-
-			if (is_resource($this->connection))
-			{
-				// Execute the ldap_set_option here (after connect and before bind)
-				$this->setVersion();
-				ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
-
-
-				if ($this->serverType == "activedirectory")
+				if ($connected) break;
+				if (empty($host)) continue;
+	
+				if (preg_match('/^ldap/',$host))
 				{
-					$result=$this->setReferrals();
-					dol_syslog(get_class($this)."::connect_bind try bindauth for activedirectory on ".$host." user=".$this->searchUser." password=".preg_replace('/./','*',$this->searchPassword),LOG_DEBUG);
-					$this->result=$this->bindauth($this->searchUser,$this->searchPassword);
-					if ($this->result)
-					{
-						$this->bind=$this->result;
-						$connected=2;
-						break;
-					}
-					else
-					{
-						$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
-					}
+					$this->connection = ldap_connect($host);
 				}
 				else
 				{
-					// Try in auth mode
-					if ($this->searchUser && $this->searchPassword)
+					$this->connection = ldap_connect($host,$this->serverPort);
+				}
+	
+				if (is_resource($this->connection))
+				{
+					// Execute the ldap_set_option here (after connect and before bind)
+					$this->setVersion();
+					ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
+	
+	
+					if ($this->serverType == "activedirectory")
 					{
-						dol_syslog(get_class($this)."::connect_bind try bindauth on ".$host." user=".$this->searchUser." password=".preg_replace('/./','*',$this->searchPassword),LOG_DEBUG);
+						$result=$this->setReferrals();
+						dol_syslog(get_class($this)."::connect_bind try bindauth for activedirectory on ".$host." user=".$this->searchUser." password=".preg_replace('/./','*',$this->searchPassword),LOG_DEBUG);
 						$this->result=$this->bindauth($this->searchUser,$this->searchPassword);
 						if ($this->result)
 						{
@@ -223,26 +207,45 @@ class Ldap
 							$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
 						}
 					}
-					// Try in anonymous
-					if (! $this->bind)
+					else
 					{
-						dol_syslog(get_class($this)."::connect_bind try bind on ".$host,LOG_DEBUG);
-						$result=$this->bind();
-						if ($result)
+						// Try in auth mode
+						if ($this->searchUser && $this->searchPassword)
 						{
-							$this->bind=$this->result;
-							$connected=1;
-							break;
+							dol_syslog(get_class($this)."::connect_bind try bindauth on ".$host." user=".$this->searchUser." password=".preg_replace('/./','*',$this->searchPassword),LOG_DEBUG);
+							$this->result=$this->bindauth($this->searchUser,$this->searchPassword);
+							if ($this->result)
+							{
+								$this->bind=$this->result;
+								$connected=2;
+								break;
+							}
+							else
+							{
+								$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
+							}
 						}
-						else
+						// Try in anonymous
+						if (! $this->bind)
 						{
-							$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
+							dol_syslog(get_class($this)."::connect_bind try bind on ".$host,LOG_DEBUG);
+							$result=$this->bind();
+							if ($result)
+							{
+								$this->bind=$this->result;
+								$connected=1;
+								break;
+							}
+							else
+							{
+								$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
+							}
 						}
 					}
 				}
+	
+				if (! $connected) $this->close();
 			}
-
-			if (! $connected) $this->close();
 		}
 
 		if ($connected)

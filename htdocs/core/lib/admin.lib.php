@@ -746,17 +746,24 @@ function activateModule($value,$withdeps=1)
         if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
         {
             // Activation des modules dont le module depend
+            $TError=array();
             $num = count($objMod->depends);
             for ($i = 0; $i < $num; $i++)
             {
+            	$activate = false;
             	foreach ($modulesdir as $dir)
             	{
             		if (file_exists($dir.$objMod->depends[$i].".class.php"))
             		{
             			activateModule($objMod->depends[$i]);
+						$activate = true;
             		}
             	}
+				
+				if (!$activate) $TError[] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
             }
+            
+            setEventMessages('', $TError, 'errors');
         }
 
         if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
