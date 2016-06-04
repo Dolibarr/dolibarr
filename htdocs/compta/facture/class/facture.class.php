@@ -3264,7 +3264,7 @@ class Facture extends CommonInvoice
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
 			$response->label=$langs->trans("CustomerBillsUnpaid");
-			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1';
+			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=accountancy&leftmenu=customers_bills';
 			$response->img=img_object($langs->trans("Bills"),"bill");
 
 			while ($obj=$this->db->fetch_object($resql))
