@@ -662,6 +662,20 @@ if (empty($reshook))
             }
 
             if (GETPOST('propalid') > 0) {
+
+            	$producttmp=new ProductFournisseur($db);
+            	$sorttouse = 'pfp.unitprice, s.nom, pfp.quantity, pfp.price';
+            	$productSupplierArray = $producttmp->list_product_fournisseur_price($object->id, $sorttouse);    
+            	// list all price per supplier and take the one with the lower quantity.
+            	if ( is_array($productSupplierArray) )
+            	{
+            		foreach ($productSupplierArray as $productSupplier)
+            		{
+            			$bp = $productSupplier->fourn_unitprice;
+            			break;
+            		}
+            	}
+            	
                 $result = $propal->addline(
                     $desc,
                     $pu_ht,
@@ -679,7 +693,7 @@ if (empty($reshook))
                     0,
                     0,
                     0,
-                    0,
+                    $bp,
                     '',
                     '',
                     '',
@@ -724,6 +738,7 @@ if (empty($reshook))
                     exit;
                 }
             } elseif (GETPOST('factureid') > 0) {
+            	
                 $result = $facture->addline(
                     $desc,
                     $pu_ht,
