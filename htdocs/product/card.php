@@ -1121,7 +1121,7 @@ else
     else if ($object->id > 0)
     {
         // Fiche en mode edition
-        if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
+        if ($action == 'edit' &&  ((($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) ||  ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))))
         {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1733,7 +1733,8 @@ if (empty($reshook))
 {
 	if ($action == '' || $action == 'view')
 	{
-	    if ($user->rights->produit->creer || $user->rights->service->creer)
+	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
+	       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
 	    {
 	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
