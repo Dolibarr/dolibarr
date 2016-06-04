@@ -240,7 +240,10 @@ if ($section)
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		$useglobalvars=1;
 		$form = new Form($db);
-		$formquestion=array('urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'));
+		$formquestion=array(
+			'urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'),
+			'section'=>array('type'=>'hidden','value'=>$section,'name'=>'section')
+		);
 		print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
 	}
 
