@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=Rss information
 BoxLastProducts=Latest %s products/services
-BoxProductsAlertStock=Products in stock alert
+BoxProductsAlertStock=Stock alerts for products
 BoxLastProductsInContract=Latest %s contracted products/services
 BoxLastSupplierBills=Latest supplier invoices
 BoxLastCustomerBills=Latest customer invoices
@@ -44,7 +44,7 @@ BoxTitleLastModifiedSupplierBills=Latest %s modified supplier invoices
 BoxTitleLastModifiedProspects=Latest %s modified prospects
 BoxTitleLastProductsInContract=Latest %s products/services in a contract
 BoxTitleLastModifiedMembers=Latest %s members
-BoxTitleLastFicheInter=Latest %s modified intervention
+BoxTitleLastFicheInter=Latest %s modified interventions
 BoxTitleOldestUnpaidCustomerBills=Oldest %s unpaid customer invoices
 BoxTitleOldestUnpaidSupplierBills=Oldest %s unpaid supplier invoices
 BoxTitleCurrentAccounts=Open accounts balances
