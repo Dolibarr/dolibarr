@@ -152,7 +152,7 @@ if (empty($reshook))
 		{
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorFieldMustBeANumeric",'eeee'), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldMustBeANumeric",$langs->transnoentities("VATRateForSupplierProduct")), null, 'errors');
 		}
 		if (empty($quantity))
 		{
