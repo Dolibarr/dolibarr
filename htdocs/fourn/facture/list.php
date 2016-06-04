@@ -82,7 +82,6 @@ $year = GETPOST("year","int");
 $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
-$filter = GETPOST("filtre");
 $optioncss = GETPOST('optioncss','alpha');
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
@@ -225,7 +224,7 @@ if ($search_amount_all_tax != '')
 	$sql .= natural_search('fac.total_ttc', $search_amount_all_tax, 1);
 }
 
-if ($search_status != '' && $search_status>=0)
+if ($search_status != '' && $search_status >= 0)
 {
 	$sql.= " AND fac.fk_statut = ".$search_status;
 }
@@ -347,7 +346,7 @@ if ($resql)
 	print '<input class="flat" type="text" size="6" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 	print '</td><td class="liste_titre" align="right">';
 	$liststatus=array('0'=>$langs->trans("Draft"),'1'=>$langs->trans("Unpaid"), '2'=>$langs->trans("Paid"));
-	print $form->selectarray('filtre', $liststatus, $search_status, 1);
+	print $form->selectarray('search_status', $liststatus, $search_status, 1);
 	print '</td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(0);

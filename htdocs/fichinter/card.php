@@ -494,7 +494,7 @@ if (empty($reshook))
 
 			$desc=GETPOST('np_desc');
 			$date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
-			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION)?0:convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
+			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION)?convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int')) : 0;
 
 
 			// Extrafields
@@ -1553,7 +1553,7 @@ else if ($id > 0 || ! empty($ref))
                         $selectmode = 'select';
                         if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
                             $selectmode = 'text';
-                        $form->select_duration('duration', $objp->duree, $selectmode);
+                        $form->select_duration('duration', $objp->duree, 0, $selectmode);
                     }
                     print '</td>';
 
