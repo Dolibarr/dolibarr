@@ -1315,7 +1315,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		{
     			$objp = $db->fetch_object($result);
     			$var = ! $var;
-    			print "<tr $bc[$var]>";
+    			print '<tr'. $bc[$var].'>';
     			// Date
     			print "<td>" . dol_print_date($db->jdate($objp->dp), "dayhour") . "</td>";
     
