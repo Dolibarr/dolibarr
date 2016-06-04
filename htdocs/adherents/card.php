@@ -265,6 +265,11 @@ if (empty($reshook))
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname")), null, 'errors');
 		}
+		if ($morphy == 'mor' && empty($societe)) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
+		}
 		// Test si le login existe deja
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
@@ -513,6 +518,11 @@ if (empty($reshook))
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Password")), null, 'errors');
 			}
+		}
+		if ($morphy == 'mor' && empty($societe)) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
 		}
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
