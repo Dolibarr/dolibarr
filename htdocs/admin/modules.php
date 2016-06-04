@@ -79,6 +79,11 @@ if ($action == 'set' && $user->admin)
 {
     $result=activateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
+	else
+	{
+		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+		setEventMessages($msg, null, 'warnings');
+	}
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }

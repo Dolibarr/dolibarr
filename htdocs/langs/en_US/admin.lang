@@ -1752,3 +1752,5 @@ AddSubstitutions=Add keys substitutions
 DetectionNotPossible=Detection not possible
 UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received it is saved on database user table and will be checked on each future access) 
 ListOfAvailableAPIs=List of available APIs
+ModuleEnabledAdminMustCheckRights=Module has been activated. All permissions were given to admin users only.
+UserHasNoPermissions=This user has no permission defined
