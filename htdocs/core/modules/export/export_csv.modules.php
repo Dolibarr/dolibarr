@@ -312,7 +312,7 @@ class ExportCsv extends ModeleExports
 		$oldvalue=$newvalue;
 		$newvalue=str_replace("\r",'\r',$newvalue);
 		$newvalue=str_replace("\n",'\n',$newvalue);
-		if (! empty($conf->global->USE_STRICT_CSV_RULES && $oldvalue != $newvalue)
+		if (! empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue)
 		{
 			// If strict use of CSV rules, we just add quote
 			$newvalue=$oldvalue;
