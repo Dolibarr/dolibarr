@@ -1122,7 +1122,7 @@ else
     else if ($object->id > 0)
     {
         // Fiche en mode edition
-        if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
+        if ($action == 'edit' &&  ((($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) ||  ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))))
         {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
