@@ -1730,7 +1730,8 @@ if (empty($reshook))
 {
 	if ($action == '' || $action == 'view')
 	{
-	    if ($user->rights->produit->creer || $user->rights->service->creer)
+	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
+	       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
 	    {
 	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
