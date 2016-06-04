@@ -3812,7 +3812,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->selectMultiCurrency($selected, $htmlname, 1);
+            print $this->selectMultiCurrency($selected, $htmlname, 0);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -4091,7 +4091,7 @@ class Form
 		
 		$out='';
         $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value="'.$conf->currency.'"'.((empty($selected) || $selected == $conf->currency)?' selected="selected"':'').'>'.$langs->cache_currencies[$conf->currency]['label'].'</option>';
+		if ($useempty) $out .= '<option value=""></option>';
 		if (count($TCurrency) > 0)
 		{
 			foreach ($langs->cache_currencies as $code_iso => $currency)
