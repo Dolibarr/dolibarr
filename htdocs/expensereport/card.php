@@ -819,7 +819,7 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 	}
 }
 
-if ($action == "addline")
+if ($action == "addline" && $user->rights->expensereport->creer)
 {
 	$error = 0;
 
@@ -911,7 +911,7 @@ if ($action == "addline")
 	$action='';
 }
 
-if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
+if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes" && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -954,7 +954,7 @@ if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 	}
 }
 
-if ($action == "updateligne" )
+if ($action == "updateligne" && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -1640,8 +1640,11 @@ else
 							print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
 							print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
 						}
-						print '<td style="text-align:right;"></td>';
-
+						// Ajout des boutons de modification/suppression
+						if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
+						{
+							print '<td style="text-align:right;"></td>';
+						}
 						print '</tr>';
 
 						$var=true;
@@ -1682,7 +1685,7 @@ else
 
 								// Ajout des boutons de modification/suppression
 								print '<td style="text-align:right;" class="nowrap">';
-								if($object->fk_statut<2 OR $object->fk_statut==99)
+								if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 								{
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
 									print img_edit();
@@ -1768,7 +1771,7 @@ else
 					//print '</div>';
 
 					// Add a line
-					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline')
+					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 					{
 						print '<tr class="liste_titre">';
 						print '<td colspan="2"></td>';

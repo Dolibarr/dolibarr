@@ -2875,7 +2875,7 @@ class Commande extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
+	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             $generic_commande = new Commande($this->db);
