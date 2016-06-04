@@ -138,7 +138,7 @@ if ($action == 'display' || $action == 'delete') {
 		if(!empty($obj)){
 			foreach ( $obj as $cpt ) {
 				$var = ! $var;
-				print "<tr $bc[$var]>";
+				print '<tr'. $bc[$var].'>';
 				print '<td>' . length_accountg($cpt->account_number) . '</td>';
 				print '<td>' . $cpt->label . '</td>';
 				print $form->formconfirm($_SERVER["PHP_SELF"]."?account_category=$cat_id&cptid=".$cpt->rowid, $langs->trans("DeleteCptCategory"), $langs->trans("ConfirmDeleteCptCategory"), "delete", '', 0, "action-delete".$j);

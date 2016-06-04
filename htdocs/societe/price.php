@@ -416,7 +416,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 			foreach ( $prodcustprice->lines as $line ) {
 
-				print "<tr $bc[$var]>";
+				print '<tr'. $bc[$var].'>';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
