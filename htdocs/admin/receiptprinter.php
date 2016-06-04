@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -377,7 +378,8 @@ if ($mode == 'template' && $user->admin)
     if ($ret > 0) {
         setEventMessages($printer->error, $printer->errors, 'errors');
     } else {
-        for ($line=0; $line < count($printer->listprinterstemplates); $line++) {
+        $max = count($printer->listprinterstemplates);
+        for ($line=0; $line < $max; $line++) {
             $var = !$var;
             print '<tr '.$bc[$var].'>';
             if ($action=='edittemplate' && $printer->listprinterstemplates[$line]['rowid']==$templateid) {
@@ -422,7 +424,8 @@ if ($mode == 'template' && $user->admin)
     print '<th>'.$langs->trans("Tag").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
-    for ($tag=0; $tag < count($printer->tags); $tag++) {
+    $max = count($printer->tags);
+    for ($tag=0; $tag < $max; $tag++) {
         $var = !$var;
         print '<tr '.$bc[$var].'>';
         print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
