@@ -70,7 +70,9 @@ class modStock extends DolibarrModules
 		$this->langfiles = array("stocks");
 
 		// Constants
-		$this->const = array();
+		$this->const = array(
+			0=>array('STOCK_ALLOW_NEGATIVE_TRANSFER','chaine','1','',1)
+		);
 
 		// Boxes
 		$this->boxes = array();

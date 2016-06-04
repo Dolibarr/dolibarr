@@ -49,6 +49,10 @@ if($action)
 	{
 		$res = dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", GETPOST('STOCK_USERSTOCK_AUTOCREATE','alpha'),'chaine',0,'',$conf->entity);
 	}
+	if ($action == 'STOCK_ALLOW_NEGATIVE_TRANSFER')
+	{
+		$res = dolibarr_set_const($db, "STOCK_ALLOW_NEGATIVE_TRANSFER", GETPOST('STOCK_ALLOW_NEGATIVE_TRANSFER','alpha'),'chaine',0,'',$conf->entity);
+	}
 	// Mode of stock decrease
 	if ($action == 'STOCK_CALCULATE_ON_BILL'
 	|| $action == 'STOCK_CALCULATE_ON_VALIDATE_ORDER'
@@ -367,6 +371,22 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print "</td>\n";
 print "</tr>\n";
+
+$var=!$var;
+
+print "<tr ".$bc[$var].">";
+print '<td width="60%">'.$langs->trans("WarehouseAllowNegativeTransfer").'</td>';
+
+print '<td width="160" align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_ALLOW_NEGATIVE_TRANSFER\">";
+print $form->selectyesno("STOCK_ALLOW_NEGATIVE_TRANSFER",$conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
+
 print '<br>';
 print '</table>';
 print '<br>';
