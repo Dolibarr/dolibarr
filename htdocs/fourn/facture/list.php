@@ -84,7 +84,7 @@ $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
 $optioncss = GETPOST('optioncss','alpha');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x"))		// All test must be present to be compatible with all browsers
 {
     $search_all="";
 	$search_ref="";
@@ -272,7 +272,6 @@ if ($resql)
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
 	if ($search_amount_no_tax)	$param.='&search_amount_no_tax='.urlencode($search_amount_no_tax);
 	if ($search_amount_all_tax)	$param.='&search_amount_all_tax='.urlencode($search_amount_all_tax);
-	if ($filter && $filter != -1) $param.='&filtre='.urlencode($filter);
 	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
 
