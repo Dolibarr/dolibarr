@@ -309,13 +309,12 @@ class Facture extends CommonInvoice
 		
 			$forceduedate = $this->calculate_date_lim_reglement();
 			
-			// Update date and number of last generation of recurring template invoice, before inserting new invoice
+			// For recurrn invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0)
 			{
-                $_facrec->nb_gen_done++;
                 $next_date = $_facrec->getNextDate();   // Calculate next date
                 $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
-                $_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);
+                //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
                 $_facrec->setNextDate($next_date,1);
 			}
 		}

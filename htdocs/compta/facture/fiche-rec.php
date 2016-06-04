@@ -1256,8 +1256,13 @@ else
 		
     	print '<br>';
 		
+    	// Frequencry/Recurring section
 		if ($object->frequency > 0)
 		{
+    		if (empty($conf->cron->enabled))
+    		{
+    			print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));	
+    		}
     		
     		print '<table class="border" width="100%">';
     		

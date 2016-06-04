@@ -863,7 +863,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Standard invoice or Deposit invoice created from a Predefined invoice
+		// Standard invoice or Deposit invoice created from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
