@@ -405,6 +405,39 @@ if ($id > 0)
         // Note Public
         print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
+        // Accountancy account capital
+		print '<tr><td class="nowrap">';
+        print $langs->trans("LoanAccountancyCapitalCode");
+        print '</td><td>';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($object->account_capital);
+        } else {
+			print $object->account_capital;
+		}
+		print '</td></tr>';
+
+        // Accountancy account insurance
+		print '<tr><td class="nowrap">';
+        print $langs->trans("LoanAccountancyInsuranceCode");
+        print '</td><td>';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($object->account_insurance);
+        } else {
+			print $object->account_insurance;
+		}
+		print '</td></tr>';
+
+		// Accountancy account interest
+		print '<tr><td class="nowrap">';
+        print $langs->trans("LoanAccountancyInterestCode");
+        print '</td><td>';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($object->account_interest);
+        } else {
+			print $object->account_interest;
+		}
+		print '</td></tr>';
+
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
