@@ -116,9 +116,9 @@ if ($action == 'add' && $user->rights->loan->write)
 			$object->note_private 			= GETPOST('note_private');
 			$object->note_public 			= GETPOST('note_public');
 
-			$accountancy_account_capital	 = GETPOST('accountancy_account_capital');
-			$accountancy_account_insurance	 = GETPOST('accountancy_account_insurance');
-			$accountancy_account_interest	 = GETPOST('accountancy_account_interest');
+			$accountancy_account_capital	= GETPOST('accountancy_account_capital');
+			$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
+			$accountancy_account_interest	= GETPOST('accountancy_account_interest');
 
 			if ($accountancy_account_capital <= 0) { $object->account_capital = ''; } else { $object->account_capital = $accountancy_account_capital; }
 			if ($accountancy_account_insurance <= 0) { $object->account_insurance = ''; } else { $object->account_insurance = $accountancy_account_insurance; }
@@ -507,13 +507,11 @@ if ($id > 0)
                 print '<td align="right">'.price($objp->amount_interest, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
                 print '<td align="right">'.price($objp->amount_capital, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
 				print "</tr>";
-                $total_insurance += $objp->amount_insurance;
-                $total_interest += $objp->amount_interest;
                 $total_capital += $objp->amount_capital;
 				$i++;
 			}
 
-			$totalpaid = $total_insurance + $total_interest + $total_capital;
+			$totalpaid = $total_capital;
 
 			if ($object->paid == 0)
 			{

@@ -138,7 +138,7 @@ if ($action == 'add_payment')
         }
 	}
 
-	$_GET["action"]='create';
+	$action = 'create';
 }
 
 
