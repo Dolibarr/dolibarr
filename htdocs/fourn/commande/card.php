@@ -1055,7 +1055,6 @@ if (empty($reshook))
 								}
 
 								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-
 								if ($result>=0) 
 								{
 								    $tva_tx = $lines[$i]->tva_tx;
@@ -1089,6 +1088,7 @@ if (empty($reshook))
 										$lines[$i]->fk_unit
 									);
 								}
+									
 								if ($result < 0) {
 									$error++;
 									break;

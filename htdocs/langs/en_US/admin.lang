@@ -1753,3 +1753,4 @@ AddSubstitutions=Add keys substitutions
 DetectionNotPossible=Detection not possible
 UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received it is saved on database user table and will be checked on each future access) 
 ListOfAvailableAPIs=List of available APIs
+activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is missing, so module "%1$s" may not work correclty. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise
