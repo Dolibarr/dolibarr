@@ -635,7 +635,7 @@ if ($step == 4 && $datatoimport)
         
     }
 	
-	if(!empty(GETPOST('update'))) {
+	if (GETPOST('update')) {
 		$array_match_file_to_database=array();
 	}
 
