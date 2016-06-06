@@ -253,7 +253,8 @@ if (empty($reshook))
 		}
 		$lastname=$_POST["lastname"];
 		$firstname=$_POST["firstname"];
-		$morphy=$morphy=$_POST["morphy"];
+		$morphy=$_POST["morphy"];
+		$login=$_POST["login"];
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;
 			$langs->load("errors");
@@ -264,7 +265,19 @@ if (empty($reshook))
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Firstname")), null, 'errors');
 		}
-
+		if ($morphy == 'mor' && empty($societe)) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
+		}
+		// Test si le login existe deja
+		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
+		{
+			if (empty($login)) {
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Login")), null, 'errors');
+			}
+		}
 		// Create new object
 		if ($result > 0 && ! $error)
 		{
@@ -505,6 +518,11 @@ if (empty($reshook))
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Password")), null, 'errors');
 			}
+		}
+		if ($morphy == 'mor' && empty($societe)) {
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Company")), null, 'errors');
 		}
 		if ($morphy != 'mor' && empty($lastname)) {
 			$error++;

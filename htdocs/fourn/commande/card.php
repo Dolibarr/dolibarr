@@ -1030,7 +1030,7 @@ if (empty($reshook))
 							$num = count($lines);
 
 							$productsupplier = new ProductFournisseur($db);
-							
+						
 							for($i = 0; $i < $num; $i ++)
 							{
 
@@ -1040,7 +1040,7 @@ if (empty($reshook))
 								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
 								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
-
+	
 								// Reset fk_parent_line for no child products and special product
 								if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 									$fk_parent_line = 0;
@@ -1055,7 +1055,7 @@ if (empty($reshook))
 								}
 
 								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-								if ($result>0) 
+								if ($result>=0) 
 								{
 								    $tva_tx = $lines[$i]->tva_tx;
 								    
@@ -1073,7 +1073,7 @@ if (empty($reshook))
 										$tva_tx,
 										$lines[$i]->localtax1_tx,
 										$lines[$i]->localtax2_tx,
-										$lines[$i]->fk_product,
+										$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
 										$productsupplier->product_fourn_price_id,
 										$productsupplier->ref_supplier,
 										$lines[$i]->remise_percent,
@@ -1088,6 +1088,7 @@ if (empty($reshook))
 										$lines[$i]->fk_unit
 									);
 								}
+									
 								if ($result < 0) {
 									$error++;
 									break;

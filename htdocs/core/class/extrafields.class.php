@@ -1133,7 +1133,7 @@ class ExtraFields
 			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 			{
                 $object = new $InfoFieldList[0]($this->db);
-                $object->fetch($value);
+                if (!empty($value)) $object->fetch($value);
                 $valuetoshow=$object->ref;
                 if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ref is id because name is not unique
                 $out.='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$valuetoshow.'" >';

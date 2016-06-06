@@ -121,6 +121,7 @@ NEW: When emailing is not sent completely, show progression.
 
 For developers:
 
+NEW: Add a css class style called 'reposition', so when clicking on a link with this class will move scrollbarr to be placed at same page location.
 NEW: TimeZone can be supplied to mktime
 NEW: hook in shipment card
 NEW: Deprecated Societe::set_prospect_level, Societe::set_commnucation_level, Societe::set_OutstandingBill functions

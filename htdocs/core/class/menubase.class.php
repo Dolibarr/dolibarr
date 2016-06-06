@@ -264,6 +264,8 @@ class Menubase
         $sql.= " t.mainmenu,";
         $sql.= " t.leftmenu,";
         $sql.= " t.fk_menu,";
+        $sql.= " t.fk_mainmenu,";
+        $sql.= " t.fk_leftmenu,";
         $sql.= " t.position,";
         $sql.= " t.url,";
         $sql.= " t.target,";
@@ -293,6 +295,8 @@ class Menubase
                 $this->mainmenu = $obj->mainmenu;
                 $this->leftmenu = $obj->leftmenu;
                 $this->fk_menu = $obj->fk_menu;
+                $this->fk_mainmenu = $obj->fk_mainmenu;
+                $this->fk_leftmenu = $obj->fk_leftmenu;
                 $this->position = $obj->position;
                 $this->url = $obj->url;
                 $this->target = $obj->target;

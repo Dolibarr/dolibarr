@@ -309,13 +309,12 @@ class Facture extends CommonInvoice
 		
 			$forceduedate = $this->calculate_date_lim_reglement();
 			
-			// Update date and number of last generation of recurring template invoice, before inserting new invoice
+			// For recurrn invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0)
 			{
-                $_facrec->nb_gen_done++;
                 $next_date = $_facrec->getNextDate();   // Calculate next date
                 $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
-                $_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);
+                //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
                 $_facrec->setNextDate($next_date,1);
 			}
 		}
@@ -3465,7 +3464,7 @@ class Facture extends CommonInvoice
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
 			$response->label=$langs->trans("CustomerBillsUnpaid");
-			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1';
+			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=accountancy&leftmenu=customers_bills';
 			$response->img=img_object($langs->trans("Bills"),"bill");
 
 			$generic_facture = new Facture($this->db);

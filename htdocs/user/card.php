@@ -333,7 +333,7 @@ if (empty($reshook)) {
 					$object->gender = GETPOST("gender", 'alpha');
 					$object->pass = GETPOST("password");
 					$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-					$object->admin = empty($user->admin) ? 0 : GETPOST("admin"); // A user can only be set admin by an admin
+					if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 					$object->address = GETPOST('address', 'alpha');
 					$object->zip = GETPOST('zipcode', 'alpha');
 					$object->town = GETPOST('town', 'alpha');
@@ -1914,7 +1914,7 @@ else
                 if ($user->admin								// Need to be admin to allow downgrade of an admin
                 && ($user->id != $object->id)                   // Don't downgrade ourself
                 && (
-                	(empty($conf->multicompany->enabled) && $nbAdmin > 1)
+                	(empty($conf->multicompany->enabled) && $nbAdmin >= 1)
                 	|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
                 	)
                 )

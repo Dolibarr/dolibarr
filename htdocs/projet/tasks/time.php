@@ -408,7 +408,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		/*
 		 * Form to add time spent
 		 */
-		if ($user->rights->projet->creer)
+		if ($user->rights->projet->lire)
 		{
 			print '<br>';
 
