@@ -91,7 +91,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id." OR d.fk_soc IS NULL) ";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if ($search_ref)		$sql.=" AND d.rowid=".$search_ref;
