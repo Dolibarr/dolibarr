@@ -211,7 +211,7 @@ if ($result)
 
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="5">'.$langs->trans("Total").'</td>';
     print "<td align=\"right\"><b>".price($total)."</b></td>";
 	print "<td>&nbsp;</td></tr>";
 
