@@ -267,14 +267,14 @@ if ($resql)
 			$productstatic->type=$obj->ptype;
 			$productstatic->ref=$obj->pref;
 			$productstatic->entity=$obj->pentity;
-			print $productstatic->getNomUrl(1,'',20);
+			print $productstatic->getNomUrl(1,'',24);
             print $obj->label?' - '.dol_trunc($obj->label,16):'';
             if (! empty($obj->description) && ! empty($conf->global->PRODUCT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
 		}
 		else
 		{
-			if ($obj->type == 0) print img_object($obj->description,'product').dol_trunc($obj->description,20);
-			if ($obj->type == 1) print img_object($obj->description,'service').dol_trunc($obj->description,20);
+			if ($obj->type == 0) print img_object($obj->description,'product').' '.dol_trunc($obj->description,24);
+			if ($obj->type == 1) print img_object($obj->description,'service').' '.dol_trunc($obj->description,24);
 		}
 		print '</td>';
 
