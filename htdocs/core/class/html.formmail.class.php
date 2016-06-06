@@ -203,9 +203,16 @@ class FormMail extends Form
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();
-        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+		if(isset($_POST['listofpaths'])) {
+    		$listofpaths=$_POST['listofpaths'];
+    		$listofnames=$_POST['listofnames'];
+    		$listofmimes=$_POST['listofmimes'];
+    	}
+		else {
+	        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
+	        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
+	        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+		}
         return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
     }
 
@@ -619,7 +626,10 @@ class FormMail extends Form
 	        				if (! $this->withfilereadonly)
 	        				{
 	        					$out.= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key+1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
-	        					//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
+	        					$out.= '<input type="hidden" name="listofpaths[]" value="'.$val.'"/>';
+							$out.= '<input type="hidden" name="listofnames[]" value="'.$listofnames[$key].'"/>';
+							$out.= '<input type="hidden" name="listofmimes[]" value="'.$listofmimes[$key].'"/>';
+        					//$out.= ' <a href="'.$_SERVER["PHP_SELF"].'?removedfile='.($key+1).' id="removedfile_'.$key.'">'.img_delete($langs->trans("Delete").'</a>';
 	        				}
 	        				$out.= '<br></div>';
 	        			}
