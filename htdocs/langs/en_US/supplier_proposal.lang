@@ -59,3 +59,5 @@ DefaultModelSupplierProposalClosed=Default template when closing a price request
 ListOfSupplierProposal=List of supplier proposal requests
 SupplierProposalsToClose=Supplier proposals to close
 SupplierProposalsToProcess=Supplier proposals to process
+LastSupplierProposals=Last price requests
+AllPriceRequests=All requests

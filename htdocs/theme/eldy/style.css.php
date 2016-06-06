@@ -730,6 +730,11 @@ div.ficheaddleft {
     }
 }
 
+/* For table into table into card */
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+    padding: 0 0 0 0;
+}
+
 .containercenter {
 	display : table;
 	margin : 0px auto;
@@ -2235,7 +2240,7 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 10px 2px 10px 3px;			/* t r b l */
+	padding: 8px 2px 8px 3px;			/* t r b l */
 }
 tr.box_titre .nobordernopadding td { padding: 0px ! important; }
 table.liste td, table.noborder td, div.noborder form, div.noborder form div {

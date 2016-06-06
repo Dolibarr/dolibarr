@@ -785,6 +785,15 @@ div.ficheaddleft {
     }
 }
 
+/* For table into table into card */
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+    padding: 0 0 0 0;
+}
+
+table.noborder tr.liste_titre td {
+	padding: 3px !important;
+}
+
 .containercenter {
 	display : table;
 	margin : 0px auto;
@@ -844,7 +853,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>);;
+	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);;
 }
 
 
@@ -1874,7 +1883,10 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divButAction { margin-bottom: 1.4em; }
+div.divButAction { 
+	margin-bottom: 1.4em; 
+	vertical-align: top;
+}
 
 span.butAction, span.butActionDelete {
 	cursor: pointer;
@@ -2129,7 +2141,7 @@ table.noborder tr, div.noborder form {
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
-	padding: 12px 2px 12px 3px;			/* t r b l */
+	padding: 8px 2px 8px 3px;			/* t r b l */
 }
 table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
