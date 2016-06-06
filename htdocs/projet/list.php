@@ -558,6 +558,9 @@ if ($resql)
     	$projectstatic->user_author_id = $obj->fk_user_creat;
     	$projectstatic->public = $obj->public;
     	$projectstatic->ref = $obj->ref;
+    	$projectstatic->datee = $obj->date_end;
+    	$projectstatic->statut = $obj->fk_statut;
+    	$projectstatic->opp_status = $obj->fk_opp_status;
     	 
     	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
     	if ($userAccess >= 0)
@@ -570,6 +573,7 @@ if ($resql)
         	{
         		print '<td class="nowrap">';
         		print $projectstatic->getNomUrl(1);
+        		if ($projectstatic->hasDelay()) print img_warning($langs->trans('Late'));
         		print '</td>';
         	}
     		// Title

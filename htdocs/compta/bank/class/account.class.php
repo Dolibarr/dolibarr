@@ -1102,6 +1102,7 @@ class Account extends CommonObject
         $sql.= " AND b.fk_account = ba.rowid";
         $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
         $sql.= " AND (ba.rappro = 1 AND ba.courant != 2)";	// Compte rapprochable
+        $sql.= " AND clos = 0";
         if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
 
         $resql=$this->db->query($sql);

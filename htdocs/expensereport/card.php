@@ -1401,6 +1401,7 @@ else
 				print '<td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="2">'.$object->note_private.'</td>';
 				print '</tr>';
+				// Amount
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
 				print '<td>'.price($object->total_ht).'</td>';
@@ -1412,9 +1413,8 @@ else
 				if($object->fk_statut==6) $rowspan+=2;
 
 				print '<td rowspan="'.$rowspan.'" valign="top">';
-				/*
-				 * Payments
-				 */
+				
+				// List of payments
 				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
 				$sql.= "c.code as type_code,c.libelle as payment_type";
 				$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
@@ -1499,9 +1499,13 @@ else
 				}
 				print '</td></tr>';
 
+				// Validation date
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.dol_print_date($object->date_create,'dayhour').'</td></tr>';
+				print '<td>'.dol_print_date($object->date_create,'dayhour');
+				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late"));
+				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late"));
+				print '</td></tr>';
 				print '</tr>';
 
 				// User to inform
@@ -1515,7 +1519,11 @@ else
 						$userfee=new User($db);
 						$userfee->fetch($object->fk_user_validator);
 						print $userfee->getNomUrl(1);
-						if (empty($userfee->email) || ! isValidEmail($userfee->email)) print img_warning($langs->trans("EmailNotValid"));
+						if (empty($userfee->email) || ! isValidEmail($userfee->email)) 
+						{
+						    $langs->load("errors");
+						    print img_warning($langs->trans("ErrorBadEMail", $userfee->email));
+						}
 					}
 					print '</td></tr>';
 				}
