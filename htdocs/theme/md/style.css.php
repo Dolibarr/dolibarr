@@ -100,6 +100,7 @@ $fontsize='13';
 $fontsizesmaller='11';
 $usegradient=0;
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
+$borderwith=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -169,7 +170,7 @@ else { $colortextbackvmenu='000000'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-else { $colortexttitle='404040'; $colorshadowtitle='FFFFFF'; }
+else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
@@ -563,6 +564,9 @@ div.myavailability {
     max-width: 0;
     overflow: auto;
 }
+.tablelistofcalendars {
+	margin-top: 25px !important;
+}
 
 
 /* ============================================================================== */
@@ -853,7 +857,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);;
+	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);;
 }
 
 
@@ -2094,7 +2098,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: 1px;
+	border-top-width: <?php echo $borderwith ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2430,7 +2434,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: 1px;
+	border-top-width: <?php echo $borderwith; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
     

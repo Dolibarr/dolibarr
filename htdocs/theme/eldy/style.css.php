@@ -564,6 +564,9 @@ div.myavailability {
     max-width: 0;
     overflow: auto;
 }
+.tablelistofcalendars {
+	margin-top: 25px !important;
+}
 
 
 /* ============================================================================== */
