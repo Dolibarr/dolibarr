@@ -80,7 +80,7 @@ $childids[]=$user->id;
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.rowid as socid,";				// Ou
+$sql = "SELECT s.nom, d.fk_user, s.rowid as socid,";				// Ou
 $sql.= " d.rowid, d.type, d.dated as dd, d.km,";		// Comment
 $sql.= " d.fk_statut,";
 $sql.= " u.lastname, u.firstname";							// Qui
@@ -188,7 +188,7 @@ if ($resql)
         print '<td align="center">'.dol_print_date($db->jdate($obj->dd),'day').'</td>';
         // User
         print '<td>';
-        $userstatic->id = $obj->rowid;
+        $userstatic->id = $obj->fk_user;
         $userstatic->lastname = $obj->lastname;
         $userstatic->firstname = $obj->firstname;
         print $userstatic->getNomUrl(1);
