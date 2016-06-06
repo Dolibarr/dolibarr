@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -550,6 +550,7 @@ if ($resql)
     	$projectstatic->title = $obj->projecttitle;
     	$projectstatic->public = $obj->public;
     	$projectstatic->statut = $obj->projectstatus;
+    	$projectstatic->datee = $obj->date_end;
     	
     	$taskstatic->id = $obj->id;
     	$taskstatic->ref = $obj->ref;
@@ -568,6 +569,7 @@ if ($resql)
         	{
         		print '<td class="nowrap">';
         		print $projectstatic->getNomUrl(1, 'task');
+        		if ($projectstatic->hasDelay()) print img_warning("Late");
         		print '</td>';
         	}
     		// Title
