@@ -119,7 +119,7 @@ if ($id > 0 || ! empty($ref))
 
 
 	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), 0, 'resource@resource');
+	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), 0, 'resource');
 
 
 	/*

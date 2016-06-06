@@ -168,7 +168,7 @@ if ( $object->fetch($id) > 0 )
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource@resource');
+		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource');
 
 		print '<table class="border" width="100%">';
 
@@ -201,7 +201,7 @@ if ( $object->fetch($id) > 0 )
 	}
 	else
 	{
-		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource@resource');
+		dol_fiche_head($head, 'resource', $langs->trans("ResourceSingular"),0,'resource');
 
 		// Confirm deleting resource line
 	    if ($action == 'delete')

@@ -89,7 +89,7 @@ if ($object->id)
 
 	$head=resource_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), 0, 'resource@resource');
+	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), 0, 'resource');
 
 
 	// Construit liste des fichiers

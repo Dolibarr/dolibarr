@@ -64,7 +64,7 @@ $form = new Form($db);
 if ($id > 0 || ! empty($ref))
 {
 	$head = resource_prepare_head($object);
-	dol_fiche_head($head, 'note', $langs->trans('ResourceSingular'), 0, 'resource@resource');
+	dol_fiche_head($head, 'note', $langs->trans('ResourceSingular'), 0, 'resource');
 
 	print '<table class="border" width="100%">';
 	print '<tr><td class="titlefield">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
