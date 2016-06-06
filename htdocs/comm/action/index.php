@@ -78,7 +78,7 @@ if (! $user->rights->agenda->allactions->read || $filter =='mine')  // If no per
 }
 
 $action=GETPOST('action','alpha');
-//$year=GETPOST("year");
+$resourceid=GETPOST("resourceid","int");
 $year=GETPOST("year","int")?GETPOST("year","int"):date("Y");
 $month=GETPOST("month","int")?GETPOST("month","int"):date("m");
 $week=GETPOST("week","int")?GETPOST("week","int"):date("W");
@@ -292,6 +292,7 @@ if ($status == 'todo') $title=$langs->trans("ToDoActions");
 
 $param='';
 if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $param.="&actioncode=".$actioncode;
+if ($resourceid > 0)  $param.="&resourceid=".$resourceid;
 if ($status || isset($_GET['status']) || isset($_POST['status'])) $param.="&status=".$status;
 if ($filter)  $param.="&filter=".$filter;
 if ($filtert) $param.="&filtert=".$filtert;
@@ -349,7 +350,7 @@ $paramnoaction=preg_replace('/action=[a-z_]+/','',$param);
 $head = calendars_prepare_head($paramnoaction);
 
 dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,$listofextcals,$actioncode,$usergroup);
+print_actions_filter($form,$canedit,$status,$year,$month,$day,$showbirthday,0,$filtert,0,$pid,$socid,$action,$listofextcals,$actioncode,$usergroup,'', $resourceid);
 dol_fiche_end();
 
 
@@ -442,12 +443,15 @@ $sql.= ' a.fk_soc, a.fk_contact,';
 $sql.= ' ca.code as type_code, ca.libelle as type_label';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+// We must filter on resource table
+if ($resourceid > 0) $sql.=", ".MAIN_DB_PREFIX."element_resources as r";
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0) $sql.=", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
 if ($usergroup > 0) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 $sql.= ' WHERE a.fk_action = ca.id';
 $sql.= ' AND a.entity IN ('.getEntity('agenda', 1).')';
 if ($actioncode) $sql.=" AND ca.code IN ('".implode("','", explode(',',$actioncode))."')";
+if ($resourceid > 0) $sql.=" AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".$db->escape($resourceid);
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
 if ($socid > 0) $sql.= ' AND a.fk_soc = '.$socid;
