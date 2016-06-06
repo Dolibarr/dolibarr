@@ -89,7 +89,7 @@ if ($object->id)
 
 	$head=resource_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), 0, 'resource');
+	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), 0, 'resource@resource');
 
 
 	// Construit liste des fichiers
@@ -104,7 +104,7 @@ if ($object->id)
     print '<table class="border" width="100%">';
 
 
-	print '<tr><td style="width:35%">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
 	$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
 	print $form->showrefnav($object, 'id', $linkback,1,"rowid");
 	print '</td>';

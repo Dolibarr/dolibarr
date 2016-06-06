@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005-2012	Regis Houssin	  <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent	  <jmenent@2byte.es>
+ * Copyright (C) 2016       Laurent Destailleur <aldy@users.sourceforge.net>
  * Copyright (C) 2013       Florian Henry   <florian.henry@open-concept.pro>
- * Copyright (C) 2016	  	  Gilles Poirier  <glgpoirier@gmail.com>
+ * Copyright (C) 2016	    Gilles Poirier  <glgpoirier@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,7 @@ $object = new DolResource($db);
 $object->fetch($id,$ref);
 
 $permissionnote=$user->rights->resource->write;	// Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
