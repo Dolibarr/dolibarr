@@ -1269,7 +1269,7 @@ else
     		// Nb of generation already done
     		print '<tr><td width="20%">'.$langs->trans("NbOfGenerationDone").'</td>';
     		print '<td>';
-    		print $object->nb_gen_done?$object->nb_gen_done:'';
+    		print $object->nb_gen_done?$object->nb_gen_done:'0';
     		print '</td>';
     		print '</tr>';
     		
@@ -1338,14 +1338,21 @@ else
 		//{
 		    if ($user->rights->facture->creer)
 		    {
-    		    if (empty($object->frequency) || $object->date_when <= $today)
-    		    {
-                    print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
-    		    }
-    		    else
-    		    {
-    		        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
-    		    }
+		        if (! empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max))
+		        {
+		            print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MaxGenerationReached")).'">'.$langs->trans("CreateBill").'</a></div>';
+		        }
+		        else
+		        {
+        		    if (empty($object->frequency) || $object->date_when <= $today)
+        		    {
+                        print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;socid='.$object->thirdparty->id.'&amp;fac_rec='.$object->id.'">'.$langs->trans("CreateBill").'</a></div>';
+        		    }
+        		    else
+        		    {
+        		        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DateIsNotEnough")).'">'.$langs->trans("CreateBill").'</a></div>';
+        		    }
+		        }
 		    }
 		    else
     	    {

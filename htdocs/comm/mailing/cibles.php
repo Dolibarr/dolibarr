@@ -558,7 +558,7 @@ if ($object->fetch($id) >= 0)
 		{
 			if ($object->statut < 2) 
 			{
-			    print '<tr '.$bc[false].'><td colspan="8">';
+			    print '<tr '.$bc[false].'><td colspan="8" class="opacitymedium">';
     			print $langs->trans("NoTargetYet");
     			print '</td></tr>';
 			}
