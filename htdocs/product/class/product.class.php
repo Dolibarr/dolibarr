@@ -879,9 +879,10 @@ class Product extends CommonObject
 	 *  Delete a product from database (if not used)
 	 *
 	 *	@param      int		$id         Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
+	 *  @param      int     $notrigger  Do not execute trigger
 	 * 	@return		int					< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
-	function delete($id=0)
+	function delete($id=0, $notrigger=0)
 	{
 		// Deprecation warning
 		if ($id > 0) {
@@ -914,7 +915,7 @@ class Product extends CommonObject
 		{
 			$this->db->begin();
 
-			if (! $error)
+			if (! $error && empty($notrigger))
 			{
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_DELETE',$user);
