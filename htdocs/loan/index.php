@@ -104,6 +104,7 @@ if ($resql)
 	$var=true;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_ref) $param.="&amp;search_ref=".$search_ref;
     if ($search_label) $param.="&amp;search_label=".$search_user;

@@ -381,7 +381,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	
 	$param='';
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
 	if ($orderday)      		$param.='&orderday='.$orderday;

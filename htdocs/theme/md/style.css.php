@@ -2483,6 +2483,11 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
 }
+tr.liste_titre_topborder td {
+	border-top-width: <?php echo $borderwith; ?>px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 .liste_titre td a {
 	text-shadow: none !important;
 	color: rgb(<?php echo $colortexttitle; ?>);

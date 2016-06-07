@@ -155,6 +155,7 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $listofextcals=array();
 
 $param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($actioncode != '') $param.="&actioncode=".$actioncode;
 if ($resourceid > 0) $param.="&resourceid=".$resourceid;

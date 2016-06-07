@@ -397,6 +397,7 @@ if ($resql)
 
 	$param='';
 	if ($socid > 0)             $param.='&socid='.$socid;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($orderday)      		$param.='&orderday='.$orderday;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;

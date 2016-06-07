@@ -121,6 +121,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

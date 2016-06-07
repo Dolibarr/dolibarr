@@ -138,7 +138,8 @@ if ($resql)
 	$var=true;
 
 	$param='';
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($year)   $param.='&amp;year='.$year;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
