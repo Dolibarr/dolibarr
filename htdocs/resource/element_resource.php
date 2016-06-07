@@ -168,7 +168,7 @@ if($ret == -1) {
         dol_print_error($db,$object->error);
         exit;
 }
-if(!$ret) {
+if (!$ret) {
         print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
 }
 else
@@ -304,6 +304,7 @@ else
         //print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
 
 
+	// Show list of resource links
 
         foreach ($object->available_resources as $modresources => $resources)
         {

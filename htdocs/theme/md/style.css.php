@@ -857,7 +857,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);;
+	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
 
