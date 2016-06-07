@@ -130,7 +130,7 @@ foreach ($accounts as $key=>$type)
 		$total[$acc->currency_code] += $solde;
 	}
 }
-if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+if (! $found) print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 // Total
 foreach ($total as $key=>$solde)
 {
@@ -182,7 +182,7 @@ foreach ($accounts as $key=>$type)
 if (! $found)
 {
 	$var = !$var;
-	print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+	print '<tr '.$bc[false].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 }
 // Total
 foreach ($total as $key=>$solde)
@@ -249,7 +249,7 @@ foreach ($accounts as $key=>$type)
 if (! $found)
 {
 	$var = !$var;
-	print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+	print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 }
 // Total
 foreach ($total as $key=>$solde)

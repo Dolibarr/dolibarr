@@ -135,7 +135,7 @@ if ($result) {
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var] . '><td colspan="5">' . $langs->trans("None") . '</td></tr>';
+		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	
 	print '</table>';

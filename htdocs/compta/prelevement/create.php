@@ -235,7 +235,7 @@ if ($resql)
             $i++;
         }
     }
-    else print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+    else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     print "</table>";
     print "<br>\n";
 }

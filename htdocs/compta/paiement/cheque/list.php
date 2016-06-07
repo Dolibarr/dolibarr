@@ -215,7 +215,7 @@ if ($resql)
     else
     {
    		print "<tr ".$bc[$var].">";
-   		print '<td colspan="7">'.$langs->trans("None")."</td>";
+   		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
     }
 	print "</table>";

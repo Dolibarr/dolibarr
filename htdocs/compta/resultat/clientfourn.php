@@ -279,7 +279,7 @@ if ($total_ttc == 0)
 {
     $var=!$var;
     print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-    print '<td colspan="3">'.$langs->trans("None").'</td>';
+    print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
     print '</tr>';
 }
 
@@ -362,7 +362,7 @@ if ($result) {
     {
         $var=!$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 
@@ -439,7 +439,7 @@ if ($result) {
     else {
         $var = !$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 } else {
@@ -517,7 +517,7 @@ if ($result) {
     else {
         $var = !$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 } else {
@@ -606,7 +606,7 @@ if (! empty($conf->salaries->enabled))
 	    {
 	        $var = !$var;
 	        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-	        print '<td colspan="3">'.$langs->trans("None").'</td>';
+	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
 	    }
 	}
@@ -688,7 +688,7 @@ if (! empty($conf->expensereport->enabled))
 			{
 				$var = !$var;
 				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-				print '<td colspan="3">'.$langs->trans("None").'</td>';
+				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 		}
@@ -757,7 +757,7 @@ if (! empty($conf->don->enabled))
 		{
 			$var = !$var;
 			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-			print '<td colspan="3">'.$langs->trans("None").'</td>';
+			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
 	}
