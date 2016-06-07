@@ -87,6 +87,8 @@ class box_factures_imp extends ModeleBoxes
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.facnumber, f.date_lim_reglement,";
+			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
 			$sql.= " ORDER BY datelimite ASC, f.facnumber ASC ";
 			$sql.= $db->plimit($max, 0);
