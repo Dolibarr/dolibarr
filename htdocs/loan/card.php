@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2015	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,6 +26,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/html.formventilation.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -104,19 +106,23 @@ if ($action == 'add' && $user->rights->loan->write)
 		}
 		else
 		{
-			$object->label		= $_POST["label"];
-			$object->fk_bank	= $_POST["accountid"];
-			$object->capital	= $_POST["capital"];
-			$object->datestart	= $datestart;
-			$object->dateend	= $dateend;
-			$object->nbterm		= $_POST["nbterm"];
-			$object->rate		= $_POST["rate"];
-			$object->note_private = GETPOST('note_private');
-			$object->note_public = GETPOST('note_public');
+			$object->label					= $_POST["label"];
+			$object->fk_bank				= $_POST["accountid"];
+			$object->capital				= $_POST["capital"];
+			$object->datestart				= $datestart;
+			$object->dateend				= $dateend;
+			$object->nbterm					= $_POST["nbterm"];
+			$object->rate					= $_POST["rate"];
+			$object->note_private 			= GETPOST('note_private');
+			$object->note_public 			= GETPOST('note_public');
 
-			$object->account_capital	= $_POST["accountancy_account_capital"];
-			$object->account_insurance	= $_POST["accountancy_account_insurance"];
-			$object->account_interest	= $_POST["accountancy_account_interest"];
+			$accountancy_account_capital	= GETPOST('accountancy_account_capital');
+			$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
+			$accountancy_account_interest	= GETPOST('accountancy_account_interest');
+
+			if ($accountancy_account_capital <= 0) { $object->account_capital = ''; } else { $object->account_capital = $accountancy_account_capital; }
+			if ($accountancy_account_insurance <= 0) { $object->account_insurance = ''; } else { $object->account_insurance = $accountancy_account_insurance; }
+			if ($accountancy_account_interest <= 0) { $object->account_interest = ''; } else { $object->account_interest = $accountancy_account_interest; }
 
 			$id=$object->create($user);
 			if ($id <= 0)
@@ -172,6 +178,7 @@ else if ($action == 'update' && $user->rights->loan->write)
  */
 
 $form = new Form($db);
+if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation($db);
 
 $help_url='EN:Module_Loan|FR:Module_Emprunt';
 llxHeader("",$langs->trans("Loan"),$help_url);
@@ -253,27 +260,50 @@ if ($action == 'create')
 
 	print '</table>';
 
+	print '<br>';
+
+	print '<table class="border" width="100%">';
     // Accountancy
-	if ($conf->accounting->enabled)
+	if (! empty($conf->accounting->enabled))
 	{
-        print '<br>';
-        
-        print '<table class="border" width="100%">';
-        
+		// Accountancy_account_capital
+        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
+        print '<td>';
+		print $formaccountancy->select_account($object->accountancy_account_capital, 'accountancy_account_capital', 1, '', 0, 1);
+        print '</td></tr>';
+
+		// Accountancy_account_insurance
+        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
+        print '<td>';
+		print $formaccountancy->select_account($object->accountancy_account_insurance, 'accountancy_account_insurance', 1, '', 0, 1);
+        print '</td></tr>';
+
+		// Accountancy_account_interest
+        print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
+        print '<td>';
+		print $formaccountancy->select_account($object->accountancy_account_interest, 'accountancy_account_interest', 1, '', 0, 1);
+        print '</td></tr>';
+	}			
+	else // For external software 
+	{
+        // Accountancy_account_capital
         print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
         print '<td><input name="accountancy_account_capital" size="16" value="'.$object->accountancy_account_capital.'">';
         print '</td></tr>';
-        
+
+		// Accountancy_account_insurance
         print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInsuranceCode").'</td>';
         print '<td><input name="accountancy_account_insurance" size="16" value="'.$object->accountancy_account_insurance.'">';
         print '</td></tr>';
-        
+
+		// Accountancy_account_interest
         print '<tr><td class="fieldrequired">'.$langs->trans("LoanAccountancyInterestCode").'</td>';
         print '<td><input name="accountancy_account_interest" size="16" value="'.$object->accountancy_account_interest.'">';
         print '</td></tr>';
         
         print '</table>';
 	}
+	print '</table>';
 	
 	dol_fiche_end();
 
@@ -375,6 +405,39 @@ if ($id > 0)
         // Note Public
         print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
+        // Accountancy account capital
+		print '<tr><td class="nowrap">';
+        print $langs->trans("LoanAccountancyCapitalCode");
+        print '</td><td>';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($object->account_capital);
+        } else {
+			print $object->account_capital;
+		}
+		print '</td></tr>';
+
+        // Accountancy account insurance
+		print '<tr><td class="nowrap">';
+        print $langs->trans("LoanAccountancyInsuranceCode");
+        print '</td><td>';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($object->account_insurance);
+        } else {
+			print $object->account_insurance;
+		}
+		print '</td></tr>';
+
+		// Accountancy account interest
+		print '<tr><td class="nowrap">';
+        print $langs->trans("LoanAccountancyInterestCode");
+        print '</td><td>';
+		if (! empty($conf->accounting->enabled)) {
+			print length_accountg($object->account_interest);
+        } else {
+			print $object->account_interest;
+		}
+		print '</td></tr>';
+
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
@@ -444,13 +507,11 @@ if ($id > 0)
                 print '<td align="right">'.price($objp->amount_interest, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
                 print '<td align="right">'.price($objp->amount_capital, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
 				print "</tr>";
-                $total_insurance += $objp->amount_insurance;
-                $total_interest += $objp->amount_interest;
                 $total_capital += $objp->amount_capital;
 				$i++;
 			}
 
-			$totalpaid = $total_insurance + $total_interest + $total_capital;
+			$totalpaid = $total_capital;
 
 			if ($object->paid == 0)
 			{
