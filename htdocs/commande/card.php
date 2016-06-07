@@ -2147,7 +2147,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
-		if ($action != 'editconditions' && $object->brouillon)
+		if ($action != 'editconditions')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
@@ -2165,7 +2165,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $object->brouillon)
+		if ($action != 'editmode')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';

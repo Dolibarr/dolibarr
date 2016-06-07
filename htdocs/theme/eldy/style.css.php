@@ -2653,7 +2653,7 @@ form.liste_total div {
 	border-bottom: none;
 }
 
-.margintable {
+.paymenttable, .margintable {
 	border-top-width: <?php echo $borderwith ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;

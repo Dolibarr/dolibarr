@@ -2527,6 +2527,12 @@ input.liste_titre {
 	border-bottom: none;
 }
 
+.paymenttable, .margintable {
+	border-top-width: <?php echo $borderwith ?>px !important;
+	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
+	border-top-style: solid !important;
+}
+
 .margintable td {
 	border: 0px !important;
 }
