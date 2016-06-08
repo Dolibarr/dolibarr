@@ -344,10 +344,7 @@ $sql.= " WHERE m.fk_product = p.rowid";
 $sql.= " AND m.fk_entrepot = e.rowid";
 $sql.= " AND e.entity IN (".getEntity('stock', 1).")";
 if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
-if ($id)
-{
-    $sql.= " AND e.rowid ='".$id."'";
-}
+if ($id > 0) $sql.= " AND e.rowid ='".$id."'";
 if ($month > 0)
 {
     if ($year > 0)
@@ -359,15 +356,12 @@ else if ($year > 0)
 {
     $sql.= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if ($idproduct > 0)
-{
-    $sql.= " AND p.rowid = '".$idproduct."'";
-}
-if (! empty($search_movement))      $sql.= " AND m.label LIKE '%".$db->escape($search_movement)."%'";
+if ($idproduct > 0) $sql.= " AND p.rowid = '".$idproduct."'";
+if (! empty($search_movement))      $sql.= natural_search('m.label', $search_movement);
 if (! empty($search_inventorycode)) $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
 if (! empty($search_product_ref))   $sql.= " AND p.ref LIKE '%".$db->escape($search_product_ref)."%'";
 if (! empty($search_product))       $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
-if (! empty($search_warehouse))     $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
+if ($search_warehouse > 0)          $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
 if (! empty($search_user))          $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
 if (! empty($search_batch))         $sql.= " AND m.batch LIKE '%".$db->escape($search_batch)."%'";
 
