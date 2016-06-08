@@ -358,12 +358,12 @@ else if ($year > 0)
 }
 if ($idproduct > 0) $sql.= " AND p.rowid = '".$idproduct."'";
 if (! empty($search_movement))      $sql.= natural_search('m.label', $search_movement);
-if (! empty($search_inventorycode)) $sql.= " AND m.inventorycode LIKE '%".$db->escape($search_inventorycode)."%'";
-if (! empty($search_product_ref))   $sql.= " AND p.ref LIKE '%".$db->escape($search_product_ref)."%'";
-if (! empty($search_product))       $sql.= " AND p.label LIKE '%".$db->escape($search_product)."%'";
+if (! empty($search_inventorycode)) $sql.= natural_search('m.inventorycode', $search_inventorycode);
+if (! empty($search_product_ref))   $sql.= natural_search('p.ref', $search_product_ref);
+if (! empty($search_product))       $sql.= natural_search('p.label', $search_product);
 if ($search_warehouse > 0)          $sql.= " AND e.rowid = '".$db->escape($search_warehouse)."'";
-if (! empty($search_user))          $sql.= " AND u.login LIKE '%".$db->escape($search_user)."%'";
-if (! empty($search_batch))         $sql.= " AND m.batch LIKE '%".$db->escape($search_batch)."%'";
+if (! empty($search_user))          $sql.= natural_search('u.login', $search_user);
+if (! empty($search_batch))         $sql.= natural_search('m.batch', $search_batch);
 
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
