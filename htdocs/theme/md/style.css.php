@@ -568,6 +568,14 @@ div.myavailability {
 	margin-top: 25px !important;
 }
 
+/* for future usage (when left menu has been removed) */
+.table-responsive {
+    width: calc(100% - 330px);
+    margin-bottom: 15px;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */

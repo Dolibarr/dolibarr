@@ -569,6 +569,15 @@ div.myavailability {
 	margin-top: 25px !important;
 }
 
+/* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
+.table-responsive {
+    width: calc(100% - 330px);
+    margin-bottom: 15px;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+
 
 /* ============================================================================== */
 /* Styles to hide objects                                                         */
@@ -638,16 +647,14 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-	/* margin-top: 12px;
-	margin-bottom: 8px; */
-	display: table;
+	display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	table-layout: fixed;
 }
 #id-right, #id-left {
 	padding-top: 12px;
 	padding-bottom: 8px;
 
-	display: table-cell;
+	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
 	vertical-align: top;
 }
