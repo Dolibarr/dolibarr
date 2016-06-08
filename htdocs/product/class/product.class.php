@@ -131,7 +131,7 @@ class Product extends CommonObject
 	var $status_buy;
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
-	// We must manage batch number, sell-by date and so on : '1':yes '0':no
+	// We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	var $status_batch;
 
 	var $customcode;       // Customs code
