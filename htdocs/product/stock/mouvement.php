@@ -66,7 +66,29 @@ if (! $sortorder) $sortorder="DESC";
 
 $pdluoid=GETPOST('pdluoid','int');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'movementlist';
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array($contextpage));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('movement');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+
+
+/*
+ * Actions
+ */
+
+if ($cancel) $action='';	// Protection to avoid action for all cancel buttons
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+// Do we click on purge search criteria ?
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
     $year='';
     $month='';
@@ -77,14 +99,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
     $search_user="";
     $search_batch="";
     $sall="";
+    $search_array_options=array();
 }
-
-
-/*
- * Actions
- */
-
-if ($cancel) $action='';	// Protection to avoid action for all cancel buttons
 
 // Correct stock
 if ($action == "correct_stock")
@@ -547,22 +563,40 @@ if ($resql)
 
 
     $param='';
-    if ($id > 0) $param.='&id='.$id;
-    if ($search_movement)   $param.='&search_movement='.urlencode($search_movement);
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if ($id > 0)                 $param.='&id='.$id;
+    if ($search_movement)        $param.='&search_movement='.urlencode($search_movement);
     if ($search_inventorycode)   $param.='&search_inventorycode='.urlencode($search_inventorycode);
-    if ($search_product_ref) $param.='&search_product_ref='.urlencode($search_product_ref);
-    if ($search_product)   $param.='&search_product='.urlencode($search_product);
-    if ($search_warehouse) $param.='&search_warehouse='.urlencode($search_warehouse);
-    if (!empty($sref)) $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
-    if (!empty($snom)) $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
-    if ($search_user)    $param.='&search_user='.urlencode($search_user);
-    if ($idproduct > 0)  $param.='&idproduct='.$idproduct;
-    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords,'');
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords);
-
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($search_product_ref)     $param.='&search_product_ref='.urlencode($search_product_ref);
+    if ($search_product)         $param.='&search_product='.urlencode($search_product);
+    if ($search_warehouse > 0)   $param.='&search_warehouse='.urlencode($search_warehouse);
+    if (!empty($sref))           $param.='&sref='.urlencode($sref); // FIXME $sref is not defined
+    if (!empty($snom))           $param.='&snom='.urlencode($snom); // FIXME $snom is not defined
+    if ($search_user)            $param.='&search_user='.urlencode($search_user);
+    if ($idproduct > 0)          $param.='&idproduct='.$idproduct;
+    // Add $param from extra fields
+    foreach ($search_array_options as $key => $val)
+    {
+        $crit=$val;
+        $tmpkey=preg_replace('/search_options_/','',$key);
+        if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    }
+    
+    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+    print '<input type="hidden" name="action" value="list">';
+    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
-
+    
+    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords, '', 0, '', '', $limit);
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+    
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     //print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"], "m.rowid","",$param,"",$sortfield,$sortorder);
@@ -581,7 +615,8 @@ if ($resql)
     print_liste_field_titre($langs->trans("InventoryCodeShort"),$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("LabelMovement"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Source"),$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Units"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("");
     print "</tr>\n";
 
     // Lignes des champs de filtre
@@ -633,17 +668,21 @@ if ($resql)
     print '<td class="liste_titre" align="left">';
     print '&nbsp; ';
     print '</td>';
-
+    // Qty
+    print '<td class="liste_titre" align="left">';
+    print '&nbsp; ';
+    print '</td>';
+    // Actions    
     print '<td class="liste_titre" align="right">';
-    print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-    print '<input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" name="button_removefilter" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+    print $searchpitco;
     print '</td>';
     print "</tr>\n";
 
     $arrayofuniqueproduct=array();
 
     $var=True;
-    while ($i < min($num,$conf->liste_limit))
+    while ($i < min($num,$limit))
     {
         $objp = $db->fetch_object($resql);
 
@@ -710,6 +749,9 @@ if ($resql)
         print '<td align="right">';
         if ($objp->value > 0) print '+';
         print $objp->value.'</td>';
+        
+        print '<td></td>';
+        
         print "</tr>\n";
         $i++;
     }
