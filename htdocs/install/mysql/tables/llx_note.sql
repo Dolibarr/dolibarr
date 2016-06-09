@@ -19,14 +19,14 @@
 create table llx_note
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
-  entity            integer   DEFAULT 1 NOT NULL,   		-- Multi company id
+  entity			integer   DEFAULT 1 NOT NULL,			-- Multi company id
   datec				datetime,
   tms				timestamp,
-  element        	varchar(24) NOT NULL, 					-- Example : Salary / Product / Contact
-  fk_element     	integer,								-- Id of the element
+  element			varchar(24) NOT NULL,					-- Example : Salary / Product / Contact
+  fk_element		integer,								-- Id of the element
   type				tinyint DEFAULT 0,						-- 0 : private note | 1 : public note
-  title          	varchar(255),
-  text           	text DEFAULT NULL,
+  title				varchar(255),
+  text				text DEFAULT NULL,
   fk_user_author	integer DEFAULT NULL,
   fk_user_modif		integer DEFAULT NULL
 )ENGINE=innodb;
