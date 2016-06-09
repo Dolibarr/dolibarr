@@ -658,10 +658,11 @@ if ($resql)
         		else print $langs->trans('PrivateProject');
         		print '</td>';
         	}
+        	// Amount
         	if (! empty($arrayfields['p.opp_amount']['checked']))
         	{
     			print '<td align="right">';
-    			if ($obj->opp_status_code) print price($obj->opp_amount, 1, '', 1, -1, -1, $conf->currency);
+    			if ($obj->opp_status_code) print price($obj->opp_amount, 1, '', 1, -1, -1, '');
     			print '</td>';
         	}
         	if (! empty($arrayfields['p.fk_opp_status']['checked']))
