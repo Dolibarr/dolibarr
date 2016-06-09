@@ -1863,9 +1863,9 @@ class Commande extends CommonOrder
 
     /**
      *	Load array this->expeditions of lines of shipments with nb of products sent for each order line
-     *  Note: For a dedicated shipment, the fetch_lines load the qty_asked and qty_shipped. This function return qty_shipped cuulated for order
+     *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
      *   
-     *	@param      int		$filtre_statut      Filter on status
+     *	@param      int		$filtre_statut      Filter on shipment status
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
     function loadExpeditions($filtre_statut=-1)
@@ -1932,21 +1932,6 @@ class Commande extends CommonOrder
             return $row[0];
         }
         else dol_print_error($this->db);
-    }
-
-    /**
-     *	Return a array with sendings by line
-     *
-     *	@param      int		$filtre_statut      Filtre sur statut
-     *	@return     int                 		0 si OK, <0 si KO
-     *
-     *	TODO  deprecate, move to Shipping class
-     */
-    function livraison_array($filtre_statut=self::STATUS_CANCELED)
-    {
-        $delivery = new Livraison($this->db);
-        $deliveryArray = $delivery->livraison_array($filtre_statut);
-        return $deliveryArray;
     }
 
     /**
