@@ -657,10 +657,6 @@ td.showDragHandle {
 	vertical-align: top;
 }
 #id-top {
-/*	min-width: 100%;
-	position: relative;
-	heigth: 52px;
-	background: #f00;*/
 }
 #id-left {
 	min-height: 100%;
@@ -964,7 +960,7 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	/* box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important; */
+	display: table;
 }
 ul.tmenu li {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -1009,10 +1005,8 @@ li.tmenusel, li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
 .tmenuend .tmenuleft { width: 0px; }
-/* .tmenuend { display: none; } We keep tmenuend it to show background for rest of line */
-.tmenuend .tmenucenter {
-    width: 1px;
-}
+.tmenuend { display: none; }
+
 div.tmenuleft
 {
 	float: <?php print $left; ?>;

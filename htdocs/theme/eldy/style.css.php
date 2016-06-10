@@ -667,6 +667,29 @@ td.showDragHandle {
 	height: calc(100% - 50px);*/
 }
 
+/* For desktop */
+<?php if (GETPOST('testmenuhider') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+.side-nav {
+	border-right: 1px solid #BBB;
+	border-bottom: 1px solid #BBB;
+	background: #FFF;
+}
+.side-nav {
+	position: absolute;
+    z-index: 200;
+}
+div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid #e0e0e0;
+}
+div.vmenu, td.vmenu {
+	padding-right: 6px !important;
+}
+<?php } ?>
+
+
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
@@ -838,11 +861,11 @@ div#id-top {
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.1)), color-stop(1, rgba(0,0,0,.4)) );
 	<?php } ?>
-	<?php if ($disableimages) { ?>
+	/*<?php if ($disableimages) { ?>
 	height: 34px;
 	<?php } else { ?>
 	height: <?php print $heightmenu2; ?>px;
-	<?php } ?>
+	<?php } ?>*/
 <?php } ?>
 }
 
@@ -912,9 +935,10 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
+	display: table;
 }
 ul.tmenu li {	/* We need this to have background color when menu entry wraps on new lines */
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
+/*	background: rgb(<?php echo $colorbackhmenu1 ?>);
 	<?php if ($usegradienttop) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
@@ -922,7 +946,7 @@ ul.tmenu li {	/* We need this to have background color when menu entry wraps on 
 	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.1)), color-stop(1, rgba(0,0,0,.4)) );
-	<?php } ?>
+	<?php } ?>*/
 }
 li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
@@ -930,7 +954,6 @@ li.tmenu, li.tmenusel {
 	vertical-align: bottom;
 	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
 	float: <?php print $left; ?>;
-    /* height: <?php print $heightmenu; ?>px; */
     <?php } ?>
 	position:relative;
 	display: block;
