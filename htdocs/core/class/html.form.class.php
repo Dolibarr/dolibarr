@@ -5948,7 +5948,7 @@ class Form
                         {
                             console.log("We uncheck all");
                     		$(".'.$cssclass.'").prop(\'checked\', false);
-                        }';
+                        }'."\n";
         if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t done."); }';
         $out.='         });
                 });
