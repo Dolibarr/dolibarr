@@ -30,7 +30,7 @@ if (empty($usedolheader))
 	<link rel="shortcut icon" type="image/x-icon" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/img/favicon.ico"/>
 	<title>Test page</title>
 	<!-- Includes for JQuery (Ajax library) -->
-	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui.custom.css" />
+	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/smoothness/jquery-ui.css" />
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" />
 	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css" />
@@ -40,6 +40,7 @@ if (empty($usedolheader))
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/tablednd/jquery.tablednd.0.6.min.js"></script>
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/js/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/select2/select2.min.js?version=4.0.0-beta"></script>
 	<?php if ($_GET["dol_use_jmobile"] == 1) { ?>
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/mobile/jquery.mobile-latest.min.js"></script>
 	<?php } ?>
@@ -87,8 +88,9 @@ This page is a sample of page using tables. It is designed to make test with<br>
 - tablednd<br>
 </h1>
 
-<br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
+<?php  ?> 
 
+<br><hr><br>Example 0a : Table with div+div+div containg a select that should be overflowed and truncated => Use this to align text or form<br>
 
 <div class="tagtable centpercent">
 	<div class="tagtr">
@@ -127,12 +129,31 @@ This page is a sample of page using tables. It is designed to make test with<br>
     </tr>
 </table>
 
-
+<?php  ?>
 
 
 
 <br><hr><br>Example 1 : Standard table/thead/tbody/tr/th-td (no class pair/impair on td) => Use this if you need the drag and drop for lines or for long result tables<br>
 
+ 
+<script type="text/javascript" language="javascript">
+/*jQuery(document).ready(function() {
+$(document).ready(function() {
+    var table = $('#tablelines3').DataTable( {
+        scrollY:        "300px",
+        scrollX:        true,
+        scrollCollapse: true,
+        paging:         false,
+        fixedColumns:   {
+            leftColumns: 1,
+            rightColumns: 1
+        }
+    } );
+} );
+});*/
+</script>
+
+ 
 <?php
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $productspecimen=new Product($db);
@@ -198,16 +219,23 @@ if (! empty($moreforfilter))
 }
 
 ?>
-<table class="tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
+    
+<table class="stripe row-border order-column centpercent tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
+<thead>
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'),0,$_SERVER["PHP_SELF"],'aaa','','','align="left"',$sortfield,$sortorder); ?>
 <?php print getTitleFieldOfList($langs->trans('title2'),0,$_SERVER["PHP_SELF"],'bbb','','','align="right"',$sortfield,$sortorder); ?>
 <?php print getTitleFieldOfList($langs->trans('title3'),0,$_SERVER["PHP_SELF"],'ccc','','','align="center"',$sortfield,$sortorder); ?>
 </tr>
+</thead>
+<tbody>
 <tr class="pair"><td><?php echo $productspecimen->getNomUrl(1); ?></td><td align="right">b1</td><td class="tdlineupdown" align="left">c1</td></tr>
-<tr class="impair"><td>a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
+<tr class="impair nowrap"><td>a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2 a2</td><td align="right">b2</td><td class="tdlineupdown" align="left">c2</td></tr>
 <tr class="pair"><td>a3</td><td align="right">b3</td><td class="tdlineupdown" align="left">c3</td></tr>
+</tbody>
 </table>
+
+
 <br>
 
 
@@ -323,7 +351,7 @@ $('xxxth').replaceWith(
     <tr>
         <td>line2</td>
         <td>dfsdf</td>
-        <td align="center"> xxx </td>
+        <td align="center" class="nowrap"> xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx xxx </td>
     </tr>
     <tr>
         <td>line3</td>

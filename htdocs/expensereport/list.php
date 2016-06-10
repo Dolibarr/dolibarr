@@ -81,7 +81,6 @@ $fieldstosearchall = array(
 
 $form = new Form($db);
 $formother = new FormOther($db);
-$expensereporttmp=new ExpenseReport($db);
 
 llxHeader('', $langs->trans("ListOfTrips"));
 
@@ -104,7 +103,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
-$sql.= " d.date_debut, d.date_fin,";
+$sql.= " d.date_debut, d.date_fin, d.date_valid,";
 $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
@@ -244,7 +243,8 @@ if ($resql)
 	print '</td>';
 
 	// User
-	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous){
+	if ($user->rights->expensereport->readall || $user->rights->expensereport->lire_tous)
+	{
 		print '<td class="liste_titre" align="left">';
 		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td>';
@@ -280,7 +280,7 @@ if ($resql)
 	
 	$expensereportstatic=new ExpenseReport($db);
 
-	if($num > 0)
+	if ($num > 0)
 	{
 		while ($i < min($num,$limit))
 		{
@@ -288,21 +288,27 @@ if ($resql)
 			
 			$expensereportstatic->id=$objp->rowid;
 			$expensereportstatic->ref=$objp->ref;
+			$expensereportstatic->status=$objp->status;
+			$expensereportstatic->valid=$objp->date_valid;
+			$expensereportstatic->date_debut=$objp->date_debut;
+			$expensereportstatic->date_fin=$objp->date_fin;
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
-			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
+			print '<td>';
+			print $expensereportstatic->getNomUrl(1);
+			print $expensereportstatic->status;
+			if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) print img_warning($langs->trans("Late"));
+			if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) print img_warning($langs->trans("Late"));
+			print '</td>';
 			print '<td align="center">'.($objp->date_debut > 0 ? dol_print_date($objp->date_debut, 'day') : '').'</td>';
 			print '<td align="center">'.($objp->date_fin > 0 ? dol_print_date($objp->date_fin, 'day') : '').'</td>';
 			print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->id_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>';
 			print '<td align="right">'.price($objp->total_ht).'</td>';
 			print '<td align="right">'.price($objp->total_tva).'</td>';
 			print '<td align="right">'.price($objp->total_ttc).'</td>';
-
-			$expensereporttmp->status=$objp->status;
 			print '<td align="right">';
-			//print $objp->status;
-			print $expensereporttmp->getLibStatut(5);
+			print $expensereportstatic->getLibStatut(5);
 			print '</td>';
 
 			print '<td></td>';

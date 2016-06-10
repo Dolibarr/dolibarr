@@ -100,6 +100,7 @@ $fontsize='13';
 $fontsizesmaller='11';
 $usegradient=0;
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
+$borderwith=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -169,7 +170,7 @@ else { $colortextbackvmenu='000000'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-else { $colortexttitle='404040'; $colorshadowtitle='FFFFFF'; }
+else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
@@ -563,6 +564,17 @@ div.myavailability {
     max-width: 0;
     overflow: auto;
 }
+.tablelistofcalendars {
+	margin-top: 25px !important;
+}
+
+/* for future usage (when left menu has been removed) */
+.table-responsive {
+    width: calc(100% - 330px);
+    margin-bottom: 15px;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
 
 
 /* ============================================================================== */
@@ -645,10 +657,6 @@ td.showDragHandle {
 	vertical-align: top;
 }
 #id-top {
-/*	min-width: 100%;
-	position: relative;
-	heigth: 52px;
-	background: #f00;*/
 }
 #id-left {
 	min-height: 100%;
@@ -785,6 +793,15 @@ div.ficheaddleft {
     }
 }
 
+/* For table into table into card */
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+    padding: 0 0 0 0;
+}
+
+table.noborder tr.liste_titre td {
+	padding: 3px !important;
+}
+
 .containercenter {
 	display : table;
 	margin : 0px auto;
@@ -844,7 +861,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>);;
+	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
 
@@ -943,7 +960,7 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	/* box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important; */
+	display: table;
 }
 ul.tmenu li {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -988,10 +1005,8 @@ li.tmenusel, li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
 .tmenuend .tmenuleft { width: 0px; }
-/* .tmenuend { display: none; } We keep tmenuend it to show background for rest of line */
-.tmenuend .tmenucenter {
-    width: 1px;
-}
+.tmenuend { display: none; }
+
 div.tmenuleft
 {
 	float: <?php print $left; ?>;
@@ -1428,6 +1443,11 @@ div.blockvmenusearch
 
     padding-bottom: 10px;
     border-bottom: 1px solid #f4f4f4;
+}
+div.blockvmenusearchphone
+{
+	border-bottom: none;
+	margin-bottom: 0px;
 }
 
 div.blockvmenuhelp
@@ -1874,7 +1894,10 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divButAction { margin-bottom: 1.4em; }
+div.divButAction { 
+	margin-bottom: 1.4em; 
+	vertical-align: top;
+}
 
 span.butAction, span.butActionDelete {
 	cursor: pointer;
@@ -2082,7 +2105,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: 1px;
+	border-top-width: <?php echo $borderwith ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2129,7 +2152,7 @@ table.noborder tr, div.noborder form {
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
-	padding: 12px 2px 12px 3px;			/* t r b l */
+	padding: 8px 2px 8px 3px;			/* t r b l */
 }
 table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
@@ -2418,7 +2441,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: 1px;
+	border-top-width: <?php echo $borderwith; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
     
@@ -2467,6 +2490,11 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
 }
+tr.liste_titre_topborder td {
+	border-top-width: <?php echo $borderwith; ?>px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 .liste_titre td a {
 	text-shadow: none !important;
 	color: rgb(<?php echo $colortexttitle; ?>);
@@ -2504,6 +2532,12 @@ input.liste_titre {
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
 	border-bottom: none;
+}
+
+.paymenttable, .margintable {
+	border-top-width: <?php echo $borderwith ?>px !important;
+	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
+	border-top-style: solid !important;
 }
 
 .margintable td {

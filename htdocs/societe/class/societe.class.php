@@ -1347,7 +1347,7 @@ class Societe extends CommonObject
             $this->db->begin();
 
             // User is mandatory for trigger call
-            if ($call_trigger)
+            if (! $error && $call_trigger)
             {
                 // Call trigger
                 $result=$this->call_trigger('COMPANY_DELETE',$fuser);

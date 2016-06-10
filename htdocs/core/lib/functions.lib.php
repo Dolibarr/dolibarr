@@ -2981,10 +2981,11 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
+ *  @param  string  $morecssontable     More css on table
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0)
+function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
 {
 	global $conf;
 
@@ -2994,7 +2995,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
 	if ($picto) $return.= '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
@@ -4135,8 +4136,7 @@ function yn($yesno, $case=1, $color=0)
 /**
  *	Return a path to have a directory according to object.
  *  New usage:       $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
- *  Old usage:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
- *  Old usage:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
+ *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/" 
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
@@ -5340,6 +5340,11 @@ function printCommonFooter($zone='private')
     	           /* alert(page_y); */
     	           this.href=this.href+\'&page_y=\'+page_y;
     	           });'."\n";
+    	print '});'."\n";
+    	
+    	print '<!-- Set handler to switch left menu page -->'."\n";
+    	print 'jQuery(".menuhider").click(function() {';
+    	print "  $('.side-nav').toggle();  ";
     	print '});'."\n";
     	
     	print '</script>'."\n";

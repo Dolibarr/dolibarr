@@ -517,7 +517,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	}
@@ -571,7 +571,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

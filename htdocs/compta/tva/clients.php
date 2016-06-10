@@ -322,7 +322,7 @@ if (is_array($coll_list)) {
 //print load_fiche_titre($vatsup);
 
 //print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
+print "<tr class=\"liste_titre liste_titre_topborder\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Supplier")."</td>";
 print "<td>".$langs->trans("VATIntra")."</td>";

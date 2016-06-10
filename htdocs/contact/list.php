@@ -369,6 +369,7 @@ if ($result)
     $i = 0;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     $param.='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
     $param.='&type='.urlencode($type).'&view='.urlencode($view);

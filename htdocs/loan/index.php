@@ -2,7 +2,7 @@
 /* Copyright (C) 2014       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2015		Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2016		Laurent Destailleur  <jmenent@2byte.es>
+ * Copyright (C) 2016		Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,6 +104,7 @@ if ($resql)
 	$var=true;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_ref) $param.="&amp;search_ref=".$search_ref;
     if ($search_label) $param.="&amp;search_label=".$search_user;

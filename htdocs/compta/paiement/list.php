@@ -203,6 +203,7 @@ if ($resql)
     $i = 0;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     $param.=(GETPOST("orphelins")?"&orphelins=1":"");
     $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");

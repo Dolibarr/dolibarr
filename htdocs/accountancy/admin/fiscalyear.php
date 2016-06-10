@@ -42,7 +42,10 @@ if (! $sortorder) $sortorder="ASC";
 $langs->load("admin");
 $langs->load("compta");
 
-if (! $user->admin)
+// Security check
+if ($user->societe_id > 0)
+	accessforbidden();
+if (! $user->rights->accounting->fiscalyear)
 	accessforbidden();
 
 $error = 0;
@@ -132,7 +135,7 @@ if ($result) {
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var] . '><td colspan="5">' . $langs->trans("None") . '</td></tr>';
+		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	
 	print '</table>';

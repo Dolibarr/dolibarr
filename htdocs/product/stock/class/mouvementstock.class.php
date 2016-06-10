@@ -126,7 +126,6 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
-			// FIXME Code not complete to implement this
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
@@ -218,7 +217,7 @@ class MouvementStock extends CommonObject
                         $i++;
                 	}
             	}
-            	else
+            	else   // If not found, we add record
             	{
             	    $productlot = new Productlot($this->db);
             	    $productlot->fk_product = $fk_product;

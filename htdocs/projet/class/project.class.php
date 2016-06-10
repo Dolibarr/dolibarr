@@ -1627,8 +1627,8 @@ class Project extends CommonObject
             $response = new WorkboardResponse();
             $response->warning_delay = $conf->projet->warning_delay/60/60/24;
             $response->label = $langs->trans("OpenedProjects");
-            if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/index.php?search_status=1&mainmenu=project';
-            else $response->url = DOL_URL_ROOT.'/projet/index.php?mode=mine&search_status=1&mainmenu=project';
+            if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
+            else $response->url = DOL_URL_ROOT.'/projet/list.php?mode=mine&search_status=1&mainmenu=project';
             $response->img = img_object($langs->trans("Projects"),"project");
     
             // This assignment in condition is not a bug. It allows walking the results.
@@ -1719,9 +1719,8 @@ class Project extends CommonObject
 	{
 	    global $conf;
 	
-        if (! ($this->statut == 1)) {
-            return false;
-        }
+        if (! ($this->statut == 1)) return false;
+        if (! $this->datee) return false;
 
         $now = dol_now();
 

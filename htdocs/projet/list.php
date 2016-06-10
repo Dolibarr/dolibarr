@@ -90,8 +90,8 @@ $year	= GETPOST('year','int');
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$contextpage='projectlist';
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
@@ -308,7 +308,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 
 	$param='';
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sday)              		$param.='&sday='.$day;
 	if ($smonth)              		$param.='&smonth='.$smonth;
 	if ($syear)               		$param.='&syear=' .$syear;
@@ -346,7 +347,8 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
-
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	
 	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
 	
 	// Show description of content
@@ -425,7 +427,7 @@ if ($resql)
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.tms']['checked']))    print_liste_field_titre($arrayfields['p.tms']['label'],$_SERVER["PHP_SELF"],"p.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'],$_SERVER["PHP_SELF"],"p.fk_statut","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['p.fk_statut']['checked'])) print_liste_field_titre($arrayfields['p.fk_statut']['label'],$_SERVER["PHP_SELF"],"p.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -558,6 +560,9 @@ if ($resql)
     	$projectstatic->user_author_id = $obj->fk_user_creat;
     	$projectstatic->public = $obj->public;
     	$projectstatic->ref = $obj->ref;
+    	$projectstatic->datee = $obj->date_end;
+    	$projectstatic->statut = $obj->fk_statut;
+    	$projectstatic->opp_status = $obj->fk_opp_status;
     	 
     	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
     	if ($userAccess >= 0)
@@ -570,6 +575,7 @@ if ($resql)
         	{
         		print '<td class="nowrap">';
         		print $projectstatic->getNomUrl(1);
+        		if ($projectstatic->hasDelay()) print img_warning($langs->trans('Late'));
         		print '</td>';
         	}
     		// Title

@@ -39,6 +39,9 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after dat
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'dolresource','internal', 'USERINCHARGE',     'In charge of resource', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'dolresource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
+
 -- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -116,6 +119,7 @@ ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
 ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
 
 ALTER TABLE llx_chargesociales ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_tva ADD COLUMN import_key varchar(14);
 
 --DROP TABLE llx_website_page;
 --DROP TABLE llx_website;

@@ -305,16 +305,14 @@ if ($resql)
     $num = $db->num_rows($resql);
     
     $params='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    
-if ($search_entity != '') $params.= '&amp;search_entity='.urlencode($search_entity);
-if ($search_fk_product != '') $params.= '&amp;search_fk_product='.urlencode($search_fk_product);
-if ($search_batch != '') $params.= '&amp;search_batch='.urlencode($search_batch);
-if ($search_fk_user_creat != '') $params.= '&amp;search_fk_user_creat='.urlencode($search_fk_user_creat);
-if ($search_fk_user_modif != '') $params.= '&amp;search_fk_user_modif='.urlencode($search_fk_user_modif);
-if ($search_import_key != '') $params.= '&amp;search_import_key='.urlencode($search_import_key);
-
-	
+    if ($search_entity != '') $params.= '&amp;search_entity='.urlencode($search_entity);
+    if ($search_fk_product != '') $params.= '&amp;search_fk_product='.urlencode($search_fk_product);
+    if ($search_batch != '') $params.= '&amp;search_batch='.urlencode($search_batch);
+    if ($search_fk_user_creat != '') $params.= '&amp;search_fk_user_creat='.urlencode($search_fk_user_creat);
+    if ($search_fk_user_modif != '') $params.= '&amp;search_fk_user_modif='.urlencode($search_fk_user_modif);
+    if ($search_import_key != '') $params.= '&amp;search_import_key='.urlencode($search_import_key);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
     // Add $param from extra fields
     foreach ($search_array_options as $key => $val)

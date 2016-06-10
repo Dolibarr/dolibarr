@@ -105,7 +105,7 @@ foreach ($accounts as $key=>$type)
 		$solde = $acc->solde(1);
 
 		print '<tr '.$bc[$var].'>';
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
 		print '<td align="center">';
@@ -116,7 +116,7 @@ foreach ($accounts as $key=>$type)
                 setEventMessages($acc->error, $acc->errors, 'errors');
             } else {
                 print $result->nbtodo;
-                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+                if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
             }
 		}
 		else print $langs->trans("FeatureDisabled");
@@ -130,7 +130,7 @@ foreach ($accounts as $key=>$type)
 		$total[$acc->currency_code] += $solde;
 	}
 }
-if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+if (! $found) print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 // Total
 foreach ($total as $key=>$solde)
 {
@@ -182,7 +182,7 @@ foreach ($accounts as $key=>$type)
 if (! $found)
 {
 	$var = !$var;
-	print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+	print '<tr '.$bc[false].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 }
 // Total
 foreach ($total as $key=>$solde)
@@ -249,7 +249,7 @@ foreach ($accounts as $key=>$type)
 if (! $found)
 {
 	$var = !$var;
-	print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+	print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 }
 // Total
 foreach ($total as $key=>$solde)

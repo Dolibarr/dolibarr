@@ -1613,6 +1613,28 @@ class ExpenseReport extends CommonObject
             return -1;
         }
     }
+    
+    /**
+     * Return if an expense report is late or not
+     *
+     * @param  string  $option          'topay' or 'toapprove'
+     * @return boolean                  True if late, False if not late
+     */
+    public function hasDelay($option)
+    {
+        global $conf;
+    
+        //Only valid members
+        if ($option == 'toapprove' && $this->status != 2) return false;
+        if ($option == 'topay' && $this->status != 5) return false;
+    
+        $now = dol_now();
+    
+        if ($option == 'toapprove')
+            return $this->datevalid < ($now - $conf->expensereport->approve->warning_delay);
+        else
+            return $this->datevalid < ($now - $conf->expensereport->payment->warning_delay);
+    }    
 }
 
 

@@ -543,7 +543,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -614,7 +614,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			}
 			else
 			{
-				print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+				print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			print "</table><br>";
 			$db->free($resql);

@@ -72,6 +72,7 @@ $title=$langs->trans("SpecialExpensesArea");
 if ($mode == 'sconly') $title=$langs->trans("SocialContributionsPayments");
 
 $param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($mode == 'sconly') $param='&mode=sconly';
 if ($sortfield) $param.='&sortfield='.$sortfield;

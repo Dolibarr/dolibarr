@@ -1737,7 +1737,7 @@ class Adherent extends CommonObject
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->adherent->cotisation->warning_delay/60/60/24;
 	        $response->label=$langs->trans("MembersWithSubscriptionToReceive");
-	        $response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1';
+	        $response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
 	        $response->img=img_object($langs->trans("Members"),"user");
 
             $adherentstatic = new Adherent($this->db);
@@ -2006,14 +2006,18 @@ class Adherent extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 * Return if a member is late (subscription late) or not
+	 * 
+	 * @return boolean     True if late, False if not late
+	 */
     public function hasDelay()
     {
         global $conf;
 
         //Only valid members
-        if ($this->statut <= 0) {
-            return false;
-        }
+        if ($this->statut <= 0) return false;
+        if (! $this->datefin) return false;
 
         $now = dol_now();
 

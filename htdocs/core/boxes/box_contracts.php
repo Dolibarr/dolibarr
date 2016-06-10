@@ -55,13 +55,15 @@ class box_contracts extends ModeleBoxes
     	$this->max=$max;
 
     	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-    	$contractstatic=new Contrat($db);
-
+    	
     	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));
 
     	if ($user->rights->contrat->lire)
     	{
-    		$sql = "SELECT s.nom as name, s.rowid as socid,";
+        	$contractstatic=new Contrat($db);
+        	$thirdpartytmp=new Societe($db);
+        	
+    	    $sql = "SELECT s.nom as name, s.rowid as socid,";
     		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
     		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -80,7 +82,10 @@ class box_contracts extends ModeleBoxes
 
     			$line = 0;
 
-                while ($line < $num) {
+    			$langs->load("contracts");
+    			
+                while ($line < $num) 
+                {
     				$objp = $db->fetch_object($resql);
     				$datec=$db->jdate($objp->datec);
     				$dateterm=$db->jdate($objp->fin_validite);
@@ -89,38 +94,26 @@ class box_contracts extends ModeleBoxes
 
     				$contractstatic->statut=$objp->fk_statut;
     				$contractstatic->id=$objp->rowid;
+    				$contractstatic->ref=$objp->ref;
     				$result=$contractstatic->fetch_lines();
 
+    				$thirdpartytmp->name = $objp->name;
+    				$thirdpartytmp->id = $objp->socid;
+    				
     				// fin_validite is no more on contract but on services
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => $this->boximg,
-                        'tooltip' => $langs->trans('Contract').': '.($objp->ref?$objp->ref:$objp->rowid),
-                        'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid,
-                    );
-
-                    $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => ($objp->ref?$objp->ref:$objp->rowid), // Some contracts have no ref
-                        'tooltip' => $langs->trans('Contract').': '.($objp->ref?$objp->ref:$objp->rowid),
+                        'text' => $contractstatic->getNomUrl(1),
                         'text2'=> $late,
-                        'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid,
-                    );
-
-                    $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" width="16"',
-                        'logo' => 'company',
-                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
-                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                        'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
-                        'text' => dol_trunc($objp->name,40),
-                        'tooltip' => $langs->trans('Customer').': '.$objp->name,
-                        'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid,
+                        'text' => $thirdpartytmp->getNomUrl(1),
+                        'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(

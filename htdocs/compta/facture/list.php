@@ -792,6 +792,7 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($day)                $param.='&day='.$day;
     if ($month)              $param.='&month='.$month;

@@ -100,6 +100,7 @@ $fontsizesmaller='11';
 $usegradienttop=(isset($conf->global->THEME_ELDY_TOPMENU_BACK1)?0:1);
 $usegradienttitle=(isset($conf->global->THEME_ELDY_BACKTITLE1)?0:1);
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
+$borderwith=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -564,6 +565,18 @@ div.myavailability {
     max-width: 0;
     overflow: auto;
 }
+.tablelistofcalendars {
+	margin-top: 25px !important;
+}
+
+/* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
+.table-responsive {
+    width: calc(100% - 330px);
+    margin-bottom: 15px;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
 
 
 /* ============================================================================== */
@@ -634,16 +647,14 @@ td.showDragHandle {
 /* ============================================================================== */
 
 #id-container {
-	/* margin-top: 12px;
-	margin-bottom: 8px; */
-	display: table;
+	display: table;					/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	table-layout: fixed;
 }
 #id-right, #id-left {
 	padding-top: 12px;
 	padding-bottom: 8px;
 
-	display: table-cell;
+	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
 	float: none;
 	vertical-align: top;
 }
@@ -655,6 +666,44 @@ td.showDragHandle {
 	border-right: 1px #888 solid;
 	height: calc(100% - 50px);*/
 }
+
+/* For desktop */
+<?php if (GETPOST('testmenuhider') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+#id-container {
+	width: 100%;
+}
+.side-nav {
+	border-right: 1px solid #BBB;
+	border-bottom: 1px solid #BBB;
+	background: #FFF;
+}
+.side-nav {
+	position: absolute;
+    z-index: 200;
+}
+div.blockvmenulogo
+{
+	border-bottom: 0 !important;
+}
+div.blockvmenusearch {
+	border-bottom: 1px solid #e0e0e0;
+	padding-bottom: 10px !important;
+}
+div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid #e0e0e0;
+	padding-left: 0 !important;
+}
+div.vmenu, td.vmenu {
+	padding-right: 6px !important;
+}
+div.blockvmenulast {
+	border-bottom: 0;
+}
+<?php } ?>
+
 
 
 div.fiche {
@@ -730,6 +779,11 @@ div.ficheaddleft {
     }
 }
 
+/* For table into table into card */
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+    padding: 0 0 0 0;
+}
+
 .containercenter {
 	display : table;
 	margin : 0px auto;
@@ -792,7 +846,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: <?php echo $borderwith ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
 
@@ -822,11 +876,11 @@ div#id-top {
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.1)), color-stop(1, rgba(0,0,0,.4)) );
 	<?php } ?>
-	<?php if ($disableimages) { ?>
+	/*<?php if ($disableimages) { ?>
 	height: 34px;
 	<?php } else { ?>
 	height: <?php print $heightmenu2; ?>px;
-	<?php } ?>
+	<?php } ?>*/
 <?php } ?>
 }
 
@@ -896,9 +950,10 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
+	display: table;
 }
 ul.tmenu li {	/* We need this to have background color when menu entry wraps on new lines */
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
+/*	background: rgb(<?php echo $colorbackhmenu1 ?>);
 	<?php if ($usegradienttop) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
@@ -906,7 +961,7 @@ ul.tmenu li {	/* We need this to have background color when menu entry wraps on 
 	background-image: -webkit-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -ms-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -webkit-gradient( linear, left top, left bottom, color-stop(0, rgba(255,255,255,.1)), color-stop(1, rgba(0,0,0,.4)) );
-	<?php } ?>
+	<?php } ?>*/
 }
 li.tmenu, li.tmenusel {
 	<?php print $minwidthtmenu?'min-width: '.$minwidthtmenu.'px;':''; ?>
@@ -914,7 +969,6 @@ li.tmenu, li.tmenusel {
 	vertical-align: bottom;
 	<?php if (empty($conf->global->MAIN_MENU_INVERT)) { ?>
 	float: <?php print $left; ?>;
-    /* height: <?php print $heightmenu; ?>px; */
     <?php } ?>
 	position:relative;
 	display: block;
@@ -2191,7 +2245,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: 2px;
+	border-top-width: <?php echo $borderwith ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2217,13 +2271,6 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
-/*
-#tablelines tr.liste_titre:first-child td, form.formnoborder div, tr.liste_titre.trnoborder td {
-    border-top-width: 1px;
-    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
-    border-top-style: solid;
-}
-*/
 .liste_titre_add td, .liste_titre_add .tagtd
 {
     border-top-width: 1px;
@@ -2235,7 +2282,7 @@ table.liste tr, table.noborder tr, div.noborder form {
 	min-height: 20px;
 }
 table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.noborder tr.box_titre td {
-	padding: 10px 2px 10px 3px;			/* t r b l */
+	padding: 8px 2px 8px 3px;			/* t r b l */
 }
 tr.box_titre .nobordernopadding td { padding: 0px ! important; }
 table.liste td, table.noborder td, div.noborder form, div.noborder form div {
@@ -2558,7 +2605,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: 2px;
+	border-top-width: <?php echo $borderwith ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
     
@@ -2608,6 +2655,11 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
 }
+tr.liste_titre_topborder td {
+	border-top-width: <?php echo $borderwith; ?>px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 .liste_titre td a {
 	text-shadow: none !important;
 	color: rgb(<?php echo $colortexttitle; ?>);
@@ -2644,6 +2696,12 @@ form.liste_total div {
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
 	border-bottom: none;
+}
+
+.paymenttable, .margintable {
+	border-top-width: <?php echo $borderwith ?>px !important;
+	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
+	border-top-style: solid !important;
 }
 
 .margintable td {

@@ -31,6 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -343,6 +344,78 @@ if ($object->id > 0)
 		print '</table>';
 	}
 
+	
+	/*
+	 * Last supplier proposal
+	 */
+	$proposalstatic = new SupplierProposal($db);
+	
+	if ($user->rights->supplier_proposal->lire)
+	{
+	    $sql  = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total as total_ttc";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p ";
+	    $sql.= " WHERE p.fk_soc =".$object->id;
+	    $sql.= " AND p.entity =".$conf->entity;
+	    $sql.= " ORDER BY p.date_valid DESC";
+	    $sql.= " ".$db->plimit($MAXLIST);
+	    
+	    $resql=$db->query($sql);
+	    if ($resql)
+	    {
+	        $i = 0 ;
+	        $num = $db->num_rows($resql);
+	
+	        if ($num > 0)
+	        {
+	            print '<table class="noborder" width="100%">';
+	
+	            print '<tr class="liste_titre">';
+	            print '<td colspan="3">';
+	            print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierProposals",($num<$MAXLIST?"":$MAXLIST)).'</td>';
+	            print '<td align="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'">'.$langs->trans("AllPriceRequests").' <span class="badge">'.$num.'</span></td>';
+	            print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+	            print '</tr></table>';
+	            print '</td></tr>';
+	        }
+	
+	        $var = True;
+	        while ($i < $num && $i <= $MAXLIST)
+	        {
+	            $obj = $db->fetch_object($resql);
+	            $var=!$var;
+	
+	            print "<tr ".$bc[$var].">";
+	            print '<td class="nowrap">';
+	            $proposalstatic->id = $obj->rowid;
+	            $proposalstatic->ref = $obj->ref;
+	            $proposalstatic->total_ht = $obj->total_ht;
+	            $proposalstatic->total_tva = $obj->total_tva;
+	            $proposalstatic->total_ttc = $obj->total_ttc;
+	            print $proposalstatic->getNomUrl(1);
+	            print '</td>';
+	            print '<td align="center" width="80">';
+	            if ($obj->dc)
+	            {
+	                print dol_print_date($db->jdate($obj->dc),'day');
+	            }
+	            else
+	            {
+	                print "-";
+	            }
+	            print '</td>';
+	            print '<td align="right" class="nowrap">'.$proposalstatic->LibStatut($obj->fk_statut,5).'</td>';
+	            print '</tr>';
+	            $i++;
+	        }
+	        $db->free($resql);
+	
+	        if ($num >0) print "</table>";
+	    }
+	    else
+	    {
+	        dol_print_error($db);
+	    }
+	}	
 
 	/*
 	 * Last supplier orders
@@ -441,7 +514,6 @@ if ($object->id > 0)
 	/*
 	 * Last supplier invoices
 	 */
-	$MAXLIST=5;
 
 	$langs->load('bills');
 	$facturestatic = new FactureFournisseur($db);
