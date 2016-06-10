@@ -51,6 +51,7 @@ GenericTransport=Transporteur générique
 Enlevement=Enlèvement sur place par le client
 DocumentModelSimple=Modèle simple
 DocumentModelMerou=Modèle Merou A5
+DocumentModelDorade=Modèle d'expédition chiffré
 WarningNoQtyLeftToSend=Alerte, aucun produit en attente d'expédition.
 StatsOnShipmentsOnlyValidated=Statistiques effectuées sur les expéditions validées uniquement. La date prise en compte est la date de validation (la date de prévision de livraison n'étant pas toujours renseignée).
 DateDeliveryPlanned=Date prévue de livraison
