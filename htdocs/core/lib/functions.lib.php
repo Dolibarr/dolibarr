@@ -5342,6 +5342,11 @@ function printCommonFooter($zone='private')
     	           });'."\n";
     	print '});'."\n";
     	
+    	print '<!-- Set handler to switch left menu page -->'."\n";
+    	print 'jQuery(".menuhider").click(function() {';
+    	print "  $('.side-nav').toggle();  ";
+    	print '});'."\n";
+    	
     	print '</script>'."\n";
 	}
 	

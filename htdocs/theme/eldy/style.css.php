@@ -669,6 +669,9 @@ td.showDragHandle {
 
 /* For desktop */
 <?php if (GETPOST('testmenuhider') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+#id-container {
+	width: 100%;
+}
 .side-nav {
 	border-right: 1px solid #BBB;
 	border-bottom: 1px solid #BBB;
@@ -678,14 +681,26 @@ td.showDragHandle {
 	position: absolute;
     z-index: 200;
 }
+div.blockvmenulogo
+{
+	border-bottom: 0 !important;
+}
+div.blockvmenusearch {
+	border-bottom: 1px solid #e0e0e0;
+	padding-bottom: 10px !important;
+}
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
 	border-left: none !important;
 	border-right: none !important;
 	border-bottom: 1px solid #e0e0e0;
+	padding-left: 0 !important;
 }
 div.vmenu, td.vmenu {
 	padding-right: 6px !important;
+}
+div.blockvmenulast {
+	border-bottom: 0;
 }
 <?php } ?>
 

@@ -1444,6 +1444,11 @@ div.blockvmenusearch
     padding-bottom: 10px;
     border-bottom: 1px solid #f4f4f4;
 }
+div.blockvmenusearchphone
+{
+	border-bottom: none;
+	margin-bottom: 0px;
+}
 
 div.blockvmenuhelp
 {
