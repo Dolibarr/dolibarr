@@ -668,7 +668,7 @@ td.showDragHandle {
 }
 
 /* For desktop */
-<?php if (GETPOST('testmenuhider') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
 }
@@ -680,6 +680,7 @@ td.showDragHandle {
 .side-nav {
 	position: absolute;
     z-index: 200;
+    display: none;
 }
 div.blockvmenulogo
 {
@@ -701,6 +702,10 @@ div.vmenu, td.vmenu {
 }
 div.blockvmenulast {
 	border-bottom: 0;
+}
+div.fiche {
+	margin-<?php print $left; ?>: 6px !important;
+	margin-<?php print $right; ?>: 6px !important;
 }
 <?php } ?>
 

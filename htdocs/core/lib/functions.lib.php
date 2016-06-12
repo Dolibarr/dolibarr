@@ -5344,7 +5344,8 @@ function printCommonFooter($zone='private')
     	
     	print '<!-- Set handler to switch left menu page -->'."\n";
     	print 'jQuery(".menuhider").click(function() {';
-    	print "  $('.side-nav').toggle();  ";
+    	print "  $('.side-nav').toggle();";
+    	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
     	print '});'."\n";
     	
     	print '</script>'."\n";

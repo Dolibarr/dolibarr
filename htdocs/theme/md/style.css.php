@@ -717,6 +717,36 @@ td.showDragHandle {
 	margin-left: 228px;
 }
 
+/* For desktop */
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+#id-container {
+	width: 100%;
+}
+.side-nav-vert {
+	margin-left: 0;
+}
+div.login_block {
+	border-right: none ! important; 
+	top: inherit !important;
+}
+.side-nav {
+	/*top: inherit !important;*/
+	overflow-x: initial !important;
+	overflow-y: scroll;
+	/*position: initial !important;*/
+	display: none;
+}
+div.login_block {
+	/* position: initial !important;*/
+	display: none;
+}
+#id-right {
+	padding-left: 0 ! important;
+}
+#id-left {
+	top: 60px ! important;
+}
+<?php } ?>
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;

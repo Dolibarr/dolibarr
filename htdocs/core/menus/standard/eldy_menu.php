@@ -111,7 +111,7 @@ class MenuManager
     /**
      *  Show menu
      *
-     *	@param	string	$mode			'top', 'left', 'jmobile'
+     *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile'
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
      */
@@ -132,25 +132,25 @@ class MenuManager
 
         if (empty($conf->global->MAIN_MENU_INVERT))
         {
-        	if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        	if ($mode == 'top')  print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
         	if ($mode == 'left') print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0,'','',$moredata);
         }
         else
 		{
         	$conf->global->MAIN_SHOW_LOGO=0;
         	if ($mode == 'top')  print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$this->menu,0);
-        	if ($mode == 'left') print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0);
+        	if ($mode == 'left') print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,0,$mode);
 		}
 
 		if ($mode == 'topnb')
 		{
-		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);  // no output
+		    print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);  // no output
 		    return $this->menu->getNbOfVisibleMenuEntries();
 		}
 		    
         if ($mode == 'jmobile')
         {
-            print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1);
+            print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);
 
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'

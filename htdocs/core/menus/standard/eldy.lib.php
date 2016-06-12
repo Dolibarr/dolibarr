@@ -36,9 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			1=Disable output (Initialise &$menu only).
+ * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
-function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
+function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode='')
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -51,7 +52,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 	if (empty($noout)) print_start_menu_array();
 
 	// Show/Hide vertical menu
-	if (GETPOST('testmenuhider') && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+	if ($mode != 'jmobile' && $mode != 'topnb' && (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
     	$showmode=1;
     	$classname = 'class="tmenu menuhider"';

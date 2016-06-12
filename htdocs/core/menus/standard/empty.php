@@ -92,6 +92,19 @@ class MenuManager
 			$idsel='home';
 			$classname='class="tmenusel"';
 
+			// Show/Hide vertical menu
+			if ($mode != 'jmobile' && $mode != 'topnb' && (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+			    $showmode=1;
+			    $classname = 'class="tmenu menuhider"';
+			    $idsel='menu';
+			
+			    if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
+			    if (empty($noout)) print_text_menu_entry('', 1, '#', $id, $idsel, $classname, $atarget);
+			    if (empty($noout)) print_end_menu_entry($showmode);
+			    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
+			}			
+			
 			if (empty($noout)) print_start_menu_entry_empty($idsel, $classname, $showmode);
 			if (empty($noout)) print_text_menu_entry_empty($langs->trans("Home"), 1, dol_buildpath('/index.php',1).'?mainmenu=home&amp;leftmenu=', $id, $idsel, $classname, $this->atarget);
 			if (empty($noout)) print_end_menu_entry_empty($showmode);
