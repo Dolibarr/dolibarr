@@ -93,6 +93,13 @@ class Expedition extends CommonObject
 	var $meths;
 	var $listmeths;			// List of carriers
 
+	
+	const STATUS_DRAFT = 0;
+	const STATUS_VALIDATED = 1;
+	const STATUS_CLOSED = 2;
+	
+	
+	
 	/**
 	 *	Constructor
 	 *
@@ -1794,9 +1801,9 @@ class Expedition extends CommonObject
 	}
 
 	/**
-	 *	Classify the shipping as closed
+	 *	Classify the shipping as closed.
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     <0 if KO, >0 if OK
 	 */
 	function setClosed()
 	{
@@ -1806,15 +1813,43 @@ class Expedition extends CommonObject
 		
 		$this->db->begin();
 		
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=2';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut='.self::STATUS_CLOSED;
 		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0';
 
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			// TODO: Add option/checkbox to set order billed if 100% of order is shipped
-			$this->statut=2;
+			// Set order billed if 100% of order is shipped (qty in shipment lines match qty in order lines)
+			if ($this->origin == 'commande' && $this->origin_id > 0)
+			{
+				$order = new Commande($this->db);
+				$order->fetch($this->origin_id);
+				
+				$order->loadExpeditions(self::STATUS_CLOSED);		// Fill $order->expeditions = array(orderlineid => qty)
+				
+				$shipments_match_order = 1;
+				foreach($order->lines as $line)
+				{
+					$lineid = $line->id;
+					$qty = $line->qty;
+					if (($type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->expeditions[$lineid] != $qty)
+					{
+						$shipments_match_order = 0;
+						$text='Qty for order line id '.$lineid.' is '.$qty.' but in shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.', we have '.$order->expeditions[$lineid].' so we can t close order';
+						dol_syslog($text);
+						break;
+					}
+				}
+				if ($shipments_match_order)
+				{
+					dol_syslog("Qty for the ".count($order->lines)." lines of order have same value for shipments with status Expedition::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');	
+					$order->cloture($user);
+				}
+			}
+			
+			$this->statut=self::STATUS_CLOSED;
 
+			
 			// If stock increment is done on closing
 			if (! $error && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
 			{
@@ -1823,7 +1858,7 @@ class Expedition extends CommonObject
 				$langs->load("agenda");
 	
 				// Loop on each product line to add a stock movement
-				// TODO possibilite d'expedier a partir d'une propale ou autre origine
+				// TODO possibilite d'expedier a partir d'une propale ou autre origine ?
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql.= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql.= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock";

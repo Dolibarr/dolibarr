@@ -72,6 +72,7 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Product quantity from opened suppli
 NoProductToShipFoundIntoStock=No product to ship found into warehouse <b>%s</b>. Correct stock or go back to choose another warehouse. 
 WeightVolShort=Weight/Vol.
 ValidateOrderFirstBeforeShipment=You must first validate the order before being able to make shipments.
+CloseShippeOrdersAutomatically=Classify the order "Delivered" if entirely shipped.
 
 # Sending methods
 SendingMethodCATCH=Catch by customer
