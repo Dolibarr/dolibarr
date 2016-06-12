@@ -381,13 +381,18 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			{
 				$altok++;
 				$blockvmenuopened=true;
+				$lastopened=true;
+				for($j = ($i + 1); $j < $num; $j++)
+				{
+				    if (empty($menu_array[$j]['level'])) $lastopened=false;
+				}				
 				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenuimpair'.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenuimpair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair'.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenupair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 			}
 

@@ -160,14 +160,19 @@ class MenuManager
 					if (empty($this->menu->liste[$i]['level']))
 					{
 			    		$altok++;
-						$blockvmenuopened=true;
+    					$blockvmenuopened=true;
+						$lastopened=true;
+        				for($j = ($i + 1); $j < $num; $j++)
+        				{
+        				    if (empty($menu_array[$j]['level'])) $lastopened=false;
+        				}				
 						if (($alt%2==0))
 						{
-							print '<div class="blockvmenuimpair'.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
+							print '<div class="blockvmenuimpair'.($lastopened?' blockvmenulast':'').($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 						}
 						else
 						{
-							print '<div class="blockvmenupair'.($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
+							print '<div class="blockvmenupair'.($lastopened?' blockvmenulast':'').($alt == 1 ? ' blockvmenufirst':'').'">'."\n";
 						}
 					}
 

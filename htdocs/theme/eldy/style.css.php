@@ -687,7 +687,6 @@ div.blockvmenulogo
 	border-bottom: 0 !important;
 }
 div.blockvmenusearch {
-	border-bottom: 1px solid #e0e0e0;
 	padding-bottom: 10px !important;
 }
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
