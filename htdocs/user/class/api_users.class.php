@@ -20,14 +20,12 @@ use Luracast\Restler\RestException;
 //require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 /**
- * API class for user object
+ * API class for users
  *
- * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
  */
-class UserApi extends DolibarrApi
+class Users extends DolibarrApi
 {
 	/**
 	 *
@@ -44,9 +42,6 @@ class UserApi extends DolibarrApi
 
 	/**
 	 * Constructor
-	 *
-	 * @url	user/
-	 * 
 	 */
 	function __construct() {
 		global $db, $conf;
@@ -62,7 +57,6 @@ class UserApi extends DolibarrApi
 	 * @param 	int 	$id ID of user
 	 * @return 	array|mixed data without useless information
 	 * 
-	 * @url	GET user/{id}
 	 * @throws 	RestException
 	 */
 	function get($id) {
@@ -85,6 +79,7 @@ class UserApi extends DolibarrApi
 	}
 
 	/**
+	 * TODO move to the /contacts/ API
 	 * Create useraccount object from contact
 	 *
 	 * @param   int   $contactid   Id of contact
@@ -133,8 +128,6 @@ class UserApi extends DolibarrApi
 	 *
 	 * @param array $request_data New user data
 	 * @return int
-	 *
-	 * @url POST user/
 	 */
 	function post($request_data = NULL) {
 	    // check user authorization
@@ -170,8 +163,6 @@ class UserApi extends DolibarrApi
 	 * @param int   $id             Id of account to update
 	 * @param array $request_data   Datas   
 	 * @return int 
-     * 
-	 * @url	PUT user/{id}
 	 */
 	function put($id, $request_data = NULL) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
@@ -194,7 +185,7 @@ class UserApi extends DolibarrApi
 			$this->useraccount->$field = $value;
 		}
 
-		if ($this->useraccount->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
+		if ($this->useraccount->update(DolibarrApiAccess::$user, 1))
 			return $this->get($id);
 
         return false;
@@ -207,9 +198,9 @@ class UserApi extends DolibarrApi
 	 * @param   int     $group Group ID
 	 * @return  int
      * 
-	 * @url	GET user/{id}/setGroup/{group}
+	 * @url	GET {id}/setGroup/{group}
 	 */
-	function setGroup($id,$group) {
+	function setGroup($id, $group) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
@@ -232,8 +223,6 @@ class UserApi extends DolibarrApi
 	 *
 	 * @param   int     $id Account ID
 	 * @return  array
-     * 
-	 * @url	DELETE user/{id}
 	 */
 	function delete($id) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
@@ -262,7 +251,7 @@ class UserApi extends DolibarrApi
 	 */
 	function _validate($data) {
 		$account = array();
-		foreach (UserApi::$FIELDS as $field)
+		foreach (Users::$FIELDS as $field)
 		{
 			if (!isset($data[$field]))
 				throw new RestException(400, "$field field missing");
