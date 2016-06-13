@@ -58,7 +58,10 @@ if (empty($conf->global->MAIN_MODULE_API))
 
 $api = new DolibarrApi($db);
 
-$api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
+// Enable the Restler API Explorer.
+// See https://github.com/Luracast/Restler-API-Explorer for more info.
+$api->r->addAPIClass('Luracast\\Restler\\Explorer');
+
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
