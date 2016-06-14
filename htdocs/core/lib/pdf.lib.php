@@ -318,15 +318,16 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
     else 
     {
         for ($page=$start_page; $page <= $end_page; ++$page) {
-        	$this->setPage($page);
+        	$pdf->setPage($page);
+		$dims = $pdf->getPageDimensions($page);
         	if ($page == $start_page) {
         		// first page
-        		$height = $this->h - $start_y - $this->bMargin;
+        		$height = $dims['h'] - $start_y - $dims['bm'];
         	} elseif ($page == $end_page) {
         		// last page
-        		$height = $end_y - $this->tMargin;
+        		$height = $end_y - $dims['tm'];
         	} else {
-        		$height = $this->h - $this->tMargin - $this->bMargin;
+        		$height = $dims['h'] - $dims['tm'] - $dims['bm'];
         	}
         }
 	}
