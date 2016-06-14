@@ -618,7 +618,7 @@ if ($step == 4 && $datatoimport)
 	    $obj->enclosure = $enclosure;
 	}
 	
-	if(!empty(GETPOST('update'))) {
+	if (GETPOST('update')) {
 		$array_match_file_to_database=array();
 	}
 
