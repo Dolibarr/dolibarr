@@ -21,14 +21,12 @@
  require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
- * API class for product object
+ * API class for products
  *
- * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
  */
-class ProductApi extends DolibarrApi
+class Products extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
@@ -45,9 +43,6 @@ class ProductApi extends DolibarrApi
 
     /**
      * Constructor
-     *
-     * @url	product/
-     * 
      */
     function __construct()
     {
@@ -58,24 +53,22 @@ class ProductApi extends DolibarrApi
 
     /**
      * Get properties of a product object
-     *
+     * 
      * Return an array with product informations
      *
      * @param 	int 	$id     ID of product
-     * @param   string  $ref    Product ref
-     * @param   string  $ref_ext    Product ref ext
      * @return 	array|mixed data without useless information
 	 * 
-     * @url	GET product/{id}
      * @throws 	RestException
+     * TODO implement getting a product by ref or by $ref_ext
      */
-    function get($id='', $ref='', $ref_ext='')
+    function get($id)
     {		
-		if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
 		}
 			
-        $result = $this->product->fetch($id,$ref,$ref_ext);
+        $result = $this->product->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Product not found');
         }
@@ -86,7 +79,7 @@ class ProductApi extends DolibarrApi
         
         $this->product->load_stock();
 
-		return $this->_cleanObjectDatas($this->product);
+        return $this->_cleanObjectDatas($this->product);
     }
 
     /**
@@ -96,17 +89,15 @@ class ProductApi extends DolibarrApi
      * 
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
      * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to nuy (1) or not to buy (0)  
+     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      *
      * @return array Array of product objects
-     *
-     * @url	GET /product/list
      */
-    function getList($mode=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($mode=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -169,6 +160,7 @@ class ProductApi extends DolibarrApi
 
 
     /**
+     * TODO implement this as a filter in /products/
      * List products in a category
      * 
      * Get a list of products
@@ -257,8 +249,6 @@ class ProductApi extends DolibarrApi
      * 
      * @param   array   $request_data   Request data
      * @return  int     ID of product
-     *
-     * @url     POST product/
      */
     function post($request_data = NULL)
     {
@@ -277,7 +267,6 @@ class ProductApi extends DolibarrApi
         }
         
         return $this->product->id;
-        
     }
 
     /**
@@ -286,8 +275,7 @@ class ProductApi extends DolibarrApi
      * @param int   $id             Id of product to update
      * @param array $request_data   Datas   
      * @return int 
-     *
-     * @url	PUT product/{id}
+     * FIXME The product is correctluy updated but the API returns an error 500.
      */
     function put($id, $request_data = NULL)
     {
@@ -308,7 +296,7 @@ class ProductApi extends DolibarrApi
             $this->product->$field = $value;
         }
         
-        if($this->product->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->product->update($id, DolibarrApiAccess::$user,1,'update'))
             return $this->get ($id);
         
         return false;
@@ -319,12 +307,11 @@ class ProductApi extends DolibarrApi
      * 
      * @param   int     $id   Product ID
      * @return  array
-     *
-     * @url	DELETE product/{id}
+     * FIXME Deleting a product/service does not work because the Product::delete() method uses a global $user but it is not set.
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->product->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
 			throw new RestException(401);
 		}
         $result = $this->product->fetch($id);
@@ -349,7 +336,7 @@ class ProductApi extends DolibarrApi
     function _validate($data)
     {
         $product = array();
-        foreach (ProductApi::$FIELDS as $field) {
+        foreach (Products::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $product[$field] = $data[$field];
