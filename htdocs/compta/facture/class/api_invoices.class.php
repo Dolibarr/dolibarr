@@ -20,14 +20,12 @@
  require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 /**
- * API class for invoice object
+ * API class for invoices
  *
- * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
  */
-class InvoiceApi extends DolibarrApi
+class Invoices extends DolibarrApi
 {
     /**
      *
@@ -44,9 +42,6 @@ class InvoiceApi extends DolibarrApi
 
     /**
      * Constructor
-     *
-     * @url     GET invoice/
-     * 
      */
     function __construct()
     {
@@ -63,7 +58,6 @@ class InvoiceApi extends DolibarrApi
      * @param 	int 	$id ID of invoice
      * @return 	array|mixed data without useless information
      *
-     * @url	GET invoice/{id}
      * @throws 	RestException
      */
     function get($id)
@@ -89,21 +83,18 @@ class InvoiceApi extends DolibarrApi
      * 
      * Get a list of invoices
      * 
+     * FIXME this parameter is overwritten in the code and thus ignored
      * @param int       $socid      Filter list with thirdparty ID
-     * @param string	$mode		Filter by invoice status : draft | unpaid | paid | cancelled
+     * @param string	$status		Filter by invoice status : draft | unpaid | paid | cancelled
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
-     *
      * @return array Array of invoice objects
      *
-     * @url	GET invoice/list
-     * @url	GET invoice/list/{mode}
-     * @url GET thirdparty/{socid}/invoice/list
-     * @url GET thirdparty/{socid}/invoice/list/{mode} 
+	 * @throws RestException
      */
-    function getList($socid=0, $mode='', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($socid=0, $status='', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -125,11 +116,11 @@ class InvoiceApi extends DolibarrApi
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         
         
-		// Example of use $mode
-        if ($mode == 'draft') $sql.= " AND s.fk_statut IN (0)";
-        if ($mode == 'unpaid') $sql.= " AND s.fk_statut IN (1)";
-        if ($mode == 'paid') $sql.= " AND s.fk_statut IN (2)";
-        if ($mode == 'cancelled') $sql.= " AND s.fk_statut IN (3)";
+		// Filter by status
+        if ($status == 'draft') $sql.= " AND s.fk_statut IN (0)";
+        if ($status == 'unpaid') $sql.= " AND s.fk_statut IN (1)";
+        if ($status == 'paid') $sql.= " AND s.fk_statut IN (2)";
+        if ($status == 'cancelled') $sql.= " AND s.fk_statut IN (3)";
         
         // Insert sale filter
         if ($search_sale > 0)
@@ -183,8 +174,6 @@ class InvoiceApi extends DolibarrApi
      * 
      * @param array $request_data   Request datas
      * @return int  ID of invoice
-     *
-     * @url	POST invoice/
      */
     function post($request_data = NULL)
     {
@@ -212,8 +201,6 @@ class InvoiceApi extends DolibarrApi
      * @param int   $id             Id of invoice to update
      * @param array $request_data   Datas   
      * @return int 
-     * 
-     * @url	PUT invoice/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -245,8 +232,6 @@ class InvoiceApi extends DolibarrApi
      *
      * @param int   $id Invoice ID
      * @return type
-     * 
-     * @url	DELETE invoice/{id} 
      */
     function delete($id)
     {
@@ -262,7 +247,7 @@ class InvoiceApi extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        if( !$this->invoice->delete($id))
+        if( $this->invoice->delete($id) < 0)
         {
             throw new RestException(500);
         }
@@ -273,7 +258,6 @@ class InvoiceApi extends DolibarrApi
                 'message' => 'Facture deleted'
             )
         );
-        
     }
     
     /**
@@ -287,7 +271,7 @@ class InvoiceApi extends DolibarrApi
     function _validate($data)
     {
         $invoice = array();
-        foreach (InvoiceApi::$FIELDS as $field) {
+        foreach (Invoices::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $invoice[$field] = $data[$field];
