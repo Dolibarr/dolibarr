@@ -392,21 +392,22 @@ if (empty($reshook))
 
 		// Check parameters
 
-		// Check for mandatory prof id
-		for($i = 1; $i < 6; $i ++)
+		// Check for mandatory prof id (but only if country is than than ours)
+		if ($mysoc->country_id > 0 && $object->thirdparty->country_id == $mysoc->country_id)
 		{
-			$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
-			$idprof = 'idprof' . $i;
-			if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
-			{
-				if (! $error)
-					$langs->load("errors");
-				$error ++;
-
-				setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId' . $i, $object->thirdparty->country_code)), null, 'errors');
-			}
+    		for ($i = 1; $i <= 6; $i++)
+    		{
+    			$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
+    			$idprof = 'idprof' . $i;
+    			if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
+    			{
+    				if (! $error) $langs->load("errors");
+    				$error++;
+    				setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId' . $i, $object->thirdparty->country_code)), null, 'errors');
+    			}
+    		}
 		}
-
+		
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
