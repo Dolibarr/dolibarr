@@ -42,6 +42,10 @@ $modules=array(
 		),
 		'projet' => array(
 				array(
+						'code' => 'MAIN_DELAY_PROJECT_TO_CLOSE',
+						'img' => 'project'
+				),
+				array(
 						'code' => 'MAIN_DELAY_TASKS_TODO',
 						'img' => 'task'
 				)

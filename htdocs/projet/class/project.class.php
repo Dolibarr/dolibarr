@@ -1711,7 +1711,7 @@ class Project extends CommonObject
 	
 	
 	/**
-	 * Is the action delayed?
+	 * Is the project delayed?
 	 *
 	 * @return bool
 	 */
