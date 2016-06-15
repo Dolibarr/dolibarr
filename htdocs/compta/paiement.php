@@ -530,7 +530,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
         
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS)) {
-			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = (SELECT parent FROM '.MAIN_DB_PREFIX.'societe WHERE rowid = '.$facture->socid.'))';
+			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->parent.')';
 		}
 		
         $sql.= ') AND f.paye = 0';
