@@ -33,6 +33,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 $langs->load('companies');
 $langs->load('bills');
@@ -518,11 +519,21 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
          * List of unpaid invoices
          */
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_total_ttc, f.type, ';
-        $sql.= ' f.datef as df';
+        $sql.= ' f.datef as df, f.fk_soc as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-        $sql.= ' WHERE f.entity = '.$conf->entity;
-        $sql.= ' AND f.fk_soc = '.$facture->socid;
-        $sql.= ' AND f.paye = 0';
+		
+		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS)) {
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON (f.fk_soc = s.rowid)';
+		}
+		
+		$sql.= ' WHERE f.entity = '.$conf->entity;
+        $sql.= ' AND (f.fk_soc = '.$facture->socid;
+        
+		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS)) {
+			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = (SELECT parent FROM '.MAIN_DB_PREFIX.'societe WHERE rowid = '.$facture->socid.'))';
+		}
+		
+        $sql.= ') AND f.paye = 0';
         $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
         if ($facture->type != 2)
         {
@@ -583,6 +594,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     $objp = $db->fetch_object($resql);
                     $var=!$var;
 
+					$soc = new Societe($db);
+					$soc->fetch($objp->socid);
+
                     $invoice=new Facture($db);
                     $invoice->fetch($objp->facid);
                     $paiement = $invoice->getSommePaiement();
@@ -605,6 +619,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
                     print '<td>';
                     print $invoice->getNomUrl(1,'');
+                    if($objp->socid != $facture->thirdparty->id) print ' - '.$soc->getNomUrl(1).' ';
                     print "</td>\n";
 
                     // Date
