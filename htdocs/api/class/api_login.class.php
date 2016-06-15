@@ -18,14 +18,11 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
-
 
 /**
- * API generic (login, status, ...)
- *
+ * API that allows to log in with an user account.
  */
-class GenericApi extends DolibarrApi
+class Login
 {
 
 	function __construct() {
@@ -46,7 +43,7 @@ class GenericApi extends DolibarrApi
      *
 	 * @throws RestException
 	 */
-	public function login($login, $password, $entity=0, $reset=0) {
+	public function index($login, $password, $entity=0, $reset=0) {
 
 	    global $conf, $dolibarr_main_authentication, $dolibarr_auto_user;
 	    
@@ -103,20 +100,4 @@ class GenericApi extends DolibarrApi
 			)
 		);
 	}
-
-	/**
-     * Get status (Dolibarr version)
-     *
-	 * @access protected
-	 * @class  DolibarrApiAccess {@requires admin}
-	 */
-	function status() {
-		require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-		return array(
-			'success' => array(
-				'code' => 200,
-				'dolibarr_version' => DOL_VERSION
-			)
-		);
-    }
 }
