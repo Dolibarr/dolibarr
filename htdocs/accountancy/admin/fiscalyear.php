@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ if (! $user->rights->accounting->fiscalyear)
 
 $error = 0;
 
-// List of statut
+// List of status
 static $tmpstatut2label = array (
 		'0' => 'OpenFiscalYear',
 		'1' => 'CloseFiscalYear' 
