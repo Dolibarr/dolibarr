@@ -275,7 +275,6 @@ class Products extends DolibarrApi
      * @param int   $id             Id of product to update
      * @param array $request_data   Datas   
      * @return int 
-     * FIXME The product is correctluy updated but the API returns an error 500.
      */
     function put($id, $request_data = NULL)
     {
