@@ -38,7 +38,7 @@ create table llx_facture
   fk_soc				integer            NOT NULL,
   datec					datetime,								-- date de creation de la facture
   datef					date,									-- date invoice
-  date_pointoftax		date,									-- date point of tax (for GB)
+  date_pointoftax		date DEFAULT NULL,									-- date point of tax (for GB)
   date_valid			date,									-- date validation
   tms					timestamp,								-- date creation/modification
   paye					smallint DEFAULT 0 NOT NULL,
