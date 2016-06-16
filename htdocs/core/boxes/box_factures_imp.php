@@ -77,14 +77,18 @@ class box_factures_imp extends ModeleBoxes
             $sql.= " f.tva as total_tva,";
             $sql.= " f.total_ttc,";
 			$sql.= " f.paye, f.fk_statut, f.rowid as facid";
+			$sql.= ", sum(pf.amount) as am";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
 			$sql.= " WHERE f.fk_soc = s.rowid";
 			$sql.= " AND f.entity = ".$conf->entity;
 			$sql.= " AND f.paye = 0";
 			$sql.= " AND fk_statut = 1";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
+			$sql.= " GROUP BY s.nom, s.rowid, s.code_client, s.logo, f.facnumber, f.date_lim_reglement,";
+			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.facnumber DESC ";
 			$sql.= " ORDER BY datelimite ASC, f.facnumber ASC ";
 			$sql.= $db->plimit($max, 0);
@@ -146,7 +150,7 @@ class box_factures_imp extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3),
+                        'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3,$objp->am),
                     );
 
 					$line++;
@@ -186,4 +190,3 @@ class box_factures_imp extends ModeleBoxes
 	}
 
 }
-
