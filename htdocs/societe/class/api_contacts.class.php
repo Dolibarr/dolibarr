@@ -300,6 +300,24 @@ class Contacts extends DolibarrApi
 	    return $result;
 	}
 	
+    /**
+     * Get categories for a contact
+     *
+     * @param int		$id         ID of contact
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        $categories = new Categories();
+        return $categories->getListForItem('contact', $sortfield, $sortorder, $limit, $page, $id);
+    }
+
 	/**
 	 * Validate fields before create or update object
      * 

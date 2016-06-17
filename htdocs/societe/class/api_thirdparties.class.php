@@ -244,6 +244,64 @@ class Thirdparties extends DolibarrApi
     }
     
     /**
+     * Get categories for a thirdparty
+     *
+     * @param int		$id         ID of thirdparty
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        $categories = new Categories();
+        return $categories->getListForItem('customer', $sortfield, $sortorder, $limit, $page, $id);
+    }
+
+    /**
+     * Add category to a thirdparty
+     *
+     * @param int		$id	Id of thirdparty
+     * @param array     $request_data   Request datas
+     *
+     * @return mixed
+     *
+     * @url POST {id}/addCategory
+     */
+    function addCategory($id, $request_data = NULL) {
+        if (!isset($request_data["category_id"]))
+            throw new RestException(400, "category_id field missing");
+        $category_id = $request_data["category_id"];
+
+      if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			  throw new RestException(401);
+      }
+
+      $result = $this->company->fetch($id);
+      if( ! $result ) {
+          throw new RestException(404, 'Thirdparty not found');
+      }
+      $category = new Categorie($this->db);
+      $result = $category->fetch($category_id);
+      if( ! $result ) {
+          throw new RestException(404, 'category not found');
+      }
+
+      if( ! DolibarrApi::_checkAccessToResource('societe',$this->company->id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+      if( ! DolibarrApi::_checkAccessToResource('category',$category->id)) {
+        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+      }
+
+      $category->add_type($this->company,'customer');
+      return $this->company;
+    }
+
+    /**
      * Validate fields before create or update object
      * 
      * @param array $data   Datas to validate
