@@ -1032,7 +1032,7 @@ function price2numjs(amount) {
 		if ($langs->transnoentitiesnoconv("SeparatorThousand") != "SeparatorThousand") {
 			$thousand = $langs->transnoentitiesnoconv("SeparatorThousand");
 		}
-		print "var dec='" . $dec . "'; var thousand='" . $thousand . "';\n";    // Set var in javascript
+		print "var dec='" . dol_escape_js($dec) . "'; var thousand='" . dol_escape_js($thousand) . "';\n";    // Set var in javascript
 	?>
 
 	var main_max_dec_shown = <?php echo str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
