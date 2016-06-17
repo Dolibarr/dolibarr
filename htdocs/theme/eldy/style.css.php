@@ -958,7 +958,6 @@ a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
     font-weight: normal;
 	padding: 0px 5px 0px 3px;
 	white-space: nowrap;
-	/*	text-shadow: 1px 1px 1px #000000; */
 	color: #<?php echo $colortextbackhmenu; ?>;
     text-decoration: none;
 }
@@ -1002,13 +1001,16 @@ li.tmenu, li.tmenusel {
 	margin: 0 0 0 0;
 	font-weight: normal;
 }
+li.menuhider:hover {
+	background-image: none !important;
+}
 li.tmenusel, li.tmenu:hover {
-    background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%) !important;
-    background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%) !important;
-    background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%) !important;
-    background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%) !important;
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
+    background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%);
+    background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%);
+    background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%);
+    background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.5) 100%);
+	/* background: rgb(<?php echo $colorbackhmenu1 ?>); */
 }
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
@@ -1038,6 +1040,13 @@ div.tmenucenter
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
     width: 100%;
+	/*
+    max-width: <?php echo round($fontsize * 8); ?>px;
+   	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: #<?php echo $colortextbackhmenu; ?>;
+	*/
 }
 #menu_titre_logo {
 	padding-top: 0;
@@ -4310,7 +4319,7 @@ img.demothumb {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.7, 0) + 8; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 20; ?>px)
 {
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
@@ -4329,7 +4338,7 @@ img.demothumb {
 	}
 
     li.tmenu, li.tmenusel {
-    	min-width: 32px;
+    	min-width: 36px;
     }
     div.mainmenu {
     	min-width: auto;
@@ -4339,7 +4348,7 @@ img.demothumb {
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.7, 0) + 8; ?>px)
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 4.5, 0) + 8; ?>px)
 {
 	div.mainmenu {
 		height: 23px;
@@ -4358,7 +4367,7 @@ img.demothumb {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: 605px)
+@media only screen and (max-width: 660px)
 {
 	/* Reduce login top right info */
 	.usertextatoplogin {
@@ -4385,7 +4394,7 @@ img.demothumb {
 		<?php } ?>
 	}
     li.tmenu, li.tmenusel {
-        min-width: 30px;
+        min-width: 32px;
     }
 	div.mainmenu {
 		height: 23px;

@@ -1267,7 +1267,7 @@ class FormFile
                 print '<input type="hidden" name="id" value="' . $object->id . '">';
                 print '<input type="hidden" name="linkid" value="' . $link->id . '">';
                 print '<input type="hidden" name="action" value="confirm_updateline">';
-                print $langs->trans('Link') . ': <input type="text" name="link" size="50" value="' . $link->url . '">';
+                print $langs->trans('Link') . ': <input type="text" name="link" value="' . $link->url . '">';
                 print '</td>';
                 print '<td>';
                 print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
