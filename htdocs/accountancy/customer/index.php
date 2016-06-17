@@ -184,6 +184,8 @@ print '<td width="60" align="center">' . $langs->trans("NovemberMin") . '</td>';
 print '<td width="60" align="center">' . $langs->trans("DecemberMin") . '</td>';
 print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
+
+//TODO : Cannot work with PGSQL !, Change that with php treatment rather than big SQL query
 $sql = "SELECT IF(aa.account_number IS NULL, 'Non pointe', aa.account_number) AS 'code comptable',";
 $sql .= "  IF(aa.label IS NULL, 'Non pointe', aa.label) AS 'Intitulé',";
 $sql .= "  ROUND(SUM(IF(MONTH(f.datef)=1,fd.total_ht,0)),2) AS 'Janvier',";
