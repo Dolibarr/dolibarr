@@ -88,6 +88,7 @@ class Products extends DolibarrApi
      * Get a list of products
      * 
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+     * @param int		$category	Use this param to filter list by category
      * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
      * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      * @param string	$sortfield	Sort field
@@ -97,25 +98,36 @@ class Products extends DolibarrApi
      *
      * @return array Array of product objects
      */
-    function index($mode=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($mode=0, $category=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
         
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 
-        $sql ="SELECT rowid, ref, ref_ext";
+        $sql = "SELECT rowid, ref, ref_ext";
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        if ($category > 0)
+        {
+            $sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
+        }
         $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-		
+
+        // Select products of given category
+        if ($category > 0)
+        {
+            $sql.= " AND c.fk_categorie = ".$db->escape($category);
+            $sql.= " AND c.fk_product = p.rowid ";
+        }
+
         // Show products
         if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
         // Show services
         if ($mode == 2) $sql.= " AND p.fk_product_type = 1";
         // Show product on sell
-        if ($to_sell) $sql.= " AND p.to_sell = ".$db->escape($to_sell);
+        if ($to_sell !== '') $sql.= " AND p.tosell = ".$db->escape($to_sell);
         // Show product on buy
-        if ($to_buy) $sql.= " AND p.to_nuy = ".$db->escape($to_nuy);
+        if ($to_buy !== '') $sql.= " AND p.tobuy = ".$db->escape($to_buy);
 
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -155,7 +167,7 @@ class Products extends DolibarrApi
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No product found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
 
@@ -168,7 +180,7 @@ class Products extends DolibarrApi
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
      * @param int		$category		Use this param to filter list by category
      * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to nuy (1) or not to buy (0)  
+     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -193,7 +205,7 @@ class Products extends DolibarrApi
         // Select products of given category
         $sql.= " AND c.fk_categorie = ".$db->escape($category);
         $sql.= " AND c.fk_product = p.rowid ";
-		
+
         // Show products
         if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
         // Show services
@@ -201,7 +213,7 @@ class Products extends DolibarrApi
         // Show product on sell
         if ($to_sell) $sql.= " AND p.to_sell = ".$db->escape($to_sell);
         // Show product on buy
-        if ($to_buy) $sql.= " AND p.to_nuy = ".$db->escape($to_nuy);
+        if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
