@@ -165,7 +165,9 @@ class MenuManager
         				for($j = ($i + 1); $j < $num; $j++)
         				{
         				    if (empty($menu_array[$j]['level'])) $lastopened=false;
-        				}				
+        				}
+        				$alt = 0;   // For menu manager "empty", we force to not have blockvmenufirst defined
+        				$lastopened = 1; // For menu manager "empty", we force to not have blockvmenulast defined
 						if (($alt%2==0))
 						{
 							print '<div class="blockvmenuimpair'.($lastopened?' blockvmenulast':'').($alt == 1 ? ' blockvmenufirst':'').'">'."\n";

@@ -667,13 +667,37 @@ td.showDragHandle {
 	height: calc(100% - 50px);*/
 }
 
+.side-nav {
+	display: table-cell;
+	border-right: 1px solid #d0d0d0;
+}
+div.blockvmenulogo
+{
+	border-bottom: 0 !important;
+}
+div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks {
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid #e0e0e0;
+	padding-left: 0 !important;
+}
+div.blockvmenuend {
+	border: none !important;
+	padding-left: 0 !important;
+}
+div.vmenu, td.vmenu {
+	padding-right: 6px !important;
+}
+
+
+
 /* For desktop */
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
 }
 .side-nav {
-	border-right: 1px solid #BBB;
 	border-bottom: 1px solid #BBB;
 	background: #FFF;
 }
@@ -687,7 +711,8 @@ div.blockvmenulogo
 	border-bottom: 0 !important;
 }
 div.blockvmenusearch {
-	padding-bottom: 10px !important;
+	padding-bottom: 12px !important;
+	border-bottom: 1px solid #e0e0e0;
 }
 div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmenuend {
 	border-top: none !important;
@@ -698,9 +723,6 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
 }
 div.vmenu, td.vmenu {
 	padding-right: 6px !important;
-}
-div.blockvmenulast {
-	border-bottom: 0;
 }
 div.fiche {
 	margin-<?php print $left; ?>: 6px !important;
@@ -1017,8 +1039,13 @@ div.tmenucenter
 	<?php } ?>
     width: 100%;
 }
+#menu_titre_logo {
+	padding-top: 0;
+	padding-bottom: 0;
+}
 div.menu_titre {
-	padding-top: 5px;
+	padding-top: 4px;
+	padding-bottom: 4px;
 }
 .mainmenuaspan
 {
@@ -1373,12 +1400,12 @@ div.vmenu, td.vmenu {
 }
 
 .menu_contenu {
-	padding-top: 5px;
-	padding-bottom: 2px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 	overflow: hidden;
     text-overflow: ellipsis;
 }
-#menu_contenu_logo { padding-right: 4px; }
+#menu_contenu_logo { padding-top: 0; }
 .companylogo { }
 .searchform { padding-top: 4px; }
 
@@ -1402,15 +1429,20 @@ a.vsmenu.addbookmarkpicto {
 }
 .vmenu div.blockvmenubookmarks, .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone
 {
-	border-bottom: 1px solid #BBB;
+/*	border-bottom: 1px solid #BBB; */
+}
+div.blockvmenusearchphone 
+{
+	border-bottom: none !important;
 }
 .vmenu div.blockvmenuend, .vmenu div.blockvmenulogo
 {
 	margin: 0 0 8px 2px;
 }
-.vmenu  div.blockvmenusearch
+.vmenu div.blockvmenusearch
 {
-	padding-bottom: 5px;
+	padding-bottom: 14px;
+	border-bottom: 1px solid #e0e0e0;
 }
 .vmenu div.blockvmenuend
 {
@@ -1419,6 +1451,7 @@ a.vsmenu.addbookmarkpicto {
 .vmenu div.blockvmenulogo
 {
 	padding-bottom: 10px;
+	padding-top: 0;
 }
 div.blockvmenubookmarks
 {
@@ -1434,21 +1467,12 @@ div.blockvmenupair, div.blockvmenuimpair, div.blockvmenubookmarks, div.blockvmen
     padding-right: 1px;
     padding-top: 3px;
     padding-bottom: 3px;
-    /* margin: 1px 0 8px 2px; */
     margin: 0 0 0 2px;
 
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
 
     border-left: 1px solid #AAA;
     border-right: 1px solid #BBB;
-/*    border-bottom: 1px solid #BBB;
-    border-top: 1px solid #BBB;
-    border-radius: 4px;
-	-moz-border-radius: 4px;
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;
-  */
 }
 
 div.blockvmenusearch
@@ -1457,26 +1481,11 @@ div.blockvmenusearch
 	color: #000000;
 	text-align: <?php print $left; ?>;
 	text-decoration: none;
-    /*padding-left: 5px;
-    padding-right: 1px;
-    padding-top: 3px;
-    padding-bottom: 3px; */
-    margin: 1px 0px 4px 2px;
+    margin: 1px 0px 0px 2px;
 	background: rgb(<?php echo $colorbackvmenu1; ?>);
-
-    /*border-left: 1px solid #AAA;
-    border-right: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
-    border-top: 1px solid #BBB;*/
-    /*border-radius: 4px;
-	-moz-border-radius: 4px;
-    -moz-box-shadow: 3px 3px 4px #DDD;
-    -webkit-box-shadow: 3px 3px 4px #DDD;
-    box-shadow: 3px 3px 4px #DDD;*/
 }
 
 div.blockvmenusearch > form > div {
-/* min-height: 40px; */
 	padding-top: 3px;
 }
 div.blockvmenusearch > form > div > label {
