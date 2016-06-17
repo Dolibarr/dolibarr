@@ -257,6 +257,50 @@ class Contacts extends DolibarrApi
 	}
 
 	/**
+	 * Create useraccount object from contact
+	 *
+	 * @param   int   $id   Id of contact
+	 * @param   array   $request_data   Request datas
+	 * @return  int     ID of user
+	 *
+	 * @url	POST {id}/createUser
+	 */
+	function createUser($id, $request_data = NULL) {
+	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
+	    //throw new RestException(401);
+	    //}
+	
+	    if (!isset($request_data["login"]))
+	    				throw new RestException(400, "login field missing");
+	    if (!isset($request_data["password"]))
+	    				throw new RestException(400, "password field missing");
+	    if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+	        throw new RestException(401);
+	    }
+	    $contact = new Contact($this->db);
+	    $contact->fetch($id);
+	    if ($contact->id <= 0) {
+	        throw new RestException(404, 'Contact not found');
+	    }
+	
+	    if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
+	        throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+	    }
+	    // Check mandatory fields
+	    $login = $request_data["login"];
+	    $password = $request_data["password"];
+	    $useraccount = new User($this->db);
+	    $result = $useraccount->create_from_contact($contact,$login,$password);
+	    if ($result <= 0) {
+	        throw new RestException(500, "User not created");
+	    }
+	    // password parameter not used in create_from_contact
+	    $useraccount->setPassword($useraccount,$password);
+	
+	    return $result;
+	}
+	
+	/**
 	 * Validate fields before create or update object
      * 
 	 * @param   array $data Data to validate
