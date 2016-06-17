@@ -347,7 +347,7 @@ else
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
-if ($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM)
+if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 {
 	if (! empty($conf->product->enabled)) activitytrim(0);
 	if (! empty($conf->service->enabled)) activitytrim(1);
