@@ -441,13 +441,17 @@ class Orders extends DolibarrApi
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
      * 
-     * @url GET     order/{id}/validate
-     * @url POST    order/{id}/validate
+     * @url POST    {id}/validate
      *  
      * @return  array
-     * TODO keep only one of the two verbs above (and fix the URL: {id}/validate)
+     * FIXME An error 403 is returned if the request has an empty body.
+     * Error message: "Forbidden: Content type `text/plain` is not supported."
+     * Workaround: send this in the body
+     * {
+     *   "idwarehouse": 0
+     * }
      */
-    function validOrder($id, $idwarehouse=0)
+    function validate($id, $idwarehouse=0)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
