@@ -251,6 +251,24 @@ class Products extends DolibarrApi
     }
     
     /**
+     * Get categories for a product
+     *
+     * @param int		$id         ID of product
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        $categories = new Categories();
+        return $categories->getListForItem('product', $sortfield, $sortorder, $limit, $page, $id);
+    }
+
+    /**
      * Validate fields before create or update object
      * 
      * @param array $data   Datas to validate
