@@ -283,6 +283,23 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 		    if (preg_match('/^MonthShort/', $value)) $qualifiedforclean=0;
 		    if (preg_match('/^Day\d/', $value)) $qualifiedforclean=0;
 		    if (preg_match('/^ExportDataset_/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^ImportDataset_/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^ActionAC_/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^TypeLocaltax/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^StatusProspect/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^PL_/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^TE_/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^JuridicalStatus/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^CalcMode/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^newLT/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^LT\dSummary/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^LT\dPaid/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^LT\dPayment/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^LT\dCustomer/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^LT\dSupplier/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^LT\dReport/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^TypeContact_contrat_/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^ErrorPriceExpression/', $value)) $qualifiedforclean=0;
 		    
 		    if ($qualifiedforclean)
 		    {
@@ -300,12 +317,13 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	if (empty($unused)) print "No string not used found.\n";
 	else 
 	{
-        $filetosave='/tmp/notused.lang';
+        $filetosave='/tmp/'.($argv[2]?$argv[2]:"").'notused.lang';
         print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
         file_put_contents($filetosave, join("",$unused));
         print "To remove from original file, run command :\n";
         if (($argv[2]?$argv[2]:"")) print 'cd htdocs/langs/en_US; mv '.($argv[2]?$argv[2]:"")." ".($argv[2]?$argv[2]:"").".tmp; ";
-        print "diff ".($argv[2]?$argv[2]:"").".tmp ".$filetosave." | grep \< | cut  -b 3- > ".($argv[2]?$argv[2]:"")."\n";
+        print "diff ".($argv[2]?$argv[2]:"").".tmp ".$filetosave." | grep \< | cut  -b 3- > ".($argv[2]?$argv[2]:"");
+        if (($argv[2]?$argv[2]:"")) print "; rm ".($argv[2]?$argv[2]:"").".tmp;\n";
 	}
 }
 
