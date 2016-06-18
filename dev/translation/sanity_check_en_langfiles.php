@@ -292,15 +292,39 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^ErrorPriceExpression/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^Language_/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^DescADHERENT_/', $value)) $qualifiedforclean=0;
+	    // main.lang
 	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^FormatDate/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^DateFormat/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^.b$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^.*Bytes$/', $value)) $qualifiedforclean=0;
-	    if (preg_match('/^By/', $value)) $qualifiedforclean=0;
-	     
 	    if (preg_match('/^(DoTest|Under|Limits|Cards|CurrentValue|DateLimit|DateAndHour|NbOfLines|NbOfObjects|NbOfReferes|TotalTTCShort|VATs)/', $value)) $qualifiedforclean=0;
-	     
+	    // orders
+	    if (preg_match('/^OrderSource/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TypeContact_/', $value)) $qualifiedforclean=0;
+        // other.lang	    
+	    if (preg_match('/^Notify_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PredefinedMail/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DemoCompany/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^WeightUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^LengthUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^SurfaceUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^VolumeUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^SizeUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^EMailText/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/ById$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/ByLogin$/', $value)) $qualifiedforclean=0;
+	    // products
+	    if (preg_match('/GlobalVariableUpdaterType$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/GlobalVariableUpdaterHelp$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/OppStatus/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/AvailabilityType/', $value)) $qualifiedforclean=0;
+
+	    if (preg_match('/sms/i', $value)) $qualifiedforclean=0;
+	    if (preg_match('/TF_/i', $value)) $qualifiedforclean=0;
+	    if (preg_match('/WithBankUsing/i', $value)) $qualifiedforclean=0;
+	    if (preg_match('/descWORKFLOW_/i', $value)) $qualifiedforclean=0;
+	    
 	    if (! $qualifiedforclean)
 	    {
             continue;	        
