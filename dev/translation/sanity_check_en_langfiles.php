@@ -85,7 +85,7 @@ if ($web)
     echo "<body>";
 }
 
-echo "If you call this file with the argument \"?unused=true\" it searches for the translation strings that exist in en_US but are never used.\n";
+echo "If you call this with argument \"unused=true\" it searches for the translation strings that exist in en_US but are never used.\n";
 if ($web) print "<br>";
 echo "IMPORTANT: that can take quite a lot of time (up to 10 minutes), you need to tune the max_execution_time on your php.ini accordingly.\n";
 if ($web) print "<br>";
@@ -114,7 +114,10 @@ $dups=array();
 $exludefiles = array('.','..','README');
 $files = array_diff($files,$exludefiles);
 // To force a file: $files=array('myfile.lang');
-$files = array('admin.lang');
+if (isset($argv[2]))
+{
+    $files = array($argv[2]);
+}
 $langstrings_3d = array();
 $langstrings_full = array();
 foreach ($files AS $file) {
@@ -279,6 +282,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 		    if (preg_match('/^Month/', $value)) $qualifiedforclean=0;
 		    if (preg_match('/^MonthShort/', $value)) $qualifiedforclean=0;
 		    if (preg_match('/^Day\d/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^ExportDataset_/', $value)) $qualifiedforclean=0;
 		    
 		    if ($qualifiedforclean)
 		    {
@@ -299,6 +303,9 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
         $filetosave='/tmp/notused.lang';
         print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
         file_put_contents($filetosave, join("",$unused));
+        print "To remove from original file, run command :\n";
+        if (($argv[2]?$argv[2]:"")) print 'cd htdocs/langs/en_US; mv '.($argv[2]?$argv[2]:"")." ".($argv[2]?$argv[2]:"").".tmp; ";
+        print "diff ".($argv[2]?$argv[2]:"").".tmp ".$filetosave." | grep \< | cut  -b 3- > ".($argv[2]?$argv[2]:"")."\n";
 	}
 }
 
