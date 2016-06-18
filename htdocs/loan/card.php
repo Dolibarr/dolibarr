@@ -101,7 +101,7 @@ if ($action == 'add' && $user->rights->loan->write)
 		}
 		elseif (! $_POST["capital"])
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Capital")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 			$action = 'create';
 		}
 		else
@@ -220,7 +220,7 @@ if ($action == 'create')
 	}
 
     // Capital
-    print '<tr><td class="fieldrequired">'.$langs->trans("Capital").'</td><td><input name="capital" size="10" value="' . GETPOST("capital") . '"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("LoanCapital").'</td><td><input name="capital" size="10" value="' . GETPOST("capital") . '"></td></tr>';
 
 	// Date Start
 	print "<tr>";
@@ -365,7 +365,7 @@ if ($id > 0)
 		}
 
 		// Capital
-		print '<tr><td>'.$langs->trans("Capital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+		print '<tr><td>'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
     	// Date start
 		print "<tr><td>".$langs->trans("DateStart")."</td>";
@@ -490,7 +490,7 @@ if ($id > 0)
 			print '<td>'.$langs->trans("Type").'</td>';
 			print '<td align="center">'.$langs->trans("Insurance").'</td>';
 			print '<td align="center">'.$langs->trans("Interest").'</td>';
-      		print '<td align="center">'.$langs->trans("Capital").'</td>';
+      		print '<td align="center">'.$langs->trans("LoanCapital").'</td>';
       		print '<td>&nbsp;</td>';
       		print '</tr>';
 

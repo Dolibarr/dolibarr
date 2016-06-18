@@ -96,10 +96,11 @@ if ($web) print "<br>";
 
 
 // directory containing the php and lang files
-$htdocs 	= $path."/../../htdocs/";
+$htdocs = $path."../../htdocs/";
+$scripts = $path."../../scripts/";
 
 // directory containing the english lang files
-$workdir 	= $htdocs."langs/en_US/";
+$workdir = $htdocs."langs/en_US/";
 
 
 $files = scandir($workdir);
@@ -241,17 +242,18 @@ if ($web)
 
 // STEP 2 - Search key not used
 
-
-if (! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true')
+if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true'))
 {
 	foreach ($langstrings_dist AS $value)
 	{
-		$search = '\'trans("'.$value.'")\'';
-		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'*';
+		//$search = '\'trans("'.$value.'")\'';
+	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\'';
+		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'* '.$scripts.'*';
+		//print $string."<br>\n";
 		exec($string,$output);
 		if (empty($output)) {
 			$unused[$value] = true;
-			echo $value.'<br>';
+			echo $value."<br>\n";
 		}
 	}
 
