@@ -191,7 +191,6 @@ ImageEditor=Image editor
 YouReceiveMailBecauseOfNotification=You receive this message because your email has been added to list of targets to be informed of particular events into %s software of %s.
 YouReceiveMailBecauseOfNotification2=This event is the following:
 ThisIsListOfModules=This is a list of modules preselected by this demo profile (only most common modules are visible in this demo). Edit this to have a more personalized demo and click on "Start".
-ClickHere=Click here
 UseAdvancedPerms=Use the advanced permissions of some modules
 FileFormat=File format
 SelectAColor=Choose a color

@@ -373,7 +373,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        32
+        ,   north__size:        36
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340

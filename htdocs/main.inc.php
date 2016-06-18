@@ -207,7 +207,7 @@ if (ini_get('register_globals'))    // To solve bug in using $_SESSION
 }
 
 // Init the 5 global objects
-// This include will set: $conf, $db, $langs, $user, $mysoc objects
+// This include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc objects
 require_once 'master.inc.php';
 
 // Activate end of page function
@@ -221,11 +221,12 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
     $conf->browser->os=$tmp['browseros'];
     $conf->browser->version=$tmp['browserversion'];
     $conf->browser->layout=$tmp['layout'];     // 'classic', 'phone', 'tablet'
-    $conf->browser->phone=$tmp['phone'];	   // deprecated, use layout
-    $conf->browser->tablet=$tmp['tablet'];	   // deprecated, use layout
+    $conf->browser->phone=$tmp['phone'];	   // TODO deprecated, use ->layout
+    $conf->browser->tablet=$tmp['tablet'];	   // TODO deprecated, use ->layout
     //var_dump($conf->browser);
-}
 
+    if ($conf->browser->layout == 'phone') $conf->global->MAIN_TESTMENUHIDER=1;
+}
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'

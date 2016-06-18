@@ -14,7 +14,6 @@ EditPageMeta=Edit Meta
 EditPageContent=Edit Content
 Website=Web site
 AddPage=Add page
-Page=Page
 PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> not yet available. You must first add a page.
 RequestedPageHasNoContentYet=Requested page with id %s has not content yet or cache file .tpl.php was removed. Edit content of page to solve this.
 PageDeleted=Page '%s' of website %s deleted

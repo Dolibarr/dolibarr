@@ -65,7 +65,6 @@ DateEndPropalShort=Date end
 ValidityDuration=Validity duration
 CloseAs=Set status to
 SetAcceptedRefused=Set accepted/refused
-ClassifyBilled=Classify billed
 BuildBill=Build invoice
 ErrorPropalNotFound=Propal %s not found
 Estimate=Estimate :
