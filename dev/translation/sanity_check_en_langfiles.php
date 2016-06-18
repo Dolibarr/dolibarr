@@ -110,8 +110,11 @@ if (empty($files))
 	exit;
 }
 
+$dups=array();
 $exludefiles = array('.','..','README');
 $files = array_diff($files,$exludefiles);
+// To force a file: $files=array('myfile.lang');
+$files = array('admin.lang');
 $langstrings_3d = array();
 $langstrings_full = array();
 foreach ($files AS $file) {
@@ -128,7 +131,7 @@ foreach ($files AS $file) {
 					$langstrings_3d[$path_file['basename']][$line+1]=$row_array[0];
 					$langstrings_3dtrans[$path_file['basename']][$line+1]=$row_array[1];
 					$langstrings_full[]=$row_array[0];
-					$langstrings_dist[$row_array[0]]=$row_array[0];
+					$langstrings_dist[$row_array[0]]=$row;
 				}
 			}
 		}
@@ -244,7 +247,10 @@ if ($web)
 
 if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true'))
 {
-	foreach ($langstrings_dist AS $value)
+    print "***** Strings in en_US that are never used:\n";
+    
+    $unused=array();
+	foreach ($langstrings_dist AS $value => $line)
 	{
 		//$search = '\'trans("'.$value.'")\'';
 	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\'';
@@ -252,17 +258,48 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 		//print $string."<br>\n";
 		exec($string,$output);
 		if (empty($output)) {
-			$unused[$value] = true;
-			echo $value."<br>\n";
+		    $qualifiedforclean=1;
+		    // Check if we must keep this key to be into file for removal
+		    if (preg_match('/^Module\d+/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Permission\d+/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^PermissionAdvanced\d+/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^ProfId\d+/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Delays_/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^BarcodeDesc/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Extrafield/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^LocalTax/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Country/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Civility/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Currency/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^DemandReasonTypeSRC/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^PaperFormat/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^AmountLT/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^TotalLT/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Month/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^MonthShort/', $value)) $qualifiedforclean=0;
+		    if (preg_match('/^Day\d/', $value)) $qualifiedforclean=0;
+		    
+		    if ($qualifiedforclean)
+		    {
+    			$unused[$value] = $line;
+	       		echo $line;        // $trad contains the \n
+		    }
+		}
+		else 
+		{
+		    unset($output);
+		    //print 'X'.$output.'Y';
 		}
 	}
 
-	if ($web) print "<h2>\n";
-	print "Strings in en_US that are never used\n";
-	if ($web) print "</h2>\n";
-	if ($web) echo "<pre>";
-	print_r($unused);
-	if ($web) echo "</pre>\n";
+	if (empty($unused)) print "No string not used found.\n";
+	else 
+	{
+        $filetosave='/tmp/notused.lang';
+        print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
+        file_put_contents($filetosave, join("",$unused));
+	}
 }
 
 echo "\n";
