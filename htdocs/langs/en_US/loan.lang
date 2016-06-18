@@ -12,14 +12,10 @@ Nbterms=Number of terms
 LoanAccountancyCapitalCode=Accountancy code capital
 LoanAccountancyInsuranceCode=Accountancy code insurance
 LoanAccountancyInterestCode=Accountancy code interest
-LoanPayment=Loan payment
 ConfirmDeleteLoan=Confirm deleting this loan
 LoanDeleted=Loan Deleted Successfully
 ConfirmPayLoan=Confirm classify paid this loan
 LoanPaid=Loan Paid
-ErrorLoanCapital=Loan amount has to be numeric and greater than zero.
-ErrorLoanLength=Loan length has to be numeric and greater than zero.
-ErrorLoanInterest=Annual interest has to be numeric and greater than zero.
 # Calc
 LoanCalc=Bank Loans Calculator
 PurchaseFinanceInfo=Purchase & Financing Information

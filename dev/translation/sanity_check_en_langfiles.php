@@ -255,57 +255,65 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
     $unused=array();
 	foreach ($langstrings_dist AS $value => $line)
 	{
-		//$search = '\'trans("'.$value.'")\'';
+    	$qualifiedforclean=1;
+	    // Check if we must keep this key to be into file for removal
+	    if (preg_match('/^Module\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Permission\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PermissionAdvanced\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ProfId\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Delays_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^BarcodeDesc/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Extrafield/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^LocalTax/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Country/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Civility/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Currency/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DemandReasonTypeSRC/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PaperFormat/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^AmountLT/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TotalLT/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Month/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^MonthShort/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Day\d/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Short/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ExportDataset_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ImportDataset_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ActionAC_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TypeLocaltax/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^StatusProspect/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PL_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TE_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^JuridicalStatus/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^CalcMode/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^newLT/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^LT\d/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TypeContact_contrat_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ErrorPriceExpression/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Language_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DescADHERENT_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^FormatDate/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DateFormat/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^.b$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^.*Bytes$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^By/', $value)) $qualifiedforclean=0;
+	     
+	    if (preg_match('/^(DoTest|Under|Limits|Cards|CurrentValue|DateLimit|DateAndHour|NbOfLines|NbOfObjects|NbOfReferes|TotalTTCShort|VATs)/', $value)) $qualifiedforclean=0;
+	     
+	    if (! $qualifiedforclean)
+	    {
+            continue;	        
+	    }
+	    
+	    //$search = '\'trans("'.$value.'")\'';
 	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\'';
 		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'* '.$scripts.'*';
 		//print $string."<br>\n";
 		exec($string,$output);
 		if (empty($output)) {
-		    $qualifiedforclean=1;
-		    // Check if we must keep this key to be into file for removal
-		    if (preg_match('/^Module\d+/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Permission\d+/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^PermissionAdvanced\d+/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^ProfId\d+/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Delays_/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^BarcodeDesc/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Extrafield/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^LocalTax/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Country/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Civility/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Currency/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^DemandReasonTypeSRC/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^PaperFormat/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^AmountLT/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^TotalLT/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Month/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^MonthShort/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^Day\d/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^ExportDataset_/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^ImportDataset_/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^ActionAC_/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^TypeLocaltax/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^StatusProspect/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^PL_/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^TE_/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^JuridicalStatus/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^CalcMode/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^newLT/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^LT\dSummary/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^LT\dPaid/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^LT\dPayment/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^LT\dCustomer/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^LT\dSupplier/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^LT\dReport/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^TypeContact_contrat_/', $value)) $qualifiedforclean=0;
-		    if (preg_match('/^ErrorPriceExpression/', $value)) $qualifiedforclean=0;
-		    
-		    if ($qualifiedforclean)
-		    {
-    			$unused[$value] = $line;
-	       		echo $line;        // $trad contains the \n
-		    }
+   			$unused[$value] = $line;
+       		echo $line;        // $trad contains the \n
 		}
 		else 
 		{
