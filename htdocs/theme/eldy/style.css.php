@@ -692,7 +692,7 @@ div.vmenu, td.vmenu {
 
 
 
-/* For desktop */
+/* For smartphone (testmenuhider is on) */
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
@@ -735,7 +735,8 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
-	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
+	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
+	<?php if (! empty($conf->dol_use_jmobile)) print ' margin-bottom: 10px;'."\n"; ?>
 }
 div.fichecenter {
 	width: 100%;
@@ -2951,6 +2952,8 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
+.widthpictotitle { width: 40px; }
+
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { margin: 0px; }
 .legendColorBox, .legendLabel { border: none !important; }
@@ -4054,8 +4057,8 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 
 .ui-btn-inner {
 	min-width: .4em;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 6px;
+	padding-right: 6px;
 	<?php if (! empty($dol_use_jmobile)) { ?>
 	font-size: 13px;
 	<?php } else { ?>
@@ -4064,20 +4067,26 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 34px;
+	padding-right: 30px;
 }
 .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 34px;
+	padding-left: 30px;
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 38px;
+	padding-right: 30px;
 }
 .ui-select .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 38px;
+	padding-left: 30px;
+}
+.ui-select .ui-btn-icon-right .ui-icon {
+    right: 8px;
+}
+.ui-btn-icon-left > .ui-btn-inner > .ui-icon, .ui-btn-icon-right > .ui-btn-inner > .ui-icon {
+    margin-top: -10px;
 }
 select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
-    /* TODO added by jmobile, replace jmobile with pure css*/
+    /* TODO modified by jmobile, replace jmobile with pure css*/
     overflow:hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

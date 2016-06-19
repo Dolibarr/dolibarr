@@ -334,7 +334,7 @@ if ($resql)
 		}
 	else
 	{
-		print '<tr '.$bc[false].'>'.'<td colspan="9">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '<tr '.$bc[false].'>'.'<td colspan="9" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 	print "</table>";
 
