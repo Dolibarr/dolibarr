@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - errors
-ErrorFailedToDeleteJoinedFiles=Geschäftspartner kann nicht gelöscht werden. Entfernen Sie zuerst alle verknüpften Dateien.
 ErrorBadThirdPartyName=Der für den Geschäftspartner eingegebene Name ist ungültig.
 ErrorUserCannotBeDelete=Dieser Benutzer kann nicht gelöscht werden. Eventuell ist er noch mit einem Geschäftspartner verknüpft.
 ErrorFileSizeTooLarge=Die Grösse der gewählten Datei übersteigt den zulässigen Maximalwert.

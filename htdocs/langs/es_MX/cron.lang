@@ -2,9 +2,6 @@
 CronNone=Ninguno
 CronMethod=Método
 CronModule=Módulo
-CronStatus=Estado
-CronStatusActive=Habilitado
-CronStatusInactive=Deshabilitado
 CronLabel=Descripción
 CronArgs=Parámetros
 CronStatusInactiveBtn=Desactivar

@@ -9,49 +9,29 @@ ACCOUNTING_EXPORT_DEVISE=Exporter la devise
 Selectformat=Sélectionnez le format du fichier
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe pour le nom du fichier
 
-Accounting=Comptabilité
-Globalparameters=Paramètres globaux
-Menuaccount=Comptes comptables
-Menuthirdpartyaccount=Comptes de tiers
-MenuTools=Outils
-
 ConfigAccountingExpert=Configuration du module comptabilité expert
 Journaux=Journaux
 JournalFinancial=Journaux financiers
-Exports=Exports
-Export=Exporter
-Modelcsv=Modèle d'export
-OptionsDeactivatedForThisExportModel=Pour ce modèle d'export, les options sont désactivées
-Selectmodelcsv=Sélectionner un modèle d'export
-Modelcsv_normal=Export standard
-Modelcsv_CEGID=Export vers CEGID Expert
 BackToChartofaccounts=Retour au plan comptable
 
-Definechartofaccounts=Définir un plan comptable
 Selectchartofaccounts=Sélectionner un plan comptable
 Addanaccount=Ajouter un compte comptable
 AccountAccounting=Compte comptable
+AccountAccountingShort=Compte
 AccountAccountingSuggest=Suggestion du compte
 Ventilation=Ventilation
 
 MenuAccountancy=Comptabilité
 CustomersVentilation=Ventilation clients
 SuppliersVentilation=Ventilation fournisseurs
-TradeMargin=Marge commerciale
 Reports=Rapports
-ByCustomerInvoice=Par factures clients
 NewAccount=Nouveau compte comptable
 Create=Créer
 CreateMvts=Créer mouvement
-UpdateAccount=Modification de compte comptable
 UpdateMvts=Modification de mouvements
 WriteBookKeeping=Enregistrer les écritures dans le grand livre
 Bookkeeping=Grand livre
 AccountBalance=Balance des comptes
-
-AccountingVentilation=Ventilation comptable
-AccountingVentilationSupplier=Ventilation comptable client
-AccountingVentilationCustomer=Ventilation comptable fournisseur
 
 CAHTF=Total achat fournisseur HT
 InvoiceLines=Lignes de facture à ventiler
@@ -59,7 +39,6 @@ InvoiceLinesDone=Lignes de factures ventilées
 IntoAccount=Ventiler dans le compte comptable
 
 Ventilate=Ventiler
-VentilationAuto=Ventilation automatique
 
 Processing=Traitement en cours
 EndProcessing=Fin du traitement
@@ -69,14 +48,10 @@ Lineofinvoice=Ligne de la facture
 VentilatedinAccount=Ventilé avec succès dans le compte comptable
 NotVentilatedinAccount=Non ventilé dans le compte comptable
 
-ACCOUNTING_SEPARATORCSV=Séparateur de colonne dans le fichier export
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Nombre d'éléments à ventiler affichés par page (maximum conseillé : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Commencer le tri des pages de ventilation "A ventiler" par les éléments les plus récents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Commencer le tri des pages de ventilation "Ventilées" par les éléments les plus récents
 
-AccountLength=Longueur des comptes comptables affichés dans Dolibarr
-AccountLengthDesc=Fonction permettant de simuler une longueur de compte comptable en remplaçant les espaces par le chiffre zéro. Cette fonction touche uniquement à l'affichage, elle ne modifie pas les comptes comptables enregistrés dans Dolibarr. Pour l'export, cette fonction est nécessaire pour être compatible avec certains logiciels.
 ACCOUNTING_LENGTH_DESCRIPTION=Longueur pour afficher la description des produits & services dans les listes (Idéalement = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longueur pour afficher la description du compte des produits & services dans les listes (Idéaliement = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Longueur des comptes généraux
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Journal de paie
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Compte comptable de tranfert
 ACCOUNTING_ACCOUNT_SUSPENSE=Compte comptable d'attente
+DONATION_ACCOUNTINGACCOUNT=Compte où enregistrer les dons
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable par défaut pour les produits achetés (si non défini dans la fiche produit)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable par défaut pour les produits vendus (si non défini dans la fiche produit)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services v
 Doctype=Type de documents
 Docdate=Date
 Docref=Référence
-Numerocompte=Compte
 Code_tiers=Tiers
 Labelcompte=Libellé du compte
 Sens=Sens
 Codejournal=Journal
 NumPiece=Numéro de pièce
+AccountingCategory=Catégorie comptable
 
 DelBookKeeping=Supprimer les écritures du grand livre
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Journal des achats
 FinanceJournal=Journal de trésorerie
 DescFinanceJournal=Journal de trésorerie comprenant tous les types de paiements par compte bancaire / caisse
 
-CashPayment=Règlement espèce
-
-SupplierInvoicePayment=Paiement de facture fournisseur
 CustomerInvoicePayment=Paiement de facture client
 
 ThirdPartyAccount=Comptes de tiers
@@ -130,7 +103,6 @@ DescThirdPartyReport=Consultez ici la liste des tiers clients et fournisseurs et
 
 ListAccounts=Liste des comptes comptables
 
-Pcgversion=Version du plan
 Pcgtype=Classe de compte
 Pcgsubtype=Sous classe de compte
 Accountparent=Racine des comptes
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Consultez ici la liste des lignes de factures clients et 
 ChangeAccount=Changer le compte comptable pour les lignes sélectionnées par le compte :
 Vide=-
 DescVentilSupplier=Consultez ici la ventilation comptable annuelle de vos factures fournisseurs
-DescVentilTodoSupplier=Ventilez vos lignes de facture fournisseur avec un compte comptable
 DescVentilDoneSupplier=Consultez ici la liste des lignes de factures fournisseur et leur compte comptable
 
 ValidateHistory=Valider Automatiquement
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Le mouvement n'est pas équilibré. Crédit = %s. Débit
 FicheVentilation=Fiche ventilation
 GeneralLedgerIsWritten=Les opérations ont été inscrites dans le grand livre
 
-MvtNotCorrectlyBalanced=Le mouvement n'est pas équilibré. Crédit = %s. Débit = %s
+## Admin
+ApplyMassCategories=Application en masse des catégories
 
-##Export Journal Feature
-ExportFormat=Format de l'export
-Prefixname=Préfixe du fichier d'export
-Separate=Séparateur
-Textframe=Cadre de la valeur de texte
-Headercol=Ligne contenant le nom des colonnes en-tête du fichier
-Fieldname=Nom du champ
-Headername=Nom en-tête
-Type=Type de champs
-Param=Paramètres Supplémentaires
-EnabledProduct=Dans produit
-EnabledTiers=Dans le compte de tiers
-EnabledVat=Dans le compte TVA
+## Export
+Exports=Exports
+Export=Exporter
+Modelcsv=Modèle d'export
+OptionsDeactivatedForThisExportModel=Pour ce modèle d'export, les options sont désactivées
+Selectmodelcsv=Sélectionner un modèle d'export
+Modelcsv_normal=Export standard
+Modelcsv_CEGID=Export vers CEGID Expert comptabilité
+Modelcsv_COALA=Export vers Sage Coala
+Modelcsv_bob50=Export vers Sage BOB 50
+Modelcsv_ciel=Export vers Sage Ciel Compta ou Compta Evolution
+Modelcsv_quadratus=Export vers Quadratus QuadraCompta
+Modelcsv_ebp=Export vers EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initialisation comptabilité
@@ -177,3 +149,12 @@ OptionModeProductSell=Mode ventes
 OptionModeProductBuy=Modes achats
 OptionModeProductSellDesc=Afficher tous les produits/services n'ayant pas de compte comptable défini pour les ventes.
 OptionModeProductBuyDesc=Afficher tous les produits/services n'ayant pas de compte comptable défini pour les achats.
+
+## Dictionary
+Range=Plage de comptes
+Calculated=Calculé
+Formula=Formule
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Pas de catégories comptable disponibles pour ce pays
+ExportNotSupported=Le format de l'export n'est pas supporté par cette page

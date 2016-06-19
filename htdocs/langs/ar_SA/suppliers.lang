@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 Suppliers=الموردين
-AddSupplier=إنشاء المورد
-SupplierRemoved=إزالة المورد
 SuppliersInvoice=فاتورة الموردين
 ShowSupplierInvoice=مشاهدة فاتورة المورد
 NewSupplier=مورد جديد
@@ -9,16 +7,13 @@ History=التاريخ
 ListOfSuppliers=قائمة الموردين
 ShowSupplier=وتظهر المورد
 OrderDate=من أجل التاريخ
-BuyingPrice=سعر الشراء
-BuyingPriceMin=الحد الأدنى من سعر الشراء
-BuyingPriceMinShort=يوجد سعر الشراء
-TotalBuyingPriceMin=مجموعه subproducts شراء أسعار
+BuyingPriceMin=Minimum purchase price
+BuyingPriceMinShort=Min purchase price
+TotalBuyingPriceMinShort=Total of subproducts purchase prices
+TotalSellingPriceMinShort=Total of subproducts sell prices
 SomeSubProductHaveNoPrices=بعض المنتجات الفرعية التي لا تعرف السعر
 AddSupplierPrice=إضافة مورد الأسعار
 ChangeSupplierPrice=تغيير سعر المورد
-ErrorQtyTooLowForThisSupplier=كمية منخفضة جدا لهذا المورد أو لا يعرف سعر هذا المنتج لهذا المورد
-ErrorSupplierCountryIsNotDefined=لهذا البلد المورد غير محدد. تصحيح هذا أولا.
-ProductHasAlreadyReferenceInThisSupplier=هذا المنتج بالفعل مرجعا في هذا المورد
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=ويرتبط هذا المورد بالفعل مرجع مع مرجع : %s
 NoRecordedSuppliers=لم تسجل الموردين
 SupplierPayment=المورد الدفع
@@ -33,15 +28,16 @@ ConfirmApproveThisOrder=هل أنت متأكد من أن يوافق على هذ�
 DenyingThisOrder=إنكار هذا النظام
 ConfirmDenyingThisOrder=هل أنت متأكد من إنكار هذا الأمر؟
 ConfirmCancelThisOrder=هل أنت متأكد من أنك تريد إلغاء هذا النظام؟
-AddCustomerOrder=العملاء من أجل إنشاء
-AddCustomerInvoice=إنشاء فاتورة المستهلك
 AddSupplierOrder=من أجل إنشاء مورد
 AddSupplierInvoice=إنشاء مورد فاتورة
 ListOfSupplierProductForSupplier=قائمة المنتجات والأسعار لمورد <b>ق ٪</b>
-NoneOrBatchFileNeverRan=أو لا شيء دفعة <b>٪ ق</b> لا يتعارض مؤخرا
 SentToSuppliers=أرسلت للموردين
 ListOfSupplierOrders=قائمة الطلبات المورد
 MenuOrdersSupplierToBill=أوامر مورد للفاتورة
 NbDaysToDelivery=تأخير التسليم في أيام
 DescNbDaysToDelivery=أكبر تسليم تأخير من المنتجات من هذا النظام
 UseDoubleApproval=استخدام موافقة مزدوجة عندما مبلغ (بدون ضريبة) أعلى من (ويمكن أن يتم الموافقة الثانية من قبل أي مستخدم بإذن مخصص. تعيين إلى 0 من دون موافقة مزدوجة)
+SupplierReputation=Supplier reputation
+DoNotOrderThisProductToThisSupplier=Do not order
+NotTheGoodQualitySupplier=Wrong quality
+ReputationForThisProduct=Reputation
