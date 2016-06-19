@@ -239,7 +239,7 @@ if ($action == 'create')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';
-	print '<td align="right">'.$langs->trans("Capital").'</td>';
+	print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
 	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
@@ -268,7 +268,7 @@ if ($action == 'create')
 	print '<td align="right">';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Capital") .': <input type="text" size="8" name="amount_capital">';
+		print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital">';
 	}
 	else
 	{

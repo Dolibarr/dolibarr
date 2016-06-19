@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Expense report
 ExpenseReports=Expense reports
-Trip=Expense report
 Trips=Expense reports
 TripsAndExpenses=Expenses reports
 TripsAndExpensesStatistics=Expense reports statistics
@@ -12,21 +11,18 @@ ListOfFees=List of fees
 ShowTrip=Show expense report
 NewTrip=New expense report
 CompanyVisited=Company/foundation visited
-Kilometers=Kilometers
 FeesKilometersOrAmout=Amount or kilometers
 DeleteTrip=Delete expense report
 ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
 ListTripsAndExpenses=List of expense reports
 ListToApprove=Waiting for approval
 ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
 ClassifyRefunded=Classify 'Refunded'
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person to inform for validation. 
 TripSociete=Information company
-TripSalarie=Informations user
 TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
@@ -43,13 +39,8 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-AucuneNDF=No expense reports found for this criteria
 AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
 ModePaiement=Payment mode
 
 VALIDATOR=User responsible for approval
@@ -64,21 +55,15 @@ MOTIF_CANCEL=Reason
 
 DATE_REFUS=Deny date
 DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
 DATE_CANCEL=Cancelation date
 DATE_PAIEMENT=Payment date
 
-TO_PAID=Pay
 BROUILLONNER=Reopen
-SendToValid=Sent on approval
-ModifyInfoGen=Edit
 ValidateAndSubmit=Validate and submit for approval
 ValidatedWaitingApproval=Validated (waiting for approval)
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 
-RefuseTrip=Deny an expense report
 ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
 
 ValideTrip=Approve expense report
@@ -87,7 +72,6 @@ ConfirmValideTrip=Are you sure you want to approve this expense report ?
 PaidTrip=Pay an expense report
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
 
-CancelTrip=Cancel an expense report
 ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
 
 BrouillonnerTrip=Move back expense report to status "Draft"

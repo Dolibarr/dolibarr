@@ -1948,7 +1948,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 			        $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
 			        if (! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'].=' / ';
 			        $linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($elementobject->ref);
-			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateSending");
+			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateShipment");
 			        //if (! empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'].=' / '; 
 			        //$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
 			    }
@@ -1957,7 +1957,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 			        $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
 			        if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
 			        $linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($elementobject->ref);
-			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateSending") : '');
+			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateShipment") : '');
 			        //if (empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
 			        //$linkedobjects[$objecttype]['date_value'].= ($elementobject->date_delivery ? ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs) : '');
 			    }

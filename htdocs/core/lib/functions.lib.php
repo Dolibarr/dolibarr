@@ -4871,6 +4871,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 						if (block) {
 							$.dolEventValid("","'.dol_escape_js($out).'");
 						} else {
+							/* jnotify(message, preset of message type, keepmessage) */
 							$.jnotify("'.dol_escape_js($out).'",
 							"'.($style=="ok" ? 3000 : $style).'",
 							'.($style=="ok" ? "false" : "true").',

@@ -956,7 +956,6 @@ else
 	            }
 	            if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
 	            {
-	                $langs->load("expensereports");
 	                $langs->load("trips");
 	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
 	            }
