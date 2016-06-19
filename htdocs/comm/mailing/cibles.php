@@ -122,9 +122,10 @@ if (GETPOST('clearlist'))
 	// Loading Class
 	$obj = new MailingTargets($db);
 	$obj->clear_target($id);
-
+	/* Avoid this to allow reposition
 	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	exit;
+	*/
 }
 
 if ($action == 'delete')
@@ -400,7 +401,7 @@ if ($object->fetch($id) >= 0)
 
 		$cleartext='';
 		if ($allowaddtarget) {
-		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<input type="submit" name="clearlist" class="button" value="'.$langs->trans("TargetsReset").'">';
+		    $cleartext=$langs->trans("ToClearAllRecipientsClickHere").' '.'<a href="'.$_SERVER["PHP_SELF"].'?clearlist=1&id='.$object->id.'" class="button reposition">'.$langs->trans("TargetsReset").'</a>';
 		}
 		print_barre_liste($langs->trans("MailSelectedRecipients"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$cleartext,$num,$nbtotalofrecords,'title_generic',0,'','',$limit);
 		
