@@ -55,8 +55,9 @@ function DoResponse()
 
 	// Check if it is an allowed command
 	if (! IsAllowedCommand($sCommand))
+	{
 		SendError(1, 'The "' . $sCommand . '" command isn\'t allowed');
-
+	}
 	// Check if it is an allowed type.
 	if (! IsAllowedType($sResourceType))
 		SendError(1, 'Invalid type specified');
