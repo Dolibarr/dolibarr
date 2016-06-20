@@ -56,6 +56,7 @@ SupplierBill=Supplier invoice
 SupplierBills=suppliers invoices
 Payment=Payment
 PaymentBack=Payment back
+CustomerInvoicePaymentBack=Payment back
 Payments=Payments
 PaymentsBack=Payments back
 paymentInInvoiceCurrency=in invoices currency
