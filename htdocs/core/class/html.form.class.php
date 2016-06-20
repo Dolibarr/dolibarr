@@ -280,6 +280,7 @@ class Form
             $savemethod		= false;
             $ext_element	= false;
             $button_only	= false;
+            $inputOption    = '';
 
             if (is_object($object))
             {
