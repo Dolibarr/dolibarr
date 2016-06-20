@@ -3,7 +3,6 @@ PaypalSetup=Nastavení modulu PayPal
 PaypalDesc=Tento modul nabízejí stránky, které umožní zákazníkům platby prostřednictvím <a href="http://www.paypal.com" target="_blank">PayPal</a>. Toho lze využít pro snadnou platbu nebo platbu na určitý objekt Dolibarr (faktury, objednávky, ...)
 PaypalOrCBDoPayment=Platit přes PayPal nebo kreditní kartou
 PaypalDoPayment=Plaťte s PayPal
-PaypalCBDoPayment=Platit kreditní kartou
 PAYPAL_API_SANDBOX=Testovací/sandbox režim
 PAYPAL_API_USER=API uživatelské jméno
 PAYPAL_API_PASSWORD=API heslo
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=Pouze PayPal
 PAYPAL_CSS_URL=Optimální URL ze stylů CSS na platební stránky
 ThisIsTransactionId=Toto je id transakce: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Přidat URL platby PayPal při odeslání dokumentu e-mailem
-PAYPAL_IPN_MAIL_ADDRESS=E-mailová adresa pro rychlé oznámení o platbě (IPN)
 PredefinedMailContentLink=Můžete kliknout na níže uvedený odkaz pro bezpečné provedení platby (PayPal), pokud jste tak již neudělal dříve. \n\n %s \n\n
 YouAreCurrentlyInSandboxMode=Platby jsou v současné době v testovacím režimu "sandbox"
 NewPaypalPaymentReceived=Nové přijaté PayPal platby

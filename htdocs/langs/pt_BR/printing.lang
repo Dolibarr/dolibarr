@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - printing
-Module64000Name=Impressão Direta
 Module64000Desc=Habilitar Sistema de Impressão Direta
 PrintingSetup=Configuração do Sistema de Impressão Direta
 PrintingDesc=Este módulo adiciona um botão Imprimir para enviar documentos diretamente para uma impressora (sem abrir documento em um aplicativo) com vários módulos.

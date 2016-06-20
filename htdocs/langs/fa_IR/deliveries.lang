@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=تحویل
-Deliveries=تحویل
+DeliveryRef=Ref Delivery
 DeliveryCard=کارت تحویل
 DeliveryOrder=منظور تحویل
-DeliveryOrders=تحویل سفارشات
 DeliveryDate=تاریخ تحویل
-DeliveryDateShort=تحویل سیستمهای. تاریخ
 CreateDeliveryOrder=تولید منظور تحویل
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=تعداد تحویل
 SetDeliveryDate=تنظیم تاریخ حمل و نقل
 ValidateDeliveryReceipt=اعتبارسنجی رسید تحویل
 ValidateDeliveryReceiptConfirm=آیا مطمئن هستید که می خواهید به اعتبار این رسید تحویل؟
@@ -30,3 +27,4 @@ Recipient=دریافت کننده
 ErrorStockIsNotEnough=این سهام به اندازه کافی وجود ندارد
 Shippable=حمل و نقلی
 NonShippable=حمل و نقلی نیست
+ShowReceiving=Show delivery receipt

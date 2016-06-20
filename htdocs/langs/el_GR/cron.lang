@@ -1,11 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Πληροφορίες
-CronAbout = Σχετικά με το Cron
-CronAboutPage = Σχετικά με τη σελίδα Cron
 # Right
 Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
+Permission23102 = Δημιουργία/ενημέρωση προγραμματισμένης εργασίας
 Permission23103 = Διαγραφή προγραμματισμένης εργασίας
 Permission23104 = Εκτέλεση προγραμματισμένης εργασίας
 # Admin
@@ -18,15 +15,10 @@ CronExplainHowToRunUnix=Στο Unix περιβάλλον θα πρέπει να 
 CronExplainHowToRunWin=Σε Microsoft (tm) Windows περιβάλλον μπορείτε να χρησιμοποιήσετε τα εργαλεία Προγραμματισμένη εργασία ώστε να εκτελείτε η γραμμή εντολών καθένα 5 λεπτά
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Προγραμματισμένες εργασίες
-CronListActive=Λίστα ενεργών/προγραμματισμένων εργασών
-CronListInactive=Λίστα με τις απενεργοποιημένες εργασίες
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Τελευταία εκτέλεση
 CronLastOutput=Τελευταία εκτέλεση εξόδου
 CronLastResult=Τελευταίος κωδικός αποτελέσματος
-CronListOfCronJobs=Κατάλογος προγραμματισμένων εργασιών
 CronCommand=Εντολή
 CronList=Προγραμματισμένες εργασίες
 CronDelete=Διαγραφή προγραμματισμένων εργασιών
@@ -34,22 +26,17 @@ CronConfirmDelete=Είστε σίγουροι ότι θέλετε να διαγ�
 CronExecute=Εκτέλεση προγραμματισμένων εργασιών
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
 CronInfo=Scheduled job module allow to execute job that have been planned
-CronWaitingJobs=Εργασίες σε αναμονή
 CronTask=Εργασία
 CronNone=Καμία
 CronDtStart=Όχι πριν
 CronDtEnd=Όχι μετά
 CronDtNextLaunch=Επόμενη εκτέλεση
-CronDtLastLaunch=Ημερομηνία έναρξης ή εκτέλεσης
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Συχνότητα
-CronClass=Class
+CronClass=Κατηγορία
 CronMethod=Μέθοδος
 CronModule=Module
-CronAction=Ενέργεια
-CronStatus=Κατάσταση
-CronStatusActive=Ενεργή
-CronStatusInactive=Ανενεργή
 CronNoJobs=Δεν έχουν καταχωρηθεί εργασίες
 CronPriority=Προτεραιότητα
 CronLabel=Περιγραφή
@@ -59,7 +46,6 @@ CronEach=Κάθε
 JobFinished=Ξεκίνησε και τελείωσε
 #Page card
 CronAdd= Προσθήκη εργασίας
-CronHourStart= Ώρα και ημερομηνία έναρξης της εργασίας
 CronEvery=Execute job each
 CronObject=Instance/Object to create
 CronArgs=Παράμετροι
@@ -81,14 +67,12 @@ CronCommandHelp=Γραμμή εντολών του συστήματος προς
 CronCreateJob=Create new Scheduled Job
 CronFrom=Από
 # Info
-CronInfoPage=Πληροφορίες
 # Common
 CronType=Είδος εργασίας
 CronType_method=Καλέστε τη μέθοδο της κατηγορίας Dolibarr
 CronType_command=Εντολή Shell
-CronMenu=Μενού
 CronCannotLoadClass=Cannot load class %s or object %s
-UseMenuModuleToolsToAddCronJobs=Πηγαίνετε στο μενού "Home - Modules εργαλεία - Λίστα εργασιών" για να δείτε και να επεξεργαστείτε τις προγραμματισμένες εργασίες.
-TaskDisabled=Job disabled
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump

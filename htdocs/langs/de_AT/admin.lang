@@ -24,7 +24,6 @@ Module53Desc=Services-Verwaltung
 Module57Name=ausstehende Bestellungen
 Module70Name=Eingriffe
 Module70Desc=Eingriffsverwaltung
-Module250Desc=Werkzeug zum Datenimport (mit Assistenten)
 Module310Desc=Mitgliederverwaltun
 Module500Name=Steuern, Sozialbeiträge und Dividenden
 Module500Desc=Steuer-, Sozialbeitrags- und Dividendenverwaltung

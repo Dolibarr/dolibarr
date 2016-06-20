@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dostawa
-Deliveries=Dostawy
+DeliveryRef=Ref Delivery
 DeliveryCard=Karta dostawy
 DeliveryOrder=Zamówienie dostawy
-DeliveryOrders=Zamówień na dostawy
 DeliveryDate=Data dostawy
-DeliveryDateShort=Data dostarczenia
 CreateDeliveryOrder=Generowanie zamówienia dostawy
 DeliveryStateSaved=Stan dostawy zapisany
-QtyDelivered=Ilość dostarczona
 SetDeliveryDate=Ustaw datę wysyłki
 ValidateDeliveryReceipt=Potwierdzenie otrzymania dostawy
 ValidateDeliveryReceiptConfirm=Czy na pewno chcesz, aby potwierdzić dostawę otrzymania?
@@ -30,3 +27,4 @@ Recipient=Odbiorca
 ErrorStockIsNotEnough=Nie wystarczająco w magazynie
 Shippable=Możliwa wysyłka
 NonShippable=Nie do wysyłki
+ShowReceiving=Show delivery receipt

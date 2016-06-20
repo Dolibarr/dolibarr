@@ -3,7 +3,6 @@ PaypalSetup=Настройка модуля PayPal
 PaypalDesc=Этот модуль предлагает страниц, чтобы выплаты по <a href="http://www.paypal.com" target="_blank">PayPal</a> клиентами. Это может быть использовано для свободного оплаты или оплаты на определенный объект Dolibarr (счет-фактура, заказ, ...)
 PaypalOrCBDoPayment=Оплатить с помощью кредитной карты или Paypal
 PaypalDoPayment=Оплатить с помощью Paypal
-PaypalCBDoPayment=Оплата кредитной картой
 PAYPAL_API_SANDBOX=Режим тестирования / песочницы
 PAYPAL_API_USER=API имя пользователя
 PAYPAL_API_PASSWORD=API пароль
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=только PayPal
 PAYPAL_CSS_URL=Ссылка на собственные стили CSS на странице оплаты (необязательная)
 ThisIsTransactionId=Это идентификатор транзакции: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Добавить адрес Paypal оплата при отправке документа по почте
-PAYPAL_IPN_MAIL_ADDRESS=Адрес электронной почты для мгновенного уведомления об оплате (IPN)
 PredefinedMailContentLink=Вы можете нажать на защищённую ссылку нижи для совершения платежа (PayPal), если вы ещё его не производили.\n\n%s\n
 YouAreCurrentlyInSandboxMode=В настоящее время вы в режиме &quot;песочницы&quot;
 NewPaypalPaymentReceived=Получен новый платёж Paypal 

@@ -4,7 +4,6 @@ EMailSupport=Sähköpostit tukea
 RemoteControlSupport=Online reaaliajassa / etätuki
 OtherSupport=Muut tuet
 ToSeeListOfAvailableRessources=Voit ottaa yhteyttä / nähdä käytettävissä olevat varat:
-ClickHere=Klikkaa tästä
 HelpCenter=Ohjekeskukseen
 DolibarrHelpCenter=Dolibarr apua ja tukea keskus
 ToGoBackToDolibarr=Muuten napsauta <a href="%s">tästä käyttää Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Joskus ei ole yhtiön käytettävissä tällä hetkell
 BackToHelpCenter=Muussa tapauksessa, klikkaa tästä ja mennä <a href="%s">takaisin ohjekeskukseen kotisivu.</a>
 LinkToGoldMember=Voit soittaa yksi valmentaja valittua on Dolibarr for your language ( %s) napsauttamalla hänen Widget (status ja enimmäishinta päivittyvät automaattisesti):
 PossibleLanguages=Tuetut kielet
-MakeADonation=Ohje Dolibarr hanke, tee lahjoitus
-# SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
-# SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Help Dolibarr project, subscribe to the foundation
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>

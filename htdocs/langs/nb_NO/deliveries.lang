@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
-Deliveries=Leveringer
+DeliveryRef=Leveranse ref.
 DeliveryCard=Leveringskort
 DeliveryOrder=Leveringsordre
-DeliveryOrders=Leveringsordre
 DeliveryDate=Leveringsdato
-DeliveryDateShort=Lev. dato
 CreateDeliveryOrder=Opprett leveringsordre
 DeliveryStateSaved=Leveringsstatus lagret
-QtyDelivered=Ant. levert
 SetDeliveryDate=Angi leveringsdato
 ValidateDeliveryReceipt=Godkjenn leveringskvittering
 ValidateDeliveryReceiptConfirm=Er du sikker på at du vil validere denne leveringskvitteringen?
@@ -30,3 +27,4 @@ Recipient=Mottaker
 ErrorStockIsNotEnough=Ikke nok på lager
 Shippable=Kan sendes
 NonShippable=Kan ikke sendes
+ShowReceiving=Vis leveringskvittering

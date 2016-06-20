@@ -159,7 +159,6 @@ ListSuppliersShort=Lista de proveedores
 ListProspectsShort=Lista de clientes potenciales
 ListCustomersShort=Lista de clientes
 ThirdPartiesArea=Terceros y área de contacto
-LastModifiedThirdParties=Últimos %s terceros modificados
 MonkeyNumRefModelDesc=Devuelve un número con formato %syymm-nnnn para el código de cliente y %syymm-nnnn para código de proveedor donde yy es el año, mm el mes y nnnn una secuencia numérica sin ruptura y sin regresar a 0.
 LeopardNumRefModelDesc=El código es libre. Este código puede ser modificado en cualquier momento.
 ManagingDirectors=Administrador(es) (CEO, Director, Presidente...)

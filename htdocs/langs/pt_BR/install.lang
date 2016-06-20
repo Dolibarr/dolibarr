@@ -138,6 +138,5 @@ MigrationProjectTaskTime=Atualizar tempo gasto em sgundos
 MigrationActioncommElement=Atualizar dados nas ações
 MigrationPaymentMode=Migração de dados para o modo de pagamento
 MigrationEvents=Migração de eventos para adicionar proprietário evento na tabela de atribuição
-MigrationReloadModule=Recarregar módulo %s
 ShowNotAvailableOptions=Mostrar as opções não disponíveis
 HideNotAvailableOptions=Esconder as opção não disponível

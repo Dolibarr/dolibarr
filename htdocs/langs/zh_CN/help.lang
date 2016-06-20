@@ -4,7 +4,6 @@ EMailSupport=电子邮件支持
 RemoteControlSupport=网上实时/远程支持
 OtherSupport=其他支持
 ToSeeListOfAvailableRessources=联络/查看可用的资源：
-ClickHere=点击这里
 HelpCenter=帮助中心
 DolibarrHelpCenter=Dolibarr帮助和支持中心
 ToGoBackToDolibarr=否则，请点击<a href="%s">这里使用Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=有时，是目前公司没有可供您进行搜索，
 BackToHelpCenter=否则，请点击这里进入<a href="%s">返回帮助中心主页</a> 。
 LinkToGoldMember=你可以调用由Dolibarr预选您的语言（%s的按一下他的小工具（状态和最高价格自动更新））的教练之一：
 PossibleLanguages=支持的语言
-MakeADonation=帮助Dolibarr项目，使捐赠
 SubscribeToFoundation=帮助Dolibarr项目，认购的机构
 SeeOfficalSupport=使用您的语言的 Dolibarr 官方支持: <br><b><a href="%s" target="_blank">%s</a></b>

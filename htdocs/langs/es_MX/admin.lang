@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionProgram=Programa de versión
 VersionLastInstall=Versión inicial de la instalación
-VersionLastUpgrade=Versión de la última actualización
 VersionUnknown=Desconocido
 VersionRecommanded=Recomendado
 SessionId=ID de sesión

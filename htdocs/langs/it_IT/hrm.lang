@@ -12,9 +12,6 @@ CloseEtablishment=Close establishment
 DictionaryDepartment=HRM - Department list
 DictionaryFunction=HRM - Function list
 # Module
-ListOfEmployees=List of employees
-Employees=Employees
-Employee=Employee
-Employe=Employe
-NewEmployee=New employee
-EmployeeCard=Employee card
+Employees=Dipendenti
+Employee=Dipendente
+NewEmployee=Nuovo dipendente

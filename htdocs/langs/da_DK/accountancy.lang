@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Regnskab
-Globalparameters=Globale parametre
-Menuaccount=Regnskabskonti
-Menuthirdpartyaccount=Trediepartskonti
-MenuTools=Værktøjer
 
 ConfigAccountingExpert=Konfiguration af ekspert Regnskabsmodulet
 Journaux=Journaler
 JournalFinancial=Finans journal
-Exports=Eksporter
-Export=Export
-Modelcsv=Eksportmodul
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Vælg en eksportmodel
-Modelcsv_normal=Klassisk eksport
-Modelcsv_CEGID=Eksporter med CEGID ekspert
 BackToChartofaccounts=Returner kontoplan
 
-Definechartofaccounts=Definer en kontoplan
 Selectchartofaccounts=Vælg en kontoplan
 Addanaccount=Tilføj en regnskabsmæssig konto
 AccountAccounting=Regnskabsmæssig konto
+AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Sammenbrud
 
 MenuAccountancy=Accountancy
 CustomersVentilation=Udspecificer kunder
 SuppliersVentilation=Udspecificer leverandører
-TradeMargin=Handelsforskel
 Reports=Reporter
-ByCustomerInvoice=Efter fakturakunder
 NewAccount=By regnskabskonto
 Create=Opret
 CreateMvts=Create movement
-UpdateAccount=Ændring af en regnskabsmæssig konto
 UpdateMvts=Ændring af en bevægelse
 WriteBookKeeping=Optage konti i kontoplanen
 Bookkeeping=Kontoplan
 AccountBalance=Account balance
-
-AccountingVentilation=Udspecificer regnskab
-AccountingVentilationSupplier=Udspecificer regnskab leverandører
-AccountingVentilationCustomer=Udspecificer regnskab kunder
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Linjer af faktura, der skal fornyes
@@ -59,7 +39,6 @@ InvoiceLinesDone=Fornyede linjer af faktura
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=Forny
-VentilationAuto=Udspecificer automatisk
 
 Processing=Forarbejde
 EndProcessing=Forarbejdet
@@ -69,14 +48,10 @@ Lineofinvoice=Fakturalinjer
 VentilatedinAccount=Fornyet med succes i den regnskabsmæssige konto
 NotVentilatedinAccount=Ikke fornyede i den regnskabsmæssige konto
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
-AccountLength=Længde af regnskabssystemet konti i Dolibarr
-AccountLengthDesc=Funktion gør det muligt at foregive en længde på regnskabsmæssig konto ved at erstatte mellemrum med tallet nul. Da denne funktion kun vises på skærmen ændrer det ikke ved de bogføring registreret i Dolibarr konti. For eksport, er det nødvendigt denne funktion til at være kompatibel med bestemt software.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Længde af det almindelige regnskab
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Socialkladde
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto overførsel
 ACCOUNTING_ACCOUNT_SUSPENSE=Ventende konto
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskab konto som standard for købte produkter (hvis ikke defineret i produktark)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Regnskab konto som standard for de solgte produkter (hvis ikke defineret i produktark)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Regnskab konto som standard for de solgte ydelse
 Doctype=Dokumenttype
 Docdate=Dato
 Docref=Reference
-Numerocompte=Konto
 Code_tiers=Trediepart
 Labelcompte=Kontonavn
 Sens=Sens
 Codejournal=Journal
 NumPiece=Piece number
+AccountingCategory=Accounting category
 
 DelBookKeeping=Slet posterne i kontoplanen
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Købskladde
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=Kontant betaling
-
-SupplierInvoicePayment=Betaling af leverandørfakturaer
 CustomerInvoicePayment=Betaling af kundefaktura
 
 ThirdPartyAccount=Tredjepart konto
@@ -130,7 +103,6 @@ DescThirdPartyReport=Gå til en liste over de tredjeparts kunder og leverandøre
 
 ListAccounts=Liste over de regnskabsmæssige konti
 
-Pcgversion=Version af planen
 Pcgtype=Kontoens klasse
 Pcgsubtype=Kontoens underklasse
 Accountparent=Roden af kontoen
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Forny dine linjer ag kundefaktura med en regnskabskonto
 ChangeAccount=Skift den regnskabsmæssige konto for strækninger, der er udvalgt af hensyn til:
 Vide=-
 DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Forny dine linier af faktura leverandører med en regnskabskonto
 DescVentilDoneSupplier=Gå til en liste over de linjer af fakturaer leverandør og deres regnskabskonto
 
 ValidateHistory=Forny automatisk
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Eksporter
+Export=Export
+Modelcsv=Eksportmodul
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Vælg en eksportmodel
+Modelcsv_normal=Klassisk eksport
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -177,3 +149,12 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page

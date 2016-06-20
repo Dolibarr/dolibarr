@@ -1047,7 +1047,6 @@ BarcodeDescUPC=Código de barras tipo UPC
 BarcodeDescISBN=Código de barras tipo ISBN
 BarcodeDescC39=Código de barras tipo C39
 BarcodeDescC128=Código de barras tipo C128
-BarcodeDescDATAMATRIX=Código de barras do tipo Datamatrix
 BarcodeDescQRCODE=Código de barras do tipo QR code
 GenbarcodeLocation=Ferramenta em linha de comando para geração de código de barras (usado pelo mecanismo interno para alguns tipos de código de barras)
 BarcodeInternalEngine=Mecanismo interno

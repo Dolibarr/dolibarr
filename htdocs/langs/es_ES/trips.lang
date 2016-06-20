@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Gasto
 ExpenseReports=Informes de gastos
-Trip=Gasto
 Trips=Gastos
 TripsAndExpenses=Gastos
 TripsAndExpensesStatistics=Estadísticas de gastos
@@ -12,21 +11,18 @@ ListOfFees=Listado de honorarios
 ShowTrip=Ver informe de gastos
 NewTrip=Nuevo gasto
 CompanyVisited=Empresa/institución visitada
-Kilometers=Kilometros
 FeesKilometersOrAmout=Importe o kilómetros
 DeleteTrip=Eliminar gasto
 ConfirmDeleteTrip=¿Está seguro de querer eliminar este gasto?
 ListTripsAndExpenses=Listado de gastos
 ListToApprove=En espera de aprobación
 ExpensesArea=Área de gastos
-SearchATripAndExpense=Buscar un gasto
 ClassifyRefunded=Clasificar 'Reembolsado'
 ExpenseReportWaitingForApproval=Se ha enviado un nuevo gasto para ser aprobado
 ExpenseReportWaitingForApprovalMessage=Un nuevo gasto ha sido enviado y espera su aprobación.\n-Usuario: %s\n-Periodo: %s\nHaga clic aquí para validarlo: %s
 TripId=Id de gasto
 AnyOtherInThisListCanValidate=Persona a informar para la validación
 TripSociete=Información de la empresa
-TripSalarie=Información del usuario
 TripNDF=Información del gasto
 PDFStandardExpenseReports=Plantilla estandard para generar un documento de gasto
 ExpenseReportLine=Línea de gasto
@@ -43,13 +39,8 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Ha declarado otro gasto en un rango similar de fechas.
-AucuneNDF=No se han encontrado gastos con este criterio
 AucuneLigne=No hay gastos declarados
-AddLine=Añadir una línea
-AddLineMini=Añadir
 
-Date_DEBUT=Fecha de inicio del periodo
-Date_FIN=Fecha fin del periodo
 ModePaiement=Modo de pago
 
 VALIDATOR=Usuario responsable para aprobación
@@ -64,21 +55,15 @@ MOTIF_CANCEL=Razón
 
 DATE_REFUS=Fecha denegación
 DATE_SAVE=Fecha de validación
-DATE_VALIDE=Fecha de validación
 DATE_CANCEL=Fecha cancelación
 DATE_PAIEMENT=Fecha de pago
 
-TO_PAID=Pagar
 BROUILLONNER=Reabrir
-SendToValid=Enviado para aprobar
-ModifyInfoGen=Modificar
 ValidateAndSubmit=Validar y enviar para aprobar
 ValidatedWaitingApproval=Validado (en espera de aprobación)
 
-NOT_VALIDATOR=No está autorizado para aprobar este gasto
 NOT_AUTHOR=No es el autor de este gasto. Operación cancelada.
 
-RefuseTrip=Denegar un gasto
 ConfirmRefuseTrip=¿Está seguro de querer denegar este gasto?
 
 ValideTrip=Aprobar gasto
@@ -87,7 +72,6 @@ ConfirmValideTrip=¿Está seguro de querer aprobar este gasto?
 PaidTrip=Pagar gasto
 ConfirmPaidTrip=¿Está seguro de querer cambiar el estado de este gasto a "Pagado"?
 
-CancelTrip=Cancelar gasto
 ConfirmCancelTrip=¿Está seguro de querer cancelar este gasto?
 
 BrouillonnerTrip=Devolver el gasto al estado "Borrador"

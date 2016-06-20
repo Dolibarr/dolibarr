@@ -4,7 +4,6 @@ EMailSupport=Email hỗ trợ
 RemoteControlSupport=Trực tuyến thời gian thực / hỗ trợ từ xa
 OtherSupport=Hỗ trợ khác
 ToSeeListOfAvailableRessources=Để liên hệ / xem các nguồn lực có sẵn:
-ClickHere=Click vào đây
 HelpCenter=Trung tâm trợ giúp
 DolibarrHelpCenter=Dolibarr trợ giúp và trung tâm hỗ trợ
 ToGoBackToDolibarr=Nếu không, bấm <a href="%s">vào đây để sử dụng Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Đôi khi, không có công ty có sẵn tại thời 
 BackToHelpCenter=Nếu không, bấm vào đây để đi <a href="%s">lại để giúp trang chủ trung tâm</a> .
 LinkToGoldMember=Bạn có thể gọi một trong những huấn luyện viên chọn trước bởi Dolibarr cho ngôn ngữ (% s) bằng cách nhấp vào Widget của mình (tình trạng và giá tối đa sẽ được tự động cập nhật):
 PossibleLanguages=Ngôn ngữ được hỗ trợ
-MakeADonation=Giúp dự án Dolibarr, thực hiện một hiến
 SubscribeToFoundation=Giúp dự án Dolibarr, đăng ký với cơ sở
 SeeOfficalSupport=Để được hỗ trợ Dolibarr chính thức ngôn ngữ của bạn: <br> <a href="%s" target="_blank"><b>% S</b></a>
