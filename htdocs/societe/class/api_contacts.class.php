@@ -20,14 +20,12 @@ use Luracast\Restler\RestException;
 //require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 /**
- * API class for contact object
+ * API class for contacts
  *
- * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
  */
-class ContactApi extends DolibarrApi
+class Contacts extends DolibarrApi
 {
 	/**
 	 *
@@ -44,9 +42,6 @@ class ContactApi extends DolibarrApi
 
 	/**
 	 * Constructor
-	 *
-	 * @url	contact/
-	 * 
 	 */
 	function __construct() {
 		global $db, $conf;
@@ -62,7 +57,6 @@ class ContactApi extends DolibarrApi
 	 * @param 	int 	$id ID of contact
 	 * @return 	array|mixed data without useless information
 	 * 
-	 * @url	GET contact/{id}
 	 * @throws 	RestException
 	 */
 	function get($id) {
@@ -96,15 +90,10 @@ class ContactApi extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @return array Array of contact objects
-	 *
-	 * @url	GET /contact/list
-	 * @url	GET /contact/list/{socid}
-	 * @url	GET	/thirdparty/{socid}/contacts
-	 * @url	GET	/customer/{socid}/contacts
      * 
 	 * @throws RestException
 	 */
-	function getList($socid = 0, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+	function index($socid = 0, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -191,8 +180,6 @@ class ContactApi extends DolibarrApi
 	 *
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
-     * 
-	 * @url	POST contact/
 	 */
 	function post($request_data = NULL) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
@@ -215,8 +202,6 @@ class ContactApi extends DolibarrApi
 	 * @param int   $id             Id of contact to update
 	 * @param array $request_data   Datas   
 	 * @return int 
-     * 
-	 * @url	PUT contact/{id}
 	 */
 	function put($id, $request_data = NULL) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
@@ -251,11 +236,9 @@ class ContactApi extends DolibarrApi
 	 *
 	 * @param   int     $id Contact ID
 	 * @return  integer
-   * 
-	 * @url	DELETE contact/{id}
 	 */
 	function delete($id) {
-		if (!DolibarrApiAccess::$user->rights->contact->supprimer)
+		if (!DolibarrApiAccess::$user->rights->societe->contact->supprimer)
 		{
 			throw new RestException(401);
 		}
@@ -274,6 +257,68 @@ class ContactApi extends DolibarrApi
 	}
 
 	/**
+	 * Create useraccount object from contact
+	 *
+	 * @param   int   $id   Id of contact
+	 * @param   array   $request_data   Request datas
+	 * @return  int     ID of user
+	 *
+	 * @url	POST {id}/createUser
+	 */
+	function createUser($id, $request_data = NULL) {
+	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
+	    //throw new RestException(401);
+	    //}
+	
+	    if (!isset($request_data["login"]))
+	    				throw new RestException(400, "login field missing");
+	    if (!isset($request_data["password"]))
+	    				throw new RestException(400, "password field missing");
+	    if (!DolibarrApiAccess::$user->rights->societe->contact->lire) {
+	        throw new RestException(401);
+	    }
+	    $contact = new Contact($this->db);
+	    $contact->fetch($id);
+	    if ($contact->id <= 0) {
+	        throw new RestException(404, 'Contact not found');
+	    }
+	
+	    if (!DolibarrApi::_checkAccessToResource('contact', $contact->id, 'socpeople&societe')) {
+	        throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+	    }
+	    // Check mandatory fields
+	    $login = $request_data["login"];
+	    $password = $request_data["password"];
+	    $useraccount = new User($this->db);
+	    $result = $useraccount->create_from_contact($contact,$login,$password);
+	    if ($result <= 0) {
+	        throw new RestException(500, "User not created");
+	    }
+	    // password parameter not used in create_from_contact
+	    $useraccount->setPassword($useraccount,$password);
+	
+	    return $result;
+	}
+	
+    /**
+     * Get categories for a contact
+     *
+     * @param int		$id         ID of contact
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        $categories = new Categories();
+        return $categories->getListForItem('contact', $sortfield, $sortorder, $limit, $page, $id);
+    }
+
+	/**
 	 * Validate fields before create or update object
      * 
 	 * @param   array $data Data to validate
@@ -282,7 +327,7 @@ class ContactApi extends DolibarrApi
 	 */
 	function _validate($data) {
 		$contact = array();
-		foreach (ContactApi::$FIELDS as $field)
+		foreach (Contacts::$FIELDS as $field)
 		{
 			if (!isset($data[$field]))
 				throw new RestException(400, "$field field missing");

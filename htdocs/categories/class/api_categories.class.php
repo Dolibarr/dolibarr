@@ -21,15 +21,12 @@
  require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
 /**
- * API class for category object
+ * API class for categories
  *
- * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
- *
  */
-class CategoryApi extends DolibarrApi
+class Categories extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
@@ -55,16 +52,12 @@ class CategoryApi extends DolibarrApi
 
     /**
      * Constructor
-     *
-     * @url     GET category/
-     * 
      */
     function __construct()
     {
 		global $db, $conf;
 		$this->db = $db;
         $this->category = new Categorie($this->db);
-        
     }
 
     /**
@@ -75,7 +68,6 @@ class CategoryApi extends DolibarrApi
      * @param 	int 	$id ID of category
      * @return 	array|mixed data without useless information
 	 * 
-     * @url	GET category/{id}
      * @throws 	RestException
      */
     function get($id)
@@ -108,9 +100,9 @@ class CategoryApi extends DolibarrApi
      * @param int		$page		Page number
      * @return array Array of category objects
      *
-     * @url	GET /category/list
+	 * @throws RestException
      */
-    function getList($type='product', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($type = '', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -122,7 +114,10 @@ class CategoryApi extends DolibarrApi
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
-        $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
+        if (!empty($type))
+        {
+            $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
+        }
 
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -165,10 +160,12 @@ class CategoryApi extends DolibarrApi
         }
 		return $obj_ret;
     }
+
     /**
      * List categories of an entity
      * 
-     * Get a list of categories
+     * Note: This method is not directly exposed in the API, it is used
+     * in the GET /xxx/{id}/categories requests.
      *
      * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string	$sortfield	Sort field
@@ -178,9 +175,9 @@ class CategoryApi extends DolibarrApi
      * @param int		$item		Id of the item to get categories for
      * @return array Array of category objects
      *
-     * @url	GET /product/{item}/categories
+     * @access private
      */
-    function getListForItem($type='product', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $item = 0) {
+    function getListForItem($type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $item = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -197,11 +194,14 @@ class CategoryApi extends DolibarrApi
           $sub_type="societe";
           $subcol_name="fk_soc";
         }
+        if ($type=="contact") {
+          $subcol_name="fk_socpeople";
+        }
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= " , ".MAIN_DB_PREFIX."categorie_".$sub_type." as sub ";
         $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
-        $sql.= ' AND s.type='.array_search($type,CategoryApi::$TYPES);
+        $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
         $sql.= ' AND s.rowid = sub.fk_categorie';
         $sql.= ' AND sub.'.$subcol_name.' = '.$item;
 
@@ -246,142 +246,12 @@ class CategoryApi extends DolibarrApi
         }
 		return $obj_ret;
     }
-    
-    /**
-     * Get member categories list
-     * 
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @return mixed
-     * 
-     * @url GET /category/list/member
-     */
-    function getListCategoryMember($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        return $this->getList('member', $sortfield, $sortorder, $limit, $page);  
-    }
-    
-    /**
-     * Get customer categories list
-     * 
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * 
-     * @return mixed
-     * 
-     * @url GET /category/list/customer
-     */
-    function getListCategoryCustomer($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        return $this->getList('customer', $sortfield, $sortorder, $limit, $page);  
-    }
-    /**
-     * Get categories for a customer
-     * 
-     * @param int		$cusid  Customer id filter
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * 
-     * @return mixed
-     * 
-     * @url GET /customer/{cusid}/categories
-     */
-    function getListCustomerCategories($cusid, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        return $this->getListForItem('customer', $sortfield, $sortorder, $limit, $page, $cusid);  
-    }
 
-    /**
-     * Add category to customer
-     * 
-     * @param int		$cusid	Id of customer
-     * @param int		$catid  Id of category
-     * 
-     * @return mixed
-     * 
-     * @url GET /customer/{cusid}/addCategory/{catid}
-     */
-    function addCustomerCategory($cusid,$catid) {
-      if(! DolibarrApiAccess::$user->rights->societe->creer) {
-			  throw new RestException(401);
-      }
-      $customer = new Client($this->db);
-      $customer->fetch($cusid);
-      if( ! $customer ) {
-        throw new RestException(404, 'customer not found');
-      }
-      $result = $this->category->fetch($catid);
-      if( ! $result ) {
-        throw new RestException(404, 'category not found');
-      }
-      
-      if( ! DolibarrApi::_checkAccessToResource('societe',$customer->id)) {
-        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
-      if( ! DolibarrApi::_checkAccessToResource('category',$this->category->id)) {
-        throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-      }
-      $this->category->add_type($customer,'customer');
-      return $customer;
-    }
-    
-    /**
-     * Get supplier categories list
-     * 
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * 
-     * @return mixed
-     * 
-     * @url GET /category/list/supplier
-     */
-    function getListCategorySupplier($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        return $this->getList('supplier', $sortfield, $sortorder, $limit, $page);  
-    }
-    
-    /**
-     * Get product categories list
-     * 
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * 
-     * @return mixed
-     * 
-     * @url GET /category/list/product
-     */
-    function getListCategoryProduct($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        return $this->getList('product', $sortfield, $sortorder, $limit, $page);  
-    }
-    
-    /**
-     * Get contact categories list
-     * 
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @return mixed
-     * 
-     * @url GET /category/list/contact
-     */
-    function getListCategoryContact($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        return $this->getList('contact', $sortfield, $sortorder, $limit, $page);  
-    }
-    
     /**
      * Create category object
      * 
      * @param array $request_data   Request data
      * @return int  ID of category
-     *
-     * @url	POST category/
      */
     function post($request_data = NULL)
     {
@@ -406,8 +276,6 @@ class CategoryApi extends DolibarrApi
      * @param int   $id             Id of category to update
      * @param array $request_data   Datas   
      * @return int 
-     *
-     * @url	PUT category/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -439,8 +307,6 @@ class CategoryApi extends DolibarrApi
      *
      * @param int $id   Category ID
      * @return array
-     * 
-     * @url	DELETE category/{id}
      */
     function delete($id)
     {
@@ -479,7 +345,7 @@ class CategoryApi extends DolibarrApi
     function _validate($data)
     {
         $category = array();
-        foreach (CategoryApi::$FIELDS as $field) {
+        foreach (Categories::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $category[$field] = $data[$field];

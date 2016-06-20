@@ -21,14 +21,12 @@
  require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
- * API class for product object
+ * API class for products
  *
- * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
  */
-class ProductApi extends DolibarrApi
+class Products extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object 
@@ -45,9 +43,6 @@ class ProductApi extends DolibarrApi
 
     /**
      * Constructor
-     *
-     * @url	product/
-     * 
      */
     function __construct()
     {
@@ -58,24 +53,22 @@ class ProductApi extends DolibarrApi
 
     /**
      * Get properties of a product object
-     *
+     * 
      * Return an array with product informations
      *
      * @param 	int 	$id     ID of product
-     * @param   string  $ref    Product ref
-     * @param   string  $ref_ext    Product ref ext
      * @return 	array|mixed data without useless information
 	 * 
-     * @url	GET product/{id}
      * @throws 	RestException
+     * TODO implement getting a product by ref or by $ref_ext
      */
-    function get($id='', $ref='', $ref_ext='')
+    function get($id)
     {		
-		if(! DolibarrApiAccess::$user->rights->produit->lire) {
+        if(! DolibarrApiAccess::$user->rights->produit->lire) {
 			throw new RestException(401);
 		}
 			
-        $result = $this->product->fetch($id,$ref,$ref_ext);
+        $result = $this->product->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Product not found');
         }
@@ -86,7 +79,7 @@ class ProductApi extends DolibarrApi
         
         $this->product->load_stock();
 
-		return $this->_cleanObjectDatas($this->product);
+        return $this->_cleanObjectDatas($this->product);
     }
 
     /**
@@ -95,98 +88,17 @@ class ProductApi extends DolibarrApi
      * Get a list of products
      * 
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+     * @param int		$category	Use this param to filter list by category
      * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to nuy (1) or not to buy (0)  
+     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      *
      * @return array Array of product objects
-     *
-     * @url	GET /product/list
      */
-    function getList($mode=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
-        global $db, $conf;
-        
-        $obj_ret = array();
-        
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
-
-        $sql ="SELECT rowid, ref, ref_ext";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-        $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
-		
-        // Show products
-        if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
-        // Show services
-        if ($mode == 2) $sql.= " AND p.fk_product_type = 1";
-        // Show product on sell
-        if ($to_sell) $sql.= " AND p.to_sell = ".$db->escape($to_sell);
-        // Show product on buy
-        if ($to_buy) $sql.= " AND p.to_nuy = ".$db->escape($to_nuy);
-
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-        {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
-        }
-
-        $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
-            if ($page < 0)
-            {
-                $page = 0;
-            }
-            $offset = $limit * $page;
-
-            $sql.= $db->plimit($limit + 1, $offset);
-        }
-
-        $result = $db->query($sql);
-        if ($result)
-        {
-            $num = $db->num_rows($result);
-            while ($i < $num)
-            {
-                $obj = $db->fetch_object($result);
-                $product_static = new Product($db);
-                if($product_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($product_static);
-                }
-                $i++;
-            }
-        }
-        else {
-            throw new RestException(503, 'Error when retrieve product list');
-        }
-        if( ! count($obj_ret)) {
-            throw new RestException(404, 'No product found');
-        }
-		return $obj_ret;
-    }
-
-
-    /**
-     * List products in a category
-     * 
-     * Get a list of products
-     * 
-     * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
-     * @param int		$category		Use this param to filter list by category
-     * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to nuy (1) or not to buy (0)  
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     *
-     * @return array Array of product objects
-     *
-     * @url	GET /product/list/category/{category}
-     */
-    function getByCategory($mode=0, $category=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($mode=0, $category=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -194,22 +106,28 @@ class ProductApi extends DolibarrApi
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 
         $sql = "SELECT rowid, ref, ref_ext";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as p, ";
-        $sql.= MAIN_DB_PREFIX."categorie_product as c";
+        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+        if ($category > 0)
+        {
+            $sql.= ", ".MAIN_DB_PREFIX."categorie_product as c";
+        }
         $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 
         // Select products of given category
-        $sql.= " AND c.fk_categorie = ".$db->escape($category);
-        $sql.= " AND c.fk_product = p.rowid ";
-		
+        if ($category > 0)
+        {
+            $sql.= " AND c.fk_categorie = ".$db->escape($category);
+            $sql.= " AND c.fk_product = p.rowid ";
+        }
+
         // Show products
         if ($mode == 1) $sql.= " AND p.fk_product_type = 0";
         // Show services
         if ($mode == 2) $sql.= " AND p.fk_product_type = 1";
         // Show product on sell
-        if ($to_sell) $sql.= " AND p.to_sell = ".$db->escape($to_sell);
+        if ($to_sell !== '') $sql.= " AND p.tosell = ".$db->escape($to_sell);
         // Show product on buy
-        if ($to_buy) $sql.= " AND p.to_nuy = ".$db->escape($to_nuy);
+        if ($to_buy !== '') $sql.= " AND p.tobuy = ".$db->escape($to_buy);
 
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -257,8 +175,6 @@ class ProductApi extends DolibarrApi
      * 
      * @param   array   $request_data   Request data
      * @return  int     ID of product
-     *
-     * @url     POST product/
      */
     function post($request_data = NULL)
     {
@@ -277,7 +193,6 @@ class ProductApi extends DolibarrApi
         }
         
         return $this->product->id;
-        
     }
 
     /**
@@ -286,8 +201,6 @@ class ProductApi extends DolibarrApi
      * @param int   $id             Id of product to update
      * @param array $request_data   Datas   
      * @return int 
-     *
-     * @url	PUT product/{id}
      */
     function put($id, $request_data = NULL)
     {
@@ -308,7 +221,7 @@ class ProductApi extends DolibarrApi
             $this->product->$field = $value;
         }
         
-        if($this->product->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->product->update($id, DolibarrApiAccess::$user,1,'update'))
             return $this->get ($id);
         
         return false;
@@ -319,12 +232,10 @@ class ProductApi extends DolibarrApi
      * 
      * @param   int     $id   Product ID
      * @return  array
-     *
-     * @url	DELETE product/{id}
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->product->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->produit->supprimer) {
 			throw new RestException(401);
 		}
         $result = $this->product->fetch($id);
@@ -336,9 +247,27 @@ class ProductApi extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        return $this->product->delete($id);
+        return $this->product->delete(DolibarrApiAccess::$user);
     }
     
+    /**
+     * Get categories for a product
+     *
+     * @param int		$id         ID of product
+     * @param string	$sortfield	Sort field
+     * @param string	$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+    function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+        $categories = new Categories();
+        return $categories->getListForItem('product', $sortfield, $sortorder, $limit, $page, $id);
+    }
+
     /**
      * Validate fields before create or update object
      * 
@@ -349,7 +278,7 @@ class ProductApi extends DolibarrApi
     function _validate($data)
     {
         $product = array();
-        foreach (ProductApi::$FIELDS as $field) {
+        foreach (Products::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $product[$field] = $data[$field];

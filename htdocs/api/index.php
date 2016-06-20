@@ -58,7 +58,10 @@ if (empty($conf->global->MAIN_MODULE_API))
 
 $api = new DolibarrApi($db);
 
-$api->r->addAPIClass('Luracast\\Restler\\Resources'); //this creates resources.json at API Root
+// Enable the Restler API Explorer.
+// See https://github.com/Luracast/Restler-API-Explorer for more info.
+$api->r->addAPIClass('Luracast\\Restler\\Explorer');
+
 $api->r->setSupportedFormats('JsonFormat', 'XmlFormat');
 $api->r->addAuthenticationClass('DolibarrApiAccess','');
 
@@ -77,25 +80,19 @@ foreach ($modulesdir as $dir)
     {
         while (($file = readdir($handle))!==false)
         {
-            if (is_readable($dir.$file) && preg_match("/^(mod.*)\.class\.php$/i",$file,$reg))
+            if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i",$file,$reg))
             {
-                $modulename=$reg[1];
+                $module = $part = strtolower($reg[1]);
 
-                // Defined if module is enabled
-                $enabled=true;
-                $module=$part=$obj=strtolower(preg_replace('/^mod/i','',$modulename));
-                //if ($part == 'propale') $part='propal';
-                if ($module == 'societe') {
-					$obj = 'thirdparty';
-				}
                 if ($module == 'categorie') {
                     $part = 'categories';
-					$obj = 'category';
 				}
                 if ($module == 'facture') {
                     $part = 'compta/facture';
-					$obj = 'facture';
 				}
+
+                // Defined if module is enabled
+                $enabled=true;
                 if (empty($conf->$module->enabled)) $enabled=false;
 
                 if ($enabled)
@@ -115,17 +112,14 @@ foreach ($modulesdir as $dir)
                     {
                         while (($file_searched = readdir($handle_part))!==false)
                         {
-                            if (is_readable($dir_part.$file_searched) && preg_match("/^(api_.*)\.class\.php$/i",$file_searched,$reg))
+                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
                             {
-                                $classname=$reg[1];
-                                $classname = str_replace('Api_','',ucwords($reg[1])).'Api';
-                                $classname = ucfirst($classname);
+                                $classname = ucwords($reg[1]);
                                 require_once $dir_part.$file_searched;
-                                if (class_exists($classname)) 
+                                if (class_exists($classname))
                                 {
                                     dol_syslog("Found API classname=".$classname);    
-                                    $api->r->addAPIClass($classname,'');
-                                    $listofapis[]=array('classname'=>$classname, 'fullpath'=>$file_searched);
+                                    $listofapis[] = $classname;
                                 }
                             }
                         }
@@ -136,6 +130,14 @@ foreach ($modulesdir as $dir)
     }
 }
 
+// Sort the classes before adding them to Restler. The Restler API Explorer
+// shows the classes in the order they are added and it's a mess if they are
+// not sorted.
+sort($listofapis);
+foreach ($listofapis as $classname)
+{
+    $api->r->addAPIClass($classname);
+}
 
 // TODO If not found, redirect to explorer
 
