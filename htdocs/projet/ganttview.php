@@ -103,7 +103,7 @@ if ($id > 0 || ! empty($ref))
     $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
     // Ref
-    print '<tr><td width="30%">';
+    print '<tr><td class="titlefield">';
     print $langs->trans("Ref");
     print '</td><td>';
     // Define a complementary filter for search of next/prev ref.

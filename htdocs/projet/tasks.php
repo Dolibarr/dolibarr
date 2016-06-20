@@ -209,7 +209,7 @@ if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 	
 	// Ref
-	print '<tr><td width="30%">';
+	print '<tr><td class="titlefield">';
 	print $langs->trans("Ref");
 	print '</td><td>';
 	// Define a complementary filter for search of next/prev ref.
@@ -274,7 +274,8 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if (! empty($object->id)) print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if (! empty($mode)) print '<input type="hidden" name="mode" value="'.$mode.'">';
-
+	print '<input type="hidden" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'">';
+	
 	dol_fiche_head('');
 
 	print '<table class="border" width="100%">';
@@ -291,8 +292,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
 
 	// Ref
-	print '<input type="hidden" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$defaultref).'">';
-	print '<tr><td><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>'.($_POST["ref"]?$_POST["ref"]:$defaultref).'</td></tr>';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>'.($_POST["ref"]?$_POST["ref"]:$defaultref).'</td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>';
 	print '<input type="text" size="25" name="label" class="flat" value="'.$label.'">';
