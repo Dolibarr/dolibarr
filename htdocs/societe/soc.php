@@ -168,6 +168,7 @@ if (empty($reshook))
 					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
 					{
 						$errors++;
+						setEventMessages($db->lasterror(), null, 'errors');
 					}
 				}
 
@@ -202,6 +203,7 @@ if (empty($reshook))
 				} 
 				else 
 				{
+				    $langs->load("errors");
 					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
 					$db->rollback();
 				}
