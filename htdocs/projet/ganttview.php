@@ -142,7 +142,11 @@ if ($id > 0 || ! empty($ref))
 	print dol_print_date($object->date_end,'day');
 	print '</td></tr>';
 
-
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
+	print '</td></tr>';
+	
     print '</table>';
 
     print '</div>';
@@ -263,7 +267,7 @@ if (count($tasksarray)>0)
 }
 else
 {
-	print $langs->trans("NoTasks");
+	print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
 }
 
 

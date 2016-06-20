@@ -248,6 +248,11 @@ if ($id > 0 || ! empty($ref))
 	print dol_print_date($object->date_end,'day');
 	print '</td></tr>';
 
+	// Budget
+	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
+	print '</td></tr>';
+	
 	// Other options
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
@@ -444,7 +449,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		print '<tr '.$bc[false].'><td colspan="9">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr '.$bc[false].'><td colspan="9" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
 	}
 	print "</table>";
 

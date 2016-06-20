@@ -85,6 +85,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 $fieldstosearchall = array(
     'cp.rowid'=>'Ref',
     'cp.description'=>'Description',
+    'uu.lastname'=>'EmployeeLastname',
+    'uu.firstname'=>'EmployeeFirstname'
 );
 
 
@@ -428,7 +430,7 @@ if (! empty($holiday->holiday))
 if($holiday_payes == '2')
 {
     print '<tr>';
-    print '<td colspan="10" '.$bc[false].'">'.$langs->trans('None').'</td>';
+    print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
     print '</tr>';
 }
 
