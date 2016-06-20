@@ -263,7 +263,7 @@ class Facture extends CommonInvoice
 		$result=$soc->fetch($this->socid);
 		if ($result < 0)
 		{
-			$this->error="Failed to fetch company";
+			$this->error="Failed to fetch company: ".$soc->error;
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
 		}
