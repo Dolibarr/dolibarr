@@ -102,7 +102,7 @@ class Categories extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($type = '', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -114,7 +114,10 @@ class Categories extends DolibarrApi
         $sql = "SELECT s.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."categorie as s";
         $sql.= ' WHERE s.entity IN ('.getEntity('categorie', 1).')';
-        $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
+        if (!empty($type))
+        {
+            $sql.= ' AND s.type='.array_search($type,Categories::$TYPES);
+        }
 
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
