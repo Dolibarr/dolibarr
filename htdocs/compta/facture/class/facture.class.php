@@ -2215,10 +2215,10 @@ class Facture extends CommonInvoice
 			$this->line->rang=$rangtouse;
 			$this->line->info_bits=$info_bits;
 			$this->line->fk_remise_except=$fk_remise_except;
-			$this->line->total_ht=       (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ht):$total_ht);  // For credit note and if qty is negative, total is negative
-			$this->line->total_tva=      $total_tva;
-			$this->line->total_localtax1=$total_localtax1;
-			$this->line->total_localtax2=$total_localtax2;
+			$this->line->total_ht=(($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ht):$total_ht);  // For credit note and if qty is negative, total is negative
+			$this->line->total_tva=(($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_tva):$total_tva);  // For credit note and if qty is negative, total is negative
+			$this->line->total_localtax1=(($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_localtax1):$total_localtax1);  // For credit note and if qty is negative, total is negative
+			$this->line->total_localtax2=(($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_localtax2):$total_localtax2);  // For credit note and if qty is negative, total is negative
 			$this->line->localtax1_type = $localtaxes_type[0];
 			$this->line->localtax2_type = $localtaxes_type[2];
 			$this->line->total_ttc=      (($this->type==self::TYPE_CREDIT_NOTE||$qty<0)?-abs($total_ttc):$total_ttc);
