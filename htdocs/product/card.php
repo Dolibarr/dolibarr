@@ -553,7 +553,7 @@ if (empty($reshook))
     {
         if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->supprimer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->supprimer))
         {
-            $result = $object->delete($user);
+            $result = $object->delete($object->id);
         }
 
         if ($result > 0)

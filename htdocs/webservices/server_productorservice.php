@@ -841,6 +841,10 @@ function deleteProductOrService($authentication,$listofidstring)
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
+	// User must be defined to user authenticated
+    global $user;
+    $user=$fuser;
+
     $listofid=explode(',',trim($listofidstring));
     $listofiddeleted=array();
 
@@ -869,7 +873,7 @@ function deleteProductOrService($authentication,$listofidstring)
 	        }
 	        else
 			{
-		        $result=$newobject->delete($fuser);
+		        $result=$newobject->delete();
 		        if ($result <= 0)
 		        {
 		            $error++;

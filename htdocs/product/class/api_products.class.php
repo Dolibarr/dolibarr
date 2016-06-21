@@ -232,6 +232,7 @@ class Products extends DolibarrApi
      * 
      * @param   int     $id   Product ID
      * @return  array
+     * FIXME Deleting a product/service does not work because the Product::delete() method uses a global $user but it is not set.
      */
     function delete($id)
     {
@@ -247,7 +248,7 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        return $this->product->delete(DolibarrApiAccess::$user);
+        return $this->product->delete($id);
     }
     
     /**

@@ -232,7 +232,7 @@ class ProductTest extends PHPUnit_Framework_TestCase
         $localobject=new Product($this->savdb);
         $result=$localobject->fetch($id);
 
-        $result=$localobject->delete($user);
+        $result=$localobject->delete($id);
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
