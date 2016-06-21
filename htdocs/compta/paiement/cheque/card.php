@@ -440,7 +440,7 @@ if ($action == 'new')
 
 		if ($i == 0)
 		{
-			print '<b>'.$langs->trans("NoWaitingChecks").'</b><br>';
+			print '<div class="opacitymedium">'.$langs->trans("NoWaitingChecks").'</div><br>';
 		}
 	}
 
