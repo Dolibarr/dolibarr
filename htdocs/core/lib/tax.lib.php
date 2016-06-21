@@ -328,7 +328,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 {
                     $oldrowid=$assoc['rowid'];
                     $list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
-                    $list[$assoc['rate']]['vat']      += $assoc['total_vat'];
+                    $list[$assoc['rate']]['vat']      += ($assoc['total_ht'] < 0 && $assoc['total_vat'] > 0) ? -1 * $assoc['total_vat']:$assoc['total_vat'];
                     $list[$assoc['rate']]['localtax1']      += $assoc['total_localtax1'];
                     $list[$assoc['rate']]['localtax2']      += $assoc['total_localtax2'];
                 }
@@ -347,7 +347,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 $list[$assoc['rate']]['descr'][] = $assoc['descr'];
 
                 $list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
-                $list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
+                $list[$assoc['rate']]['vat_list'][] = ($assoc['total_ht'] < 0 && $assoc['total_vat'] > 0) ? -1 * $assoc['total_vat']:$assoc['total_vat'];
                 $list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
                 $list[$assoc['rate']]['localtax2_list'][]  = $assoc['total_localtax2'];
 
@@ -473,7 +473,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 {
                     $oldrowid=$assoc['rowid'];
                     $list[$assoc['rate']]['totalht']  += $assoc['total_ht'];
-                    $list[$assoc['rate']]['vat']      += $assoc['total_vat'];
+                    $list[$assoc['rate']]['vat']      += ($assoc['total_ht'] < 0 && $assoc['total_vat'] > 0) ? -1 * $assoc['total_vat']:$assoc['total_vat'];
                     $list[$assoc['rate']]['localtax1']	 += $assoc['total_localtax1'];
                     $list[$assoc['rate']]['localtax2']	 += $assoc['total_localtax2'];
                 }
@@ -492,7 +492,7 @@ function vat_by_date($db, $y, $q, $date_start, $date_end, $modetax, $direction, 
                 $list[$assoc['rate']]['descr'][] = $assoc['descr'];
 
                 $list[$assoc['rate']]['totalht_list'][] = $assoc['total_ht'];
-                $list[$assoc['rate']]['vat_list'][] = $assoc['total_vat'];
+                $list[$assoc['rate']]['vat_list'][] = ($assoc['total_ht'] < 0 && $assoc['total_vat'] > 0) ? -1 * $assoc['total_vat']:$assoc['total_vat'];
                 $list[$assoc['rate']]['localtax1_list'][] = $assoc['total_localtax1'];
                 $list[$assoc['rate']]['localtax2_list'][] = $assoc['total_localtax2'];
 
