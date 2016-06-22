@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLastProposals=Últimas cotizaciones
-BoxTitleLastPropals=Las %s últimas cotizaciones registradas
 NoRecordedProposals=Sin cotizaciones registradas
 BoxProposalsPerMonth=Cotizaciones por mes
 ForProposals=Cotizaciones

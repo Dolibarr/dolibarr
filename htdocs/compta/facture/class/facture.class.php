@@ -263,7 +263,7 @@ class Facture extends CommonInvoice
 		$result=$soc->fetch($this->socid);
 		if ($result < 0)
 		{
-			$this->error="Failed to fetch company";
+			$this->error="Failed to fetch company: ".$soc->error;
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -2;
 		}
@@ -309,13 +309,12 @@ class Facture extends CommonInvoice
 		
 			$forceduedate = $this->calculate_date_lim_reglement();
 			
-			// Update date and number of last generation of recurring template invoice, before inserting new invoice
+			// For recurrn invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0)
 			{
-                $_facrec->nb_gen_done++;
                 $next_date = $_facrec->getNextDate();   // Calculate next date
                 $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
-                $_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);
+                //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
                 $_facrec->setNextDate($next_date,1);
 			}
 		}
@@ -336,6 +335,7 @@ class Facture extends CommonInvoice
 		$sql.= ", remise_absolue";
 		$sql.= ", remise_percent";
 		$sql.= ", datef";
+		$sql.= ", date_pointoftax";
 		$sql.= ", note_private";
 		$sql.= ", note_public";
 		$sql.= ", ref_client, ref_int";
@@ -358,6 +358,7 @@ class Facture extends CommonInvoice
 		$sql.= ", ".($this->remise_absolue>0?$this->remise_absolue:'NULL');
 		$sql.= ", ".($this->remise_percent>0?$this->remise_percent:'NULL');
 		$sql.= ", '".$this->db->idate($this->date)."'";
+		$sql.= ", ".(strval($this->date_pointoftax)!='' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null');
 		$sql.= ", ".($this->note_private?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql.= ", ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", ".($this->ref_client?"'".$this->db->escape($this->ref_client)."'":"null");
@@ -665,6 +666,7 @@ class Facture extends CommonInvoice
 		$facture->type 			    = $this->type;
 		$facture->socid 		    = $this->socid;
 		$facture->date              = $this->date;
+		$facture->date_pointoftax   = $this->date_pointoftax;
 		$facture->note_public       = $this->note_public;
 		$facture->note_private      = $this->note_private;
 		$facture->ref_client        = $this->ref_client;
@@ -1014,7 +1016,7 @@ class Facture extends CommonInvoice
 
 		$sql = 'SELECT f.rowid,f.facnumber,f.ref_client,f.ref_ext,f.ref_int,f.type,f.fk_soc,f.amount,f.tva, f.localtax1, f.localtax2, f.total, f.total_ttc, f.revenuestamp';
 		$sql.= ', f.remise_percent, f.remise_absolue, f.remise';
-		$sql.= ', f.datef as df';
+		$sql.= ', f.datef as df, f.date_pointoftax';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.datec as datec';
 		$sql.= ', f.date_valid as datev';
@@ -1054,6 +1056,7 @@ class Facture extends CommonInvoice
 				$this->ref_int				= $obj->ref_int;
 				$this->type					= $obj->type;
 				$this->date					= $this->db->jdate($obj->df);
+				$this->date_pointoftax		= $this->db->jdate($obj->date_pointoftax);
 				$this->date_creation		= $this->db->jdate($obj->datec);
 				$this->date_validation		= $this->db->jdate($obj->datev);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -1328,6 +1331,7 @@ class Facture extends CommonInvoice
 		$sql.= " fk_soc=".(isset($this->socid)?$this->socid:"null").",";
 		$sql.= " datec=".(strval($this->date_creation)!='' ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
 		$sql.= " datef=".(strval($this->date)!='' ? "'".$this->db->idate($this->date)."'" : 'null').",";
+		$sql.= " date_pointoftax=".(strval($this->date_pointoftax)!='' ? "'".$this->db->idate($this->date_pointoftax)."'" : 'null').",";
 		$sql.= " date_valid=".(strval($this->date_validation)!='' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
 		$sql.= " paye=".(isset($this->paye)?$this->paye:"null").",";
 		$sql.= " remise_percent=".(isset($this->remise_percent)?$this->remise_percent:"null").",";
@@ -3460,7 +3464,7 @@ class Facture extends CommonInvoice
 			$response = new WorkboardResponse();
 			$response->warning_delay=$conf->facture->client->warning_delay/60/60/24;
 			$response->label=$langs->trans("CustomerBillsUnpaid");
-			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1';
+			$response->url=DOL_URL_ROOT.'/compta/facture/list.php?search_status=1&mainmenu=accountancy&leftmenu=customers_bills';
 			$response->img=img_object($langs->trans("Bills"),"bill");
 
 			$generic_facture = new Facture($this->db);

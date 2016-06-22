@@ -1,11 +1,9 @@
 # Dolibarr language file - Source file is en_US - mails
 Mailing=مراسلة
 EMailing=مراسلة
-Mailings=EMailings
 EMailings=EMailings
 AllEMailings=جميع eMailings
 MailCard=بطاقة الإنترنت
-MailTargets=الأهداف
 MailRecipients=المستفيدون
 MailRecipient=المتلقي
 MailTitle=العنوان
@@ -27,16 +25,11 @@ ResetMailing=إعادة إرساله عبر البريد الإلكتروني
 DeleteMailing=حذف البريد الإلكتروني
 DeleteAMailing=حذف البريد الإلكتروني
 PreviewMailing=معاينة مراسلة
-PrepareMailing=إعداد البريد الإلكتروني
 CreateMailing=إنشاء مراسلة
-MailingDesc=هذه الصفحة يسمح لك بإرسال emailings على مجموعة من الناس.
-MailingResult=ونتيجة لإرسال رسائل البريد الإلكتروني
 TestMailing=تجربة استخدام الإنترنت
 ValidMailing=صحيح مراسلة
-ApproveMailing=الموافقة على استخدام الإنترنت
 MailingStatusDraft=مسودة
 MailingStatusValidated=صادق
-MailingStatusApproved=وافق
 MailingStatusSent=أرسل
 MailingStatusSentPartialy=أرسلت جزئيا
 MailingStatusSentCompletely=أرسلت تماما
@@ -45,7 +38,6 @@ MailingStatusNotSent=لم ترسل
 MailSuccessfulySent=أرسل بالبريد الإلكتروني بنجاح (٪ من المستندات ل٪)
 MailingSuccessfullyValidated=البريد الإلكتروني التحقق من صحة بنجاح
 MailUnsubcribe=إلغاء الاشتراك
-Unsuscribe=إلغاء الاشتراك
 MailingStatusNotContact=عدم الاتصال بعد الآن
 MailingStatusReadAndUnsubscribe=Read and unsubscribe
 ErrorMailRecipientIsEmpty=البريد الإلكتروني المتلقي فارغة
@@ -53,12 +45,10 @@ WarningNoEMailsAdded=بريد الكتروني جديدة تضاف الى قائ
 ConfirmValidMailing=هل أنت متأكد أنك تريد إرساله عبر البريد الإلكتروني للتحقق من هذا؟
 ConfirmResetMailing=تحذير ، وإعادة تشغيل البريد الإلكتروني <b>ل ٪</b> ، يسمح لك أن الدمار إرسال هذه الرسالة مرة اخرى. هل أنت متأكد من أنك هذا هو ما تريد أن تفعل؟
 ConfirmDeleteMailing=هل أنت متأكد من أنك تريد حذف هذا emailling؟
-NbOfRecipients=عدد المستفيدين
 NbOfUniqueEMails=ملاحظة : فريد من رسائل البريد الإلكتروني
 NbOfEMails=ملاحظة : رسائل البريد الإلكتروني
 TotalNbOfDistinctRecipients=عدد المستفيدين متميزة
 NoTargetYet=ولم يعرف بعد المستفيدين (الذهاب على تبويبة 'المتلقين)
-AddRecipients=إضافة المتلقين
 RemoveRecipient=إزالة المتلقية
 CommonSubstitutions=عام بدائل
 YouCanAddYourOwnPredefindedListHere=البريد الإلكتروني الخاص بك لإنشاء وحدة منتق ، انظر htdocs / تضم / وحدات / الرسائل / إقرأني.
@@ -70,41 +60,22 @@ CloneEMailing=استنساخ الارسال بالبريد الالكتروني
 ConfirmCloneEMailing=هل أنت متأكد من استنساخ هذا البريد الإلكتروني؟
 CloneContent=استنساخ الرسالة
 CloneReceivers=شبيه المستفيدين
-DateLastSend=تاريخ آخر ارسال
+DateLastSend=Date of latest sending
 DateSending=تاريخ إرسال
 SentTo=إرسالها إلى <b>%s</b>
 MailingStatusRead=قرأ
-CheckRead=قراءة إيصال
 YourMailUnsubcribeOK=البريد <b>الإلكتروني٪ s غير</b> unsubcribe بشكل صحيح من القائمة البريدية
-MailtoEMail=رابط فرط إلى البريد الإلكتروني
-ActivateCheckRead=السماح لاستخدام الرابط "Unsubcribe"
 ActivateCheckReadKey=المفتاح المستخدم في تشفير URL المستخدمة ل "اقرأ استلام" و "Unsubcribe" ميزة
 EMailSentToNRecipients=البريد الإلكتروني المرسلة إلى المستلمين٪ الصورة.
 XTargetsAdded=وأضاف <b>المتلقين٪ الصورة</b> إلى قائمة المستهدفين
-EachInvoiceWillBeAttachedToEmail=سيتم إنشاء المستند باستخدام الافتراضي قالب المستند الفاتورة وتعلق على كل البريد الإلكتروني.
 OnlyPDFattachmentSupported=If the PDF document was already generated for the invoice, it will be attached to email. If not, no email will be sent (also, note that only pdf invoice are supported as attachment in mass sending in this version).
-MailTopicSendRemindUnpaidInvoices=تذكير الفاتورة%s (ق٪)
-SendRemind=إرسال تذكرة عن طريق البريد الالكتروني
-RemindSent=٪ الصورة تذكير (ق) أرسلت
 AllRecipientSelected=جميع thirdparties اختيار وإذا تم تعيين بالبريد.
-NoRemindSent=لا رسالة تذكير أرسلت
 ResultOfMailSending=نتيجة لإرسال البريد الإلكتروني الشامل
 NbSelected=ملحوظة مختارة
 NbIgnored=ملحوظة تجاهلها
 NbSent=أرسلت ملحوظة
 
 # Libelle des modules de liste de destinataires mailing
-MailingModuleDescContactCompanies=اتصالات لجميع الأطراف الثالثة (العملاء ، والاحتمال ، والمورد ،...)
-MailingModuleDescDolibarrUsers=Dolibarr جميع مستخدمي البريد الإلكتروني
-MailingModuleDescFundationMembers=مؤسسة البريد الالكتروني للأعضاء
-MailingModuleDescEmailsFromFile=رسائل البريد الإلكتروني من ملف نصي (البريد الإلكتروني ؛ اسم الشهرة ؛ التعليقات)
-MailingModuleDescEmailsFromUser=رسائل البريد الإلكتروني من المستخدم إدخال (البريد الإلكتروني؛ اللقب، الاسم الأول، وغير ذلك)
-MailingModuleDescContactsCategories=أطراف ثالثة مع رسائل البريد الإلكتروني (حسب الفئة)
-MailingModuleDescDolibarrContractsLinesExpired=أطراف ثالثة مع انتهاء العقد خطوط
-MailingModuleDescContactsByCompanyCategory=اتصالات من أطراف ثالثة (من قبل أطراف ثالثة الفئة)
-MailingModuleDescContactsByCategory=اتصالات / عناوين أطراف ثالثة (حسب الفئة)
-MailingModuleDescMembersCategories=أعضاء مؤسسة (حسب الفئات)
-MailingModuleDescContactsByFunction=اتصالات من أطراف ثالثة (من قبل المنصب / الوظيفة)
 LineInFile=خط المستندات في ملف ٪
 RecipientSelectionModules=حددت لطلبات المستفيدين الاختيار
 MailSelectedRecipients=اختيار المستفيدين
@@ -116,7 +87,6 @@ MailNoChangePossible=صادق المتلقين للمراسلة لا يمكن ت
 SearchAMailing=البحث البريدية
 SendMailing=إرسال البريد الإلكتروني
 SendMail=إرسال بريد إلكتروني
-SentBy=أرسلها
 MailingNeedCommand=لأسباب أمنية، إرسال البريد الإلكتروني هو أفضل عندما يؤديها من سطر الأوامر. إذا كان لديك واحدة، اطلب من مسؤول الخادم الخاص بك لإطلاق الأمر التالي لإرسال إرساله عبر البريد الإلكتروني لجميع المستفيدين:
 MailingNeedCommand2=ولكن يمكنك إرسالها عبر الإنترنت عن طريق إضافة معلمة MAILING_LIMIT_SENDBYWEB مع قيمة الحد الأقصى لعدد من رسائل البريد الإلكتروني التي تريد إرسالها من خلال هذه الدورة.
 ConfirmSendingEmailing=إذا كنت لا تستطيع أو تفضل إرسالها مع متصفح الشبكة العالمية الخاصة بك، يرجى تأكيد كنت متأكدا من أنك تريد إرسال البريد الإلكتروني الآن من المتصفح؟
@@ -147,3 +117,27 @@ MailSendSetupIs2=يجب عليك أولا الذهاب، مع حساب مشرف�
 MailSendSetupIs3=إذا كان لديك أي أسئلة حول كيفية إعداد ملقم SMTP الخاص بك، يمكنك أن تطلب إلى٪ s.
 YouCanAlsoUseSupervisorKeyword=يمكنك أيضا إضافة <strong>__SUPERVISOREMAIL__</strong> الكلمة أن يكون البريد الإلكتروني إرسالها إلى المشرف على المستخدم (يعمل فقط إذا تم تعريف بريد الكتروني لهذا المشرف)
 NbOfTargetedContacts=العدد الحالي من رسائل البريد الإلكتروني اتصال المستهدفة
+MailAdvTargetRecipients=Recipients (advanced selection)
+AdvTgtTitle=Fill input fields to preselect the thirdparties or contacts/addresses to target
+AdvTgtSearchTextHelp=Use %% as magic caracters. For exemple to find all item like <b>jean, joe, jim</b>, you can input <b>j%%</b>, you can also use ; as separator for value, and use ! for except this value. For exemple  <b>jean;joe;jim%%;!jimo;!jima%</b> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
+AdvTgtSearchIntHelp=Use interval to select int or float value
+AdvTgtMinVal=Minimum value
+AdvTgtMaxVal=Maximum value
+AdvTgtSearchDtHelp=Use interval to select date value
+AdvTgtStartDt=Start dt.
+AdvTgtEndDt=End dt.
+AdvTgtTypeOfIncudeHelp=Target Email of thirdparty and email of contact of the thridparty, or just thridparty email or just contact email
+AdvTgtTypeOfIncude=Type of targeted email
+AdvTgtContactHelp=Use only if you target contact into "Type of targeted email"
+AddAll=Add all
+RemoveAll=Remove all
+ItemsCount=Item(s)
+AdvTgtNameTemplate=Filter name
+AdvTgtAddContact=Add emails according to criterias
+AdvTgtLoadFilter=Load filter
+AdvTgtDeleteFilter=Delete filter
+AdvTgtSaveFilter=Save filter
+AdvTgtCreateFilter=Create filter
+AdvTgtOrCreateNewFilter=Name of new filter
+NoContactWithCategoryFound=No contact/address with a category found
+NoContactLinkedToThirdpartieWithCategoryFound=No contact/address with a category found

@@ -127,7 +127,7 @@ if(!empty($cats))
 			$resultN = $AccCat->getResult($cpt['account_number'], 0, $year_current, $cpt['dc']);
 			$sommes[$code]['NP'] += $resultNP;
 			$sommes[$code]['N'] += $resultN; 
-			print "<tr $bc[$var]>";
+			print '<tr'. $bc[$var].'>';
 			print '<td>' . $cpt['account_number'] . '</td>';
 			print '<td>' . $cpt['name_cpt'] . '</td>';
 			print '<td>' . price($resultNP)  . '</td>';

@@ -115,7 +115,7 @@ $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
 
 dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-    
+
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
@@ -266,7 +266,7 @@ if ($type_element == 'contract')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
-	$documentstaticline=new ContratLigne($db);	
+	$documentstaticline=new ContratLigne($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
@@ -276,44 +276,47 @@ if ($type_element == 'contract')
 	$thirdTypeSelect='customer';
 }
 
-$sql = $sql_select;
-$sql.= ' d.description as description,';
-if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
-if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
-if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
-$sql.= " s.rowid as socid ";
-if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
-if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
-$sql.= $where;
-if ($month > 0) {
-	if ($year > 0) {
-		$start = dol_mktime(0, 0, 0, $month, 1, $year);
-		$end = dol_time_plus_duree($start,1,'m') - 1;
-		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-	} else {
-		$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
-	}
-} else if ($year > 0) {
-	$start = dol_mktime(0, 0, 0, 1, 1, $year);
-	$end = dol_time_plus_duree($start,1,'y') - 1;
-	$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
-}
-if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
-if ($sprod_fulldescr) 
+if ($sql_select)
 {
-    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
-    $sql.=")";
+	$sql = $sql_select;
+	$sql.= ' d.description as description,';
+	if ($type_element != 'fichinter' && $type_element != 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_start, d.date_end, d.qty, d.qty as prod_qty,';
+	if ($type_element == 'contract') $sql.= ' d.label, d.fk_product as product_id, d.fk_product as fk_product, d.info_bits, d.date_ouverture as date_start, d.date_cloture as date_end, d.qty, d.qty as prod_qty,';
+	if ($type_element != 'fichinter') $sql.= ' p.ref as ref, p.rowid as prod_id, p.rowid as fk_product, p.fk_product_type as prod_type, p.fk_product_type as fk_product_type, p.entity as pentity,';
+	$sql.= " s.rowid as socid ";
+	if ($type_element != 'fichinter') $sql.= ", p.ref as prod_ref, p.label as product_label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".$tables_from;
+	if ($type_element != 'fichinter') $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
+	$sql.= $where;
+	if ($month > 0) {
+		if ($year > 0) {
+			$start = dol_mktime(0, 0, 0, $month, 1, $year);
+			$end = dol_time_plus_duree($start,1,'m') - 1;
+			$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+		} else {
+			$sql.= " AND date_format(".$dateprint.", '%m') = '".sprintf('%02d',$month)."'";
+		}
+	} else if ($year > 0) {
+		$start = dol_mktime(0, 0, 0, 1, 1, $year);
+		$end = dol_time_plus_duree($start,1,'y') - 1;
+		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
+	}
+	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
+	if ($sprod_fulldescr) 
+	{
+	    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.label LIKE '%".$db->escape($sprod_fulldescr)."%'";
+	    $sql.=")";
+	}
+	$sql.= $db->order($sortfield,$sortorder);
+	
+	$resql=$db->query($sql);
+	$totalnboflines = $db->num_rows($resql);
+	
+	$sql.= $db->plimit($limit + 1, $offset);
+	//print $sql;
 }
-$sql.= $db->order($sortfield,$sortorder);
-
-$resql=$db->query($sql);
-$totalnboflines = $db->num_rows($resql);
-
-$sql.= $db->plimit($limit + 1, $offset);
-//print $sql;
 
 // Define type of elements
 $typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
@@ -328,23 +331,24 @@ if ($sql_select)
 
 	$var=true;
 	$num = $db->num_rows($resql);
-	
+
 	$param="&socid=".$socid."&type_element=".$type_element;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sprod_fulldescr) $param.= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
 	if ($sref) $param.= "&sref=".urlencode($sref);
 	if ($month) $param.= "&month=".$month;
 	if ($year) $param.= "&year=".$year;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-	
+
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $totalnboflines, '', 0, '', '', $limit);
-    
+
     print '<table class="liste" width="100%">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'doc_number','',$param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','',$param,'align="center" width="150"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
@@ -379,7 +383,7 @@ if ($sql_select)
 		$documentstatic->statut=$objp->status;
 		$documentstatic->status=$objp->status;
 		$documentstatic->paye=$objp->paid;
-		
+
 		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
 
 		$var=!$var;
@@ -545,7 +549,7 @@ if ($sql_select)
 	}
 
 	print "</table>";
-	
+
 	if ($num > $limit) {
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 	}
@@ -554,7 +558,7 @@ if ($sql_select)
 else if (empty($type_element) || $type_element == -1)
 {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
-    
+
     print '<table class="liste" width="100%">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
@@ -564,16 +568,16 @@ else if (empty($type_element) || $type_element == -1)
     print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
-    
+
 	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
 
 	print "</table>";
 }
 else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
-    
+
     print '<table class="liste" width="100%">'."\n";
-    
+
 	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 
 	print "</table>";

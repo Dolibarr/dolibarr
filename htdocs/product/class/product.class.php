@@ -131,7 +131,7 @@ class Product extends CommonObject
 	var $status_buy;
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
-	// We must manage batch number, sell-by date and so on : '1':yes '0':no
+	// We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	var $status_batch;
 
 	var $customcode;       // Customs code
@@ -879,9 +879,10 @@ class Product extends CommonObject
 	 *  Delete a product from database (if not used)
 	 *
 	 *	@param      int		$id         Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
+	 *  @param      int     $notrigger  Do not execute trigger
 	 * 	@return		int					< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
-	function delete($id=0)
+	function delete($id=0, $notrigger=0)
 	{
 		// Deprecation warning
 		if ($id > 0) {
@@ -914,7 +915,7 @@ class Product extends CommonObject
 		{
 			$this->db->begin();
 
-			if (! $error)
+			if (! $error && empty($notrigger))
 			{
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_DELETE',$user);
@@ -1353,7 +1354,8 @@ class Product extends CommonObject
                 }
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
-				$this->ref_fourn = $obj->ref_fourn;                 // Ref supplier
+				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
+				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$result=$obj->fk_product;
 				return $result;
@@ -2665,7 +2667,7 @@ class Product extends CommonObject
     		$sql.= " WHERE fk_soc = ".$id_fourn;
     		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
     		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity = ".$conf->entity;
+    		$sql.= " AND entity IN (".getEntity('productprice', 1).")";
 
     		$resql=$this->db->query($sql);
     		if ($resql)
@@ -2688,7 +2690,7 @@ class Product extends CommonObject
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity IN (".getEntity('productprice', 1).")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3477,7 +3479,7 @@ class Product extends CommonObject
         }
 
         // Stock decrease mode
-        if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
+        if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
             $this->stock_theorique=$this->stock_reel-$stock_commande_client+$stock_sending_client;
         }
         if (! empty($conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER)) {

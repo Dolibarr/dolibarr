@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Delivery
-Deliveries=Deliveries
+DeliveryRef=Ref Delivery
 DeliveryCard=Delivery card
 DeliveryOrder=Delivery order
-DeliveryOrders=Delivery orders
 DeliveryDate=Delivery date
-DeliveryDateShort=Deliv. date
 CreateDeliveryOrder=Generate delivery order
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Qty delivered
 SetDeliveryDate=Set shipping date
 ValidateDeliveryReceipt=Validate delivery receipt
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt ?
@@ -30,3 +27,4 @@ Recipient=Recipient
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

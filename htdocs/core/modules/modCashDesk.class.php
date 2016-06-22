@@ -100,7 +100,7 @@ class modCashDesk extends DolibarrModules
 									'mainmenu'=>'cashdesk',
 									'url'=>'/cashdesk/index.php?user=__LOGIN__',
 									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-									'position'=>100,
+									'position'=>900,
                                     'enabled'=>'$conf->cashdesk->enabled',
 		                            'perms'=>'$user->rights->cashdesk->use',		// Use 'perms'=>'1' if you want your menu with no permission rules
 									'target'=>'pointofsale',

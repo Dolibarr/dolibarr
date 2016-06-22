@@ -17,11 +17,12 @@
  */
 
 /**
- *       \file       place/class/html.formresource.class.php
+ *       \file       resource/class/html.formresource.class.php
  *       \ingroup    core
  *       \brief      Class file to manage forms into resource module
  */
 require_once(DOL_DOCUMENT_ROOT ."/core/class/html.form.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/resource/class/dolresource.class.php");
 
 
 /**
@@ -56,7 +57,7 @@ class FormResource
     /**
      *  Output html form to select a resource
      *
-     *	@param	string	$selected       Preselected type
+     *	@param	int   	$selected       Preselected resource id
      *	@param  string	$htmlname       Name of field in form
      *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
      *	@param	int		$showempty		Add an empty field

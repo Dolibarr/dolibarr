@@ -39,6 +39,9 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after dat
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'dolresource','internal', 'USERINCHARGE',     'In charge of resource', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'dolresource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
+
 -- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -108,10 +111,15 @@ ALTER TABLE llx_cronjob ADD COLUMN test varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
+ALTER TABLE llx_facture ADD COLUMN date_pointoftax date DEFAULT NULL;
+
 UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
  
 ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
 ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
+
+ALTER TABLE llx_chargesociales ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_tva ADD COLUMN import_key varchar(14);
 
 --DROP TABLE llx_website_page;
 --DROP TABLE llx_website;
@@ -350,6 +358,8 @@ ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ht double(24,8)
 ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_tva double(24,8) DEFAULT 0;
 ALTER TABLE llx_expensereport_det ADD COLUMN multicurrency_total_ttc double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_expensereport_det ADD COLUMN fk_facture	integer DEFAULT 0;
+
 ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
@@ -402,6 +412,7 @@ CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
 
 -- Add more action to log
+update llx_c_action_trigger set rang = 140 where code = 'PROJECT_CREATE';
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_MODIFY','Project modified','Executed when a project is modified','project',141);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_DELETE','Project deleted','Executed when a project is deleted','project',142);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CREATE','Supplier order validated','Executed when a supplier order is validated','order_supplier',11);
@@ -475,6 +486,25 @@ update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
 -- At end (higher risk of error)
 
 -- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
 
+CREATE TABLE llx_oauth_token (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    service varchar(36),
+    token text,
+    fk_user integer,
+    fk_adherent integer,
+    entity integer
+)ENGINE=InnoDB;
 
+CREATE TABLE llx_oauth_state (
+    rowid integer AUTO_INCREMENT PRIMARY KEY,
+    service varchar(36),
+    state varchar(128),
+    fk_user integer,
+    fk_adherent integer,
+    entity integer
+)ENGINE=InnoDB;
+
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);

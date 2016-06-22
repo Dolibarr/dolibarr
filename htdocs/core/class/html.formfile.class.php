@@ -661,7 +661,7 @@ class FormFile
 
 			 	if (count($file_list) == 0 && $headershown)
 	            {
-    	        	$out.='<tr '.$bc[0].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
+    	        	$out.='<tr '.$bc[0].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         	    }
 
                 $this->numoffiles++;
@@ -928,7 +928,7 @@ class FormFile
 			}
 			if ($nboffiles == 0)
 			{
-				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'">';
+				print '<tr '.$bc[false].'><td colspan="'.(empty($useinecm)?'5':'4').'" class="opacitymedium">';
 				if (empty($textifempty)) print $langs->trans("NoFileFound");
 				else print $textifempty;
 				print '</td></tr>';
@@ -1267,7 +1267,7 @@ class FormFile
                 print '<input type="hidden" name="id" value="' . $object->id . '">';
                 print '<input type="hidden" name="linkid" value="' . $link->id . '">';
                 print '<input type="hidden" name="action" value="confirm_updateline">';
-                print $langs->trans('Link') . ': <input type="text" name="link" size="50" value="' . $link->url . '">';
+                print $langs->trans('Link') . ': <input type="text" name="link" value="' . $link->url . '">';
                 print '</td>';
                 print '<td>';
                 print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';
@@ -1302,7 +1302,7 @@ class FormFile
         }
         if ($nboflinks == 0)
         {
-            print '<tr ' . $bc[false] . '><td colspan="5">';
+            print '<tr ' . $bc[false] . '><td colspan="5" class="opacitymedium">';
             print $langs->trans("NoLinkFound");
             print '</td></tr>';
         }

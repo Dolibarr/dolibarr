@@ -12,9 +12,6 @@ CloseEtablishment=Etablissement fermé
 DictionaryDepartment=GRH - Liste des départements
 DictionaryFunction=GRH - List des fonctions
 # Module
-ListOfEmployees=List des salariés
 Employees=Salariés
 Employee=Salarié
-Employe=Employeur
 NewEmployee=Nouveau salarié
-EmployeeCard=Fiche salarié

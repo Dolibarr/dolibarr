@@ -3,7 +3,7 @@ ConfigOAuth=Oauth Configuration
 NoAccessToken=No access token saved into local database
 HasAccessToken=A token was generated and saved into local database
 NewTokenStored=Token received ans saved
-ToCheckDeleteTokenOnProvider=To check/delete authorization saved by %s OAuth provider
+ToCheckDeleteTokenOnProvider=Για έλεγχο/διαγραφή εξουσιοδότησης από %s προμηθευτή OAuth
 TokenDeleted=Token deleted
 RequestAccess=Click here to request/renew access and receive a new token to save
 DeleteAccess=Click here to delete token
@@ -12,3 +12,4 @@ ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 prov
 OAUTH_GOOGLE_NAME=Api Google
 OAUTH_GOOGLE_ID=Api Google Id
 OAUTH_GOOGLE_SECRET=Api Google Secret
+OAUTH_GOOGLE_DESC=Go on <a href="https://console.developers.google.com/" target="_blank">this page</a> then Credentials to create Oauth credentials

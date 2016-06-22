@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = O
-CronAbout = O Cron-u
-CronAboutPage = Stranica O Cron-u
 # Right
 Permission23101 = Pročitaj planiranu operaciju
 Permission23102 = Kreiraj/ažuriraj planiranu operaciju
@@ -16,17 +13,12 @@ KeyForCronAccess=Security key za URL za izvršenje cron operacija
 FileToLaunchCronJobs=Komandna linija za izvršenje cron operacija
 CronExplainHowToRunUnix=U Unix okruženju možete koristiti crontab za izvršenje komandne linije svakih 5 minuta
 CronExplainHowToRunWin=U Windows okruženju možete koristiti Scheduled task tools za izvršenje komandne linije svakih 5 minuta
-CronMethodDoesNotExists=Class %s does not contains any method %s
+CronMethodDoesNotExists=Klasa %s ne sadrži ni jedan metod %s
 # Menu
-CronJobs=Planirane operacije
-CronListActive=Lista aktivnih/planiranih poslova
-CronListInactive=Lista deaktiviranih operacija
 EnabledAndDisabled=Aktivno i neaktivno
 # Page list
-CronDateLastRun=Poslednje izvršenje
 CronLastOutput=Output poslednjeg izvršenja
 CronLastResult=Poslednji povratni kod
-CronListOfCronJobs=Lista planiranih operacija
 CronCommand=Komanda
 CronList=Planirane operacije
 CronDelete=Obriši planirane operacije
@@ -34,22 +26,17 @@ CronConfirmDelete=Da li ste sigurni da želite da obrišete ove planirane operac
 CronExecute=Izvrši planirane operacije
 CronConfirmExecute=Da li ste sigurni da želite da sada izvršite planirane operacije ?
 CronInfo=Modul planiranih aktivnosti omogućava izvršenje planirane aktivnosti
-CronWaitingJobs=Operacije na čekanju
 CronTask=Operacija
 CronNone=Nema
 CronDtStart=Ne pre
 CronDtEnd=Ne posle
 CronDtNextLaunch=Sledeće izvršenje
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frekvencija
 CronClass=Klasa
 CronMethod=Metoda
 CronModule=Modul
-CronAction=Akcija
-CronStatus=Status
-CronStatusActive=Aktivan
-CronStatusInactive=Neaktivan
 CronNoJobs=Nema prijavljenih operacija
 CronPriority=Prioritet
 CronLabel=Opis
@@ -59,11 +46,10 @@ CronEach=Svakih
 JobFinished=Operacija je izvršena
 #Page card
 CronAdd= Dodaj operacije
-CronHourStart= Vreme početka operacije
 CronEvery=Izvrši operaciju svakih
 CronObject=Instanca/Objekat za kreiranje
 CronArgs=Parametri
-CronSaveSucess=Uspešno sačuvano
+CronSaveSucess=Save successfully
 CronNote=Komentar
 CronFieldMandatory=Polje %s je obavezno
 CronErrEndDateStartDt=Kraj ne može biti pre početka
@@ -81,14 +67,12 @@ CronCommandHelp=Komandna linija za izvršenje
 CronCreateJob=Kreiraj novu planiranu operaciju
 CronFrom=Od
 # Info
-CronInfoPage=Informacija
 # Common
 CronType=Tip operacije
 CronType_method=Metoda poziva Dolibarr klase
 CronType_command=Komandna linija
-CronMenu=Cron
 CronCannotLoadClass=Nemoguće učitati klasu %s ili objekat %s
-UseMenuModuleToolsToAddCronJobs=Otvorite "Home - Alati modula - Lista aktivnosti" da biste videli i izmenili listu planiranih aktivnosti.
-TaskDisabled=Operacija deaktivirana
-MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
+MakeLocalDatabaseDumpShort=Bekap lokalne baze
+MakeLocalDatabaseDump=Kreirajte odbacivanje lokalne baze

@@ -7,7 +7,5 @@ VATToCollect=GST to collect
 VATSummary=GST Summary
 VATPaid=GST paid
 VATCollected=GST collected
-NewVATPayment=New GST payment
 VATPayment=GST Payment
 VATPayments=GST Payments
-TotalVATReceived=Total GST received

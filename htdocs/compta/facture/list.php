@@ -29,7 +29,7 @@
 /**
  *	\file       htdocs/compta/facture/list.php
  *	\ingroup    facture
- *	\brief      Page to create/see an invoice
+ *	\brief      List of customer invoices
  */
 
 require '../../main.inc.php';
@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -50,7 +51,6 @@ if (! empty($conf->projet->enabled))   require_once DOL_DOCUMENT_ROOT.'/projet/c
 $langs->load('bills');
 $langs->load('companies');
 $langs->load('products');
-$langs->load('main');
 
 $sall=trim(GETPOST('sall'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
@@ -78,8 +78,19 @@ $search_zip=GETPOST('search_zip','alpha');
 $search_state=trim(GETPOST("search_state"));
 $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
+$search_user = GETPOST('search_user','int');
+$search_sale = GETPOST('search_sale','int');
+$day	= GETPOST('day','int');
+$month	= GETPOST('month','int');
+$year	= GETPOST('year','int');
+$day_lim	= GETPOST('day_lim','int');
+$month_lim	= GETPOST('month_lim','int');
+$year_lim	= GETPOST('year_lim','int');
+$toselect = GETPOST('toselect', 'array');
+
 $option = GETPOST('option');
 if ($option == 'late') $filter = 'paye:0';
+$filtre	= GETPOST('filtre');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -95,17 +106,6 @@ $pagenext = $page + 1;
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='invoicelist';
-
-$search_user = GETPOST('search_user','int');
-$search_sale = GETPOST('search_sale','int');
-$day	= GETPOST('day','int');
-$month	= GETPOST('month','int');
-$year	= GETPOST('year','int');
-$day_lim	= GETPOST('day_lim','int');
-$month_lim	= GETPOST('month_lim','int');
-$year_lim	= GETPOST('year_lim','int');
-$filtre	= GETPOST('filtre');
-$toselect = GETPOST('toselect', 'array');
 
 // Security check
 $fieldid = (! empty($ref)?'facnumber':'rowid');
@@ -140,14 +140,14 @@ $checkedtypetiers=0;
 $arrayfields=array(
     'f.facnumber'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'f.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
+    'f.date'=>array('label'=>$langs->trans("DateInvoice"), 'checked'=>1),
+    'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
     'country.code_iso'=>array('label'=>$langs->trans("Country"), 'checked'=>0),
     'typent.code'=>array('label'=>$langs->trans("ThirdPartyType"), 'checked'=>$checkedtypetiers),
-    'f.date'=>array('label'=>$langs->trans("DateInvoice"), 'checked'=>1),
-    'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
     'f.fk_mode_reglement'=>array('label'=>$langs->trans("PaymentMode"), 'checked'=>1),
     'f.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
     'f.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
@@ -182,13 +182,14 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOST("button_removefilter.x")) // Both test are required to be compatible with all browsers
 {
     $search_user='';
     $search_sale='';
     $search_product_category='';
     $search_ref='';
     $search_refcustomer='';
+    $search_project='';
     $search_societe='';
     $search_montant_ht='';
     $search_montant_vat='';
@@ -624,14 +625,14 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('',$langs->trans('Bill'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $facturestatic=new Facture($db);
 $formcompany=new FormCompany($db);
+
+llxHeader('',$langs->trans('CustomersInvoices'),'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 $sql = 'SELECT';
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
@@ -687,6 +688,7 @@ if ($filtre)
 }
 if ($search_ref) $sql .= natural_search('f.facnumber', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('f.ref_client', $search_refcustomer);
+if ($search_project) $sql .= natural_search('p.ref', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
 if ($search_zip)   $sql.= natural_search("s.zip",$search_zip);
@@ -756,7 +758,8 @@ if (! $sall)
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' f.datec, f.tms,';
-    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client';
+    $sql.= ' s.rowid, s.nom, s.town, s.zip, s.fk_pays, s.code_client, s.client, typent.code';
+    $sql.= ' ,state.code_departement, state.nom';
 }
 else
 {
@@ -792,24 +795,25 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    if ($day)                $param.='&day='.$day;
-    if ($month)              $param.='&month='.$month;
-    if ($year)               $param.='&year=' .$year;
-    if ($day_lim)            $param.='&day_lim='.$day_lim;
-    if ($month_lim)          $param.='&month_lim='.$month_lim;
-    if ($year_lim)           $param.='&year_lim=' .$year_lim;
-    if ($search_ref)         $param.='&search_ref=' .$search_ref;
-    if ($search_refcustomer) $param.='&search_refcustomer=' .$search_refcustomer;
-    if ($search_societe)     $param.='&search_societe=' .$search_societe;
-    if ($search_sale > 0)    $param.='&search_sale=' .$search_sale;
-    if ($search_user > 0)    $param.='&search_user=' .$search_user;
-    if ($search_product_category > 0)   $param.='$search_product_category=' .$search_product_category;
-    if ($search_montant_ht != '')  $param.='&search_montant_ht='.$search_montant_ht;
-    if ($search_montant_vat != '')  $param.='&search_montant_vat='.$search_montant_vat;
-    if ($search_montant_ttc != '') $param.='&search_montant_ttc='.$search_montant_ttc;
-	if ($search_status != '') $param.='&search_status='.$search_status;
-	if ($search_paymentmode > 0) $param.='search_paymentmode='.$search_paymentmode;
+    if ($day)                $param.='&day='.urlencode($day);
+    if ($month)              $param.='&month='.urlencode($month);
+    if ($year)               $param.='&year=' .urlencode($year);
+    if ($day_lim)            $param.='&day_lim='.urlencode($day_lim);
+    if ($month_lim)          $param.='&month_lim='.urlencode($month_lim);
+    if ($year_lim)           $param.='&year_lim=' .urlencode($year_lim);
+    if ($search_ref)         $param.='&search_ref=' .urlencode($search_ref);
+    if ($search_refcustomer) $param.='&search_refcustomer=' .urlencode($search_refcustomer);
+    if ($search_societe)     $param.='&search_societe=' .urlencode($search_societe);
+    if ($search_sale > 0)    $param.='&search_sale=' .urlencode($search_sale);
+    if ($search_user > 0)    $param.='&search_user=' .urlencode($search_user);
+    if ($search_product_category > 0)   $param.='$search_product_category=' .urlencode($search_product_category);
+    if ($search_montant_ht != '')  $param.='&search_montant_ht='.urlencode($search_montant_ht);
+    if ($search_montant_vat != '')  $param.='&search_montant_vat='.urlencode($search_montant_vat);
+    if ($search_montant_ttc != '') $param.='&search_montant_ttc='.urlencode($search_montant_ttc);
+	if ($search_status != '') $param.='&search_status='.urlencode($search_status);
+	if ($search_paymentmode > 0) $param.='search_paymentmode='.urlencode($search_paymentmode);
     if ($show_files)         $param.='&show_files=' .$show_files;
 	if ($option)             $param.="&option=".$option;
 	if ($optioncss != '')    $param.='&optioncss='.$optioncss;
@@ -1059,12 +1063,12 @@ if ($resql)
 	// Thirpdarty
 	if (! empty($arrayfields['s.nom']['checked'])) 
 	{
-	   print '<td class="liste_titre" align="left"><input class="flat" type="text" size="8" name="search_societe" value="'.$search_societe.'"></td>';
+	   print '<td class="liste_titre" align="left"><input class="flat" type="text" size="6" name="search_societe" value="'.$search_societe.'"></td>';
 	}
 	// Town
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
 	// Zip
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
 	// State
 	if (! empty($arrayfields['state.nom']['checked']))
 	{
@@ -1189,17 +1193,17 @@ if ($resql)
             $var=!$var;
 
             $datelimit=$db->jdate($obj->datelimite);
-
+            $facturestatic->id=$obj->facid;
+            $facturestatic->ref=$obj->facnumber;
+            $facturestatic->type=$obj->type;
+            $facturestatic->statut=$obj->fk_statut;
+            $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
+            
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
     		{
                 print '<td class="nowrap">';
     
-                $facturestatic->id=$obj->facid;
-                $facturestatic->ref=$obj->facnumber;
-                $facturestatic->type=$obj->type;
-                $facturestatic->statut=$obj->fk_statut;
-                $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
                 $notetoshow=dol_string_nohtmltag(($user->societe_id>0?$obj->note_public:$obj->note_private),1);
                 $paiement = $facturestatic->getSommePaiement();
 				$remaintopay = $obj->total_ttc - $paiement;

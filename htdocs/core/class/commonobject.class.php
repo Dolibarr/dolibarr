@@ -744,7 +744,8 @@ abstract class CommonObject
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
         $sql.= " WHERE element_id = ".$this->id;
-        $sql.= " AND fk_c_type_contact IN (".$listId.")";
+        if ($listId)
+        	$sql.= " AND fk_c_type_contact IN (".$listId.")";
 
         dol_syslog(get_class($this)."::delete_linked_contact", LOG_DEBUG);
         if ($this->db->query($sql))
@@ -4473,20 +4474,24 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropiate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param DoliDB 	$db 			Database handler
-	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
-	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
-	 * @param string[] 	$tables 		Tables that need to be changed
+	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
+	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
+	 * @param  string[]    $tables        Tables that need to be changed
+	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one) 
 	 * @return bool
 	 */
-	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
+	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors=0)
 	{
 		foreach ($tables as $table)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
-			if (!$db->query($sql)) {
-				return false;
+			if (! $db->query($sql)) 
+			{
+			    if ($ignoreerrors) return true;
+				//$this->errors = $db->lasterror();
+			    return false;
 			}
 		}
 

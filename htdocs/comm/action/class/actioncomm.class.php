@@ -932,6 +932,7 @@ class ActionComm extends CommonObject
 	        $response->warning_delay = $conf->agenda->warning_delay/60/60/24;
 	        $response->label = $langs->trans("ActionsToDo");
 	        $response->url = DOL_URL_ROOT.'/comm/action/listactions.php?status=todo&amp;mainmenu=agenda';
+	        if ($user->rights->agenda->allactions->read) $response->url.='&amp;filtert=-1';
 	        $response->img = img_object($langs->trans("Actions"),"action");
 
             // This assignment in condition is not a bug. It allows walking the results.

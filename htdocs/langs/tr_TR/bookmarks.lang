@@ -14,6 +14,5 @@ BehaviourOnClick=İnternet adresine tıklandığında yapılacak işlem
 CreateBookmark=Yer imi ekleyin
 SetHereATitleForLink=Yer iminin başlığını yazın
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Dış http ya da bağıl Dolibarr İnternet adresi kullanın
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bağlantıya tıklandığında sayfanın geçerli ya da yeni bir pencerede açılmasını seçin
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Bağlantılı sayfanın yeni bir pencerede açılıp açılmayacağını seçin
 BookmarksManagement=Yer imi yönetimi
-ListOfBookmarks=Yer imi listesi

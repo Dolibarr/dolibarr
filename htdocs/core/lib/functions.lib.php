@@ -436,7 +436,7 @@ function dol_size($size,$type='')
  */
 function dol_sanitizeFileName($str,$newstr='_',$unaccent=1)
 {
-	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"','°');
 	return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
@@ -718,8 +718,8 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 	{
 		$limittitle=30;
 		$out.='<a class="tabTitle">';
-		if ($picto) $out.=img_picto('',($pictoisfullpath?'':'object_').$picto,'',$pictoisfullpath).' ';
-		$out.=dol_trunc($title,$limittitle);
+		if ($picto) $out.=img_picto($title,($pictoisfullpath?'':'object_').$picto,'',$pictoisfullpath).' ';
+		$out.='<span class="tabTitleText">'.dol_trunc($title,$limittitle).'</span>';
 		$out.='</a>';
 	}
 
@@ -902,8 +902,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',-$maxvisiblephotos,0,0,0,$width,0).'</div>';
         else 
         {
-			$nophoto='/public/theme/common/nophoto.png';
-            $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
+				$nophoto='';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			}
+			else {
+				$nophoto='/public/theme/common/nophoto.png';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
+            
         }
 	}
 	else 
@@ -2778,7 +2785,7 @@ function dol_print_error($db='',$error='',$errors=null)
 			if (empty($msg)) continue;
 			if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 			{
-				$out.="<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+				$out.="<b>".$langs->trans("Message").":</b> ".dol_escape_htmltag($msg)."<br>\n" ;
 			}
 			else                        // Mode CLI
 			{
@@ -2903,8 +2910,8 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
 		//print "&nbsp;";
-		$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-		$sortimg.= '<span class="nowrap">';
+		//$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
+		//$sortimg.= '<span class="nowrap">';
 
 		if (! $sortorder || $field != $sortfield)
 		{
@@ -2916,16 +2923,16 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 			if ($sortorder == 'DESC' ) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
-				$sortimg.= img_up("Z-A",0);
+				$sortimg.= '<span class="nowrap">'.img_up("Z-A",0).'</span>';
 			}
 			if ($sortorder == 'ASC' ) {
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
 				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-				$sortimg.= img_down("A-Z",0);
+				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';
 			}
 		}
 
-		$sortimg.= '</span>';
+		//$sortimg.= '</span>';
 	}
 
 	$out.=$sortimg;
@@ -2974,10 +2981,11 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
+ *  @param  string  $morecssontable     More css on table
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0)
+function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
 {
 	global $conf;
 
@@ -2987,8 +2995,8 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -4128,8 +4136,7 @@ function yn($yesno, $case=1, $color=0)
 /**
  *	Return a path to have a directory according to object.
  *  New usage:       $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
- *  Old usage:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
- *  Old usage:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
+ *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/" 
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
@@ -4864,6 +4871,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 						if (block) {
 							$.dolEventValid("","'.dol_escape_js($out).'");
 						} else {
+							/* jnotify(message, preset of message type, keepmessage) */
 							$.jnotify("'.dol_escape_js($out).'",
 							"'.($style=="ok" ? 3000 : $style).'",
 							'.($style=="ok" ? "false" : "true").',
@@ -5321,6 +5329,7 @@ function printCommonFooter($zone='private')
 	print "\n";
 	if (! empty($conf->use_javascript_ajax))
 	{
+		print '<!-- Reposition management (does not work if a redirect is done after action of submission) -->'."\n";
     	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
     	
     	print '<!-- If page_y set, we set scollbar with it -->'."\n";
@@ -5330,9 +5339,15 @@ function printCommonFooter($zone='private')
     	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
     	print 'jQuery(".reposition").click(function() {
     	           var page_y = $(document).scrollTop();
-    	           /* alert(page_y); */
+    	           /*alert(page_y);*/
     	           this.href=this.href+\'&page_y=\'+page_y;
     	           });'."\n";
+    	print '});'."\n";
+    	
+    	print '<!-- Set handler to switch left menu page -->'."\n";
+    	print 'jQuery(".menuhider").click(function() {';
+    	print "  $('.side-nav').toggle();";
+    	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
     	print '});'."\n";
     	
     	print '</script>'."\n";

@@ -445,7 +445,7 @@ class ProductFournisseur extends Product
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE pfp.entity IN (".getEntity('productprice', 1).")";
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND s.status=1"; // only enabled company selected
         $sql.= " AND pfp.fk_product = ".$prodid;
@@ -466,6 +466,7 @@ class ProductFournisseur extends Product
                 $prodfourn->product_fourn_price_id	= $record["product_fourn_pri_id"];
                 $prodfourn->product_fourn_id		= $record["product_fourn_id"];
                 $prodfourn->fourn_ref				= $record["ref_fourn"];
+                $prodfourn->ref_supplier			= $record["ref_fourn"];
                 $prodfourn->fourn_price				= $record["price"];
                 $prodfourn->fourn_qty				= $record["quantity"];
 				$prodfourn->fourn_remise_percent	= $record["remise_percent"];

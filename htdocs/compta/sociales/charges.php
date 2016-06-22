@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -325,8 +325,6 @@ if ($id > 0)
 	{
 		$head=tax_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
-
 		// Clone confirmation
 		if ($action === 'clone')
 		{
@@ -357,11 +355,16 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 
+		
+		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
+		
 		print '<table class="border" width="100%">';
 
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
+		
 		// Ref
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="2">';
-		print $form->showrefnav($object,'id');
+		print '<tr><td class="fieldtitle">'.$langs->trans("Ref").'</td><td colspan="2">';
+		print $form->showrefnav($object,'id',$linkback);
 		print "</td></tr>";
 
 		// Label
@@ -402,7 +405,7 @@ if ($id > 0)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
-			print '<table class="nobordernopadding" width="100%">';
+			print '<table class="nobordernopadding paymenttable" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -488,9 +491,12 @@ if ($id > 0)
 
 		print '</table>';
 
+		dol_fiche_end();
+		
+		
 		if ($action == 'edit')
 		{
-			print '<br><div align="center">';
+			print '<div align="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -499,7 +505,6 @@ if ($id > 0)
 
 		if ($action == 'edit') print "</form>\n";
 
-		dol_fiche_end();
 
 
 		/*

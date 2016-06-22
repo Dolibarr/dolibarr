@@ -14,6 +14,5 @@ BehaviourOnClick=Μετάβαση σε
 CreateBookmark=Δημιουργία σελιδοδείκτη
 SetHereATitleForLink=Ορισμός τίτλου για τον σελιδοδείκτη
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Χρησιμοποιήστε μια εξωτερική διεύθυνση URL ή μια σχετική διεύθυνση URL του Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Με ποιον τρόπο θα ανοίξει η σελίδα
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Διαχείριση σελιδοδεικτών
-ListOfBookmarks=Λίστα σελιδοδεικτών

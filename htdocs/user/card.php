@@ -333,7 +333,7 @@ if (empty($reshook)) {
 					$object->gender = GETPOST("gender", 'alpha');
 					$object->pass = GETPOST("password");
 					$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-					$object->admin = empty($user->admin) ? 0 : GETPOST("admin"); // A user can only be set admin by an admin
+					if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 					$object->address = GETPOST('address', 'alpha');
 					$object->zip = GETPOST('zipcode', 'alpha');
 					$object->town = GETPOST('town', 'alpha');
@@ -889,7 +889,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     // Address
     print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+	print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
     print $object->address;
     print '</textarea></td></tr>';
 
@@ -1738,7 +1738,7 @@ else
                 }
                 else
                 {
-                    print '<tr '.$bc[false].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
+                    print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
                 }
 
                 print "</table>";
@@ -1914,7 +1914,7 @@ else
                 if ($user->admin								// Need to be admin to allow downgrade of an admin
                 && ($user->id != $object->id)                   // Don't downgrade ourself
                 && (
-                	(empty($conf->multicompany->enabled) && $nbAdmin > 1)
+                	(empty($conf->multicompany->enabled) && $nbAdmin >= 1)
                 	|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
                 	)
                 )
@@ -1998,7 +1998,7 @@ else
 
 			// Address
             print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	        print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+	        print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 

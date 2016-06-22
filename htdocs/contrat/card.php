@@ -1060,7 +1060,7 @@ if ($action == 'create')
 
             $projectid          = (!empty($objectsrc->fk_project)?$objectsrc->fk_project:'');
 
-            $soc = $objectsrc->client;
+            $soc = $objectsrc->thirdparty;
 
             $note_private		= (! empty($objectsrc->note_private) ? $objectsrc->note_private : '');
             $note_public		= (! empty($objectsrc->note_public) ? $objectsrc->note_public : '');

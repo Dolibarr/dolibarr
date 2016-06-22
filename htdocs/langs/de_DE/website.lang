@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - website
+Shortname=Code
+WebsiteSetupDesc=Erstellen Sie hier für jede benötigte Website einen Eintrag. Gehen Sie anschließend in das Menü Websites zu Bearbeitung.
+DeleteWebsite=Website löschen
+ConfirmDeleteWebsite=Möchten Sie diese Website wirklich löschen? Alle Seiten inkl. Inhalt werden auch gelöscht.
+WEBSITE_PAGENAME=Seitenname/Alias
+WEBSITE_CSS_URL=URL der externen CSS-Datei
+WEBSITE_CSS_INLINE=CSS Inhalt
+MediaFiles=Medienbibliothek
+EditCss=Style/CSS bearbeiten
+EditMenu=Menü bearbeiten
+EditPageMeta=Meta bearbeiten
+EditPageContent=Inhalt bearbeiten
+Website=Webseite
+AddPage=Seite hinzufügen
+PreviewOfSiteNotYetAvailable=Vorschau ihrer Webseite <strong>%s</strong> noch nicht Verfügbar. Zuerst muss eine Seite hinzugefügt werden.
+RequestedPageHasNoContentYet=Die Seite mit id %s hat keinen Inhalt oder die Cachedatei .tpl.php wurde gelöscht. Editieren Sie den Inhalt der Seite um das Problem zu lösen.
+PageDeleted=Seite '%s' der Webseite %s entfernt
+PageAdded=Seite '%s' angefügt
+ViewSiteInNewTab=Webseite in neuen Tab anzeigen
+ViewPageInNewTab=Seite in neuem Tab anzeigen
+SetAsHomePage=Als Startseite festlegen
+RealURL=Echte URL

@@ -478,9 +478,20 @@ class Commande extends CommonOrder
                 }
             }
 
-            $this->statut=self::STATUS_DRAFT;
-            $this->db->commit();
-            return 1;
+            if (!$error) {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_SETDRAFT',$user);
+            	if ($result < 0) $error++;
+            }
+            
+            if (!$error) {
+           		$this->statut=self::STATUS_DRAFT;
+            	$this->db->commit();
+            	return 1;
+            }else {
+            	$this->db->rollback();
+            	return -1;
+            }
         }
         else
         {
@@ -1394,6 +1405,11 @@ class Commande extends CommonOrder
                 return -2;
             }
         }
+        else
+        {
+            dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+            return -3;
+        }
     }
 
 
@@ -1847,9 +1863,9 @@ class Commande extends CommonOrder
 
     /**
      *	Load array this->expeditions of lines of shipments with nb of products sent for each order line
-     *  Note: For a dedicated shipment, the fetch_lines load the qty_asked and qty_shipped. This function return qty_shipped cuulated for order
+     *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
      *   
-     *	@param      int		$filtre_statut      Filter on status
+     *	@param      int		$filtre_statut      Filter on shipment status
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
     function loadExpeditions($filtre_statut=-1)
@@ -1916,21 +1932,6 @@ class Commande extends CommonOrder
             return $row[0];
         }
         else dol_print_error($this->db);
-    }
-
-    /**
-     *	Return a array with sendings by line
-     *
-     *	@param      int		$filtre_statut      Filtre sur statut
-     *	@return     int                 		0 si OK, <0 si KO
-     *
-     *	TODO  deprecate, move to Shipping class
-     */
-    function livraison_array($filtre_statut=self::STATUS_CANCELED)
-    {
-        $delivery = new Livraison($this->db);
-        $deliveryArray = $delivery->livraison_array($filtre_statut);
-        return $deliveryArray;
     }
 
     /**
@@ -2485,7 +2486,57 @@ class Commande extends CommonOrder
 		return $this->classifyBilled($user);
 	}
 
-
+	/**
+	 * Classify the order as not invoiced
+	 *
+	 * @return     int     <0 if ko, >0 if ok
+	 */
+	function classifyUnBilled()
+	{
+	    global $conf, $user, $langs;
+	    $error = 0;
+	
+	    $this->db->begin();
+	
+	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 0';
+	    $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+	
+	    dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
+	    if ($this->db->query($sql))
+	    {
+	        // Call trigger
+	        $result=$this->call_trigger('ORDER_CLASSIFY_UNBILLED',$user);
+	        if ($result < 0) $error++;
+	        // End call triggers
+	
+	        if (! $error)
+	        {
+	            $this->facturee=0; // deprecated
+	            $this->billed=0;
+	
+	            $this->db->commit();
+	            return 1;
+	        }
+	        else
+	        {
+	            foreach($this->errors as $errmsg)
+	            {
+	                dol_syslog(get_class($this)."::classifyUnBilled ".$errmsg, LOG_ERR);
+	                $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            }
+	            $this->db->rollback();
+	            return -1*$error;
+	        }
+	    }
+	    else
+	    {
+	        $this->error=$this->db->error();
+	        $this->db->rollback();
+	        return -1;
+	    }
+	}
+	
+	
     /**
      *  Update a line in database
      *
@@ -2958,7 +3009,7 @@ class Commande extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
+	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             $generic_commande = new Commande($this->db);
@@ -3262,9 +3313,12 @@ class Commande extends CommonOrder
                 $line->total_tva=19.6;
                 $line->remise_percent=0;
             }
-            $prodid = mt_rand(1, $num_prods);
-            $line->fk_product=$prodids[$prodid];
-
+            if ($num_prods > 0)
+            {
+            	$prodid = mt_rand(1, $num_prods);
+            	$line->fk_product=$prodids[$prodid];
+            }
+            
             $this->lines[$xnbp]=$line;
 
             $this->total_ht       += $line->total_ht;

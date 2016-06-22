@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - salaries
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accountancy code for salaries payments
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accountancy code for financial charge
+Salary=Salary
+Salaries=Salaries
+NewSalaryPayment=New salary payment
+SalaryPayment=Salary payment
+SalariesPayments=Salaries payments
+ShowSalaryPayment=Show salary payment
+THM=Average hourly price
+TJM=Average daily price
+CurrentSalary=Current salary
+THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently as information only and is not used for any calculation

@@ -314,7 +314,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
-	print '<textarea name="address" id="address" cols="80" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS:$_POST["address"]) . '</textarea></td></tr>'."\n";
+	print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS:$_POST["address"]) . '</textarea></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';

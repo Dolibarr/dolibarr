@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Relatório de despesas
 ExpenseReports=Relatórios de despesas
-Trip=Relatório de Despesas
 Trips=Relatórios de Despesas
 TripsAndExpenses=Relatório de Despesas
 TripsAndExpensesStatistics=Estatísticas dos Relatórios de Despesas
@@ -12,21 +11,18 @@ ListOfFees=Lista de Taxas
 ShowTrip=Show expense report
 NewTrip=Novo relatório de despesas
 CompanyVisited=Empresa/Instituição Visitada
-Kilometers=Quilómetros
 FeesKilometersOrAmout=Quantidade de Quilómetros
 DeleteTrip=Apagar relatório de despesas
 ConfirmDeleteTrip=Tem a certeza que deseja apagar este relatório de despesas?
 ListTripsAndExpenses=Lista de relatórios de despesas
 ListToApprove=A aguardar aprovação
 ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
 ClassifyRefunded=Classificar 'Reembolsado'
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Pessoa para informar para validação.
 TripSociete=Informação da Empresa
-TripSalarie=Informations user
 TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Linha do relatório de despesas
@@ -43,13 +39,8 @@ TF_HOTEL=Hotel
 TF_TAXI=Táxi
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-AucuneNDF=No expense reports found for this criteria
 AucuneLigne=There is no expense report declared yet
-AddLine=Adicione uma linha
-AddLineMini=Adicionar
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
 ModePaiement=Modo de pagamento
 
 VALIDATOR=Utilizador responsável pela aprovação
@@ -64,21 +55,15 @@ MOTIF_CANCEL=Motivo
 
 DATE_REFUS=Negada em
 DATE_SAVE=Data da validação
-DATE_VALIDE=Data da validação
 DATE_CANCEL=Data do cancelamento
 DATE_PAIEMENT=Data de pagamento
 
-TO_PAID=Pagar
 BROUILLONNER=Reabrir
-SendToValid=Sent on approval
-ModifyInfoGen=Editar
 ValidateAndSubmit=Validar e submeter para aprovação 
 ValidatedWaitingApproval=Validated (waiting for approval)
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 
-RefuseTrip=Deny an expense report
 ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
 
 ValideTrip=Aprovar relatório de despesas
@@ -87,7 +72,6 @@ ConfirmValideTrip=Are you sure you want to approve this expense report ?
 PaidTrip=Pagar um relatório de despesas
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
 
-CancelTrip=Cancelar um relatório de despesas
 ConfirmCancelTrip=Are you sure you want to cancel this expense report ?
 
 BrouillonnerTrip=Move back expense report to status "Draft"

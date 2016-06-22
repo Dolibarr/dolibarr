@@ -167,9 +167,10 @@ class Categorie extends CommonObject
 	 *
 	 * 	@param		int		$id		Id of category
 	 *  @param		string	$label	Label of category
+	 *  @param		string	$type	Type of category
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
-	function fetch($id,$label='')
+	function fetch($id,$label='',$type='')
 	{
 		global $conf;
 
@@ -182,10 +183,10 @@ class Categorie extends CommonObject
 		{
 			$sql.= " WHERE rowid = '".$id."'";
 		}
-
 		else
 		{
-			if ($label) $sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
+			$sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
+			if ($type) $sql.= " AND type = '".$this->db->escape($type)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -255,9 +256,9 @@ class Categorie extends CommonObject
 
 		if ($this->already_exists())
 		{
-			$this->error=$langs->trans("ImpossibleAddCat");
+			$this->error=$langs->trans("ImpossibleAddCat", $this->label);
 			$this->error.=" : ".$langs->trans("CategoryExistsAtSameLevel");
-			dol_syslog($this->error, LOG_ERR);
+			dol_syslog($this->error, LOG_WARNING);
 			return -4;
 		}
 
@@ -1272,11 +1273,11 @@ class Categorie extends CommonObject
 	 * Return list of categories (object instances or labels) linked to element of id $id and type $type
 	 * Should be named getListOfCategForObject
 	 *
-	 * @param   int    $id   Id of element
-	 * @param   string $type Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 * @param   string $mode 'object'=Get array of fetched category instances, 'label'=Get array of category
-	 *                       labels, 'id'= Get array of category IDs
-	 * @return  mixed        Array of category objects or < 0 if KO
+	 * @param   int    $id     Id of element
+	 * @param   string $type   Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
+	 * @param   string $mode   'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
+	 *                         labels, 'id'= Get array of category IDs
+	 * @return  mixed          Array of category objects or < 0 if KO
 	 */
 	function containing($id, $type, $mode='object')
 	{
@@ -1716,6 +1717,6 @@ class Categorie extends CommonObject
 			'categorie_societe'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, 1);
 	}
 }

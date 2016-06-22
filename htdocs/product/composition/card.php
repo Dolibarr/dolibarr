@@ -116,13 +116,14 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 else if($action==='save_composed_product')
 {
 	$TProduct = GETPOST('TProduct', 'array');
-	if(!empty($TProduct))
+	if (!empty($TProduct))
 	{
 		foreach ($TProduct as $id_product => $row)
 		{
 			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0 );
 			else $object->del_sousproduit($id, $id_product);
 		}
+		setEventMessages('RecordSaved', null);
 	}
 	$action='';
 }
@@ -282,7 +283,7 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				print '<tr class="impair">';
-				print '<td colspan="3">'.$langs->trans("None").'</td>';
+				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 			print '</table>';
@@ -453,7 +454,7 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($conf->stock->enabled)) $colspan++;
 
 				print '<tr class="impair">';
-				print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
+				print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 

@@ -170,6 +170,7 @@ if ($resql)
     $i = 0;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     $param.='&search_contract='.$search_contract;
     $param.='&search_name='.$search_name;
@@ -256,7 +257,7 @@ if ($resql)
     print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
     print '</td>';
     print '<td class="liste_titre">';
-    print '<input type="text" class="flat" size="6" name="search_ref_customer value="'.dol_escape_htmltag($search_ref_supplier).'">';
+    print '<input type="text" class="flat" size="6" name="search_ref_customer value="'.dol_escape_htmltag($search_ref_customer).'">';
     print '</td>';
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="6" name="search_ref_supplier value="'.dol_escape_htmltag($search_ref_supplier).'">';

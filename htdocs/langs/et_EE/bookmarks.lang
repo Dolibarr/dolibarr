@@ -14,6 +14,5 @@ BehaviourOnClick=Käitumine URLil klõpsamise puhul
 CreateBookmark=Loo järjehoidja
 SetHereATitleForLink=Sea järjehoidja pealkiri
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Kasuta välise lehe URLi või Dolibarri sisest linki
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Vali, kas leht avaneb uues või olemasolevas aknas
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Järjehoidjate haldamine
-ListOfBookmarks=Järjehoidjad

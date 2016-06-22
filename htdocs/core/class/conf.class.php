@@ -378,6 +378,8 @@ class Conf
 
 		// Set some default values
 
+		$this->global->MAIN_ACTIVATE_HTML5=1;
+		
 		// societe
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
@@ -403,6 +405,7 @@ class Conf
 			$this->global->STOCK_CALCULATE_ON_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_VALIDATE_ORDER=0;
 			$this->global->STOCK_CALCULATE_ON_SHIPMENT=1;
+			$this->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_BILL=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER=0;
 			$this->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER=1;
@@ -505,7 +508,7 @@ class Conf
 		{
 		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
 		    $this->projet->task                 = new StdClass();
-		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_TASKS_TODO:7)*24*60*60;
 		}
 		
         if (isset($this->commande)) {

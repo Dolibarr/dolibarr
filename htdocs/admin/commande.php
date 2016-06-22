@@ -166,8 +166,8 @@ else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
 	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// We therefore requires a variable to have a coherent view
 		$conf->global->COMMANDE_ADDON_PDF = $value;
 	}
 
@@ -181,8 +181,8 @@ else if ($action == 'setdoc')
 
 else if ($action == 'setmod')
 {
-	// TODO Verifier si module numerotation choisi peut etre active
-	// par appel methode canBeActivated
+	// TODO Check if numbering module chosen can be activated 
+	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "COMMANDE_ADDON",$value,'chaine',0,'',$conf->entity);
 }

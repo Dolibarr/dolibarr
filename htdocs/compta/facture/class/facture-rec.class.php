@@ -666,7 +666,7 @@ class FactureRec extends CommonInvoice
 				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
 			    $facture->type = self::TYPE_STANDARD;
 			    $facture->brouillon = 1;
-			    $facture->date = $now;
+			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
 			    
 			    $invoiceidgenerated = $facture->create($user);       // This will also update fields of recurring invoice
@@ -761,6 +761,8 @@ class FactureRec extends CommonInvoice
 		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
 		$prodids = array();
+		$num_prods = 0;
+		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
 		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
@@ -960,6 +962,7 @@ class FactureRec extends CommonInvoice
         if ($this->db->query($sql))
         {
             $this->date_when = $date;
+            if ($increment_nb_gen_done>0) $this->nb_gen_done++;
             return 1;
         }
         else

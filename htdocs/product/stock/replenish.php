@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2015	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,9 @@ if (!$sortorder) {
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical=0;
-if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
+if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+|| ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE))
 {
     $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -238,7 +241,7 @@ $form = new Form($db);
 
 $title = $langs->trans('Status');
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.price,';
+$sql = 'SELECT p.rowid, p.ref, p.label,p.description, p.price,';
 $sql.= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
 $sql.= ' p.tms as datem, p.duration, p.tobuy,';
 $sql.= ' p.desiredstock, p.seuil_stock_alerte as alertstock,';
@@ -487,7 +490,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		// Multilangs
 		if (! empty($conf->global->MAIN_MULTILANGS))
 		{
-			$sql = 'SELECT label';
+			$sql = 'SELECT label,description';
 			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'product_lang';
 			$sql .= ' WHERE fk_product = ' . $objp->rowid;
 			$sql .= ' AND lang = "' . $langs->getDefaultLang() . '"';
@@ -497,6 +500,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			if ($resqlm)
 			{
 				$objtp = $db->fetch_object($resqlm);
+				if (!empty($objtp->description)) $objp->description = $objtp->description;
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
 		}
@@ -554,7 +558,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
-		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->label . '" ></td>';
+		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->description . '" ></td>';
 
 		if (!empty($conf->service->enabled) && $type == 1)
 		{

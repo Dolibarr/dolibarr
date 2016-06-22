@@ -254,7 +254,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	string	$htmlname		DIV ID (field name)
      * @param	int		$condition		Condition to edit
-     * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:xxx')
+     * @param	string	$inputType		Type of input ('string', 'numeric', 'datepicker', 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:xxx')
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -280,6 +280,7 @@ class Form
             $savemethod		= false;
             $ext_element	= false;
             $button_only	= false;
+            $inputOption    = '';
 
             if (is_object($object))
             {
@@ -299,6 +300,7 @@ class Form
                 $inputType=$tmp[0];
                 if (! empty($tmp[1])) $inputOption=$tmp[1];
                 if (! empty($tmp[2])) $savemethod=$tmp[2];
+				$out.= '<input id="width_'.$htmlname.'" value="'.$inputOption.'" type="hidden"/>'."\n";
             }
             else if ((preg_match('/^datepicker/',$inputType)) || (preg_match('/^datehourpicker/',$inputType)))
             {
@@ -363,7 +365,6 @@ class Form
             	$out.= '<input id="textarea_'.$htmlname.'_rows" value="'.$rows.'" type="hidden"/>'."\n";
             	$out.= '<input id="textarea_'.$htmlname.'_cols" value="'.$cols.'" type="hidden"/>'."\n";
             }
-
             $out.= '<span id="viewval_'.$htmlname.'" class="viewval_'.$inputType.($button_only ? ' inactive' : ' active').'">'.$value.'</span>'."\n";
             $out.= '<span id="editval_'.$htmlname.'" class="editval_'.$inputType.($button_only ? ' inactive' : ' active').' hideobject">'.(! empty($editvalue) ? $editvalue : $value).'</span>'."\n";
         }
@@ -1137,8 +1138,8 @@ class Form
                 {
                     $obj = $this->db->fetch_object($resql);
                     $desc=dol_trunc($obj->description,40);
-                    if ($desc=='(CREDIT_NOTE)') $desc=$langs->trans("CreditNote");
-                    if ($desc=='(DEPOSIT)')     $desc=$langs->trans("Deposit");
+                    if (preg_match('/\(CREDIT_NOTE\)/', $desc)) $desc=preg_replace('/\(CREDIT_NOTE\)/', $langs->trans("CreditNote"), $desc);
+                    if (preg_match('/\(DEPOSIT\)/', $desc)) $desc=preg_replace('/\(DEPOSIT\)/', $langs->trans("Deposit"), $desc);
 
                     $selectstring='';
                     if ($selected > 0 && $selected == $obj->rowid) $selectstring=' selected';
@@ -1603,7 +1604,7 @@ class Form
      *  @param		string		$selected_input_value	Value of preselected input text (for use with ajax)
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
-     *  @param      int			$socid					Thirdparty Id
+     *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
      *  @return		void
      */
     function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0)
@@ -1662,7 +1663,7 @@ class Form
      *	@param		int		$status         -1=Return all products, 0=Products not on sell, 1=Products on sell
      *  @param      int		$finished       Filter on finished field: 2=No filter
      *  @param      int		$outputmode     0=HTML select string, 1=Array
-     *  @param      int		$socid     		Thirdparty Id
+     *  @param      int		$socid     		Thirdparty Id (to get also price dedicated to this customer)
      *  @return     array    				Array of keys for json
      */
     function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0)
@@ -1673,7 +1674,7 @@ class Form
         $outarray=array();
 
         $sql = "SELECT ";
-        $sql.= " p.rowid, p.label, p.ref, p.description, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock, p.fk_price_expression";
+        $sql.= " p.rowid, p.label, p.ref, p.description, p.barcode, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.duration, p.stock, p.fk_price_expression";
 
         //Price by customer
         if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES) && !empty($socid)) {
@@ -1860,6 +1861,7 @@ class Form
         $outref='';
         $outlabel='';
         $outdesc='';
+        $outbarcode='';
         $outtype='';
         $outprice_ht='';
         $outprice_ttc='';
@@ -1878,6 +1880,8 @@ class Form
         $outref=$objp->ref;
         $outlabel=$objp->label;
         $outdesc=$objp->description;
+        $outbarcode=$objp->barcode;
+        
         $outtype=$objp->fk_product_type;
         $outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration,0,dol_strlen($objp->duration)-1):'';
         $outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration,-1):'';
@@ -1891,12 +1895,16 @@ class Form
 			else if ($objp->stock <= 0) $opt.= ' class="product_line_stock_too_low"';
         }
         $opt.= '>';
-        $opt.= $objp->ref.' - '.dol_trunc($label,$maxlengtharticle).' - ';
-
+        $opt.= $objp->ref;
+        if ($outbarcode) $opt.=' ('.$outbarcode.')';
+        $opt.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
+        
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
-        $outval.=$objRef.' - '.dol_trunc($label,$maxlengtharticle).' - ';
-
+        $outval.=$objRef;
+        if ($outbarcode) $outval.=' ('.$outbarcode.')';
+        $outval.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
+        
         $found=0;
 
         // Multiprice
@@ -2322,7 +2330,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-        $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE p.entity IN (".getEntity('productprice', 1).")";
         $sql.= " AND p.tobuy = 1";
         $sql.= " AND s.fournisseur = 1";
         $sql.= " AND p.rowid = ".$productid;
@@ -3805,7 +3813,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->selectMultiCurrency($selected, $htmlname, 1);
+            print $this->selectMultiCurrency($selected, $htmlname, 0);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -3887,7 +3895,7 @@ class Form
             }
             else
             {
-                if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
+                if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
                 else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
             }
             $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
@@ -3898,7 +3906,7 @@ class Form
             if ($nbqualifiedlines > 0)
             {
                 print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
-                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description='(DEPOSIT)')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
+                if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
                 print '>';
             }
             if ($more) print $more;
@@ -4084,7 +4092,7 @@ class Form
 		
 		$out='';
         $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value="'.$conf->currency.'"'.((empty($selected) || $selected == $conf->currency)?' selected="selected"':'').'>'.$langs->cache_currencies[$conf->currency]['label'].'</option>';
+		if ($useempty) $out .= '<option value=""></option>';
 		if (count($TCurrency) > 0)
 		{
 			foreach ($langs->cache_currencies as $code_iso => $currency)
@@ -5914,7 +5922,7 @@ class Form
     /**
      *	Return HTML to show the search and clear seach button
      *
-     *  @param	int  	$addcheckuncheckall        Add the check all uncheck al button
+     *  @param	int  	$addcheckuncheckall        Add the check all uncheck all button
      *  @param  string  $cssclass                  CSS class
      *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
      *  @return	string                          
@@ -5941,7 +5949,7 @@ class Form
                         {
                             console.log("We uncheck all");
                     		$(".'.$cssclass.'").prop(\'checked\', false);
-                        }';
+                        }'."\n";
         if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t done."); }';
         $out.='         });
                 });

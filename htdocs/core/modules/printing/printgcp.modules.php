@@ -458,7 +458,7 @@ class printing_printgcp extends PrintingDriver
         else
         {
                 $html .= '<tr '.$bc[$var].'>';
-                $html .= '<td colspan="6">'.$langs->trans("None").'</td>';
+                $html .= '<td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td>';
                 $html .= '</tr>';
         }
         $html .= '</table>';

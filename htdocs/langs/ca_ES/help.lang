@@ -4,7 +4,6 @@ EMailSupport=Assistència E-Mail
 RemoteControlSupport=Assistència en temps real a distància
 OtherSupport=Altres tipus d'assistència
 ToSeeListOfAvailableRessources=Per contactar/veure els recursos disponibles:
-ClickHere=Faci clic aquí
 HelpCenter=Centre  d'assistència
 DolibarrHelpCenter=Centre de suport i ajuda Dolibarr
 ToGoBackToDolibarr=D'altra banda, faci clic <a href="%s">aquí per utilitzar Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=En ocasions, cap operador es troba disponible en el mo
 BackToHelpCenter=Sinó, feu clic aquí per <a href="%s"> tornar al centre d'assistència</a>.
 LinkToGoldMember=En cas contrari, podeu trucar immediatament a un dels assistents preseleccionats per Dolibarr per al seu idioma (%s) fent clic en el seu widget (disponibilitat i tarifa màxima actualitzades automàticament):
 PossibleLanguages=Idiomes disponibles
-MakeADonation=Ajudeu-nos al projecte Dolibarr, feu una donació
 SubscribeToFoundation=Ajuda al projecte Dolibarr, adhereix-te a l'associació
 SeeOfficalSupport=Per suport oficial de Dolibar amb el teu llenguatge:<br><b><a href="%s" target="_blank">%s</a></b>

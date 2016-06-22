@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Giao hàng
-Deliveries=Giao hàng
+DeliveryRef=Ref Delivery
 DeliveryCard=Thẻ giao hàng
 DeliveryOrder=Phiếu giao hàng
-DeliveryOrders=Phiếu giao hàng
 DeliveryDate=Ngày giao hàng
-DeliveryDateShort=Ngày giao hàng
 CreateDeliveryOrder=Tạo phiếu giao hàng
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Số lượng đã giao hàng
 SetDeliveryDate=Lập ngày vận chuyển
 ValidateDeliveryReceipt=Xác nhận chứng từ giao hàng
 ValidateDeliveryReceiptConfirm=Bạn có chắc muốn xác nhận chứng từ giao hàng này ?
@@ -30,3 +27,4 @@ Recipient=Người nhận
 ErrorStockIsNotEnough=Không có đủ tồn kho
 Shippable=Vận chuyển được
 NonShippable=Không vận chuyển được
+ShowReceiving=Show delivery receipt

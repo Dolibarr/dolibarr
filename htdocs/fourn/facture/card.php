@@ -1869,8 +1869,8 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
-        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
+        print '<tr><td>'.$form->editfieldkey("Label",'libelle',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
+        print '<td colspan="3">'.$form->editfieldval("Label",'libelle',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
 
         /*
          * List of payments
@@ -1957,7 +1957,7 @@ else
             }
             else
             {
-                 print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'">'.$langs->trans("None").'</td><td></td><td></td></tr>';
+                 print '<tr '.$bc[$var].'><td colspan="'.$nbcols.'" class="opacitymedium">'.$langs->trans("None").'</td><td></td><td></td></tr>';
             }
 
             if ($object->paye == 0)

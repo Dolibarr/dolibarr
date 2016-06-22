@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
 Commercial=تجاری
 CommercialArea=منطقه تجاری
-CommercialCard=کارت بازرگانی
-CustomerArea=منطقه مشتریان
 Customer=مشتری
 Customers=مشتریان
 Prospect=چشم انداز
@@ -12,13 +10,10 @@ NewAction=New event
 AddAction=Create event
 AddAnAction=Create an event
 AddActionRendezVous=Create a Rendez-vous event
-Rendez-Vous=قرار ملاقات گذاشتن
 ConfirmDeleteAction=Are you sure you want to delete this event ?
 CardAction=کارت رویداد
-PercentDone=درصد کامل
-ActionOnCompany=کار در مورد شرکت
-ActionOnContact=کار درباره ما تماس با
-TaskRDV=جلسات
+ActionOnCompany=Related company
+ActionOnContact=Related contact
 TaskRDVWith=نشست با٪ s
 ShowTask=نمایش کار
 ShowAction=نمایش رویداد
@@ -28,30 +23,21 @@ SalesRepresentative=نمایندگی فروش
 SalesRepresentatives=نمایندگان فروش
 SalesRepresentativeFollowUp=نماینده فروش (پیگیری)
 SalesRepresentativeSignature=نماینده فروش (امضا)
-CommercialInterlocutor=مخاطب تجاری
-ErrorWrongCode=کد اشتباه است
 NoSalesRepresentativeAffected=بدون نمایندگی فروش خاصی اختصاص داده شود
 ShowCustomer=نمایش مشتری
 ShowProspect=نمایش چشم انداز
 ListOfProspects=لیست چشم انداز
 ListOfCustomers=فهرست مشتریان
-LastDoneTasks=تاریخ و زمان آخرین٪ s به کارهای انجام شده
-LastRecordedTasks=وظایف آخرین ثبت
-LastActionsToDo=تاریخ و زمان آخرین٪ قدیمی ترین عملیات به اتمام است
-DoneAndToDoActionsFor=انجام شده و برای این کار رویدادی برای٪ s
+LastDoneTasks=Latest %s completed tasks
+LastActionsToDo=Oldest %s not completed actions
 DoneAndToDoActions=انجام شده و برای این کار وقایع
 DoneActions=رویدادهای انجام شده
-DoneActionsFor=رویدادهای انجام شده برای٪ s
 ToDoActions=رویدادهای ناقص
-ToDoActionsFor=رویدادهای ناقص برای٪ s
 SendPropalRef=Submission of commercial proposal %s
 SendOrderRef=Submission of order %s
 StatusNotApplicable=قابل اجرا نیست
 StatusActionToDo=برای انجام این کار
 StatusActionDone=کامل
-MyActionsAsked=رویدادهای I ثبت شده اند
-MyActionsToDo=رویدادهای من باید انجام دهید
-MyActionsDone=رویدادهای اختصاص داده به من
 StatusActionInProcess=در فرآیند
 TasksHistoryForThisContact=رویدادهای این تماس
 LastProspectDoNotContact=آیا تماس بگیرید
@@ -59,13 +45,8 @@ LastProspectNeverContacted=هرگز تماس
 LastProspectToContact=برای تماس با
 LastProspectContactInProcess=تماس در فرایند
 LastProspectContactDone=تماس با انجام
-DateActionPlanned=تاریخ رویداد برنامه ریزی شده برای
-DateActionDone=تاریخ رویداد انجام می شود
-ActionAskedBy=رویداد گزارش شده توسط
 ActionAffectedTo=Event assigned to
 ActionDoneBy=رویداد های انجام شده توسط
-ActionUserAsk=به گزارش
-ErrorStatusCantBeZeroIfStarted=اگر زمینه <b>'تاریخ انجام می شود'</b> پر شده است، اقدام آغاز شده است (و یا به پایان رسید)، پس درست است <b>'وضعیت'</b> می تواند 0٪٪ نیست.
 ActionAC_TEL=تلفن تماس
 ActionAC_FAX=ارسال فکس
 ActionAC_PROP=ارسال پیشنهاد از طریق پست
@@ -85,13 +66,6 @@ ActionAC_OTH_AUTO=دیگر (رویدادی به طور خودکار قرار د�
 ActionAC_MANUAL=رویدادهای دستی قرار داده
 ActionAC_AUTO=رویدادی به صورت خودکار قرار داده
 Stats=آمار فروش
-CAOrder=حجم فروش (سفارشات اعتبار)
-FromTo=از٪ s به٪ s
-MargeOrder=حاشیه (سفارشات اعتبار)
-RecapAnnee=خلاصه از سال
-NoData=هیچ اطلاعات وجود دارد
 StatusProsp=وضعیت چشم انداز
 DraftPropals=طرح تجاری پیش نویس
-SearchPropal=جستجوی یک طرح تجاری
-CommercialDashboard=خلاصه تجاری
 NoLimit=No limit

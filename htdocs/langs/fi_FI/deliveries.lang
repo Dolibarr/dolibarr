@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Toimitus
-Deliveries=Toimitukset
+DeliveryRef=Ref Delivery
 DeliveryCard=Toimitus-kortti
 DeliveryOrder=Toimitusvahvistus
-DeliveryOrders=Toimitus tilaukset
 DeliveryDate=Toimituspäivää
-DeliveryDateShort=Toimitus. päivämäärä
 CreateDeliveryOrder=Luo toimitusvahvistus
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Kpl toimitettu
 SetDeliveryDate=Aseta meriliikenneyhtiön päivämäärä
 ValidateDeliveryReceipt=Validate toimituksen vastaanottamisen
 ValidateDeliveryReceiptConfirm=Oletko varma, että haluat vahvistaa tämän toimituksen vastaanottamisesta?
@@ -30,3 +27,4 @@ Recipient=Edunsaajavaltiot
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

@@ -605,7 +605,7 @@ if ($mode != 'marketplace')
         else $text.=$langs->trans("No");
         
         $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-        if (isset($objMod->menu) && is_array($objMod->menu) && $objMod->menu)
+        if (isset($objMod->menu) && is_array($objMod->menu) && ! empty($objMod->menu))
         {
             $text.=$langs->trans("Yes");
         }

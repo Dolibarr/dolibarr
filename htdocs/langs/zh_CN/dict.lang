@@ -138,7 +138,7 @@ CountryLS=莱索托
 CountryLR=利比里亚
 CountryLY=利比亚
 CountryLI=列支敦士登
-CountryLT=Lituania
+CountryLT=Lithuania
 CountryLU=卢森堡
 CountryMO=澳门
 CountryMK=马其顿，前南斯拉夫的
@@ -290,6 +290,8 @@ CurrencySingXOF=郎西非国家中央银行
 CurrencyXPF=CFP法郎
 CurrencySingXPF=太平洋法郎
 CurrencyCentSingEUR=美分
+CurrencyCentINR=派萨
+CurrencyCentSingINR=派萨
 CurrencyThousandthSingTND=千分之一
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=因特网

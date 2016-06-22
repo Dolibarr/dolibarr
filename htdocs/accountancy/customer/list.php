@@ -302,7 +302,7 @@ if ($result) {
 		if ($objp->code_sell_l != $objp->code_sell_p)
 			$code_sell_p_l_differ = 'color:red';
 
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;

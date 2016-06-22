@@ -181,14 +181,17 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		}
 		else
 		{
-			$permissions = 0777 ;
-			if ( isset( $Config['ChmodOnFolderCreate'] ) )
+			$permissions = '0777';
+			if ( isset( $Config['ChmodOnFolderCreate'] ) && $Config['ChmodOnFolderCreate'])
 			{
-				$permissions = $Config['ChmodOnFolderCreate'] ;
+				$permissions = (string) $Config['ChmodOnFolderCreate'];
 			}
+			$permissionsdec = octdec($permissions);
+			$permissionsdec |= octdec('0111');  // Set x bit required for directories
+			dol_syslog("io.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
 			// To create the folder with 0777 permissions, we need to set umask to zero.
 			$oldumask = umask(0);
-			mkdir($folderPath, $permissions);
+			mkdir($folderPath, $permissionsdec);
 			umask($oldumask);
 		}
 

@@ -80,7 +80,7 @@ $childids[]=$user->id;
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.rowid as socid,";				// Ou
+$sql = "SELECT s.nom, d.fk_user, s.rowid as socid,";				// Ou
 $sql.= " d.rowid, d.type, d.dated as dd, d.km,";		// Comment
 $sql.= " d.fk_statut,";
 $sql.= " u.lastname, u.firstname";							// Qui
@@ -91,7 +91,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_
 $sql.= " WHERE d.fk_user = u.rowid";
 $sql.= " AND d.entity = ".$conf->entity;
 if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND sc.fk_user = " .$user->id;
+if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND (sc.fk_user = " .$user->id." OR d.fk_soc IS NULL) ";
 if ($socid) $sql.= " AND s.rowid = ".$socid;
 
 if ($search_ref)		$sql.=" AND d.rowid=".$search_ref;
@@ -188,7 +188,7 @@ if ($resql)
         print '<td align="center">'.dol_print_date($db->jdate($obj->dd),'day').'</td>';
         // User
         print '<td>';
-        $userstatic->id = $obj->rowid;
+        $userstatic->id = $obj->fk_user;
         $userstatic->lastname = $obj->lastname;
         $userstatic->firstname = $obj->firstname;
         print $userstatic->getNomUrl(1);

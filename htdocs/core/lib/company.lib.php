@@ -163,7 +163,7 @@ function societe_prepare_head(Societe $object)
         if(!empty($object->note_private)) $nbNote++;
 		if(!empty($object->note_public)) $nbNote++;
         $head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.$object->id;
-        $head[$h][1] = $langs->trans("Note");
+        $head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
         $head[$h][2] = 'note';
         $h++;
@@ -551,7 +551,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+            	print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -766,7 +766,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     else
 	{
         print "<tr ".$bc[! $var].">";
-        print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
+        print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
         print "</tr>\n";
     }
     print "\n</table>\n";

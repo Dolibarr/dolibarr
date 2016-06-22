@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Envio
-Deliveries=Envios
+DeliveryRef=Ref Delivery
 DeliveryCard=Ficha Envio
 DeliveryOrder=Ordem de Envio
-DeliveryOrders=Ordens de Envio
 DeliveryDate=Data de Envio
-DeliveryDateShort=Data Envio
 CreateDeliveryOrder=Gerar Ordem de Entrega
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Quant. Enviada
 SetDeliveryDate=Indicar a Data de Envio
 ValidateDeliveryReceipt=Confirmar a Nota de Entrega
 ValidateDeliveryReceiptConfirm=Deseja mesmo confirmar esta entrega?
@@ -30,3 +27,4 @@ Recipient=Destinatário
 ErrorStockIsNotEnough=Não existe estoque suficiente
 Shippable= Transportável
 NonShippable=Não Transportável
+ShowReceiving=Show delivery receipt

@@ -741,7 +741,7 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
@@ -886,7 +886,7 @@ else
 	        }
 	
 	        // Close
-	        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
+	        if ($object->statut == 1 && $user->rights->projet->creer)
 	        {
 	            if ($userWrite > 0)
 	            {
@@ -956,7 +956,6 @@ else
 	            }
 	            if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
 	            {
-	                $langs->load("expensereports");
 	                $langs->load("trips");
 	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
 	            }
@@ -981,9 +980,9 @@ else
 	        }
 	
 	        // Delete
-	        if ($user->rights->projet->supprimer)
+	        if ($user->rights->projet->supprimer || ($object->statut == 0 && $user->rights->projet->creer))
 	        {
-	            if ($userDelete > 0)
+	            if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 	            {
 	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 	            }

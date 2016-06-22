@@ -1076,31 +1076,32 @@ if ($action == 'create')
 
 	// Terms of payment
 	print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td colspan="2">';
-	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
+	$form->select_conditions_paiements(GETPOST('cond_reglement_id') > 0 ? GETPOST('cond_reglement_id') : $soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
-	$form->select_types_paiements($soc->mode_reglement_id, 'mode_reglement_id');
+	$form->select_types_paiements(GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $soc->mode_reglement_id, 'mode_reglement_id');
 	print '</td></tr>';
 
     // Bank Account
     if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
-        $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+        $form->select_comptes(GETPOST('fk_account')>0 ? GETPOST('fk_account','int') : $fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
     }
 
     // Shipping Method
     if (! empty($conf->expedition->enabled)) {
         print '<tr><td>' . $langs->trans('SendingMethod') . '</td><td colspan="2">';
-        print $form->selectShippingMethod($shipping_method_id, 'shipping_method_id', '', 1);
+        print $form->selectShippingMethod(GETPOST('shipping_method_id') > 0 ? GETPOST('shipping_method_id', 'int') : $shipping_method_id, 'shipping_method_id', '', 1);
         print '</td></tr>';
     }
 
 	// Delivery date (or manufacturing)
 	print '<tr><td>' . $langs->trans("DeliveryDate") . '</td>';
 	print '<td colspan="2">';
+	$datedelivery = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
 	if ($conf->global->DATE_LIVRAISON_WEEK_DELAY != "") {
 		$tmpdte = time() + ((7 * $conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
 		$syear = date("Y", $tmpdte);
@@ -1108,7 +1109,7 @@ if ($action == 'create')
 		$sday = date("d", $tmpdte);
 		$form->select_date($syear."-".$smonth."-".$sday, 'liv_', '', '', '', "addask");
 	} else {
-		$form->select_date(-1, 'liv_', '', '', '', "addask", 1, 1);
+		$form->select_date($datedelivery ? $datedelivery : -1, 'liv_', '', '', '', "addask", 1, 1);
 	}
 	print '</td></tr>';
 

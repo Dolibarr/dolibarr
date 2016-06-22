@@ -473,7 +473,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
     $board=new Account($db);
-    $nb = $board::countAccountToReconcile();
+    $nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
     if ($nb > 0)
     {
         $dashboardlines[] = $board->load_board($user);
@@ -481,7 +481,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 }
 
 // Number of cheque to send
-if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id)
+if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->societe_id && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT))
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
     $board=new RemiseCheque($db);

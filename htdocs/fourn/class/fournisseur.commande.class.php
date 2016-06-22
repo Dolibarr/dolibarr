@@ -1458,12 +1458,10 @@ class CommandeFournisseur extends CommonOrder
             //print $sql;
             if ($resql)
             {
-                $this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande_fournisseurdet');
-
                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
 					$linetmp = new CommandeFournisseurLigne($this->db);
-					$linetmp->id=$this->rowid;
+					$linetmp->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'commande_fournisseurdet');
 					$linetmp->array_options = $array_options;
 					$result=$linetmp->insertExtraFields();
 					if ($result < 0)
@@ -2494,7 +2492,7 @@ class CommandeFournisseur extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SuppliersOrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3';
+	        $response->url=DOL_URL_ROOT.'/fourn/commande/list.php?statut=1,2,3&mainmenu=commercial&leftmenu=orders_suppliers';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             while ($obj=$this->db->fetch_object($resql))
@@ -2657,11 +2655,31 @@ class CommandeFournisseur extends CommonOrder
     {
         global $conf;
 		
-        $now = dol_now();
-        $date_to_test = empty($this->date_livraison) ? $this->date_commande : $this->date_livraison;
+        if (empty($this->date_delivery) && ! empty($this->date_livraison)) $this->date_delivery = $this->date_livraison;    // For backward compatibility
         
-        return ($this->statut != 3) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
+        $now = dol_now();
+        $date_to_test = empty($this->date_delivery) ? $this->date_commande : $this->date_delivery;
+        
+        return ($this->statut > 0 && $this->statut < 4) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
+    
+    /**
+     * Show the customer delayed info
+     *
+     * @return string       Show delayed information
+     */
+    public function showDelay()
+    {
+        global $conf, $langs;
+    
+        if (empty($this->date_delivery) && ! empty($this->date_livraison)) $this->date_delivery = $this->date_livraison;    // For backward compatibility
+        
+        if (empty($this->date_delivery)) $text=$langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
+        else $text=$text=$langs->trans("DeliveryDate").' '.dol_print_date($this->date_delivery, 'day');
+        $text.=' '.($conf->commande->fournisseur->warning_delay>0?'+':'-').' '.round(abs($conf->commande->fournisseur->warning_delay)/3600/24,1).' '.$langs->trans("days").' < '.$langs->trans("Today");
+    
+        return $text;
+    }    
 }
 
 

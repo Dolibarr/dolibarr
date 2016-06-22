@@ -3,7 +3,6 @@ PaypalSetup=PayPal moduuli setup
 PaypalDesc=Tämä moduuli tarjoaa sivuja, jotta maksua <a href="http://www.paypal.com" target="_blank">PayPal</a> asiakkaat. Tätä voidaan käyttää ilmaiseksi maksua tai maksun tietystä Dolibarr esine (lasku, tilaus, ...)
 PaypalOrCBDoPayment=Maksaa luottokortilla tai Paypal
 PaypalDoPayment=Maksa Paypal
-PaypalCBDoPayment=Maksa luottokortilla
 PAYPAL_API_SANDBOX=Tila testi / hiekkalaatikko
 PAYPAL_API_USER=API käyttäjätunnus
 PAYPAL_API_PASSWORD=API salasana
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=PayPal only
 PAYPAL_CSS_URL=Optionnal Url CSS-tyylisivun maksamisesta sivu
 ThisIsTransactionId=Tämä on id liiketoimen: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Lisää URL Paypal-maksujärjestelmää, kun lähetät asiakirjan postitse
-PAYPAL_IPN_MAIL_ADDRESS=Sähköpostiosoite varten instant tiedon maksusta (IPN)
 PredefinedMailContentLink=You can click on the secure link below to make your payment (PayPal) if it is not already done.\n\n%s\n\n
 YouAreCurrentlyInSandboxMode=Olet nyt &quot;hiekkalaatikko&quot;-tilassa
 NewPaypalPaymentReceived=New Paypal payment received

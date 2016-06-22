@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Raport Cheltuieli
 ExpenseReports=Rapoarte Cheltuieli
-Trip=Raport Cheltuieli
 Trips=Rapoarte Cheltuieli
 TripsAndExpenses=Rapoarte Cheltuieli
 TripsAndExpensesStatistics=Statistici Rapoarte Cheltuieli
@@ -12,21 +11,18 @@ ListOfFees=Lista note cheltuieli
 ShowTrip=Show expense report
 NewTrip= Raport de cheltuieli nou
 CompanyVisited=Societatea / Instituţia vizitată
-Kilometers=Kilometri
 FeesKilometersOrAmout=Valoarea  sau km
 DeleteTrip=Șterge raport de cheltuieli
 ConfirmDeleteTrip=Sunteți sigur că doriți să ștergeți acest raport cheltuieli?
 ListTripsAndExpenses=Listă rapoarte de cheltuieli
 ListToApprove=În așteptare pentru aprobare
 ExpensesArea=Rapoarte de cheltuieli
-SearchATripAndExpense=Căutați un raport de cheltuieli
 ClassifyRefunded=Clasează "Rambursată"
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=ID Raport de cheltuieli 
 AnyOtherInThisListCanValidate=Persoana de informare pentru validare.
 TripSociete=Informații   companie
-TripSalarie=Informații Utilizator 
 TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Line raport de cheltuieli
@@ -43,13 +39,8 @@ TF_HOTEL=Hotel
 TF_TAXI=Taxi
 
 ErrorDoubleDeclaration=Ați declarat un alt raport de cheltuieli într-un interval de timp similar.
-AucuneNDF=Nu există rapoarte de cheltuieli pentru acest criteriu
 AucuneLigne=Nu există încă nici un raport de cheltuieli declarate 
-AddLine=Adaugao linie
-AddLineMini=Adaugă
 
-Date_DEBUT=Perioada Dată început
-Date_FIN=Perioada Dată sfârşit
 ModePaiement=Mod plata
 
 VALIDATOR=User responsible for approval
@@ -64,21 +55,15 @@ MOTIF_CANCEL=Motiv
 
 DATE_REFUS=Dată respingere
 DATE_SAVE=Dată validare
-DATE_VALIDE=Dată validare
 DATE_CANCEL=Data anulare
 DATE_PAIEMENT=Data Plata 
 
-TO_PAID=Plăteşte
 BROUILLONNER=Redeschide
-SendToValid=Sent on approval
-ModifyInfoGen=Editare
 ValidateAndSubmit=Validareaza și trimite pentru aprobare
 ValidatedWaitingApproval=Validated (waiting for approval)
 
-NOT_VALIDATOR=Nu aveti permisiunea să aprobati acest raport de cheltuieli
 NOT_AUTHOR=Tu nu esti autorul acestui raport de cheltuieli. Operatiune anulata.
 
-RefuseTrip=Respinge un raport de cheltuieli
 ConfirmRefuseTrip=Sunteți sigur că doriți să respingeti acest raport cheltuieli?
 
 ValideTrip=Aproba raport de cheltuieli
@@ -87,7 +72,6 @@ ConfirmValideTrip=Sunteți sigur că doriți să aprobati acest raport cheltuiel
 PaidTrip=Plăste un raport de cheltuieli
 ConfirmPaidTrip=Sunteţi sigur că doriţi sa clasati acest raport de cheltuieli ca "Platit" ?
 
-CancelTrip=Anulează un raport de cheltuieli
 ConfirmCancelTrip=Sunteți sigur că doriți să anulați acest raport cheltuieli?
 
 BrouillonnerTrip=Move back expense report to status "Draft"

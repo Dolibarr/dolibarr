@@ -295,4 +295,29 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) va
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  232, 23209, '', 0, 'Zuliana', 1);
 
 -- Regions Peru (id country=181)
-insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18101, '', 0, 'Perú', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18101, '', 0, 'Amazonas', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18102, '', 0, 'Ancash', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18103, '', 0, 'Apurimac', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18104, '', 0, 'Arequipa', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18105, '', 0, 'Ayacucho', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18106, '', 0, 'Cajamarca', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18107, '', 0, 'Callao', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18108, '', 0, 'Cuzco', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18109, '', 0, 'Huancavelica', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18110, '', 0, 'Huanuco', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18111, '', 0, 'Ica', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18112, '', 0, 'Junin', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18113, '', 0, 'La Libertad', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18114, '', 0, 'Lambayeque', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18115, '', 0, 'Lima Metropolitana', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18116, '', 0, 'Lima', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18117, '', 0, 'Loreto', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18118, '', 0, 'Madre de Dios', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18119, '', 0, 'Moquegua', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18120, '', 0, 'Pasco', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18121, '', 0, 'Piura', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18122, '', 0, 'Puno', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18123, '', 0, 'San Martín', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18124, '', 0, 'Tacna', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18125, '', 0, 'Tumbes', 1);
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  181, 18126, '', 0, 'Ucayali', 1);

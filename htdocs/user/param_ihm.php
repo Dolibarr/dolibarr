@@ -166,12 +166,6 @@ if ($action == 'edit')
     
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
     
-    
-    print '<div class="underbanner clearboth"></div>';
-    
-    print '<br>';
-    
-
     if (! empty($conf->use_javascript_ajax))
     {/*
         print '<script type="text/javascript" language="javascript">
@@ -267,11 +261,6 @@ else
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
     
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
-    
-    print '<div class="underbanner clearboth"></div>';
-    
-    print '<br>';
     
     $var=true;
 

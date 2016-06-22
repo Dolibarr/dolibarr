@@ -3,7 +3,6 @@ PaypalSetup=PayPal การติดตั้งโมดูล
 PaypalDesc=หน้าเสนอโมดูลนี้จะอนุญาตให้มีการชำระเงินใน <a href="http://www.paypal.com" target="_blank">PayPal</a> โดยลูกค้า นี้สามารถใช้สำหรับการชำระเงินฟรีหรือการชำระเงินบนวัตถุโดยเฉพาะอย่างยิ่ง Dolibarr (ใบแจ้งหนี้การสั่งซื้อ ... )
 PaypalOrCBDoPayment=ชำระเงินด้วยบัตรเครดิตหรือ Paypal
 PaypalDoPayment=ชำระเงินด้วย PayPal
-PaypalCBDoPayment=ชำระเงินด้วยบัตรเครดิต
 PAYPAL_API_SANDBOX=การทดสอบ Mode / ทราย
 PAYPAL_API_USER=ชื่อผู้ใช้ API
 PAYPAL_API_PASSWORD=รหัสผ่าน API
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=PayPal เท่านั้น
 PAYPAL_CSS_URL=Optionnal Url ของแผ่นสไตล์ CSS ในหน้าชำระเงิน
 ThisIsTransactionId=<b>นี่คือรหัสของรายการ:% s</b>
 PAYPAL_ADD_PAYMENT_URL=เพิ่ม URL ของการชำระเงิน Paypal เมื่อคุณส่งเอกสารทางไปรษณีย์
-PAYPAL_IPN_MAIL_ADDRESS=E-mail address สำหรับการแจ้งเตือนทันทีของการชำระเงิน (IPN)
 PredefinedMailContentLink=คุณสามารถคลิกที่ลิงค์ด้านล่างเพื่อความปลอดภัยในการชำระเงินของคุณ (PayPal) หากยังไม่ได้ทำมาแล้ว % s
 YouAreCurrentlyInSandboxMode=คุณกำลังอยู่ใน "ทราย" โหมด
 NewPaypalPaymentReceived=ใหม่การชำระเงินที่ได้รับ Paypal

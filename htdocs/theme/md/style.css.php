@@ -100,6 +100,7 @@ $fontsize='13';
 $fontsizesmaller='11';
 $usegradient=0;
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
+$borderwith=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -131,6 +132,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
 $colorbackhmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1)   :(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackvmenu1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$conf->global->THEME_ELDY_VERMENU_BACK1)   :(empty($user->conf->THEME_ELDY_VERMENU_BACK1)?$colorbackvmenu1:$user->conf->THEME_ELDY_VERMENU_BACK1);
+$colortopbordertitle1=empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPBORDER_TITLE1)?$colortopbordertitle1:$conf->global->THEME_ELDY_TOPBORDER_TITLE1)   :(empty($user->conf->THEME_ELDY_TOPBORDER_TITLE1)?$colortopbordertitle1:$user->conf->THEME_ELDY_TOPBORDER_TITLE1);
 $colorbacktitle1     =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTITLE1)   ?$colorbacktitle1:$conf->global->THEME_ELDY_BACKTITLE1)      :(empty($user->conf->THEME_ELDY_BACKTITLE1)?$colorbacktitle1:$user->conf->THEME_ELDY_BACKTITLE1);
 $colorbacktabcard1   =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABCARD1) ?$colorbacktabcard1:$conf->global->THEME_ELDY_BACKTABCARD1)  :(empty($user->conf->THEME_ELDY_BACKTABCARD1)?$colorbacktabcard1:$user->conf->THEME_ELDY_BACKTABCARD1);
 $colorbacktabactive  =empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$conf->global->THEME_ELDY_BACKTABACTIVE):(empty($user->conf->THEME_ELDY_BACKTABACTIVE)?$colorbacktabactive:$user->conf->THEME_ELDY_BACKTABACTIVE);
@@ -153,7 +155,7 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
 
-$colortopbordertitle1=$colorbackhmenu1;
+if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
 
 
 // Set text color to black or white
@@ -168,7 +170,7 @@ else { $colortextbackvmenu='000000'; }
 $tmppart=explode(',',$colorbacktitle1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 260) { $colortexttitle='FFFFFF'; $colorshadowtitle='888888'; }
-else { $colortexttitle='404040'; $colorshadowtitle='FFFFFF'; }
+else { $colortexttitle='101010'; $colorshadowtitle='FFFFFF'; }
 $tmppart=explode(',',$colorbacktabcard1);
 $tmpval=(! empty($tmppart[1]) ? $tmppart[1] : '')+(! empty($tmppart[2]) ? $tmppart[2] : '')+(! empty($tmppart[3]) ? $tmppart[3] : '');
 if ($tmpval <= 340) { $colortextbacktab='FFFFFF'; }
@@ -305,7 +307,7 @@ select.flat, form.flat select {
 input:disabled {
 	background:#f4f4f4;
 }
-.optiongrey {
+.optiongrey, .opacitymedium {
 	opacity: 0.5;
 }
 .opacityhigh {
@@ -562,6 +564,17 @@ div.myavailability {
     max-width: 0;
     overflow: auto;
 }
+.tablelistofcalendars {
+	margin-top: 25px !important;
+}
+
+/* for future usage (when left menu has been removed) */
+.table-responsive {
+    width: calc(100% - 330px);
+    margin-bottom: 15px;
+    overflow-y: hidden;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
 
 
 /* ============================================================================== */
@@ -585,6 +598,13 @@ div.myavailability {
 .minheight40 { min-height: 40px; }
 .titlefield { width: 30%; }
 .titlefieldcreate { width: 20%; }
+
+/* Force values for small screen */
+@media only screen and (max-width: 1400px)
+{
+	.titlefield { width: 30% !important; }
+	.titlefieldcreate { width: 30% !important; }
+}
 
 /* Force values for small screen */
 @media only screen and (max-width: 570px)
@@ -637,10 +657,6 @@ td.showDragHandle {
 	vertical-align: top;
 }
 #id-top {
-/*	min-width: 100%;
-	position: relative;
-	heigth: 52px;
-	background: #f00;*/
 }
 #id-left {
 	min-height: 100%;
@@ -701,6 +717,40 @@ td.showDragHandle {
 	margin-left: 228px;
 }
 
+/* For smartphone (testmenuhider is on) */
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+#id-container {
+	width: 100%;
+}
+.side-nav-vert {
+	margin-left: 0;
+}
+div.login_block {
+	border-right: none ! important; 
+	top: inherit !important;
+}
+.side-nav {
+	/*top: inherit !important;*/
+	overflow-x: initial !important;
+	overflow-y: scroll;
+	/*position: initial !important;*/
+	display: none;
+}
+div.login_block {
+	/* position: initial !important;*/
+	display: none;
+}
+#id-right {
+	padding-left: 0 ! important;
+}
+#id-left {
+	top: 60px ! important;
+}
+div.fiche {
+	margin-<?php print $left; ?>: 6px !important;
+	margin-<?php print $right; ?>: 6px !important;
+}
+<?php } ?>
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'4':'20')); ?>px;
@@ -777,13 +827,22 @@ div.ficheaddleft {
     }
 }
 
+/* For table into table into card */
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+    padding: 0 0 0 0;
+}
+
+table.noborder tr.liste_titre td {
+	padding: 3px !important;
+}
+
 .containercenter {
 	display : table;
 	margin : 0px auto;
 }
 
 #pictotitle {
-	margin-right: 8px;
+	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
 .pictosubstatus {
@@ -836,7 +895,7 @@ img.photoref {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>);;
+	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
 
@@ -935,7 +994,7 @@ ul.tmenu {	/* t r b l */
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	/* box-shadow: 0 0 6px rgba(0, 0, 0, .4) !important; */
+	display: table;
 }
 ul.tmenu li {
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -980,10 +1039,8 @@ li.tmenusel, li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
 }
 .tmenuend .tmenuleft { width: 0px; }
-/* .tmenuend { display: none; } We keep tmenuend it to show background for rest of line */
-.tmenuend .tmenucenter {
-    width: 1px;
-}
+.tmenuend { display: none; }
+
 div.tmenuleft
 {
 	float: <?php print $left; ?>;
@@ -1125,9 +1182,12 @@ $mainmenuusedarray=array_unique(explode(',',$mainmenuused));
 $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
 $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','holiday','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','webservices','websites');
+// Put here list of menu entries we are sure we don't want
+$divnotrequired=array('multicurrency','salaries','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
+	if (in_array($val,$divnotrequired)) continue;
 	//print "XXX".$val;
 
 	// Search img file in module dir
@@ -1420,6 +1480,11 @@ div.blockvmenusearch
 
     padding-bottom: 10px;
     border-bottom: 1px solid #f4f4f4;
+}
+div.blockvmenusearchphone
+{
+	border-bottom: none;
+	margin-bottom: 0px;
 }
 
 div.blockvmenuhelp
@@ -1722,7 +1787,7 @@ div.tabs {
     clear:both;
 	height:100%;
 }
-div.tabsElem { margin-top: 8px; }		/* To avoid overlap of tabs when not browser */
+div.tabsElem { margin-top: 6px; }		/* To avoid overlap of tabs when not browser */
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
@@ -1787,7 +1852,7 @@ a.tabTitle {
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 5px 12px 5px;
+	padding: 7px 9px 7px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -1866,7 +1931,10 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divButAction { margin-bottom: 1.4em; }
+div.divButAction { 
+	margin-bottom: 1.4em; 
+	vertical-align: top;
+}
 
 span.butAction, span.butActionDelete {
 	cursor: pointer;
@@ -2074,7 +2142,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: 1px;
+	border-top-width: <?php echo $borderwith ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2121,7 +2189,7 @@ table.noborder tr, div.noborder form {
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
-	padding: 12px 2px 12px 3px;			/* t r b l */
+	padding: 8px 2px 8px 3px;			/* t r b l */
 }
 table.noborder td, div.noborder form, div.noborder form div {
 	padding: 4px 2px 4px 3px;			/* t r b l */
@@ -2410,7 +2478,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: 1px;
+	border-top-width: <?php echo $borderwith; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
     
@@ -2459,6 +2527,11 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
 }
+tr.liste_titre_topborder td {
+	border-top-width: <?php echo $borderwith; ?>px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 .liste_titre td a {
 	text-shadow: none !important;
 	color: rgb(<?php echo $colortexttitle; ?>);
@@ -2496,6 +2569,12 @@ input.liste_titre {
 }
 .tableforservicepart1 tbody tr td, .tableforservicepart2 tbody tr td {
 	border-bottom: none;
+}
+
+.paymenttable, .margintable {
+	border-top-width: <?php echo $borderwith ?>px !important;
+	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
+	border-top-style: solid !important;
 }
 
 .margintable td {
@@ -2724,6 +2803,8 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 .product_line_stock_too_low { color: #664400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
+
+.widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { margin: 0px; }
@@ -3835,8 +3916,8 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 
 .ui-btn-inner {
 	min-width: .4em;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 6px;
+	padding-right: 6px;
 	<?php if (! empty($dol_use_jmobile)) { ?>
 	font-size: 13px;
 	<?php } else { ?>
@@ -3845,16 +3926,29 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 34px;
+	padding-right: 30px;
 }
 .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 34px;
+	padding-left: 30px;
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 38px;
+	padding-right: 30px;
 }
 .ui-select .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 38px;
+	padding-left: 30px;
+}
+.ui-select .ui-btn-icon-right .ui-icon {
+    right: 8px;
+}
+.ui-btn-icon-left > .ui-btn-inner > .ui-icon, .ui-btn-icon-right > .ui-btn-inner > .ui-icon {
+    margin-top: -10px;
+}
+select {
+    /* display: inline-block; */	/* We can't set this. This disable ability to make */
+    /* TODO modified by jmobile, replace jmobile with pure css*/
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;

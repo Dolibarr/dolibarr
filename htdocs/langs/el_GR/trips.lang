@@ -1,84 +1,69 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReport=Expense report
 ExpenseReports=Αναφορές εξόδων
-Trip=Αναφορά εξόδων
 Trips=Αναφορές εξόδων
 TripsAndExpenses=Αναφορές εξόδων
 TripsAndExpensesStatistics=Στατιστικές αναφορές εξόδων
 TripCard=Expense report card
 AddTrip=Create expense report
-ListOfTrips=List of expense reports
+ListOfTrips=Λίστα αναφορών εξόδων
 ListOfFees=Λίστα φόρων
 ShowTrip=Show expense report
 NewTrip=New expense report
 CompanyVisited=Έγινε επίσκεψη σε εταιρία/οργανισμό
-Kilometers=Χιλιόμετρα
 FeesKilometersOrAmout=Σύνολο χλμ
-DeleteTrip=Delete expense report
-ConfirmDeleteTrip=Are you sure you want to delete this expense report ?
-ListTripsAndExpenses=List of expense reports
+DeleteTrip=Διαγραφή αναφοράς εξόδων
+ConfirmDeleteTrip=Είστε σίγουρος ότι θέλετε να διαγράψετε αυτή την αναφορά εξόδων;
+ListTripsAndExpenses=Λίστα αναφορών εξόδων
 ListToApprove=Waiting for approval
-ExpensesArea=Expense reports area
-SearchATripAndExpense=Search an expense report
+ExpensesArea=Περιοχή αναφοράς εξόδων
 ClassifyRefunded=Ταξινομήστε «επιστραφεί»
 ExpenseReportWaitingForApproval=A new expense report has been submitted for approval
 ExpenseReportWaitingForApprovalMessage=A new expense report has been submitted and is waiting for approval.\n- User: %s\n- Period: %s\nClick here to validate: %s
 TripId=Id expense report
 AnyOtherInThisListCanValidate=Person to inform for validation.
 TripSociete=Πληροφορίες εταιρίας
-TripSalarie=Πληροφορίες χρήστη
 TripNDF=Informations expense report
 PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
 ExpenseReportLine=Expense report line
 TF_OTHER=Άλλο
 TF_TRIP=Transportation
 TF_LUNCH=Γεύμα
-TF_METRO=Metro
+TF_METRO=Μετρό
 TF_TRAIN=Τρένο
 TF_BUS=Λεωφορείο
 TF_CAR=Όχημα
 TF_PEAGE=Διόδια
 TF_ESSENCE=Καύσιμα
 TF_HOTEL=Ξενοδοχείο
-TF_TAXI=Taxi
+TF_TAXI=Ταξί
 
 ErrorDoubleDeclaration=You have declared another expense report into a similar date range.
-AucuneNDF=No expense reports found for this criteria
 AucuneLigne=There is no expense report declared yet
-AddLine=Add a line
-AddLineMini=Add
 
-Date_DEBUT=Period date start
-Date_FIN=Period date end
 ModePaiement=Payment mode
 
 VALIDATOR=User responsible for approval
-VALIDOR=Approved by
-AUTHOR=Recorded by
-AUTHORPAIEMENT=Paid by
+VALIDOR=Εγκρίθηκε από
+AUTHOR=Αποθηκεύτηκε από
+AUTHORPAIEMENT=Πληρώθηκε από
 REFUSEUR=Denied by
-CANCEL_USER=Deleted by
+CANCEL_USER=Διαγράφηκε από
 
 MOTIF_REFUS=Αιτία
 MOTIF_CANCEL=Αιτία
 
 DATE_REFUS=Deny date
-DATE_SAVE=Validation date
-DATE_VALIDE=Validation date
-DATE_CANCEL=Cancelation date
-DATE_PAIEMENT=Payment date
+DATE_SAVE=Ημερομηνία Επικύρωσης
+DATE_CANCEL=Ημερομηνία ακύρωσης
+DATE_PAIEMENT=Ημερομηνία πληρωμής
 
-TO_PAID=Pay
 BROUILLONNER=Reopen
-SendToValid=Sent on approval
-ModifyInfoGen=Edit
 ValidateAndSubmit=Validate and submit for approval
 ValidatedWaitingApproval=Επικύρωση (αναμονή για έγκριση)
 
-NOT_VALIDATOR=You are not allowed to approve this expense report
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.
 
-RefuseTrip=Deny an expense report
 ConfirmRefuseTrip=Are you sure you want to deny this expense report ?
 
 ValideTrip=Approve expense report
@@ -87,7 +72,6 @@ ConfirmValideTrip=Are you sure you want to approve this expense report ?
 PaidTrip=Pay an expense report
 ConfirmPaidTrip=Are you sure you want to change status of this expense report to "Paid" ?
 
-CancelTrip=Cancel an expense report
 ConfirmCancelTrip=Είστε σίγουροι ότι θέλετε να ακυρώσετε αυτή την αναφορά εξόδων
 
 BrouillonnerTrip=Move back expense report to status "Draft"

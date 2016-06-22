@@ -37,8 +37,9 @@ create table llx_facture
   increment				varchar(10),
   fk_soc				integer            NOT NULL,
   datec					datetime,								-- date de creation de la facture
-  datef					date,									-- date de la facture
-  date_valid			date,									-- date de validation
+  datef					date,									-- date invoice
+  date_pointoftax		date DEFAULT NULL,									-- date point of tax (for GB)
+  date_valid			date,									-- date validation
   tms					timestamp,								-- date creation/modification
   paye					smallint DEFAULT 0 NOT NULL,
   amount				double(24,8)     DEFAULT 0 NOT NULL,

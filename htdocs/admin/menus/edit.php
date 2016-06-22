@@ -272,7 +272,7 @@ if ($action == 'create')
     </script>';
 
     print load_fiche_titre($langs->trans("NewMenu"),'','title_setup');
-
+    
     print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
@@ -284,7 +284,7 @@ if ($action == 'create')
     $parent_rowid = $_GET['menuId'];
     if ($_GET['menuId'])
     {
-        $sql = "SELECT m.rowid, m.mainmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
+        $sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
         $res  = $db->query($sql);
         if ($res)
         {
@@ -293,6 +293,7 @@ if ($action == 'create')
             {
                 $parent_rowid = $menu['rowid'];
                 $parent_mainmenu = $menu['mainmenu'];
+                $parent_leftmenu = $menu['leftmenu'];
                 $parent_langs = $menu['langs'];
                 $parent_level = $menu['level'];
             }
@@ -343,7 +344,9 @@ if ($action == 'create')
     {
         print '<td><input type="text" size="20" id="menuId" name="menuId" value="'.($_POST["menuId"]?$_POST["menuId"]:'').'"></td>';
     }
-    print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
+    print '<td>'.$langs->trans('DetailMenuIdParent');
+    print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
+    print '</td></tr>';
 
     // Title
     print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.$_POST["titre"].'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
@@ -423,9 +426,10 @@ elseif ($action == 'edit')
 
     // MenuId Parent
     print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent').'</td>';
-    print '<td><input type="text" name="fk_menu" value="'.$menu->fk_menu.'" size=10></td>';
-    //$menu_handler
-    //print '<td><input type="text" size="50" name="handler" value="all"></td>';
+    $valtouse=$menu->fk_menu;
+    if ($menu->fk_mainmenu) $valtouse='fk_mainmenu='.$menu->fk_mainmenu;
+    if ($menu->fk_leftmenu) $valtouse.='&fk_leftmenu='.$menu->fk_leftmenu;
+    print '<td><input type="text" name="fk_menu" value="'.$valtouse.'" size="10"></td>';
     print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
 
     // Niveau

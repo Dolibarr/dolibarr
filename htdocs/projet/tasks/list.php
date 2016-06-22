@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,8 +58,8 @@ $day	= GETPOST('day','int');
 $month	= GETPOST('month','int');
 $year	= GETPOST('year','int');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$contextpage='tasklist';
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'tasklist';
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array($contextpage));
@@ -213,7 +213,7 @@ else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0]='0';         // To avoid sql syntax error if not found
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate";
+$sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_update";
 $sql.= ", t.rowid as id, t.ref, t.label, t.planned_workload, t.duration_effective, t.progress, t.fk_statut";
@@ -314,6 +314,7 @@ if ($resql)
     $num = $db->num_rows($resql);
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($sday)              		$param.='&sday='.$day;
 	if ($smonth)              		$param.='&smonth='.$smonth;
@@ -550,12 +551,15 @@ if ($resql)
     	$projectstatic->title = $obj->projecttitle;
     	$projectstatic->public = $obj->public;
     	$projectstatic->statut = $obj->projectstatus;
+    	$projectstatic->datee = $db->jdate($obj->projectdatee);
     	
     	$taskstatic->id = $obj->id;
     	$taskstatic->ref = $obj->ref;
     	$taskstatic->label = $obj->label;
     	$taskstatic->fk_statut = $obj->fk_statut;
     	$taskstatic->progress = $obj->progress;
+    	$taskstatic->datee = $db->jdate($obj->date_end);	// deprecated
+    	$taskstatic->date_end = $db->jdate($obj->date_end);
     	
     	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
     	if ($userAccess >= 0)
@@ -568,6 +572,7 @@ if ($resql)
         	{
         		print '<td class="nowrap">';
         		print $projectstatic->getNomUrl(1, 'task');
+        		if ($projectstatic->hasDelay()) print img_warning("Late");
         		print '</td>';
         	}
     		// Title
@@ -605,6 +610,7 @@ if ($resql)
         	{
         	    print '<td>';
         	    print $taskstatic->getNomUrl(1,'withproject');
+        		if ($taskstatic->hasDelay()) print img_warning("Late");
         	    print '</td>';
         	}        	 
     	    // Label

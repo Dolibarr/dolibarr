@@ -197,7 +197,7 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print (!empty($object->address)?$object->address:'');
 	print '</textarea></td></tr>';
 
@@ -546,7 +546,7 @@ else
 			$doleditor->Create();
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
 

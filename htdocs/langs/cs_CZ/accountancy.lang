@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Oddělovač sloupců pro export souboru
 ACCOUNTING_EXPORT_DATE=Formát data pro export souboru
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Účetnictví
-Globalparameters=Globální parametry
-Menuaccount=Účetní závěrka
-Menuthirdpartyaccount=Účty třetích stran
-MenuTools=Nástroje
 
 ConfigAccountingExpert=Konfigurace modulu účetního experta
 Journaux=Deníky
 JournalFinancial=Finanční deníky
-Exports=Exporty
-Export=Export
-Modelcsv=Model exportu
-OptionsDeactivatedForThisExportModel=Možnosti pro tento exportní model jsou deaktivovány
-Selectmodelcsv=Vyberte způsob exportu
-Modelcsv_normal=Klasický export
-Modelcsv_CEGID=Export směrem CEGID Expert
 BackToChartofaccounts=Návrat účtové osnovy
 
-Definechartofaccounts=Definovat účtové osnovy
 Selectchartofaccounts=Vyberte účtové osnovy
 Addanaccount=Přidat účetní účet
 AccountAccounting=Účetní účet
+AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Přerušení
 
 MenuAccountancy=Accountancy
 CustomersVentilation=Členění zákazníků
 SuppliersVentilation=Členění dodvatelů
-TradeMargin=Obchodní marže
 Reports=Zprávy
-ByCustomerInvoice=Fakturováno zákazníky
 NewAccount=Nový účetní účet
 Create=Vytvořit
 CreateMvts=Create movement
-UpdateAccount=Změna účetního účtu
 UpdateMvts=Změna pohybu
 WriteBookKeeping=Účetní záznamy v hlavní účetní knize
 Bookkeeping=Hlavní účetní kniha
 AccountBalance=Account balance
-
-AccountingVentilation=Členění účetnictví
-AccountingVentilationSupplier=Členění účetnictví dodavatel
-AccountingVentilationCustomer=Členění účetnictví zákazník
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Řádky faktury, které mají být prověřeny
@@ -59,7 +39,6 @@ InvoiceLinesDone=Prověření řádků faktury
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=Prověřit
-VentilationAuto=Automatické členění
 
 Processing=Dřu jako kůň  .....
 EndProcessing=Konec zpracování
@@ -69,14 +48,10 @@ Lineofinvoice=Řádky faktury
 VentilatedinAccount=Úspěšně prověření v účetním účtu
 NotVentilatedinAccount=Neprověřeno v účetním účtu
 
-ACCOUNTING_SEPARATORCSV=Oddělovač sloupců v souboru exportu
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Počet prvků, které mají být zobrazeny rozdělením podle stránky (doporučené maximum: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Začněte třídění rozkladných stránek "Má k rozdělení" nejnovějšími elementy
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Začněte třídění rozpisu stránek "Breakdown", podle nejnovějších prvků
 
-AccountLength=Délka účetnické osnovy uvedené v Dolibarr
-AccountLengthDesc=Funkce povolující simulovat délku účetního účtu nahrazením místa prostřednictvím nulového obrázku. Tato funkce se týká pouze zobrazení, to nemění účetní účty zaregistrované v Dolibarr. Pro export této funkce je nutné, aby byla kompatibilní s daným softwarem.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Délka hlavních účtů
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Sociální deník
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Převodní účet
 ACCOUNTING_ACCOUNT_SUSPENSE=Čekající účet
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené produkty (pokud není definován v listu produktu)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané produkty (pokud není definován v listu produktu)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro pr
 Doctype=Typ dokumentu
 Docdate=Datum
 Docref=Reference
-Numerocompte=Účet
 Code_tiers=Třetí strana
 Labelcompte=Štítek účtu
 Sens=Sens
 Codejournal=Deník
 NumPiece=Piece number
+AccountingCategory=Accounting category
 
 DelBookKeeping=Odstranit záznamy hlavní knihy
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Nákupní deník
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=Platba v hotovosti
-
-SupplierInvoicePayment=Platba dodavatelské faktury
 CustomerInvoicePayment=Platba zákaznické faktury
 
 ThirdPartyAccount=Účet třetí strany
@@ -130,7 +103,6 @@ DescThirdPartyReport=Poraďte se zde seznam třetích stran, zákazníky a dodav
 
 ListAccounts=Seznam účetních účtů
 
-Pcgversion=Verze plánu
 Pcgtype=Třída účtu
 Pcgsubtype=Podle třídy účtu
 Accountparent=kořen účtu
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Prověřte své řádky zákaznické faktury s účetním
 ChangeAccount=Změna účetních účtů pro řádky vybraných účtů:
 Vide=-
 DescVentilSupplier=Poraďte se zde s ročním rozdělením účetnictví faktur dodavatelů
-DescVentilTodoSupplier=Prověřte zde své řádky dodavatelských faktur s účetním účtem
 DescVentilDoneSupplier=Poraďte se zde se seznamem linek faktur dodavatele a jejich účetních účtů
 
 ValidateHistory=Ověřit automaticky
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=Karta členění
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Exporty
+Export=Export
+Modelcsv=Model exportu
+OptionsDeactivatedForThisExportModel=Možnosti pro tento exportní model jsou deaktivovány
+Selectmodelcsv=Vyberte způsob exportu
+Modelcsv_normal=Klasický export
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -177,3 +149,12 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page

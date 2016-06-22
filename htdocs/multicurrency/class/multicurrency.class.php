@@ -107,11 +107,18 @@ class MultiCurrency extends CommonObject
 	 */
 	public function create(User $user, $trigger = true)
 	{
-		global $conf;
+		global $conf,$langs;
 		
 		dol_syslog('Currency::create', LOG_DEBUG);
 
 		$error = 0;
+		
+		if (self::checkCodeAlreadyExists($this->code))
+		{
+			$error++;
+			$this->errors[] = $langs->trans('multicurrency_code_already_added');
+			return -1;
+		}
 		
 		if (empty($this->entity) || $this->entity <= 0) $this->entity = $conf->entity;
 		$now=date('Y-m-d H:i:s');
@@ -505,9 +512,10 @@ class MultiCurrency extends CommonObject
 	 {
 	 	$sql = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
-		// FIXME Is this comptible with SQL ?
-		$sql.= ' WHERE m.code = "'.$db->escape($code).'" AND mc.date_sync >= ALL (SELECT date_sync FROM '.MAIN_DB_PREFIX.'multicurrency_rate)';
-		$sql.= " AND m.entity IN '".getEntity('multicurrency', 1)."'";
+		$sql.= ' WHERE m.code = "'.$db->escape($code).'"';
+		$sql.= " AND m.entity IN (".getEntity('multicurrency', 1).")";
+		$sql.= ' ORDER BY mc.date_sync DESC LIMIT 1';
+		
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
 		else return array(0, 1);
@@ -616,6 +624,21 @@ class MultiCurrency extends CommonObject
 			}	
 		}
 	}
+	
+	/**
+	 * Check in database if the current code already exists
+	 * 
+	 * @param	string	$code 	current code to search
+	 * @return	boolean         True if exists, false if not exists
+	 */
+	 public static function checkCodeAlreadyExists($code)
+	 {
+	 	global $db;
+		
+	 	$currency = new MultiCurrency($db);
+		if ($currency->fetch('', $code) > 0) return true;
+		else return false;
+	 }
 }
 
 /**
