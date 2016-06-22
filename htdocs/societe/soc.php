@@ -396,7 +396,7 @@ if (empty($reshook))
             // Only for companies
 	        if (!($object->particulier || $private))
         	{
-	        	for ($i = 1; $i < 5; $i++)
+	        	for ($i = 1; $i <= 6; $i++)
 	        	{
 	        	    $slabel="idprof".$i;
 	    			$_POST[$slabel]=trim($_POST[$slabel]);
@@ -411,15 +411,18 @@ if (empty($reshook))
 						}
 					}
 
-					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-
-					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-					{
-						$langs->load("errors");
-						$error++;
-						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-						$action = (($action=='add'||$action=='create')?'create':'edit');
-					}
+            		// Check for mandatory prof id (but only if country is than than ours)
+					if ($mysoc->country_id > 0 && $object->country_id == $mysoc->country_id)
+            		{
+    					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+    					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+    					{
+    						$langs->load("errors");
+    						$error++;
+    						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+    						$action = (($action=='add'||$action=='create')?'create':'edit');
+    					}
+            		}
 	        	}
         	}
         }
@@ -1864,7 +1867,7 @@ else
         /*
          * View
          */
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 

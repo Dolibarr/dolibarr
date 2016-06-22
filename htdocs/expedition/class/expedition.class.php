@@ -864,16 +864,14 @@ class Expedition extends CommonObject
 				$product=new Product($this->db);
 				$result=$product->fetch($fk_product);
 
-				$product_type=$product->type;
 				if ($entrepot_id > 0) {
-                    $product->load_stock();
-				    $product_stock = $product->stock_warehouse[$entrepot_id]->real;
+					$product->load_stock();
+					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
 				}
-				else 
-				{
-				    $product_stock = $product->stock_reel;
-				}
-				
+				else
+					$product_stock = $product->stock_reel;
+
+				$product_type=$product->type;
 				if ($product_type == 0 && $product_stock < $qty)
 				{
 					$this->error=$langs->trans('ErrorStockIsNotEnough');

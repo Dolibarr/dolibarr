@@ -265,7 +265,7 @@ if ($id > 0 || ! empty($ref))
 			print load_fiche_titre($langs->trans("ProductParentList"),'','').'<br>';
 			print '<table class="centpercent noborder">';
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans('ParentProduct').'</td>';
+			print '<td>'.$langs->trans('ParentProducts').'</td>';
 			print '<td>'.$langs->trans('Label').'</td>';
 			print '<td>'.$langs->trans('Qty').'</td>';
 			print '</td>';

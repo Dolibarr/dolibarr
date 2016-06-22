@@ -238,8 +238,11 @@ if (empty($reshook))
 	// Set supplier ref
 	if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 	{
-	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
-	    if ($result < 0) dol_print_error($db, $object->error);
+		$object->ref_supplier = GETPOST('ref_supplier', 'alpha');
+		
+		if ($object->update($user) < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// payments conditions
@@ -1349,7 +1352,7 @@ if ($action == 'create')
     }
     else
     {
-        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1',1);
+        print $form->select_company(GETPOST('socid','int'),'socid','s.fournisseur = 1','SelectThirdParty');
     }
     print '</td></tr>';
 

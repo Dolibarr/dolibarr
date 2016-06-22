@@ -235,7 +235,8 @@ if ($object->id)
 
     	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
     	{
-    		$filearray = dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
+
+    		$filearray = array_merge($filearray,dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
     	}
 
     	// For each file build select list with PDF extention
