@@ -112,13 +112,24 @@ foreach ($modulesdir as $dir)
                     {
                         while (($file_searched = readdir($handle_part))!==false)
                         {
-                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
+                            // Support of the deprecated API.
+                            if (is_readable($dir_part.$file_searched) && preg_match("/^api_deprecated_(.*)\.class\.php$/i",$file_searched,$reg))
+                            {
+                                $classname = ucwords($reg[1]).'Api';
+                                require_once $dir_part.$file_searched;
+                                if (class_exists($classname))
+                                {
+                                    dol_syslog("Found deprecated API classname=".$classname);
+                                    $api->r->addAPIClass($classname, '');
+                                }
+                            }
+                            else if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
                             {
                                 $classname = ucwords($reg[1]);
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname);    
+                                    dol_syslog("Found API classname=".$classname);
                                     $listofapis[] = $classname;
                                 }
                             }
