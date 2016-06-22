@@ -14,6 +14,5 @@ BehaviourOnClick=Hành vi khi một URL được nhấp
 CreateBookmark=Tạo dấu
 SetHereATitleForLink=Đặt tên cho bookmark
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Sử dụng một URL http bên ngoài hoặc một URL tương đối Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Chọn nếu một trang mở liên kết phải xuất hiện trên cửa sổ hiện tại hoặc mới
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Quản lý bookmark
-ListOfBookmarks=Danh sách bookmark

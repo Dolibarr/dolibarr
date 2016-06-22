@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - website
+Shortname=Cod
+WebsiteSetupDesc=Create here as much entry as number of different websites you need. Then go into menu Websites to edit them.
+DeleteWebsite=Şterge website
+ConfirmDeleteWebsite=Are you sure you want to delete this web site. All its pages and content will also be removed.
+WEBSITE_PAGENAME=Pagina nume/alias
+WEBSITE_CSS_URL=URL of external CSS file
+WEBSITE_CSS_INLINE=Conţinutul CSS
+MediaFiles=Media library
+EditCss=Edit Style/CSS
+EditMenu=Edit meniu
+EditPageMeta=Edit Meta
+EditPageContent=Editare continut
+Website=Web site
+AddPage=Add pagina
+PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> not yet available. You must first add a page.
+RequestedPageHasNoContentYet=Requested page with id %s has not content yet or cache file .tpl.php was removed. Edit content of page to solve this.
+PageDeleted=Page '%s' of website %s deleted
+PageAdded=Pagina '%s' adaugata
+ViewSiteInNewTab=View site in new tab
+ViewPageInNewTab=View page in new tab
+SetAsHomePage=Seteaza ca  pagina Home 
+RealURL=Real URL

@@ -17,6 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// $cssclass must be defined by caller. For example cssclass='fieldtitle"
 $module = $object->element;
 $note_public = 'note_public';
 $note_private = 'note_private';

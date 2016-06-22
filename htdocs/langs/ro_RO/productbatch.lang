@@ -17,6 +17,5 @@ printEatby=Expiră : %s
 printSellby=Vanzare: %s
 printQty=Cant: %d
 AddDispatchBatchLine=Adauga o linie pentru Perioada de valabilitate expediere
-BatchDefaultNumber=Nedefinit
 WhenProductBatchModuleOnOptionAreForced=Când modulul de lot / serial este pornit, modul de creștere / scădere a stocului este fortat la ultima alegere și nu poate fi editat. Alte opțiuni pot fi definite după cum doriți.
 ProductDoesNotUseBatchSerial=Acest produs nu foloseste numarul de lot / serie

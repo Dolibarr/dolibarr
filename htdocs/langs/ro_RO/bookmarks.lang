@@ -14,6 +14,5 @@ BehaviourOnClick=Comportamentul pe clic pe URL-ul
 CreateBookmark=Creaţi marcaj
 SetHereATitleForLink=Setaţi aici un titlu de marcaj
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Folosiţi un extern http URL-ul sau o rudă Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Alegeţi dacă pagină deschisă de legătură trebuie să apară pe curent sau de-o fereastră nouă
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Alegeţi dacă pagină din link se deschide sau nu într-o nouă fereastră
 BookmarksManagement=Marcaje de management
-ListOfBookmarks=Lista de semne de carte

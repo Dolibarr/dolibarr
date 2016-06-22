@@ -44,8 +44,10 @@ function project_prepare_head($object)
 	$head[$h][2] = 'project';
 	$h++;
 
+    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ProjectContact");
+	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 	$head[$h][2] = 'contact';
 	$h++;
 
@@ -131,8 +133,10 @@ function task_prepare_head($object)
 	$head[$h][2] = 'task_task';
 	$h++;
 
+	$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$head[$h][1] = $langs->trans("TaskRessourceLinks");
+	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 	$head[$h][2] = 'task_contact';
 	$h++;
 

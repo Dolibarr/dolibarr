@@ -1,4 +1,3 @@
 # Dolibarr language file - Source file is en_US - ldap
 DomainPassword=Domainpasswort
-SynchronizeDolibarr2Ldap=Systembenutzer & LDAP-Benutzer synchronisieren
 ForceSynchronize=Erzwinge System-LDAP-Synchronisation

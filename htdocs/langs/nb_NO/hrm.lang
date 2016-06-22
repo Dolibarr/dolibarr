@@ -12,9 +12,6 @@ CloseEtablishment=Lukk firma
 DictionaryDepartment=HRM - Departementliste
 DictionaryFunction=HRM - Funksjonsliste
 # Module
-ListOfEmployees=Liste over ansatte
 Employees=Ansatte
 Employee=Ansatt
-Employe=Ansatt
 NewEmployee=Ny ansatt
-EmployeeCard=Arbeidstakerkort

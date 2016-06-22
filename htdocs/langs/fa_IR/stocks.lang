@@ -5,8 +5,6 @@ Warehouses=ساختمان و ذخیره سازی
 NewWarehouse=جدید منطقه انبار / سهام
 WarehouseEdit=اصلاح انبار
 MenuNewWarehouse=انبار جدید
-WarehouseOpened=Warehouse open
-WarehouseClosed=انبار بسته شده
 WarehouseSource=انبار منبع
 WarehouseSourceNotDefined=بدون انبار تعریف شده است،
 AddOne=اضافه کردن یک
@@ -17,11 +15,8 @@ DeleteSending=حذف ارسال
 Stock=موجودی
 Stocks=سهام
 StocksByLotSerial=Stocks by lot/serial
-Movement=جنبش
 Movements=جنبش
 ErrorWarehouseRefRequired=نام انبار مرجع مورد نیاز است
-ErrorWarehouseLabelRequired=برچسب انبار مورد نیاز است
-CorrectStock=سهام صحیح
 ListOfWarehouses=لیست انبار
 ListOfStockMovements=فهرست جنبش های سهام
 StocksArea=Warehouses area
@@ -41,7 +36,6 @@ StockMovements=Stock movements
 LabelMovement=برچسب جنبش
 NumberOfUnit=تعداد واحد
 UnitPurchaseValue=قیمت خرید واحد
-TotalStock=در انبار ها
 StockTooLow=سهام بیش از حد کم
 StockLowerThanLimit=سهام کمتر از حد هشدار
 EnhancedValue=ارزش
@@ -59,10 +53,10 @@ RuleForStockManagementIncrease=Rule for automatic stock management increase (man
 DeStockOnBill=کاهش سهام واقعی بر روی مشتریان اعتبار فاکتورها / یادداشت های اعتباری
 DeStockOnValidateOrder=کاهش سهام واقعی در اعتبار سنجی سفارشات مشتریان
 DeStockOnShipment=Decrease real stocks on shipping validation
+DeStockOnShipmentOnClosing=Decrease real stocks on shipping classification closed
 ReStockOnBill=افزایش سهام واقعی در تامین کنندگان فاکتورها / یادداشت های اعتباری اعتبار
 ReStockOnValidateOrder=افزایش سهام واقعی در سفارشات تامین کنندگان موافقت
 ReStockOnDispatchOrder=افزایش سهام واقعی در اعزام کتابچه راهنمای کاربر به انبارها، بعد از دریافت سفارش کالا
-ReStockOnDeleteInvoice=افزایش سهام واقعی در حذف فاکتور
 OrderStatusNotReadyToDispatch=منظور هنوز رتبهدهی نشده است و یا بیشتر یک وضعیت است که اجازه می دهد تا اعزام از محصولات در انبارها سهام.
 StockDiffPhysicTeoric=Explanation for difference between physical and theoretical stock
 NoPredefinedProductToDispatch=محصولات از پیش تعریف شده برای این شی. بنابراین بدون اعزام در انبار مورد نیاز است.
@@ -72,10 +66,6 @@ StockLimit=محدود سهام برای هشدار
 PhysicalStock=سهام فیزیکی
 RealStock=سهام و مستغلات
 VirtualStock=سهام مجازی
-MininumStock=حداقل سهام
-StockUp=انبار کردن
-MininumStockShort=دقیقه سهام
-StockUpShort=انبار کردن
 IdWarehouse=انبار شناسه
 DescWareHouse=شرح انبار
 LieuWareHouse=انبار محل
@@ -95,9 +85,8 @@ ThisWarehouseIsPersonalStock=این انبار را نشان سهام شخصی �
 SelectWarehouseForStockDecrease=انتخاب انبار استفاده برای سهام کاهش
 SelectWarehouseForStockIncrease=انتخاب انبار استفاده برای افزایش سهام
 NoStockAction=بدون عمل سهام
-LastWaitingSupplierOrders=سفارشات در انتظار پذیرایی
-DesiredStock=Desired minimum stock
-DesiredMaxStock=Desired maximum stock
+DesiredStock=Desired optimal stock
+DesiredStockDesc=This stock amount will be the value used to fill the stock by replenishment feature.
 StockToBuy=برای سفارش
 Replenishment=دوباره پر کردن
 ReplenishmentOrders=سفارشات دوباره پر کردن
@@ -115,12 +104,11 @@ WarehouseForStockDecrease=<b>انبار٪ خواهد</b> شد برای سهام 
 WarehouseForStockIncrease=<b>انبار٪ خواهد</b> شد برای افزایش سهام استفاده
 ForThisWarehouse=برای این انبار
 ReplenishmentStatusDesc=This is a list of all products with a stock lower than desired stock (or lower than alert value if checkbox "alert only" is checked). Using the checkbox, you can create supplier orders to fill the difference.
-ReplenishmentOrdersDesc=This is a list of all opened supplier orders including predefined products. Only opened orders with predefined products, so orders that may affect stocks, are visible here.
+ReplenishmentOrdersDesc=This is a list of all open supplier orders including predefined products. Only open orders with predefined products, so orders that may affect stocks, are visible here.
 Replenishments=پر کردن
 NbOfProductBeforePeriod=تعداد محصول٪ s را در انبار قبل از دوره (<٪) انتخاب
 NbOfProductAfterPeriod=تعداد محصول٪ s را در سهام بعد از دوره زمانی انتخاب شده (>٪ بازدید کنندگان)
 MassMovement=جنبش توده ای
-MassStockMovement=جنبش سهام توده
 SelectProductInAndOutWareHouse=انتخاب محصول، مقدار، یک انبار منابع و انبار هدف، و سپس کلیک کنید "٪ s". به محض این که برای همه جنبش های مورد نیاز انجام می شود، بر روی "٪ s" را کلیک کنید.
 RecordMovement=رکورد ی انتقال
 ReceivingForSameOrder=Receipts for this order
@@ -135,7 +123,10 @@ IsInPackage=Contained into package
 ShowWarehouse=Show warehouse
 MovementCorrectStock=Stock correction for product %s
 MovementTransferStock=Stock transfer of product %s into another warehouse
-WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn=Source warehouse must be defined here when "Product lot" module is on. It will be used to list which lot/serial are available for products requiring lot/serial data for movement. If you want to send products from different warehouses, just make the shipment into several steps.
 InventoryCodeShort=Inv./Mov. code
 NoPendingReceptionOnSupplierOrder=No pending reception due to open supplier order
 ThisSerialAlreadyExistWithDifferentDate=This lot/serial number (<strong>%s</strong>) already exists but with different eatby or sellby date (found <strong>%s</strong> but you enter <strong>%s</strong>).
+OpenAll=Open for all actions
+OpenInternal=Open for internal actions
+OpenShipping=Open for shippings
+OpenDispatch=Open for dispatch

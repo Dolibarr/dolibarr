@@ -50,7 +50,7 @@ $paymentstatic=new Paiement($db);
 $accountstatic=new Account($db);
 $companystatic=new Societe($db);
 
-$search_ref=GETPOST("search_ref","int");
+$search_ref=GETPOST("search_ref","alpha");
 $search_account=GETPOST("search_account","int");
 $search_paymenttype=GETPOST("search_paymenttype");
 $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be able to search on "< x"

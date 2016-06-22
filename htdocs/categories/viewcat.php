@@ -297,7 +297,7 @@ else
 	}
 	else
 	{
-		print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("NoSubCat")."</td></tr>";
+		print "<tr ".$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat")."</td></tr>";
 	}
 	print "</table>\n";
 }
@@ -371,7 +371,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 		}
 		else
 		{
-			print "<tr ".$bc[false].'><td colspan="2">'.$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
+			print "<tr ".$bc[false].'><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
 		}
 		print "</table>\n";
 	}
@@ -422,7 +422,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 		}
 		else
 		{
-			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoSupplier")."</td></tr>";
+			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoSupplier").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -475,7 +475,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 		}
 		else
 		{
-			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
+			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoCustomer").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -529,7 +529,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 		}
 		else
 		{
-			print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("ThisCategoryHasNoMember")."</td></tr>";
+			print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoMember").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -582,7 +582,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 		}
 		else
 		{
-			print "<tr ".$bc[false]."><td>".$langs->trans("ThisCategoryHasNoContact")."</td></tr>";
+			print '<tr '.$bc[false].'><td class="opacitymedium">'.$langs->trans("ThisCategoryHasNoContact").'</td></tr>';
 		}
 		print "</table>\n";
 	}
@@ -636,7 +636,7 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
         }
         else
         {
-            print "<tr ".$bc[false].'><td colspan="3">'.$langs->trans("ThisCategoryHasNoAccount")."</td></tr>";
+            print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoAccount").'</td></tr>';
         }
         print "</table>\n";
     }

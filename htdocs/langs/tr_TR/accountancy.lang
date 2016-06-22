@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Dışaaktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışaaktarma dosyası için tarih biçimi
 ACCOUNTING_EXPORT_PIECE=Parça sayısını dışaaktar
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Genel hesapla birlikte dışaaktar
-ACCOUNTING_EXPORT_LABEL=Etiketi dışaaktar
+ACCOUNTING_EXPORT_LABEL=Etiket dışaaktar
 ACCOUNTING_EXPORT_AMOUNT=Tutarı dışaaktar
-ACCOUNTING_EXPORT_DEVISE=Cihazı dışaaktar
+ACCOUNTING_EXPORT_DEVISE=Para birimi dışaaktar
 Selectformat=Dosya için biçimi seçin
 ACCOUNTING_EXPORT_PREFIX_SPEC=Dosya adı için öneki belirtin
-
-Accounting=Muhasebe
-Globalparameters=Genel parametreler
-Menuaccount=Muhasebe hesapları
-Menuthirdpartyaccount=Üçüncü parti hesapları
-MenuTools=Araçlar
 
 ConfigAccountingExpert=Hesap uzmanı modülü yapılandırması
 Journaux=Günlükler
 JournalFinancial=Mali günlükler
-Exports=Dışaaktarımlar
-Export=Dışaaktar
-Modelcsv=Dışaaktarım modeli
-OptionsDeactivatedForThisExportModel=Bu dışaaktarma modeli için seçenekler etkinleştirilmemiş
-Selectmodelcsv=Bir dışaaktarım modeli seç
-Modelcsv_normal=Klasik dışaaktarım
-Modelcsv_CEGID=CEGID Uzmanına yönelik dışaaktarım
 BackToChartofaccounts=Hesap planı cirosu
 
-Definechartofaccounts=Hesap planı tanımla
 Selectchartofaccounts=Hesap planı seç
 Addanaccount=Muhasebe hesabı ekle
 AccountAccounting=Muhasebe hesabı
+AccountAccountingShort=Hesap
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Analiz
 
 MenuAccountancy=Muhasebe
 CustomersVentilation=Müşteri analizi
 SuppliersVentilation=Tedarikçi analizi
-TradeMargin=Ticaret kar oranı
 Reports=Raporlar
-ByCustomerInvoice=Müşteri faturalarına göre
 NewAccount=Yeni muhasebe hesabı
 Create=Oluştur
 CreateMvts=Hareket oluştur
-UpdateAccount=Bir muhasebe hesabının değiştirilmesi
 UpdateMvts=Bir hareketin değiştirilmesi
 WriteBookKeeping=Büyük defter hesap kayıtları
 Bookkeeping=Büyük Defter
 AccountBalance=Hesap bakiyesi
-
-AccountingVentilation=Analiz muhasebesi
-AccountingVentilationSupplier=Tedarikçi hesabı analizi
-AccountingVentilationCustomer=Müşteri hesabı analizi
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Analiz edilecek fatura kalemleri
@@ -59,7 +39,6 @@ InvoiceLinesDone=Analiz edilen fatura kalemleri
 IntoAccount=Muhasebe hesapları analizi
 
 Ventilate=Analiz
-VentilationAuto=Otomatik analiz
 
 Processing=İşleme
 EndProcessing=İşleme sonu
@@ -69,14 +48,10 @@ Lineofinvoice=Fatura satırı
 VentilatedinAccount=Muhasebe hesabında başarıyla analiz edildi
 NotVentilatedinAccount=Muhasebe hesabında analiz edilmedi.
 
-ACCOUNTING_SEPARATORCSV=Dışaaktarma dosyası sütün ayırıcısı
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Analiz syfasında gösterilecek öğe sayısı (önerilen ençok:50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Analiz sayfalarında "Analiz edileceklerin" sıralandırılmasını en son öğelerden göre başlatın
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Analiz sayfalarında "Analiz edilmişlerin" sıralandırılmasını en son öğelerden göre başlatın
 
-AccountLength=Dolibarr'da gösterilen muhasebe hesapları uzunluğu
-AccountLengthDesc=Boşlukların sıfır figürü ile değiştirilmesiyle muhasebe hesap uzunluğunun uydurulmasını sağlayan işlevdir. Bu işlev yalnızca görüntüyü değiştirir, Dolibarr'da kayıtlı muhasebe hesaplarını değiştirmez. Dışaaktarma için bu fonksiyonun belirli yazılımla uyumlu olması gerekir.
 ACCOUNTING_LENGTH_DESCRIPTION=Listelemede ürün & hizmet tanımlaması için yer uzunluğu (En iyi = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Listelemede ürün & hizmet hesap tanımlama formu için yer uzunluğu (En iyi = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Genel hesapların uzunluğu
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Sosyal günlük
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Transfer hesabı
 ACCOUNTING_ACCOUNT_SUSPENSE=Bekleme hesabı
+DONATION_ACCOUNTINGACCOUNT=Bağış kayıtları hesabı
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Satınalınan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Satılan ürünler için varsayılan muhasebe hesabı (ürün kartlarında tanımlanmışsa)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Satılan hizmetler için varsayılan muhasebe ko
 Doctype=Belge türü
 Docdate=Tarih
 Docref=Referans
-Numerocompte=Hesap
 Code_tiers=Üçüncü parti
 Labelcompte=Hesap etiketi
 Sens=Sens (borsa haberleri yayınlama günlüğü)
 Codejournal=Günlük
 NumPiece=Parça sayısı
+AccountingCategory=Muhasebe kategorisi
 
 DelBookKeeping=Büyük defter kayıtlarını sil
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Alış günlüğü
 FinanceJournal=Finance journal
 DescFinanceJournal=Banka hesabından yapılan tüm ödeme türlerini içeren finans günlüğü
 
-CashPayment=Nakit ödeme
-
-SupplierInvoicePayment=Tedarikçi faturası ödemesi
 CustomerInvoicePayment=Müşteri faturası ödemesi
 
 ThirdPartyAccount=Üçüncü parti hesabı
@@ -130,7 +103,6 @@ DescThirdPartyReport=Burada üçüncü parti müşterileri ve tedarikçileri ile
 
 ListAccounts=Muhasebe hesapları listesi
 
-Pcgversion=Plan sürümü
 Pcgtype=Hesap sınıfı
 Pcgsubtype=Hesap sınıfı altında
 Accountparent=Hesabın kökü
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Bir muhasebe hesabıyla müşteri faturanızın kalemleri
 ChangeAccount=Muhasebe hesabını, hesap tarafından seçilen satırlar için değiştirin:
 Vide=-
 DescVentilSupplier=Tedarikçi faturalarınızın yıllık hesap analizi için buraya danışın
-DescVentilTodoSupplier=Bir muhasebe hesabıyla tedarikçi faturanızın kalemlerini analiz edin
 DescVentilDoneSupplier=Burada tedarikçi faturaları ve muhasebe hesapları satırları listesine başvurun
 
 ValidateHistory=Otomatikman doğrula
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Hareket doğru denkleştirilmemiş. Alacak = %s. Borç =
 FicheVentilation=Analiz kartı
 GeneralLedgerIsWritten=İşlemler büyük deftere yazılır
 
-MvtNotCorrectlyBalanced=Hareket doğru denkleştirilmemiş. Alacak = %s. Borç = %s
+## Admin
+ApplyMassCategories=Toplu kategori uygula
 
-##Export Journal Feature
-ExportFormat=Dışaktarım biçimi
-Prefixname=Dışaktarım dosyası öneki
-Separate=Dışaaktarım ayırıcısı
-Textframe=Metin değeri çerçevesi
-Headercol=Dosya başlığındaki kolon adı
-Fieldname=Alan Adı
-Headername=Başlıktaki ad
-Type=Alan türü
-Param=Ek parametreler
-EnabledProduct=Ürünlerde
-EnabledTiers=Üçüncü partide
-EnabledVat=KDV nde
+## Export
+Exports=Dışaaktarımlar
+Export=Dışaaktar
+Modelcsv=Dışaaktarım modeli
+OptionsDeactivatedForThisExportModel=Bu dışaaktarma modeli için seçenekler etkinleştirilmemiş
+Selectmodelcsv=Bir dışaaktarım modeli seç
+Modelcsv_normal=Klasik dışaaktarım
+Modelcsv_CEGID=CEGID Expert Comptabilité'ye doğru dışaaktar
+Modelcsv_COALA=Sage Coala'ya doğru dışaaktar
+Modelcsv_bob50=Sage BOB 50'ye doğru dişaaktar
+Modelcsv_ciel=Sage Ciel Compta ya da Compta Evolution'a doğru dışaaktar
+Modelcsv_quadratus=Quadratus QuadraCompta'ya doğru dışaaktar
+Modelcsv_ebp=EBP'ye yönelik dışaaktarım
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı
@@ -177,3 +149,12 @@ OptionModeProductSell=Satış modu
 OptionModeProductBuy=Satınalma modu
 OptionModeProductSellDesc=Satışlar için muhasebe hesabı tanımlanmamış tüm ürünleri göster.
 OptionModeProductBuyDesc=Satınalmalar için muhasebe hesabı tanımlanmamış tüm ürünleri göster.
+
+## Dictionary
+Range=Muhasebe hesabı aralığı
+Calculated=Hesaplanmış
+Formula=Formül
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Bu ülke için mevcut muhasebe kategorisi yok
+ExportNotSupported=Ayarlanan dışaaktarım biçimi bu sayfada desteklenmiyor

@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Afhending
-Deliveries=Sendingar
+DeliveryRef=Ref Delivery
 DeliveryCard=Afhending kort
 DeliveryOrder=Sending röð
-DeliveryOrders=Sending pantana
 DeliveryDate=Fæðingardag
-DeliveryDateShort=Skila. dagsetning
 CreateDeliveryOrder=Búa til afhendingar til
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Magn afhentir
 SetDeliveryDate=Setja skipum dagsetningu
 ValidateDeliveryReceipt=Staðfesta sending berst
 ValidateDeliveryReceiptConfirm=Ertu viss um að þú viljir að sannprófa þetta sending berst?
@@ -30,3 +27,4 @@ Recipient=Viðtakandi
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

@@ -6,7 +6,7 @@ CountryES=Španielsko
 CountryDE=Nemecko
 CountryCH=Švajčiarsko
 CountryGB=Veľká Británia
-# CountryUK=United Kingdom
+CountryUK=United Kingdom
 CountryIE=Írsko
 CountryCN=Čína
 CountryTN=Tunisko
@@ -138,7 +138,7 @@ CountryLS=Lesotho
 CountryLR=Libéria
 CountryLY=Líbyjská
 CountryLI=Lichtenštajnsko
-CountryLT=Litovských
+CountryLT=Lithuania
 CountryLU=Luxembursko
 CountryMO=Macao
 CountryMK=Macedónsko, Bývalá juhoslovanská z
@@ -253,7 +253,6 @@ CivilityMR=Pán
 CivilityMLE=Pani
 CivilityMTRE=Majster
 CivilityDR=Lekár
-
 ##### Currencies #####
 Currencyeuros=Euro
 CurrencyAUD=AU dolár
@@ -290,10 +289,10 @@ CurrencyXOF=CFA frank BCEAO
 CurrencySingXOF=CFA frank BCEAO
 CurrencyXPF=CFP frank
 CurrencySingXPF=Frank CFP
-
 CurrencyCentSingEUR=cent
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=tisícina
-
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=E-mailové kampane
@@ -306,7 +305,6 @@ DemandReasonTypeSRC_WOM=Word of mouth
 DemandReasonTypeSRC_PARTNER=Partner
 DemandReasonTypeSRC_EMPLOYEE=Zamestnanec
 DemandReasonTypeSRC_SPONSORING=Sponzoring
-
 #### Paper formats ####
 PaperFormatEU4A0=Formát 4A0
 PaperFormatEU2A0=Formát 2A0

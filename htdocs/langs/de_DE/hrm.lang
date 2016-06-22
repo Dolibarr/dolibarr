@@ -12,9 +12,6 @@ CloseEtablishment=Einrichtung schliessen
 DictionaryDepartment=PV - Abteilungsliste
 DictionaryFunction=PV - Stellenbezeichnungen Liste
 # Module
-ListOfEmployees=Liste der Mitarbeiter
 Employees=Mitarbeiter
 Employee=Mitarbeiter
-Employe=Mitarbeiter
 NewEmployee=Neuer Mitarbeiter
-EmployeeCard=Mitarbeiter - Karte

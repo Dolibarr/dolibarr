@@ -1,24 +1,20 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=ID događaj
 Actions=Događaji
-ActionsArea=Opseg događaja (akcije i zadaci)
 Agenda=Agenda
 Agendas=Agende
 Calendar=Kalendar
-Calendars=Kalendari
 LocalAgenda=Interni kalendar
 ActionsOwnedBy=Događaj u vlasništvu
+ActionsOwnedByShort=Owner
 AffectedTo=Dodeljeno
-DoneBy=Urađeno
 Event=Događaj
 Events=Događaj
 EventsNb=Broj događaja
-MyEvents=Moji događaji
-OtherEvents=Drugi događaji
 ListOfActions=Lista događaja
 Location=Lokacija
+ToUserOfGroup=To any user in group
 EventOnFullDay=Dogadaj svim danima
-SearchAnAction= Potraži događaj/zadatak
 MenuToDoActions=Svi nezavršeni događaji
 MenuDoneActions=Svi završeni događaji
 MenuToDoMyActions=Moji nezavršeni događaji
@@ -27,20 +23,14 @@ ListOfEvents=Lista događaja (interni kalendar)
 ActionsAskedBy=Događaje prijavio
 ActionsToDoBy=Događaji dodeljeni
 ActionsDoneBy=Događaje završio
-ActionsForUser=Događaji za korisnike
-ActionsForUsersGroup=Događaji za sve korisnike grupe
 ActionAssignedTo=Događaj dodeljen 
-AllMyActions= Svi moji događaji/zadaci
-AllActions= Svi događaji/zadaci
 ViewCal=Mesečni pregled
 ViewDay=Dnevni pregled
 ViewWeek=Nedeljni pregled
-ViewYear=Godišnji pregled
 ViewPerUser=Pregled po korisniku
 ViewPerType=Pregled po tipu
-ViewWithPredefinedFilters= Pogledaj po unpred zadatim filterima
 AutoActions= Automatsko popunjavanje
-AgendaAutoActionDesc= Definiši ovde događaje za koje želiš da Dolibarr automatski kreira događaj u agendi. Ukoliko ništa nije označeno (), samo manuelne akcije će biti uključene u agendi.
+AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked, only manual actions will be included in logged and visible into agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
 AgendaSetupOtherDesc= Ova stranica omogućava izvoz vaših Dolibarr događaja u eksterni kalendar (thunderbird, google kalendar, ...)
 AgendaExtSitesDesc=Ova stranica omogućava da odabereš eksterni kalendar čije događaje ćeš videti u Dolibarr agendi.
 ActionsEvents=Događaji za koje će Dolibarr da kreira akciju u agendi automatski
@@ -64,20 +54,19 @@ SupplierInvoiceSentByEMail=Faktura dobavljača %s poslata mejlom
 ShippingSentByEMail=Isporuka %s poslata mejlom
 ShippingValidated= Isporuka %s je potvrđena
 InterventionSentByEMail=Intervencija %s poslata mejlo
+ProposalDeleted=Proposal deleted
+OrderDeleted=Order deleted
+InvoiceDeleted=Invoice deleted
 NewCompanyToDolibarr= Subjekt kreiran
-DateActionPlannedStart= Planirani početak
-DateActionPlannedEnd= Planirani kraj
-DateActionDoneStart= Stvarni početak
-DateActionDoneEnd= Stvarni kraj
 DateActionStart= Početak
 DateActionEnd= Kraj
 AgendaUrlOptions1=Možete dodati i sledeće parametre da filtrirate rezultat:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b>.
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
-AgendaShowBirthdayEvents=Prikaži rođendan kontakta
-AgendaHideBirthdayEvents=Sakri rođendan kontakta
+AgendaUrlOptions2=<b>prijava=%s</b> da se zabrani izlaz akcija kreiranih ili dodeljenih korisniku <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> da se zabrani izlaz akcijama čiji je vlasnik korisnik <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> da se zabrani izlaz akcijama koje su dodeljene korisniku <b>%s</b>.
+AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> da se zabrani izlaz akcijama povezanim sa projektom <b>PROJECT_ID</b>.
+AgendaShowBirthdayEvents=Show birthdays of contacts
+AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Zauzet
 ExportDataset_event1=Spisak događaja iz agende
 DefaultWorkingDays=Već utvrđen period radnih dana u nedelji (Primer: 1-5, 1-6)
@@ -90,8 +79,6 @@ ExtSitesNbOfAgenda=Broj kalendara
 AgendaExtNb=Kalendar broj %s
 ExtSiteUrlAgenda=URL za pristup .ical datoteke
 ExtSiteNoLabel=Nema opisa
-WorkingTimeRange=Period radnog vremena
-WorkingDaysRange=Period radnih dana
 VisibleTimeRange=Vidljiv vremenski period
 VisibleDaysRange=Vidljiv vremenski period
 AddEvent=Kreiraj događaj

@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = About
-CronAbout = About Cron
-CronAboutPage = Cron about page
 # Right
 Permission23101 = Read Scheduled job
 Permission23102 = Create/update Scheduled job
@@ -18,15 +15,10 @@ CronExplainHowToRunUnix=On Unix environment you should use the following crontab
 CronExplainHowToRunWin=On Microsoft(tm) Windows environement you can use Scheduled task tools to run the command line each 5 minutes
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Scheduled jobs
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=List of disabled jobs
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Last run
 CronLastOutput=Last run output
 CronLastResult=Last result code
-CronListOfCronJobs=List of scheduled jobs
 CronCommand=Command
 CronList=Scheduled jobs
 CronDelete=Delete scheduled jobs
@@ -34,22 +26,17 @@ CronConfirmDelete=Are you sure you want to delete these scheduled jobs ?
 CronExecute=Launch scheduled jobs
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now ?
 CronInfo=Scheduled job module allow to execute job that have been planned
-CronWaitingJobs=Waiting jobs
 CronTask=Job
 CronNone=None
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Next execution
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frequency
 CronClass=Class
 CronMethod=Method
 CronModule=Module
-CronAction=Action
-CronStatus=Status
-CronStatusActive=Enabled
-CronStatusInactive=Disabled
 CronNoJobs=No jobs registered
 CronPriority=Priority
 CronLabel=תאור
@@ -59,11 +46,10 @@ CronEach=Every
 JobFinished=Job launched and finished
 #Page card
 CronAdd= Add jobs
-CronHourStart= Start hour and date of job
 CronEvery=Execute job each
 CronObject=Instance/Object to create
 CronArgs=Parameters
-CronSaveSucess=Save succesfully
+CronSaveSucess=Save successfully
 CronNote=Comment
 CronFieldMandatory=Fields %s is mandatory
 CronErrEndDateStartDt=End date cannot be before start date
@@ -81,14 +67,12 @@ CronCommandHelp=The system command line to execute.
 CronCreateJob=Create new Scheduled Job
 CronFrom=From
 # Info
-CronInfoPage=Information
 # Common
 CronType=Job type
 CronType_method=Call method of a Dolibarr Class
 CronType_command=Shell command
-CronMenu=Cron
 CronCannotLoadClass=Cannot load class %s or object %s
-UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Modules tools - Job list" to see and edit scheduled jobs.
-TaskDisabled=Job disabled
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump

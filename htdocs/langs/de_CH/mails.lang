@@ -1,11 +1,5 @@
 # Dolibarr language file - Source file is en_US - mails
 ActivateCheckReadKey=Schlüssel um die URL für "Lesebestätigung" und "Abmelden/Unsubscribe" zu verschlüsseln
-NoRemindSent=Keine eMail-Erinnerung versandt
-MailingModuleDescContactCompanies=Kontakte aller Geschäftspartner (Kunden, Leads, Lieferanten, ...)
-MailingModuleDescContactsCategories=Geschäftspartner-Kontakte (nach Kategorie)
-MailingModuleDescDolibarrContractsLinesExpired=Geschäftspartner mit abgelaufenen Vertragspositionen
-MailingModuleDescContactsByCompanyCategory=Kontakt über Geschäftspartner (durch Kategorie)
-MailingModuleDescContactsByFunction=Kontakt über Geschäftspartner (durch Position/Funktion)
 RecipientSelectionModules=Definiert Empfängerauswahlen
 NbOfCompaniesContacts=Einzigartige Geschäftspartner-Kontakte
 TagMailtoEmail=E-Mailadresses des Empfängers

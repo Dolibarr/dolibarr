@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Kế toán
-Globalparameters=Các thông số toàn cầu
-Menuaccount=Tài khoản kế toán
-Menuthirdpartyaccount=Tài khoản của bên thứ ba
-MenuTools=Công cụ
 
 ConfigAccountingExpert=Cấu hình của các chuyên gia kế toán mô-đun
 Journaux=Tạp chí
 JournalFinancial=Tạp chí tài chính
-Exports=Xuất khẩu
-Export=Xuất dữ liệu
-Modelcsv=Mô hình xuất khẩu
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Chọn một mô hình xuất khẩu
-Modelcsv_normal=Cổ điển xuất khẩu
-Modelcsv_CEGID=Xuất khẩu theo hướng CEGID chuyên gia
 BackToChartofaccounts=Quay trở lại biểu đồ của tài khoản
 
-Definechartofaccounts=Xác định một biểu đồ của tài khoản
 Selectchartofaccounts=Chọn một biểu đồ của tài khoản
 Addanaccount=Thêm một tài khoản kế toán
 AccountAccounting=Tài khoản kế toán
+AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 
 MenuAccountancy=Accountancy
 CustomersVentilation=Breakdown customers
 SuppliersVentilation=Breakdown suppliers
-TradeMargin=Lợi nhuận thương mại
 Reports=Báo cáo
-ByCustomerInvoice=Hoá đơn cho khách hàng
 NewAccount=Tài khoản kế toán mới
 Create=Tạo
 CreateMvts=Create movement
-UpdateAccount=Sự biến đổi của một tài khoản kế toán
 UpdateMvts=Sửa đổi của một thay đổi
 WriteBookKeeping=Tài khoản ghi trong sổ kế toán tổng
 Bookkeeping=Sổ cái tổng hợp
 AccountBalance=Account balance
-
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Dòng hoá đơn được ventilation
@@ -59,7 +39,6 @@ InvoiceLinesDone=Đường ventilation hóa đơn
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilation
-VentilationAuto=Automatic breakdown
 
 Processing=Chế biến
 EndProcessing=Sự kết thúc của chế biến
@@ -69,14 +48,10 @@ Lineofinvoice=Dòng của hóa đơn
 VentilatedinAccount=Ventilation thành công trong các tài khoản kế toán
 NotVentilatedinAccount=Không ventilation trong tài khoản kế toán
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
-AccountLength=Chiều dài của kế toán tài khoản thể hiện trong Dolibarr
-AccountLengthDesc=Chức năng cho phép để giả vờ chiều dài của tài khoản kế toán bằng cách thay thế không gian bởi các con số không. Chức năng này chỉ chạm vào màn hình, nó không sửa đổi các tài khoản kế toán đăng ký tại Dolibarr. Đối với xuất khẩu, chức năng này là cần thiết để tương thích với phần mềm nhất định.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Chiều dài của các tài khoản tổng hợp
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Tạp chí Xã hội
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Tài khoản chuyển nhượng
 ACCOUNTING_ACCOUNT_SUSPENSE=Tài khoản của chờ đợi
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Kế toán tài khoản mặc định cho các sản phẩm đã mua (nếu không quy định trong bảng sản phẩm)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Kế toán tài khoản mặc định cho các sản phẩm bán ra (nếu không quy định trong bảng sản phẩm)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Kế toán tài khoản mặc định cho các d
 Doctype=Loại văn bản
 Docdate=Ngày
 Docref=Tài liệu tham khảo
-Numerocompte=Tài khoản
 Code_tiers=Của bên thứ ba
 Labelcompte=Tài khoản Label
 Sens=Sens
 Codejournal=Tạp chí
 NumPiece=Piece number
+AccountingCategory=Accounting category
 
 DelBookKeeping=Xóa các bản ghi của sổ kế toán tổng
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Mua tạp chí
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=Thanh toán bằng tiền mặt
-
-SupplierInvoicePayment=Thanh toán hóa đơn của nhà cung cấp
 CustomerInvoicePayment=Thanh toán hóa đơn của khách hàng
 
 ThirdPartyAccount=Tài khoản của bên thứ ba
@@ -130,7 +103,6 @@ DescThirdPartyReport=Tham khảo ý kiến ​​ở đây là danh sách các k
 
 ListAccounts=Danh sách các tài khoản kế toán
 
-Pcgversion=Phiên bản kế hoạch
 Pcgtype=Lớp tài khoản
 Pcgsubtype=Trong lớp học của các tài khoản
 Accountparent=Gốc của tài khoản
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Ventilation cho đường dây của bạn hóa đơn c�
 ChangeAccount=Thay đổi tài khoản kế toán cho dòng lựa chọn tài khoản:
 Vide=-
 DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilation cho đường dây của nhà cung cấp hóa đơn với một tài khoản kế toán
 DescVentilDoneSupplier=Tham khảo ý kiến ​​ở đây là danh sách các dòng nhà cung cấp hoá đơn, tài khoản kế toán
 
 ValidateHistory=Tự động xác nhận
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Xuất khẩu
+Export=Xuất dữ liệu
+Modelcsv=Mô hình xuất khẩu
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Chọn một mô hình xuất khẩu
+Modelcsv_normal=Cổ điển xuất khẩu
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -177,3 +149,12 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page

@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dodávka
-Deliveries=Dodávky
+DeliveryRef=Ref Delivery
 DeliveryCard=Karta dodávky
 DeliveryOrder=Dodací objednávka
-DeliveryOrders=Dodací objednávky
 DeliveryDate=Termín dodání
-DeliveryDateShort=Term. dodání
 CreateDeliveryOrder=Generovat objednávku k dodání
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Množství dodáno
 SetDeliveryDate=Nastavit datem odeslání
 ValidateDeliveryReceipt=Potvrzení o doručení
 ValidateDeliveryReceiptConfirm=Jste si jisti, že chcete ověřit toto potvrzení o doručení?
@@ -30,3 +27,4 @@ Recipient=Příjemce
 ErrorStockIsNotEnough=Dostatečné množství není skladem
 Shippable=Doručitelné
 NonShippable=Nedoručitelné
+ShowReceiving=Show delivery receipt

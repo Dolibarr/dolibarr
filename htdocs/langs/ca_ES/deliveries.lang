@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Enviament
-Deliveries=Enviaments
+DeliveryRef=Ref. d'enviament
 DeliveryCard=Fitxa recepció
 DeliveryOrder=Nota de recepció
-DeliveryOrders=Notes de recepció
 DeliveryDate=Data de lliurament
-DeliveryDateShort=Data lliurament
 CreateDeliveryOrder=Generar nota de recepció
 DeliveryStateSaved=Estat d'enviament desat
-QtyDelivered=Qtat. entregada
 SetDeliveryDate=Indica la data de lliurament
 ValidateDeliveryReceipt=Validar el rebut de lliurament
 ValidateDeliveryReceiptConfirm=Estàs segur de voler validar aquest rebut de lliurament?
@@ -30,3 +27,4 @@ Recipient=Destinatari
 ErrorStockIsNotEnough=No hi han suficient stock
 Shippable=Enviable
 NonShippable=No enviable
+ShowReceiving=Mostra la confirmació d'entrega

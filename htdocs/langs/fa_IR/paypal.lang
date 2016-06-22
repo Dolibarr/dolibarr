@@ -3,7 +3,6 @@ PaypalSetup=راه اندازی ماژول پی پال
 PaypalDesc=این ماژول صفحات پیشنهاد به اجازه پرداخت <a href="http://www.paypal.com" target="_blank">پی پال</a> توسط مشتریان. این می تواند برای پرداخت رایگان و پرداخت در یک شیء خاص Dolibarr استفاده می شود (فاکتور، سفارش، ...)
 PaypalOrCBDoPayment=پرداخت با کارت اعتباری یا پی پال
 PaypalDoPayment=پرداخت با پی پال
-PaypalCBDoPayment=پرداخت با کارت اعتباری
 PAYPAL_API_SANDBOX=تست حالت / گودال ماسهبازی
 PAYPAL_API_USER=نام کاربری API
 PAYPAL_API_PASSWORD=رمز عبور API
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=پی پال تنها
 PAYPAL_CSS_URL=آدرس Optionnal از سبک CSS ورق در صفحه پرداخت
 ThisIsTransactionId=این شناسه از معامله <b>است:٪ s</b>
 PAYPAL_ADD_PAYMENT_URL=اضافه کردن آدرس از پرداخت پی پال زمانی که شما یک سند ارسال از طریق پست
-PAYPAL_IPN_MAIL_ADDRESS=آدرس پست الکترونیکی برای اطلاع رسانی فوری پرداخت (IPN)
 PredefinedMailContentLink=شما می توانید بر روی لینک زیر کلیک کنید امن به پرداخت خود را (پی پال) اگر آن را در حال حاضر انجام می شود. از٪ s
 YouAreCurrentlyInSandboxMode=شما در حال حاضر در "گودال ماسهبازی" حالت
 NewPaypalPaymentReceived=پرداخت پی پال جدید دریافت

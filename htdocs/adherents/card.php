@@ -554,7 +554,7 @@ if (empty($reshook))
 			$result=$object->create($user);
 			if ($result > 0)
 			{
-				// Fundation categories
+				// Foundation categories
 				$memcats = GETPOST('memcats', 'array');
 				$object->setCategories($memcats);
 
@@ -864,7 +864,7 @@ else
 
 		// Address
 		print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1125,7 +1125,7 @@ else
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1567,12 +1567,12 @@ else
 	        if (! $adht->cotisation)
 	        {
 	        	print $langs->trans("SubscriptionNotRecorded");
-		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 	        }
 	        else
 	        {
 	            print $langs->trans("SubscriptionNotReceived");
-	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 	        }
         }
         print '</td></tr>';

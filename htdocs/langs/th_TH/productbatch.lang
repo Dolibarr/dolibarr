@@ -17,6 +17,5 @@ printEatby=กินโดย:% s
 printSellby=ขายโดย:% s
 printQty=จำนวน:% d
 AddDispatchBatchLine=เพิ่มบรรทัดสำหรับอายุการเก็บรักษาการฝึกอบรม
-BatchDefaultNumber=ตะคุ่ม
 WhenProductBatchModuleOnOptionAreForced=เมื่อโมดูลจัดสรร / อนุกรมอยู่บนเพิ่มขึ้น / ลดโหมดหุ้นถูกบังคับให้ต้องเลือกสุดท้ายและไม่สามารถแก้ไขได้ ตัวเลือกอื่น ๆ สามารถกำหนดได้ตามที่คุณต้องการ
 ProductDoesNotUseBatchSerial=ผลิตภัณฑ์นี้ไม่ได้ใช้มาก / หมายเลขซีเรีย

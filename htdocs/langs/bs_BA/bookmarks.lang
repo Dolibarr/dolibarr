@@ -14,6 +14,5 @@ BehaviourOnClick=Ponašanje kada se klikne na link
 CreateBookmark=Kreiraj bookmark
 SetHereATitleForLink=Postavi naslov za bookmark
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Koristi ekterni http link ili relativni Dolibarr link
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izaberi da li će se stranica otvorena sa linkom prokazati u trenutnom ili novom prozoru
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Upravljanje bookmark-ima
-ListOfBookmarks=Lista bookmark-a
