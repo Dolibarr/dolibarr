@@ -412,6 +412,7 @@ class DoliDBMysqli extends DoliDB
             1100 => 'DB_ERROR_NOT_LOCKED',
             1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
             1146 => 'DB_ERROR_NOSUCHTABLE',
+            1215 => 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT',
             1216 => 'DB_ERROR_NO_PARENT',
             1217 => 'DB_ERROR_CHILD_EXISTS',
             1396 => 'DB_ERROR_USER_ALREADY_EXISTS',    // When creating user already existing
