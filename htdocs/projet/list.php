@@ -72,6 +72,7 @@ $search_status=GETPOST("search_status",'int');
 $search_opp_status=GETPOST("search_opp_status",'alpha');
 $search_opp_percent=GETPOST("search_opp_percent",'alpha');
 $search_opp_amount=GETPOST("search_opp_amount",'alpha');
+$search_budget_amount=GETPOST("search_budget_amount",'alpha');
 $search_public=GETPOST("search_public",'int');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -121,6 +122,7 @@ $arrayfields=array(
     'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>103),
     'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>104),
     'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES?1:0), 'position'=>105),
+    'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
     'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
     'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -153,6 +155,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_opp_status=-1;
 	$search_opp_amount='';
 	$search_opp_percent='';
+	$search_budget_amount='';
 	$search_public="";
 	$search_sale="";
 	$search_user='';
@@ -203,7 +206,7 @@ if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0]='0';    
 
 $distinct='DISTINCT';   // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update";
+$sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", cls.code as opp_status_code";
 // Add fields for extrafields
@@ -270,6 +273,8 @@ if ($search_public!='') $sql .= " AND p.public = ".$db->escape($search_public);
 if ($search_sale > 0) $sql.= " AND sc.fk_user = " .$search_sale;
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
 if ($search_user > 0) $sql.= " AND ecp.fk_c_type_contact IN (".join(',',array_keys($listofprojectcontacttype)).") AND ecp.element_id = p.rowid AND ecp.fk_socpeople = ".$search_user; 
+if ($search_opp_amount != '') $sql .= natural_search('p.opp_amount', $search_opp_amount, 1);
+if ($search_budget_amount != '') $sql .= natural_search('p.budget_amount', $search_budget_amount, 1);
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {
@@ -327,6 +332,8 @@ if ($resql)
 	if ($search_public != '') 		$param.='&search_public='.$search_public;
 	if ($search_user > 0)    		$param.='&search_user='.$search_user;
 	if ($search_sale > 0)    		$param.='&search_sale='.$search_sale;
+	if ($search_opp_amount != '')    $param.='&search_opp_amount='.$search_opp_amount;
+	if ($search_budget_amount != '') $param.='&search_budget_amount='.$search_budget_amount;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
@@ -335,7 +342,7 @@ if ($resql)
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
-	
+
 	$text=$langs->trans("Projects");
 	if ($search_user == $user->id) $text=$langs->trans('MyProjects');
 
@@ -409,7 +416,8 @@ if ($resql)
     if (! empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'],$_SERVER["PHP_SELF"],'p.opp_amount',"",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'],$_SERVER["PHP_SELF"],'p.fk_opp_status',"",$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'],$_SERVER["PHP_SELF"],'p.opp_percent',"",$param,'align="right"',$sortfield,$sortorder);
-	// Extra fields
+    if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'],$_SERVER["PHP_SELF"],'p.budget_amount',"",$param,'align="center"',$sortfield,$sortorder);
+    // Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
 	   foreach($extrafields->attribute_label as $key => $val) 
@@ -498,10 +506,16 @@ if ($resql)
     	print '<input type="text" class="flat" name="search_opp_percent" size="2" value="'.$search_opp_percent.'">';
 		print '</td>';
 	}
-	// Extra fields
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	if (! empty($arrayfields['p.budget_amount']['checked']))
 	{
-        foreach($extrafields->attribute_label as $key => $val) 
+		print '<td class="liste_titre nowrap" align="right">';
+		print '<input type="text" class="flat" name="search_budget_amount" size="4" value="'.$search_budget_amount.'">';
+	    print '</td>';
+	}
+    // Extra fields
+    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+    {
+        foreach($extrafields->attribute_label as $key => $val)
         {
             if (! empty($arrayfields["ef.".$key]['checked']))
             {
@@ -681,6 +695,12 @@ if ($resql)
         	{
     			print '<td align="right">';
     			if ($obj->opp_percent) print price($obj->opp_percent, 1, '', 1, 0).'%';
+    			print '</td>';
+    	    }
+    	    if (! empty($arrayfields['p.budget_amount']['checked']))
+        	{
+    			print '<td align="right">';
+    			if ($obj->budget_amount != '') print price($obj->budget_amount, 1, '', 1, -1, -1);
     			print '</td>';
         	}
     		// Extra fields
