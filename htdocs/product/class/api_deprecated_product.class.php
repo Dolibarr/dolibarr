@@ -26,7 +26,7 @@
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * @deprecated
+ * @deprecated Use Products instead (defined in api_products.class.php)
  */
 class ProductApi extends DolibarrApi
 {

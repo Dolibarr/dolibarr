@@ -25,7 +25,7 @@
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * @deprecated
+ * @deprecated Use Invoices instead (defined in api_invoices.class.php)
  */
 class InvoiceApi extends DolibarrApi
 {

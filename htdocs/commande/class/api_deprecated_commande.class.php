@@ -29,7 +29,7 @@
  * @category Api
  * @package  Api
  * 
- * @deprecated
+ * @deprecated Use Orders instead (defined in api_orders.class.php)
  */
 class CommandeApi extends DolibarrApi
 {

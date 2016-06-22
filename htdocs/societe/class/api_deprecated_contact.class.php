@@ -25,7 +25,7 @@ use Luracast\Restler\RestException;
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * @deprecated
+ * @deprecated Use Contacts instead (defined in api_contacts.class.php)
  */
 class ContactApi extends DolibarrApi
 {

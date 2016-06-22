@@ -27,7 +27,7 @@
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  * 
- * @deprecated
+ * @deprecated Use Categories instead (defined in api_categories.class.php)
  */
 class CategoryApi extends DolibarrApi
 {

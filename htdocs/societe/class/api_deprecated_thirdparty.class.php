@@ -24,7 +24,7 @@
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * @deprecated
+ * @deprecated Use Thirdparties instead (defined in api_thirdparties.class.php)
  */
 class ThirdpartyApi extends DolibarrApi
 {
