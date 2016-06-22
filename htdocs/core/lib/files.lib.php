@@ -1983,13 +1983,13 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
 
-	else if ($modulepart == 'unpaid')
+	else if ($modulepart == 'massfilesarea')
 	{
 		if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->facture->dir_output.'/unpaid/temp/'.$original_file;
+		$original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
 
 	// Wrapping pour les fiches intervention
