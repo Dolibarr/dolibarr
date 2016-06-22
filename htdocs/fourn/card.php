@@ -232,6 +232,7 @@ if ($object->id > 0)
 	// Categories
 	if (! empty($conf->categorie->enabled))
 	{
+	    $langs->load("categories");
     	print '<tr><td>' . $langs->trans("SuppliersCategoriesShort") . '</td>';
     	print '<td colspan="3">';
     	print $form->showCategories($object->id, 'supplier', 1);
