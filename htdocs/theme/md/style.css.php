@@ -583,6 +583,7 @@ div.myavailability {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth50  { min-width: 50px; }
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }
@@ -615,6 +616,7 @@ div.myavailability {
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -683,9 +685,12 @@ td.showDragHandle {
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	position: fixed;
 	top: 50px;
-	z-index: 4;
+<?php } ?>
+	z-index: 200;
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
 	-ms-transform: translateZ(0);
@@ -709,8 +714,11 @@ td.showDragHandle {
 	-moz-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
+<?php } ?>
 <?php } ?>
 }
 .side-nav-vert {
@@ -730,11 +738,16 @@ div.login_block {
 	top: inherit !important;
 }
 .side-nav {
-	/*top: inherit !important;*/
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
-	/*position: initial !important;*/
+<?php } ?>
 	display: none;
+
+	position: auto;
+	top: auto;
+	z-index: 200;
 }
 div.login_block {
 	/* position: initial !important;*/
@@ -744,7 +757,13 @@ div.login_block {
 	padding-left: 0 ! important;
 }
 #id-left {
+	z-index: 201;
+	background: #FFF;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+	top: 50px ! important;
+<?php } else { ?>
 	top: 60px ! important;
+<?php } ?>
 }
 div.fiche {
 	margin-<?php print $left; ?>: 6px !important;
@@ -1323,7 +1342,11 @@ div.login_block {
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+	position: absolute;
+<?php } else { ?>
 	position: fixed;
+<?php } ?>
 	font-weight: bold;
 	z-index: 10;
 	text-align: center;
@@ -1495,7 +1518,7 @@ div.blockvmenuhelp
 	text-align: center;
 	text-decoration: none;
     padding-left: 0px;
-    padding-right: 3px;
+    padding-right: 8px;
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 4px 0px 0px 0px;

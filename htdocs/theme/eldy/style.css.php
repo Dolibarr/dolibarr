@@ -585,6 +585,7 @@ div.myavailability {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth50  { min-width: 50px; }
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }
@@ -617,6 +618,7 @@ div.myavailability {
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -1510,7 +1512,7 @@ div.blockvmenuhelp
 	text-align: center;
 	text-decoration: none;
     padding-left: 0px;
-    padding-right: 3px;
+    padding-right: 6px;
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 4px 0px 0px 0px;

@@ -128,7 +128,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflow maxwidth100onsmartphone" align="left"',
                     'text' => $contratlignestatic->getNomUrl(1),
 					'asis' => 1
                     );
