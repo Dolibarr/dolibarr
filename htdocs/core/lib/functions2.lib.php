@@ -1239,7 +1239,7 @@ function hexbin($hexa)
  *	Retourne le numero de la semaine par rapport a une date
  *
  *	@param	string	$time   	Date au format 'timestamp'
- *	@return int					Number of week
+ *	@return string					Number of week
  */
 function numero_semaine($time)
 {

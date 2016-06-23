@@ -82,6 +82,8 @@ Codejournal=Journal
 NumPiece=Piece number
 AccountingCategory=Accounting category
 
+NotMatch=Not Set
+
 DelBookKeeping=Delete the records of the general ledger
 
 DescSellsJournal=Sales journal
