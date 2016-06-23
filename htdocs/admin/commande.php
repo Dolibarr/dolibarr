@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2014 Regis Houssin                <regis.houssin@capnetworks.com>
  * Copyright (C) 2008 	   Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand			    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2016 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2013 	   Florian Henry			    <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -494,7 +494,7 @@ foreach ($dirmodels as $reldir)
 	                                print "</td>";
 	                            }
 
-	                            // Defaut
+	                            // Default
 	                            print '<td align="center">';
 	                            if ($conf->global->COMMANDE_ADDON_PDF == $name)
 	                            {
