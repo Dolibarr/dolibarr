@@ -1924,6 +1924,8 @@ else if ($id || $ref)
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
 		$formmail->substit['__SHIPPINGREF__']=$object->ref;
+		$formmail->substit['__SHIPPINGTRACKNUM__']=$object->tracking_number;
+		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
 
 		//Find the good contact adress
 		//Find the good contact adress
