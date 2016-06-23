@@ -1105,6 +1105,8 @@ FreeLegalTextOnSupplierProposal=Free text on price requests suppliers
 WatermarkOnDraftSupplierProposal=Watermark on draft price requests suppliers (none if empty)
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL=Ask for bank account destination of price request
 WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
+##### Suppliers Orders #####
+BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Ask for bank account destination of supplier order
 ##### Orders #####
 OrdersSetup=Order management setup
 OrdersNumberingModules=Orders numbering models
