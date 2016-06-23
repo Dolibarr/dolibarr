@@ -961,7 +961,7 @@ class FormMail extends Form
 			// For mass emailing, we have different keys
 			$vars=array(
 			    '__ID__' => 'IdRecord',
-			    '__EMAIL__' => 'EMail',
+			    '__EMAIL__' => 'EMailRecipient',
 			    '__LASTNAME__' => 'Lastname',
 			    '__FIRSTNAME__' => 'Firstname',
 			    '__MAILTOEMAIL__' => 'TagMailtoEmail',
