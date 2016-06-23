@@ -2737,12 +2737,12 @@ class Form
 
 
     /**
-     *      Retourne la liste des types de paiements possibles
+     *      Return list of payment modes
      *
      *      @param	string	$selected        Id du type de paiement pre-selectionne
      *      @param  string	$htmlname        Nom de la zone select
-     *      @param  string	$filtertype      Pour filtre
-     *		@param	int		$addempty		Ajoute entree vide
+     *      @param  int 	$filtertype      Not used
+     *		@param	int		$addempty		 Add an empty entry
      *		@return	void
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
@@ -5109,7 +5109,7 @@ class Form
 	 * 	@param		int		$id				Id of object
  	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
  	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect (recommended)
-	 * 	@return		mixed					Array of category objects or < 0 if KO
+	 * 	@return		string					String with categories
 	 */
 	function showCategories($id, $type, $rendermode=0)
 	{
