@@ -197,7 +197,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 	 * @param   array   $head       Array with properties of box title
 	 * @param   array   $contents   Array with properties of box lines
 	 * @param	int		$nooutput	No print, only return string
-	 * @return  void
+	 * @return  string
 	 */
 	function showBox($head = null, $contents = null, $nooutput=0)
 	{
