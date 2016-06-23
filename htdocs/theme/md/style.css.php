@@ -2599,7 +2599,10 @@ input.liste_titre {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 }
-
+.paymenttable tr td:first-child, .margintable tr td:first-child
+{
+	padding-left: 2px;
+}
 .margintable td {
 	border: 0px !important;
 }
