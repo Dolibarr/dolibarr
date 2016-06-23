@@ -204,7 +204,7 @@ class FormCompany
 	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
-	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country
