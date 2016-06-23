@@ -299,10 +299,12 @@ class pdf_standard extends ModeleExpenseReport
 
 					$showpricebeforepagebreak=1;
 
+					$pdf->SetFont('','', $default_font_size - 1);
+					
 					// Accountancy piece
 					$pdf->SetXY($this->posxpiece, $curY);
-					$pdf->MultiCell($this->posxcomment-$this->posxpiece-0.8, 4, $piece_comptable, 0, 'C');
-	
+					$pdf->writeHTMLCell($this->posxcomment-$this->posxpiece-0.8, 4, $this->posxpiece-1, $curY, $piece_comptable, 0, 1);
+					
 					// Comments
 					$pdf->SetXY($this->posxcomment, $curY);
 					$pdf->writeHTMLCell($this->posxdate-$this->posxcomment-0.8, 4, $this->posxcomment-1, $curY, $object->lines[$i]->comments, 0, 1);
@@ -537,7 +539,7 @@ class pdf_standard extends ModeleExpenseReport
 		$pdf->SetFont('','B', $default_font_size + 4);
 		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx,6,$langs->trans("ExpenseReport"), 0, 'L');
+		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx,6,$langs->trans("ExpenseReport"), 0, 'R');
 
 		$pdf->SetFont('','', $default_font_size -1);
 
@@ -545,19 +547,19 @@ class pdf_standard extends ModeleExpenseReport
    		$posy+=8;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'R');
 
    		// Date start period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outpulangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateStart")." : " . ($object->date_debut>0?dol_print_date($object->date_debut,"day",false,$outpulangs):''), '', 'R');
 
    		// Date end period
    		$posy+=5;
    		$pdf->SetXY($posx,$posy);
    		$pdf->SetTextColor(0,0,60);
-   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outpulangs):''), '', 'L');
+   		$pdf->MultiCell($this->page_largeur-$this->marge_droite-$posx, 3, $outputlangs->transnoentities("DateEnd")." : " . ($object->date_fin>0?dol_print_date($object->date_fin,"day",false,$outpulangs):''), '', 'R');
 
    		// Status Expense Report
    		$posy+=6;
