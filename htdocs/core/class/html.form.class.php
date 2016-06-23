@@ -5170,7 +5170,7 @@ class Form
         {
         	$num = count($object->linkedObjects);
             $numoutput=0;
-            
+
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
         		$tplpath = $element = $subelement = $objecttype;
@@ -5217,7 +5217,10 @@ class Form
         		else if ($objecttype == 'expensereport')   {
         			$tplpath = 'expensereport';
         		}
-
+        		else if ($objecttype == 'subscription')   {
+        		    $tplpath = 'adherents';
+        		}
+        		
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
@@ -5225,7 +5228,7 @@ class Form
         		{
         		    $numoutput++;
         		    
-        		    echo '<br>';
+        		    print '<br>';
         		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
         		    
         		    print '<table class="noborder allwidth">';

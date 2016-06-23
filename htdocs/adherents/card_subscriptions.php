@@ -53,6 +53,10 @@ $result=restrictedArea($user,'adherent',$rowid,'','cotisation');
 $object = new Adherent($db);
 $extrafields = new ExtraFields($db);
 $adht = new AdherentType($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
 $errmsg='';
 $errmsgs=array();
 
@@ -379,6 +383,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                $invoice->socid=$object->fk_soc;
 	                $invoice->date=$datecotisation;
 
+	                // Possibility to add external linked objects with hooks
+	                $invoice->linked_objects['subscription'] = $crowid;
+	                if (! empty($_POST['other_linked_objects']) && is_array($_POST['other_linked_objects']))
+	                {
+	                    $invoice->linked_objects = array_merge($invoice->linked_objects, $_POST['other_linked_objects']);
+	                }
+	                 
 	                $result=$invoice->create($user);
 	                if ($result <= 0)
 	                {

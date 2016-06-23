@@ -2541,12 +2541,10 @@ abstract class CommonObject
                     else if ($objecttype == 'fichinter')			{
                         $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
                     }
-
-                    // TODO ajout temporaire - MAXIME MANGIN
-                    else if ($objecttype == 'contratabonnement')	{
-                        $classpath = 'contrat/class'; $subelement = 'contrat'; $module = 'contratabonnement';
+                    else if ($objecttype == 'subscription')			{
+                        $classpath = 'adherents/class'; $module = 'adherent';
                     }
-
+                    
                     // Set classfile
                     $classfile = strtolower($subelement); $classname = ucfirst($subelement);
                     
@@ -2561,6 +2559,9 @@ abstract class CommonObject
                     }
                     else if ($objecttype == 'facturerec')   {
                         $classfile = 'facture-rec'; $classname = 'FactureRec';
+                    }
+                    else if ($objecttype == 'subscription')   {
+                        $classfile = 'cotisation'; $classname = 'Cotisation';
                     }
                     
                     // Here $module, $classfile and $classname are set
