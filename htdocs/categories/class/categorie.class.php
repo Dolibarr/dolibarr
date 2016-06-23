@@ -6,7 +6,7 @@
  * Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2016  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Charlie Benke           <charlie@patas-monkey.com>
@@ -149,7 +149,7 @@ class Categorie extends CommonObject
 	 */
 	var $type;
 
-	var $cats=array();			// Tableau en memoire des categories
+	var $cats=array();			// Categories table in memory
 	var $motherof=array();
 
 	/**
@@ -232,9 +232,9 @@ class Categorie extends CommonObject
 	 * 	Add category into database
 	 *
 	 * 	@param	User	$user		Object user
-	 * 	@return	int 				-1 : erreur SQL
-	 *          					-2 : nouvel ID inconnu
-	 *          					-3 : categorie invalide
+	 * 	@return	int 				-1 : SQL error
+	 *          					-2 : new ID unknown
+	 *          					-3 : Invalid category
 	 * 								-4 : category already exists
 	 */
 	function create($user)
@@ -304,7 +304,7 @@ class Categorie extends CommonObject
 				$action='create';
 
 				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
+				// TODO the hook duplicates the trigger !!
 				$hookmanager->initHooks(array('HookModuleNamedao'));
 				$parameters=array('socid'=>$this->id);
 				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -398,7 +398,7 @@ class Categorie extends CommonObject
 			$action='update';
 
 			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
+			// TODO the hook duplicates the trigger !!
 			$hookmanager->initHooks(array('HookCategorydao'));
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -867,8 +867,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Reconstruit l'arborescence des categories sous la forme d'un tableau
-	 * Renvoi un tableau de tableau('id','id_mere',...) trie selon arbre et avec:
+	 * Rebuilding the category tree as an array
+	 * Return an array of table('id','id_mere',...) trie selon arbre et avec:
 	 *                id = id de la categorie
 	 *                id_mere = id de la categorie mere
 	 *                id_children = tableau des id enfant
