@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Levering
-Deliveries=Leveringen
+DeliveryRef=Ref Delivery
 DeliveryCard=Bezorging kaart
 DeliveryOrder=Ontvangsbon
-DeliveryOrders=Ontvangstbonnen
 DeliveryDate=Leveringsdatum
-DeliveryDateShort=Leveringsdatum
 CreateDeliveryOrder=Genereer ontvangstbon\n
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Aantal geleverd
 SetDeliveryDate=Stel verzenddatum in
 ValidateDeliveryReceipt=Valideer ontvangstbewijs
 ValidateDeliveryReceiptConfirm=Weet u zeker dat u dit ontvangstbewijs wilt valideren?
@@ -30,3 +27,4 @@ Recipient=Ontvanger
 ErrorStockIsNotEnough=Er is niet genoeg voorraad
 Shippable=Zendklaar
 NonShippable=Niet verzendbaar
+ShowReceiving=Show delivery receipt

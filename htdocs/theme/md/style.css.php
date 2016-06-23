@@ -583,6 +583,7 @@ div.myavailability {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth50  { min-width: 50px; }
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }
@@ -615,6 +616,7 @@ div.myavailability {
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -683,9 +685,12 @@ td.showDragHandle {
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	position: fixed;
 	top: 50px;
-	z-index: 4;
+<?php } ?>
+	z-index: 200;
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
 	-ms-transform: translateZ(0);
@@ -709,15 +714,18 @@ td.showDragHandle {
 	-moz-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
+<?php } ?>
 <?php } ?>
 }
 .side-nav-vert {
 	margin-left: 228px;
 }
 
-/* For desktop */
+/* For smartphone (testmenuhider is on) */
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
@@ -730,11 +738,16 @@ div.login_block {
 	top: inherit !important;
 }
 .side-nav {
-	/*top: inherit !important;*/
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
-	/*position: initial !important;*/
+<?php } ?>
 	display: none;
+
+	position: auto;
+	top: auto;
+	z-index: 200;
 }
 div.login_block {
 	/* position: initial !important;*/
@@ -744,7 +757,17 @@ div.login_block {
 	padding-left: 0 ! important;
 }
 #id-left {
+	z-index: 201;
+	background: #FFF;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+	top: 50px ! important;
+<?php } else { ?>
 	top: 60px ! important;
+<?php } ?>
+}
+div.fiche {
+	margin-<?php print $left; ?>: 6px !important;
+	margin-<?php print $right; ?>: 6px !important;
 }
 <?php } ?>
 
@@ -838,7 +861,7 @@ table.noborder tr.liste_titre td {
 }
 
 #pictotitle {
-	margin-right: 8px;
+	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
 .pictosubstatus {
@@ -1319,7 +1342,11 @@ div.login_block {
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+	position: absolute;
+<?php } else { ?>
 	position: fixed;
+<?php } ?>
 	font-weight: bold;
 	z-index: 10;
 	text-align: center;
@@ -1491,7 +1518,7 @@ div.blockvmenuhelp
 	text-align: center;
 	text-decoration: none;
     padding-left: 0px;
-    padding-right: 3px;
+    padding-right: 8px;
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 4px 0px 0px 0px;
@@ -2800,6 +2827,8 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
 
+.widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
+
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { margin: 0px; }
 .legendColorBox, .legendLabel { border: none !important; }
@@ -3910,8 +3939,8 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 
 .ui-btn-inner {
 	min-width: .4em;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 6px;
+	padding-right: 6px;
 	<?php if (! empty($dol_use_jmobile)) { ?>
 	font-size: 13px;
 	<?php } else { ?>
@@ -3920,16 +3949,29 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 34px;
+	padding-right: 30px;
 }
 .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 34px;
+	padding-left: 30px;
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 38px;
+	padding-right: 30px;
 }
 .ui-select .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 38px;
+	padding-left: 30px;
+}
+.ui-select .ui-btn-icon-right .ui-icon {
+    right: 8px;
+}
+.ui-btn-icon-left > .ui-btn-inner > .ui-icon, .ui-btn-icon-right > .ui-btn-inner > .ui-icon {
+    margin-top: -10px;
+}
+select {
+    /* display: inline-block; */	/* We can't set this. This disable ability to make */
+    /* TODO modified by jmobile, replace jmobile with pure css*/
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;

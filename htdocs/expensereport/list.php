@@ -297,7 +297,6 @@ if ($resql)
 			print "<tr ".$bc[$var].">";
 			print '<td>';
 			print $expensereportstatic->getNomUrl(1);
-			print $expensereportstatic->status;
 			if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) print img_warning($langs->trans("Late"));
 			if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) print img_warning($langs->trans("Late"));
 			print '</td>';
@@ -335,7 +334,7 @@ if ($resql)
 		}
 	else
 	{
-		print '<tr '.$bc[false].'>'.'<td colspan="9">'.$langs->trans("NoRecordFound").'</td></tr>';
+		print '<tr '.$bc[false].'>'.'<td colspan="9" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
 	}
 	print "</table>";
 

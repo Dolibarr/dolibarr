@@ -2486,7 +2486,57 @@ class Commande extends CommonOrder
 		return $this->classifyBilled($user);
 	}
 
-
+	/**
+	 * Classify the order as not invoiced
+	 *
+	 * @return     int     <0 if ko, >0 if ok
+	 */
+	function classifyUnBilled()
+	{
+	    global $conf, $user, $langs;
+	    $error = 0;
+	
+	    $this->db->begin();
+	
+	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 0';
+	    $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+	
+	    dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
+	    if ($this->db->query($sql))
+	    {
+	        // Call trigger
+	        $result=$this->call_trigger('ORDER_CLASSIFY_UNBILLED',$user);
+	        if ($result < 0) $error++;
+	        // End call triggers
+	
+	        if (! $error)
+	        {
+	            $this->facturee=0; // deprecated
+	            $this->billed=0;
+	
+	            $this->db->commit();
+	            return 1;
+	        }
+	        else
+	        {
+	            foreach($this->errors as $errmsg)
+	            {
+	                dol_syslog(get_class($this)."::classifyUnBilled ".$errmsg, LOG_ERR);
+	                $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            }
+	            $this->db->rollback();
+	            return -1*$error;
+	        }
+	    }
+	    else
+	    {
+	        $this->error=$this->db->error();
+	        $this->db->rollback();
+	        return -1;
+	    }
+	}
+	
+	
     /**
      *  Update a line in database
      *

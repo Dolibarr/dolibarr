@@ -138,13 +138,13 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (100,'PCG99-ABREGE','PROD',  'XXXXXX',  '786', '1407', 'Reprises sur provisions pour risques', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (101,'PCG99-ABREGE','PROD',  'XXXXXX',  '787', '1407', 'Reprises sur provisions', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (102,'PCG99-ABREGE','PROD',  'XXXXXX',   '79', '1407', 'Transferts de charges', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', '', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1402,'PCG99-ABREGE','IMMO',  'XXXXXX', '2', '', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1403,'PCG99-ABREGE','STOCK', 'XXXXXX', '3', '', 'Stock et commandes en cours d''exécution', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1404,'PCG99-ABREGE','TIERS', 'XXXXXX', '4', '', 'Créances et dettes à un an au plus', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1405,'PCG99-ABREGE','FINAN', 'XXXXXX', '5', '', 'Placement de trésorerie et de valeurs disponibles', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1406,'PCG99-ABREGE','CHARGE','XXXXXX', '6', '', 'Charges', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1407,'PCG99-ABREGE','PROD',  'XXXXXX', '7', '', 'Produits', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1401,'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', '0', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1402,'PCG99-ABREGE','IMMO',  'XXXXXX', '2', '0', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1403,'PCG99-ABREGE','STOCK', 'XXXXXX', '3', '0', 'Stock et commandes en cours d''exécution', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1404,'PCG99-ABREGE','TIERS', 'XXXXXX', '4', '0', 'Créances et dettes à un an au plus', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1405,'PCG99-ABREGE','FINAN', 'XXXXXX', '5', '0', 'Placement de trésorerie et de valeurs disponibles', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1406,'PCG99-ABREGE','CHARGE','XXXXXX', '6', '0', 'Charges', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1407,'PCG99-ABREGE','PROD',  'XXXXXX', '7', '0', 'Produits', '1');
 
 --
 -- Descriptif des plans comptables FR PCG99-BASE
@@ -488,13 +488,13 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (436,'PCG99-BASE','PROD',  'XXXXXX',  '791', '435', 'Transferts de charges d''exploitation ', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (437,'PCG99-BASE','PROD',  'XXXXXX',  '796', '435', 'Transferts de charges financières', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (438,'PCG99-BASE','PROD',  'XXXXXX',  '797', '435', 'Transferts de charges exceptionnelles', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1501,'PCG99-BASE','CAPIT', 'XXXXXX', '1', '', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1502,'PCG99-BASE','IMMO',  'XXXXXX', '2', '', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1503,'PCG99-BASE','STOCK', 'XXXXXX', '3', '', 'Stock et commandes en cours d''exécution', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1504,'PCG99-BASE','TIERS', 'XXXXXX', '4', '', 'Créances et dettes à un an au plus', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1505,'PCG99-BASE','FINAN', 'XXXXXX', '5', '', 'Placement de trésorerie et de valeurs disponibles', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1506,'PCG99-BASE','CHARGE','XXXXXX', '6', '', 'Charges', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1507,'PCG99-BASE','PROD',  'XXXXXX', '7', '', 'Produits', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1501,'PCG99-BASE','CAPIT', 'XXXXXX', '1', '0', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1502,'PCG99-BASE','IMMO',  'XXXXXX', '2', '0', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1503,'PCG99-BASE','STOCK', 'XXXXXX', '3', '0', 'Stock et commandes en cours d''exécution', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1504,'PCG99-BASE','TIERS', 'XXXXXX', '4', '0', 'Créances et dettes à un an au plus', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1505,'PCG99-BASE','FINAN', 'XXXXXX', '5', '0', 'Placement de trésorerie et de valeurs disponibles', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1506,'PCG99-BASE','CHARGE','XXXXXX', '6', '0', 'Charges', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1507,'PCG99-BASE','PROD',  'XXXXXX', '7', '0', 'Produits', '1');
 
 --
 -- Descriptif des plans comptables BE PCMN-BASE
@@ -1413,13 +1413,13 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1348, 'PCMN-BASE', 'PROD', 'XXXXXX', '792', '1345', 'Prélèvement sur les réserves', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1349, 'PCMN-BASE', 'PROD', 'XXXXXX', '793', '1345', 'Perte à reporter', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1350, 'PCMN-BASE', 'PROD', 'XXXXXX', '794', '1345', 'Intervention d''associés (ou du propriétaire) dans la perte', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1351, 'PCMN-BASE', 'CAPIT', 'XXXXXX', '1', '', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1352, 'PCMN-BASE', 'IMMO', 'XXXXXX', '2', '', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1353, 'PCMN-BASE', 'STOCK', 'XXXXXX', '3', '', 'Stock et commandes en cours d''exécution', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1354, 'PCMN-BASE', 'TIERS', 'XXXXXX', '4', '', 'Créances et dettes à un an au plus', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1355, 'PCMN-BASE', 'FINAN', 'XXXXXX', '5', '', 'Placement de trésorerie et de valeurs disponibles', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1356, 'PCMN-BASE', 'CHARGE', 'XXXXXX', '6', '', 'Charges', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1357, 'PCMN-BASE', 'PROD', 'XXXXXX', '7', '', 'Produits', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1351, 'PCMN-BASE', 'CAPIT', 'XXXXXX', '1', '0', 'Fonds propres, provisions pour risques et charges et dettes à plus d''un an', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1352, 'PCMN-BASE', 'IMMO', 'XXXXXX', '2', '0', 'Frais d''établissement. Actifs immobilisés et créances à plus d''un an', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1353, 'PCMN-BASE', 'STOCK', 'XXXXXX', '3', '0', 'Stock et commandes en cours d''exécution', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1354, 'PCMN-BASE', 'TIERS', 'XXXXXX', '4', '0', 'Créances et dettes à un an au plus', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1355, 'PCMN-BASE', 'FINAN', 'XXXXXX', '5', '0', 'Placement de trésorerie et de valeurs disponibles', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1356, 'PCMN-BASE', 'CHARGE', 'XXXXXX', '6', '0', 'Charges', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (1357, 'PCMN-BASE', 'PROD', 'XXXXXX', '7', '0', 'Produits', '1');
 
 --
 -- Descriptif des plans comptables ES PCG08-PYME
@@ -1427,13 +1427,13 @@ INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype
 
 INSERT INTO llx_accounting_system (rowid, pcg_version, label, active) VALUES (4, 'PCG08-PYME', 'The PYME accountancy spanish plan', '1');
 
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4001,'PCG08-PYME','FINANCIACION', 'XXXXXX', '1', '', 'Financiación básica', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4002,'PCG08-PYME','ACTIVO',  'XXXXXX', '2', '', 'Activo no corriente', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4003,'PCG08-PYME','EXISTENCIAS', 'XXXXXX', '3', '', 'Existencias', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4004,'PCG08-PYME','ACREEDORES_DEUDORES', 'XXXXXX', '4', '', 'Acreedores y deudores por operaciones comerciales', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4005,'PCG08-PYME','CUENTAS_FINANCIERAS', 'XXXXXX', '5', '', 'Cuentas financieras', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4006,'PCG08-PYME','COMPRAS_GASTOS','XXXXXX', '6', '', 'Compras y gastos', '1');
-INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4007,'PCG08-PYME','VENTAS_E_INGRESOS',  'XXXXXX', '7', '', 'Ventas e ingresos', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4001,'PCG08-PYME','FINANCIACION', 'XXXXXX', '1', '0', 'Financiación básica', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4002,'PCG08-PYME','ACTIVO',  'XXXXXX', '2', '0', 'Activo no corriente', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4003,'PCG08-PYME','EXISTENCIAS', 'XXXXXX', '3', '0', 'Existencias', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4004,'PCG08-PYME','ACREEDORES_DEUDORES', 'XXXXXX', '4', '0', 'Acreedores y deudores por operaciones comerciales', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4005,'PCG08-PYME','CUENTAS_FINANCIERAS', 'XXXXXX', '5', '0', 'Cuentas financieras', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4006,'PCG08-PYME','COMPRAS_GASTOS','XXXXXX', '6', '0', 'Compras y gastos', '1');
+INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4007,'PCG08-PYME','VENTAS_E_INGRESOS',  'XXXXXX', '7', '0', 'Ventas e ingresos', '1');
 
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4008, 'PCG08-PYME','FINANCIACION', 'XXXXXX', '10', '4001', 'CAPITAL', '1');
 INSERT INTO llx_accounting_account (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (4009, 'PCG08-PYME','FINANCIACION', 'XXXXXX', '100', '4008', 'Capital social', '1');

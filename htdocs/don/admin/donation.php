@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2015  Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2016  Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
@@ -90,12 +90,12 @@ else if ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "DON_ADDON_MODEL",$value,'chaine',0,'',$conf->entity))
 	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that was read before the new set
+		// So we go through a variable for a coherent display
 		$conf->global->DON_ADDON_MODEL = $value;
 	}
 
-	// On active le modele
+	// It enables the model
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
 	{
@@ -321,7 +321,7 @@ if (preg_match('/fr/i',$conf->global->MAIN_INFO_SOCIETE_COUNTRY))
 print '<br>';
 print load_fiche_titre($langs->trans("DonationsModels"));
 
-// Defini tableau def de modele
+// Defined the template definition table
 $type='donation';
 $def = array();
 $sql = "SELECT nom";
@@ -408,7 +408,7 @@ if (is_resource($handle))
                     print "</td>";
                 }
 
-                // Defaut
+                // Default
                 if ($conf->global->DON_ADDON_MODEL == "$name")
                 {
 					print "<td align=\"center\">";

@@ -1,11 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=البنك
-Banks=المصارف
 MenuBankCash=البنك / النقدية
-MenuSetupBank=البنك / النقدية الإعداد
 BankName=اسم المصرف
 FinancialAccount=حساب
-FinancialAccounts=الحسابات
 BankAccount=الحساب المصرفي
 BankAccounts=الحسابات المصرفية
 ShowAccount=مشاهدة الحساب
@@ -13,10 +10,7 @@ AccountRef=الحساب المالي المرجع
 AccountLabel=الحساب المالي العلامة
 CashAccount=الحساب النقدي
 CashAccounts=حسابات نقدية
-MainAccount=الحساب الرئيسي
-CurrentAccount=الحساب الجاري
 CurrentAccounts=الحسابات الجارية
-SavingAccount=حساب توفير
 SavingAccounts=حسابات التوفير
 ErrorBankLabelAlreadyExists=الحساب المالي الملصق موجود بالفعل
 BankBalance=التوازن
@@ -40,13 +34,10 @@ SwiftValid=BIC / SWIFT غير صالح
 SwiftNotValid=BIC / SWIFT غير صالح
 StandingOrders=أوامر دائمة
 StandingOrder=من أجل الوقوف
-Withdrawals=انسحابات
-Withdrawal=انسحاب
 AccountStatement=كشف حساب
 AccountStatementShort=بيان
 AccountStatements=بيانات الحساب
 LastAccountStatements=كشوفات الحساب الأخير
-Rapprochement=المصالحة
 IOMonthlyReporting=تقارير شهرية
 BankAccountDomiciliation=معالجة حساب
 BankAccountCountry=حساب البلاد
@@ -55,29 +46,19 @@ BankAccountOwnerAddress=معالجة حساب المالك
 RIBControlError=التحقق من تكامل القيم يفشل. وهذا يعني حصول على معلومات عن هذا رقم الحساب ليست كاملة أو خاطئة (ارجع البلد والأرقام وIBAN).
 CreateAccount=إنشاء حساب
 NewAccount=حساب جديد
-NewBankAccount=حساب مصرفي جديد
 NewFinancialAccount=الحساب المالي الجديد
 MenuNewFinancialAccount=الحساب المالي الجديد
-NewCurrentAccount=الجديد في الحساب الجاري
-NewSavingAccount=حساب توفير جديد
-NewCashAccount=حساب نقدية جديدة
 EditFinancialAccount=تحرير الحساب
-AccountSetup=إعداد الحسابات المالية
-SearchBankMovement=بحث الحركة المصرفية
-Debts=ديون
 LabelBankCashAccount=بطاقة مصرفية أو نقدا
 AccountType=نوع الحساب
 BankType0=حساب توفير
 BankType1=الحساب الجاري
 BankType2=الحساب النقدي
-IfBankAccount=إذا كان حساب مصرفي
 AccountsArea=حسابات المنطقة
 AccountCard=حساب بطاقة
 DeleteAccount=حذف حساب
 ConfirmDeleteAccount=هل أنت متأكد من أنك تريد حذف هذا الحساب؟
 Account=حساب
-ByCategories=حسب فئات
-ByRubriques=حسب فئات
 BankTransactionByCategories=المعاملات المصرفية وفقا للفئات
 BankTransactionForCategory=المعاملات المصرفية لفئة <b>%s</b>
 RemoveFromRubrique=إزالة الارتباط مع هذه الفئة
@@ -85,14 +66,12 @@ RemoveFromRubriqueConfirm=هل أنت متأكد من أنك تريد إزالة
 ListBankTransactions=قائمة المعاملات المصرفية
 IdTransaction=رقم المعاملات
 BankTransactions=المعاملات المصرفية
-SearchTransaction=بحث الصفقة
 ListTransactions=قائمة المعاملات
 ListTransactionsByCategory=قائمة المعاملات / الفئة
 TransactionsToConciliate=المعاملات التوفيق
 Conciliable=Conciliable
 Conciliate=التوفيق
 Conciliation=توفيق
-ConciliationForAccount=التوفيق في هذا الحساب
 IncludeClosedAccount=وتشمل حسابات مغلقة
 OnlyOpenedAccount=حسابات مفتوحة فقط
 AccountToCredit=الحساب على الائتمان
@@ -102,7 +81,6 @@ ConciliationDisabled=توفيق سمة المعوقين
 StatusAccountOpened=فتح
 StatusAccountClosed=مغلقة
 AccountIdShort=عدد
-EditBankRecord=تعديل السجل
 LineRecord=المعاملات
 AddBankRecord=إضافة المعاملات
 AddBankRecordLong=إضافة المعاملات يدويا
@@ -110,11 +88,8 @@ ConciliatedBy=طريق التصالح
 DateConciliating=التوفيق التاريخ
 BankLineConciliated=صفقة التصالح
 CustomerInvoicePayment=عملاء الدفع
-CustomerInvoicePaymentBack=العميل دفع الظهر
-SupplierInvoicePayment=المورد الدفع
 WithdrawalPayment=انسحاب الدفع
 SocialContributionPayment=اجتماعي / دفع الضرائب المالية
-FinancialAccountJournal=مجلة الحساب المالي
 BankTransfer=حوالة مصرفية
 BankTransfers=التحويلات المصرفية
 TransferDesc=التحويل من حساب إلى آخر واحد ، وسوف يكتب Dolibarr اثنين من السجلات (أ مصدر في حساب الخصم والائتمان في الاعتبار الهدف من نفس المبلغ. العلامة نفسها وحتى الآن وسيتم استخدام هذه الصفقة)
@@ -127,23 +102,21 @@ ConfirmValidateCheckReceipt=هل أنت متأكد من ذلك فحص للتحق
 DeleteCheckReceipt=تأكد من ورود حذف هذا؟
 ConfirmDeleteCheckReceipt=هل أنت متأكد من أنك تريد حذف هذا التحقق من ورود؟
 BankChecks=الشيكات المصرفية
-BankChecksToReceipt=في انتظار إيداع الشيكات
+BankChecksToReceipt=Checks awaiting deposit
 ShowCheckReceipt=الاختيار إظهار تلقي الودائع
 NumberOfCheques=ملاحظة : للشيكات
 DeleteTransaction=حذف المعاملات
 ConfirmDeleteTransaction=هل أنت متأكد من أنك تريد حذف هذه الصفقة؟
 ThisWillAlsoDeleteBankRecord=وهذا من شأنه أيضا حذف المتولدة المعاملات المصرفية
 BankMovements=حركات
-CashBudget=الميزانية النقدية
 PlannedTransactions=المخطط المعاملات
 Graph=الرسومات
 ExportDataset_banque_1=المعاملات المصرفية وحساب
 ExportDataset_banque_2=إيداع زلة
 TransactionOnTheOtherAccount=صفقة على حساب الآخرين
-TransactionWithOtherAccount=تحويل الحساب
-PaymentNumberUpdateSucceeded=دفع عدد تحديث بنجاح
+PaymentNumberUpdateSucceeded=Payment number updated successfully
 PaymentNumberUpdateFailed=دفع عددا لا يمكن تحديث
-PaymentDateUpdateSucceeded=تاريخ التحديث الدفع بنجاح
+PaymentDateUpdateSucceeded=Payment date updated successfully
 PaymentDateUpdateFailed=دفع حتى الآن لا يمكن تحديث
 Transactions=المعاملات
 BankTransactionLine=المعاملات المصرفية
@@ -156,15 +129,12 @@ InputReceiptNumber=اختيار كشف حساب مصرفي ذات الصلة م�
 EventualyAddCategory=في نهاية المطاف، حدد الفئة التي لتصنيف السجلات
 ToConciliate=التوفيق؟
 ThenCheckLinesAndConciliate=ثم، والتحقق من خطوط الحالية في بيان البنك وانقر
-BankDashboard=الحسابات المصرفية موجز
 DefaultRIB=BAN الافتراضي
 AllRIB=جميع BAN
 LabelRIB=BAN تسمية
 NoBANRecord=لا يوجد سجل BAN
 DeleteARib=حذف سجل BAN
 ConfirmDeleteRib=هل أنت متأكد أنك تريد حذف هذا السجل BAN؟
-StartDate=تاريخ البدء
-EndDate=تاريخ الانتهاء
 RejectCheck=تحقق عاد
 ConfirmRejectCheck=هل أنت متأكد أنك تريد وضع علامة هذا الاختيار مرفوضا؟
 RejectCheckDate=تاريخ أعيد الاختيار

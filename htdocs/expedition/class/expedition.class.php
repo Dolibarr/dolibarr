@@ -1300,7 +1300,7 @@ class Expedition extends CommonObject
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice, cd.remise_percent";
 		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
@@ -1353,6 +1353,7 @@ class Expedition extends CommonObject
                 $line->id               = $obj->line_id;
 				$line->fk_origin_line 	= $obj->fk_origin_line;
 				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+				$line->product_type     = $obj->product_type;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
 				$line->ref				= $obj->product_ref;		// TODO deprecated
@@ -1832,10 +1833,10 @@ class Expedition extends CommonObject
 				{
 					$lineid = $line->id;
 					$qty = $line->qty;
-					if (($type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->expeditions[$lineid] != $qty)
+					if (($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->expeditions[$lineid] != $qty)
 					{
 						$shipments_match_order = 0;
-						$text='Qty for order line id '.$lineid.' is '.$qty.' but in shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.', we have '.$order->expeditions[$lineid].' so we can t close order';
+						$text='Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->expeditions[$lineid].', so we can t close order';
 						dol_syslog($text);
 						break;
 					}

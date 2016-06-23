@@ -3,7 +3,6 @@ PaypalSetup=PayPal Moduleinstellungen
 PaypalDesc=Dieses Modul ermöglicht es Zahlungen von Kunden per <a href="http://www.paypal.com" target="_blank">PayPal</a> zu tätigen.
 PaypalOrCBDoPayment=Zahlen Sie mit Kreditkarte oder Paypal?
 PaypalDoPayment=Zahlen mit Paypal
-PaypalCBDoPayment=Zahlen mit Kreditkarte
 PAYPAL_API_SANDBOX=Testmoduds/Sandbox
 PAYPAL_API_USER=Paypal Benutzername
 PAYPAL_API_PASSWORD=Paypal Passwort
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=Nur PayPal
 PAYPAL_CSS_URL=Optionale CSS-Layoutdatei auf der Zahlungsseite
 ThisIsTransactionId=Die Transaktions ID lautet: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Fügen Sie die Webadresse für Paypal Zahlungen hinzu, wenn Sie ein Dokument per E-Mail versenden.
-PAYPAL_IPN_MAIL_ADDRESS=E-Mail Adresse für sofortige Benachrichtigung der Zahlungen (IPN)
 PredefinedMailContentLink=Sie können unten auf den sicheren Link klicken, um Ihre Zahlung mit PayPal \n\n %s \n\n zu tätigen
 YouAreCurrentlyInSandboxMode=Sie befinden sich im &quot;Sandbox&quot;-Modus
 NewPaypalPaymentReceived=Neue PayPal-Zahlung erhalten

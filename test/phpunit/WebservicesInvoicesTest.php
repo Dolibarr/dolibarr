@@ -84,11 +84,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			$this->soapclient->decodeUTF8(false);
 		}
 		
-		// create a third_party, needed to create an invoice
+		// create third_parties, needed to test an invoice
 		$societe=new Societe($db);
 		$societe->ref='';
 		$societe->name='name';
-		$societe->ref_ext='209';
+		$societe->ref_ext='ref-phpunit';
 		$societe->status=1;
 		$societe->client=1;
 		$societe->fournisseur=0;
@@ -167,16 +167,16 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$WS_METHOD  = 'createInvoice';
 
     	// load societe first
-    	$societe=new Societe($db);
-    	$societe->fetch('', '', '209');
+    	/*$societe=new Societe($db);
+    	$societe->fetch('', '', 'ref-phpunit');
     	print __METHOD__." societe loaded id=".$societe->id."\n";
-    
+        */
     	
     	$body = array (
     			"id" => NULL,
 				"ref" => NULL,
-				"ref_ext" => "165",
-				"thirdparty_id" => $societe->id,
+				"ref_ext" => "ref-phpunit-2",
+				"thirdparty_id" => $this->socid,
 				"fk_user_author" => NULL,
 				"fk_user_valid" => NULL,
 				"date" => "2015-04-19 20:16:53",
@@ -247,7 +247,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__." result=".$result['result']['result_code']."\n";
     	$this->assertEquals('OK',$result['result']['result_code']);
-    	$this->assertEquals('165', $result['ref_ext']);
+    	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
 
     	return $result;
@@ -282,7 +282,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// Test URL
     	$result='';
-    	$parameters = array('authentication'=>$authentication,'id'=>NULL,'ref'=>NULL,'ref_ext'=>165);
+    	$parameters = array('authentication'=>$authentication,'id'=>NULL,'ref'=>NULL,'ref_ext'=>'ref-phpunit-2');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
@@ -303,7 +303,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	}
     	print __METHOD__." result=".$result['result']['result_code']."\n";
     	$this->assertEquals('OK',$result['result']['result_code']);
-    	$this->assertEquals('165', $result['invoice']['ref_ext']);
+    	$this->assertEquals('ref-phpunit-2', $result['invoice']['ref_ext']);
 
 
     	return $result;
@@ -332,8 +332,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$body = array (
     		"id" => NULL,
 			"ref" => NULL,
-			"ref_ext" => "165",
-			"thirdparty_id" => "209",
+			"ref_ext" => "ref-phpunit-2",
+			"thirdparty_id" => $this->socid,
 			"fk_user_author" => NULL,
 			"fk_user_valid" => NULL,
 			"date" => "2015-04-19 20:16:53",
@@ -404,7 +404,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__." result=".$result['result']['result_code'].$result['result']['result_label']."\n";
     	$this->assertEquals('OK',$result['result']['result_code']);
-    	$this->assertEquals('165', $result['ref_ext']);
+    	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
 
     	return $result;

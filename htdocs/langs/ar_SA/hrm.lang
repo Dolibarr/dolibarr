@@ -12,9 +12,6 @@ CloseEtablishment=إنشاء وثيقة
 DictionaryDepartment=شؤون الموظفين - الأقسام 
 DictionaryFunction=شؤون الموظفين - الوظائف
 # Module
-ListOfEmployees=قائمة الموظفين 
 Employees=الموظفين
 Employee=الموظف
-Employe=Employe
 NewEmployee=موظف جديد
-EmployeeCard=بطاقة موظف

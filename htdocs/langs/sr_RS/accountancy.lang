@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Separator kolona datoteke za izvoz
 ACCOUNTING_EXPORT_DATE=Format datuma datoteke za izvoz
 ACCOUNTING_EXPORT_PIECE=Izvezi broj delova
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Izvoz sa globalnim računom
-ACCOUNTING_EXPORT_LABEL=Izvezi oznaku
-ACCOUNTING_EXPORT_AMOUNT=Izvezi sumu
-ACCOUNTING_EXPORT_DEVISE=Izvezi izvod
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Odaberi format datoteke
 ACCOUNTING_EXPORT_PREFIX_SPEC=Naznači prefix datoteci
-
-Accounting=Računovodstvo
-Globalparameters=Globalni parametri
-Menuaccount=Računovodstveni nalozi
-Menuthirdpartyaccount=Računi subjekta
-MenuTools=Alati
 
 ConfigAccountingExpert=Konfigurisanje mogula računovodstveni ekspert
 Journaux=Izveštaji
 JournalFinancial=Finansijski izveštaji
-Exports=Izvozi
-Export=Izvoz
-Modelcsv=Model izvoza
-OptionsDeactivatedForThisExportModel=Za ovaj model izvoza, opcije su deaktivirane
-Selectmodelcsv=Izaberite model izvoza
-Modelcsv_normal=Klasičan izvoz
-Modelcsv_CEGID=Izvoz ka CEGID ekspertu
 BackToChartofaccounts=Vrati tabelu računa
 
-Definechartofaccounts=Definiši tabelu računa
 Selectchartofaccounts=Izaberi tabelu računa
 Addanaccount=Dodaj računovodstveni nalog
 AccountAccounting=Računovodstveni nalog
+AccountAccountingShort=Account
 AccountAccountingSuggest=Predlog računovodstvenog naloga
 Ventilation=Presek
 
-MenuAccountancy=Accountancy
+MenuAccountancy=Računovodstvo
 CustomersVentilation=Presek kupaca
 SuppliersVentilation=Presek dobavljača
-TradeMargin=Trgovinske marže
 Reports=Izveštaji
-ByCustomerInvoice=Po računima kupaca
 NewAccount=Novi računovodstveni nalog
 Create=Kreiraj
 CreateMvts=Kreiraj promet
-UpdateAccount=Izmena računovodstvenog naloga
 UpdateMvts=Izmena prometa
 WriteBookKeeping=Snimanje računa u glavnoj knjizi
 Bookkeeping=Glavna knjiga
-AccountBalance=Account balance
-
-AccountingVentilation=Računovodstveni presek
-AccountingVentilationSupplier=Presek računovostva dobavljača
-AccountingVentilationCustomer=Presek računovodstva kupca
+AccountBalance=Stanje računa
 
 CAHTF=Ukupna nabavka bez PDV-a
 InvoiceLines=Linije faktura za kontrolu
@@ -59,7 +39,6 @@ InvoiceLinesDone=Kontrolisane linije faktura
 IntoAccount=Kontrolisati u računovodstvenom nalogu
 
 Ventilate=Kontroliši
-VentilationAuto=Automatski presek
 
 Processing=Obrada
 EndProcessing=Kraj obrade
@@ -69,14 +48,10 @@ Lineofinvoice=Linija faktura
 VentilatedinAccount=Uspešno prekontrolisano uračunovdstvenom nalogu
 NotVentilatedinAccount=Nije prekontrolisano u računovodstvenom nalogu
 
-ACCOUNTING_SEPARATORCSV=Separator kolona u datoteci za izvoz
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Broj elemenata predviđeni za presek po strani (maksimalno preporučeno: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Započni sortiranje stranica za presek "Predvidjeno za presek" na osnovu najnovijih elemenata
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Započni sortiranje stranica za presek "Presek" na osnovu najnovijih elemenata
 
-AccountLength=Dužina računovodstvenih naloga prikazanih u Dolibarru
-AccountLengthDesc=Funkcija omogućava pretvaranje dužine računovdstvenog naloga zamenom razmaka nultim znakom . Ova funkcija utiče samo na prikaz, ne modifikuje računovdstvene naloge registrovane u Dolibaru . Za izvoz , ova funkcija je potrebno da bude kompatibilna sa određenim softverom .
 ACCOUNTING_LENGTH_DESCRIPTION=Dužina za prikaz opisa proizvoda i usluga na spisku (Najbolje = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Dužina za prikaz forme opisa naloga proizvoda i usluga na spisku (Najbolje = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Dužina opštih naloga
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Izveštaj društvenih aktivnosti
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Račun prometa
 ACCOUNTING_ACCOUNT_SUSPENSE=Račun čekanja
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Prodazumevani račuvodstveni nalog za kupljene proizvode (ukoliko nije definisan u tabeli proizvoda)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Podrazumevani računovodstveni nalog za prodate proizvode (ukoliko nije definisan u tabeli proizvoda)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Podrazumevani račuvodstveni nalog za prodate us
 Doctype=Tip dokumenta
 Docdate=Datum
 Docref=Referenca
-Numerocompte=Račun
 Code_tiers=Treće lice
 Labelcompte=Oznaka računa
 Sens=Sens
 Codejournal=Izveštaj
-NumPiece=Piece number
+NumPiece=Deo broj
+AccountingCategory=Accounting category
 
 DelBookKeeping=Obriši evidenciju glavne knjige
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Izveštaj nabavke
 FinanceJournal=Finansijski izveštaji
 DescFinanceJournal=Finansijski izveštaji uključujući sve vrste uplata preko bankovnog računa
 
-CashPayment=Gotovinsko plaćanje
-
-SupplierInvoicePayment=Uplata dobavljača po fakturi
 CustomerInvoicePayment=Uplata kupca po fakturi
 
 ThirdPartyAccount=Račun subjekta
@@ -130,7 +103,6 @@ DescThirdPartyReport=Ovde konsultuj listu kupaca i dobavljača i njihove računo
 
 ListAccounts=Lista računovodstvenih naloga
 
-Pcgversion=Verzija plana
 Pcgtype=Klasa računa
 Pcgsubtype=Pod klasom računa
 Accountparent=Koren računa
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Prekontroliši linije faktura kupaca sa računovodstvenim
 ChangeAccount=Izmeni računovodstveni nalog sa linijama odabranim od strane naloga:
 Vide=-
 DescVentilSupplier=Konsultuj ovde godišnju računovdstveni presek predračuna dobavljača
-DescVentilTodoSupplier=Prekontroliši linije faktura dobavljača sa računovdstvenim nalogom
 DescVentilDoneSupplier=Konslutuj ovde listu linija faktura dobavljača i njihovih računovdstvenih naloga
 
 ValidateHistory=Odobri automatski
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Transakcija nema dobar balans. Credit = %s. Debit = %s
 FicheVentilation=Kartica preseka
 GeneralLedgerIsWritten=Operacije su zapisane u glavnoj knjizi
 
-MvtNotCorrectlyBalanced=Transakcija nema dobar balans. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format eksporta
-Prefixname=Prefiks datoteke za izvoz
-Separate=Separator za izvoz
-Textframe=Okvir tekstualne vrednosti
-Headercol=Imena kolona u začelju
-Fieldname=Ime polja
-Headername=Ime u začelju
-Type=Tip polja
-Param=Dodatni parametri
-EnabledProduct=U Proizvodima
-EnabledTiers=U subjektu
-EnabledVat=In VAT
+## Export
+Exports=Izvozi
+Export=Izvoz
+Modelcsv=Model izvoza
+OptionsDeactivatedForThisExportModel=Za ovaj model izvoza, opcije su deaktivirane
+Selectmodelcsv=Izaberite model izvoza
+Modelcsv_normal=Klasičan izvoz
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Započinjanje računovodstva
@@ -177,3 +149,12 @@ OptionModeProductSell=Vrsta prodaje
 OptionModeProductBuy=Vrsta kupovine
 OptionModeProductSellDesc=Prikaži sve proizvode bez računovodstvenog naloga definisanog za prodaju.
 OptionModeProductBuyDesc=Prikaži sve proizvode bez računovodstvenog naloga definisanog za kupovinu
+
+## Dictionary
+Range=Opseg knjižnih računa
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page

@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Info
-CronAbout = Info su Cron
-CronAboutPage = Pagina informativa su Cron
 # Right
 Permission23101 = Leggi processo pianificato
 Permission23102 = Crea / Aggiornamento processo pianificato
@@ -18,15 +15,10 @@ CronExplainHowToRunUnix=In ambienti Unix per lanciare il comando ogni 5 minuti d
 CronExplainHowToRunWin=In ambienti Microsoft(tm) Windows per lanciare il comando ogni 5 minuti dovresti usare le operazioni pianificate
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Azioni pianificate
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Lista dei job disabilitati
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Ultimo avvio
 CronLastOutput=Output dell'ultimo avvio
 CronLastResult=Codice del risultato dell'ultima esecuzione
-CronListOfCronJobs=Lista dei job programmati
 CronCommand=Comando
 CronList=Processi pianificati
 CronDelete=Cancella i job programmati
@@ -34,22 +26,17 @@ CronConfirmDelete=Sei sicuro di voler cancellare questi processi pianificati?
 CronExecute=Lanca i job programmati
 CronConfirmExecute=Sei sicuro di voler eseguire questi processi pianificati ora?
 CronInfo=Il modulo per i job programmati permette di eseguire operazioni definite in anticipoi 
-CronWaitingJobs=Job in attesa
 CronTask=Azione
 CronNone=Nessuno
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Prossima esecuzione
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frequenza
 CronClass=Classe
 CronMethod=Metodo
 CronModule=Modulo
-CronAction=Azione
-CronStatus=Stato
-CronStatusActive=Attivo
-CronStatusInactive=Disabilitato
 CronNoJobs=Nessun job registrato
 CronPriority=Priorità
 CronLabel=Descrizione
@@ -59,11 +46,10 @@ CronEach=Ogni
 JobFinished=Azione eseguita e completata
 #Page card
 CronAdd= Aggiungi job
-CronHourStart= Data e ora di inizio di lavoro
 CronEvery=Esegui ogni lavoro
 CronObject=Istanza/Oggetto da creare
 CronArgs=Parametri
-CronSaveSucess=Salvato con successo
+CronSaveSucess=Save successfully
 CronNote=Commento
 CronFieldMandatory=Il campo %s è obbligatorio
 CronErrEndDateStartDt=La data di fine non può essere precedente a quella di inizio
@@ -81,14 +67,12 @@ CronCommandHelp=Il comando da eseguire sul sistema
 CronCreateJob=Crea nuovo job programmato
 CronFrom=Da
 # Info
-CronInfoPage=Informazioni
 # Common
 CronType=Tipo di lavoro
 CronType_method=Metodo di chiamata di una classe Dolibarr
 CronType_command=Comando da shell
-CronMenu=Cron
 CronCannotLoadClass=Non posso caricare la classe %s o l'oggetto %s
-UseMenuModuleToolsToAddCronJobs=Andare nel menu "Home - Modules tools - Job list" per vedere e modificare le azioni pianificate.
-TaskDisabled=Lavoro disabilitato
+UseMenuModuleToolsToAddCronJobs=Vai nel menu "Home - Strumenti di amministrazione - Processi pianificati" per visualizzare e modificare i processi pianificati.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump

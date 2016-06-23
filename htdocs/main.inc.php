@@ -207,7 +207,7 @@ if (ini_get('register_globals'))    // To solve bug in using $_SESSION
 }
 
 // Init the 5 global objects
-// This include will set: $conf, $db, $langs, $user, $mysoc objects
+// This include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc objects
 require_once 'master.inc.php';
 
 // Activate end of page function
@@ -221,11 +221,12 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
     $conf->browser->os=$tmp['browseros'];
     $conf->browser->version=$tmp['browserversion'];
     $conf->browser->layout=$tmp['layout'];     // 'classic', 'phone', 'tablet'
-    $conf->browser->phone=$tmp['phone'];	   // deprecated, use layout
-    $conf->browser->tablet=$tmp['tablet'];	   // deprecated, use layout
+    $conf->browser->phone=$tmp['phone'];	   // TODO deprecated, use ->layout
+    $conf->browser->tablet=$tmp['tablet'];	   // TODO deprecated, use ->layout
     //var_dump($conf->browser);
-}
 
+    if ($conf->browser->layout == 'phone') $conf->global->MAIN_TESTMENUHIDER=1;
+}
 
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
@@ -1179,17 +1180,19 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             // jQuery jeditable
             if (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE))
             {
+            	print '<!-- JS to manage editInPlace feature -->'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.min.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-autocomplete.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript">'."\n";
                 print 'var urlSaveInPlace = \''.DOL_URL_ROOT.'/core/ajax/saveinplace.php\';'."\n";
                 print 'var urlLoadInPlace = \''.DOL_URL_ROOT.'/core/ajax/loadinplace.php\';'."\n";
-                print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n";
-                print 'var placeholderInPlace = \''.$langs->trans('ClickToEdit').'\';'."\n";
+                print 'var tooltipInPlace = \''.$langs->transnoentities('ClickToEdit').'\';'."\n";	// Added in title attribute of span
+                print 'var placeholderInPlace = \'&nbsp;\';'."\n";	// If we put another string than $langs->trans("ClickToEdit") here, nothing is shown. If we put empty string, there is error, Why ?
                 print 'var cancelInPlace = \''.$langs->trans('Cancel').'\';'."\n";
                 print 'var submitInPlace = \''.$langs->trans('Ok').'\';'."\n";
                 print 'var indicatorInPlace = \'<img src="'.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'">\';'."\n";
+                print 'var withInPlace = 300;';		// width in pixel for default string edit
                 print '</script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/editinplace.js'.($ext?'?'.$ext:'').'"></script>'."\n";
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext?'?'.$ext:'').'"></script>'."\n";

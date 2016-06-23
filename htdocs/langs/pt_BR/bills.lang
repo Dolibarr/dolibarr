@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-Bill=Fatura
 Bills=Faturas
 BillsCustomers=Faturas de cliente
 BillsCustomer=Fatura de cliente
@@ -53,9 +52,7 @@ SupplierInvoice=Fatura de fornecedor
 SuppliersInvoices=Faturas de fornecedores
 SupplierBill=Fatura de fornecedor
 SupplierBills=Faturas de fornecedores
-Payment=Pagamento
 PaymentBack=Reembolso de pagamento
-Payments=Pagamentos
 PaymentsBack=Reembolsos de pagamentos
 PaidBack=Reembolso pago
 DeletePayment=Deletar pagamento

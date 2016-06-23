@@ -146,7 +146,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		// Choice of type of product
     		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
     
-    		if ((string) $type != '0') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=0">';
+    		if ((string) $type != '0') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=0'.($mode?'&mode='.$mode:'').'">';
     		else print img_picto('','tick').' ';
     		print $langs->trans("Products");
     		if ((string) $type != '0') print '</a>';
@@ -154,7 +154,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
     		else print ' &nbsp; / &nbsp; ';
     
-    		if ((string) $type != '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=1">';
+    		if ((string) $type != '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'&type=1'.($mode?'&mode='.$mode:'').'">';
     		else print img_picto('','tick').' ';
     		print $langs->trans("Services");
     		if ((string) $type != '1') print '</a>';
@@ -162,7 +162,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		if (! empty($conf->dol_use_jmobile)) print '</div>'."\n".'<div class="nowrap">'."\n";
     		else print ' &nbsp; / &nbsp; ';
     
-    		if ((string) $type == '0' || (string) $type == '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).'">';
+    		if ((string) $type == '0' || (string) $type == '1') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($mode?'&mode='.$mode:'').'">';
     		else print img_picto('','tick').' ';
     		print $langs->trans("ProductsAndServices");
     		if ((string) $type == '0' || (string) $type == '1') print '</a>';
@@ -172,7 +172,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		print '<br>';
 	    }
 	    
-		// Choice of stats
+		// Choice of stats mode (byunit or bynumber)
 		if (! empty($conf->dol_use_jmobile)) print "\n".'<div class="fichecenter"><div class="nowrap">'."\n";
 
 		if ($mode == 'bynumber') print '<a href="'.$_SERVER["PHP_SELF"].'?id='.(GETPOST('id')?GETPOST('id'):$object->id).($type != '' ? '&type='.$type:'').'&mode=byunit">';

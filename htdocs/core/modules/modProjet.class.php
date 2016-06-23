@@ -124,13 +124,18 @@ class modProjet extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 		
-		/* not required (0 = not present)
-		$this->const[$r][0] = "PROJECT_HIDE_TASKS";
+		$this->const[$r][0] = "MAIN_DELAY_PROJECT_TO_CLOSE";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "0";
+		$this->const[$r][2] = "7";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
-		*/
+		$r++;
+		$this->const[$r][0] = "MAIN_DELAY_TASKS_TODO";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "7";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
 		
 		// Boxes
 		$this->boxes = array();

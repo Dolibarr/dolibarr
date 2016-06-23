@@ -569,15 +569,15 @@ class FormFile
             	$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
             	$out.= $hookmanager->resPrint;
             }
-        }
 
+        }
         // Get list of files
         if (! empty($filedir))
         {
             $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
 
             // Show title of array if not already shown
-            if ((! empty($file_list) || $modulepart == 'massfilesarea') && ! $headershown)
+            if ((! empty($file_list) || preg_match('/^massfilesarea', $modulepart)) && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
@@ -1267,7 +1267,7 @@ class FormFile
                 print '<input type="hidden" name="id" value="' . $object->id . '">';
                 print '<input type="hidden" name="linkid" value="' . $link->id . '">';
                 print '<input type="hidden" name="action" value="confirm_updateline">';
-                print $langs->trans('Link') . ': <input type="text" name="link" size="50" value="' . $link->url . '">';
+                print $langs->trans('Link') . ': <input type="text" name="link" value="' . $link->url . '">';
                 print '</td>';
                 print '<td>';
                 print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';

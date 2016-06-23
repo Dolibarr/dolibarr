@@ -44,8 +44,10 @@ function project_prepare_head($object)
 	$head[$h][2] = 'project';
 	$h++;
 
+    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/contact.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("ProjectContact");
+	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 	$head[$h][2] = 'contact';
 	$h++;
 
@@ -131,8 +133,10 @@ function task_prepare_head($object)
 	$head[$h][2] = 'task_task';
 	$h++;
 
+	$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/contact.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$head[$h][1] = $langs->trans("TaskRessourceLinks");
+	if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 	$head[$h][2] = 'task_contact';
 	$h++;
 
@@ -162,6 +166,7 @@ function task_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject')?'&withproject=1':'');
 	$filesdir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($object->project->ref) . '/' .dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$nbFiles = count(dol_dir_list($filesdir,'files',0,'','(\.meta|_preview\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][1] = $langs->trans('Documents');
@@ -1000,7 +1005,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 	$sql2.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	$sql2.= " WHERE p.rowid IN (".join(',',$arrayidofprojects).")";
-	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount, p.dateo, p.datee";
+	$sql2.= " GROUP BY p.rowid, p.ref, p.title, p.fk_soc, s.nom, p.fk_user_creat, p.public, p.fk_statut, p.fk_opp_status, p.opp_amount, p.dateo, p.datee";
 	$sql2.= " ORDER BY p.title, p.ref";
 
 	$var=true;

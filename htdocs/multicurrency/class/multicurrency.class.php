@@ -629,7 +629,7 @@ class MultiCurrency extends CommonObject
 	 * Check in database if the current code already exists
 	 * 
 	 * @param	string	$code 	current code to search
-	 * @return	true if exists, false if not exists
+	 * @return	boolean         True if exists, false if not exists
 	 */
 	 public static function checkCodeAlreadyExists($code)
 	 {

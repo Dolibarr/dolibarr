@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = За
-CronAbout = За Cron
-CronAboutPage = Официалната страница за Cron
 # Right
 Permission23101 = Прочитане на Планирана задача
 Permission23102 = Създаване/обновяване на Планирана задача
@@ -18,15 +15,10 @@ CronExplainHowToRunUnix=В Unix среда би трябвало да изпол
 CronExplainHowToRunWin=В Microsoft(tm)-ска среда може да използвате инструментите за планирани задачи, за да се изпълни командния ред на всеки 5 минути
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Планирани задачи
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Списък на неактивираните задачи
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Последно изпълнение
 CronLastOutput=Изходен резултат от последно изпълнени 
 CronLastResult=Послед резултатен код
-CronListOfCronJobs=Списък на планираните задачи
 CronCommand=Команда
 CronList=Планирани задачи
 CronDelete=Изтриване на планирани задачи
@@ -34,22 +26,17 @@ CronConfirmDelete=Сигурни ли сте, че искате да изтри�
 CronExecute=Зареждане на планирани задачи
 CronConfirmExecute=Сигурни ли сте, че искате да се изпълнят тези планирани задачи сега ?
 CronInfo=Модул Планирана задача позволява да се изпълни задача, която е била планирана
-CronWaitingJobs=Чакащи задачи
 CronTask=Задача
 CronNone=Няма
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Следващо изпълнение
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Честота
 CronClass=Клас
 CronMethod=Метод
 CronModule=Модул
-CronAction=Действие
-CronStatus=Статус
-CronStatusActive=Активирани
-CronStatusInactive=Неактивирани
 CronNoJobs=Няма регистрирани задачи
 CronPriority=Приоритет
 CronLabel=Описание
@@ -59,11 +46,10 @@ CronEach=Всеки
 JobFinished=Задачи заредени и приключили
 #Page card
 CronAdd= Добавяне на задачи
-CronHourStart= Начален час и дата на задача
 CronEvery=Изпълни задачата всеки
 CronObject=Въплъщение/Обект за създаване
 CronArgs=Параметри
-CronSaveSucess=Записана успешно
+CronSaveSucess=Save successfully
 CronNote=Коментар
 CronFieldMandatory=Полета %s са задължителни
 CronErrEndDateStartDt=Крайната дата не може да бъде преди началната дата
@@ -81,14 +67,12 @@ CronCommandHelp=Системният команден ред за стартир
 CronCreateJob=Създаване на нова Планирана задача
 CronFrom=От
 # Info
-CronInfoPage=Информация
 # Common
 CronType=Тип задача
 CronType_method=Изпълни метод на Dolibarr клас
 CronType_command=Терминална команда
-CronMenu=Крон (софтуер за изпънение на автоматични задачи)
 CronCannotLoadClass=Неможе да се зареди класа %s или обекта %s
-UseMenuModuleToolsToAddCronJobs=Върнете се в меню "Начало - Модулни инструменти - Списък задачи", за да видите и редактирате планираните задачи.
-TaskDisabled=Неактивирани задачи
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump

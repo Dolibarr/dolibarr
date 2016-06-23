@@ -43,7 +43,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
+    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet","expedition");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -1002,14 +1002,16 @@ class Societe extends CommonObject
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
+     *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
+     *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
      *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
-    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
+    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='')
     {
         global $langs;
         global $conf;
 
-        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6)) return -1;
 
         $sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
@@ -1049,9 +1051,11 @@ class Societe extends CommonObject
         else if ($ref_int) $sql .= " WHERE s.ref_int = '".$this->db->escape($ref_int)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof1) $sql .= " WHERE s.siren = '".$this->db->escape($idprof1)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($idprof2)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($idprof3)."' AND s.entity IN (".getEntity($this->element, 1).")"; 		// TODO This request is used ? Multiple database recording provided !!
+        else if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($idprof3)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity IN (".getEntity($this->element, 1).")";
-
+        else if ($idprof5) $sql .= " WHERE s.idprof5 = '".$this->db->escape($idprof5)."' AND s.entity IN (".getEntity($this->element, 1).")";
+        else if ($idprof6) $sql .= " WHERE s.idprof6 = '".$this->db->escape($idprof6)."' AND s.entity IN (".getEntity($this->element, 1).")";
+        
         $resql=$this->db->query($sql);
         dol_syslog(get_class($this)."::fetch ".$sql);
         if ($resql)
@@ -1059,11 +1063,11 @@ class Societe extends CommonObject
             $num=$this->db->num_rows($resql);
             if ($num > 1)
             {
-                $this->error='Fetch several records found request';
+                $this->error='Fetch found several records. Rename one of tirdparties to avoid duplicate.';
                 dol_syslog($this->error, LOG_ERR);
                 $result = -2;
             }
-            if ($num)
+            elseif ($num)   // $num = 1
             {
                 $obj = $this->db->fetch_object($resql);
 

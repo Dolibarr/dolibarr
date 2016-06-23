@@ -551,14 +551,15 @@ if ($resql)
     	$projectstatic->title = $obj->projecttitle;
     	$projectstatic->public = $obj->public;
     	$projectstatic->statut = $obj->projectstatus;
-    	$projectstatic->datee = $obj->projectdatee;
+    	$projectstatic->datee = $db->jdate($obj->projectdatee);
     	
     	$taskstatic->id = $obj->id;
     	$taskstatic->ref = $obj->ref;
     	$taskstatic->label = $obj->label;
     	$taskstatic->fk_statut = $obj->fk_statut;
     	$taskstatic->progress = $obj->progress;
-    	$taskstatic->datee = $obj->date_end;
+    	$taskstatic->datee = $db->jdate($obj->date_end);	// deprecated
+    	$taskstatic->date_end = $db->jdate($obj->date_end);
     	
     	$userAccess = $projectstatic->restrictedProjectArea($user);    // why this ?
     	if ($userAccess >= 0)

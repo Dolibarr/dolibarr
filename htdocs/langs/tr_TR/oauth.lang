@@ -12,3 +12,4 @@ ListOfSupportedOauthProviders=OAuth2 sağlayıcınız tarafınıdan verilen kiml
 OAUTH_GOOGLE_NAME=Api Google
 OAUTH_GOOGLE_ID=Api Google Id
 OAUTH_GOOGLE_SECRET=Api Google Parolası
+OAUTH_GOOGLE_DESC=<a href="https://console.developers.google.com/" target="_blank">Bu sayfayı açarak</a> Oauth kimlik bilgilerini oluşturmak için Credentials bölümüne gidin

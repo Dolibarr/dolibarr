@@ -111,7 +111,7 @@ ALTER TABLE llx_cronjob ADD COLUMN test varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
-ALTER TABLE llx_facture ADD COLUMN date_pointoftax date;
+ALTER TABLE llx_facture ADD COLUMN date_pointoftax date DEFAULT NULL;
 
 UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
  
@@ -412,6 +412,7 @@ CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
 
 -- Add more action to log
+update llx_c_action_trigger set rang = 140 where code = 'PROJECT_CREATE';
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_MODIFY','Project modified','Executed when a project is modified','project',141);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_DELETE','Project deleted','Executed when a project is deleted','project',142);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CREATE','Supplier order validated','Executed when a supplier order is validated','order_supplier',11);

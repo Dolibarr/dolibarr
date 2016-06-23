@@ -1,24 +1,20 @@
 # Dolibarr language file - Source file is en_US - agenda
 IdAgenda=رمز الحدث
 Actions=الأحداث
-ActionsArea=منطقة الأحداث (الأنشطة و المهام)
 Agenda=جدول الأعمال
 Agendas=جداول الأعمال
 Calendar=التقويم
-Calendars=التقاويم
 LocalAgenda=تقويم الداخلي
 ActionsOwnedBy=الحدث يملكها
+ActionsOwnedByShort=Owner
 AffectedTo=مناط لـ
-DoneBy=أنهي بواسطة
 Event=حدث
 Events=الأحداث
 EventsNb=عدد الأحداث
-MyEvents=الأحداث الخاصة بي
-OtherEvents=الأحداث الأخرى
 ListOfActions=قائمة الأحداث
 Location=الموقع
+ToUserOfGroup=To any user in group
 EventOnFullDay=الأحداث في كامل اليوم (أيام)
-SearchAnAction= البحث عن حدث/ مهمة
 MenuToDoActions=جميع الأحداث الغير مكتملة
 MenuDoneActions=جميع الأحداث الملغية
 MenuToDoMyActions=أحداثي الغير مكتملة
@@ -27,20 +23,14 @@ ListOfEvents=قائمة الأحداث (التقويم الداخلي)
 ActionsAskedBy=أحداث تم رعايتها بواسطة
 ActionsToDoBy=أحداث عينت لـ
 ActionsDoneBy=أحداث انهيت بواسطة
-ActionsForUser=أحداث المستخدم
-ActionsForUsersGroup=أحداث لجميع مستخدمي مجموعة
 ActionAssignedTo=الحدث المخصصة ل
-AllMyActions= كل أحداثي/ مهامي
-AllActions= جميع الأحداث / المهام
 ViewCal=عرض شهري
 ViewDay=عرض يومي
 ViewWeek=عرض اسبوعي
-ViewYear=Year view
 ViewPerUser=لكل وجهة نظر المستخدم
 ViewPerType=Per type view
-ViewWithPredefinedFilters= قم بالعرض مع الفلاتر المعرفة مسبقاً
 AutoActions= إكمال تلقائي
-AgendaAutoActionDesc= عرف الأحداث التي تريد من دوليبار إنشائها تلقائيا في جدوال الأعمال. إذا لم تقم بإختيار أي شي (الخيار الإفتراضي), سوف يتم فقط إدخال الأنشطلة إلى جدول الأعمال يدوياً
+AgendaAutoActionDesc= Define here events for which you want Dolibarr to create automatically an event in agenda. If nothing is checked, only manual actions will be included in logged and visible into agenda. Automatic tracking of business actions done on objects (validation, status change) will not be saved.
 AgendaSetupOtherDesc= تسمح لك هذه الصفحة بنقل الأحداث إلى تقويم خارجي مثل جوجل, تندربيرد وغيرها, وذلك بإستخدام الخيارات في هذه الصفحة
 AgendaExtSitesDesc=تسمح لك هذه الصفحة بتعريف مصادر خارجية للتقويم وذلك لرؤية الأحداث الخاصة بالتقويم الخاص بهم في تقويم دوليبار
 ActionsEvents=الأحداث التي ستمكن دوليبار من إنشاء أعمال تلقائية في جدول الأعمال
@@ -64,11 +54,10 @@ SupplierInvoiceSentByEMail=تم إرسال فاتروة المزود%s بواس�
 ShippingSentByEMail=شحنة%s إرسالها عن طريق البريد الإلكتروني
 ShippingValidated= شحنة %sالتأكد من صلاحيتها
 InterventionSentByEMail=التدخل%s إرسالها عن طريق البريد الإلكتروني
+ProposalDeleted=Proposal deleted
+OrderDeleted=Order deleted
+InvoiceDeleted=Invoice deleted
 NewCompanyToDolibarr= تم إنشاء طرف ثالث أو خارجي
-DateActionPlannedStart= التاريخ المخطط للبدء
-DateActionPlannedEnd= التاريخ المخطط للإنهاء
-DateActionDoneStart= تاريخ البداية الفعلية
-DateActionDoneEnd= تاريخ النهاية الفعلية
 DateActionStart= تاريخ البدء
 DateActionEnd= تاريخ النهاية
 AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لترشيح النتائج:
@@ -76,8 +65,8 @@ AgendaUrlOptions2=<b>تسجيل الدخول =٪ s إلى</b> تقييد الإ�
 AgendaUrlOptions3=<b>وجينا =٪ s إلى</b> تقييد الإخراج إلى الإجراءات التي <b>يملكها%s</b> المستخدم.
 AgendaUrlOptions4=<b>logint=<b>logint=%s</b> لتقييد الانتاج للإجراءات المناطة للمستخدم <b>%s</b>
 AgendaUrlOptionsProject=<b>مشروع = PROJECT_ID</b> لتقييد الإخراج إلى الإجراءات المرتبطة <b>PROJECT_ID</b> المشروع.
-AgendaShowBirthdayEvents=أظهر تاريخ الميلاد في عناوين الإتصال
-AgendaHideBirthdayEvents=أخفي تاريخ الميلاد في عناوين الإتصال
+AgendaShowBirthdayEvents=Show birthdays of contacts
+AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=مشغول
 ExportDataset_event1=قائمة الأحداث في جدول الأعمال
 DefaultWorkingDays=افتراضي أيام عمل تتراوح في الأسبوع (على سبيل المثال: 1-5، 1-6)
@@ -90,8 +79,6 @@ ExtSitesNbOfAgenda=عدد التقاويم
 AgendaExtNb=رقم التقويم %s
 ExtSiteUrlAgenda=عنوان المتصفح للدخول لملف .ical
 ExtSiteNoLabel=لا يوجد وصف
-WorkingTimeRange=تعمل مجموعة الوقت
-WorkingDaysRange=أيام عمل تتراوح
 VisibleTimeRange=النطاق الزمني مرئية
 VisibleDaysRange=أيام مرئية مجموعة
 AddEvent=إنشاء الحدث

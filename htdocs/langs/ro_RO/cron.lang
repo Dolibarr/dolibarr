@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Despre
-CronAbout = Despre Cron
-CronAboutPage = Despre pagina cron
 # Right
 Permission23101 = Citeste Job programat
 Permission23102 = Creare/Modificare job programat
@@ -18,15 +15,10 @@ CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentr
 CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare 5 minute
 CronMethodDoesNotExists=Class %s does not contains any method %s
 # Menu
-CronJobs=Joburi programate
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Lista joburilor dezactivate
 EnabledAndDisabled=Enabled and disabled
 # Page list
-CronDateLastRun=Ultima rulare
 CronLastOutput=Ieşirea ultimei rulări
 CronLastResult=Codul ultimului rezultat
-CronListOfCronJobs=Lista joburilor programate
 CronCommand=Comandă
 CronList=Joburi programate
 CronDelete=Şterge Joburi programate
@@ -34,22 +26,17 @@ CronConfirmDelete=Sunteţi sigur că doriţi să ştergeţi aceaste job-uri ?
 CronExecute=Lanseaza joburi programate
 CronConfirmExecute=Sunteţi sigur că doriţi să executati  aceaste job-uri programate  acum ?
 CronInfo=Modul de joburi programate permite să  se execute  job-uri  care au fost planificate
-CronWaitingJobs=Joburi în aşteptare
 CronTask=Job
 CronNone=Niciunul
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=Urmatoarea execuţie
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Start date of latest execution
+CronDtLastResult=End date of latest execution
 CronFrequency=Frecvenţă
 CronClass=Clasa
 CronMethod=Metoda
 CronModule=Modulul
-CronAction=Acţiunea
-CronStatus=Statut
-CronStatusActive=Activat
-CronStatusInactive=Dezactivat
 CronNoJobs=Niciun job înregistrat
 CronPriority=Prioritate
 CronLabel=Descriere
@@ -59,11 +46,10 @@ CronEach=Fiecare
 JobFinished=Job lansat şi terminat
 #Page card
 CronAdd= Adaugă joburi
-CronHourStart= Data şi Ora de start a jobului
 CronEvery=Executa fiecare job
 CronObject=Instanţă/Obiect de creat
 CronArgs=Parametri
-CronSaveSucess=Salvare realizată
+CronSaveSucess=Save successfully
 CronNote=Comenteaza
 CronFieldMandatory=Câmpurile %s sunt obligatorii
 CronErrEndDateStartDt=Data de sfârşit nu poate fi înaintea datei de început
@@ -81,14 +67,12 @@ CronCommandHelp=Linia de comandă de sistem pentru a executa.
 CronCreateJob=Create new Scheduled Job
 CronFrom=De la
 # Info
-CronInfoPage=Informatie
 # Common
 CronType=Tip job
 CronType_method=Apel metodă a Clasei Dolibarr
 CronType_command=Comandă shell
-CronMenu=Cron
 CronCannotLoadClass=Nu pot încărca clasa %s sau  obiectul %s
-UseMenuModuleToolsToAddCronJobs=Intrați în meniul ''Acasă - Instrumentele modulelor - Lista de job-uri'' pentru a vedea și edita job-urile programate.
-TaskDisabled=Job dezactivat
+UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
+JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump

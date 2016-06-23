@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2015 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2016 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ if ($rowid > 0)
 	// Define variables to know what current user can do on properties of user linked to edited member
 	if ($object->user_id)
 	{
-		// $user est le user qui edite, $object->user_id est l'id de l'utilisateur lies au membre edite
+		// $ User is the user who edits, $ object->user_id is the id of the related user in the edited member  
 		$caneditfielduser=((($user->id == $object->user_id) && $user->rights->user->self->creer)
 				|| (($user->id != $object->user_id) && $user->rights->user->user->creer));
 		$caneditpassworduser=((($user->id == $object->user_id) && $user->rights->user->self->password)
@@ -209,7 +209,7 @@ if (empty($reshook))
 	{
 		if ($result > 0)
 		{
-			// Creation user
+			// User creation 
 			$company = new Societe($db);
 			$result=$company->create_from_member($object,GETPOST('companyname'));
 
@@ -495,7 +495,7 @@ if (empty($reshook))
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Nature")), null, 'errors');
 		}
-		// Test si le login existe deja
+		// Tests if the login already exists
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			if (empty($login)) {
@@ -550,11 +550,11 @@ if (empty($reshook))
 		{
 			$db->begin();
 
-			// Email a peu pres correct et le login n'existe pas
+			// Email about right and login does not exist
 			$result=$object->create($user);
 			if ($result > 0)
 			{
-				// Categories association
+				// Foundation categories
 				$memcats = GETPOST('memcats', 'array');
 				$object->setCategories($memcats);
 
@@ -615,7 +615,7 @@ if (empty($reshook))
 
 		if ($result >= 0 && ! count($object->errors))
 		{
-			// Send confirmation Email (selon param du type adherent sinon generique)
+			// Send confirmation email (according to parameters of member type. Otherwise generic)
 			if ($object->email && GETPOST("send_mail"))
 			{
 				$result=$object->send_an_email($adht->getMailOnValid(),$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
@@ -864,7 +864,7 @@ else
 
 		// Address
 		print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1125,7 +1125,7 @@ else
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1379,7 +1379,7 @@ else
 			$helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 			$label=$form->textwithpicto($tmp,$helpcontent,1,'help');
 
-			// Cree un tableau formulaire
+			// Create an array
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
 			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
@@ -1567,12 +1567,12 @@ else
 	        if (! $adht->cotisation)
 	        {
 	        	print $langs->trans("SubscriptionNotRecorded");
-		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 	        }
 	        else
 	        {
 	            print $langs->trans("SubscriptionNotReceived");
-	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
+	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 	        }
         }
         print '</td></tr>';

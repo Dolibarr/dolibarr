@@ -85,7 +85,7 @@ if ($web)
     echo "<body>";
 }
 
-echo "If you call this file with the argument \"?unused=true\" it searches for the translation strings that exist in en_US but are never used.\n";
+echo "If you call this with argument \"unused=true\" it searches for the translation strings that exist in en_US but are never used.\n";
 if ($web) print "<br>";
 echo "IMPORTANT: that can take quite a lot of time (up to 10 minutes), you need to tune the max_execution_time on your php.ini accordingly.\n";
 if ($web) print "<br>";
@@ -96,10 +96,11 @@ if ($web) print "<br>";
 
 
 // directory containing the php and lang files
-$htdocs 	= $path."/../../htdocs/";
+$htdocs = $path."../../htdocs/";
+$scripts = $path."../../scripts/";
 
 // directory containing the english lang files
-$workdir 	= $htdocs."langs/en_US/";
+$workdir = $htdocs."langs/en_US/";
 
 
 $files = scandir($workdir);
@@ -109,8 +110,14 @@ if (empty($files))
 	exit;
 }
 
+$dups=array();
 $exludefiles = array('.','..','README');
 $files = array_diff($files,$exludefiles);
+// To force a file: $files=array('myfile.lang');
+if (isset($argv[2]))
+{
+    $files = array($argv[2]);
+}
 $langstrings_3d = array();
 $langstrings_full = array();
 foreach ($files AS $file) {
@@ -127,7 +134,7 @@ foreach ($files AS $file) {
 					$langstrings_3d[$path_file['basename']][$line+1]=$row_array[0];
 					$langstrings_3dtrans[$path_file['basename']][$line+1]=$row_array[1];
 					$langstrings_full[]=$row_array[0];
-					$langstrings_dist[$row_array[0]]=$row_array[0];
+					$langstrings_dist[$row_array[0]]=$row;
 				}
 			}
 		}
@@ -241,26 +248,116 @@ if ($web)
 
 // STEP 2 - Search key not used
 
-
-if (! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true')
+if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($argv[1]) && $argv[1]=='unused=true'))
 {
-	foreach ($langstrings_dist AS $value)
+    print "***** Strings in en_US that are never used:\n";
+    
+    $unused=array();
+	foreach ($langstrings_dist AS $value => $line)
 	{
-		$search = '\'trans("'.$value.'")\'';
-		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'*';
+    	$qualifiedforclean=1;
+	    // Check if we must keep this key to be into file for removal
+	    if (preg_match('/^Module\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Permission\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PermissionAdvanced\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ProfId\d+/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Delays_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^BarcodeDesc/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Extrafield/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^LocalTax/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Country/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Civility/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Currency/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DemandReasonTypeSRC/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PaperFormat/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^AmountLT/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TotalLT/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Month/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^MonthShort/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Day\d/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Short/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ExportDataset_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ImportDataset_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ActionAC_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TypeLocaltax/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^StatusProspect/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PL_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TE_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^JuridicalStatus/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^CalcMode/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^newLT/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^LT\d/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TypeContact_contrat_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ErrorPriceExpression/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^Language_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DescADHERENT_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^SubmitTranslation/', $value)) $qualifiedforclean=0;
+	    // main.lang
+	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^FormatDate/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DateFormat/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^.b$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^.*Bytes$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^(DoTest|Under|Limits|Cards|CurrentValue|DateLimit|DateAndHour|NbOfLines|NbOfObjects|NbOfReferes|TotalTTCShort|VATs)/', $value)) $qualifiedforclean=0;
+	    // orders
+	    if (preg_match('/^OrderSource/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^TypeContact_/', $value)) $qualifiedforclean=0;
+        // other.lang	    
+	    if (preg_match('/^Notify_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^PredefinedMail/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^DemoCompany/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^WeightUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^LengthUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^SurfaceUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^VolumeUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^SizeUnit/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^EMailText/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/ById$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/ByLogin$/', $value)) $qualifiedforclean=0;
+	    // products
+	    if (preg_match('/GlobalVariableUpdaterType$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/GlobalVariableUpdaterHelp$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/OppStatus/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/AvailabilityType/', $value)) $qualifiedforclean=0;
+
+	    if (preg_match('/sms/i', $value)) $qualifiedforclean=0;
+	    if (preg_match('/TF_/i', $value)) $qualifiedforclean=0;
+	    if (preg_match('/WithBankUsing/i', $value)) $qualifiedforclean=0;
+	    if (preg_match('/descWORKFLOW_/i', $value)) $qualifiedforclean=0;
+	    
+	    if (! $qualifiedforclean)
+	    {
+            continue;	        
+	    }
+	    
+	    //$search = '\'trans("'.$value.'")\'';
+	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\' -e "('.$value.')"';
+		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'* '.$scripts.'*';
+		//print $string."<br>\n";
 		exec($string,$output);
 		if (empty($output)) {
-			$unused[$value] = true;
-			echo $value.'<br>';
+   			$unused[$value] = $line;
+       		echo $line;        // $trad contains the \n
+		}
+		else 
+		{
+		    unset($output);
+		    //print 'X'.$output.'Y';
 		}
 	}
 
-	if ($web) print "<h2>\n";
-	print "Strings in en_US that are never used\n";
-	if ($web) print "</h2>\n";
-	if ($web) echo "<pre>";
-	print_r($unused);
-	if ($web) echo "</pre>\n";
+	if (empty($unused)) print "No string not used found.\n";
+	else 
+	{
+        $filetosave='/tmp/'.($argv[2]?$argv[2]:"").'notused.lang';
+        print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
+        file_put_contents($filetosave, join("",$unused));
+        print "To remove from original file, run command :\n";
+        if (($argv[2]?$argv[2]:"")) print 'cd htdocs/langs/en_US; mv '.($argv[2]?$argv[2]:"")." ".($argv[2]?$argv[2]:"").".tmp; ";
+        print "diff ".($argv[2]?$argv[2]:"").".tmp ".$filetosave." | grep \< | cut  -b 3- > ".($argv[2]?$argv[2]:"");
+        if (($argv[2]?$argv[2]:"")) print "; rm ".($argv[2]?$argv[2]:"").".tmp;\n";
+	}
 }
 
 echo "\n";

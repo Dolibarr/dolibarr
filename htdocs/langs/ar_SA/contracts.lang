@@ -1,12 +1,9 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=عقود منطقة
 ListOfContracts=قائمة العقود
-LastModifiedContracts=مشاركة الصورة٪ العقود المعدلة
 AllContracts=جميع العقود
 ContractCard=عقد بطاقة
-ContractStatus=عقد مركز
 ContractStatusNotRunning=لا تعمل
-ContractStatusRunning=على التوالي
 ContractStatusDraft=مسودة
 ContractStatusValidated=صادق
 ContractStatusClosed=مغلقة
@@ -17,7 +14,6 @@ ServiceStatusNotLateShort=لا تنتهي
 ServiceStatusLate=على التوالي ، وانتهت
 ServiceStatusLateShort=انتهى
 ServiceStatusClosed=مغلقة
-ServicesLegend=خدمات أسطورة
 Contracts=عقود
 ContractsSubscriptions=العقود / الاشتراكات
 ContractsAndLine=العقود وخط عقود
@@ -33,7 +29,6 @@ MenuClosedServices=أغلقت الخدمات
 NewContract=العقد الجديد
 NewContractSubscription=العقد الجديد / الاشتراك
 AddContract=إنشاء العقد
-SearchAContract=بحث عقد
 DeleteAContract=الغاء العقد
 CloseAContract=وثيقة العقد
 ConfirmDeleteAContract=هل أنت متأكد من أنك تريد حذف هذا العقد ، وجميع الخدمات التي تقدمها؟
@@ -46,22 +41,16 @@ ConfirmActivateService=هل أنت متأكد من تفعيل هذه الخدم�
 RefContract=إشارة العقد
 DateContract=تاريخ العقد
 DateServiceActivate=تاريخ تفعيل الخدمة
-DateServiceUnactivate=تاريخ خدمة unactivation
-DateServiceStart=موعدا لبدء الخدمة
-DateServiceEnd=موعد لنهاية الخدمة
 ShowContract=وتظهر العقد
 ListOfServices=قائمة الخدمات
 ListOfInactiveServices=قائمة الخدمات غير الفعالة
 ListOfExpiredServices=انتهت نشطة قائمة الخدمات
 ListOfClosedServices=قائمة مغلقة الخدمات
-ListOfRunningContractsLines=قائمة تشغيل خطوط العقد
 ListOfRunningServices=لائحة ادارة الخدمات
 NotActivatedServices=لا تنشيط الخدمات) بين مصدق العقود)
 BoardNotActivatedServices=خدمات لتفعيل العقود بين مصدق
-LastContracts=العقود الماضية ق٪
-LastActivatedServices=ق الماضي ٪ تنشيط الخدمات
-LastModifiedServices=آخر تعديل ٪ ق الخدمات
-EditServiceLine=تعديل خط الخدمات
+LastContracts=Latest %s contracts
+LastModifiedServices=Latest %s modified services
 ContractStartDate=تاريخ البدء
 ContractEndDate=نهاية التاريخ
 DateStartPlanned=تاريخ البدء المخطط
@@ -72,10 +61,7 @@ DateStartReal=البداية الحقيقية لتاريخ
 DateStartRealShort=البداية الحقيقية لتاريخ
 DateEndReal=نهاية التاريخ الحقيقي
 DateEndRealShort=نهاية التاريخ الحقيقي
-NbOfServices=ملاحظة : الخدمات
 CloseService=قريبة من الخدمة
-ServicesNomberShort=ق ٪ خدمة (ق)
-RunningServices=ادارة الخدمات
 BoardRunningServices=انتهت إدارة الخدمات
 ServiceStatus=مركز الخدمة
 DraftContracts=عقود مشاريع
@@ -88,7 +74,6 @@ ConfirmMoveToAnotherContract=الهدف الأول choosed جديدة العقد
 ConfirmMoveToAnotherContractQuestion=اختيار القائمة التي العقد (من نفس الطرف الثالث) ، وترغب في نقل هذه الخدمة؟
 PaymentRenewContractId=تجديد العقد الخط (رقم ٪)
 ExpiredSince=تاريخ الانتهاء
-RelatedContracts=العقود ذات الصلة
 NoExpiredServices=أي نوع من الخدمات انتهت نشط
 ListOfServicesToExpireWithDuration=قائمة الخدمات لتنتهي في أيام٪ الصورة
 ListOfServicesToExpireWithDurationNeg=قائمة الخدمات انتهت من أكثر من٪ الصورة أيام
@@ -104,4 +89,3 @@ TypeContact_contrat_internal_SALESREPFOLL=ممثل مبيعات متابعة ا�
 TypeContact_contrat_external_BILLING=فواتير العملاء الاتصال
 TypeContact_contrat_external_CUSTOMER=متابعة العملاء الاتصال
 TypeContact_contrat_external_SALESREPSIGN=توقيع عقد خدمات العملاء
-Error_CONTRACT_ADDON_NotDefined=لم يتم تعريف ثابت CONTRACT_ADDON

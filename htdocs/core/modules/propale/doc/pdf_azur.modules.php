@@ -648,8 +648,11 @@ class pdf_azur extends ModelePDFPropales
 				*/
 
 				// Customer signature area
-				$posy=$this->_signature_area($pdf, $object, $posy, $outputlangs);
-
+				if (empty($conf->global->PROPAL_DISABLE_SIGNATURE))
+				{
+				    $posy=$this->_signature_area($pdf, $object, $posy, $outputlangs);
+				}
+				
 				// Pied de page
 				$this->_pagefoot($pdf,$object,$outputlangs);
 				if (method_exists($pdf,'AliasNbPages')) $pdf->AliasNbPages();

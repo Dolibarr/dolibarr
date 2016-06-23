@@ -138,7 +138,7 @@ CountryLS=Lesotho
 CountryLR=Liberia
 CountryLY=Libyan
 CountryLI=Liechtenstein
-CountryLT=Lituania
+CountryLT=Lithuania
 CountryLU=Luxembourg
 CountryMO=Macao
 CountryMK=Macedonia, the former Yugoslav of
@@ -290,6 +290,8 @@ CurrencySingXOF=CFA Franc BCEAO
 CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
 CurrencyCentSingEUR=cent
+CurrencyCentINR=paisa
+CurrencyCentSingINR=paise
 CurrencyThousandthSingTND=thousandth
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

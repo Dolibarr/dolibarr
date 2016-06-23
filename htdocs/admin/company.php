@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2015	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2016	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -314,7 +314,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
-	print '<textarea name="address" id="address" cols="80" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS:$_POST["address"]) . '</textarea></td></tr>'."\n";
+	print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS:$_POST["address"]) . '</textarea></td></tr>'."\n";
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
@@ -399,7 +399,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	print '<br>';
 
-	// Identifiants de la societe (country-specific)
+	// IDs of the company (country-specific)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 	$var=true;
@@ -416,7 +416,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<tr '.$bc[$var].'><td width="35%"><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
 	print '<input name="capital" id="capital" size="20" value="' . $conf->global->MAIN_INFO_CAPITAL . '"></td></tr>';
 
-	// Forme juridique
+	// Juridical Status
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 	if ($mysoc->country_code) {
@@ -764,7 +764,7 @@ else
 	print $mysoc->logo;
 	print '</td><td class="nocellnopadd" valign="center" align="right">';
 
-	// On propose la generation de la vignette si elle n'existe pas
+	// It offers the generation of the thumbnail if it does not exist
 	if (!is_file($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_mini) && preg_match('/(\.jpg|\.jpeg|\.png)$/i',$mysoc->logo))
 	{
 		print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'</a>&nbsp;&nbsp;';
@@ -790,7 +790,7 @@ else
 	print '<br>';
 
 
-	// Identifiants de la societe (country-specific)
+	// IDs of the company (country-specific)
 	print '<form name="formsoc" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<table class="noborder" width="100%">';
@@ -807,7 +807,7 @@ else
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Capital").'</td><td>';
 	print $conf->global->MAIN_INFO_CAPITAL . '</td></tr>';
 
-	// Forme juridique
+	// Juridical Status
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("JuridicalStatus").'</td><td>';
 	print getFormeJuridiqueLabel($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
@@ -898,7 +898,7 @@ else
 		print '</td></tr>';
 	}
 
-	// TVA
+	// VAT
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("VATIntra").'</td>';
 	print '<td>';
@@ -943,7 +943,7 @@ else
 	print '</form>';
 
 	/*
-	 *  Debut d'annee fiscale
+	 *  fiscal year beginning
 	 */
 	print '<br>';
 	print '<table class="noborder" width="100%">';
@@ -960,7 +960,7 @@ else
 	print "</table>";
 
 	/*
-	 *  Options fiscale
+	 *  tax options
 	 */
 	print '<br>';
 	print '<table class="noborder" width="100%">';

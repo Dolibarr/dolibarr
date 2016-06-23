@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Saadetis
-Deliveries=Saadetised
+DeliveryRef=Ref Delivery
 DeliveryCard=Saadetiste kaart
 DeliveryOrder=Saateleht
-DeliveryOrders=Saatelehed
 DeliveryDate=Kohaletoimetamise kuupäev
-DeliveryDateShort=Tarne kuupäev
 CreateDeliveryOrder=Koosta saateleht
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Saadetud kogus
 SetDeliveryDate=Määra saadetise kuupäev
 ValidateDeliveryReceipt=Kinnita vastuvõtu kinnitus
 ValidateDeliveryReceiptConfirm=Kas soovite kinnitada selle saadetise vastuvõtu kinnituse?
@@ -30,3 +27,4 @@ Recipient=Vastuvõtja
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

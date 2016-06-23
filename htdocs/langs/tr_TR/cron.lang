@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Hakkında
-CronAbout = Cron hakkında
-CronAboutPage = Cron hakkında sayfası
 # Right
 Permission23101 = Planlı işleri oku
 Permission23102 = Planlı iş oluştur/güncelle
@@ -18,15 +15,10 @@ CronExplainHowToRunUnix=Unix ortamında komut satırını her 5 dakikada bir ça
 CronExplainHowToRunWin=Mikrosot (tm) Windows ortamında komut satırını her 5 dakikada bir çalıştırmak için Planlanmış görev araçlarını kullanmalısınız
 CronMethodDoesNotExists=Sınıf %s hiçbir %s yöntemi içermiyor
 # Menu
-CronJobs=Planlı işler
-CronListActive=Devre dışı/planlı işlerin listesi
-CronListInactive=Etkin olmayan işler listesi
 EnabledAndDisabled=Etkin ve engelli
 # Page list
-CronDateLastRun=Son çalıştırma
 CronLastOutput=Son çalıştırma çıktısı
 CronLastResult=Son sonuç kodu
-CronListOfCronJobs=Planlı işler listesi
 CronCommand=Komut
 CronList=Planlı işler
 CronDelete=Planlı işleri sil
@@ -34,11 +26,10 @@ CronConfirmDelete=Bu planlı işleri silmek istediğinizden emin misiniz?
 CronExecute=Planlı işleri yükle
 CronConfirmExecute=Bu planlı işleri şimdi yürütmek istediğinizden emin misiniz?
 CronInfo=Planlı iş modülü planlanmış işlerin yürütülmesini sağlar
-CronWaitingJobs=İş bekliyor
 CronTask=İş
 CronNone=Hiçbiri
-CronDtStart=Önce değil
-CronDtEnd=Sonra değil
+CronDtStart=Bundan önce değil
+CronDtEnd=Bundan sonra değil
 CronDtNextLaunch=Sonraki yürütme
 CronDtLastLaunch=Son yürütmenin başlama tarihi
 CronDtLastResult=Son yürütmenin bitiş tarihi
@@ -46,10 +37,6 @@ CronFrequency=Sıklık
 CronClass=Sınıf
 CronMethod=Yöntem
 CronModule=Modül
-CronAction=İşlem
-CronStatus=Durum
-CronStatusActive=Etkin
-CronStatusInactive=Engelli
 CronNoJobs=Kayıtlı iş yok
 CronPriority=Öncelik
 CronLabel=Açıklama
@@ -59,7 +46,6 @@ CronEach=Her
 JobFinished=İş başlatıldı ve bitirildi
 #Page card
 CronAdd= İş ekle
-CronHourStart= İşin başlama saati ve tarihi
 CronEvery=İş yürütme zamanı
 CronObject=Oluşturulacak durum/nesne
 CronArgs=Parametreler
@@ -81,14 +67,12 @@ CronCommandHelp=Yürütülecek sistem komut satırı.
 CronCreateJob=Yeni Planlı İş oluştur
 CronFrom=Gönderen
 # Info
-CronInfoPage=Bilgi
 # Common
 CronType=İş türü
 CronType_method=Dolibarr Sınıfı çağırma yöntemi
 CronType_command=Kabuk komutu
-CronMenu=Kron
 CronCannotLoadClass=%s sınıfı ya da %s nesnesi yüklenemiyor
-UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Modül araçları - İş listesi" menüsüne gidin.
-TaskDisabled=İş engellendi
+UseMenuModuleToolsToAddCronJobs=Planlı işleri görmek ve düzenlemek için "Giriş - Yönetici Ayarları - Planlı işler" menüsüne git.
+JobDisabled=İş engellendi
 MakeLocalDatabaseDumpShort=Yerel veritabanı yedeklemesi
 MakeLocalDatabaseDump=Yerel bir veritabanı dökümü oluştur
