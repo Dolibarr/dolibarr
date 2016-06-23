@@ -101,7 +101,7 @@ if (! empty($search_doc_date)) {
 } 
    
    
-if (empty(GETPOST("button_removefilter_x")) && empty(GETPOST("button_removefilter"))) // Both test are required to be compatible with all browsers
+if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {  
   if (! empty($search_accountancy_code_start)) {
   	$filter['t.numero_compte'] = $search_accountancy_code_start;
