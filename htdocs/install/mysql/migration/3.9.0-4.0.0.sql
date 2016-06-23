@@ -136,6 +136,7 @@ CREATE TABLE llx_website
 	tms           timestamp
 ) ENGINE=innodb;
 ALTER TABLE llx_website ADD COLUMN fk_default_home integer;
+ALTER TABLE llx_website CHANGE COLUMN shortname ref varchar(24) NOT NULL;
 ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 
 CREATE TABLE llx_website_page
