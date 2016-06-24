@@ -484,7 +484,7 @@ function dol_print_object_info($object, $usetable=0)
  *
  *	@param	string	$email       	Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
- *	@return boolean     			True if domain email is OK, False if KO
+ *	@return string     			    Return email tracker string
  */
 function dolAddEmailTrackId($email, $trackingid)
 {
@@ -1239,7 +1239,7 @@ function hexbin($hexa)
  *	Retourne le numero de la semaine par rapport a une date
  *
  *	@param	string	$time   	Date au format 'timestamp'
- *	@return int					Number of week
+ *	@return string					Number of week
  */
 function numero_semaine($time)
 {

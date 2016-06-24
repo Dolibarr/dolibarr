@@ -327,7 +327,7 @@ class FormMail extends Form
            	    )))
         	{
         	    $out.= '<div style="padding: 3px 0 3px 0">'."\n";
-        	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none" disabled="disabled">'.$langs->trans("NoTemplateDefined").'</option></select>';
+        	    $out.= $langs->trans('SelectMailModel').': <select name="modelmailselected" disabled="disabled"><option value="none">'.$langs->trans("NoTemplateDefined").'</option></select>';    // Do not put disabled on option, it is already on select and it makes chrome crazy.
         	    if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         	    $out.= ' &nbsp; ';
         	    $out.= '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" disabled="disabled" id="modelselected">';
@@ -770,9 +770,10 @@ class FormMail extends Form
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @param	int			$id				Id template to find
+	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @return array						array('topic'=>,'content'=>,..)
 	 */
-	private function getEMailTemplate($db, $type_template, $user, $outputlangs,$id=0)
+	private function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1)
 	{
 		$ret=array();
 
@@ -781,6 +782,7 @@ class FormMail extends Form
 		$sql.= " WHERE type_template='".$db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		if (!empty($id)) $sql.= " AND rowid=".$id;
 		$sql.= $db->order("lang,label","ASC");
@@ -870,9 +872,10 @@ class FormMail extends Form
 	 * 		@param	string		$type_template	Get message for key module
 	 *      @param	string		$user			Use template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @return	int		<0 if KO,
+	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
+	 *      @return	int		                    <0 if KO, nb of records found if OK
 	 */
-	public function fetchAllEMailTemplate($type_template, $user, $outputlangs)
+	public function fetchAllEMailTemplate($type_template, $user, $outputlangs, $active=1)
 	{
 		$ret=array();
 
@@ -881,6 +884,7 @@ class FormMail extends Form
 		$sql.= " WHERE type_template='".$this->db->escape($type_template)."'";
 		$sql.= " AND entity IN (".getEntity("c_email_templates").")";
 		$sql.= " AND (fk_user is NULL or fk_user = 0 or fk_user = ".$user->id.")";
+		if ($active >= 0) $sql.=" AND active = ".$active;
 		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
 		$sql.= $this->db->order("position,lang,label","ASC");
 		//print $sql;
@@ -961,7 +965,7 @@ class FormMail extends Form
 			// For mass emailing, we have different keys
 			$vars=array(
 			    '__ID__' => 'IdRecord',
-			    '__EMAIL__' => 'EMail',
+			    '__EMAIL__' => 'EMailRecipient',
 			    '__LASTNAME__' => 'Lastname',
 			    '__FIRSTNAME__' => 'Firstname',
 			    '__MAILTOEMAIL__' => 'TagMailtoEmail',

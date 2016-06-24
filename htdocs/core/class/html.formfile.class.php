@@ -577,7 +577,7 @@ class FormFile
             $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
 
             // Show title of array if not already shown
-            if ((! empty($file_list) || preg_match('/^massfilesarea', $modulepart)) && ! $headershown)
+            if ((! empty($file_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
