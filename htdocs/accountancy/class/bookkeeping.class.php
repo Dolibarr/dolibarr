@@ -1316,79 +1316,121 @@ class BookKeeping extends CommonObject
   
   
   
-        /**
-         * Return list of accounts with label by chart of accounts
-         *
-         * @param string $selectid Preselected chart of accounts
-         * @param string $htmlname Name of field in html form
-         * @param int $showempty Add an empty field
-         * @param array $event Event options
-         * @param int $select_in $selectid value is a aa.rowid (0 default) or aa.account_number (1)
-         * @param int $select_out set value returned by select 0=rowid (default), 1=account_number
-         * @param int $aabase set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
-         *
-         * @return string String with HTML select
-         */
-        function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
-                global $conf;
+  /**
+   * Return list of accounts with label by chart of accounts
+   *
+   * @param string $selectid Preselected chart of accounts
+   * @param string $htmlname Name of field in html form
+   * @param int $showempty Add an empty field
+   * @param array $event Event options
+   * @param int $select_in $selectid value is a aa.rowid (0 default) or aa.account_number (1)
+   * @param int $select_out set value returned by select 0=rowid (default), 1=account_number
+   * @param int $aabase set accounting_account base class to display empty=all or from 1 to 8 will display only account beginning by this number
+   *
+   * @return string String with HTML select
+   */
+  function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $aabase = '') {
+          global $conf;
 
-                require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+          require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-                $pcgver = $conf->global->CHARTOFACCOUNTS;
-                
-            		$sql  = "SELECT DISTINCT ab.numero_compte as account_number, aa.label as label, aa.rowid as rowid, aa.fk_pcg_version";
-            		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab";
-                $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ab.numero_compte"; 
-                $sql .= " AND aa.active = 1";
-            		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
-                $sql .= " AND asy.rowid = " . $pcgver;
-                $sql .= " ORDER BY account_number ASC";
+          $pcgver = $conf->global->CHARTOFACCOUNTS;
+          
+      		$sql  = "SELECT DISTINCT ab.numero_compte as account_number, aa.label as label, aa.rowid as rowid, aa.fk_pcg_version";
+      		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as ab";
+          $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.account_number = ab.numero_compte"; 
+          $sql .= " AND aa.active = 1";
+      		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+          $sql .= " AND asy.rowid = " . $pcgver;
+          $sql .= " ORDER BY account_number ASC";
 
-                dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
-                $resql = $this->db->query($sql);
+          dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
+          $resql = $this->db->query($sql);
 
-                if (!$resql) {
-                        $this->error = "Error " . $this->db->lasterror();
-                        dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
-                        return -1;
-                }
+          if (!$resql) {
+                  $this->error = "Error " . $this->db->lasterror();
+                  dol_syslog(get_class($this) . "::select_account " . $this->error, LOG_ERR);
+                  return -1;
+          }
 
-                $out = ajax_combobox($htmlname, $event);
+          $out = ajax_combobox($htmlname, $event);
 
-                $options = array();
-                $selected = null;
+          $options = array();
+          $selected = null;
 
-                while ($obj = $this->db->fetch_object($resql)) {
-                        $label = length_accountg($obj->account_number) . ' - ' . $obj->label;
-                        $label = dol_trunc($label, $trunclength);
+          while ($obj = $this->db->fetch_object($resql)) {
+                  $label = length_accountg($obj->account_number) . ' - ' . $obj->label;
+                  $label = dol_trunc($label, $trunclength);
 
-                        $select_value_in = $obj->rowid;
-                        $select_value_out = $obj->rowid;
+                  $select_value_in = $obj->rowid;
+                  $select_value_out = $obj->rowid;
 
-                        if ($select_in == 1) {
-                                $select_value_in = $obj->account_number;
-                        }
-                        if ($select_out == 1) {
-                                $select_value_out = $obj->account_number;
-                        }
+                  if ($select_in == 1) {
+                          $select_value_in = $obj->account_number;
+                  }
+                  if ($select_out == 1) {
+                          $select_value_out = $obj->account_number;
+                  }
 
-                        // Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
-                        // Because same account_number can be share between different accounting_system and do have the same meaning
-                        if (($selectid != '') && $selectid == $select_value_in) {
-                                $selected = $select_value_out;
-                        }
+                  // Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
+                  // Because same account_number can be share between different accounting_system and do have the same meaning
+                  if (($selectid != '') && $selectid == $select_value_in) {
+                          $selected = $select_value_out;
+                  }
 
-                        $options[$select_value_out] = $label;
-                }
+                  $options[$select_value_out] = $label;
+          }
 
-                $out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
-                $this->db->free($resql);
-                return $out;
-        }
+          $out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', 'maxwidth300');
+          $this->db->free($resql);
+          return $out;
+  }
 
   
 	
 	/**
+	* Description of a root accounting account 
+	*
+	* @param 	string 	$account	Accounting account
+	* @return 	string 	
+	*/
+	function get_compte_racine($account = null)
+	{	
+		global $conf;
+		$pcgver = $conf->global->CHARTOFACCOUNTS;
+
+
+    $sql  = "SELECT root.account_number, root.label as label";
+    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
+    $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+    $sql .= " AND asy.rowid = " . $pcgver;
+    $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as parent ON aa.account_parent = parent.rowid";
+    $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as root ON parent.account_parent = root.rowid";
+    $sql .= " WHERE aa.account_number = '" . $account . "'";  
+    $sql .= " AND parent.active = 1";
+    $sql .= " AND root.active = 1";
+
+
+		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = '';
+			if ($this->db->num_rows($resql)) {
+				$obj = $this->db->fetch_object($resql);	
+			}
+							
+			return $obj->label;
+			
+		} else {
+			$this->error = "Error " . $this->db->lasterror();
+			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
+
+			return -1;
+		}
+	}
+  
+  
+  /**
 	* Description of accounting account
 	*
 	* @param 	string 	$account	Accounting account
@@ -1398,7 +1440,6 @@ class BookKeeping extends CommonObject
 	{	
 		global $conf;
 		$pcgver = $conf->global->CHARTOFACCOUNTS;
-
 		$sql  = "SELECT aa.account_number, aa.label, aa.rowid, aa.fk_pcg_version, cat.label as category";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa ";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
@@ -1406,7 +1447,6 @@ class BookKeeping extends CommonObject
 		$sql .= " AND asy.rowid = " . $pcgver;
 		$sql .= " AND aa.active = 1";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_accounting_category as cat ON aa.fk_accounting_category = cat.rowid";
-
 		dol_syslog(get_class($this) . "::select_account sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -1424,7 +1464,6 @@ class BookKeeping extends CommonObject
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(__METHOD__ . " " . $this->error, LOG_ERR);
-
 			return -1;
 		}
 	}
