@@ -874,7 +874,8 @@ class Expedition extends CommonObject
 				$product_type=$product->type;
 				if ($product_type == 0 && $product_stock < $qty)
 				{
-					$this->error=$langs->trans('ErrorStockIsNotEnough');
+                    $langs->load("errors");
+				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
 					$this->db->rollback();
 					return -3;
 				}
@@ -930,7 +931,8 @@ class Expedition extends CommonObject
 
 						if ($prod_batch->qty < $linebatch->dluo_qty)
 						{
-							$this->errors[] = $langs->trans('ErrorStockIsNotEnough');
+                            $langs->load("errors");
+        				    $this->errors[]=$langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $prod_batch->fk_product);
 							dol_syslog(get_class($this)."::addline_batch error=Product ".$prod_batch->batch.": ".$this->errorsToString(), LOG_ERR);
 							$this->db->rollback();
 							return -1;
