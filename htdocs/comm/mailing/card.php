@@ -259,7 +259,8 @@ if (empty($reshook))
 						}
 
 						// Fabrication du mail
-						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css);
+						$trackid='';  // TODO Define a trackid for mass emailing too. We can use source type for this.
+						$mail = new CMailFile($newsubject, $sendto, $from, $newmessage, $arr_file, $arr_mime, $arr_name, '', '', 0, $msgishtml, $errorsto, $arr_css, $trackid);
 
 						if ($mail->error)
 						{
@@ -1115,7 +1116,8 @@ else
 			// Subject
 			print '<tr><td width="25%" class="fieldrequired">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat" type="text" size=60 name="sujet" value="'.$object->sujet.'"></td></tr>';
 
-			dol_init_file_process($upload_dir);
+			$trackid=''; // TODO To avoid conflicts with 2 mass emailing, we shoul set a trackid here, even if we use another one into email header.
+			dol_init_file_process($upload_dir, $trackid);
 
 			// Joined files
 			$addfileaction='addfile';

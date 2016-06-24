@@ -1392,12 +1392,14 @@ function dol_meta_create($object)
 
 
 /**
- * Init $_SESSION with uploaded files
+ * Scan a directory and init $_SESSION to manage uploaded files with list of all found files.
+ * Note: Only email module seems to use this. Other feature initialize the $_SESSION doing $formmail->clear_attached_files(); $formmail->add_attached_files()
  *
  * @param	string	$pathtoscan				Path to scan
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_init_file_process($pathtoscan='')
+function dol_init_file_process($pathtoscan='', $trackid='')
 {
 	$listofpaths=array();
 	$listofnames=array();
@@ -1413,9 +1415,10 @@ function dol_init_file_process($pathtoscan='')
 			$listofmimes[]=dol_mimetype($val['name']);
 		}
 	}
-	$_SESSION["listofpaths"]=join(';',$listofpaths);
-	$_SESSION["listofnames"]=join(';',$listofnames);
-	$_SESSION["listofmimes"]=join(';',$listofmimes);
+    $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
+	$_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
+	$_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
+	$_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
 }
 
 
@@ -1430,9 +1433,10 @@ function dol_init_file_process($pathtoscan='')
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null)
+function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesession=0, $varfiles='addedfile', $savingdocmask='', $link=null, $trackid='')
 {
 	global $db,$user,$conf,$langs;
 
@@ -1482,6 +1486,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					{
 						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
+						$formmail->trackid = $trackid;
 						$formmail->add_attached_files($destpath, $destfile, $TFile['type'][$i]);
 					}
 					if (image_format_supported($destpath) == 1)
@@ -1550,9 +1555,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * @param	int		$filenb					File nb to delete
  * @param	int		$donotupdatesession		1=Do not edit _SESSION variable
  * @param   int		$donotdeletefile        1=Do not delete physically file
+ * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void
  */
-function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1)
+function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=1,$trackid='')
 {
 	global $db,$user,$conf,$langs,$_FILES;
 
@@ -1562,9 +1568,10 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 	$listofpaths=array();
 	$listofnames=array();
 	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+    $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
+	if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
 
 	if ($keytodelete >= 0)
 	{
@@ -1583,6 +1590,7 @@ function dol_remove_file_process($filenb,$donotupdatesession=0,$donotdeletefile=
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
+				$formmail->trackid = $trackid;
 				$formmail->remove_attached_files($keytodelete);
 			}
 		}
