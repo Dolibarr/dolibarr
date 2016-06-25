@@ -235,7 +235,7 @@ $dolibarr_main_prod='0';
 // Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
 // Default value: 'mysqldump, mysql, pg_dump, pgrestore'
 // Examples:
-// $dolibarr_main_restrict_os_commands='mysqldump, mysqldumpalias';
+// $dolibarr_main_restrict_os_commands='mysqldump, /usr/local/bin/otherdumptool';
 //
 $dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
 
