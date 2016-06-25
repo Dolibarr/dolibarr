@@ -1362,7 +1362,9 @@ class User extends CommonObject
 						$adh->lastname=$this->lastname;
 						$adh->login=$this->login;
 						$adh->gender=$this->gender;
+						
 						$adh->pass=$this->pass;
+						
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
 						$adh->email=$this->email;
@@ -1375,7 +1377,7 @@ class User extends CommonObject
 						$adh->user_id=$this->id;
 						$adh->user_login=$this->login;
 
-						$result=$adh->update($user,0,1);
+						$result=$adh->update($user,0,1,0);
                         if ($result < 0)
 						{
 						    $this->error=$adh->error;
@@ -1499,7 +1501,7 @@ class User extends CommonObject
 			$password=getRandomPassword(false);
 		}
 
-		// Crypte avec md5
+		// Crypt password
 		$password_crypted = dol_hash($password);
 
 		// Mise a jour
@@ -1543,7 +1545,7 @@ class User extends CommonObject
 
 						if ($result >= 0)
 						{
-							$result=$adh->setPassword($user,$this->pass,0,1);	// Cryptage non gere dans module adherent
+							$result=$adh->setPassword($user,$this->pass,(empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1),1);	// Cryptage non gere dans module adherent
 							if ($result < 0)
 							{
 								$this->error=$adh->error;

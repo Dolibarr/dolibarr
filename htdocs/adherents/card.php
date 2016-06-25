@@ -1439,6 +1439,12 @@ else
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass);
+			if ($object->pass) print preg_replace('/./i','*',$object->pass);
+			else
+			{
+			    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+			    else print $langs->trans("Hidden");
+			}
 			if ((! empty($object->pass) || ! empty($object->pass_crypted)) && empty($object->user_id))
 			{
 			    $langs->load("errors");
@@ -1447,7 +1453,7 @@ else
 			}
 			print '</td></tr>';
 		}
-
+		
         print '</table>';
         
         print '</div>';

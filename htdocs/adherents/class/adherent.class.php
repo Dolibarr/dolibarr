@@ -47,8 +47,15 @@ class Adherent extends CommonObject
     var $mesgs;
 
     var $login;
-    var $pass;
-    var $societe;
+
+	//! Clear password in memory
+	var $pass;
+	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+	var $pass_indatabase;
+	//! Encrypted password in database (always defined)
+	var $pass_indatabase_crypted;
+
+	var $societe;
     var $company;
     var $address;
     var $zip;
@@ -482,8 +489,10 @@ class Adherent extends CommonObject
                 dol_syslog(get_class($this)."::update update password");
                 if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
                 {
-                    // Si mot de passe saisi et different de celui en base
-                    $result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncuserpass);
+                    $isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1;
+                    
+                    // If password to set differs from the one found into database
+                    $result=$this->setPassword($user,$this->pass,$isencrypted,$notrigger,$nosyncuserpass);
                     if (! $nbrowsaffected) $nbrowsaffected++;
                 }
             }
@@ -810,13 +819,11 @@ class Adherent extends CommonObject
             $password=getRandomPassword(false);
         }
 
-        // Cryptage mot de passe
-        if ($isencrypted)
-        {
-            // Encryption
-            $password_indatabase = dol_hash($password);
-        }
-        else
+        // Crypt password
+        $password_crypted = dol_hash($password);
+
+        $password_indatabase = '';
+        if (! $isencrypted)
         {
             $password_indatabase = $password;
         }
@@ -824,7 +831,17 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         // Mise a jour
-        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".$this->db->escape($password_indatabase)."'";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+        $sql.= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
+        //if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
+        if ($isencrypted)
+        {
+            $sql.= ", pass = null";
+        }
+        else
+        {
+            $sql.= ", pass = '".$this->db->escape($password_indatabase)."'";
+        }
         $sql.= " WHERE rowid = ".$this->id;
 
         //dol_syslog("Adherent::Password sql=hidden");
@@ -838,7 +855,8 @@ class Adherent extends CommonObject
             {
                 $this->pass=$password;
                 $this->pass_indatabase=$password_indatabase;
-
+                $this->pass_indatabase_crypted=$password_crypted;
+                
                 if ($this->user_id && ! $nosyncuser)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -1042,7 +1060,7 @@ class Adherent extends CommonObject
 
         $sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
         $sql.= " d.note_public,";
-        $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
+        $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
         $sql.= " d.tms as datem,";
@@ -1087,7 +1105,6 @@ class Adherent extends CommonObject
                 $this->firstname		= $obj->firstname;
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;
-                $this->pass				= $obj->pass;
                 $this->societe			= $obj->company;
                 $this->company			= $obj->company;
                 $this->fk_soc			= $obj->fk_soc;
@@ -1095,6 +1112,10 @@ class Adherent extends CommonObject
                 $this->zip				= $obj->zip;
                 $this->town				= $obj->town;
 
+                $this->pass				= $obj->pass;
+                $this->pass_indatabase  = $obj->pass;
+                $this->pass_indatabase_crypted = $obj->pass_crypted;
+                
                 $this->state_id			= $obj->state_id;
                 $this->state_code		= $obj->state_id?$obj->state_code:'';
                 $this->state			= $obj->state_id?$obj->state:'';
