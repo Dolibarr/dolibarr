@@ -2224,7 +2224,7 @@ else
 			print '<td>';
 			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
 			$c = new Categorie( $db );
-			$cats = $c->containing( $object->id, 'user' );
+			$cats = $c->containing($object->id, Categorie::TYPE_USER);
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
