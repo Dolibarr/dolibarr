@@ -220,6 +220,25 @@ $dolibarr_main_authentication='dolibarr';
 //
 $dolibarr_main_force_https='0';
 
+// dolibarr_main_prod
+// When this parameter is defined, all errors messages are not reported.
+// This feature exists for production usage to avoid to give any information to hackers.
+// Default value: 0
+// Possible values: 0 or 1
+// Examples:
+// $dolibarr_main_prod='0';
+//
+$dolibarr_main_prod='0';
+
+// $dolibarr_main_restrict_os_commands
+// To restrict commands you can execute by the backup feature, enter allowed command here.
+// Note: If you can, defining permission on OS linux (using SELinux for example) may be a better choice.
+// Default value: 'mysqldump, mysql, pg_dump, pgrestore'
+// Examples:
+// $dolibarr_main_restrict_os_commands='mysqldump, mysqldumpalias';
+//
+$dolibarr_main_restrict_os_commands='mysqldump, mysql, pg_dump, pgrestore';
+
 // dolibarr_nocsrfcheck
 // This parameter can be used to disable CSRF protection.
 // This might be required if you access Dolibarr behind a proxy that make
@@ -231,15 +250,11 @@ $dolibarr_main_force_https='0';
 //
 $dolibarr_nocsrfcheck='0';
 
-// dolibarr_main_prod
-// When this parameter is defined, all errors messages are not reported.
-// This feature exists for production usage to avoid to give any information to hackers.
-// Default value: 0
-// Possible values: 0 or 1
+// dolibarr_mailing_limit_sendbyweb
+// Can set a limit for mailing send by web. Can be used for a restricted mode.
+// Default value: 0 (use database value if exist)
 // Examples:
-// $dolibarr_main_prod='0';
-//
-$dolibarr_main_prod='0';
+// $dolibarr_mailing_limit_sendbyweb='0';
 
 
 
@@ -251,8 +266,6 @@ $dolibarr_main_prod='0';
 // This parameter contains prefix of Dolibarr database. 'llx_' if not defined.
 // Examples:
 // $dolibarr_main_db_prefix='llx_';
-//
-$dolibarr_main_db_prefix='';
 
 // dolibarr_main_limit_users
 // Can set a limit on the number of users it will be possible to create
@@ -260,12 +273,6 @@ $dolibarr_main_db_prefix='';
 // Default value: 0 (unlimited)
 // Examples:
 // $dolibarr_main_limit_users='0';
-
-// dolibarr_mailing_limit_sendbyweb
-// Can set a limit for mailing send by web. Can be used for a restricted mode.
-// Default value: 0 (use database value if exist)
-// Examples:
-// $dolibarr_mailing_limit_sendbyweb='0';
 
 // dolibarr_strict_mode
 // Set this to 1 to enable the PHP strict mode. For dev environment only.
