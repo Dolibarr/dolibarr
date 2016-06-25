@@ -299,6 +299,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^DateFormat/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^.b$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^.*Bytes$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^NoteSomeFeaturesAreDisabled/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^(DoTest|Under|Limits|Cards|CurrentValue|DateLimit|DateAndHour|NbOfLines|NbOfObjects|NbOfReferes|TotalTTCShort|VATs)/', $value)) $qualifiedforclean=0;
 	    // orders
 	    if (preg_match('/^OrderSource/', $value)) $qualifiedforclean=0;
