@@ -316,7 +316,7 @@ class DoliDBPgsql extends DoliDB
 			}
 
 			// Replace group_concat(x) with string_agg(x, ',')
-			$line=preg_replace('/group_concat\(([^\)]+)\)/','string_agg(\\1, \',\')',$line);
+			$line=preg_replace('/GROUP_CONCAT\(([^\)]+)\)/i','STRING_AGG(\\1, \',\')',$line);
 			//print $line."\n";
 			
 			// Remove () in the tables in FROM if 1 table
