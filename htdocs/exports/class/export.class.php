@@ -241,7 +241,7 @@ class Export
 			// Loop on each condition to add
 			foreach ($array_filterValue as $key => $value)
 			{
-			    if (preg_match('/group_concat/', $key)) continue;
+			    if (preg_match('/GROUP_CONCAT/i', $key)) continue;
 				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
@@ -256,7 +256,7 @@ class Export
 		    // Loop on each condition to add
 		    foreach ($array_filterValue as $key => $value)
 		    {
-		        if (preg_match('/group_concat/', $key) and $value != '') $sql.=" HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+		        if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') $sql.=" HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 		    }
 		}
 		
