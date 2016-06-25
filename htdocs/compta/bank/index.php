@@ -45,16 +45,9 @@ $statut=GETPOST('statut');
  * View
  */
 
-$help_url='EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
-llxHeader('',$langs->trans('AccountsArea'),$help_url);
+$title=$langs->trans('BankAccounts');
 
-$link='';
-if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
-if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
-print load_fiche_titre($langs->trans("AccountsArea"),$link, 'title_bank.png');
-
-
-// On charge tableau des comptes financiers (ouverts par defaut)
+// Load array of financial accounts (opened by default)
 $accounts = array();
 
 $sql  = "SELECT rowid, courant, rappro";
@@ -66,16 +59,29 @@ $sql.= $db->order('label', 'ASC');
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($resql);
-		$accounts[$objp->rowid] = $objp->courant;
-		$i++;
-	}
-	$db->free($resql);
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($resql);
+        $accounts[$objp->rowid] = $objp->courant;
+        $i++;
+    }
+    $db->free($resql);
 }
+
+$nbtotalofrecords = $num;
+
+
+$help_url='EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+llxHeader('',$title,$help_url);
+
+$link='';
+if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
+if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
+
+print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$link,$num,$nbtotalofrecords,'title_bank.png',0,'','',$limit, 1);
+
 
 
 /*
