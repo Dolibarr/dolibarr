@@ -1332,14 +1332,14 @@ class User extends CommonObject
 			// If user is linked to a member, remove old link to this member
 			if ($this->fk_member > 0)
 			{
-				$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
-				dol_syslog(get_class($this)."::update", LOG_DEBUG);
+				dol_syslog(get_class($this)."::update remove link with member. We will recreate it later", LOG_DEBUG);
+			    $sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member = NULL where fk_member = ".$this->fk_member;
 				$resql = $this->db->query($sql);
 				if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 			}
 			// Set link to user
+			dol_syslog(get_class($this)."::update set link with member", LOG_DEBUG);
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user SET fk_member =".($this->fk_member>0?$this->fk_member:'null')." where rowid = ".$this->id;
-			dol_syslog(get_class($this)."::update", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (! $resql) { $this->error=$this->db->error(); $this->db->rollback(); return -5; }
 
@@ -1347,6 +1347,8 @@ class User extends CommonObject
 			{
 				if ($this->fk_member > 0 && ! $nosyncmember)
 				{
+				    dol_syslog(get_class($this)."::update user is linked with a member. We try to update member too.", LOG_DEBUG);
+				    
 					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
 					// This user is linked with a member, so we also update members informations
@@ -1374,16 +1376,18 @@ class User extends CommonObject
 						$adh->user_login=$this->login;
 
 						$result=$adh->update($user,0,1);
-						if ($result < 0)
+                        if ($result < 0)
 						{
-							$this->error=$luser->error;
-							dol_syslog(get_class($this)."::update ".$this->error,LOG_ERR);
+						    $this->error=$adh->error;
+						    $this->errors=$adh->errors;
+							dol_syslog(get_class($this)."::update error after calling adh->update to sync it with user: ".$this->error, LOG_ERR);
 							$error++;
 						}
 					}
 					else
 					{
 						$this->error=$adh->error;
+						$this->errors=$adh->errors;
 						$error++;
 					}
 				}

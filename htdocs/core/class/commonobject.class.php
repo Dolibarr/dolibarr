@@ -3998,14 +3998,13 @@ abstract class CommonObject
     	{
     		if (!empty($this->errors))
     		{
-    			$this->errors=array_merge($this->errors,$interface->errors);
+    			$this->errors=array_unique(array_merge($this->errors,$interface->errors));   // We use array_unique because when a trigger call another trigger on same object, this->errors is added twice.
     		}
     		else
     		{
     			$this->errors=$interface->errors;
     		}
     	}
-
     	return $result;
     }
 

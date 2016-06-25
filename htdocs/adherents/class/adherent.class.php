@@ -509,7 +509,7 @@ class Adherent extends CommonObject
             if (! $error && $nbrowsaffected)	// If something has change in main data
             {
                 // Update information on linked user if it is an update
-                if ($this->user_id > 0 && ! $nosyncuser)
+                if (! $error && $this->user_id > 0 && ! $nosyncuser)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -552,7 +552,7 @@ class Adherent extends CommonObject
                 }
 
                 // Update information on linked thirdparty if it is an update
-                if ($this->fk_soc > 0 && ! $nosyncthirdparty)
+                if (! $error && $this->fk_soc > 0 && ! $nosyncthirdparty)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
@@ -1423,9 +1423,10 @@ class Adherent extends CommonObject
         $err=0;
 
         // mailman
-        if (! empty($conf->global->ADHERENT_USE_MAILMAN))
+        if (! empty($conf->global->ADHERENT_USE_MAILMAN) && ! empty($conf->mailmanspip->enabled))
         {
             $result=$mailmanspip->add_to_mailman($this);
+         
             if ($result < 0)
             {
             	if (! empty($mailmanspip->error)) $this->errors[]=$mailmanspip->error;
@@ -1444,7 +1445,7 @@ class Adherent extends CommonObject
         }
 
         // spip
-        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled))
+        if (! empty($conf->global->ADHERENT_USE_SPIP) && ! empty($conf->mailmanspip->enabled))
         {
             $result=$mailmanspip->add_to_spip($this);
             if ($result < 0)
@@ -1458,7 +1459,7 @@ class Adherent extends CommonObject
             return -$err;
         }
         else
-       {
+        {
             return 1;
         }
     }

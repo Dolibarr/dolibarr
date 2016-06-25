@@ -54,6 +54,7 @@ $mode		= GETPOST('mode','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
+$cancel     = GETPOST('cancel');
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -299,7 +300,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$_POST["cancel"]) {
+	if ($action == 'update' && ! $cancel) 
+	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($caneditfield)    // Case we can edit all field
@@ -395,7 +397,7 @@ if (empty($reshook)) {
 					if (!$error) {
 						$ret = $object->update($user);
 						if ($ret < 0) {
-							$error ++;
+							$error++;
 							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
