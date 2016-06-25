@@ -44,7 +44,7 @@ class DoliDBPgsql extends DoliDB
     //! Collate used to force collate when creating database
     var $forcecollate='';			// Can't be static as it may be forced with a dynamic value
 	//! Version min database
-	const VERSIONMIN='8.4.0';	// Version min database
+	const VERSIONMIN='9.0.0';	// Version min database
 	/** @var resource Resultset of last query */
 	private $_results;
 
@@ -315,6 +315,10 @@ class DoliDBPgsql extends DoliDB
 				}
 			}
 
+			// Replace group_concat(x) with string_agg(x, ',')
+			$line=preg_replace('/group_concat\(([^\)]+)\)/','string_agg(\\1, \',\')',$line);
+			//print $line."\n";
+			
 			// Remove () in the tables in FROM if 1 table
 			$line=preg_replace('/FROM\s*\((([a-z_]+)\s+as\s+([a-z_]+)\s*)\)/i','FROM \\1',$line);
 			//print $line."\n";
