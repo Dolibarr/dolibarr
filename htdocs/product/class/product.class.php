@@ -4110,7 +4110,7 @@ class Product extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, Categorie::TYPE_PRODUCT, 'id');
+		$existing = $c->containing($this->id, 'product', 'id');
 
 		// Diff
 		if (is_array($existing)) {

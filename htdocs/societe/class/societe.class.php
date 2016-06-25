@@ -1368,11 +1368,11 @@ class Societe extends CommonObject
 	            // Fill $toute_categs array with an array of (type => array of ("Categorie" instance))
 	            if ($this->client || $this->prospect)
 	            {
-	                $toute_categs ['societe'] = $static_cat->containing($this->id,Categorie::TYPE_CUSTOMER);
+	                $toute_categs ['societe'] = $static_cat->containing($this->id,'customer');
 	            }
 	            if ($this->fournisseur)
 	            {
-	                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,Categorie::TYPE_SUPPLIER);
+	                $toute_categs ['fournisseur'] = $static_cat->containing($this->id,'supplier');
 	            }
 
 	            // Remove each "Categorie"
@@ -3424,7 +3424,7 @@ class Societe extends CommonObject
 		// Get current categories
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
-		$existing = $c->containing($this->id, $type_id, 'id');
+		$existing = $c->containing($this->id, $type_text, 'id');
 
 		// Diff
 		if (is_array($existing)) {

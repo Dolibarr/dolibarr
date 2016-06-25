@@ -925,7 +925,7 @@ else
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 		{
 			print '<tr><td>' . fieldLabel('Categories', 'memcars') . '</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, 'parent', null, null, 1);
+			$cate_arbo = $form->select_all_categories('member', null, 'parent', null, null, 1);
 			print $form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), null, null, null, null, '100%');
 			print "</td></tr>";
 		}
@@ -1180,9 +1180,9 @@ else
 		{
 			print '<tr><td>' . fieldLabel('Categories', 'memcats') . '</td>';
 			print '<td colspan="2">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, null, null, null, null, 1);
+			$cate_arbo = $form->select_all_categories('member', null, null, null, null, 1);
 			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_MEMBER);
+			$cats = $c->containing($object->id, 'member');
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}

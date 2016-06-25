@@ -36,7 +36,7 @@ $langs->load("categories");
 if (! $user->rights->categorie->lire) accessforbidden();
 
 $id=GETPOST('id','int');
-$type=(GETPOST('type') ? GETPOST('type') : Categorie::TYPE_PRODUCT);
+$type=(GETPOST('type') ? GETPOST('type') : 'product');
 $catname=GETPOST('catname','alpha');
 $section=(GETPOST('section')?GETPOST('section'):0);
 
@@ -48,13 +48,13 @@ $section=(GETPOST('section')?GETPOST('section'):0);
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoriesArea");
-elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoriesArea");
-elseif ($type == Categorie::TYPE_CUSTOMER)  $title=$langs->trans("CustomersCategoriesArea");
-elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategoriesArea");
-elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactsCategoriesArea");
-elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesArea");
-else                                        $title=$langs->trans("CategoriesArea");
+if ($type == Categorie::TYPE_PRODUCT) {			$title=$langs->trans("ProductsCategoriesArea"); $type='product'; }
+elseif ($type == Categorie::TYPE_SUPPLIER) {	$title=$langs->trans("SuppliersCategoriesArea"); $type='supplier'; }
+elseif ($type == Categorie::TYPE_CUSTOMER) {	$title=$langs->trans("CustomersCategoriesArea"); $type='customer'; }
+elseif ($type == Categorie::TYPE_MEMBER) {		$title=$langs->trans("MembersCategoriesArea"); $type='member'; }
+elseif ($type == Categorie::TYPE_CONTACT) {		$title=$langs->trans("ContactsCategoriesArea"); $type='contact'; }
+elseif ($type == Categorie::TYPE_ACCOUNT) {		$title=$langs->trans("AccountsCategoriesArea"); $type='account'; }
+else 											$title=$langs->trans("CategoriesArea");
 
 $arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
@@ -118,7 +118,7 @@ if ($catname || $id > 0)
 		$categstatic->ref=$cat->label;
 		$categstatic->label=$cat->label;
 		$categstatic->type=$cat->type;
-		print $categstatic->getNomUrl(1,'');
+		print '<span class="noborderoncategories" style="background: #aaa">'.$categstatic->getNomUrl(1,'').'</span>';
 		print "</td>\n";
 		print "\t\t<td>".$cat->description."</td>\n";
 		print "\t</tr>\n";

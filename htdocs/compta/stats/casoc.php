@@ -315,7 +315,7 @@ print "<table class=\"noborder\" width=\"100%\">";
     // Category filter
 print '<tr class="liste_titre">';
 print '<td>';
-print $langs->trans("Category") . ': ' . $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_cat, 'search_categ', true);
+print $langs->trans("Category") . ': ' . $formother->select_categories('customer', $selected_cat, 'search_categ', true);
 print ' ';
 print $langs->trans("SubCats") . '? ';
 print '<input type="checkbox" name="subcat" value="yes"';
