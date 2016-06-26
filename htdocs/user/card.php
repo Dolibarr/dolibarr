@@ -1442,6 +1442,49 @@ else
 				print '</td></tr>';
 		    }
 
+		    // Multicompany
+		    // TODO This should be done with hook formObjectOption
+		    if (is_object($mc))
+		    {
+		        if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		        {
+		            print '<tr><td>'.$langs->trans("Entity").'</td><td>';
+		            if (empty($object->entity))
+		            {
+		                print $langs->trans("AllEntities");
+		            }
+		            else
+		            {
+		                $mc->getInfo($object->entity);
+		                print $mc->label;
+		            }
+		            print "</td></tr>\n";
+		        }
+		    }
+		    
+		    if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
+		    {
+		        print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
+		        print '<td>'.$object->openid.'</td>';
+		        print "</tr>\n";
+		    }
+		    
+		    print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
+		    print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
+		    print "</tr>\n";
+		    
+		    print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
+		    print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
+		    print "</tr>\n";
+		    
+		    // Other attributes
+		    $parameters=array();
+		    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		    if (empty($reshook) && ! empty($extrafields->attribute_label))
+		    {
+		        print $object->showOptionals($extrafields);
+		    }
+		    
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -1489,49 +1532,6 @@ else
                 print '</td>';
                 print '</tr>'."\n";
             }
-
-            // Multicompany
-            // TODO This should be done with hook formObjectOption
-            if (is_object($mc))
-            {
-	            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-	            {
-	            	print '<tr><td>'.$langs->trans("Entity").'</td><td>';
-	            	if (empty($object->entity))
-	            	{
-	            		print $langs->trans("AllEntities");
-	            	}
-	            	else
-	            	{
-	            		$mc->getInfo($object->entity);
-	            		print $mc->label;
-	            	}
-	            	print "</td></tr>\n";
-	            }
-            }
-
-            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
-            {
-                print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
-                print '<td>'.$object->openid.'</td>';
-                print "</tr>\n";
-            }
-
-            print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            // Other attributes
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
-			{
-				print $object->showOptionals($extrafields);
-			}
 
 			print "</table>\n";
 			print '</div>';

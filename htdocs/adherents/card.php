@@ -1485,6 +1485,30 @@ else
 			print $object->showOptionals($extrafields, 'view', $parameters);
 		}
 
+        // Date end subscription
+        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+        if ($object->datefin)
+        {
+            print dol_print_date($object->datefin,'day');
+            if ($object->hasDelay()) {
+                print " ".img_warning($langs->trans("Late"));
+            }
+        }
+        else
+        {
+	        if (! $adht->cotisation)
+	        {
+	        	print $langs->trans("SubscriptionNotRecorded");
+		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+	        }
+	        else
+	        {
+	            print $langs->trans("SubscriptionNotReceived");
+	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+	        }
+        }
+        print '</td></tr>';
+		
 		// Third party Dolibarr
 		if (! empty($conf->societe->enabled))
 		{
@@ -1554,30 +1578,6 @@ else
 			else print $langs->trans("NoDolibarrAccess");
 		}
 		print '</td></tr>';
-
-        // Date end subscription
-        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
-        if ($object->datefin)
-        {
-            print dol_print_date($object->datefin,'day');
-            if ($object->hasDelay()) {
-                print " ".img_warning($langs->trans("Late"));
-            }
-        }
-        else
-        {
-	        if (! $adht->cotisation)
-	        {
-	        	print $langs->trans("SubscriptionNotRecorded");
-		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-	        }
-	        else
-	        {
-	            print $langs->trans("SubscriptionNotReceived");
-	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-	        }
-        }
-        print '</td></tr>';
 
 		print "</table>\n";
 
