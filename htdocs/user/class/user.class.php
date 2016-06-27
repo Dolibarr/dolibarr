@@ -1254,7 +1254,7 @@ class User extends CommonObject
 		$this->signature    = trim($this->signature);
 		$this->note         = trim($this->note);
 		$this->openid       = trim(empty($this->openid)?'':$this->openid);    // Avoid warning
-		$this->admin        = $this->admin?$this->admin:0;
+		$this->admin        = !empty( $this->admin ) ?$this->admin:0;
 		$this->address		= empty($this->address)?'':$this->address;
 		$this->zip			= empty($this->zip)?'':$this->zip;
 		$this->town			= empty($this->town)?'':$this->town;
@@ -1285,7 +1285,7 @@ class User extends CommonObject
 		$sql.= ", login = '".$this->db->escape($this->login)."'";
         $sql.= ", api_key = ".($this->api_key ? "'".$this->db->escape($this->api_key)."'" : "null");
 		$sql.= ", gender = ".($this->gender != -1 ? "'".$this->db->escape($this->gender)."'" : "null");	// 'man' or 'woman'
-		if (! empty($user->admin)) $sql.= ", admin = ".$this->admin;	// admin flag can be set/unset only by an admin user
+		if (!empty($this->admin)) $sql.= ", admin = ".$this->admin;	// admin flag can be set/unset only by an admin user
 		$sql.= ", address = '".$this->db->escape($this->address)."'";
 		$sql.= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql.= ", town = '".$this->db->escape($this->town)."'";
