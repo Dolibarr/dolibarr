@@ -1703,6 +1703,7 @@ class Categorie extends CommonObject
 			'categorie_societe'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		
+		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables, true);
 	}
 }

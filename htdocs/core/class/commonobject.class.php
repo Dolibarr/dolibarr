@@ -4181,16 +4181,25 @@ abstract class CommonObject
 	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
 	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
 	 * @param array 	$tables 		Tables that need to be changed
+	 * @param bool		$delete_if_error Delete if udpate failed because of duplicate entry (on category_societe for example)
 	 * @return bool
 	 */
-	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
+	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $delete_if_error = false)
 	{
 		foreach ($tables as $table)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
 			if (!$db->query($sql)) {
-				return false;
+				if($delete_if_error) {
+					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE fk_soc = '.$origin_id;
+					if (!$db->query($sql)) {
+						return false;	
+					}		
+				}
+				else {
+					return false;	
+				}
 			}
 		}
 
