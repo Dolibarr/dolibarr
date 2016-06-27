@@ -12,7 +12,7 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
-***** ChangeLog for 4.0 compared to 3.9.* *****
+***** ChangeLog for 4.0.0 compared to 3.9.* *****
 For users:
 
 NEW: Add reccuring invoice feature and automatic generation of invoices.
