@@ -82,6 +82,7 @@ class ExtraFields
 	'chkbxlst' => 'ExtrafieldCheckBoxFromList',
 	'link' => 'ExtrafieldLink',
 	'separate' => 'ExtrafieldSeparator',
+	'password' => 'ExtrafieldPassword',
 	);
 
 	/**
@@ -190,7 +191,7 @@ class ExtraFields
 			} elseif($type=='phone') {
 				$typedb='varchar';
 				$lengthdb='20';
-			}elseif($type=='mail') {
+			} elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
@@ -199,6 +200,9 @@ class ExtraFields
 			} elseif ($type=='link') {
 				$typedb='int';
 				$lengthdb='11';
+			} elseif($type=='password') {
+				$typedb='varchar';
+				$lengthdb='50';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -417,7 +421,7 @@ class ExtraFields
 			} elseif($type=='phone') {
 				$typedb='varchar';
 				$lengthdb='20';
-			}elseif($type=='mail') {
+			} elseif($type=='mail') {
 				$typedb='varchar';
 				$lengthdb='128';
 			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') || ($type=='checkbox') || ($type=='chkbxlst')) {
@@ -426,6 +430,9 @@ class ExtraFields
 			} elseif ($type=='link') {
 				$typedb='int';
 				$lengthdb='11';
+			} elseif($type=='password') {
+				$typedb='varchar';
+				$lengthdb='50';
 			} else {
 				$typedb=$type;
 				$lengthdb=$length;
@@ -1144,6 +1151,10 @@ class ExtraFields
 			    $out.='Error bad setup of extrafield';
 			}
 		}
+		elseif ($type == 'password')
+		{
+			$out='<input type="password" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="'.$showsize.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="'.$keysuffix.'options_'.$key.$keyprefix.'"/>';
 		}
@@ -1401,6 +1412,10 @@ class ExtraFields
 		elseif ($type == 'text')
 		{
 			$value=dol_htmlentitiesbr($value);
+		}
+		elseif ($type == 'password')
+		{
+			$value=preg_replace('/./i','*',$value);
 		}
 		else
 		{
