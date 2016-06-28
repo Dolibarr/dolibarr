@@ -3486,7 +3486,7 @@ class Societe extends CommonObject
 				FROM '.MAIN_DB_PREFIX.'societe_commerciaux
 				WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
 				  SELECT fk_user
-				  FROM llx_societe_commerciaux
+				  FROM '.MAIN_DB_PREFIX.'societe_commerciaux
 				  WHERE fk_soc = '.(int) $origin_id.'
 				);';
 
