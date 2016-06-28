@@ -172,7 +172,6 @@ class box_supplier_orders extends ModeleBoxes
      * 	@param	array	$head       Array with properties of box title
      * 	@param  array	$contents   Array with properties of box lines
 	 *  @param	int		$nooutput	No print, only return string
-	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
     function showBox($head = null, $contents = null, $nooutput=0)
