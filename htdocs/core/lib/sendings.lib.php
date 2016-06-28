@@ -302,7 +302,9 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 					$expedition->id=$objp->sendingid;
 					$expedition->fetchObjectLinked($expedition->id,$expedition->element);
 					//var_dump($expedition->linkedObjects);
-					$receiving=(! empty($expedition->linkedObjects['delivery'][0])?$expedition->linkedObjects['delivery'][0]:'');
+					reset($expedition->linkedObjects['delivery']);
+					$first = key($expedition->linkedObjects['delivery']);
+					$receiving=(! empty($expedition->linkedObjects['delivery'][$first])?$expedition->linkedObjects['delivery'][$first]:'');
 
 					if (! empty($receiving))
 					{
