@@ -449,6 +449,8 @@ class Commande extends CommonOrder
             // If stock is decremented on validate order, we must reincrement it
             if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
+                $result = 0;
+                
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
 
@@ -460,21 +462,8 @@ class Commande extends CommonOrder
                         $mouvP = new MouvementStock($this->db);
                         // We increment stock of product (and sub-products)
                         $result=$mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderBackToDraftInDolibarr",$this->ref));
-                        if ($result < 0) { $error++; }
+                        if ($result < 0) { $error++; $this->error=$mouvP->error; break; }
                     }
-                }
-
-                if (!$error)
-                {
-                    $this->statut=self::STATUS_DRAFT;
-                    $this->db->commit();
-                    return $result;
-                }
-                else
-                {
-                    $this->error=$mouvP->error;
-                    $this->db->rollback();
-                    return $result;
                 }
             }
 
@@ -3258,7 +3247,8 @@ class Commande extends CommonOrder
 
         dol_syslog(get_class($this)."::initAsSpecimen");
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0;
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";

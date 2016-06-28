@@ -760,8 +760,9 @@ class FactureRec extends CommonInvoice
 		$arraynow=dol_getdate($now);
 		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		$prodids = array();
+        // Load array of products prodids
 		$num_prods = 0;
+		$prodids = array();
 		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
