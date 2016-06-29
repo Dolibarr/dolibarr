@@ -149,6 +149,7 @@ Save=Save
 SaveAs=Save As
 TestConnection=Test connection
 ToClone=Clone
+ConfirmCloneAction=Are you sure you want to clone this event ?
 ConfirmClone=Choose data you want to clone :
 NoCloneOptionsSpecified=No data to clone defined.
 Of=of

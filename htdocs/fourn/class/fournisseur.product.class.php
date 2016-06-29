@@ -277,7 +277,7 @@ class ProductFournisseur extends Product
 		                $error++;
 		            }
 
-		            if (! $error  && !empty($cong->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
+		            if (! $error  && !empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG))
 		            {
 		                // Add record into log table
 		                $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log(";
