@@ -857,8 +857,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("donations");
 				$newmenu->add("/don/index.php?leftmenu=donations&amp;mainmenu=accountancy",$langs->trans("Donations"), 0, $user->rights->don->lire, '', $mainmenu, 'donations');
-				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/card.php?action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
-				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/list.php",$langs->trans("List"), 1, $user->rights->don->lire);
+				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/card.php?leftmenu=donations&amp;action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
+				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/list.php?leftmenu=donations",$langs->trans("List"), 1, $user->rights->don->lire);
 				// if ($leftmenu=="donations") $newmenu->add("/don/stats/index.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 			}
 
@@ -1459,9 +1459,17 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 			    $tmp=explode('?',$menu_array[$i]['url'],2);
 			    $url = $shorturl = $tmp[0];
-			    $param = (isset($tmp[1])?$tmp[1]:'');
-			
-			    if (! preg_match('/mainmenu/i',$param) && ! preg_match('/leftmenu/i',$param)) $param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&amp;leftmenu=';
+			    $param = (isset($tmp[1])?$tmp[1]:'');    // params in url of the menu link
+
+			    // Complete param to force leftmenu to '' to closed opend menu when we click on a link with no leftmenu defined.
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($menu_array[$i]['mainmenu'])) 
+			    {
+			        $param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
+			    }
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($menu_array[$i]['mainmenu'])) 
+			    {
+			        $param.=($param?'&':'').'leftmenu=';
+			    }
 			    //$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
 			    $url = dol_buildpath($url,1).($param?'?'.$param:'');
 			    $shorturl = $shorturl.($param?'?'.$param:'');
