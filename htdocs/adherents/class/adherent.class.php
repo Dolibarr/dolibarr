@@ -316,7 +316,7 @@ class Adherent extends CommonObject
             if ($id > 0)
             {
                 $this->id=$id;
-                $this->ref=$id;
+                $this->ref=(string) $id;
 
                 // Update minor fields
                 $result=$this->update($user,1,1,0,0,'add'); // nosync is 1 to avoid update data of user
@@ -1578,6 +1578,7 @@ class Adherent extends CommonObject
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
+        $link=''; $linkend='';
         if ($option == 'card')
         {
             $link = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
