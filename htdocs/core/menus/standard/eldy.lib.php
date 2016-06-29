@@ -1453,15 +1453,25 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 			}
 
-			// For external modules
-			$tmp=explode('?',$menu_array[$i]['url'],2);
-			$url = $tmp[0];
-			$param = (isset($tmp[1])?$tmp[1]:'');
-			$url = dol_buildpath($url,1).($param?'?'.$param:'');
-
+			$url = $shorturl = $menu_array[$i]['url'];
+			
+			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$menu_array[$i]['url']))
+			{
+			    $tmp=explode('?',$menu_array[$i]['url'],2);
+			    $url = $shorturl = $tmp[0];
+			    $param = (isset($tmp[1])?$tmp[1]:'');
+			
+			    if (! preg_match('/mainmenu/i',$param) || ! preg_match('/leftmenu/i',$param)) $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
+			    //$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
+			    $url = dol_buildpath($url,1).($param?'?'.$param:'');
+			    $shorturl = $shorturl.($param?'?'.$param:'');
+			}
+				
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
+			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
 			$url=preg_replace('/__USERID__/',$user->id,$url);
-
+			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
+				
 			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
 			// Menu niveau 0
