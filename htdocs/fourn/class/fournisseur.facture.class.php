@@ -1647,7 +1647,8 @@ class FactureFournisseur extends CommonInvoice
 
         $now = dol_now();
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0;
         $prodids = array();
 
         $sql = "SELECT rowid";

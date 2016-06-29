@@ -72,7 +72,7 @@ $date_endy = dol_mktime(23,59,59,$_REQUEST["date_end_delymonth"],$_REQUEST["date
 
 if ($action == 'create')
 {
-	if (is_array($selected) == false)
+	if (! is_array($selected))
 	{
 		$error++;
 		setEventMessages($langs->trans('Error_OrderNotChecked'), null, 'errors');

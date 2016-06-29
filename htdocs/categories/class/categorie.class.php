@@ -43,13 +43,13 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 class Categorie extends CommonObject
 {
 	// Categories types
-	const TYPE_PRODUCT = 0;
-	const TYPE_SUPPLIER = 1;
-	const TYPE_CUSTOMER = 2;
-	const TYPE_MEMBER = 3;
-	const TYPE_CONTACT = 4;
-	const TYPE_USER = 4;    // categorie contact and user are same !
-    const TYPE_ACCOUNT = 5; // bank account
+	const TYPE_PRODUCT = 0;    // TODO Replace with value 'product'
+	const TYPE_SUPPLIER = 1;   // TODO Replace this value with 'supplier'
+	const TYPE_CUSTOMER = 2;   // TODO Replace this value with 'customer'
+	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
+	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
+	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
+    const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
 
 	/**
 	 * @var array ID mapping from type string
@@ -63,7 +63,7 @@ class Categorie extends CommonObject
 		'member'   => 3,
 		'contact'  => 4,
 		'user'     => 4,
-        'account' => 5,
+        'account'  => 5,
 	);
 	/**
 	 * @var array Foreign keys mapping from type string

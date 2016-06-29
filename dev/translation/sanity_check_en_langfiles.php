@@ -316,6 +316,9 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^EMailText/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/ById$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/ByLogin$/', $value)) $qualifiedforclean=0;
+	    // printing
+	    if (preg_match('/PrintingDriverDesc$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/PrintTestDesc$/', $value)) $qualifiedforclean=0;
 	    // products
 	    if (preg_match('/GlobalVariableUpdaterType$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/GlobalVariableUpdaterHelp$/', $value)) $qualifiedforclean=0;

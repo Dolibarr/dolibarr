@@ -857,8 +857,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				$langs->load("donations");
 				$newmenu->add("/don/index.php?leftmenu=donations&amp;mainmenu=accountancy",$langs->trans("Donations"), 0, $user->rights->don->lire, '', $mainmenu, 'donations');
-				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/card.php?action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
-				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/list.php",$langs->trans("List"), 1, $user->rights->don->lire);
+				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/card.php?leftmenu=donations&amp;action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
+				if (empty($leftmenu) || $leftmenu=="donations") $newmenu->add("/don/list.php?leftmenu=donations",$langs->trans("List"), 1, $user->rights->don->lire);
 				// if ($leftmenu=="donations") $newmenu->add("/don/stats/index.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
 			}
 
@@ -1058,6 +1058,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("MenuBankCash"),0,$user->rights->banque->lire, '', $mainmenu, 'bank');
 
 				$newmenu->add("/compta/bank/card.php?action=create",$langs->trans("MenuNewFinancialAccount"),1,$user->rights->banque->configurer);
+				$newmenu->add("/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("List"),1,$user->rights->banque->lire, '', $mainmenu, 'bank');
 				$newmenu->add("/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
 				$newmenu->add("/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
 
@@ -1184,9 +1185,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$langs->load("projects");
 
 				// Project affected to user
-				$newmenu->add("/projet/index.php?leftmenu=projects&mode=mine", $langs->trans("MyProjects"), 0, $user->rights->projet->lire, '', $mainmenu, 'myprojects');
-				$newmenu->add("/projet/card.php?leftmenu=projects&action=create&mode=mine", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
-				$newmenu->add("/projet/list.php?leftmenu=projects&mode=mine&search_status=1", $langs->trans("List"), 1, $user->rights->projet->lire);
+				$newmenu->add("/projet/index.php?leftmenu=myprojects&mode=mine", $langs->trans("MyProjects"), 0, $user->rights->projet->lire, '', $mainmenu, 'myprojects');
+				$newmenu->add("/projet/card.php?leftmenu=myprojects&action=create&mode=mine", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
+				$newmenu->add("/projet/list.php?leftmenu=myprojects&mode=mine&search_status=1", $langs->trans("List"), 1, $user->rights->projet->lire);
 
 				// All project i have permission on
 				$newmenu->add("/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire && $user->rights->projet->lire, '', $mainmenu, 'projects');
@@ -1197,10 +1198,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
 				{
 					// Project affected to user
-					$newmenu->add("/projet/activity/index.php?mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
-					$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
-					$newmenu->add("/projet/tasks/list.php?mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
-					$newmenu->add("/projet/activity/perweek.php?mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
+					$newmenu->add("/projet/activity/index.php?leftmenu=mytasks&mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
+					$newmenu->add("/projet/tasks.php?leftmenu=mytasks&action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
+					$newmenu->add("/projet/tasks/list.php?leftmenu=mytasks&mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
+					$newmenu->add("/projet/activity/perweek.php?leftmenu=mytasks&mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
 
 					// All project i have permission on
 					$newmenu->add("/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
@@ -1452,15 +1453,33 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 			}
 
-			// For external modules
-			$tmp=explode('?',$menu_array[$i]['url'],2);
-			$url = $tmp[0];
-			$param = (isset($tmp[1])?$tmp[1]:'');
-			$url = dol_buildpath($url,1).($param?'?'.$param:'');
+			$url = $shorturl = $menu_array[$i]['url'];
+			
+			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$menu_array[$i]['url']))
+			{
+			    $tmp=explode('?',$menu_array[$i]['url'],2);
+			    $url = $shorturl = $tmp[0];
+			    $param = (isset($tmp[1])?$tmp[1]:'');    // params in url of the menu link
 
+			    // Complete param to force leftmenu to '' to closed opend menu when we click on a link with no leftmenu defined.
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($menu_array[$i]['mainmenu'])) 
+			    {
+			        $param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
+			    }
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($menu_array[$i]['mainmenu'])) 
+			    {
+			        $param.=($param?'&':'').'leftmenu=';
+			    }
+			    //$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
+			    $url = dol_buildpath($url,1).($param?'?'.$param:'');
+			    $shorturl = $shorturl.($param?'?'.$param:'');
+			}
+				
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
+			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
 			$url=preg_replace('/__USERID__/',$user->id,$url);
-
+			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
+				
 			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
 			// Menu niveau 0

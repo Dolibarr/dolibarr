@@ -1736,7 +1736,7 @@ else
         {
             $num = $db->num_rows($result);
             $i = 0; $totalpaye = 0;
-            print '<table class="nobordernopadding" width="100%">';
+            print '<table class="nobordernopadding paymenttable" width="100%">';
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
 			print '<td>'.$langs->trans('Date').'</td>';

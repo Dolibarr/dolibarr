@@ -166,14 +166,13 @@ if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
-	foreach ( $tabfac as $key => $val ) {
-
+	foreach ($tabfac as $key => $val) 
+	{
 		$companystatic = new Societe($db);
 		$invoicestatic = new FactureFournisseur($db);
 
 		$invoicestatic->id = $key;
-		$invoicestatic->ref = $val["ref"];
-		$invoicestatic->ref = $val["refsologest"];
+		$invoicestatic->ref = (string) $val["refsologest"];
 		$invoicestatic->refsupplier = $val["refsuppliersologest"];
 		$invoicestatic->type = $val["type"];
 		$invoicestatic->description = html_entity_decode(dol_trunc($val["description"], 32));
