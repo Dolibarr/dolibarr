@@ -84,6 +84,11 @@ AccountingCategory=Accounting category
 
 NotMatch=Not Set
 
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+
 DelBookKeeping=Delete the records of the general ledger
 
 DescSellsJournal=Sales journal
@@ -160,3 +165,4 @@ Formula=Formula
 ## Error
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
 ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping

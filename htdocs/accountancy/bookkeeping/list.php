@@ -202,14 +202,22 @@ if ($action == 'delbookkeeping') {
 if ($action == 'delbookkeepingyearconfirm') {
 
 	$delyear = GETPOST('delyear', 'int');
+	if ($delyear==-1) {
+		$delyear=0;
+	}
+	$deljournal = GETPOST('deljournal','alpha');
+	if ($deljournal==-1) {
+		$deljournal=0;
+	}
 
-	if (! empty($delyear)) {
-		$result = $object->deleteByYear($delyear);
+
+	if (! empty($delyear) || ! empty($deljournal)) {
+		$result = $object->deleteByYearAndJournal($delyear,$deljournal);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		Header("Location: list.php");
-		exit();
+		exit;
 	}
 }
 if ($action == 'delmouvconfirm') {
@@ -222,7 +230,7 @@ if ($action == 'delmouvconfirm') {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 		Header("Location: list.php");
-		exit();
+		exit;
 	}
 }
 if ($action == 'export_csv') {
@@ -276,11 +284,13 @@ if ($action == 'delbookkeepingyear') {
 
 	$form_question = array ();
 	$delyear = GETPOST('delyear');
+	$deljournal = GETPOST('deljournal');
 
 	if (empty($delyear)) {
 		$delyear = dol_print_date(dol_now(), '%Y');
 	}
 	$year_array = $formventilation->selectyear_accountancy_bookkepping($delyear, 'delyear', 0, 'array');
+	$journal_array = $formventilation->selectjournal_accountancy_bookkepping($deljournal, 'deljournal', 0, 'array');
 
 	$form_question['delyear'] = array (
 			'name' => 'delyear',
@@ -288,6 +298,13 @@ if ($action == 'delbookkeepingyear') {
 			'label' => $langs->trans('DelYear'),
 			'values' => $year_array,
 			'default' => $delyear
+	);
+	$form_question['deljournal'] = array (
+			'name' => 'deljournal',
+			'type' => 'select',
+			'label' => $langs->trans('DelJournal'),
+			'values' => $journal_array,
+			'default' => $deljournal
 	);
 
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('DeleteMvt'), $langs->trans('ConfirmDeleteMvt'), 'delbookkeepingyearconfirm', $form_question, 0, 1);
