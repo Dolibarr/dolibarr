@@ -255,9 +255,7 @@ begin
 
   // Prepare an object calle "Page" of type wpInstalling.
   // Object will be show later in NextButtonClick function.
-  Page := CreateInputQueryPage(wpInstalling,
-  CustomMessage('TechnicalParameters'), '',
-  CustomMessage('IfFirstInstall'));
+  Page := CreateInputQueryPage(wpInstalling, CustomMessage('TechnicalParameters'), '', CustomMessage('IfFirstInstall'));
 
   // TODO Add control differently if first install or update
   if firstinstall
@@ -333,6 +331,19 @@ begin
     datadirnew := pathWithSlashes+'/bin/mysql/data';
     exedirold := pathWithSlashes+'/bin/mysql/mysql5.6.17';
     exedirnew := pathWithSlashes+'/bin/mysql/mysql5.6.17';
+
+
+    //----------------------------------------------
+    // Test if VC11Redist has been installed
+    //----------------------------------------------
+	
+    if not FileExists ('c:/windows/system32/msvcr70.dll') and not FileExists ('c:/windows/sysWOW64/msvcr70.dll') and not FileExists ('c:/winnt/system32/msvcr70.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr70.dll') then
+    begin
+      // TODO Copy file or ask to install package ?
+      //CustomMessage('YouWillInstallDoliWamp')+#13#13
+      MsgBox('The package vcredist_x64.exe or vcredist_86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://ccc">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
+    end;
+
 
     // If we have a new database version, we should only copy old my.ini file into new directory
     // and change only all basedir= strings to use new version. Like this, data dir is still correct.
