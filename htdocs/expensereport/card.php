@@ -1432,7 +1432,7 @@ else
 				{
 					$num = $db->num_rows($resql);
 					$i = 0; $total = 0;
-					print '<table class="nobordernopadding" width="100%">';
+					print '<table class="nobordernopadding paymenttable" width="100%">';
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans("RefPayment").'</td>';
 					print '<td>'.$langs->trans("Date").'</td>';
