@@ -406,7 +406,7 @@ class ActionComm extends CommonObject
 	 */
 	public function add(User $user, $notrigger = 0)
 	{
-		$this->create($user, $notrigger);
+		return $this->create($user, $notrigger);
 	}
 
     /**
