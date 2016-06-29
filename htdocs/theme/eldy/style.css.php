@@ -4093,7 +4093,7 @@ select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
     /* TODO modified by jmobile, replace jmobile with pure css*/
     overflow:hidden;
-    white-space: nowrap;
+    white-space: nowrap;			/* Enabling this make behaviour strange when selecting the empty value if this empty value is '' instead of '&nbsp;' */
     text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
