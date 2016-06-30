@@ -106,7 +106,7 @@ if (empty($reshook))
         {
             header("Location: ".$backtopage);
             exit;
-        }    
+        }
     }
 
 	if ($action == 'confirm_merge' && $confirm == 'yes')
@@ -200,8 +200,8 @@ if (empty($reshook))
 				{
 					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
-				} 
-				else 
+				}
+				else
 				{
 				    $langs->load("errors");
 					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
@@ -262,8 +262,8 @@ if (empty($reshook))
             $error++;
             $action='create';
         }
-        
-        
+
+
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
@@ -340,13 +340,13 @@ if (empty($reshook))
 			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
 		}
-		
+
 		// Multicurrency
 		if (!empty($conf->multicurrency->enabled))
 		{
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 		}
-		
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0)
@@ -1494,7 +1494,7 @@ else
             	print $object->ref;
             	print '</td></tr>';
 			}
-			
+
             // Name
             print '<tr><td class="titlefield">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
@@ -1922,13 +1922,13 @@ else
         dol_htmloutput_errors($error,$errors);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
         dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
-        
+
+
         print '<div class="fichecenter">';
         print '<div class="fichehalfleft">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -1936,12 +1936,12 @@ else
     	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
-	    
+
     	// Prospect/Customer
     	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
     	print yn($object->fournisseur);
     	print '</td></tr>';
-    	
+
     	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
@@ -2019,7 +2019,7 @@ else
         print yn($object->tva_assuj);
         print '</td>';
 		print '</tr>';
-		
+
         // VAT Code
         print '<tr>';
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
@@ -2163,13 +2163,13 @@ else
         print '<tr><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
 
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-        
+
         // Legal
         print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
@@ -2244,7 +2244,7 @@ else
 	        print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code,1) : '';
 			print '</td></tr>';
 		}
-		
+
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2325,10 +2325,10 @@ else
 
         print '</table>';
 		print '</div>';
-		
+
         print '</div></div>';
         print '<div style="clear:both"></div>';
-        
+
         dol_fiche_end();
 
 
@@ -2345,13 +2345,13 @@ else
 			$TContact = $object->contact_array_objects();
 			foreach ($TContact as &$contact)
 			{
-				if (!empty($contact->email)) 
+				if (!empty($contact->email))
 				{
 					$at_least_one_email_contact = true;
 					break;
 				}
 			}
-			
+
 	        if (! empty($object->email) || $at_least_one_email_contact)
 	        {
 	        	$langs->load("mails");
@@ -2408,7 +2408,7 @@ else
 			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head();
-			
+
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';

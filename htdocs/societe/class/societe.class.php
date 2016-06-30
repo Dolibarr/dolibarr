@@ -357,7 +357,7 @@ class Societe extends CommonObject
 	// Multicurrency
 	var $fk_multicurrency;
 	var $multicurrency_code;
-	
+
     /**
      * To contains a clone of this when we need to save old properties of object
      *  @var Societe
@@ -406,14 +406,14 @@ class Societe extends CommonObject
         if (empty($this->client))      $this->client=0;
         if (empty($this->fournisseur)) $this->fournisseur=0;
         $this->import_key = trim($this->import_key);
-		
+
 		if (!empty($this->multicurrency_code)) $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
 			$this->multicurrency_code = '';
 			$this->fk_multicurrency = 0;
 		}
-		
+
         dol_syslog(get_class($this)."::create ".$this->name);
 
         // Check parameters
@@ -845,7 +845,7 @@ class Societe extends CommonObject
             $sql .= ",mode_reglement_supplier = ".(! empty($this->mode_reglement_supplier_id)?"'".$this->db->escape($this->mode_reglement_supplier_id)."'":"null");
             $sql .= ",cond_reglement_supplier = ".(! empty($this->cond_reglement_supplier_id)?"'".$this->db->escape($this->cond_reglement_supplier_id)."'":"null");
             $sql .= ",fk_shipping_method = ".(! empty($this->shipping_method_id)?"'".$this->db->escape($this->shipping_method_id)."'":"null");
-            
+
             $sql .= ",client = " . (! empty($this->client)?$this->client:0);
             $sql .= ",fournisseur = " . (! empty($this->fournisseur)?$this->fournisseur:0);
             $sql .= ",barcode = ".(! empty($this->barcode)?"'".$this->db->escape($this->barcode)."'":"null");
@@ -1055,7 +1055,7 @@ class Societe extends CommonObject
         else if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof5) $sql .= " WHERE s.idprof5 = '".$this->db->escape($idprof5)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof6) $sql .= " WHERE s.idprof6 = '".$this->db->escape($idprof6)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        
+
         $resql=$this->db->query($sql);
         dol_syslog(get_class($this)."::fetch ".$sql);
         if ($resql)
@@ -1900,10 +1900,10 @@ class Societe extends CommonObject
         $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
         if (empty($notooltip))
         {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
                 $label=$langs->trans("ShowCompany");
-                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+                $link.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $link.=' class="classfortooltip"';
@@ -2195,6 +2195,7 @@ class Societe extends CommonObject
     function display_rib($mode='label')
     {
         require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
 
@@ -2206,6 +2207,7 @@ class Societe extends CommonObject
         {
         	if (empty($bac->rum))
         	{
+        		require_once DOL_DOCUMENT_ROOT . '/compta/prelevement/class/bonprelevement.class.php';
         		$prelevement = new BonPrelevement($this->db);
         		$bac->fetch_thirdparty();
         		$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
@@ -3126,7 +3128,7 @@ class Societe extends CommonObject
         }
         else return false;
     }
-    
+
     /**
      *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *
@@ -3355,7 +3357,7 @@ class Societe extends CommonObject
 
 	}
 
-	
+
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
@@ -3390,8 +3392,8 @@ class Societe extends CommonObject
 
 		return $result;
 	}
-	
-	
+
+
 	/**
 	 * Sets object to supplied categories.
 	 *

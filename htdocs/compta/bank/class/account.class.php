@@ -258,6 +258,10 @@ class Account extends CommonObject
 				$string .= $this->code_guichet.' ';
 			} elseif ($val == 'BankAccountNumberKey') {
 				$string .= $this->cle_rib.' ';
+			}elseif ($val == 'BIC') {
+				$string .= $this->bic.' ';
+			}elseif ($val == 'IBAN') {
+				$string .= $this->iban.' ';
 			}
 		}
 
@@ -1151,9 +1155,9 @@ class Account extends CommonObject
         if ($user->societe_id) {
             return 0;
         }
-    
+
         $nb=0;
-        
+
         $sql = "SELECT COUNT(ba.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
@@ -1169,7 +1173,7 @@ class Account extends CommonObject
 
         return $nb;
     }
-        
+
     /**
      *    	Return clicable name (with picto eventually)
      *
@@ -1204,7 +1208,7 @@ class Account extends CommonObject
             $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id.$linkclose;
             $linkend='</a>';
         }
-        
+
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
         $result.=$link.$this->label.$linkend;
         return $result;
@@ -1324,12 +1328,16 @@ class Account extends CommonObject
 
 		if ($detailedBBAN == 0) {
 			return array(
-				'BankAccountNumber'
+					'IBAN',
+					'BIC',
+					'BankAccountNumber'
 			);
 		} elseif ($detailedBBAN == 2) {
 			return array(
-				'BankCode',
-				'BankAccountNumber'
+					'IBAN',
+					'BIC',
+					'BankCode',
+					'BankAccountNumber'
 			);
 		}
 
@@ -1352,16 +1360,20 @@ class Account extends CommonObject
 		global $conf;
 
 		$fieldlists = array(
-			'BankCode',
-			'DeskCode',
-			'BankAccountNumber',
-			'BankAccountNumberKey'
+				'IBAN',
+				'BIC',
+				'BankCode',
+				'DeskCode',
+				'BankAccountNumber',
+				'BankAccountNumberKey'
 		);
 
 		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
 				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
 					$fieldlists = array(
+						'IBAN',
+						'BIC',
 						'BankCode',
 						'DeskCode',
 						'BankAccountNumberKey',
