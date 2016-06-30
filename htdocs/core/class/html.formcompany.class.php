@@ -204,7 +204,7 @@ class FormCompany
 	 *    Ainsi les liens avec les departements se font sur un departement independemment de son nom.
 	 *
 	 *    @param	string	$selected        	Code state preselected (mus be state id)
-	 *    @param    string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    integer	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
 	 *    @param    string	$htmlname			Id of department
 	 * 	  @return	string						String with HTML select
 	 *    @see select_country
@@ -755,9 +755,10 @@ class FormCompany
      *  @param  string	$htmlname       Name of HTML select
      *  @param  string	$preselected    Default value to show
      *  @param  string	$country_code   FR, IT, ...
+     *  @param  string  $morecss        More css
      *  @return	string					HTML string with prof id
      */
-    function get_input_id_prof($idprof,$htmlname,$preselected,$country_code)
+    function get_input_id_prof($idprof,$htmlname,$preselected,$country_code,$morecss='maxwidth100onsmartphone quatrevingtpercent')
     {
         global $conf,$langs;
 
@@ -791,8 +792,9 @@ class FormCompany
 
         $maxlength=$formlength;
         if (empty($formlength)) { $formlength=24; $maxlength=128; }
-
-        $out = '<input type="text" name="'.$htmlname.'" id="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
+        $formlength=0;
+        
+        $out = '<input type="text" '.($morecss?'class="'.$morecss.'" ':'').'name="'.$htmlname.'" id="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;
     }

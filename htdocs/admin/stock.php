@@ -317,13 +317,13 @@ $found++;
 {
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
-	print '<td colspan="2">'.$langs->trans("NoModueToManageStockIncrease").'</td>';
+	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockIncrease").'</td>';
 	print "</tr>\n";
 }*/
 
 print '</table>';
 
-// Optio to force stock to be enough before adding a line into document
+// Option to force stock to be enough before adding a line into document
 if ($conf->invoice->enabled || $conf->order->enabled || $conf->expedition->enabled)
 {
 	print '<br>';

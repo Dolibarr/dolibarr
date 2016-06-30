@@ -131,7 +131,7 @@ class Product extends CommonObject
 	var $status_buy;
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
-	// We must manage batch number, sell-by date and so on : '1':yes '0':no
+	// We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	var $status_batch;
 
 	var $customcode;       // Customs code
@@ -879,9 +879,10 @@ class Product extends CommonObject
 	 *  Delete a product from database (if not used)
 	 *
 	 *	@param      int		$id         Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
+	 *  @param      int     $notrigger  Do not execute trigger
 	 * 	@return		int					< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
-	function delete($id=0)
+	function delete($id=0, $notrigger=0)
 	{
 		// Deprecation warning
 		if ($id > 0) {
@@ -914,7 +915,7 @@ class Product extends CommonObject
 		{
 			$this->db->begin();
 
-			if (! $error)
+			if (! $error && empty($notrigger))
 			{
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_DELETE',$user);
@@ -2666,7 +2667,7 @@ class Product extends CommonObject
     		$sql.= " WHERE fk_soc = ".$id_fourn;
     		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
     		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity = ".$conf->entity;
+    		$sql.= " AND entity IN (".getEntity('productprice', 1).")";
 
     		$resql=$this->db->query($sql);
     		if ($resql)
@@ -2689,7 +2690,7 @@ class Product extends CommonObject
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity IN (".getEntity('productprice', 1).")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)

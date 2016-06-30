@@ -121,6 +121,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 	$param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -214,7 +215,7 @@ if ($resql)
     else
     {
    		print "<tr ".$bc[$var].">";
-   		print '<td colspan="7">'.$langs->trans("None")."</td>";
+   		print '<td colspan="7" class="opacitymedium">'.$langs->trans("None")."</td>";
    		print '</tr>';
     }
 	print "</table>";

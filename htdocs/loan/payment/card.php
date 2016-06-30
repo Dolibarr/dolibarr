@@ -163,7 +163,7 @@ print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$lan
 print '<tr><td valign="top">'.$langs->trans('Number').'</td><td colspan="3">'.$payment->num_payment.'</td></tr>';
 
 // Amount
-print '<tr><td valign="top">'.$langs->trans('Capital').'</td><td colspan="3">'.price($payment->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('LoanCapital').'</td><td colspan="3">'.price($payment->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 print '<tr><td valign="top">'.$langs->trans('Insurance').'</td><td colspan="3">'.price($payment->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 print '<tr><td valign="top">'.$langs->trans('Interest').'</td><td colspan="3">'.price($payment->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 

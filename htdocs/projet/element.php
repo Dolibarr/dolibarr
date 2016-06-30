@@ -121,7 +121,7 @@ print '<table class="border" width="100%">';
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
-print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 // Define a complementary filter for search of next/prev ref.
 if (! $user->rights->projet->all->lire)
 {
@@ -157,16 +157,19 @@ print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
 print dol_print_date($object->date_end,'day');
 print '</td></tr>';
 
-// Opportunity status
-print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-if ($code) print $langs->trans("OppStatus".$code);
-print '</td></tr>';
-
-// Opportunity Amount
-print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
-print '</td></tr>';
+if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+{
+    // Opportunity status
+    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
+    $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
+    if ($code) print $langs->trans("OppStatus".$code);
+    print '</td></tr>';
+    
+    // Opportunity Amount
+    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
+    if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
+    print '</td></tr>';
+}
 
 // Budget
 print '<tr><td>'.$langs->trans("Budget").'</td><td>';

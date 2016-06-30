@@ -12,9 +12,6 @@ CloseEtablishment=Kuruluş kapat
 DictionaryDepartment=İK - Bölüm listesi
 DictionaryFunction=İK - İşlev listesi
 # Module
-ListOfEmployees=Çalışanlar listesi
 Employees=Çalışanlar
 Employee=Çalışanlar
-Employe=Çalışan
 NewEmployee=Yeni çalışan
-EmployeeCard=Çalışan kartı

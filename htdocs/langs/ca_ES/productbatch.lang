@@ -17,6 +17,5 @@ printEatby=Caducitat: %s
 printSellby=Límit venda: %s
 printQty=Quant.: %d
 AddDispatchBatchLine=Afegir una línia per despatx per caducitat
-BatchDefaultNumber=Indefinit
 WhenProductBatchModuleOnOptionAreForced=Si el mòdul de Lot/Serie està activat, l'increment/disminució d'estoc està forçat a l'elecció anterior i no pot editar-se. Les altres opcions poden definir-se si cal.
 ProductDoesNotUseBatchSerial=Aquest producte no utilitza lot/número de sèrie

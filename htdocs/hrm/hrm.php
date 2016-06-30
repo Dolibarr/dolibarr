@@ -207,7 +207,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         }
         else
         {
-            print '<tr '.$bc[$var].'><td colspan="7">'.$langs->trans("None").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table><br>';
     }
@@ -272,7 +272,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -336,7 +336,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

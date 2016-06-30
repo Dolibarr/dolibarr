@@ -24,7 +24,6 @@ Errors=Fouten
 NotAuthorized=U bent niet toegelaten om dat te doen.
 NoFilter=Geen filter
 DateCreationShort=Aanmaak datum
-SupplierProposalUHT=U.P. net is hiervoor nodig
 YouCanSetDefaultValueInModuleSetup=Je kan de standaard waarde gebruiken wanneer je een nieuw record plaatst in de module setup
 SetLinkToAnotherThirdParty=Link naar een derde partij
 SelectAction=Selecteer actie

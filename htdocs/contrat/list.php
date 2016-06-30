@@ -170,6 +170,7 @@ if ($resql)
     $i = 0;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     $param.='&search_contract='.$search_contract;
     $param.='&search_name='.$search_name;

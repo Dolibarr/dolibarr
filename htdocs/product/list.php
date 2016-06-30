@@ -73,7 +73,8 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="p.ref";
 if (! $sortorder) $sortorder="ASC";
 
-$contextpage='productservicelist';
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'productservicelist';
 if ($type === '1') { $contextpage='servicelist'; if ($search_type=='') $search_type='1'; }
 if ($type === '0') { $contextpage='productlist'; if ($search_type=='') $search_type='0'; }
 
@@ -334,7 +335,8 @@ else
 	    }
 
 	    $param='';
-        if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	    if ($search_categ > 0) $param.="&amp;search_categ=".$search_categ;
     	if ($sref) $param="&amp;sref=".$sref;
     	if ($search_ref_supplier) $param="&amp;search_ref_supplier=".$search_ref_supplier;

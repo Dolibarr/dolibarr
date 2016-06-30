@@ -127,7 +127,7 @@ $(document).ready(function() {
 		$('.editval_string').editable(urlSaveInPlace, {
 			type		: 'text',
 			id			: 'field',
-			width		: 300,
+			width		: withInPlace,				/* Size of string area in px ? */
 			tooltip		: tooltipInPlace,
 			placeholder	: placeholderInPlace,
 			cancel		: cancelInPlace,

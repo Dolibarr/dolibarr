@@ -327,7 +327,7 @@ if ($form_complete && $show_progress) {
 	$legend = '<tr class="liste_titre">';
 	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Month") . '</td>';
 	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Interest") . '</td>';
-	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Capital") . '</td>';
+	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("LoanCapital") . '</td>';
 	$legend.= '<td class="liste_titre" align="center">' . $langs->trans("Position") . '</td>';
 	$legend.= '</tr>';
 

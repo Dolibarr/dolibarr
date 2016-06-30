@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015 	   Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2015-2016 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -543,7 +543,7 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="4">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -614,7 +614,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			}
 			else
 			{
-				print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+				print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			print "</table><br>";
 			$db->free($resql);
@@ -824,7 +824,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print '</tr>';
 
 				$total_ttc +=  $obj->total_ttc;
-				$total += $obj->total;
+				$total += $obj->total_ht;
 				$totalam +=  $obj->am;
 				$var=!$var;
 				$i++;
@@ -877,7 +877,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
 	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye,";
-	$sql.= " s.nom, s.rowid, s.code_client, s.code_fournisseur";
+	$sql.= " s.nom, s.rowid, s.code_client, s.code_fournisseur, ff.date_lim_reglement";
 	$sql.= " ORDER BY ff.date_lim_reglement ASC";
 
 	$resql=$db->query($sql);

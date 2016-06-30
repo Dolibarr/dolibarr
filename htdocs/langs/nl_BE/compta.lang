@@ -1,12 +1,8 @@
 # Dolibarr language file - Source file is en_US - compta
-Accountancy=Boekhouding
-Treasury=Kasstromen
 RemainingAmountPayment=Resterend bedrag betaling:
 Accountparent=Hoofdrekening
 Accountsparent=Hoofdrekeningen
 LT1SummaryES=RE Balans
-ToGet=Terug te trekken
-TaxAndDividendsArea=Verkoopsbelastingen, sociale/fiscale belastingen/bijdragen en dividenten-zone
 SocialContribution=Sociale bijdrage/belasting
 SocialContributions=Sociale bijdragen/belastingen
 MenuTaxAndDividends=Belastingen en dividenten

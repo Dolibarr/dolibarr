@@ -3,7 +3,6 @@ PaypalSetup=贝宝模块的设置
 PaypalDesc=该模块提供的网页，允许<a href="http://www.paypal.com" target="_blank">对贝</a>宝支付客户的。这可以使用一个免费的付款或支付上一个特定的Dolibarr对象（发票，订单，... ...）
 PaypalOrCBDoPayment=与信用卡或PayPal付款
 PaypalDoPayment=用PayPal
-PaypalCBDoPayment=信用卡支付
 PAYPAL_API_SANDBOX=测试/沙箱模式
 PAYPAL_API_USER=API的用户名
 PAYPAL_API_PASSWORD=API密码
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=支付宝
 PAYPAL_CSS_URL=optionnal付款页面的CSS样式表的URL
 ThisIsTransactionId=这是交易编号<b>：%s</b>
 PAYPAL_ADD_PAYMENT_URL=当你邮寄一份文件，添加URL Paypal付款
-PAYPAL_IPN_MAIL_ADDRESS=E-mail地址，即时付款通知（IPN）
 PredefinedMailContentLink=您可以点击下面的安全链接，使您的​​支付宝(PayPal)，如果它不是已经完成。⏎⏎ %s ⏎⏎.
 YouAreCurrentlyInSandboxMode=您目前在“沙箱”模式
 NewPaypalPaymentReceived=收到新的支付宝付款

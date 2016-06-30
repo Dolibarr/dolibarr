@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Бухгалтерия
-Globalparameters=Глобальные параметры
-Menuaccount=Учётные записи бухгалтерии
-Menuthirdpartyaccount=Учётные записи контрагентов
-MenuTools=Инструменты
 
 ConfigAccountingExpert=Configuration of the module accounting expert
 Journaux=Журналы
 JournalFinancial=Финансовые журналы
-Exports=Экспорт
-Export=Экспорт
-Modelcsv=Модель экспорта
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Выбрать модель экспорта
-Modelcsv_normal=Классический экспорт
-Modelcsv_CEGID=Export towards CEGID Expert
 BackToChartofaccounts=Return chart of accounts
 
-Definechartofaccounts=Define a chart of accounts
 Selectchartofaccounts=Select a chart of accounts
 Addanaccount=Добавить бухгалтерский счёт
 AccountAccounting=Бухгалтерский счёт
+AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Breakdown
 
 MenuAccountancy=Accountancy
 CustomersVentilation=Распределение клиентов
 SuppliersVentilation=Распределение поставщиков
-TradeMargin=Торговая наценка
 Reports=Отчёты
-ByCustomerInvoice=По счетам клиентов
 NewAccount=Новый бухгалтерский счёт
 Create=Создать
 CreateMvts=Create movement
-UpdateAccount=Modification of an accounting account
 UpdateMvts=Modification of a movement
 WriteBookKeeping=Записать счета в главную книгу
 Bookkeeping=Главная книга
 AccountBalance=Account balance
-
-AccountingVentilation=Breakdown accounting
-AccountingVentilationSupplier=Breakdown accounting supplier
-AccountingVentilationCustomer=Breakdown accounting customer
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Строки счёта для обсуждения
@@ -59,7 +39,6 @@ InvoiceLinesDone=Ventilated lines of invoice
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=Обсудить
-VentilationAuto=Automatic breakdown
 
 Processing=Обрабатывается
 EndProcessing=Конец обработки
@@ -69,14 +48,10 @@ Lineofinvoice=Строка счёта
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
 
-ACCOUNTING_SEPARATORCSV=Column separator in export file
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Социальный журнал
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Account of transfer
 ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold servi
 Doctype=Тип документа
 Docdate=Дата
 Docref=Ссылка
-Numerocompte=Бухгалтерский счёт
 Code_tiers=Контрагент
 Labelcompte=Метка бухгалтерского счёта
 Sens=Sens
 Codejournal=Журнал
 NumPiece=Piece number
+AccountingCategory=Accounting category
 
 DelBookKeeping=Удалить записи главной книги
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Журнал покупок
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=Платёж наличными средствами
-
-SupplierInvoicePayment=Платёж счёта поставщика
 CustomerInvoicePayment=Платёж счёта клиента
 
 ThirdPartyAccount=Бухгалтерский счёт контрагента
@@ -130,7 +103,6 @@ DescThirdPartyReport=Consult here the list of the thirdparty customers and the s
 
 ListAccounts=Список бухгалтерских счетов
 
-Pcgversion=Version of the plan
 Pcgtype=Класс бухгалтерского счёта
 Pcgsubtype=Подкласс бухгалтерского счёта
 Accountparent=Владелец бухгалтерского счёта
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounti
 ChangeAccount=Change the accounting account for lines selected by the account:
 Vide=-
 DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
 ValidateHistory=Подтверждать автоматически
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=Breakdown card
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Экспорт
+Export=Экспорт
+Modelcsv=Модель экспорта
+OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
+Selectmodelcsv=Выбрать модель экспорта
+Modelcsv_normal=Классический экспорт
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -177,3 +149,12 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page

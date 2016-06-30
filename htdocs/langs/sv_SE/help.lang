@@ -4,7 +4,6 @@ EMailSupport=E-postmeddelanden stöd
 RemoteControlSupport=Online realtid / fjärrsupport
 OtherSupport=Annat stöd
 ToSeeListOfAvailableRessources=För att kontakta / se tillgängliga resurser:
-ClickHere=Klicka här
 HelpCenter=Hjälpcenter
 DolibarrHelpCenter=Dolibarr Hjälp-och supportcenter
 ToGoBackToDolibarr=Annars klickar du på <a href="%s">att här använda Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Ibland finns det inget företag finns tillgängliga d�
 BackToHelpCenter=Annars, här klickar du gå <a href="%s">tillbaka för att hjälpa hemsida centrum</a> .
 LinkToGoldMember=Du kan ringa en av de tränare förvalda genom Dolibarr för ditt språk (%s) genom att klicka på hans Widget (status och högsta pris uppdateras automatiskt):
 PossibleLanguages=Språk som stöds
-MakeADonation=Hjälp Dolibarr projekt, göra en donation
 SubscribeToFoundation=Hjälp Dolibarr projektet, prenumerera på stiftelsen
 SeeOfficalSupport=För officiell Dolibarr support på ditt språk: <br><b><a href="%s" target="_blank">%s</a></b>

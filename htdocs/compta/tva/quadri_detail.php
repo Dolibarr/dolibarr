@@ -479,7 +479,7 @@ else
 
 	//print table headers for this quadri - expenses now
 	//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td align="left">'.$elementsup.'</td>';
 	print '<td align="left">'.$productsup.'</td>';
 	if ($modetax == 0)

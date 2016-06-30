@@ -1599,7 +1599,7 @@ class Task extends CommonObject
 	            $task_static->projectstatus = $obj->projectstatus;
 	            $task_static->progress = $obj->progress;
 	            $task_static->fk_statut = $obj->status;
-	            $task_static->datee = $this->db->jdate($obj->datee);
+	            $task_static->date_end = $this->db->jdate($obj->datee);
 	
 	            if ($task_static->hasDelay()) {
 	                $response->nbtodolate++;
@@ -1616,7 +1616,7 @@ class Task extends CommonObject
 	}
 	
 	/**
-	 * Is the action delayed?
+	 * Is the task delayed?
 	 *
 	 * @return bool
 	 */
@@ -1630,6 +1630,8 @@ class Task extends CommonObject
 
         $now = dol_now();
 
-        return ($this->datee > 0 && $this->datee < ($now - $conf->projet->task->warning_delay));
+        $datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
+
+        return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
 	}	
 }

@@ -17,6 +17,5 @@ printEatby=Verzehren bis: %s
 printSellby=Verkaufen bis: %s
 printQty=Menge: %d
 AddDispatchBatchLine=Fügen Sie eine Zeile für Haltbarkeit Versendung
-BatchDefaultNumber=Nicht definiert
 WhenProductBatchModuleOnOptionAreForced=Wenn das Modul Lot/Serien-Nr. eingeschaltet ist, wird der Modus für Lagerbestands-Erhöhungen / -Senkungen auf die letzte Auswahl festgelegt und kann nicht geändert werden. Andere Optionen können nach Wunsch eingestellt werden.
 ProductDoesNotUseBatchSerial=Dieses Produkt verwendet keine Lose oder Seriennummern

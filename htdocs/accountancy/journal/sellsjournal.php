@@ -207,7 +207,7 @@ if ($action == 'writebookkeeping') {
 		$companystatic->client = $tabcompany[$key]['code_client'];
 
 		$invoicestatic->id = $key;
-		$invoicestatic->ref = $val["ref"];
+		$invoicestatic->ref = (string) $val["ref"];
 
 		foreach ( $tabttc[$key] as $k => $mt ) {
 			$bookkeeping = new BookKeeping($db);

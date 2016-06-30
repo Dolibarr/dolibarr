@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = À propos
-CronAbout = À propos de Cron
-CronAboutPage = Page à propos de Cron
 # Right
 Permission23101 = Voir les tâches planifiées
 Permission23102 = Créer/Modifier des tâches planifiées
@@ -18,15 +15,10 @@ CronExplainHowToRunUnix=Sur un environnement Unix vous pouvez utiliser l'entrée
 CronExplainHowToRunWin=Sur un environement Microsoft(tm) Windows vous pouvez utiliser le planificateur de tache pour lancer cette commande toute les 5 minutes.
 CronMethodDoesNotExists=La classe %s ne contient aucune méthode %s
 # Menu
-CronJobs=Travaux programmés
-CronListActive=Liste des travaux activés/planifiés
-CronListInactive=Liste des travaux inactifs
 EnabledAndDisabled=Activés et désactivés
 # Page list
-CronDateLastRun=Dernier lancement
 CronLastOutput=Sortie du dernier lancement
 CronLastResult=Dernier code de retour
-CronListOfCronJobs=Liste des travaux planifiés
 CronCommand=Commande
 CronList=Travaux planifiés
 CronDelete=Effacer les travaux planifiés
@@ -34,22 +26,17 @@ CronConfirmDelete=Êtes-vous sûr de vouloir supprimer ces travaux planifiées?
 CronExecute=Lancer les travaux planifiés
 CronConfirmExecute=Etes-vous sûr que vous voulez exécuter ces travaux planifiées maintenant?
 CronInfo=Le module des travaux planifiés permet d'exécuter des opérations qui ont été programmées
-CronWaitingJobs=Travaux en attente
 CronTask=Travail planifié
 CronNone=Aucun(e)
 CronDtStart=Pas avant
 CronDtEnd=Pas après
 CronDtNextLaunch=Prochaine exécution
-CronDtLastLaunch=Date démarrage dernière exécution
+CronDtLastLaunch=Date de début dernière exécution
 CronDtLastResult=Date de fin dernière exécution
 CronFrequency=Fréquence
 CronClass=Classe
 CronMethod=Méthode
 CronModule=Module
-CronAction=Action
-CronStatus=État
-CronStatusActive=Actif
-CronStatusInactive=Inactif
 CronNoJobs=Aucun travail enregistré
 CronPriority=Priorité
 CronLabel=Description
@@ -59,11 +46,10 @@ CronEach=Tous les
 JobFinished=Travail lancé et terminé
 #Page card
 CronAdd= Ajoutez des travaux
-CronHourStart= Date et heure de démarrage de la tâche
 CronEvery=Exécuter chaque tâche
 CronObject=Instance/objet à créer
 CronArgs=Paramètres
-CronSaveSucess=Enregistrement effectué
+CronSaveSucess=Mise à jour effectuée avec succès.
 CronNote=Commentaire
 CronFieldMandatory=Le champ %s est obligatoire
 CronErrEndDateStartDt=La date de fin ne peux être avant la date de début
@@ -81,14 +67,12 @@ CronCommandHelp=La commande système a exécuter.
 CronCreateJob=Créer un nouveau travail planifié
 CronFrom=A partir du
 # Info
-CronInfoPage=Information
 # Common
 CronType=Type de travail planifié
 CronType_method=Méthode d'appel d'une classe Dolibarr
 CronType_command=Commande terminal
-CronMenu=Cron
 CronCannotLoadClass=Impossible de charger la classe %s ou l'objet %s
-UseMenuModuleToolsToAddCronJobs=Aller dans le menu "Accueil - Outils modules - Liste des travaux" pour voir et éditer les travaux planifiés.
-TaskDisabled=Travail non programmé
+UseMenuModuleToolsToAddCronJobs=Aller à la page "Accueil - Outils administration - Travaux planifiées" pour voir la listes des travaux programmées et les modifier.
+JobDisabled=Travail désactivé
 MakeLocalDatabaseDumpShort=Sauvegarde locale de base
 MakeLocalDatabaseDump=Créer une sauvegarde locale de la base

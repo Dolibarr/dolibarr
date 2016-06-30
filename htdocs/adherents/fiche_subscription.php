@@ -33,35 +33,49 @@ $langs->load("members");
 $langs->load("users");
 
 $adh = new Adherent($db);
-$subscription = new Cotisation($db);
+$object = new Cotisation($db);
 $errmsg='';
 
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
-$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
-$typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
+$action=GETPOST("action",'alpha');
+$rowid=GETPOST("rowid","int")?GETPOST("rowid","int"):GETPOST("id","int");
+$typeid=GETPOST("typeid","int");
+$cancel=GETPOST('cancel');
 
 if (! $user->rights->adherent->cotisation->lire)
 	 accessforbidden();
+
+$permissionnote = $user->rights->adherent->cotisation->creer; // Used by the include of actions_setnotes.inc.php
+$permissiondellink=$user->rights->adherent->cotisation->creer;	// Used by the include of actions_dellink.inc.php
+$permissiontoedit = $user->rights->adherent->cotisation->creer; // Used by the include of actions_lineupdonw.inc.php
 
 
 /*
  * 	Actions
  */
 
+if ($cancel) $action='';
+
+//include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not include_once
+
+include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
+//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+
+
 if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
 	// Charge objet actuel
-	$result=$subscription->fetch($_POST["rowid"]);
+	$result=$object->fetch($_POST["rowid"]);
 	if ($result > 0)
 	{
 		$db->begin();
 
 		$errmsg='';
 
-		if ($subscription->fk_bank)
+		if ($object->fk_bank)
 		{
 			$accountline=new AccountLine($db);
-			$result=$accountline->fetch($subscription->fk_bank);
+			$result=$accountline->fetch($object->fk_bank);
 
 			// If transaction consolidated
 			if ($accountline->rappro)
@@ -84,31 +98,31 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 		if (! $errmsg)
 		{
 			// Modifie valeures
-			$subscription->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
-			$subscription->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
-			$subscription->note=$_POST["note"];
-			$subscription->amount=$_POST["amount"];
-			//print 'datef='.$subscription->datef.' '.$_POST['datesubendday'];
+			$object->dateh=dol_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+			$object->datef=dol_mktime($_POST['datesubendhour'], $_POST['datesubendmin'], 0, $_POST['datesubendmonth'], $_POST['datesubendday'], $_POST['datesubendyear']);
+			$object->note=$_POST["note"];
+			$object->amount=$_POST["amount"];
+			//print 'datef='.$object->datef.' '.$_POST['datesubendday'];
 
-			$result=$subscription->update($user);
-			if ($result >= 0 && ! count($subscription->errors))
+			$result=$object->update($user);
+			if ($result >= 0 && ! count($object->errors))
 			{
 				$db->commit();
 
-				header("Location: fiche_subscription.php?rowid=".$subscription->id);
+				header("Location: fiche_subscription.php?rowid=".$object->id);
 				exit;
 			}
 			else
 			{
 				$db->rollback();
 
-			    if ($subscription->error)
+			    if ($object->error)
 				{
-					$errmsg=$subscription->error;
+					$errmsg=$object->error;
 				}
 				else
 				{
-					foreach($subscription->errors as $error)
+					foreach($object->errors as $error)
 					{
 						if ($errmsg) $errmsg.='<br>';
 						$errmsg.=$error;
@@ -126,11 +140,11 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->adherent->cotisation->creer)
 {
-	$result=$subscription->fetch($rowid);
-    $result=$subscription->delete($user);
+	$result=$object->fetch($rowid);
+    $result=$object->delete($user);
     if ($result > 0)
     {
-    	header("Location: card_subscriptions.php?rowid=".$subscription->fk_adherent);
+    	header("Location: card_subscriptions.php?rowid=".$object->fk_adherent);
     	exit;
     }
     else
@@ -145,9 +159,10 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
  * View
  */
 
-llxHeader('',$langs->trans("SubscriptionCard"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
 $form = new Form($db);
+
+
+llxHeader('',$langs->trans("SubscriptionCard"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 
 dol_htmloutput_errors($errmsg);
@@ -161,8 +176,8 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	 *
 	 ********************************************/
 
-    $subscription->fetch($rowid);
-	$result=$adh->fetch($subscription->fk_adherent);
+    $object->fetch($rowid);
+	$result=$adh->fetch($object->fk_adherent);
 
 	/*
 	 * Affichage onglets
@@ -170,12 +185,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$object->id;
 	$head[$h][1] = $langs->trans("SubscriptionCard");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -184,7 +199,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
-	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
+	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$object->fk_bank."\">";
 	
 	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
 
@@ -196,7 +211,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
-	print $form->showrefnav($subscription, 'rowid', $linkback, 1);
+	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';	
 
     // Member
@@ -207,34 +222,34 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
     // Date start subscription
     print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
+	$form->select_date($object->dateh,'datesub',1,1,0,'update',1);
 	print '</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
-	$form->select_date($subscription->datef,'datesubend',0,0,0,'update',1);
+	$form->select_date($object->datef,'datesubend',0,0,0,'update',1);
 	print '</td>';
     print '</tr>';
 
     // Amount
     print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="2">';
-	print '<input type="text" class="flat" size="10" name="amount" value="'.price($subscription->amount).'"></td></tr>';
+	print '<input type="text" class="flat" size="10" name="amount" value="'.price($object->amount).'"></td></tr>';
 
     // Label
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="2">';
-	print '<input type="text" class="flat" size="60" name="note" value="'.$subscription->note.'"></td></tr>';
+	print '<input type="text" class="flat" size="60" name="note" value="'.$object->note.'"></td></tr>';
 
 	// Bank line
 	if (! empty($conf->banque->enabled))
 	{
-		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
+		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
 	    {
     		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
-			if ($subscription->fk_bank)
+			if ($object->fk_bank)
 			{
 	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($subscription->fk_bank);
+		    	$result=$bankline->fetch($object->fk_bank);
 				print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
@@ -267,8 +282,8 @@ if ($rowid && $action != 'edit')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-    $result=$subscription->fetch($rowid);
-	$result=$adh->fetch($subscription->fk_adherent);
+    $result=$object->fetch($rowid);
+	$result=$adh->fetch($object->fk_adherent);
 
 	/*
 	 * Affichage onglets
@@ -276,12 +291,12 @@ if ($rowid && $action != 'edit')
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$object->id;
 	$head[$h][1] = $langs->trans("SubscriptionCard");
 	$head[$h][2] = 'general';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
@@ -295,7 +310,7 @@ if ($rowid && $action != 'edit')
         //$formquestion['text']='<b>'.$langs->trans("ThisWillAlsoDeleteBankRecord").'</b>';
 		$text=$langs->trans("ConfirmDeleteSubscription");
 		if (! empty($conf->banque->enabled) && ! empty($conf->global->ADHERENT_BANK_USE)) $text.='<br>'.img_warning().' '.$langs->trans("ThisWillAlsoDeleteBankRecord");
-		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$subscription->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?rowid=".$object->id,$langs->trans("DeleteSubscription"),$text,"confirm_delete",$formquestion,0,1);
     }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -307,7 +322,7 @@ if ($rowid && $action != 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
-	print $form->showrefnav($subscription, 'rowid', $linkback, 1);
+	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';
 
     // Member
@@ -318,35 +333,35 @@ if ($rowid && $action != 'edit')
 
     // Date record
     /*print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datec,'dayhour').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($object->datec,'dayhour').'</td>';
     print '</tr>';*/
 
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->dateh,'day').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($object->dateh,'day').'</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($subscription->datef,'day').'</td>';
+	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dol_print_date($object->datef,'day').'</td>';
     print '</tr>';
 
     // Amount
-    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="3">'.price($subscription->amount).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="3">'.price($object->amount).'</td></tr>';
 
     // Amount
-    print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$subscription->note.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur" colspan="3">'.$object->note.'</td></tr>';
 
     // Bank line
 	if (! empty($conf->banque->enabled))
 	{
-		if ($conf->global->ADHERENT_BANK_USE || $subscription->fk_bank)
+		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
 	    {
     		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="3">';
-			if ($subscription->fk_bank)
+			if ($object->fk_bank)
 			{
 	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($subscription->fk_bank);
+		    	$result=$bankline->fetch($object->fk_bank);
 		    	print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
@@ -373,7 +388,7 @@ if ($rowid && $action != 'edit')
 	{
 		if (! $bankline->rappro)
 		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Modify")."</a></div>";
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=edit\">".$langs->trans("Modify")."</a></div>";
 		}
 		else
 		{
@@ -384,12 +399,49 @@ if ($rowid && $action != 'edit')
     // Supprimer
     if ($user->rights->adherent->cotisation->creer)
     {
-        print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";
+        print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"]."?rowid=".$object->id."&action=delete\">".$langs->trans("Delete")."</a></div>\n";
     }
 
     print '</div>';
-    print "<br>\n";
-
+    
+    
+    print '<div class="fichecenter"><div class="fichehalfleft">';
+    print '<a name="builddoc"></a>'; // ancre
+    
+    // Documents generes
+    /*
+    $filename = dol_sanitizeFileName($object->ref);
+    $filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
+    $urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
+    $genallowed = $user->rights->facture->creer;
+    $delallowed = $user->rights->facture->supprimer;
+    
+    print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+    $somethingshown = $formfile->numoffiles;
+    */
+    // Linked object block
+    $somethingshown = $form->showLinkedObjectBlock($object);
+    
+    // Show links to link elements
+    /*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
+    if ($linktoelem) print '<br>'.$linktoelem;
+    
+    // Link for paypal payment
+    if (! empty($conf->paypal->enabled) && $object->statut != 0) {
+        include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
+        print showPaypalPaymentUrl('invoice', $object->ref);
+    }
+    */
+    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    
+    // List of actions on element
+    /*
+    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+    $formactions = new FormActions($db);
+    $somethingshown = $formactions->showactions($object, 'invoice', $socid);
+    */
+    
+    print '</div></div></div>';    
 }
 
 

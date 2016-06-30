@@ -53,6 +53,8 @@ if ($file && ! $what)
     exit;
 }
 
+$errormsg='';
+
 
 /*
  * Actions
@@ -120,16 +122,37 @@ if ($what == 'mysql')
 {
     
     $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
-    if ($cmddump)
+    if (! empty($dolibarr_main_restrict_os_commands))
+    {
+        $arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
+        $ok=0;
+        dol_syslog("Command are restricted to ".$dolibarr_main_restrict_os_commands.". We check that on of this command is inside ".$cmddump);
+        foreach($arrayofallowedcommand as $allowedcommand)
+        {
+            if (preg_match('/'.preg_quote($allowedcommand,'/').'/', $cmddump))
+            {
+                $ok=1;
+                break;
+            }
+        }
+        if (! $ok)
+        {
+            $errormsg=$langs->trans('CommandIsNotInsideAllowedCommands');
+        }
+    }
+    
+    if (! $errormsg && $cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_MYSQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
-    
-    $errormsg=$utils->error;
-    $_SESSION["commandbackuplastdone"]=$utils->result['commandbackuplastdone'];
-    $_SESSION["commandbackuptorun"]=$utils->result['commandbackuptorun'];
+    if (! $errormsg) 
+    {
+        $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
+        $errormsg=$utils->error;
+        $_SESSION["commandbackuplastdone"]=$utils->result['commandbackuplastdone'];
+        $_SESSION["commandbackuptorun"]=$utils->result['commandbackuptorun'];
+    }
 }
 
 // MYSQL NO BIN
@@ -146,16 +169,19 @@ if ($what == 'mysqlnobin')
 if ($what == 'postgresql')
 {
     $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
-    if ($cmddump)
+    
+    if (! $errormsg && $cmddump)
     {
         dolibarr_set_const($db, 'SYSTEMTOOLS_POSTGRESQLDUMP', $cmddump,'chaine',0,'',$conf->entity);
     }
 
-    $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
-    
-    $errormsg=$utils->error;
-    $_SESSION["commandbackuplastdone"]=$utils->result['commandbackuplastdone'];
-    $_SESSION["commandbackuptorun"]=$utils->result['commandbackuptorun'];
+    if (! $errormsg) 
+    {
+        $utils->dumpDatabase(GETPOST('compression','alpha'), $what, 0, $file);
+        $errormsg=$utils->error;
+        $_SESSION["commandbackuplastdone"]=$utils->result['commandbackuplastdone'];
+        $_SESSION["commandbackuptorun"]=$utils->result['commandbackuptorun'];
+    }
 
     $what='';   // Clear to show message to run command
 }

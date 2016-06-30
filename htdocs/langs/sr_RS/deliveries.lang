@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Isporuka
-Deliveries=Isporuke
+DeliveryRef=Ref Delivery
 DeliveryCard=Kartica isporuke
 DeliveryOrder=Narudžbenica isporuke
-DeliveryOrders=Narudžbenice isporuke
 DeliveryDate=Datum isporuke
-DeliveryDateShort=Dat. ispor.
 CreateDeliveryOrder=Generiši narudžbenicu isporuke
 DeliveryStateSaved=Status isporuke sačuvan
-QtyDelivered=Kol. isporučeno
 SetDeliveryDate=Zadaj datum isporuke
 ValidateDeliveryReceipt=Odobri prijemnicu isporuke
 ValidateDeliveryReceiptConfirm=Da li ste sigurni da želite da odobrite prijemnicu isporuke ?
@@ -30,3 +27,4 @@ Recipient=Primalac
 ErrorStockIsNotEnough=Nema dovoljno zaliha
 Shippable=Isporučivo
 NonShippable=Nije isporučivo
+ShowReceiving=Show delivery receipt

@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=交貨
-Deliveries=交付
+DeliveryRef=Ref Delivery
 DeliveryCard=交付卡
 DeliveryOrder=交貨單
-DeliveryOrders=發貨單
 DeliveryDate=交貨日期
-DeliveryDateShort=可交付。日期
 CreateDeliveryOrder=產生交貨單
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=交付數量
 SetDeliveryDate=出貨日期設置
 ValidateDeliveryReceipt=驗證送達回執
 ValidateDeliveryReceiptConfirm=你確定要驗證這個交貨收據嗎？
@@ -30,3 +27,4 @@ Recipient=收貨人
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

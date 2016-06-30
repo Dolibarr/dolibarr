@@ -819,7 +819,7 @@ if ($action == 'set_paid' && $id > 0 && $user->rights->expensereport->to_paid)
 	}
 }
 
-if ($action == "addline")
+if ($action == "addline" && $user->rights->expensereport->creer)
 {
 	$error = 0;
 
@@ -911,7 +911,7 @@ if ($action == "addline")
 	$action='';
 }
 
-if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
+if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes" && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -954,7 +954,7 @@ if ($action == 'confirm_delete_line' && GETPOST("confirm") == "yes")
 	}
 }
 
-if ($action == "updateligne" )
+if ($action == "updateligne" && $user->rights->expensereport->creer)
 {
 	$object = new ExpenseReport($db);
 	$object->fetch($id);
@@ -1401,6 +1401,7 @@ else
 				print '<td>'.$langs->trans("NotePrivate").'</td>';
 				print '<td colspan="2">'.$object->note_private.'</td>';
 				print '</tr>';
+				// Amount
 				print '<tr>';
 				print '<td>'.$langs->trans("AmountHT").'</td>';
 				print '<td>'.price($object->total_ht).'</td>';
@@ -1412,9 +1413,8 @@ else
 				if($object->fk_statut==6) $rowspan+=2;
 
 				print '<td rowspan="'.$rowspan.'" valign="top">';
-				/*
-				 * Payments
-				 */
+				
+				// List of payments
 				$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
 				$sql.= "c.code as type_code,c.libelle as payment_type";
 				$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p";
@@ -1432,7 +1432,7 @@ else
 				{
 					$num = $db->num_rows($resql);
 					$i = 0; $total = 0;
-					print '<table class="nobordernopadding" width="100%">';
+					print '<table class="nobordernopadding paymenttable" width="100%">';
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans("RefPayment").'</td>';
 					print '<td>'.$langs->trans("Date").'</td>';
@@ -1499,9 +1499,13 @@ else
 				}
 				print '</td></tr>';
 
+				// Validation date
 				print '<tr>';
 				print '<td>'.$langs->trans("DATE_SAVE").'</td>';
-				print '<td>'.dol_print_date($object->date_create,'dayhour').'</td></tr>';
+				print '<td>'.dol_print_date($object->date_create,'dayhour');
+				if ($object->status == 2 && $object->hasDelay('toapprove')) print ' '.img_warning($langs->trans("Late"));
+				if ($object->status == 5 && $object->hasDelay('topay')) print ' '.img_warning($langs->trans("Late"));
+				print '</td></tr>';
 				print '</tr>';
 
 				// User to inform
@@ -1515,7 +1519,11 @@ else
 						$userfee=new User($db);
 						$userfee->fetch($object->fk_user_validator);
 						print $userfee->getNomUrl(1);
-						if (empty($userfee->email) || ! isValidEmail($userfee->email)) print img_warning($langs->trans("EmailNotValid"));
+						if (empty($userfee->email) || ! isValidEmail($userfee->email)) 
+						{
+						    $langs->load("errors");
+						    print img_warning($langs->trans("ErrorBadEMail", $userfee->email));
+						}
 					}
 					print '</td></tr>';
 				}
@@ -1640,8 +1648,11 @@ else
 							print '<td style="text-align:right;">'.$langs->trans('AmountHT').'</td>';
 							print '<td style="text-align:right;">'.$langs->trans('AmountTTC').'</td>';
 						}
-						print '<td style="text-align:right;"></td>';
-
+						// Ajout des boutons de modification/suppression
+						if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
+						{
+							print '<td style="text-align:right;"></td>';
+						}
 						print '</tr>';
 
 						$var=true;
@@ -1682,7 +1693,7 @@ else
 
 								// Ajout des boutons de modification/suppression
 								print '<td style="text-align:right;" class="nowrap">';
-								if($object->fk_statut<2 OR $object->fk_statut==99)
+								if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 								{
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
 									print img_edit();
@@ -1768,7 +1779,7 @@ else
 					//print '</div>';
 
 					// Add a line
-					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline')
+					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 					{
 						print '<tr class="liste_titre">';
 						print '<td colspan="2"></td>';

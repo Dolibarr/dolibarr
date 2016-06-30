@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - website
+Shortname=Kod
+WebsiteSetupDesc=Burada istediğiniz sayıda farklı websitesi oluşturun. Sonra Websitesi menüsüne giderek bunları düzenleyin.
+DeleteWebsite=Websitesi sil
+ConfirmDeleteWebsite=Bu websitesini silmek istediğinizden emin misiniz? Bütün sayfaları ve içeriği silinecektir.
+WEBSITE_PAGENAME=Sayfa adı/rumuz
+WEBSITE_CSS_URL=Dış CSS dosyası URL si
+WEBSITE_CSS_INLINE=CSS içeriği
+MediaFiles=Medya kütüphanesi
+EditCss=Stil/CSS düzenle
+EditMenu=Menü düzenle
+EditPageMeta=Meta Düzenle
+EditPageContent=İçerik Düzenle
+Website=Web sitesi
+AddPage=Sayfa ekle
+PreviewOfSiteNotYetAvailable=Web sitenizin <strong>%s</strong> önizlemesi henüz hazır değil. Önce bir sayfa eklemelisiniz.
+RequestedPageHasNoContentYet=İstenen %s kimlikli sayfa henüz içeriğe sahip değil veya önbellek dosyası .tpl.php silinmiş. Bunu çözümlemek için içeriği düzenleyin.
+PageDeleted=Silinen sayfa '%s', websitesi %s e ait
+PageAdded=Eklenen sayfa %s
+ViewSiteInNewTab=Siteyi yeni sekmede izle
+ViewPageInNewTab=Siteyi yeni sekmede izle
+SetAsHomePage=Giriş Sayfası olarak ayarla
+RealURL=Gerçek URL

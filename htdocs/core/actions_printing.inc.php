@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2014-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,8 @@ if ($action == 'print_file' and $user->rights->printing->read)
             $printer = new $classname($db);
             //print '<pre>'.print_r($printer, true).'</pre>';
 
-            if (! empty($conf->global->{$printer->active})) {
+            if (! empty($conf->global->{$printer->active})) 
+            {
                 $subdir=(GETPOST('printer', 'alpha')=='expedition'?'sending':'');
                 $module = GETPOST('printer', 'alpha');
                 if ($module =='commande_fournisseur') {
@@ -56,10 +57,11 @@ if ($action == 'print_file' and $user->rights->printing->read)
                     //print '<pre>'.print_r($printer->errors, true).'</pre>';
                     setEventMessages($printer->error, $printer->errors, 'errors');
                 }
-                if ($ret==0) {
+                if ($ret==0) 
+                {
                     //print '<pre>'.print_r($printer->errors, true).'</pre>';
                     setEventMessages($printer->error, $printer->errors);
-                    setEventMessages($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->trans("ViaModule").' '.$printer->name, null);
+                    setEventMessages($langs->trans("FileWasSentToPrinter", basename(GETPOST('file'))).' '.$langs->transnoentitiesnoconv("ViaModule").' '.$printer->name, null);
                     $printed++;
                 }
             }

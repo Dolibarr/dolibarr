@@ -360,9 +360,11 @@ if ($id > 0)
 		
 		print '<table class="border" width="100%">';
 
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
+		
 		// Ref
 		print '<tr><td class="fieldtitle">'.$langs->trans("Ref").'</td><td colspan="2">';
-		print $form->showrefnav($object,'id');
+		print $form->showrefnav($object,'id',$linkback);
 		print "</td></tr>";
 
 		// Label
@@ -403,7 +405,7 @@ if ($id > 0)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
-			print '<table class="nobordernopadding" width="100%">';
+			print '<table class="nobordernopadding paymenttable" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';

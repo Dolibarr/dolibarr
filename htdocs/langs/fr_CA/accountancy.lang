@@ -6,7 +6,6 @@ ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exporter avec compte global
 ACCOUNTING_EXPORT_LABEL=Exporter la désignation
 Selectformat=Sélectionner le format de date pour le fichier
 ACCOUNTING_EXPORT_PREFIX_SPEC=Spécifiez le préfixe du nom de fichier
-Accounting=Compte
 AccountAccountingSuggest=Compte comptable suggéré
 AccountBalance=Solde du compte
 CAHTF=Total achats fournisseur avant taxes

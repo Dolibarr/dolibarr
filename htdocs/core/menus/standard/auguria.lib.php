@@ -34,9 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
  * @param	Menu	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			Disable output (Initialise &$menu only).
+ * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
  * @return	int						0
  */
-function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
+function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode='')
 {
 	global $user,$conf,$langs,$dolibarr_main_db_name;
 
@@ -52,6 +53,19 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 
 	if (empty($noout)) print_start_menu_array_auguria();
 
+	// Show/Hide vertical menu
+	if ($mode != 'jmobile' && $mode != 'topnb' && (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+	{
+	    $showmode=1;
+	    $classname = 'class="tmenu menuhider"';
+	    $idsel='menu';
+	
+	    if (empty($noout)) print_start_menu_entry_auguria($idsel,$classname,$showmode);
+	    if (empty($noout)) print_text_menu_entry_auguria('', 1, '#', $id, $idsel, $classname, $atarget);
+	    if (empty($noout)) print_end_menu_entry_auguria($showmode);
+	    $menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
+	}
+	
 	$num = count($newTabMenu);
 	for($i = 0; $i < $num; $i++)
 	{
@@ -64,11 +78,19 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0)
 			
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
 			{
-				$tmp=explode('?',$newTabMenu[$i]['url'],2);
+			    $tmp=explode('?',$newTabMenu[$i]['url'],2);
 				$url = $shorturl = $tmp[0];
 				$param = (isset($tmp[1])?$tmp[1]:'');
 
-				if (! preg_match('/mainmenu/i',$param) || ! preg_match('/leftmenu/i',$param)) $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['mainmenu'].'&amp;leftmenu=';
+				// Complete param to force leftmenu to '' to closed opend menu when we click on a link with no leftmenu defined.
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($newTabMenu[$i]['url'])) 
+			    {
+			        $param.=($param?'&':'').'mainmenu='.$newTabMenu[$i]['url'].'&leftmenu=';
+			    }
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($newTabMenu[$i]['url'])) 
+			    {
+			        $param.=($param?'&':'').'leftmenu=';
+			    }
 				//$url.="idmenu=".$newTabMenu[$i]['rowid'];    // Already done by menuLoad
 				$url = dol_buildpath($url,1).($param?'?'.$param:'');
 				$shorturl = $shorturl.($param?'?'.$param:'');
@@ -367,13 +389,18 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			{
 				$altok++;
 				$blockvmenuopened=true;
+				$lastopened=true;
+				for($j = ($i + 1); $j < $num; $j++)
+				{
+				    if (empty($menu_array[$j]['level'])) $lastopened=false;
+				}				
 				if ($altok % 2 == 0)
 				{
-					print '<div class="blockvmenuimpair'.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenuimpair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 				else
 				{
-					print '<div class="blockvmenupair'.($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
+					print '<div class="blockvmenupair'.($lastopened?' blockvmenulast':'').($altok == 1 ? ' blockvmenufirst':'').'">'."\n";
 				}
 			}
 

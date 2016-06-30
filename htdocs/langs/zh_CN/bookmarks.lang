@@ -14,6 +14,5 @@ BehaviourOnClick=点击网址时的行为
 CreateBookmark=创建书签
 SetHereATitleForLink=设置书签标题
 UseAnExternalHttpLinkOrRelativeDolibarrLink=使用外部的HTTP URL或相对Dolibarr网址
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=打开新网页是显示在新的窗口还是在当前窗口
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=书签管理
-ListOfBookmarks=书签列表

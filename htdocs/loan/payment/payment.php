@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -138,7 +138,7 @@ if ($action == 'add_payment')
         }
 	}
 
-	$_GET["action"]='create';
+	$action = 'create';
 }
 
 
@@ -152,18 +152,19 @@ $form=new Form($db);
 
 
 // Form to create loan's payment
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 	$total = $loan->capital;
 
 	print load_fiche_titre($langs->trans("DoPayment"));
-	print "<br>\n";
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
+
+    dol_fiche_head();
 
 	print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
@@ -230,14 +231,15 @@ if ($_GET["action"] == 'create')
 	print '<td valign="top">'.$langs->trans("NotePublic").'</td>';
 	print '<td valign="top" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
+
 	print '</table>';
 
-	print '<br>';
+    dol_fiche_end();
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<td align="left">'.$langs->trans("DateDue").'</td>';
-	print '<td align="right">'.$langs->trans("Capital").'</td>';
+	print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
 	print '<td align="right">'.$langs->trans("AlreadyPaid").'</td>';
 	print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
@@ -266,7 +268,7 @@ if ($_GET["action"] == 'create')
 	print '<td align="right">';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Capital") .': <input type="text" size="8" name="amount_capital">';
+		print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital">';
 	}
 	else
 	{
@@ -296,13 +298,11 @@ if ($_GET["action"] == 'create')
 
 	print '</table>';
 
-	print '<br><center>';
-
+	print '<br><div class="center">';
 	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 	print '&nbsp; &nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-
-	print '</center>';
+	print '</div>';
 
 	print "</form>\n";
 }

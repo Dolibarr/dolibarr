@@ -423,21 +423,22 @@ if (empty($reshook))
 
 		// Check parameters
 
-		// Check for mandatory prof id
-		for($i = 1; $i < 6; $i ++)
+		// Check for mandatory prof id (but only if country is than than ours)
+		if ($mysoc->country_id > 0 && $object->thirdparty->country_id == $mysoc->country_id)
 		{
-			$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
-			$idprof = 'idprof' . $i;
-			if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
-			{
-				if (! $error)
-					$langs->load("errors");
-				$error ++;
-
-				setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId' . $i, $object->thirdparty->country_code)), null, 'errors');
-			}
+    		for ($i = 1; $i <= 6; $i++)
+    		{
+    			$idprof_mandatory = 'SOCIETE_IDPROF' . ($i) . '_INVOICE_MANDATORY';
+    			$idprof = 'idprof' . $i;
+    			if (! $object->thirdparty->$idprof && ! empty($conf->global->$idprof_mandatory))
+    			{
+    				if (! $error) $langs->load("errors");
+    				$error++;
+    				setEventMessages($langs->trans('ErrorProdIdIsMandatory', $langs->transcountry('ProfId' . $i, $object->thirdparty->country_code)), null, 'errors');
+    			}
+    		}
 		}
-
+		
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
@@ -1789,57 +1790,13 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
-	/*
-	 * Generate document
-	 */
-	if ($action == 'builddoc') // En get ou en post
-	{
-		$object->fetch($id);
-		$object->fetch_thirdparty();
+    // Actions to build doc
+    $upload_dir = $conf->facture->dir_output;
+    $permissioncreate=$user->rights->facture->creer;
+    include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+	
 
-		// Save last template used to generate document
-		if (GETPOST('model'))
-			$object->setDocModel($user, GETPOST('model', 'alpha'));
-        if (GETPOST('fk_bank')) { // this field may come from an external module
-            $object->fk_bank = GETPOST('fk_bank');
-        } else {
-            $object->fk_bank = $object->fk_account;
-        }
-
-		// Define output language
-		$outputlangs = $langs;
-		$newlang = '';
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang = GETPOST('lang_id');
-		if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang = $object->thirdparty->default_lang;
-		if (! empty($newlang))
-		{
-			$outputlangs = new Translate("", $conf);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0)
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-		}
-	}
-
-	// Remove file in doc form
-	else if ($action == 'remove_file') {
-		if ($object->fetch($id)) {
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-
-			$object->fetch_thirdparty();
-
-			$langs->load("other");
-			$upload_dir = $conf->facture->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-			$action = '';
-		}
-	} elseif ($action == 'update_extras') {
+	if ($action == 'update_extras') {
 		// Fill array 'array_options' with data from add form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
@@ -3353,7 +3310,7 @@ else if ($id > 0 || ! empty($ref))
 				$i ++;
 			}
 		} else {
-			print '<tr ' . $bc[false] . '><td colspan="' . $nbcols . '">' . $langs->trans("None") . '</td><td></td><td></td></tr>';
+			print '<tr ' . $bc[false] . '><td colspan="' . $nbcols . '" class="opacitymedium">' . $langs->trans("None") . '</td><td></td><td></td></tr>';
 		}
 		// }
 		$db->free($result);

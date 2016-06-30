@@ -870,10 +870,10 @@ if (empty($reshook))
 	if ($action == 'builddoc' && $user->rights->fournisseur->commande->creer)	// En get ou en	post
 	{
 	    // Build document
-
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
+	
+	    // Save last template used to generate document
+	    if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+	
 	    $outputlangs = $langs;
 	    if (GETPOST('lang_id'))
 	    {
@@ -883,7 +883,7 @@ if (empty($reshook))
 	    $result= $object->generateDocument($object->modelpdf,$outputlangs, $hidedetails, $hidedesc, $hideref);
 	    if ($result	<= 0)
 	    {
-			setEventMessages($object->error, $object->errors, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
 	        $action='';
 	    }
 	}
@@ -899,7 +899,7 @@ if (empty($reshook))
 	    if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	    else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
-
+	
 	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from add form
@@ -1055,7 +1055,6 @@ if (empty($reshook))
 								}
 
 								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty);
-
 								if ($result>=0) 
 								{
 								    $tva_tx = $lines[$i]->tva_tx;
@@ -1089,6 +1088,7 @@ if (empty($reshook))
 										$lines[$i]->fk_unit
 									);
 								}
+									
 								if ($result < 0) {
 									$error++;
 									break;
@@ -1146,189 +1146,16 @@ if (empty($reshook))
 	}
 
 	/*
-	 * Add file in email form
-	 */
-	if (GETPOST('addfile'))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	    // Set tmp user directory TODO Use a dedicated directory for temp mails files
-	    $vardir=$conf->user->dir_output."/".$user->id;
-	    $upload_dir_tmp = $vardir.'/temp';
-
-	    dol_add_file_process($upload_dir_tmp,0,0);
-	    $action='presend';
-	}
-
-	/*
-	 * Remove file in email form
-	 */
-	if (GETPOST('removedfile'))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	    // Set tmp user directory
-	    $vardir=$conf->user->dir_output."/".$user->id;
-	    $upload_dir_tmp = $vardir.'/temp';
-
-		// TODO Delete only files that was uploaded from email form
-	    dol_remove_file_process(GETPOST('removedfile','alpha'),0);
-	    $action='presend';
-	}
-
-	/*
 	 * Send mail
 	 */
-	if ($action == 'send' && ! GETPOST('addfile') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
-	{
-	    $langs->load('mails');
-
-	    if ($object->id > 0)
-	    {
-	//        $ref = dol_sanitizeFileName($object->ref);
-	//        $file = $conf->fournisseur->commande->dir_output . '/' . $ref . '/' . $ref . '.pdf';
-
-	//        if (is_readable($file))
-	//        {
-	            if (GETPOST('sendto','alpha'))
-	            {
-	                // Le destinataire a ete fourni via le champ libre
-	                $sendto = GETPOST('sendto','alpha');
-	                $sendtoid = 0;
-	            }
-	            elseif (GETPOST('receiver','alpha') != '-1')
-	            {
-	                // Recipient was provided from combo list
-	                if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
-	                {
-	                    $sendto = $object->thirdparty->email;
-	                    $sendtoid = 0;
-	                }
-	                else	// Id du contact
-	                {
-	                    $sendto = $object->thirdparty->contact_get_property(GETPOST('receiver','alpha'),'email');
-	                    $sendtoid = GETPOST('receiver','alpha');
-	                }
-	            }
-
-	            if (dol_strlen($sendto))
-	            {
-	                $langs->load("commercial");
-
-	                $from = GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
-	                $replyto = GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
-	                $message = GETPOST('message');
-	                $sendtocc = GETPOST('sendtocc','alpha');
-	                $deliveryreceipt = GETPOST('deliveryreceipt','alpha');
-
-	                if ($action == 'send')
-	                {
-	                    if (dol_strlen(GETPOST('subject'))) $subject=GETPOST('subject');
-	                    else $subject = $langs->transnoentities('CustomerOrder').' '.$object->ref;
-	                    $actiontypecode='AC_SUP_ORD';
-	                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-	                    if ($message)
-	                    {
-							if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-							$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-							$actionmsg = dol_concatdesc($actionmsg, $message);
-	                    }
-	                    $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
-	                }
-
-	                // Create form object
-	                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	                $formmail = new FormMail($db);
-
-	                $attachedfiles=$formmail->get_attached_files();
-	                $filepath = $attachedfiles['paths'];
-	                $filename = $attachedfiles['names'];
-	                $mimetype = $attachedfiles['mimes'];
-
-	                // Send mail
-	                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-	                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
-	                if ($mailfile->error)
-	                {
-	                	setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-	                }
-	                else
-	                {
-	                    $result=$mailfile->sendfile();
-	                    if ($result)
-	                    {
-	                    	$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
-	                    	setEventMessages($mesg, null, 'mesgs');
-
-	                        $error=0;
-
-	                        // Initialisation donnees
-	                        $object->sendtoid		= $sendtoid;
-	                        $object->actiontypecode	= $actiontypecode;
-	                        $object->actionmsg 		= $actionmsg;
-	                        $object->actionmsg2		= $actionmsg2;
-	                        $object->fk_element		= $object->id;
-	                        $object->elementtype	= $object->element;
-
-	                        // Appel des triggers
-	                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	                        $interface=new Interfaces($db);
-	                        $result=$interface->run_triggers('ORDER_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
-	                        if ($result < 0) { $error++; $errors=$interface->errors; }
-	                        // Fin appel triggers
-
-	                        if ($error)
-	                        {
-	                            setEventMessages($object->error, $object->errors, 'errors');
-	                        }
-	                        else
-	                        {
-	                            // Redirect here
-	                            // This avoid sending mail twice if going out and then back to page
-	                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-	                            exit;
-	                        }
-	                    }
-	                    else
-	                    {
-	                        $langs->load("other");
-	                        if ($mailfile->error)
-	                        {
-	                            $mesg = $langs->trans('ErrorFailedToSendMail',$from,$sendto);
-	                            $mesg.= '<br>'.$mailfile->error;
-	                        }
-	                        else
-	                        {
-	                            $mesg = 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-	                        }
-
-	                        setEventMessages($mesg, null, 'errors');
-	                    }
-	                }
-	/*            }
-	            else
-	            {
-	                $langs->load("other");
-	                $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-	                $action='presend';
-	                dol_syslog('Recipient email is empty');
-	            }*/
-	        }
-	        else
-	        {
-	            $langs->load("errors");
-	            setEventMessages($langs->trans('ErrorCantReadFile',$file), null, 'errors');
-	            dol_syslog('Failed to read file: '.$file);
-	        }
-	    }
-	    else
-	    {
-	        $langs->load("other");
-	        setEventMessages($langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")), null, 'errors');
-	        dol_syslog('Impossible de lire les donnees de la facture. Le fichier facture n\'a peut-etre pas ete genere.');
-	    }
-	}
+	
+	// Actions to send emails
+	$actiontypecode='AC_SUP_ORD';
+	$trigger_name='ORDER_SUPPLIER_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromsupplierorder';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	
 
 	if ($action == 'webservice' && GETPOST('mode', 'alpha') == "send" && ! GETPOST('cancel'))
 	{

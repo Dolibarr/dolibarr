@@ -47,8 +47,15 @@ class Adherent extends CommonObject
     var $mesgs;
 
     var $login;
-    var $pass;
-    var $societe;
+
+	//! Clear password in memory
+	var $pass;
+	//! Clear password in database (defined if DATABASE_PWD_ENCRYPTED=0)
+	var $pass_indatabase;
+	//! Encrypted password in database (always defined)
+	var $pass_indatabase_crypted;
+
+	var $societe;
     var $company;
     var $address;
     var $zip;
@@ -309,7 +316,7 @@ class Adherent extends CommonObject
             if ($id > 0)
             {
                 $this->id=$id;
-                $this->ref=$id;
+                $this->ref=(string) $id;
 
                 // Update minor fields
                 $result=$this->update($user,1,1,0,0,'add'); // nosync is 1 to avoid update data of user
@@ -482,8 +489,10 @@ class Adherent extends CommonObject
                 dol_syslog(get_class($this)."::update update password");
                 if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
                 {
-                    // Si mot de passe saisi et different de celui en base
-                    $result=$this->setPassword($user,$this->pass,0,$notrigger,$nosyncuserpass);
+                    $isencrypted = empty($conf->global->DATABASE_PWD_ENCRYPTED)?0:1;
+                    
+                    // If password to set differs from the one found into database
+                    $result=$this->setPassword($user,$this->pass,$isencrypted,$notrigger,$nosyncuserpass);
                     if (! $nbrowsaffected) $nbrowsaffected++;
                 }
             }
@@ -509,7 +518,7 @@ class Adherent extends CommonObject
             if (! $error && $nbrowsaffected)	// If something has change in main data
             {
                 // Update information on linked user if it is an update
-                if ($this->user_id > 0 && ! $nosyncuser)
+                if (! $error && $this->user_id > 0 && ! $nosyncuser)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -552,7 +561,7 @@ class Adherent extends CommonObject
                 }
 
                 // Update information on linked thirdparty if it is an update
-                if ($this->fk_soc > 0 && ! $nosyncthirdparty)
+                if (! $error && $this->fk_soc > 0 && ! $nosyncthirdparty)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
@@ -810,13 +819,11 @@ class Adherent extends CommonObject
             $password=getRandomPassword(false);
         }
 
-        // Cryptage mot de passe
-        if ($isencrypted)
-        {
-            // Encryption
-            $password_indatabase = dol_hash($password);
-        }
-        else
+        // Crypt password
+        $password_crypted = dol_hash($password);
+
+        $password_indatabase = '';
+        if (! $isencrypted)
         {
             $password_indatabase = $password;
         }
@@ -824,7 +831,17 @@ class Adherent extends CommonObject
         $this->db->begin();
 
         // Mise a jour
-        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".$this->db->escape($password_indatabase)."'";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent";
+        $sql.= " SET pass_crypted = '".$this->db->escape($password_crypted)."'";
+        //if (! empty($conf->global->DATABASE_PWD_ENCRYPTED))
+        if ($isencrypted)
+        {
+            $sql.= ", pass = null";
+        }
+        else
+        {
+            $sql.= ", pass = '".$this->db->escape($password_indatabase)."'";
+        }
         $sql.= " WHERE rowid = ".$this->id;
 
         //dol_syslog("Adherent::Password sql=hidden");
@@ -838,7 +855,8 @@ class Adherent extends CommonObject
             {
                 $this->pass=$password;
                 $this->pass_indatabase=$password_indatabase;
-
+                $this->pass_indatabase_crypted=$password_crypted;
+                
                 if ($this->user_id && ! $nosyncuser)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -1042,7 +1060,7 @@ class Adherent extends CommonObject
 
         $sql = "SELECT d.rowid, d.ref_ext, d.civility as civility_id, d.firstname, d.lastname, d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
         $sql.= " d.note_public,";
-        $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
+        $sql.= " d.email, d.skype, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
         $sql.= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
         $sql.= " d.datec as datec,";
         $sql.= " d.tms as datem,";
@@ -1087,7 +1105,6 @@ class Adherent extends CommonObject
                 $this->firstname		= $obj->firstname;
                 $this->lastname			= $obj->lastname;
                 $this->login			= $obj->login;
-                $this->pass				= $obj->pass;
                 $this->societe			= $obj->company;
                 $this->company			= $obj->company;
                 $this->fk_soc			= $obj->fk_soc;
@@ -1095,6 +1112,10 @@ class Adherent extends CommonObject
                 $this->zip				= $obj->zip;
                 $this->town				= $obj->town;
 
+                $this->pass				= $obj->pass;
+                $this->pass_indatabase  = $obj->pass;
+                $this->pass_indatabase_crypted = $obj->pass_crypted;
+                
                 $this->state_id			= $obj->state_id;
                 $this->state_code		= $obj->state_id?$obj->state_code:'';
                 $this->state			= $obj->state_id?$obj->state:'';
@@ -1423,9 +1444,10 @@ class Adherent extends CommonObject
         $err=0;
 
         // mailman
-        if (! empty($conf->global->ADHERENT_USE_MAILMAN))
+        if (! empty($conf->global->ADHERENT_USE_MAILMAN) && ! empty($conf->mailmanspip->enabled))
         {
             $result=$mailmanspip->add_to_mailman($this);
+         
             if ($result < 0)
             {
             	if (! empty($mailmanspip->error)) $this->errors[]=$mailmanspip->error;
@@ -1444,7 +1466,7 @@ class Adherent extends CommonObject
         }
 
         // spip
-        if ($conf->global->ADHERENT_USE_SPIP && ! empty($conf->mailmanspip->enabled))
+        if (! empty($conf->global->ADHERENT_USE_SPIP) && ! empty($conf->mailmanspip->enabled))
         {
             $result=$mailmanspip->add_to_spip($this);
             if ($result < 0)
@@ -1458,7 +1480,7 @@ class Adherent extends CommonObject
             return -$err;
         }
         else
-       {
+        {
             return 1;
         }
     }
@@ -1556,6 +1578,7 @@ class Adherent extends CommonObject
             $label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
+        $link=''; $linkend='';
         if ($option == 'card')
         {
             $link = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
@@ -1737,7 +1760,7 @@ class Adherent extends CommonObject
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->adherent->cotisation->warning_delay/60/60/24;
 	        $response->label=$langs->trans("MembersWithSubscriptionToReceive");
-	        $response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1';
+	        $response->url=DOL_URL_ROOT.'/adherents/list.php?mainmenu=members&amp;statut=1&amp;filter=outofdate';
 	        $response->img=img_object($langs->trans("Members"),"user");
 
             $adherentstatic = new Adherent($this->db);
@@ -2006,14 +2029,18 @@ class Adherent extends CommonObject
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
 
+	/**
+	 * Return if a member is late (subscription late) or not
+	 * 
+	 * @return boolean     True if late, False if not late
+	 */
     public function hasDelay()
     {
         global $conf;
 
         //Only valid members
-        if ($this->statut <= 0) {
-            return false;
-        }
+        if ($this->statut <= 0) return false;
+        if (! $this->datefin) return false;
 
         $now = dol_now();
 

@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - website
+Shortname=Koda
+WebsiteSetupDesc=Vnesite toliko zapisov, kot želite imeti spletnih strani.  Za urejanje pojdite na Menu => Websites.
+DeleteWebsite=Izbriši spletno stran
+ConfirmDeleteWebsite=Ali ste prepričani, da želite izbrisati to spletno starn. Vse strani in vsebina bodo pobrisani.
+WEBSITE_PAGENAME=Page name/alias
+WEBSITE_CSS_URL=URL of external CSS file
+WEBSITE_CSS_INLINE=CSS content
+MediaFiles=Media library
+EditCss=Edit Style/CSS
+EditMenu=Edit menu
+EditPageMeta=Edit Meta
+EditPageContent=Edit Content
+Website=Web site
+AddPage=Add page
+PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> not yet available. You must first add a page.
+RequestedPageHasNoContentYet=Requested page with id %s has not content yet or cache file .tpl.php was removed. Edit content of page to solve this.
+PageDeleted=Page '%s' of website %s deleted
+PageAdded=Page '%s' added
+ViewSiteInNewTab=View site in new tab
+ViewPageInNewTab=View page in new tab
+SetAsHomePage=Set as Home page
+RealURL=Real URL

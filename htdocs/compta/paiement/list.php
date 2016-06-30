@@ -50,7 +50,7 @@ $paymentstatic=new Paiement($db);
 $accountstatic=new Account($db);
 $companystatic=new Societe($db);
 
-$search_ref=GETPOST("search_ref","int");
+$search_ref=GETPOST("search_ref","alpha");
 $search_account=GETPOST("search_account","int");
 $search_paymenttype=GETPOST("search_paymenttype");
 $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be able to search on "< x"
@@ -203,6 +203,7 @@ if ($resql)
     $i = 0;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     $param.=(GETPOST("orphelins")?"&orphelins=1":"");
     $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");

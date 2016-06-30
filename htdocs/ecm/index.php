@@ -175,10 +175,9 @@ if ($action == 'confirm_deletefile')
 	    		dol_print_error($db,$ecmdir->error);
 	    		exit;
 	    	}
-	    	$relativepath=$ecmdir->getRelativePath();
     	}
     	else $relativepath='';
-    	$upload_dir = $conf->ecm->dir_output.($relativepath?'/'.$relativepath:'');
+    	$upload_dir = $conf->ecm->dir_output;
     	$file = $upload_dir . "/" . GETPOST('urlfile');	// Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
 
     	$ret=dol_delete_file($file);
@@ -372,7 +371,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        32
+        ,   north__size:        36
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340

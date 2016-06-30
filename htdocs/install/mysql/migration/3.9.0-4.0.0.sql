@@ -39,6 +39,9 @@ ALTER TABLE llx_opensurvey_sondage ADD COLUMN status integer DEFAULT 1 after dat
 
 ALTER TABLE llx_expedition ADD COLUMN billed smallint DEFAULT 0;
 
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (150, 'dolresource','internal', 'USERINCHARGE',     'In charge of resource', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (151, 'dolresource','external', 'THIRDINCHARGE',    'In charge of resource', 1);
+
 -- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -108,7 +111,7 @@ ALTER TABLE llx_cronjob ADD COLUMN test varchar(255) DEFAULT '1';
 
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_statut (fk_statut);
 
-ALTER TABLE llx_facture ADD COLUMN date_pointoftax date;
+ALTER TABLE llx_facture ADD COLUMN date_pointoftax date DEFAULT NULL;
 
 UPDATE llx_projet as p set p.opp_percent = (SELECT percent FROM llx_c_lead_status as cls WHERE cls.rowid = p.fk_opp_status)  WHERE p.opp_percent IS NULL AND p.fk_opp_status IS NOT NULL;
  
@@ -116,6 +119,7 @@ ALTER TABLE llx_facturedet ADD COLUMN fk_contract_line  integer NULL AFTER rang;
 ALTER TABLE llx_facturedet_rec ADD COLUMN import_key varchar(14);
 
 ALTER TABLE llx_chargesociales ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_tva ADD COLUMN import_key varchar(14);
 
 --DROP TABLE llx_website_page;
 --DROP TABLE llx_website;
@@ -132,6 +136,7 @@ CREATE TABLE llx_website
 	tms           timestamp
 ) ENGINE=innodb;
 ALTER TABLE llx_website ADD COLUMN fk_default_home integer;
+ALTER TABLE llx_website CHANGE COLUMN shortname ref varchar(24) NOT NULL;
 ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 
 CREATE TABLE llx_website_page
@@ -408,6 +413,7 @@ CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
 
 -- Add more action to log
+update llx_c_action_trigger set rang = 140 where code = 'PROJECT_CREATE';
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_MODIFY','Project modified','Executed when a project is modified','project',141);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_DELETE','Project deleted','Executed when a project is deleted','project',142);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CREATE','Supplier order validated','Executed when a supplier order is validated','order_supplier',11);

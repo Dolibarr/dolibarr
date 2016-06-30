@@ -2541,12 +2541,10 @@ abstract class CommonObject
                     else if ($objecttype == 'fichinter')			{
                         $classpath = 'fichinter/class'; $subelement = 'fichinter'; $module = 'ficheinter';
                     }
-
-                    // TODO ajout temporaire - MAXIME MANGIN
-                    else if ($objecttype == 'contratabonnement')	{
-                        $classpath = 'contrat/class'; $subelement = 'contrat'; $module = 'contratabonnement';
+                    else if ($objecttype == 'subscription')			{
+                        $classpath = 'adherents/class'; $module = 'adherent';
                     }
-
+                    
                     // Set classfile
                     $classfile = strtolower($subelement); $classname = ucfirst($subelement);
                     
@@ -2561,6 +2559,9 @@ abstract class CommonObject
                     }
                     else if ($objecttype == 'facturerec')   {
                         $classfile = 'facture-rec'; $classname = 'FactureRec';
+                    }
+                    else if ($objecttype == 'subscription')   {
+                        $classfile = 'cotisation'; $classname = 'Cotisation';
                     }
                     
                     // Here $module, $classfile and $classname are set
@@ -3997,14 +3998,13 @@ abstract class CommonObject
     	{
     		if (!empty($this->errors))
     		{
-    			$this->errors=array_merge($this->errors,$interface->errors);
+    			$this->errors=array_unique(array_merge($this->errors,$interface->errors));   // We use array_unique because when a trigger call another trigger on same object, this->errors is added twice.
     		}
     		else
     		{
     			$this->errors=$interface->errors;
     		}
     	}
-
     	return $result;
     }
 
@@ -4474,20 +4474,24 @@ abstract class CommonObject
 	 * This function is meant to be called from replaceThirdparty with the appropiate tables
 	 * Column name fk_soc MUST be used to identify thirdparties
 	 *
-	 * @param DoliDB 	$db 			Database handler
-	 * @param int 		$origin_id 		Old thirdparty id (the thirdparty to delete)
-	 * @param int 		$dest_id 		New thirdparty id (the thirdparty that will received element of the other)
-	 * @param string[] 	$tables 		Tables that need to be changed
+	 * @param  DoliDB 	   $db 			  Database handler
+	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
+	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
+	 * @param  string[]    $tables        Tables that need to be changed
+	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one) 
 	 * @return bool
 	 */
-	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables)
+	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors=0)
 	{
 		foreach ($tables as $table)
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
-			if (!$db->query($sql)) {
-				return false;
+			if (! $db->query($sql)) 
+			{
+			    if ($ignoreerrors) return true;
+				//$this->errors = $db->lasterror();
+			    return false;
 			}
 		}
 

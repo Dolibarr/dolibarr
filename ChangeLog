@@ -12,7 +12,7 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
-***** ChangeLog for 4.0 compared to 3.9.* *****
+***** ChangeLog for 4.0.0 compared to 3.9.* *****
 For users:
 
 NEW: Add reccuring invoice feature and automatic generation of invoices.
@@ -161,6 +161,47 @@ So if you included it into your module, change your code like this to be compati
   if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
+
+
+***** ChangeLog for 3.9.2 compared to 3.9.1 *****
+FIX: #4813 Won translation for the key OppStatusWON instead OppStatusWIN
+FIX: #5008 SQL error when editing the reference of a supplier invoice that already exists
+FIX: #5236 Cron module activated but "Modules tools" does not appear in the left menu.
+FIX: Accountancy - 3.9 - Chart of accounts are limited on only one country
+FIX: bug on email template
+FIX: Can't create a stock transfer from product card
+FIX: can't fetch by siret or siren because of first "if"
+FIX: Check stock of product by warehouse if $entrepot_id defined on shippings
+FIX: Compatible with multicompany
+FIX: Creation of the second ressource type fails.
+FIX: end of select when no fournprice
+FIX: Filter on assigned to was preselected on current user on list "All events" (instead of no filtering)
+FIX: Filter on category tag for suppliers
+FIX: hook on group card called but not initialized
+FIX: Infinite loop on menu tree output for edition 
+FIX: Can show tree of entries added by external modules using fk_mainmenu and fk_leftmenu instead of fk_menu.
+FIX: init var at wrong place report incorrect "shippable" flag on draft order.
+FIX: It doesn't check if there is enough stock to update the lines of orders/invoices
+FIX: Menu statistics was not visible if module proposal was not enabled
+FIX: Merge manually PR #5161 - Bad translation key
+FIX: missing column when module was installed before standard integration
+FIX: Missing number total of modules
+FIX: Not filtering correctly when coming from dashboard
+FIX: PROPAL_MERGE_PDF with PRODUCT_USE_OLD_PATH
+FIX: Remove PHP Warning: Creating default object from empty value.
+FIX: same page added several times on mergepropal option
+FIX: search on date into supplier invoice list dont work because of status -1
+FIX: Search supplier ref on contract
+FIX: Split of credit note into discount page generates records not correctly recognised as credit note.
+FIX: SQL error function on getAvailableDiscounts function, on bill create mode if socid is empty
+FIX: #5087
+FIX: #5108
+FIX: #5163
+FIX: #5195
+FIX: #5203
+FIX: #5207
+FIX: #5209
+FIX: #5230
 
 ***** ChangeLog for 3.9.1 compared to 3.9.* *****
 FIX: #3815 Call to undefined function local_by_date()

@@ -111,9 +111,14 @@ if (! empty($conf->ficheinter->enabled) && empty($conf->global->MAIN_SEARCHFORM_
 {
 	$arrayresult['searchintointervention']=array('text'=>img_picto('','object_intervention').' '.$langs->trans("SearchIntoInterventions", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/fichinter/list.php?sall='.urlencode($search_boxvalue));
 }
+// HR
 if (! empty($conf->expensereport->enabled) && empty($conf->global->MAIN_SEARCHFORM_EXPENSEREPORT_DISABLED) && $user->rights->expensereport->lire)
 {
 	$arrayresult['searchintoexpensereport']=array('text'=>img_picto('','object_trip').' '.$langs->trans("SearchIntoExpenseReports", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expensereport/list.php?sall='.urlencode($search_boxvalue));
+}
+if (! empty($conf->holiday->enabled) && empty($conf->global->MAIN_SEARCHFORM_HOLIDAY_DISABLED) && $user->rights->holiday->read)
+{
+    $arrayresult['searchintoleaves']=array('text'=>img_picto('','object_holiday').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?sall='.urlencode($search_boxvalue));
 }
 
 

@@ -56,26 +56,28 @@ class box_services_contracts extends ModeleBoxes
 		$this->max=$max;
 
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-		$contratlignestatic=new ContratLigne($db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastProductsInContract",$max));
 
 		if ($user->rights->service->lire && $user->rights->contrat->lire)
 		{
+		    $contractstatic=new Contrat($db);
+		    $contratlignestatic=new ContratLigne($db);
+		    $thirdpartytmp = new Societe($db);
+		    
 			$sql = "SELECT s.nom as name, s.rowid as socid,";
-			$sql.= " c.rowid,";
-			$sql.= " cd.rowid as cdid, cd.tms as datem, cd.statut,";
-			$sql.= " p.rowid as pid, p.label, p.fk_product_type";
+			$sql.= " c.rowid, c.ref, c.statut as contract_status,";
+			$sql.= " cd.rowid as cdid, cd.tms as datem, cd.statut, cd.label, cd.description, cd.product_type as type,";
+			$sql.= " p.rowid as product_id, p.ref as product_ref";
 			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
 			$sql.= ", ".MAIN_DB_PREFIX."contrat as c";
 			$sql.= ", ".MAIN_DB_PREFIX."contratdet as cd";
-			$sql.= ", ".MAIN_DB_PREFIX."product as p";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= ")";
 			$sql.= " WHERE c.entity = ".$conf->entity;
 			$sql.= " AND s.rowid = c.fk_soc";
 			$sql.= " AND c.rowid = cd.fk_contrat";
-			$sql.= " AND cd.fk_product = p.rowid";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= $db->order("c.tms","DESC");
@@ -94,12 +96,27 @@ class box_services_contracts extends ModeleBoxes
 					$objp = $db->fetch_object($result);
 					$datem=$db->jdate($objp->datem);
 
+					$contratlignestatic->id=$objp->cdid;
+					$contratlignestatic->fk_contrat=$objp->rowid;
+					$contratlignestatic->label=$objp->label;
+					$contratlignestatic->description=$objp->description;
+					$contratlignestatic->type=$objp->type;
+					$contratlignestatic->product_id=$objp->product_id;
+					$contratlignestatic->product_ref=$objp->product_ref;
+					
+                    $contractstatic->statut=$objp->contract_status;
+					$contractstatic->id=$objp->rowid;
+					$contractstatic->ref=$objp->ref;
+					
+					$thirdpartytmp->name = $objp->name;
+					$thirdpartytmp->id = $objp->socid;
+						
 					// Multilangs
 					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 					{
 						$sqld = "SELECT label";
 						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld.= " WHERE fk_product=".$objp->pid;
+						$sqld.= " WHERE fk_product=".$objp->product_id;
 						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
 						$sqld.= " LIMIT 1";
 
@@ -107,32 +124,29 @@ class box_services_contracts extends ModeleBoxes
 						if ($resultd)
 						{
 							$objtp = $db->fetch_object($resultd);
-							if ($objtp->label != '') $objp->label = $objtp->label;
+							if ($objtp->label != '') $contratlignestatic->label = $objtp->label;
 						}
 					}
 
-					$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-                    'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
-                    'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflow maxwidth100onsmartphone" align="left"',
+                    'text' => $contratlignestatic->getNomUrl(1),
+					'asis' => 1
+                    );
+					
+					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+                    'text' => $contractstatic->getNomUrl(1),
+					'asis' => 1
+                    );
 
-					$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-                    'text' => $objp->label,
-                    'maxlength' => 16,
-                    'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
+					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+                    'text' => $thirdpartytmp->getNomUrl(1),
+					'asis' => 1
+                    );
 
-					$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-                    'logo' => 'company',
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
-
-					$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-                    'text' => $objp->name,
-                    'maxlength' => 28,
-                    'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
-
-					$this->info_box_contents[$i][4] = array('td' => 'align="right"',
+					$this->info_box_contents[$i][] = array('td' => 'align="right"',
                     'text' => dol_print_date($datem,'day'));
 
-					$this->info_box_contents[$i][5] = array('td' => 'align="right" width="18"',
+					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"',
                     'text' => $contratlignestatic->LibStatut($objp->statut,3)
 					);
 

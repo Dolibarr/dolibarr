@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen der Exportdatei
 ACCOUNTING_EXPORT_DATE=Datumsformat der Exportdatei
 ACCOUNTING_EXPORT_PIECE=Stückzahl exportieren
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Mit globalem Konto exportieren
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Betrag exportieren
-ACCOUNTING_EXPORT_DEVISE=Währungskurs exportieren
+ACCOUNTING_EXPORT_LABEL=Exportiere Beschriftung
+ACCOUNTING_EXPORT_AMOUNT=Exportiere Betrag
+ACCOUNTING_EXPORT_DEVISE=Exportiere Währung
 Selectformat=Wählen Sie das Format für die Datei
 ACCOUNTING_EXPORT_PREFIX_SPEC=Präfix für den Dateinamen angeben
-
-Accounting=Buchhaltung
-Globalparameters=Globale Parameter
-Menuaccount=Buchhaltungskonten
-Menuthirdpartyaccount=Partnerkonten
-MenuTools=Hilfsprogramme
 
 ConfigAccountingExpert=Konfiguration des Experten-Buchhaltungsmoduls
 Journaux=Journale
 JournalFinancial=Finanzjournale
-Exports=Exporte
-Export=Exportieren
-Modelcsv=Exportmodell
-OptionsDeactivatedForThisExportModel=Für dieses Exportmodell sind die Einstellungen deaktiviert
-Selectmodelcsv=Wählen Sie ein Exportmodell
-Modelcsv_normal=Klassischer Export
-Modelcsv_CEGID=Export zu CEGID Expert
 BackToChartofaccounts=Zurück zum  Kontenplan
 
-Definechartofaccounts=Kontenplan definieren
 Selectchartofaccounts=Kontenplan wählen
 Addanaccount=Fügen Sie ein Buchhaltungskonto hinzu
 AccountAccounting=Buchhaltungskonto
+AccountAccountingShort=Konto
 AccountAccountingSuggest=Buchhaltungskontovorschlag
 Ventilation=Aufteilung
 
 MenuAccountancy=Buchhaltung
 CustomersVentilation=Aufteilung Kunden
 SuppliersVentilation=Aufteilung Lieferanten
-TradeMargin=Handelsspanne
 Reports=Berichte
-ByCustomerInvoice=Nach Kundenrechnungen
 NewAccount=Neues Buchhaltungskonto
 Create=Erstelle
 CreateMvts=Lagerbewegung erstellen
-UpdateAccount=Änderung eines Bilanzkontos
 UpdateMvts=Lagerbewegung ändern
 WriteBookKeeping=Konten ins Hauptbuch übernehmen
 Bookkeeping=Hauptbuch
 AccountBalance=Saldo Sachkonto
-
-AccountingVentilation=Überblick Rechnungswesen
-AccountingVentilationSupplier=Abbau von Buchhaltungs-Lieferanten
-AccountingVentilationCustomer=Abbau von Buchhaltungs-Kunden
 
 CAHTF=Einkaufssume pro Lieferant ohne Steuer
 InvoiceLines=Rechnungszeile bereinigen
@@ -59,7 +39,6 @@ InvoiceLinesDone=Bereinigte Rechnungszeilen
 IntoAccount=Erörtern im Sachkonto
 
 Ventilate=erörtern
-VentilationAuto=Automatischer Abbau
 
 Processing=Bearbeitung
 EndProcessing=Das Ende der Verarbeitung
@@ -69,14 +48,10 @@ Lineofinvoice=Rechnungszeile
 VentilatedinAccount=Erfolgreich im Rechnungskonto bereinigt
 NotVentilatedinAccount=Nicht im Rechnungskonto bereinigt
 
-ACCOUNTING_SEPARATORCSV=Spaltentrennzeichen in Exportdatei
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Anzahl der Elemente, die Aufgliederung nach Seite angezeigt werden (empfohlenes Maximum: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Beginnen Sie die Sortierung der Abbau Seiten "Muss sortiert werden" durch die aktuellen Elemente
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Beginnen Sie die Sortierung der Abbau Seiten "Abbau" durch die aktuellen Elemente
 
-AccountLength=Länge der in Dolibarr gezeigten Rechnungskonten
-AccountLengthDesc=Funktion ermöglicht, eine Länge von Rechnungslegungs Konto indem Räume, die durch den Nullwert vorzutäuschen. Diese Funktion berührt nur die Anzeige, ist es nicht die in Dolibarr registriert Rechnungswesen Konten ändern. Für den Export ist diese Funktion erforderlich, bei bestimmten Software-kompatibel zu sein.
 ACCOUNTING_LENGTH_DESCRIPTION=Listenlänge für die Anzeige von Produkt- und Dienstleistungsbeschreibung (Empfehlung = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Länge für die Anzeige der Beschreibung von Produkte und Leistungen in den Listen (Ideal = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Länge der Finanzbuchführung
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Sozial-Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto der Transaktion
 ACCOUNTING_ACCOUNT_SUSPENSE=Konto der Warte
+DONATION_ACCOUNTINGACCOUNT=Konto für Spenden
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Buchhaltungskonto standardmäßig für die gekauften Produkte (wenn nicht im Produktblatt definiert)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verkauften Produkte (wenn nicht im Produktblatt definiert)
@@ -99,12 +75,12 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Buchhaltungskonto standardmäßig für die verka
 Doctype=Dokumententyp
 Docdate=Datum
 Docref=Referenz
-Numerocompte=Konto
 Code_tiers=Partner
 Labelcompte=Konto-Beschriftung
 Sens=Zweck
 Codejournal=Journal
 NumPiece=Teilenummer
+AccountingCategory=Buchhaltungskategorie
 
 DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs
 
@@ -113,9 +89,6 @@ DescPurchasesJournal=Einkaufsjournal
 FinanceJournal=Finance journal
 DescFinanceJournal=Finanzjournal inklusive aller Arten von Zahlungen mit Bankkonto
 
-CashPayment=Barzahlung
-
-SupplierInvoicePayment=Rechnungszahlung (Lieferant)
 CustomerInvoicePayment=Rechnungszahlung (Kunde)
 
 ThirdPartyAccount=Partner Konto
@@ -130,7 +103,6 @@ DescThirdPartyReport=Konsultieren Sie hier die Liste der Drittkunden und die Anb
 
 ListAccounts=Liste der Abrechnungskonten
 
-Pcgversion=Version des Plans
 Pcgtype=Kontenklasse
 Pcgsubtype=Unterkontenklasse
 Accountparent=Wurzeln des Kontos
@@ -143,7 +115,6 @@ DescVentilTodoCustomer=Bereinigen Sie die Zeilen der Kundenrechnung mit einem Re
 ChangeAccount=Ändern sie das Abrechnungskonto für markierte Zeilen durch das Konto:
 Vide=-
 DescVentilSupplier=Konsultieren Sie hier die jährliche Aufteilung der Buchhaltung, Ihrer Rechnungen der Lieferanten
-DescVentilTodoSupplier=Bereinigen Sie die Zeilen der Rechnung für Lieferanten, mit einem Abrechnungskonto
 DescVentilDoneSupplier=Konsultieren Sie hier die Liste der Zeilen der Rechnungs-Kunden und deren Abrechnungskonto
 
 ValidateHistory=Automatisch geltend machen
@@ -153,21 +124,22 @@ MvtNotCorrectlyBalanced=Der Saldo der Buchung ist nicht ausgeglichen. Haben = %s
 FicheVentilation=Zusammensetzung - Karte
 GeneralLedgerIsWritten=Vorgänge werden in das Hauptbuch übertragen.
 
-MvtNotCorrectlyBalanced=Der Saldo der Buchung ist nicht ausgeglichen. Haben = %s. Soll = %s
+## Admin
+ApplyMassCategories=Massenaktualisierung der Kategorien
 
-##Export Journal Feature
-ExportFormat=Dateiformat
-Prefixname=Präfix der Exportdatei
-Separate=Trennzeichen
-Textframe=Rahmen mit Textinhalt
-Headercol=Spaltenbezeichnung im Kopf der Datei
-Fieldname=Feldname
-Headername=Name im Kopf
-Type=Feldtyp
-Param=zusätzliche Parameter
-EnabledProduct=in Produkt
-EnabledTiers=In Partner
-EnabledVat=in Steuer
+## Export
+Exports=Exporte
+Export=Exportieren
+Modelcsv=Exportmodell
+OptionsDeactivatedForThisExportModel=Für dieses Exportmodell sind die Einstellungen deaktiviert
+Selectmodelcsv=Wählen Sie ein Exportmodell
+Modelcsv_normal=Klassischer Export
+Modelcsv_CEGID=Export zu CEGID Expert Buchhaltung
+Modelcsv_COALA=Export zu Sage Coala
+Modelcsv_bob50=Export zu Sage BOB 50
+Modelcsv_ciel=Export zu Sage Ciel Compta oder Compta Evolution
+Modelcsv_quadratus=Export zu Quadratus QuadraCompta
+Modelcsv_ebp=Export zu EBP
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren
@@ -177,3 +149,12 @@ OptionModeProductSell=Modus Verkauf
 OptionModeProductBuy=Modus Einkäufe
 OptionModeProductSellDesc=Zeige alle Artikel ohne Sachkonto Verkauf
 OptionModeProductBuyDesc=Alle Artikel ohne Sachkonto Einkauf anzeigen
+
+## Dictionary
+Range=Bereich von Sachkonten
+Calculated=Berechnet
+Formula=Formel
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Für dieses Land sind keine Kontenkategorien verfügbar
+ExportNotSupported=Das eingestellte Exportformat wird von deiser Seite nicht unterstützt

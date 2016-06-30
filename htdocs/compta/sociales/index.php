@@ -69,7 +69,7 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -138,7 +138,8 @@ if ($resql)
 	$var=true;
 
 	$param='';
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($year)   $param.='&amp;year='.$year;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
@@ -210,6 +211,8 @@ if ($resql)
         print '</td>';
 		print "</tr>\n";
 
+		$i=0;
+		$totalarray=array();
 		while ($i < min($num,$limit))
 		{
 			$obj = $db->fetch_object($resql);
@@ -243,8 +246,12 @@ if ($resql)
 			}
 			print '</td>';
 
+			// Amount
 			print '<td align="right" width="100">'.price($obj->amount).'</td>';
-
+			if (! $i) $totalarray['nbfield']++;
+		    if (! $i) $totalarray['totalttcfield']=$totalarray['nbfield'];
+			$totalarray['totalttc'] += $obj->amount;
+			
 			// Due date
 			print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 
@@ -256,6 +263,22 @@ if ($resql)
 			$i++;
 		}
 
+		// Show total line
+		if (isset($totalarray['totalttcfield']))
+		{
+		    print '<tr class="liste_total">';
+            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            print '<td></td>';
+            print '<td></td>';
+            print '<td></td>';
+            print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+	        print '<td></td>';
+	        print '<td></td>';
+	        print '<td></td>';
+	        print '</tr>';
+		}
+		
 		print '</table>';
 	}
 	print '</form>';

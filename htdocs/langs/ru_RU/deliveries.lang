@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
-Deliveries=Доставки
+DeliveryRef=Ref Delivery
 DeliveryCard=Карточка доставки
 DeliveryOrder=Заказ на доставку
-DeliveryOrders=Заказы на доставку
 DeliveryDate=Дата доставки
-DeliveryDateShort=Дата дост.
 CreateDeliveryOrder=Создание заказа на доставку
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Доставленное кол-во
 SetDeliveryDate=Установить дату отправки
 ValidateDeliveryReceipt=Подтверждение получения доставки
 ValidateDeliveryReceiptConfirm=Вы действительно подтвердаете получение этой доставки?
@@ -30,3 +27,4 @@ Recipient=Получатель
 ErrorStockIsNotEnough=Нет достаточного запаса на складе
 Shippable=Возможно к отправке
 NonShippable=Не возможно к отправке
+ShowReceiving=Show delivery receipt

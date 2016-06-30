@@ -134,7 +134,8 @@ if ($result)
 	$var=true;
 
 	$param='';
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
 
@@ -211,7 +212,7 @@ if ($result)
 
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="5">'.$langs->trans("Total").'</td>';
     print "<td align=\"right\"><b>".price($total)."</b></td>";
 	print "<td>&nbsp;</td></tr>";
 

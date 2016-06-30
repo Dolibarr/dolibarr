@@ -437,6 +437,7 @@ if ($id > 0 || ! empty($ref))
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 			print dol_print_date($object->date_end,'dayhour');
+        	if ($object->hasDelay()) print img_warning("Late");
 			print '</td></tr>';
 
 			// Planned workload

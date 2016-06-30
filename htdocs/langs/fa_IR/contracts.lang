@@ -1,12 +1,9 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=منطقه قرارداد
 ListOfContracts=فهرست قرارداد
-LastModifiedContracts=Last %s modified contracts
 AllContracts=همه قراردادها
 ContractCard=کارت قرارداد
-ContractStatus=وضعیت قرارداد
 ContractStatusNotRunning=در حال اجرا نیست
-ContractStatusRunning=در حال اجرا
 ContractStatusDraft=پیش نویس
 ContractStatusValidated=اعتبار
 ContractStatusClosed=بسته
@@ -17,7 +14,6 @@ ServiceStatusNotLateShort=تمام نشده است
 ServiceStatusLate=در حال اجرا، تمام شده
 ServiceStatusLateShort=منقضی شده
 ServiceStatusClosed=بسته
-ServicesLegend=خدمات افسانه
 Contracts=قراردادها
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts
@@ -33,7 +29,6 @@ MenuClosedServices=خدمات بسته شده
 NewContract=قرارداد جدید
 NewContractSubscription=New contract/subscription
 AddContract=Create contract
-SearchAContract=جستجوی یک قرارداد
 DeleteAContract=حذف یک قرارداد
 CloseAContract=بستن یک قرارداد
 ConfirmDeleteAContract=آیا مطمئن هستید که می خواهید این قرارداد و تمام خدمات خود را حذف کنید؟
@@ -46,22 +41,16 @@ ConfirmActivateService=آیا مطمئن هستید که می خواهید بر�
 RefContract=قرارداد مرجع
 DateContract=تاریخ قرارداد
 DateServiceActivate=تاریخ فعال سازی سرویس
-DateServiceUnactivate=سرویس تاریخ بی اثر سازی
-DateServiceStart=تاریخ برای آغاز خدمات
-DateServiceEnd=تاریخ برای پایان خدمات
 ShowContract=نمایش قرارداد
 ListOfServices=فهرست خدمات
 ListOfInactiveServices=فهرست خدمات فعال است
 ListOfExpiredServices=فهرست خدمات فعال منقضی شده
 ListOfClosedServices=فهرست خدمات بسته
-ListOfRunningContractsLines=فهرست در حال اجرا خطوط قرارداد
 ListOfRunningServices=لیست خدمات در حال اجرا
 NotActivatedServices=خدمات غیر فعال (در قرارداد اعتبار)
 BoardNotActivatedServices=خدمات برای فعال سازی در قرارداد اعتبار
-LastContracts=Last %s contracts
-LastActivatedServices=تاریخ و زمان آخرین٪ s به خدمات فعال
-LastModifiedServices=تاریخ و زمان آخرین٪ بازدید کنندگان خدمات اصلاح شده
-EditServiceLine=خط ویرایش خدمات
+LastContracts=Latest %s contracts
+LastModifiedServices=Latest %s modified services
 ContractStartDate=تاریخ شروع
 ContractEndDate=تاریخ پایان
 DateStartPlanned=تاریخ شروع برنامه ریزی شده
@@ -72,10 +61,7 @@ DateStartReal=تاریخ شروع واقعی
 DateStartRealShort=تاریخ شروع واقعی
 DateEndReal=تاریخ پایان واقعی
 DateEndRealShort=تاریخ پایان واقعی
-NbOfServices=Nb و خدمات
 CloseService=نزدیک خدمات
-ServicesNomberShort=٪ سرویس (ها)
-RunningServices=در حال اجرا خدمات
 BoardRunningServices=خدمات تمام شده در حال اجرا
 ServiceStatus=وضعیت خدمات
 DraftContracts=پیش نویس قرارداد
@@ -88,7 +74,6 @@ ConfirmMoveToAnotherContract=من انتخاب قرارداد هدف جدید و
 ConfirmMoveToAnotherContractQuestion=را انتخاب کنید که در آن قرارداد موجود (از شخص ثالث همان)، شما می خواهید به حرکت می کند این سرویس به؟
 PaymentRenewContractId=تمدید قرارداد خط (تعداد٪ بازدید کنندگان)
 ExpiredSince=تاریخ انقضا
-RelatedContracts=قراردادهای مرتبط
 NoExpiredServices=بدون خدمات فعال منقضی شده
 ListOfServicesToExpireWithDuration=فهرست خدمات به پایان می رسد در٪ s روز
 ListOfServicesToExpireWithDurationNeg=فهرست خدمات تمام شده از بیش از٪ s روز
@@ -104,4 +89,3 @@ TypeContact_contrat_internal_SALESREPFOLL=نمایندگی فروش محصولا
 TypeContact_contrat_external_BILLING=حسابداری ارتباط با مشتری
 TypeContact_contrat_external_CUSTOMER=پیگیری ارتباط با مشتری
 TypeContact_contrat_external_SALESREPSIGN=قرارداد امضای ارتباط با مشتری
-Error_CONTRACT_ADDON_NotDefined=CONTRACT_ADDON ثابت تعریف نشده

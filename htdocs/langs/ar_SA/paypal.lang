@@ -3,7 +3,6 @@ PaypalSetup=بايبال حدة الإعداد
 PaypalDesc=صفحات تقدم هذه الوحدة للسماح للدفع على <a href="http://www.paypal.com" target="_blank">بال</a> من قبل العملاء. ويمكن استخدام هذا لدفع مجانا أو مقابل دفع Dolibarr على كائن معين (الفاتورة ، والنظام ،...)
 PaypalOrCBDoPayment=الدفع بواسطة بطاقة الائتمان او باي بال
 PaypalDoPayment=مع دفع بايبال
-PaypalCBDoPayment=تدفع بواسطة بطاقة ائتمان
 PAYPAL_API_SANDBOX=وضع الاختبار / رمل
 PAYPAL_API_USER=API المستخدم
 PAYPAL_API_PASSWORD=API كلمة السر
@@ -15,7 +14,6 @@ PaypalModeOnlyPaypal=باي بال فقط
 PAYPAL_CSS_URL=Optionnal عنوان الموقع من ورقة أنماط CSS في صفحة الدفع
 ThisIsTransactionId=هذا هو معرف من الصفقة: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=إضافة رابط الدفع باي بال عند إرسال مستند عبر البريد
-PAYPAL_IPN_MAIL_ADDRESS=عنوان البريد الإلكتروني للإخطار لحظة الدفع (IPN)
 PredefinedMailContentLink=يمكنك النقر على الرابط أدناه آمن لجعل الدفع (باي بال) إذا لم تكن قد فعلت ذلك. ٪ الصورة
 YouAreCurrentlyInSandboxMode=أنت حاليا في وضع &quot;رمل&quot;
 NewPaypalPaymentReceived=جديد بال تلقى الدفع

@@ -45,16 +45,9 @@ $statut=GETPOST('statut');
  * View
  */
 
-$help_url='EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
-llxHeader('',$langs->trans('AccountsArea'),$help_url);
+$title=$langs->trans('BankAccounts');
 
-$link='';
-if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
-if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
-print load_fiche_titre($langs->trans("AccountsArea"),$link, 'title_bank.png');
-
-
-// On charge tableau des comptes financiers (ouverts par defaut)
+// Load array of financial accounts (opened by default)
 $accounts = array();
 
 $sql  = "SELECT rowid, courant, rappro";
@@ -66,16 +59,29 @@ $sql.= $db->order('label', 'ASC');
 $resql = $db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	{
-		$objp = $db->fetch_object($resql);
-		$accounts[$objp->rowid] = $objp->courant;
-		$i++;
-	}
-	$db->free($resql);
+    $num = $db->num_rows($resql);
+    $i = 0;
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($resql);
+        $accounts[$objp->rowid] = $objp->courant;
+        $i++;
+    }
+    $db->free($resql);
 }
+
+$nbtotalofrecords = $num;
+
+
+$help_url='EN:Module_Banks_and_Cash|FR:Module_Banques_et_Caisses|ES:M&oacute;dulo_Bancos_y_Cajas';
+llxHeader('',$title,$help_url);
+
+$link='';
+if ($statut == '') $link='<a href="'.$_SERVER["PHP_SELF"].'?statut=all">'.$langs->trans("IncludeClosedAccount").'</a>';
+if ($statut == 'all') $link='<a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("OnlyOpenedAccount").'</a>';
+
+print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$link,$num,$nbtotalofrecords,'title_bank.png',0,'','',$limit, 1);
+
 
 
 /*
@@ -105,7 +111,7 @@ foreach ($accounts as $key=>$type)
 		$solde = $acc->solde(1);
 
 		print '<tr '.$bc[$var].'>';
-		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
+		print '<td class="titlefield">'.$acc->getNomUrl(1).'</td>';
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
 		print '<td align="center">';
@@ -116,7 +122,7 @@ foreach ($accounts as $key=>$type)
                 setEventMessages($acc->error, $acc->errors, 'errors');
             } else {
                 print $result->nbtodo;
-                if ($result->nbtodolate) print ' ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
+                if ($result->nbtodolate) print ' &nbsp; ('.$result->nbtodolate.img_warning($langs->trans("Late")).')';
             }
 		}
 		else print $langs->trans("FeatureDisabled");
@@ -130,7 +136,7 @@ foreach ($accounts as $key=>$type)
 		$total[$acc->currency_code] += $solde;
 	}
 }
-if (! $found) print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+if (! $found) print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 // Total
 foreach ($total as $key=>$solde)
 {
@@ -182,7 +188,7 @@ foreach ($accounts as $key=>$type)
 if (! $found)
 {
 	$var = !$var;
-	print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+	print '<tr '.$bc[false].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 }
 // Total
 foreach ($total as $key=>$solde)
@@ -249,7 +255,7 @@ foreach ($accounts as $key=>$type)
 if (! $found)
 {
 	$var = !$var;
-	print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+	print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 }
 // Total
 foreach ($total as $key=>$solde)
