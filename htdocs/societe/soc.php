@@ -437,7 +437,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
-                if ($result >= 0)
+				if ($result >= 0)
                 {
                     if ($object->particulier)
                     {
@@ -505,6 +505,13 @@ if (empty($reshook))
                 }
                 else
 				{
+					
+					if($result == -3) {
+						$duplicate_code_error = true;
+						$object->code_fournisseur = null;
+						$object->code_client = null;
+					}
+					
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -794,8 +801,14 @@ else
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
-        $object->code_client		= GETPOST('code_client', 'alpha');
-        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        
+        if(empty($duplicate_code_error)) {
+	        $object->code_client		= GETPOST('code_client', 'alpha');
+	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        }		else {
+			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
+		}
+		
         $object->code_fournisseur	= GETPOST('code_fournisseur', 'alpha');
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
@@ -1000,7 +1013,7 @@ else
 
         print '<td width="25%">'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
-        $tmpcode=$object->code_client;
+		$tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
         print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
