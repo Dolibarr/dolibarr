@@ -781,7 +781,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
+		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
 		{
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
