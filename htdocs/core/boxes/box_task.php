@@ -91,11 +91,11 @@ class box_task extends ModeleBoxes
 			$sql.= $db->plimit($max, 0);
 
 			$result = $db->query($sql);
-			if ($result) 
+			if ($result)
 			{
 				$num = $db->num_rows($result);
 				$i = 0;
-                while ($i < $num) 
+                while ($i < $num)
                 {
                     $objp = $db->fetch_object($result);
                     $this->info_box_contents[$i][] = array(
@@ -137,10 +137,11 @@ class box_task extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
+	function showBox($head = null, $contents = null, $nooutput=0)
 	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 }
