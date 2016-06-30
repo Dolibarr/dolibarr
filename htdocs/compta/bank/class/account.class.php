@@ -1376,22 +1376,26 @@ class Account extends CommonObject
 		$detailedBBAN = $this->useDetailedBBAN();
 
 		if ($detailedBBAN == 0) {
-			return array(
-					'IBAN',
-					'BIC',
+			$fieldarray= array(
 					'BankAccountNumber'
 			);
 		} elseif ($detailedBBAN == 2) {
-			return array(
-					'IBAN',
-					'BIC',
+			$fieldarray= array(
 					'BankCode',
 					'BankAccountNumber'
 			);
+		} else {
+			$fieldarray=self::getAccountNumberOrder();
+		}
+
+		if ($this->needIBAN()) {
+			$fieldarray[]='IBAN';
+			$fieldarray[]='BIC';
 		}
 
 		//Get the order the properties are shown
-		return self::getAccountNumberOrder();
+		return $fieldarray;
+
 	}
 
 	/**
@@ -1409,8 +1413,6 @@ class Account extends CommonObject
 		global $conf;
 
 		$fieldlists = array(
-				'IBAN',
-				'BIC',
 				'BankCode',
 				'DeskCode',
 				'BankAccountNumber',
@@ -1421,8 +1423,6 @@ class Account extends CommonObject
 			if (is_numeric($conf->global->BANK_SHOW_ORDER_OPTION)) {
 				if ($conf->global->BANK_SHOW_ORDER_OPTION == '1') {
 					$fieldlists = array(
-						'IBAN',
-						'BIC',
 						'BankCode',
 						'DeskCode',
 						'BankAccountNumberKey',
