@@ -72,17 +72,20 @@ if ($action == 'update' && ! $_POST["cancel"])
 		$action='update';
 		$error++;
 	}
-	if (! GETPOST('iban'))
+	if ($account->needIBAN() == 1)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
-		$action='update';
-		$error++;
-	}
-	if (! GETPOST('bic'))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
-		$action='update';
-		$error++;
+		if (! GETPOST('iban'))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
+			$action='update';
+			$error++;
+		}
+		if (! GETPOST('bic'))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
+			$action='update';
+			$error++;
+		}
 	}
 
     $account->fetch($id);
@@ -141,17 +144,20 @@ if ($action == 'add' && ! $_POST["cancel"])
 		$action='create';
 		$error++;
 	}
-	if (! GETPOST('iban'))
+	if ($account->needIBAN() == 1)
 	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
-		$action='create';
-		$error++;
-	}
-	if (! GETPOST('bic'))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
-		$action='create';
-		$error++;
+		if (! GETPOST('iban'))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
+			$action='create';
+			$error++;
+		}
+		if (! GETPOST('bic'))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
+			$action='create';
+			$error++;
+		}
 	}
 
 	if (! $error)
@@ -489,12 +495,12 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 			$name = 'iban';
 			$size = 30;
 			$content = $account->iban;
-			$require=true;
+			if ($account->needIBAN()) $require=true;
 		} elseif ($val == 'BIC') {
 			$name = 'bic';
 			$size = 12;
 			$content = $account->bic;
-			$require=true;
+			if ($account->needIBAN()) $require=true;
 		}
 
 		print '<tr><td'.($require?' class="fieldrequired" ':'').'>'.$langs->trans($val).'</td>';
@@ -568,10 +574,10 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
     // IBAN
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
+    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("IBAN").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
 
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("BIC").'</td>';
+    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("BIC").'</td>';
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
     // BBAN

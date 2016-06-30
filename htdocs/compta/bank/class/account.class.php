@@ -1298,6 +1298,55 @@ class Account extends CommonObject
     }
 
     /**
+     * Return 1 is IBAN is need for UE country
+     *
+     * @return		int        1 yes / 0 No
+     */
+    function needIBAN()
+    {
+    	$country_code=$this->getCountryCode();
+
+    	$country_code_in_EEC=array(
+    			'AT',	// Austria
+    			'BE',	// Belgium
+    			'BG',	// Bulgaria
+    			'CY',	// Cyprus
+    			'CZ',	// Czech republic
+    			'DE',	// Germany
+    			'DK',	// Danemark
+    			'EE',	// Estonia
+    			'ES',	// Spain
+    			'FI',	// Finland
+    			'FR',	// France
+    			'GB',	// United Kingdom
+    			'GR',	// Greece
+    			'HR',   // Croatia
+    			'NL',	// Holland
+    			'HU',	// Hungary
+    			'IE',	// Ireland
+    			'IM',	// Isle of Man - Included in UK
+    			'IT',	// Italy
+    			'LT',	// Lithuania
+    			'LU',	// Luxembourg
+    			'LV',	// Latvia
+    			'MC',	// Monaco - Included in France
+    			'MT',	// Malta
+    			//'NO',	// Norway
+    			'PL',	// Poland
+    			'PT',	// Portugal
+    			'RO',	// Romania
+    			'SE',	// Sweden
+    			'SK',	// Slovakia
+    			'SI',	// Slovenia
+    			'UK',	// United Kingdom
+    			//'CH',	// Switzerland - No. Swizerland in not in EEC
+    	);
+
+    	if (in_array($country_code,$country_code_in_EEC)) return 1; // France, Spain, Gabon, ...
+    	return 0;
+    }
+
+    /**
      *	Load miscellaneous information for tab "Info"
      *
      *	@param  int		$id		Id of object to load
