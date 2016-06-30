@@ -117,12 +117,24 @@ function dol_time_plus_duree($time,$duration_value,$duration_unit)
 	if ($duration_value == 0)  return $time;
 	if ($duration_unit == 'h') return $time + (3600*$duration_value);
 	if ($duration_unit == 'w') return $time + (3600*24*7*$duration_value);
-	if ($duration_value > 0) $deltastring="+".abs($duration_value);
-	if ($duration_value < 0) $deltastring="-".abs($duration_value);
-	if ($duration_unit == 'd') { $deltastring.=" day"; }
-	if ($duration_unit == 'm') { $deltastring.=" month"; }
-	if ($duration_unit == 'y') { $deltastring.=" year"; }
-	return strtotime($deltastring,$time);
+	
+	$deltastring='P';
+	
+	if ($duration_value > 0){ $deltastring.=abs($duration_value); $sub= false; }
+	if ($duration_value < 0){ $deltastring.=abs($duration_value); $sub= true; }
+	if ($duration_unit == 'd') { $deltastring.="D"; }
+	if ($duration_unit == 'm') { $deltastring.="M"; }
+	if ($duration_unit == 'y') { $deltastring.="Y"; }
+	
+	$date = new DateTime();
+	$date->setTimezone(new DateTimeZone('UTC'));
+	$date->setTimestamp($time);
+	$interval = new DateInterval($deltastring);
+	
+	if($sub) $date->sub($interval);
+	else $date->add( $interval );
+	
+	return $date->getTimestamp();
 }
 
 
