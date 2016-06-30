@@ -205,8 +205,8 @@ if ($action == 'create') {
 			
 			// Ref
 			print "<tr>";
-			print '<td width="20%">' . $langs->trans("Ref") . '</td><td>';
-			print $object->rowid;
+			print '<td class="titlefield">' . $langs->trans("Ref") . '</td><td>';
+			print $object->ref;
 			print '</td></tr>';
 			
 			// Label
@@ -252,11 +252,11 @@ if ($action == 'create') {
 			
 			print '<table class="border" width="100%">';
 			
-			$linkback = '<a href="' . DOL_URL_ROOT . '/admin/fiscalyear.php">' . $langs->trans("BackToList") . '</a>';
+			$linkback = '<a href="' . DOL_URL_ROOT . '/accountancy/admin/fiscalyear.php">' . $langs->trans("BackToList") . '</a>';
 			
 			// Ref
 			print '<tr><td width="25%">' . $langs->trans("Ref") . '</td><td width="50%">';
-			print $object->rowid;
+			print $object->ref;
 			print '</td><td width="25%">';
 			print $linkback;
 			print '</td></tr>';
@@ -270,16 +270,16 @@ if ($action == 'create') {
 			
 			// Date start
 			print '<tr><td>';
-			print $form->editfieldkey("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("Date", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateStart", 'date_start', $object->date_start, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td></tr>';
 			
 			// Date end
 			print '<tr><td>';
-			print $form->editfieldkey("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldkey("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td><td colspan="2">';
-			print $form->editfieldval("Date", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
+			print $form->editfieldval("DateEnd", 'date_end', $object->date_end, $object, $conf->global->MAIN_EDIT_ALSO_INLINE, 'datepicker');
 			print '</td></tr>';
 			
 			// Statut

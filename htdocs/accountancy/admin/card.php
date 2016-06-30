@@ -59,10 +59,10 @@ if ($action == 'add') {
 
 		// Clean code
 		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_parent') <= 0) {
+		if (GETPOST('account_category') <= 0) {
 			$account_parent = '';
 		} else {
-			$account_parent = GETPOST('account_parent','int');
+			$account_parent = GETPOST('account_category','int');
 		}
 		
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -76,19 +76,17 @@ if ($action == 'add') {
 		
 		$res = $object->create($user);
 		
-		if ($res == 0) {
-		} else {
-			if ($res == - 3) {
-				$error = 1;
-				$action = "create";
-			}
-			if ($res == - 4) {
-				$error = 2;
-				$action = "create";
-			}
+		if ($res == - 3) {
+			$error = 1;
+			$action = "create";
+		}
+		if ($res == - 4) {
+			$error = 2;
+			$action = "create";
 		}
 	}
-	Header("Location: account.php");
+	header("Location: account.php");
+	exit;
 } else if ($action == 'edit') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
@@ -101,12 +99,12 @@ if ($action == 'add') {
 
 		// Clean code
 		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_parent') <= 0) {
+		if (GETPOST('account_category') <= 0) {
 			$account_parent = '';
 		} else {
-			$account_parent = GETPOST('account_parent','int');
+			$account_parent = GETPOST('account_category','int');
 		}
-		
+
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
@@ -134,7 +132,8 @@ if ($action == 'add') {
 		$result = $object->delete($user);
 		
 		if ($result > 0) {
-			Header("Location: account.php");
+			header("Location: account.php");
+			exit;
 		}
 	}
 	
@@ -164,7 +163,7 @@ if ($action == 'create') {
 	
 	print '<table class="border" width="100%">';
 
-	// Account number	
+	// Account number
 	print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 	print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 
