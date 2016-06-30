@@ -63,7 +63,7 @@ class modResource extends DolibarrModules
 		// Module description
 		// used if translation string 'ModuleXXXDesc' not found
 		// (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Manage resources (printers, cars, room, ...) you can then share into events";
+		$this->description = "Gestion des ressources (imprimantes, voitures, salles, ...) Vous pouvez ensuite les utiliser dans un évènement";
 		// Possible values for version are: 'development', 'experimental' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled
