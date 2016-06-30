@@ -43,6 +43,7 @@ class AccountancyExport
 	public static $EXPORT_TYPE_CIEL = 5;
 	public static $EXPORT_TYPE_QUADRATUS = 6;
 	public static $EXPORT_TYPE_EBP = 7;
+	public static $EXPORT_TYPE_COGILOG = 8;
 
 	/**
 	 *
@@ -91,6 +92,7 @@ class AccountancyExport
 				self::$EXPORT_TYPE_CIEL => $langs->trans('Modelcsv_ciel'),
 				self::$EXPORT_TYPE_QUADRATUS => $langs->trans('Modelcsv_quadratus'),
 				self::$EXPORT_TYPE_EBP => $langs->trans('Modelcsv_ebp'),
+				self::$EXPORT_TYPE_COGILOG => $langs->trans('Modelcsv_cogilog'),
 		);
 	}
 
@@ -136,6 +138,9 @@ class AccountancyExport
 				break;
 			case self::$EXPORT_TYPE_EBP :
 				$this->exportEbp($TData);
+				break;
+			case self::$EXPORT_TYPE_COGILOG :
+				$this->exportCogilog($TData);
 				break;
 			default :
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
@@ -184,6 +189,37 @@ class AccountancyExport
 			print price($line->montant) . $this->separator;
 			print dol_trunc($line->label_compte, 32) . $this->separator;
 			print $line->doc_ref . $this->separator;
+			print $this->end_line;
+		}
+	}
+
+	/**
+	 * Export format : COGILOG
+	 *
+	 * @param array $objectLines data
+	 *
+	 * @return void
+	 */
+	public function exportCogilog($objectLines) {
+		foreach ( $objectLines as $line ) {
+			$date = dol_print_date($line->doc_date, '%d%m%Y');
+
+			print $line->code_journal . $this->separator;
+			print $date . $this->separator;
+			print $line->piece_num . $this->separator;
+			print length_accountg($line->numero_compte) . $this->separator;
+			print '' . $this->separator;
+			print $line->label_compte . $this->separator;
+			print $date . $this->separator;
+			if ($line->sens=='D') {
+				print price($line->montant) . $this->separator;
+				print '' . $this->separator;
+			}elseif ($line->sens=='C') {
+				print '' . $this->separator;
+				print price($line->montant) . $this->separator;
+			}
+			print $line->doc_ref . $this->separator;
+			print $line->label_compte . $this->separator;
 			print $this->end_line;
 		}
 	}
