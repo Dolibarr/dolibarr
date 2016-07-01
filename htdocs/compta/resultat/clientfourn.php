@@ -302,8 +302,8 @@ if ($modecompta == 'CREANCES-DETTES')
     $sql.= " AND f.fk_statut IN (1,2)";
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
     	$sql.= " AND f.type IN (0,1,2)";
-	else
-		$sql.= " AND f.type IN (0,1,2,3)";
+	  else
+		  $sql.= " AND f.type IN (0,1,2,3)";
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
@@ -320,6 +320,7 @@ else
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 }
+$sql.= " AND f.fk_mode_reglement != 0";
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql .= " GROUP BY s.nom, s.rowid";
