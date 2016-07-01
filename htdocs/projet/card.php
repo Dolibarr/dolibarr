@@ -666,9 +666,13 @@ else
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
             $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
-            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-            print '</td></tr>';
+	        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+		    {
+	            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+	            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
+	    	}
+	    	else print $text;
+	        print '</td></tr>';
         }
         
         // Visibility
