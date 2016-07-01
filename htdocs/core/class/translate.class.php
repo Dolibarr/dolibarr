@@ -167,7 +167,7 @@ class Translate
 		if (empty($domain))
 		{
 			dol_print_error('',get_class($this)."::Load ErrorWrongParameters");
-			exit;
+			return -1;
 		}
 		if ($this->defaultlang == 'none_NONE') return 0;    // Special language code to not translate keys
 

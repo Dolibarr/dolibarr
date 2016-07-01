@@ -444,7 +444,7 @@ abstract class CommonObject
     	global $conf, $langs;
 
     	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also option MAIN_FORCE_STATE_INTO_ADDRESS
-    	
+
     	$contactid=0;
     	$thirdpartyid=0;
     	if ($this->element == 'societe')
@@ -461,12 +461,12 @@ abstract class CommonObject
     		$contactid=$this->contact_id;
 			$thirdpartyid=$object->fk_soc;
     	}
-    	
+
 		$out='<!-- BEGIN part to show address block -->';
-		
+
 		$outdone=0;
 		$coords = $this->getFullAddress(1,', ');
-		if ($coords) 
+		if ($coords)
 		{
 			if (! empty($conf->use_javascript_ajax))
 			{
@@ -481,7 +481,7 @@ abstract class CommonObject
 		}
 
 		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
+				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state)
 		{
 			$out.=($outdone?' - ':'').$this->state;
 			$outdone++;
@@ -512,15 +512,15 @@ abstract class CommonObject
 		if (! empty($this->office_fax)) {
 			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
 		}
-		
+
 		$out.='<div style="clear: both;"></div>';
 		$outdone=0;
-		if (! empty($this->email)) 
+		if (! empty($this->email))
 		{
 			$out.=dol_print_email($this->email,$this->id,$object->id,'AC_EMAIL',0,0,1);
 			$outdone++;
 		}
-    	if (! empty($this->url)) 
+    	if (! empty($this->url))
 		{
 			$out.=dol_print_url($this->url,'',0,1);
 			$outdone++;
@@ -531,12 +531,12 @@ abstract class CommonObject
 			if ($this->skype) $out.=dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
 			$outdone++;
 		}
-		
+
 		$out.='<!-- END Part to show address block -->';
-		
+
 		return $out;
     }
-        
+
     /**
      *  Add a link between element $this->element and a contact
      *
@@ -592,7 +592,7 @@ abstract class CommonObject
         }
 
         $datecreate = dol_now();
-        
+
         $this->db->begin();
 
         // Insertion dans la base
@@ -610,9 +610,9 @@ abstract class CommonObject
             if (! $notrigger)
             {
             	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
-	            if ($result < 0) 
-	            { 
-	                $this->db->rollback(); 
+	            if ($result < 0)
+	            {
+	                $this->db->rollback();
 	                return -1;
 	            }
             }
@@ -883,9 +883,9 @@ abstract class CommonObject
 
         if (empty($order)) $order='position';
         if ($order == 'position') $order.=',code';
-        
+
         $tab = array();
-        $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle";
+        $sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
         $sql.= " WHERE tc.element='".$this->element."'";
         if ($activeonly == 1) $sql.= " AND tc.active=1"; // only the active types
@@ -1196,7 +1196,7 @@ abstract class CommonObject
 		if (!empty($id) && !empty($field) && !empty($table)) {
 	        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
 	        $sql.= " WHERE rowid = ".$id;
-	
+
 	        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
 	        $resql = $this->db->query($sql);
 	        if ($resql)
@@ -1428,7 +1428,7 @@ abstract class CommonObject
     	if ($this->statut >= 0 || $this->element == 'societe')
     	{
     		$fieldname = 'multicurrency_code';
-			
+
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = "'.$this->db->escape($code).'"';
     		$sql .= ' WHERE rowid='.$this->id;
@@ -1436,10 +1436,10 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->multicurrency_code = $code;
-				
+
 				list($fk_multicurrency, $rate) = MultiCurrency::getIdAndTxFromCode($this->db, $code);
 				if ($rate) $this->setMulticurrencyRate($rate);
-				
+
     			return 1;
     		}
     		else
@@ -1456,7 +1456,7 @@ abstract class CommonObject
     		return -2;
     	}
     }
-	
+
 	/**
      *  Change the multicurrency rate
      *
@@ -1469,7 +1469,7 @@ abstract class CommonObject
     	if ($this->statut >= 0 || $this->element == 'societe')
     	{
     		$fieldname = 'multicurrency_tx';
-			
+
     		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     		$sql .= ' SET '.$fieldname.' = '.$rate;
     		$sql .= ' WHERE rowid='.$this->id;
@@ -1477,11 +1477,11 @@ abstract class CommonObject
     		if ($this->db->query($sql))
     		{
     			$this->multicurrency_tx = $rate;
-				
+
 				// Update line price
 				if (!empty($this->lines))
 				{
-					foreach ($this->lines as &$line) 
+					foreach ($this->lines as &$line)
 					{
 						switch ($this->element) {
 							case 'propal':
@@ -1503,10 +1503,10 @@ abstract class CommonObject
 								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
 								break;
 						}
-						
+
 					}
 				}
-				
+
     			return 1;
     		}
     		else
@@ -2244,7 +2244,7 @@ abstract class CommonObject
                 $this->total_localtax1 += $obj->total_localtax1;
                 $this->total_localtax2 += $obj->total_localtax2;
                 $this->total_ttc       += $obj->total_ttc;
-                
+
                 if (! isset($total_ht_by_vats[$obj->vatrate]))  $total_ht_by_vats[$obj->vatrate]=0;
                 if (! isset($total_tva_by_vats[$obj->vatrate])) $total_tva_by_vats[$obj->vatrate]=0;
                 if (! isset($total_ttc_by_vats[$obj->vatrate])) $total_ttc_by_vats[$obj->vatrate]=0;
@@ -2290,12 +2290,12 @@ abstract class CommonObject
 					$this->total_ttc -= $sit->total_ttc;
 				}
 			}
-			
+
 			// Multicurrency
 			$this->multicurrency_total_ht	+= $this->total_ht * $multicurrency_tx;
             $this->multicurrency_total_tva	+= $this->total_tva * $multicurrency_tx;
             $this->multicurrency_total_ttc	+= $this->total_ttc * $multicurrency_tx;
-			
+
             $this->db->free($resql);
 
             // Now update global field total_ht, total_ttc and tva
@@ -2398,8 +2398,8 @@ abstract class CommonObject
      *  - all parameters empty -> we look all link to current object (current object can be source or target)
      *  - one couple id+type is provided -> this will set $justsource or $justtarget
      *  - one couple id+type is provided and other type is provided -> this will set $justsource or $justtarget + criteria on other type
-     *  
-     *  
+     *
+     *
      *	@param	int		$sourceid		Object source id (if not defined, id of object)
      *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
      *	@param  int		$targetid		Object target id (if not defined, id of object)
@@ -2508,7 +2508,7 @@ abstract class CommonObject
                 {
                     // Parse element/subelement (ex: project_task)
                     $module = $element = $subelement = $objecttype;
-                    if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier' 
+                    if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
                         && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
                     {
                         $module = $element = $regs[1];
@@ -2544,10 +2544,10 @@ abstract class CommonObject
                     else if ($objecttype == 'subscription')			{
                         $classpath = 'adherents/class'; $module = 'adherent';
                     }
-                    
+
                     // Set classfile
                     $classfile = strtolower($subelement); $classname = ucfirst($subelement);
-                    
+
                     if ($objecttype == 'invoice_supplier') {
                         $classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
                     }
@@ -2563,7 +2563,7 @@ abstract class CommonObject
                     else if ($objecttype == 'subscription')   {
                         $classfile = 'cotisation'; $classname = 'Cotisation';
                     }
-                    
+
                     // Here $module, $classfile and $classname are set
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
@@ -2936,7 +2936,7 @@ abstract class CommonObject
         return price2num($total_discount);
     }
 
-    
+
     /**
      * Return into unit=0, the calculated total of weight and volume of all lines * qty
      * Calculate by adding weight and volume of each product line, so properties ->volume/volume_units/weight/weight_units must be loaded on line.
@@ -2951,13 +2951,13 @@ abstract class CommonObject
         $totalVolume = '';
         $totalOrdered = '';     // defined for shipment only
         $totalToShip = '';      // defined for shipment only
-        
+
         foreach ($this->lines as $line)
         {
-        
+
             $totalOrdered+=$line->qty_asked;    // defined for shipment only
             $totalToShip+=$line->qty_shipped;   // defined for shipment only
-            
+
             // Define qty, weight, volume, weight_units, volume_units
             if ($this->element == 'shipping') $qty=$line->qty_shipped;     // for shipments
             else $qty=$line->qty;
@@ -2965,12 +2965,12 @@ abstract class CommonObject
             $volume=$line->volume;
             $weight_units=$line->weight_units;
             $volume_units=$line->volume_units;
-                        
+
             $weightUnit=0;
             $volumeUnit=0;
             if (! empty($weight_units)) $weightUnit = $weight_units;
             if (! empty($volume_units)) $volumeUnit = $volume_units;
-    
+
             //var_dump($line->volume_units);
             if ($weight_units < 50)   // >50 means a standard unit (power of 10 of official unit) > 50 means an exotic unit (like inch)
             {
@@ -2993,11 +2993,11 @@ abstract class CommonObject
                 $totalVolume += $volume * $qty;   // This may be wrong if we mix different units
             }
         }
-        
+
         return array('weight'=>$totalWeight, 'volume'=>$totalVolume, 'ordered'=>$totalOrdered, 'toship'=>$totalToShip);
-    }    
-    
-    
+    }
+
+
     /**
      *	Set extra parameters
      *
@@ -3267,7 +3267,7 @@ abstract class CommonObject
 
 		// Multicurrency
 		if (!empty($conf->multicurrency->enabled)) print '<td class="linecoluht_currency" align="right" width="80">'.$langs->trans('PriceUHTCurrency').'</td>';
-		
+
 		if ($inputalsopricewithtax) print '<td align="right" width="80">'.$langs->trans('PriceUTTC').'</td>';
 
 		// Qty
@@ -3430,7 +3430,7 @@ abstract class CommonObject
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
-			
+
 			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -3871,7 +3871,7 @@ abstract class CommonObject
                     return -1;
                 }
             }
-    
+
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
@@ -3935,13 +3935,13 @@ abstract class CommonObject
     /* For default values */
 
     /**
-     * Return the default value to use for a field when showing the create form of object. 
+     * Return the default value to use for a field when showing the create form of object.
      * Return values in this order:
      * 1) If parameter is available into POST, we return it first.
      * 2) If not but an alternate value was provided as parameter of function, we return it.
-     * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
+     * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table).
      * 4) Return value found into database (TODO No yet implemented)
-     * 
+     *
      * @param   string              $fieldname          Name of field
      * @param   string              $alternatevalue     Alternate value to use
      * @return  string|string[]                         Default value (can be an array if the GETPOST return an array)
@@ -3952,27 +3952,27 @@ abstract class CommonObject
 
         // If param here has been posted, we use this value first.
         if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
-        
+
         if (isset($alternatevalue)) return $alternatevalue;
-        
+
         $newelement=$this->element;
         if ($newelement == 'facture') $newelement='invoice';
         if ($newelement == 'commande') $newelement='order';
-        if (empty($newelement)) 
+        if (empty($newelement))
         {
             dol_syslog("Ask a default value using common method getDefaultCreateValueForField on an object with no property ->element defined. Return empty string.", LOG_WARNING);
             return '';
         }
-        
+
         $keyforfieldname=strtoupper($newelement.'_DEFAULT_'.$fieldname);
         //var_dump($keyforfieldname);
         if (isset($conf->global->$keyforfieldname)) return $conf->global->$keyforfieldname;
-        
-        // TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname 
-        
+
+        // TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
+
     }
-	
-    
+
+
 	/* For triggers */
 
 
@@ -3989,7 +3989,7 @@ abstract class CommonObject
     function call_trigger($trigger_name, $user)
     {
     	global $langs,$conf;
-    	
+
     	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
     	$interface=new Interfaces($this->db);
     	$result=$interface->run_triggers($trigger_name,$this,$user,$langs,$conf);
@@ -3998,14 +3998,13 @@ abstract class CommonObject
     	{
     		if (!empty($this->errors))
     		{
-    			$this->errors=array_merge($this->errors,$interface->errors);
+    			$this->errors=array_unique(array_merge($this->errors,$interface->errors));   // We use array_unique because when a trigger call another trigger on same object, this->errors is added twice.
     		}
     		else
     		{
     			$this->errors=$interface->errors;
     		}
     	}
-
     	return $result;
     }
 
@@ -4172,7 +4171,7 @@ abstract class CommonObject
     						{
     							$res=$object->fetch(0,$value);
     							if ($res > 0) $this->array_options[$key]=$object->id;
-    							else 
+    							else
     							{
     							    $this->error="Ref '".$value."' for object '".$object->element."' not found";
                                     $this->db->rollback();
@@ -4236,7 +4235,7 @@ abstract class CommonObject
         }
         else return 0;
     }
-    
+
     /**
      *	Update an exta field value for the current object.
      *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
@@ -4301,7 +4300,7 @@ abstract class CommonObject
                     }
                     break;
             }
-            
+
             $this->db->begin();
             $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element."_extrafields SET ".$key."='".$this->db->escape($this->array_options["options_".$key])."'";
             $sql .= " WHERE fk_object = ".$this->id;
@@ -4479,7 +4478,7 @@ abstract class CommonObject
 	 * @param  int 		   $origin_id     Old thirdparty id (the thirdparty to delete)
 	 * @param  int 		   $dest_id       New thirdparty id (the thirdparty that will received element of the other)
 	 * @param  string[]    $tables        Tables that need to be changed
-	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one) 
+	 * @param  int         $ignoreerrors  Ignore errors. Return true even if errors. We need this when replacement can fails like for categories (categorie of old thirdparty may already exists on new one)
 	 * @return bool
 	 */
 	public static function commonReplaceThirdparty(DoliDB $db, $origin_id, $dest_id, array $tables, $ignoreerrors=0)
@@ -4488,9 +4487,9 @@ abstract class CommonObject
 		{
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$table.' SET fk_soc = '.$dest_id.' WHERE fk_soc = '.$origin_id;
 
-			if (! $db->query($sql)) 
+			if (! $db->query($sql))
 			{
-			    if ($ignoreerrors) return true;
+			    if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B. 
 				//$this->errors = $db->lasterror();
 			    return false;
 			}
@@ -4498,26 +4497,26 @@ abstract class CommonObject
 
 		return true;
 	}
-	
+
 	/**
 	 * Get buy price to use for margin calculation. This function is called when buy price is unknown.
 	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
 	 *   else if calculation MARGIN_TYPE = 'costprice' and costprice is defined, use costprice as buyprice
 	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, use pmp as buyprice
 	 *	 else set min buy price as buy price
-	 *	 
+	 *
 	 * @param float		$unitPrice		 product unit price
 	 * @param float		$discountPercent line discount percent
 	 * @param int		$fk_product		 product id
 	 *
 	 * @return	float <0 if ko, buyprice if ok
 	 */
-	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0) 
+	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0)
 	{
 		global $conf;
-	
+
 		$buyPrice = 0;
-		
+
 		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1)) // In most cases, test here is false
 		{
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
@@ -4561,7 +4560,7 @@ abstract class CommonObject
 						$buyPrice = $product->pmp;
 					}
 				}
-				
+
 				if (empty($buyPrice) && isset($conf->global->MARGIN_TYPE) && in_array($conf->global->MARGIN_TYPE, array('1','pmp','costprice')))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';

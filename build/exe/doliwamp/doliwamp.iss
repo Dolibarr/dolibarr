@@ -101,6 +101,7 @@ Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversi
 ; Put here path of Wampserver applications
 ; Value OK: apache 2.2.6, php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45 or 5.1.36
 ; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45 or 5.1.36
+; Value ???: apache 2.4.19, php 5.5.12, mysql 5.6.17
 Source: "C:\Program Files\Wamp\apps\phpmyadmin4.1.14\*.*"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
 Source: "C:\Program Files\Wamp\bin\apache\apache2.4.9\*.*"; DestDir: "{app}\bin\apache\apache2.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\php\php5.5.12\*.*"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
@@ -109,7 +110,7 @@ Source: "C:\Program Files\Wamp\bin\mysql\mysql5.6.17\*.*"; DestDir: "{app}\bin\m
 Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\data\mysql"; Flags: onlyifdoesntexist ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db"
 ; Dolibarr
 Source: "htdocs\*.*"; DestDir: "{app}\www\dolibarr\htdocs"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,custom\*,custom2\*,documents\*,includes\ckeditor\_source\*,includes\savant\*,includes\phpmailer\*,jquery\plugins\template\*,nltechno*\*,PHPExcel\Shared\PDF\*,PHPExcel\Shared\PCLZip\*,tcpdf\fonts\dejavu-fonts-ttf-2.33\*,tcpdf\fonts\freefont-20100919\*,tcpdf\fonts\utils\*,*\conf.php,*\conf.php.mysql,*\conf.php.old,*\conf.php.postgres,*\conf.php.sav,*\install.forced.php"
-Source: "dev\*.*"; DestDir: "{app}\www\dolibarr\dev"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,dbmodel\*,fpdf\*,initdata\*,iso-normes\*,licence\*,phpcheckstyle\*,phpunit\*,samples\*,test\*,uml\*,vagrant\*,xdebug\*"
+Source: "dev\*.*"; DestDir: "{app}\www\dolibarr\dev"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,dbmodel\*,fpdf\*,initdata\*,initdemo\*,iso-normes\*,licence\*,phpcheckstyle\*,phpunit\*,samples\*,test\*,uml\*,vagrant\*,xdebug\*"
 Source: "doc\*.*"; DestDir: "{app}\www\dolibarr\doc"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,wiki\*,plaquette\*,dev\*,images\dolibarr_screenshot2.png,images\dolibarr_screenshot3.png,images\dolibarr_screenshot4.png,images\dolibarr_screenshot5.png,images\dolibarr_screenshot6.png,images\dolibarr_screenshot7.png,images\dolibarr_screenshot8.png,images\dolibarr_screenshot9.png,images\dolibarr_screenshot10.png,images\dolibarr_screenshot11.png,images\dolibarr_screenshot12.png"
 Source: "scripts\*.*"; DestDir: "{app}\www\dolibarr\scripts"; Flags: ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,product\materiel.net.php,product\import-product.php"
 Source: "*.*"; DestDir: "{app}\www\dolibarr"; Flags: ignoreversion; Excludes: ".gitignore,.project,CVS\*,Thumbs.db,default.properties,install.lock"
@@ -255,9 +256,7 @@ begin
 
   // Prepare an object calle "Page" of type wpInstalling.
   // Object will be show later in NextButtonClick function.
-  Page := CreateInputQueryPage(wpInstalling,
-  CustomMessage('TechnicalParameters'), '',
-  CustomMessage('IfFirstInstall'));
+  Page := CreateInputQueryPage(wpInstalling, CustomMessage('TechnicalParameters'), '', CustomMessage('IfFirstInstall'));
 
   // TODO Add control differently if first install or update
   if firstinstall
@@ -333,6 +332,19 @@ begin
     datadirnew := pathWithSlashes+'/bin/mysql/data';
     exedirold := pathWithSlashes+'/bin/mysql/mysql5.6.17';
     exedirnew := pathWithSlashes+'/bin/mysql/mysql5.6.17';
+
+
+    //----------------------------------------------
+    // Test if VC11Redist has been installed
+    //----------------------------------------------
+	
+    if not FileExists ('c:/windows/system32/msvcr70.dll') and not FileExists ('c:/windows/sysWOW64/msvcr70.dll') and not FileExists ('c:/winnt/system32/msvcr70.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr70.dll') then
+    begin
+      // TODO Copy file or ask to install package ?
+      //CustomMessage('YouWillInstallDoliWamp')+#13#13
+      MsgBox('The package vcredist_x64.exe or vcredist_86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://ccc">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
+    end;
+
 
     // If we have a new database version, we should only copy old my.ini file into new directory
     // and change only all basedir= strings to use new version. Like this, data dir is still correct.

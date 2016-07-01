@@ -476,7 +476,7 @@ if (empty($reshook))
 	$actiontypecode='AC_ASKPRICE';
 	$trigger_name='SUPPLIER_PROPOSAL_SENTBYMAIL';
 	$paramname='id';
-	$mode='emailfromsupplier_proposal';
+	$mode='emailfromsupplierproposal';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 

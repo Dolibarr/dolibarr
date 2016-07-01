@@ -633,7 +633,8 @@ class ExtraFields
 		}
 		else
 		{
-			print dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 		}
 
 		return $array_name_label;

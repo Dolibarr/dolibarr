@@ -2098,6 +2098,8 @@ class Contrat extends CommonObject
 	{
 		global $user,$langs,$conf;
 
+        // Load array of products prodids
+		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -2115,8 +2117,6 @@ class Contrat extends CommonObject
 				$prodids[$i] = $row[0];
 			}
 		}
-
-
 
 		// Initialise parametres
 		$this->id=0;

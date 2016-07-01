@@ -700,174 +700,19 @@ if (empty($reshook))
 		exit;
 	}
 
-
-	/*
-	 * Add file in email form
-	*/
-	if (GETPOST('addfile','alpha'))
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		// Set tmp user directory TODO Use a dedicated directory for temp mails files
-		$vardir=$conf->user->dir_output."/".$user->id;
-		$upload_dir_tmp = $vardir.'/temp';
-
-		dol_add_file_process($upload_dir_tmp,0,0);
-		$action='presend';
-	}
-
-	/*
-	 * Remove file in email form
-	*/
-	if (GETPOST('removedfile','alpha'))
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		// Set tmp user directory
-		$vardir=$conf->user->dir_output."/".$user->id;
-		$upload_dir_tmp = $vardir.'/temp';
-
-		// TODO Delete only files that was uploaded from email form
-		dol_remove_file_process(GETPOST('removedfile','alpha'),0);
-		$action='presend';
-	}
-
 	/*
 	 * Send mail
-	*/
-	if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send))
-	{
-		$langs->load('mails');
+	 */
+	
+	// Actions to send emails
+	$actiontypecode='AC_OTH_AUTO';
+	$trigger_name='FICHINTER_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromintervention';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	
 
-		if (GETPOST('sendto','alpha'))
-		{
-			// Le destinataire a ete fourni via le champ libre
-			$sendto = GETPOST('sendto','alpha');
-			$sendtoid = 0;
-		}
-		elseif (GETPOST('receiver','alpha') != '-1')
-		{
-			// Recipient was provided from combo list
-			if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
-			{
-				$sendto = $object->thirdparty->email;
-				$sendtoid = 0;
-			}
-			else    // Id du contact
-			{
-				$sendto = $object->thirdparty->contact_get_property(GETPOST('receiver'),'email');
-				$sendtoid = GETPOST('receiver','alpha');
-			}
-		}
-
-		if (dol_strlen($sendto))
-		{
-			$langs->load("commercial");
-
-			$from				= GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
-			$replyto			= GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
-			$message			= GETPOST('message');
-			$sendtocc			= GETPOST('sendtocc','alpha');
-			$deliveryreceipt	= GETPOST('deliveryreceipt','alpha');
-
-			if ($action == 'send')
-			{
-				if (strlen(GETPOST('subject','alphs'))) $subject = GETPOST('subject','alpha');
-				else $subject = $langs->transnoentities('Intervention').' '.$object->ref;
-				$actiontypecode='AC_OTH_AUTO';
-				$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-				if ($message)
-				{
-					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-					$actionmsg = dol_concatdesc($actionmsg, $message);
-				}
-				$actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
-			}
-
-			// Create form object
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-
-			$attachedfiles=$formmail->get_attached_files();
-			$filepath = $attachedfiles['paths'];
-			$filename = $attachedfiles['names'];
-			$mimetype = $attachedfiles['mimes'];
-
-			// Send by email
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
-			if ($mailfile->error)
-			{
-				$mesg='<div class="error">'.$mailfile->error.'</div>';
-			}
-			else
-			{
-				$result=$mailfile->sendfile();
-				if ($result)
-				{
-					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-					setEventMessages($mesg, null, 'mesgs');
-					$error=0;
-
-					// Initialisation donnees
-					$object->sendtoid		= $sendtoid;
-					$object->actiontypecode	= $actiontypecode;
-					$object->actionmsg 		= $actionmsg;
-					$object->actionmsg2		= $actionmsg2;
-					$object->fk_element		= $object->id;
-					$object->elementtype	= $object->element;
-
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($db);
-					$result=$interface->run_triggers('FICHINTER_SENTBYMAIL',$object,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $object->errors=$interface->errors;
-					}
-					// Fin appel triggers
-
-					if ($error)
-					{
-						dol_print_error($db);
-					}
-					else
-					{
-						// Redirect here
-						// This avoid sending mail twice if going out and then back to page
-						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-						exit;
-					}
-				}
-				else
-				{
-					$langs->load("other");
-					$mesg='<div class="error">';
-					if ($mailfile->error)
-					{
-						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-						$mesg.='<br>'.$mailfile->error;
-					}
-					else
-					{
-						$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-					}
-					$mesg.='</div>';
-				}
-			}
-		}
-		else
-		{
-			$langs->load("other");
-			$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-			dol_syslog('Recipient email is empty');
-		}
-
-	    $action='presend';
-	}
-
-	else if ($action == 'update_extras')
+	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from update form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);

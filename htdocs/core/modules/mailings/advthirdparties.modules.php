@@ -56,7 +56,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$contactid 		Array of contact id to add
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
-	function add_to_target($mailing_id,$socid,$type_of_target, $contactid)
+	function add_to_target_spec($mailing_id,$socid,$type_of_target, $contactid)
 	{
 		global $conf, $langs;
 
@@ -80,14 +80,14 @@ class mailing_advthirdparties extends MailingTargets
     			{
     				$num = $this->db->num_rows($result);
     				$i = 0;
-    
+
     				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
-    
+
     				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);
-    
+
     					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
     						if (!array_key_exists($obj->email, $cibles)) {
     							$cibles[$obj->email] = array(
@@ -102,7 +102,7 @@ class mailing_advthirdparties extends MailingTargets
     						);
     						}
     					}
-    
+
     					$i++;
     				}
     			}
@@ -129,21 +129,21 @@ class mailing_advthirdparties extends MailingTargets
 					$sql.= " AND socp.fk_soc IN (".implode(',',$socid).")";
 				}
 				$sql.= " ORDER BY email";
-    
+
     			// Stock recipients emails into targets table
     			$result=$this->db->query($sql);
     			if ($result)
     			{
     				$num = $this->db->num_rows($result);
     				$i = 0;
-    
+
     				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
-    
+
     				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);
-    
+
     					if (!empty($obj->email) && filter_var($obj->email, FILTER_VALIDATE_EMAIL)) {
     						if (!array_key_exists($obj->email, $cibles)) {
     							$cibles[$obj->email] = array(
@@ -158,7 +158,7 @@ class mailing_advthirdparties extends MailingTargets
     							);
     						}
     					}
-    
+
     					$i++;
     				}
     			}
@@ -202,7 +202,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *
 	 *	@return		int			Nb of recipients
 	 */
-	function getNbOfRecipients()
+	function getNbOfRecipients($sql)
 	{
 		global $conf;
 

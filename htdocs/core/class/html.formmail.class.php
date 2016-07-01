@@ -121,7 +121,7 @@ class FormMail extends Form
     }
 
     /**
-     * Clear list of attached files in send mail form (stored in session)
+     * Clear list of attached files in send mail form (also stored in session)
      *
      * @return	void
      */
@@ -132,12 +132,13 @@ class FormMail extends Form
 
         // Set tmp user directory
         $vardir=$conf->user->dir_output."/".$user->id;
-        $upload_dir = $vardir.'/temp/';
+        $upload_dir = $vardir.'/temp/';                     // TODO Add $keytoavoidconflict in upload_dir path
         if (is_dir($upload_dir)) dol_delete_dir_recursive($upload_dir);
 
-        unset($_SESSION["listofpaths"]);
-        unset($_SESSION["listofnames"]);
-        unset($_SESSION["listofmimes"]);
+        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+        unset($_SESSION["listofpaths".$keytoavoidconflict]);
+        unset($_SESSION["listofnames".$keytoavoidconflict]);
+        unset($_SESSION["listofmimes".$keytoavoidconflict]);
     }
 
     /**
@@ -153,17 +154,19 @@ class FormMail extends Form
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();
-        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+        
+        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+        if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
         if (! in_array($file,$listofnames))
         {
             $listofpaths[]=$path;
             $listofnames[]=$file;
             $listofmimes[]=$type;
-            $_SESSION["listofpaths"]=join(';',$listofpaths);
-            $_SESSION["listofnames"]=join(';',$listofnames);
-            $_SESSION["listofmimes"]=join(';',$listofmimes);
+            $_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
+            $_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
+            $_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
         }
     }
 
@@ -178,17 +181,19 @@ class FormMail extends Form
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();
-        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+        
+        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+        if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
         if ($keytodelete >= 0)
         {
             unset ($listofpaths[$keytodelete]);
             unset ($listofnames[$keytodelete]);
             unset ($listofmimes[$keytodelete]);
-            $_SESSION["listofpaths"]=join(';',$listofpaths);
-            $_SESSION["listofnames"]=join(';',$listofnames);
-            $_SESSION["listofmimes"]=join(';',$listofmimes);
+            $_SESSION["listofpaths".$keytoavoidconflict]=join(';',$listofpaths);
+            $_SESSION["listofnames".$keytoavoidconflict]=join(';',$listofnames);
+            $_SESSION["listofmimes".$keytoavoidconflict]=join(';',$listofmimes);
             //var_dump($_SESSION['listofpaths']);
         }
     }
@@ -203,9 +208,11 @@ class FormMail extends Form
         $listofpaths=array();
         $listofnames=array();
         $listofmimes=array();
-        if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-        if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-        if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+        
+        $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+        if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+        if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
         return array('paths'=>$listofpaths, 'names'=>$listofnames, 'mimes'=>$listofmimes);
     }
 
@@ -260,9 +267,10 @@ class FormMail extends Form
         	$listofpaths=array();
         	$listofnames=array();
         	$listofmimes=array();
-        	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-        	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-        	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+            $keytoavoidconflict = empty($this->trackid)?'':'-'.$this->trackid;   // this->trackid must be defined
+        	if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+        	if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+        	if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
 
        		// Define output language
 			$outputlangs = $langs;
