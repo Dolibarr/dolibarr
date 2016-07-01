@@ -1145,6 +1145,7 @@ class Project extends CommonObject
 
 		// Load source object
 		$clone_project->fetch($fromid);
+		$clone_project->fetch_optionals();
 		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start=$clone_project->date_start;

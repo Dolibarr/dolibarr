@@ -324,7 +324,8 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/GlobalVariableUpdaterHelp$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/OppStatus/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/AvailabilityType/', $value)) $qualifiedforclean=0;
-
+	    if (preg_match('/CardProduct/', $value)) $qualifiedforclean=0;
+	    
 	    if (preg_match('/sms/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/TF_/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/WithBankUsing/i', $value)) $qualifiedforclean=0;
