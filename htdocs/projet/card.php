@@ -307,17 +307,19 @@ if (empty($reshook))
 	// Delete file in doc form
 	if ($action == 'remove_file' && $user->rights->projet->creer)
 	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 	    if ($object->id > 0)
 	    {
-	        $langs->load("other");
-	        $upload_dir =	$conf->projet->dir_output . "/";
-	        $urlfile=GETPOST('urlfile','alpha');
-	        $file =	$upload_dir	. '/' .	$filetodelete;
-	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
-	        else setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	    	
+			$langs->load("other");
+			$upload_dir = $conf->projet->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			if ($ret)
+				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else
+				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+			$action = '';
 	    }
 	}
 
