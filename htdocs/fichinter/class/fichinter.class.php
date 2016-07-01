@@ -958,8 +958,8 @@ class Fichinter extends CommonObject
             if ($objsoc->fetch($socid)>0)
             {
                 $this->socid 				= $objsoc->id;
-                $this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
-                $this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+                //$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+                //$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
                 $this->fk_project			= '';
                 $this->fk_delivery_address	= '';
             }
@@ -987,8 +987,7 @@ class Fichinter extends CommonObject
             // Add lines because it is not included into create function
             foreach ($this->lines as $line)
             {
-            	// TODO
-            
+            	$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
             }
             
         	// Hook of thirdparty module
@@ -1132,9 +1131,11 @@ class Fichinter extends CommonObject
 				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
 				$line->desc = $objp->description;
+				$line->duration = $objp->duree;
 				//For invoicing we calculing hours
 				$line->qty = round($objp->duree/3600,2);
 				$line->date	= $this->db->jdate($objp->date);
+				$line->datei = $this->db->jdate($objp->date);
 				$line->rang	= $objp->rang;
 				$line->product_type = 1;
 
