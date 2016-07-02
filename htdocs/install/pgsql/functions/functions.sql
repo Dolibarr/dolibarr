@@ -63,7 +63,6 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_adherent FOR EACH RO
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_adherent_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_adherent_type FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_adherent_type_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_advtargetemailing FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_askpricesupplier FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_askpricesupplier_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_askpricesupplierdet_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -96,7 +95,7 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_cronjob FOR EACH ROW
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_deplacement FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_don FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_don_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_documents FOR EACH ROW EXECUTE PROCEDURE update_modified_column_date_u();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_ecm_directories FOR EACH ROW EXECUTE PROCEDURE update_modified_column_date_u();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_element_resources FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_entrepot FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_events FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -128,7 +127,6 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_payment_donation FOR
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_payment_expensereport FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_payment_loan FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_payment_salary FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_printer_ipp FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_printing FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_product_batch FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -155,8 +153,6 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_societe_rib FOR EACH
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_socpeople FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_socpeople_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_stock_mouvement FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_time_basket FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
-CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_timebasket_counter FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_tva FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_user_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
