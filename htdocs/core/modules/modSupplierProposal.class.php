@@ -141,7 +141,7 @@ class modSupplierProposal extends DolibarrModules
 		$this->menu[$r]=array(
 			'fk_menu'=>'fk_mainmenu=commercial',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'SupplierProposalShort',
+			'titre'=>'SupplierProposalsShort',
 			'leftmenu'=>'supplier_proposalsubmenu',
 			'url'=>'/supplier_proposal/index.php',
 			'langs'=>'supplier_proposal',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
