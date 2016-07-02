@@ -87,8 +87,6 @@ class BonPrelevement extends CommonObject
 
         $this->factures = array();
 
-        $this->numero_national_emetteur = "";
-
         $this->methodes_trans = array();
 
         $this->methodes_trans[0] = "Internet";
@@ -1018,7 +1016,6 @@ class BonPrelevement extends CommonObject
                     $this->date_echeance = $datetimeprev;
                     $this->reference_remise = $ref;
 
-                    $this->numero_national_emetteur    = $conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
                     $this->raison_sociale              = $conf->global->PRELEVEMENT_RAISON_SOCIALE;
 
                     $this->emetteur_code_banque 		  = $conf->global->PRELEVEMENT_CODE_BANQUE;
@@ -1027,7 +1024,7 @@ class BonPrelevement extends CommonObject
                     $this->emetteur_number_key		  = $conf->global->PRELEVEMENT_NUMBER_KEY;
                     $this->emetteur_iban               = $conf->global->PRELEVEMENT_IBAN;
                     $this->emetteur_bic                = $conf->global->PRELEVEMENT_BIC;
-                    $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// TODO Add this into setup of admin/prelevement.php. Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+                    $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
                     $this->factures = $factures_prev_id;
 
@@ -1462,7 +1459,7 @@ class BonPrelevement extends CommonObject
 
         fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->emetteur_ics); // ICS
 
         // Date d'echeance C1
 
@@ -1611,7 +1608,7 @@ class BonPrelevement extends CommonObject
 
         fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->emetteur_ics); // ICS
 
         // Date d'echeance C1
 
@@ -1778,7 +1775,7 @@ class BonPrelevement extends CommonObject
 
         fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->emetteur_ics); // ICS
 
         // Reserve C1
 
