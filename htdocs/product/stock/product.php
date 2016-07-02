@@ -50,7 +50,7 @@ $cancel=GETPOST('cancel');
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
-$stocklimit = GETPOST('stocklimit');
+$stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
@@ -70,7 +70,7 @@ $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldi
 if ($cancel) $action='';
 
 // Set stock limit
-if ($action == 'setstocklimit')
+if ($action == 'setseuil_stock_alerte')
 {
     $object = new Product($db);
     $result=$object->fetch($id);
@@ -78,6 +78,8 @@ if ($action == 'setstocklimit')
     $result=$object->update($object->id,$user,0,'update');
     if ($result < 0)
     	setEventMessages($object->error, $object->errors, 'errors');
+    //else
+    //	setEventMessage($lans->trans("SavedRecordSuccessfully"));
     $action='';
 }
 

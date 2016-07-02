@@ -464,12 +464,14 @@ class FormProjets
 				$sql = "SELECT t.id as rowid, t.label as ref";
 				$projectkey="fk_project";
 				break;
-			case "expensereport_det":
+			case "expensereport":
 				return '';
+			case "expensereport_det":
 				/*$sql = "SELECT rowid, '' as ref";	// table is llx_expensereport_det
 				$projectkey="fk_projet";
 				break;*/
-		    case "commande":
+				return '';
+			case "commande":
 		    case "contrat":
 			case "fichinter":
 			    $sql = "SELECT t.rowid, t.ref";

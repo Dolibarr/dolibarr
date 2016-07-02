@@ -294,7 +294,7 @@ class pdf_beluga extends ModelePDFProjects
                         'lang'=>'interventions'),
                     'trip'=>array(
                     	'name'=>"TripsAndExpenses",
-                    	'title'=>"ListTripAssociatedProject",
+                    	'title'=>"ListExpenseReportsAssociatedProject",
                     	'class'=>'Deplacement',
                     	'table'=>'deplacement',
                     	'datefieldname'=>'dated',
@@ -304,7 +304,7 @@ class pdf_beluga extends ModelePDFProjects
                         'lang'=>'trip'),
                     'expensereport'=>array(
                     	'name'=>"ExpensesReports",
-                    	'title'=>"ListTripAssociatedProject",
+                    	'title'=>"ListExpenseReportsAssociatedProject",
                     	'class'=>'ExpenseReport',
                     	'table'=>'expensereport',
                     	'datefieldname'=>'dated',

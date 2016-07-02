@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -687,7 +688,7 @@ class FormFile
      *
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
      *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
-     *	@param	string	$filedir		Directory to scan
+     *	@param	string	$filedir		Full path to directory to scan
      *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
      *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
      */
@@ -720,9 +721,6 @@ class FormFile
     			if ($modulepart == 'export')              {
     				$relativepath = $file["name"];
     			}
-	            if ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_fournisseur') {
-	                $relativepath = get_exdir($modulesubdir, 2,0,0,null,'invoice_supplier'). $modulesubdir. "/" . $file["name"];
-	            }
 
     			// Show file name with link to download
     			$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
