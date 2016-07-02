@@ -477,7 +477,7 @@ if (empty($reshook))
 	}
 
 	// Set into a contract
-	else if ($action == 'setcontrat' && $user->rights->contrat->creer)
+	else if ($action == 'setcontract' && $user->rights->contrat->creer)
 	{
 		$result=$object->set_contrat($user,GETPOST('contratid','int'));
 		if ($result < 0) dol_print_error($db,$object->error);
@@ -1251,15 +1251,8 @@ else if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if ($action == 'contrat')
 		{
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-			print '<tr><td>';
-			$htmlcontract= new Formcontract($db);
-			//print "$socid,$selected,$htmlname";
-			$htmlcontract->select_contract($object->socid,$object->fk_contrat,'contratid');
-
-			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table>';
+			$formcontract= new Formcontract($db);
+			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 		}
 		else
 		{
@@ -1649,7 +1642,6 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print '</div>';
-	print '<br>';
 
 	if ($action != 'presend')
 	{
