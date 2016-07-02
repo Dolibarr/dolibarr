@@ -174,7 +174,7 @@ if (GETPOST('statut', 'alpha') !== '')
 	$sql .= " AND cf.fk_statut IN (".GETPOST('statut', 'alpha').")";
 }
 
-if ($billed !== '')
+if ($billed !== '' && $billed >= 0)
 {
 	$sql .= " AND cf.billed = ".$billed;
 }
@@ -215,7 +215,7 @@ if ($resql)
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($socid)					$param.="&socid=".$socid;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($billed != '')          $param.="billed=".$billed; 
+	if ($billed != '')          $param.="&billed=".$billed; 
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords);
