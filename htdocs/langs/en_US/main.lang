@@ -744,6 +744,7 @@ SearchIntoMembers=Members
 SearchIntoUsers=Users
 SearchIntoProductsOrServices=Products or services
 SearchIntoProjects=Projects
+SearchIntoTasks=Tasks
 SearchIntoCustomerInvoices=Customer invoices
 SearchIntoSupplierInvoices=Supplier invoices
 SearchIntoCustomerOrders=Customer orders
