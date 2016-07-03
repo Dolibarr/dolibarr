@@ -31,5 +31,5 @@ Alias /phpmyadmin "WAMPROOT/apps/phpmyadminWAMPPHPMYADMINVERSION/"
 	<RequireAny>
 	Require ip 127.0.0.1
 	Require host localhost
-    <RequireAny>
+    </RequireAny>
 </Directory>
