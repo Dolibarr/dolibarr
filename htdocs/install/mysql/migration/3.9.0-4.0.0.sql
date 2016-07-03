@@ -78,6 +78,9 @@ ALTER TABLE llx_product ADD COLUMN default_vat_code	varchar(10) after cost_price
 
 ALTER TABLE llx_product MODIFY COLUMN stock	real;
 
+ALTER TABLE llx_chargesociales ADD COLUMN fk_account integer after fk_type;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_mode_reglement integer after fk_account;
+
 CREATE TABLE llx_categorie_user 
 (
   fk_categorie 	integer NOT NULL,
