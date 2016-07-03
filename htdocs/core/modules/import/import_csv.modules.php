@@ -557,22 +557,22 @@ class ImportCsv extends ModeleImports
 					if ($listfields)
 					{
 					    //var_dump($objimport->array_import_convertvalue); exit;
+					    
+						// Build SQL UPDATE request
+						$sqlstart = 'UPDATE '.$tablename;
 
-						// Build SQL request
-						if (empty($tablewithentity_cache[$tablename]))
-						{
-							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key';
-							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
-							$sql.=') VALUES('.$listvalues.", '".$importid."'";
+						// Build SQL INSERT request
+						$sqlstart = 'INSERT INTO '.$tablename.'('.$listfields.', import_key';
+						$sqlend = ') VALUES('.$listvalues.", '".$importid."'";
+						if (! empty($tablewithentity_cache[$tablename])) {
+							$sqlstart.= ', entity';
+							$sqlend.= ', '.$conf->entity;
+						} 
+						if (! empty($objimport->array_import_tables_creator[0][$alias])) {
+							$sqlstart.= ', '.$objimport->array_import_tables_creator[0][$alias];
+							$sqlend.=', '.$user->id;
 						}
-						else
-						{
-							$sql ='INSERT INTO '.$tablename.'('.$listfields.', import_key, entity';
-							if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$objimport->array_import_tables_creator[0][$alias];
-							$sql.=') VALUES('.$listvalues.", '".$importid."', ".$conf->entity ;
-						}
-						if (! empty($objimport->array_import_tables_creator[0][$alias])) $sql.=', '.$user->id;
-						$sql.=')';
+						$sql = $sqlstart.$sqlend.')';
 						dol_syslog("import_csv.modules", LOG_DEBUG);
 
 						//print '> '.join(',',$arrayrecord);
