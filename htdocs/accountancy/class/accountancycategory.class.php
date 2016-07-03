@@ -297,7 +297,7 @@ class AccountancyCategory
 	 * @param string $year Specific year
 	 * @param int $sens Sens of the account 0: credit - debit 1: debit - credit
 	 *
-	 * @return array Result in table
+	 * @return integer Result in table
 	 */
 	public function getResult($cpt, $month, $year, $sens) {
 		$sql = "SELECT SUM(t.debit) as debit, SUM(t.credit) as credit";
