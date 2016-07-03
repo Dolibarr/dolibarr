@@ -101,7 +101,7 @@ Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversi
 ; Put here path of Wampserver applications
 ; Value OK: apache 2.2.6, php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45 or 5.1.36
 ; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45 or 5.1.36
-; Value ???: apache 2.4.19, php 5.5.12, mysql 5.6.17
+; Value ???: apache 2.4.19, php 5.5.12, mysql 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
 Source: "C:\Program Files\Wamp\apps\phpmyadmin4.1.14\*.*"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
 Source: "C:\Program Files\Wamp\bin\apache\apache2.4.9\*.*"; DestDir: "{app}\bin\apache\apache2.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\php\php5.5.12\*.*"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
@@ -119,8 +119,8 @@ Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Fl
 Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.9\conf"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.5.12"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.6.17"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.6.17"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\openssl.conf"; DestDir: "{app}"; Flags: ignoreversion;
@@ -338,11 +338,11 @@ begin
     // Test if VC11Redist has been installed
     //----------------------------------------------
 	
-    if not FileExists ('c:/windows/system32/msvcr70.dll') and not FileExists ('c:/windows/sysWOW64/msvcr70.dll') and not FileExists ('c:/winnt/system32/msvcr70.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr70.dll') then
+    if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
     begin
       // TODO Copy file or ask to install package ?
       //CustomMessage('YouWillInstallDoliWamp')+#13#13
-      MsgBox('The package vcredist_x64.exe or vcredist_86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://ccc">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
+      MsgBox('The package vcredist_x86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://ccc">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
     end;
 
 
@@ -749,32 +749,12 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
 		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
 		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
-		
-		
-		
-		    //----------------------------------------------
-		    // Create file install_services_auto.bat (always)
-		    //----------------------------------------------
-		
-		    destFile := pathWithSlashes+'/install_services_auto.bat';
-		    srcFile := pathWithSlashes+'/install_services_auto.bat.install';
-		
-		    if FileExists (srcFile) then
-		    begin
-		      LoadStringFromFile (srcFile, srcContents);
-		
-		      //version de apache et mysql
-		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
-		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
-		
-		      SaveStringToFile(destFile,srcContents, False);
-		    end
-		
 		
 		
 		
@@ -790,6 +770,7 @@ begin
 		      LoadStringFromFile (srcFile, srcContents);
 		
 		      //version de apache et mysql
+		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
 		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
 		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
@@ -978,7 +959,6 @@ end;
 procedure DeinitializeSetup();
 begin
 //  DeleteFile(path+'\install_services.bat');
-//  DeleteFile(path+'\install_services_auto.bat');
 end;
 
 
