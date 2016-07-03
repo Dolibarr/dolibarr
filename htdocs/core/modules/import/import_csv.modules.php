@@ -304,8 +304,8 @@ class ImportCsv extends ModeleImports
 			{
 				// Build sql request
 				$sql='';
-				$listfields='';
-				$listvalues='';
+				$listfields=array();
+				$listvalues=array();
 				$i=0;
 				$errorforthistable=0;
 
@@ -514,36 +514,34 @@ class ImportCsv extends ModeleImports
 						}
 
 						// Define $listfields and $listvalues to build SQL request
-						if ($listfields) { $listfields.=', '; $listvalues.=', '; }
-						$listfields.=$fieldname;
+						$listfields[] = $fieldname;
 
 						// Note: arrayrecord (and 'type') is filled with ->import_read_record called by import.php page before calling import_insert
-						if (empty($newval) && $arrayrecord[($key-1)]['type'] < 0)       $listvalues.=($newval=='0'?$newval:"null");
-						elseif (empty($newval) && $arrayrecord[($key-1)]['type'] == 0) $listvalues.="''";
-						else															 $listvalues.="'".$this->db->escape($newval)."'";
+						if (empty($newval) && $arrayrecord[($key-1)]['type'] < 0)		 $listvalues[] = ($newval=='0'?$newval:"null");
+						elseif (empty($newval) && $arrayrecord[($key-1)]['type'] == 0)	 $listvalues[] = "''";
+						else															 $listvalues[] = "'".$this->db->escape($newval)."'";
 					}
 					$i++;
 				}
 
 				// We add hidden fields (but only if there is at least one field to add into table)
-				if ($listfields && is_array($objimport->array_import_fieldshidden[0]))
+				if (!empty($listfields) && is_array($objimport->array_import_fieldshidden[0]))
 				{
     				// Loop on each hidden fields to add them into listfields/listvalues
 				    foreach($objimport->array_import_fieldshidden[0] as $key => $val)
     				{
     				    if (! preg_match('/^'.preg_quote($alias).'\./', $key)) continue;    // Not a field of current table
-    				    if ($listfields) { $listfields.=', '; $listvalues.=', '; }
     				    if ($val == 'user->id')
     				    {
-    				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
-    				        $listvalues.=$user->id;
+    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./','',$key);
+    				        $listvalues[] = $user->id;
     				    }
     				    elseif (preg_match('/^lastrowid-/',$val))
     				    {
     				        $tmp=explode('-',$val);
     				        $lastinsertid=(isset($last_insert_id_array[$tmp[1]]))?$last_insert_id_array[$tmp[1]]:0;
-    				        $listfields.=preg_replace('/^'.preg_quote($alias).'\./','',$key);
-                            $listvalues.=$lastinsertid;
+    				        $listfields[] = preg_replace('/^'.preg_quote($alias).'\./','',$key);
+                            $listvalues[] = $lastinsertid;
     				        //print $key."-".$val."-".$listfields."-".$listvalues."<br>";exit;
     				    }
     				}
@@ -554,7 +552,7 @@ class ImportCsv extends ModeleImports
 				if (! $errorforthistable)
 				{
 				    //print "$alias/$tablename/$listfields/$listvalues<br>";
-					if ($listfields)
+					if (!empty($listfields))
 					{
 					    //var_dump($objimport->array_import_convertvalue); exit;
 					    
@@ -562,8 +560,8 @@ class ImportCsv extends ModeleImports
 						$sqlstart = 'UPDATE '.$tablename;
 
 						// Build SQL INSERT request
-						$sqlstart = 'INSERT INTO '.$tablename.'('.$listfields.', import_key';
-						$sqlend = ') VALUES('.$listvalues.", '".$importid."'";
+						$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
+						$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
 						if (! empty($tablewithentity_cache[$tablename])) {
 							$sqlstart.= ', entity';
 							$sqlend.= ', '.$conf->entity;
