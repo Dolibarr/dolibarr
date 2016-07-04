@@ -823,7 +823,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_SIREN))
 		{
 			print $conf->global->MAIN_INFO_SIREN;
-			if ($mysoc->country_code == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp" target="_blank">'.$langs->trans("Check").'</a>';
+			$s = $mysoc->id_prof_url(1,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -838,6 +839,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_SIRET))
 		{
 			print $conf->global->MAIN_INFO_SIRET;
+			$s = $mysoc->id_prof_url(2,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -852,6 +855,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_APE))
 		{
 			print $conf->global->MAIN_INFO_APE;
+			$s = $mysoc->id_prof_url(3,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -866,6 +871,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_RCS))
 		{
 			print $conf->global->MAIN_INFO_RCS;
+			$s = $mysoc->id_prof_url(4,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -880,6 +887,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_PROFID5))
 		{
 			print $conf->global->MAIN_INFO_PROFID5;
+			$s = $mysoc->id_prof_url(5,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -894,6 +903,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_PROFID6))
 		{
 			print $conf->global->MAIN_INFO_PROFID6;
+			$s = $mysoc->id_prof_url(6,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -909,9 +920,9 @@ else
 		$s='';
 		$s.=$conf->global->MAIN_INFO_TVAINTRA;
 		$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$conf->global->MAIN_INFO_TVAINTRA.'">';
-		if (empty($conf->global->MAIN_DISABLEVATCHECK))
+		if (empty($conf->global->MAIN_DISABLEVATCHECK) && $mysoc->isInEEC())
 		{
-			$s.=' &nbsp; ';
+			$s.=' - ';
 			if (! empty($conf->use_javascript_ajax))
 			{
 				print "\n";

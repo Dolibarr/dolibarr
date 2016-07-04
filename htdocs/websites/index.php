@@ -137,6 +137,8 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
  * Actions
  */
 
+if (GETPOST('refreshsite')) $pageid=0;      // If we change the site, we reset the pageid.
+
 // Add page
 if ($action == 'add')
 {
@@ -321,7 +323,7 @@ if ($action == 'updatemeta')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
-    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+        $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
         $objectpage->title = GETPOST('WEBSITE_TITLE');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
         $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
@@ -476,7 +478,7 @@ if (count($object->records) > 0)
     }
     $out.='</select>';
     print $out;
-    print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+    print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Refresh").'">';
 
     if ($website)
     {
@@ -529,22 +531,31 @@ if (count($object->records) > 0)
         $out.='<select name="pageid">';
         if ($atleastonepage)
         {
+            if (empty($pageid) && $action != 'create')      // Page id is not defined, we try to take one
+            {
+                $firstpageid=0;$homepageid=0;
+                foreach($array as $key => $valpage)
+                {
+                    if (empty($firstpageid)) $firstpageid=$valpage->id;
+                    if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid=$valpage->id;
+                }
+                $pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
+            }
+
             foreach($array as $key => $valpage)
             {
-                if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
-    
                 $out.='<option value="'.$key.'"';
                 if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
                 $out.='>';
                 $out.=$valpage->title;
-                    if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
+                if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
                 $out.='</option>';
             }
         }
         else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
         print $out;
-        print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+        print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Refresh").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         

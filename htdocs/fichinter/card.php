@@ -111,6 +111,36 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
+	// Action clone object
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->ficheinter->creer)
+	{
+		if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+		{
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+		}
+		else
+		{
+			if ($object->id > 0)
+			{
+				// Because createFromClone modifies the object, we must clone it so that we can restore it later
+				$orig = clone $object;
+
+				$result=$object->createFromClone($socid);
+				if ($result > 0)
+				{
+					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+					exit;
+				}
+				else
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$object = $orig;
+					$action='';
+				}
+			}
+		}
+	}
+	
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setValid($user);
@@ -447,7 +477,7 @@ if (empty($reshook))
 	}
 
 	// Set into a contract
-	else if ($action == 'setcontrat' && $user->rights->contrat->creer)
+	else if ($action == 'setcontract' && $user->rights->contrat->creer)
 	{
 		$result=$object->set_contrat($user,GETPOST('contratid','int'));
 		if ($result < 0) dol_print_error($db,$object->error);
@@ -1094,6 +1124,20 @@ else if ($id > 0 || ! empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
 	}
 
+	// Clone confirmation
+	if ($action == 'clone') {
+		// Create an array for form
+		$formquestion = array(
+							// 'text' => $langs->trans("ConfirmClone"),
+							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+							// 1),
+							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+							// => 1),
+							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '', '', 0, 0, null, 0, 'minwidth200')));
+		// Paiement incomplet. On demande si motif = escompte ou autre
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneIntervention'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	}
+	
 	if (!$formconfirm)
 	{
 		$parameters=array('lineid'=>$lineid);
@@ -1207,15 +1251,8 @@ else if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if ($action == 'contrat')
 		{
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-			print '<tr><td>';
-			$htmlcontract= new Formcontract($db);
-			//print "$socid,$selected,$htmlname";
-			$htmlcontract->select_contract($object->socid,$object->fk_contrat,'contratid');
-
-			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table>';
+			$formcontract= new Formcontract($db);
+			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 		}
 		else
 		{
@@ -1588,6 +1625,11 @@ else if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// Clone
+				if ($user->rights->ficheinter->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=ficheinter">' . $langs->trans("ToClone") . '</a></div>';
+				}
+				
 				// Delete
 				if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 				{
@@ -1600,7 +1642,6 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print '</div>';
-	print '<br>';
 
 	if ($action != 'presend')
 	{

@@ -38,7 +38,11 @@ $id=GETPOST('id','int');
 
 $search_all=GETPOST('search_all');
 $search_project=GETPOST('search_project');
-if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) $search_projectstatus=1;
+if (! isset($_GET['search_projectstatus']) && ! isset($_POST['search_projectstatus'])) 
+{
+    if ($search_all != '') $search_projectstatus=-1;
+    else $search_projectstatus=1;
+}
 else $search_projectstatus=GETPOST('search_projectstatus');
 $search_project_ref=GETPOST('search_project_ref');
 $search_project_title=GETPOST('search_project_title');

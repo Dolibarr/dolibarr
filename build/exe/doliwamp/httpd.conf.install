@@ -66,19 +66,23 @@ Listen WAMPAPACHEPORT
 #
 LoadModule actions_module modules/mod_actions.so
 LoadModule alias_module modules/mod_alias.so
+LoadModule allowmethods_module modules/mod_allowmethods.so
 LoadModule asis_module modules/mod_asis.so
 LoadModule auth_basic_module modules/mod_auth_basic.so
 #LoadModule auth_digest_module modules/mod_auth_digest.so
 #LoadModule authn_anon_module modules/mod_authn_anon.so
 #LoadModule authn_dbm_module modules/mod_authn_dbm.so
-LoadModule authn_default_module modules/mod_authn_default.so
 LoadModule authn_file_module modules/mod_authn_file.so
+LoadModule authz_core_module modules/mod_authz_core.so
 #LoadModule authz_dbm_module modules/mod_authz_dbm.so
-LoadModule authz_default_module modules/mod_authz_default.so
+#LoadModule authz_default_module modules/mod_authz_default.so
 LoadModule authz_groupfile_module modules/mod_authz_groupfile.so
 LoadModule authz_host_module modules/mod_authz_host.so
 LoadModule authz_user_module modules/mod_authz_user.so
 LoadModule autoindex_module modules/mod_autoindex.so
+LoadModule buffer_module modules/mod_buffer.so
+LoadModule cache_module modules/mod_cache.so
+LoadModule cache_disk_module modules/mod_cache_disk.so
 #LoadModule cern_meta_module modules/mod_cern_meta.so
 LoadModule cgi_module modules/mod_cgi.so
 #LoadModule dav_module modules/mod_dav.so
@@ -96,23 +100,23 @@ LoadModule isapi_module modules/mod_isapi.so
 LoadModule log_config_module modules/mod_log_config.so
 LoadModule mime_module modules/mod_mime.so
 #LoadModule mime_magic_module modules/mod_mime_magic.so
+LoadModule negotiation_module modules/mod_negotiation.so
 #LoadModule proxy_module modules/mod_proxy.so
 #LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
 #LoadModule proxy_balancer_module modules/mod_proxy_balancer.so
 #LoadModule proxy_connect_module modules/mod_proxy_connect.so
 #LoadModule proxy_http_module modules/mod_proxy_http.so
 #LoadModule proxy_ftp_module modules/mod_proxy_ftp.so
-LoadModule negotiation_module modules/mod_negotiation.so
 LoadModule rewrite_module modules/mod_rewrite.so
 LoadModule setenvif_module modules/mod_setenvif.so
 #LoadModule speling_module modules/mod_speling.so
+#LoadModule ssl_module modules/mod_ssl.so
 LoadModule status_module modules/mod_status.so
 #LoadModule unique_id_module modules/mod_unique_id.so
 LoadModule userdir_module modules/mod_userdir.so
 #LoadModule usertrack_module modules/mod_usertrack.so
 LoadModule vhost_alias_module modules/mod_vhost_alias.so
-#LoadModule ssl_module modules/mod_ssl.so
-LoadModule php5_module "WAMPROOT/bin/php/phpWAMPPHPVERSION/php5apache2_2.dll"
+LoadModule php5_module "WAMPROOT/bin/php/phpWAMPPHPVERSION/php5apache2_4.dll"
 
 #
 # ExtendedStatus controls whether Apache will generate "full" status
@@ -123,9 +127,9 @@ ExtendedStatus On
 
 <Location /server-status>
 SetHandler server-status
-Order Deny,Allow
-Deny from all
-Allow from localhost, 127.0.0.1
+Require local
+#Require ip 1.2.3.4
+#Require host 1.2.3.4
 </Location>
 
 
@@ -211,9 +215,7 @@ KeepAliveTimeout 30
 <Directory />
     Options FollowSymLinks
     AllowOverride None
-    Order deny,allow
-    Deny from all
-    Satisfy all
+    Require all denied
 </Directory>
 
 #
@@ -253,9 +255,10 @@ KeepAliveTimeout 30
     # Controls who can get stuff from this server.
     #
 #   onlineoffline tag - don't remove
-    Order Deny,Allow
-    Deny from all
-    Allow from 127.0.0.1
+    <RequireAny>
+		Require ip 127.0.0.1
+		Require host localhost
+	</RequireAny>
 
 </Directory>
 
@@ -272,8 +275,7 @@ KeepAliveTimeout 30
 # viewed by Web clients. 
 #
 <FilesMatch "^\.ht">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </FilesMatch>
 
 #
@@ -359,8 +361,7 @@ LogLevel warn
 <Directory "cgi-bin">
     AllowOverride None
     Options None
-    Order allow,deny
-    Allow from all
+    Require all granted
 </Directory>
 
 # 
@@ -410,7 +411,7 @@ LogLevel warn
 # keep browsers from trying to display binary files as though they are
 # text.
 #
-DefaultType text/plain
+#DefaultType text/plain
 
 <IfModule mime_module>
     #

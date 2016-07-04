@@ -1,2 +1,1 @@
-Order allow,deny
-Deny from all
+Require all granted
