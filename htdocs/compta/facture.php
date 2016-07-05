@@ -2930,16 +2930,16 @@ else if ($id > 0 || ! empty($ref))
 	// Ref
 	print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
 	print '<td colspan="5">';
-	$morehtmlref = '';
+	$morehtmlright = '';
 	$discount = new DiscountAbsolute($db);
 	$result = $discount->fetch(0, $object->id);
 	if ($result > 0) {
-		$morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
+		$morehtmlright = '&nbsp; (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
 	}
 	if ($result < 0) {
 		dol_print_error('', $discount->error);
 	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', '', '', 0, '', '', $morehtmlright);
 	print '</td></tr>';
 
 	// Ref customer
