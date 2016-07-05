@@ -699,7 +699,13 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql.= natural_search('f.total_vat', $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
-if ($search_status != '' && $search_status >= 0) $sql.= " AND f.fk_statut = ".$db->escape($search_status);
+if ($search_status != '' && $search_status >= 0)
+{
+    if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
+    if ($search_status == '1') $sql.=" AND f.fk_statut = 1";  // unpayed
+    if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some correupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+    if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
+}
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$search_paymentmode."";
 if ($month > 0)
 {
