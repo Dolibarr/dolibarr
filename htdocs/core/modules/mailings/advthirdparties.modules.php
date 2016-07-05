@@ -201,7 +201,6 @@ class mailing_advthirdparties extends MailingTargets
 	 *	emails from a text file, this function must return 500.
 	 *
 	 *  @param	string	$sql 		Not use here
-	 *  @param      string     $sql       Sql request to use
 	 *	@return	    int			          Nb of recipients
 	 */
 	function getNbOfRecipients($sql='')
