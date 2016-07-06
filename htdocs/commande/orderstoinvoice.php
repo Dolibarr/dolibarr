@@ -70,6 +70,11 @@ $date_end = dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endda
 $date_starty = dol_mktime(0,0,0,$_REQUEST["date_start_delymonth"],$_REQUEST["date_start_delyday"],$_REQUEST["date_start_delyyear"]);	// Date for local PHP server
 $date_endy = dol_mktime(23,59,59,$_REQUEST["date_end_delymonth"],$_REQUEST["date_end_delyday"],$_REQUEST["date_end_delyyear"]);
 
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('facture');
+
 if ($action == 'create')
 {
 	if (! is_array($selected))
@@ -173,6 +178,9 @@ if (($action == 'create' || $action == 'add') && !$error)
 				$object->amount				= $_POST['amount'];
 				$object->remise_absolue		= $_POST['remise_absolue'];
 				$object->remise_percent		= $_POST['remise_percent'];
+
+				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+				if ($ret < 0) $error++;
 
 				if ($_POST['origin'] && $_POST['originid'])
 				{
@@ -463,6 +471,12 @@ if ($action == 'create' && !$error)
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		$object=new Facture($db);
+		print $object->showOptionals($extrafields,'edit');
+	}
 
 	// Modele PDF
 	print '<tr><td>'.$langs->trans('Model').'</td>';
