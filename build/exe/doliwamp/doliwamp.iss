@@ -314,6 +314,7 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 var myResult: Integer;
 var res: Boolean;
 var paramok: Boolean;
+var datadir: String;
 var exedirold: String;
 var exedirnew: String;
 var themessage: String;
