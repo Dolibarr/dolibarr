@@ -87,8 +87,7 @@ class HookManager
 				{
 				    if (is_array($hooks)) $arrayhooks=$hooks;    // New system
 				    else $arrayhooks=explode(':',$hooks);        // Old system (for backward compatibility)
-
-					if (in_array($context,$arrayhooks))    // We instantiate action class only if hook is required
+					if (in_array($context,$arrayhooks) || in_array('all',$arrayhooks))    // We instantiate action class only if hook is required
 					{
 						$path 		= '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
