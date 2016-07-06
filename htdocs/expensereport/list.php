@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
@@ -51,21 +51,20 @@ $month_end    = GETPOST("month_end","int");
 $year_end     = GETPOST("year_end","int");
 $optioncss = GETPOST('optioncss','alpha');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
-{
-	$search_ref="";
-	$search_user="";
-	$search_amount_ht="";
-	$search_amount_ttc="";
-	$search_status="";
-	$month_start="";
-	$year_start="";
-	$month_end="";
-	$year_end="";
-}
-
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$contextpage='expensereportlist';
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('expensereportlist'));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('expensereport');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -73,6 +72,33 @@ $fieldstosearchall = array(
     'u.lastname'=>'Lastname',
     'u.firstname'=>"Firstname",
 );
+
+
+
+/*
+ * Actions 
+ */
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter"))		// Both test must be present to be compatible with all browsers
+{
+    $search_ref="";
+    $search_user="";
+    $search_amount_ht="";
+    $search_amount_ttc="";
+    $search_status="";
+    $month_start="";
+    $year_start="";
+    $month_end="";
+    $year_end="";
+    $search_array_options=array();
+}
+
 
 
 /*
@@ -108,7 +134,6 @@ $sql.= " u.rowid as id_user, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 $sql.= " WHERE d.entity = ".$conf->entity;
-
 // Search all
 if (!empty($sall))
 {
@@ -192,13 +217,22 @@ if ($resql)
 	$i = 0;
 
 	$param="";
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($search_ref)			$param.="&search_ref=".$search_ref;
 	if ($search_user)			$param.="&search_user=".$search_user;
 	if ($search_amount_ht)		$param.="&search_amount_ht=".$search_amount_ht;
 	if ($search_amount_ttc)		$param.="&search_amount_ttc=".$search_amount_ttc;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-
+	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+	// Add $param from extra fields
+	foreach ($search_array_options as $key => $val)
+	{
+	    $crit=$val;
+	    $tmpkey=preg_replace('/search_options_/','',$key);
+	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+	}
+	
 	print_barre_liste($langs->trans("ListTripsAndExpenses"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$nbtotalofrecords);
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -210,8 +244,9 @@ if ($resql)
     if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-
+    
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","",$param,'',$sortfield,$sortorder);
