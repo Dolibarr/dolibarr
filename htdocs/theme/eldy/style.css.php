@@ -4292,7 +4292,9 @@ border-top-right-radius: 6px;
 
 /* For demo pages */
 img.demothumb {
-    box-shadow: 2px 2px 8px #888;
+    box-shadow: 2px 2px 8px #BBB;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
 
@@ -4329,6 +4331,12 @@ img.demothumb {
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
 
+    img.demothumb {
+        box-shadow: 1px 1px 4px #BBB;
+        margin-right: 6px;
+        margin-left: 4px;
+        width: 80px;
+    }
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
