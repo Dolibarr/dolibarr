@@ -589,7 +589,7 @@ if ($resql)
 	$massactionbutton=$form->selectMassAction('', $massaction ? array() : array('presend'=>$langs->trans("SendByMail")));
     
     $i = 0;
-    print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+    print '<form method="GET" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     
 	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num,$nbtotalofrecords,'title_accountancy.png');
 
