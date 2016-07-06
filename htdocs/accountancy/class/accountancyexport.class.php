@@ -142,7 +142,7 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_COGILOG :
 				$this->exportCogilog($TData);
 				break;
-			default :
+			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
 		}
