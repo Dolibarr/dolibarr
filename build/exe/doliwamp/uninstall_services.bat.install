@@ -11,9 +11,9 @@ NET STOP doliwampapache
 
 NET STOP doliwampmysqld 
 REM Mysql 5.0-
-REM .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --remove doliwampmysqld
+.\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --remove doliwampmysqld
 REM Mysql 5.1+
-.\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld.exe --remove doliwampmysqld
+REM .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld.exe --remove doliwampmysqld
 
 REM wampmanager.exe -quit -id={doliwampserver}
 echo ---- End script >> doliwamp.log 2>>&1
