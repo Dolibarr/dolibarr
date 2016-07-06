@@ -268,6 +268,7 @@ begin
   if firstinstall
   then
   begin
+    // False means it's not a password edit
     Page.Add(CustomMessage('SMTPServer'), False);
     Page.Add(CustomMessage('ApachePort'), False);
     Page.Add(CustomMessage('MySqlPort'), False);
@@ -275,6 +276,7 @@ begin
   end
   else
   begin
+    // False means it's not a password edit
     Page.Add(CustomMessage('SMTPServer'), False);
     Page.Add(CustomMessage('ApachePort'), False);
     Page.Add(CustomMessage('MySqlPort'), False);
