@@ -438,7 +438,8 @@ class Propal extends CommonObject
 				$product_type=$product->type;
 
 				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL) && $product_type == 0 && $product->stock_reel < $qty) {
-					$this->error=$langs->trans('ErrorStockIsNotEnough');
+                    $langs->load("errors");
+				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
 					$this->db->rollback();
 					return -3;
 				}
@@ -2610,7 +2611,8 @@ class Propal extends CommonObject
     {
         global $langs;
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0;
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";

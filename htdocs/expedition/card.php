@@ -1928,7 +1928,6 @@ else if ($id || $ref)
 		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
 
 		//Find the good contact adress
-		//Find the good contact adress
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))	{
 			$objectsrc=new Commande($db);
 			$objectsrc->fetch($object->$typeobject->id);
@@ -1939,8 +1938,11 @@ else if ($id || $ref)
 		}
 		$custcontact='';
 		$contactarr=array();
-		$contactarr=$objectsrc->liste_contact(-1,'external');
-
+		if (is_object($objectsrc))    // For the case the shipment was created without orders
+		{
+    		$contactarr=$objectsrc->liste_contact(-1,'external');
+		}
+		
 		if (is_array($contactarr) && count($contactarr)>0) {
 			foreach($contactarr as $contact) {
 

@@ -311,14 +311,17 @@ if (empty($reshook))
 	}
 
 	// Delete payment
-	elseif ($action == 'deletepaiement' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
-	    $object->fetch($id);
+	 	$object->fetch($id);
 	    if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0)
 	    {
 	    	$paiementfourn = new PaiementFourn($db);
 	        $result=$paiementfourn->fetch(GETPOST('paiement_id'));
-	        if ($result > 0) $result=$paiementfourn->delete(); // If fetch ok and found
+	        if ($result > 0) {
+	        	$result=$paiementfourn->delete(); // If fetch ok and found
+	        	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			}
 	        if ($result < 0) {
 		        setEventMessages($paiementfourn->error, $paiementfourn->errors, 'errors');
 	        }
@@ -932,184 +935,17 @@ if (empty($reshook))
 	    }
 	}
 
-	// Add file in email form
-	if (GETPOST('addfile'))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	    // Set tmp user directory TODO Use a dedicated directory for temp mails files
-	    $vardir=$conf->user->dir_output."/".$user->id;
-	    $upload_dir_tmp = $vardir.'/temp';
-
-	    dol_add_file_process($upload_dir_tmp,0,0);
-	    $action='presend';
-	}
-
-	// Remove file in email form
-	if (! empty($_POST['removedfile']))
-	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	    // Set tmp user directory
-	    $vardir=$conf->user->dir_output."/".$user->id;
-	    $upload_dir_tmp = $vardir.'/temp';
-
-		// TODO Delete only files that was uploaded from email form
-	    dol_remove_file_process(GETPOST('removedfile','alpha'),0);
-	    $action='presend';
-	}
-
-	// Send mail
-	if ($action == 'send' && ! $_POST['addfile'] && ! $_POST['removedfile'] && ! $_POST['cancel'])
-	{
-	    $langs->load('mails');
-
-	    $object->fetch($id);
-	    $result=$object->fetch_thirdparty();
-	    if ($result > 0)
-	    {
-            if ($_POST['sendto'])
-            {
-                // Le destinataire a ete fourni via le champ libre
-                $sendto = $_POST['sendto'];
-                $sendtoid = 0;
-            }
-            elseif ($_POST['receiver'] != '-1')
-            {
-                // Recipient was provided from combo list
-                if ($_POST['receiver'] == 'thirdparty') // Id of third party
-                {
-                    $sendto = $object->thirdparty->email;
-                    $sendtoid = 0;
-                }
-                else	// Id du contact
-                {
-                    $sendto = $object->thirdparty->contact_get_property($_POST['receiver'],'email');
-                    $sendtoid = $_POST['receiver'];
-                }
-            }
-
-            if (dol_strlen($sendto))
-            {
-                $langs->load("commercial");
-
-                $from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
-                $replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
-                $message = $_POST['message'];
-                $sendtocc = $_POST['sendtocc'];
-                $deliveryreceipt = $_POST['deliveryreceipt'];
-
-                if ($action == 'send')
-                {
-                    if (dol_strlen($_POST['subject'])) $subject=$_POST['subject'];
-                    else $subject = $langs->transnoentities('CustomerOrder').' '.$object->ref;
-                    $actiontypecode='AC_SUP_INV';
-                    $actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-                    if ($message)
-                    {
-						if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-						$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-						$actionmsg = dol_concatdesc($actionmsg, $message);
-                    }
-                    $actionmsg2=$langs->transnoentities('Action'.$actiontypecode);
-                }
-
-                // Create form object
-                include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-                $formmail = new FormMail($db);
-
-                $attachedfiles=$formmail->get_attached_files();
-                $filepath = $attachedfiles['paths'];
-                $filename = $attachedfiles['names'];
-                $mimetype = $attachedfiles['mimes'];
-
-                // Send mail
-                require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
-                if ($mailfile->error)
-                {
-                    setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-                }
-                else
-                {
-                    $result=$mailfile->sendfile();
-                    if ($result)
-                    {
-                        $mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));		// Must not contain "
-                        setEventMessages($mesg, null, 'mesgs');
-
-                        $error=0;
-
-                        // Init data for trigger
-                        $object->sendtoid		= $sendtoid;
-                        $object->actiontypecode	= $actiontypecode;
-                        $object->actionmsg		= $actionmsg;
-                        $object->actionmsg2		= $actionmsg2;
-                        $object->fk_element		= $object->id;
-                        $object->elementtype	= $object->element;
-                        
-                        $object->email_subject  = $subject;
-                        $object->email_to       = $sendto;
-                        $object->email_tocc     = $sendtocc;
-                        $object->email_tobcc    = $sendtobcc;
-                        $object->email_from     = $from;
-                        $object->email_content  = $_POST['message'];
-
-                        // Call triggers
-                        include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-                        $interface=new Interfaces($db);
-                        $result=$interface->run_triggers('BILL_SUPPLIER_SENTBYMAIL',$object,$user,$langs,$conf);
-                        if ($result < 0) {
-                            $error++; $object->errors=$interface->errors;
-                        }
-                        // End call triggers
-
-                        if ($error)
-                        {
-                            dol_print_error($db);
-                        }
-                        else
-                        {
-                            // Redirect here
-                            // This avoid sending mail twice if going out and then back to page
-                            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-                            exit;
-                        }
-                    }
-                    else
-                    {
-                        $langs->load("other");
-                        if ($mailfile->error)
-                        {
-                            $mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-                            $mesg.='<br>'.$mailfile->error;
-                        }
-                        else
-                        {
-                            $mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-                        }
-	                    setEventMessages($mesg, null, 'errors');
-                    }
-                }
-            }
-
-            else
-            {
-                $langs->load("other");
-	            setEventMessages($langs->trans('ErrorMailRecipientIsEmpty'), null, 'errors');
-                dol_syslog('Recipient email is empty');
-            }
-	    }
-	    else
-	    {
-	        $langs->load("other");
-		    setEventMessages($langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")), null, 'errors');
-	        dol_syslog('Unable to read data from the invoice. The invoice file has perhaps not been generated.');
-	    }
-
-	    //$action = 'presend';
-	}
+	/*
+	 * Send mail
+	 */
+	
+	// Actions to send emails
+	$actiontypecode='AC_SUP_INV';
+	$trigger_name='BILL_SUPPLIER_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromsupplierinvoice';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
+	
 
 	// Build document
 	if ($action == 'builddoc')
@@ -1788,6 +1624,12 @@ else
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
 
         }
+        if ($action == 'deletepaiement')
+        {
+        	$payment_id = GETPOST('paiement_id');
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 1);
+
+        }
 
        	// Confirmation to delete line
 		if ($action == 'ask_deleteline')
@@ -1903,7 +1745,7 @@ else
         {
             $num = $db->num_rows($result);
             $i = 0; $totalpaye = 0;
-            print '<table class="nobordernopadding" width="100%">';
+            print '<table class="nobordernopadding paymenttable" width="100%">';
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
 			print '<td>'.$langs->trans('Date').'</td>';

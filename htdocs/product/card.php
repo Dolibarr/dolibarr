@@ -1314,7 +1314,7 @@ else
 	        }
 
 	        // Custom code
-    	    if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+    	    if (! $object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$object->customcode.'"></td>';
 	            // Origin country

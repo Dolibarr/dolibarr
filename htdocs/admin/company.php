@@ -308,10 +308,12 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("CompanyInfo").'</th><th>'.$langs->trans("Value").'</th></tr>'."\n";
 
+	// Name
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td class="fieldrequired"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
 	print '<input name="nom" id="name" size="30" value="'. ($conf->global->MAIN_INFO_SOCIETE_NOM?$conf->global->MAIN_INFO_SOCIETE_NOM:$_POST["nom"]) . '" autofocus="autofocus"></td></tr>'."\n";
 
+	// Addresse
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
 	print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS:$_POST["address"]) . '</textarea></td></tr>'."\n";
@@ -392,7 +394,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	// Note
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td valign="top"><label for="note">'.$langs->trans("Note").'</label></td><td>';
-	print '<textarea class="flat" name="note" id="note" cols="80" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? $conf->global->MAIN_INFO_SOCIETE_NOTE : '').'</textarea></td></tr>';
+	print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_NOTE) ? $conf->global->MAIN_INFO_SOCIETE_NOTE : '').'</textarea></td></tr>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -531,7 +533,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	// Object of the company
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td width="35%"><label for="object">'.$langs->trans("CompanyObject").'</label></td><td>';
-	print '<textarea class="flat" name="object" id="object" cols="80" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
+	print '<textarea class="flat quatrevingtpercent" name="object" id="object" rows="'.ROWS_5.'">'.(! empty($conf->global->MAIN_INFO_SOCIETE_OBJECT) ? $conf->global->MAIN_INFO_SOCIETE_OBJECT : '').'</textarea></td></tr>';
 	print '</td></tr>';
 
 	print '</table>';
@@ -821,7 +823,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_SIREN))
 		{
 			print $conf->global->MAIN_INFO_SIREN;
-			if ($mysoc->country_code == 'FR') print ' &nbsp; <a href="http://avis-situation-sirene.insee.fr/avisitu/jsp/avis.jsp" target="_blank">'.$langs->trans("Check").'</a>';
+			$s = $mysoc->id_prof_url(1,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -836,6 +839,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_SIRET))
 		{
 			print $conf->global->MAIN_INFO_SIRET;
+			$s = $mysoc->id_prof_url(2,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -850,6 +855,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_APE))
 		{
 			print $conf->global->MAIN_INFO_APE;
+			$s = $mysoc->id_prof_url(3,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -864,6 +871,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_RCS))
 		{
 			print $conf->global->MAIN_INFO_RCS;
+			$s = $mysoc->id_prof_url(4,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -878,6 +887,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_PROFID5))
 		{
 			print $conf->global->MAIN_INFO_PROFID5;
+			$s = $mysoc->id_prof_url(5,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -892,6 +903,8 @@ else
 		if (! empty($conf->global->MAIN_INFO_PROFID6))
 		{
 			print $conf->global->MAIN_INFO_PROFID6;
+			$s = $mysoc->id_prof_url(6,$mysoc);
+			if ($s) print ' - '.$s;
 		} else {
 			print '&nbsp;';
 		}
@@ -907,9 +920,9 @@ else
 		$s='';
 		$s.=$conf->global->MAIN_INFO_TVAINTRA;
 		$s.='<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$conf->global->MAIN_INFO_TVAINTRA.'">';
-		if (empty($conf->global->MAIN_DISABLEVATCHECK))
+		if (empty($conf->global->MAIN_DISABLEVATCHECK) && $mysoc->isInEEC())
 		{
-			$s.=' &nbsp; ';
+			$s.=' - ';
 			if (! empty($conf->use_javascript_ajax))
 			{
 				print "\n";

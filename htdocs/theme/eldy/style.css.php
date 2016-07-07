@@ -653,7 +653,7 @@ td.showDragHandle {
 	table-layout: fixed;
 }
 #id-right, #id-left {
-	padding-top: 12px;
+	padding-top: 16px;
 	padding-bottom: 8px;
 
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
@@ -1058,6 +1058,8 @@ div.tmenucenter
 div.menu_titre {
 	padding-top: 4px;
 	padding-bottom: 4px;
+	overflow: hidden;
+    text-overflow: ellipsis;	
 }
 .mainmenuaspan
 {
@@ -1421,7 +1423,7 @@ div.vmenu, td.vmenu {
 .companylogo { }
 .searchform { padding-top: 4px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2731,7 +2733,10 @@ form.liste_total div {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 }
-
+.paymenttable tr td:first-child, .margintable tr td:first-child
+{
+	padding-left: 2px;
+}
 .margintable td {
 	border: 0px !important;
 }
@@ -4090,7 +4095,7 @@ select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
     /* TODO modified by jmobile, replace jmobile with pure css*/
     overflow:hidden;
-    white-space: nowrap;
+    white-space: nowrap;			/* Enabling this make behaviour strange when selecting the empty value if this empty value is '' instead of '&nbsp;' */
     text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
@@ -4289,7 +4294,9 @@ border-top-right-radius: 6px;
 
 /* For demo pages */
 img.demothumb {
-    box-shadow: 2px 2px 8px #888;
+    box-shadow: 2px 2px 8px #BBB;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
 
@@ -4326,6 +4333,12 @@ img.demothumb {
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
 
+    img.demothumb {
+        box-shadow: 1px 1px 4px #BBB;
+        margin-right: 6px;
+        margin-left: 4px;
+        width: 80px;
+    }
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */

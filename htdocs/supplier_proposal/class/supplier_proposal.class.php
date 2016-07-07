@@ -2186,7 +2186,8 @@ class SupplierProposal extends CommonObject
     {
         global $user,$langs,$conf;
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0; 
         $prodids = array();
         $sql = "SELECT rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."product";

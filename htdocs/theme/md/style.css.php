@@ -1087,6 +1087,8 @@ div.tmenucenter
 }
 div.menu_titre {
 	padding-bottom: 2px;
+	overflow: hidden;
+    text-overflow: ellipsis;	
 }
 .mainmenuaspan
 {
@@ -1458,7 +1460,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 8px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2599,7 +2601,10 @@ input.liste_titre {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 }
-
+.paymenttable tr td:first-child, .margintable tr td:first-child
+{
+	padding-left: 2px;
+}
 .margintable td {
 	border: 0px !important;
 }

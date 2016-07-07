@@ -85,7 +85,9 @@ $alwayseditable=$extrafields->attribute_alwayseditable[$attrname];
 $param=$extrafields->attribute_param[$attrname];
 $perms=$extrafields->attribute_perms[$attrname];
 $list=$extrafields->attribute_list[$attrname];
-//$ishidden=$extrafields->attribute_hidden[$attrname];
+if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) {
+	$ishidden=$extrafields->attribute_hidden[$attrname];
+}
 
 if((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_array($param))
 {

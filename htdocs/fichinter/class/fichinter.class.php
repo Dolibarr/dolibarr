@@ -220,7 +220,6 @@ class Fichinter extends CommonObject
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-
             	$result=$this->insertExtraFields();
             	if ($result < 0)
             	{
@@ -926,6 +925,102 @@ class Fichinter extends CommonObject
 		return -2;
 	}
 
+	
+
+    /**
+     *	Load an object from its id and create a new one in database
+     *
+     *	@param		int			$socid			Id of thirdparty
+     *	@return		int							New id of clone
+     */
+    function createFromClone($socid=0)
+    {
+        global $user,$hookmanager;
+
+        $error=0;
+
+        $this->context['createfromclone'] = 'createfromclone';
+
+        $this->db->begin();
+
+		// get extrafields so they will be clone
+		foreach($this->lines as $line)
+			$line->fetch_optionals($line->rowid);
+
+        // Load source object
+        $objFrom = clone $this;
+
+        // Change socid if needed
+        if (! empty($socid) && $socid != $this->socid)
+        {
+            $objsoc = new Societe($this->db);
+
+            if ($objsoc->fetch($socid)>0)
+            {
+                $this->socid 				= $objsoc->id;
+                //$this->cond_reglement_id	= (! empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
+                //$this->mode_reglement_id	= (! empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
+                $this->fk_project			= '';
+                $this->fk_delivery_address	= '';
+            }
+
+            // TODO Change product price if multi-prices
+        }
+
+        $this->id=0;
+		$this->ref = '';
+        $this->statut=0;
+
+        // Clear fields
+        $this->user_author_id     = $user->id;
+        $this->user_valid         = '';
+        $this->date_creation      = '';
+        $this->date_validation    = '';
+        $this->ref_client         = '';
+		
+        // Create clone
+        $result=$this->create($user);
+        if ($result < 0) $error++;
+
+        if (! $error)
+        {
+            // Add lines because it is not included into create function
+            foreach ($this->lines as $line)
+            {
+            	$this->addline($user, $this->id, $line->desc, $line->datei, $line->duration);
+            }
+            
+        	// Hook of thirdparty module
+            if (is_object($hookmanager))
+            {
+                $parameters=array('objFrom'=>$objFrom);
+                $action='';
+                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if ($reshook < 0) $error++;
+            }
+
+            // Call trigger
+            $result=$this->call_trigger('INTERVENTION_CLONE',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
+
+        unset($this->context['createfromclone']);
+
+        // End
+        if (! $error)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
+    }
+	
+	
 	/**
 	 *	Adding a line of intervention into data base
 	 *
@@ -1036,9 +1131,11 @@ class Fichinter extends CommonObject
 				$line = new FichinterLigne($this->db);
 				$line->id = $objp->rowid;
 				$line->desc = $objp->description;
+				$line->duration = $objp->duree;
 				//For invoicing we calculing hours
 				$line->qty = round($objp->duree/3600,2);
 				$line->date	= $this->db->jdate($objp->date);
+				$line->datei = $this->db->jdate($objp->date);
 				$line->rang	= $objp->rang;
 				$line->product_type = 1;
 

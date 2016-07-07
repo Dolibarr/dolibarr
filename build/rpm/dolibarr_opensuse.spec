@@ -200,6 +200,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
+%_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
@@ -214,6 +215,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/webservices
+%_datadir/dolibarr/htdocs/websites
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php

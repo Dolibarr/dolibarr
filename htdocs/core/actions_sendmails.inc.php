@@ -22,8 +22,6 @@
  */
 
 
-// TODO Include this include file into all element pages allowing email sending
-
 // $id must be defined
 // $actiontypecode must be defined
 // $paramname must be defined
@@ -34,13 +32,15 @@
  */
 if (GETPOST('addfile'))
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	$trackid = GETPOST('trackid','aZ09');
+	
+    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir_tmp = $vardir.'/temp';
+	$upload_dir_tmp = $vardir.'/temp';             // TODO Add $keytoavoidconflict in upload_dir path
 
-	dol_add_file_process($upload_dir_tmp,0,0);
+	dol_add_file_process($upload_dir_tmp, 0, 0, 'addedfile', '', null, $trackid);
 	$action='presend';
 }
 
@@ -49,33 +49,39 @@ if (GETPOST('addfile'))
  */
 if (! empty($_POST['removedfile']) && empty($_POST['removAll']))
 {
+	$trackid = GETPOST('trackid','aZ09');
+    
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	// Set tmp user directory
 	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir_tmp = $vardir.'/temp';
+	$upload_dir_tmp = $vardir.'/temp';             // TODO Add $keytoavoidconflict in upload_dir path
 
-	// TODO Delete only files that was uploaded from email form
-	dol_remove_file_process(GETPOST('removedfile','alpha'),0);
+	// TODO Delete only files that was uploaded from email form. This can be addressed by adding the trackid into the temp path then changing donotdeletefile to 2 instead of 1 to say "delete only if into temp dir"
+	// GETPOST('removedfile','alpha') is position of file into $_SESSION["listofpaths"...] array.
+	dol_remove_file_process(GETPOST('removedfile','alpha'), 0, 1, $trackid);   // We do not delete because if file is the official PDF of doc, we don't want to remove it physically
 	$action='presend';
 }
 
 /*
  * Remove all files in email form
  */
-
-if(! empty($_POST['removAll']))
+if (GETPOST('removAll'))
 {
-	$listofpaths=array();
+	$trackid = GETPOST('trackid','aZ09');
+	
+    $listofpaths=array();
 	$listofnames=array();
 	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
+    $keytoavoidconflict = empty($trackid)?'':'-'.$trackid;
+	if (! empty($_SESSION["listofpaths".$keytoavoidconflict])) $listofpaths=explode(';',$_SESSION["listofpaths".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofnames".$keytoavoidconflict])) $listofnames=explode(';',$_SESSION["listofnames".$keytoavoidconflict]);
+	if (! empty($_SESSION["listofmimes".$keytoavoidconflict])) $listofmimes=explode(';',$_SESSION["listofmimes".$keytoavoidconflict]);
 
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
-
+	$formmail->trackid = $trackid;
+	
 	foreach($listofpaths as $key => $value)
 	{
 		$pathtodelete = $value;
@@ -94,7 +100,9 @@ if(! empty($_POST['removAll']))
  */
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
-	if($conf->dolimail->enabled) $langs->load("dolimail@dolimail");
+	$trackid = GETPOST('trackid','aZ09');
+
+    if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
 
 	$subject='';$actionmsg='';$actionmsg2='';
@@ -195,7 +203,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			if ($mode == 'emailfromproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_PROPOSAL_TO));
 			if ($mode == 'emailfromorder')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_ORDER_TO));
 			if ($mode == 'emailfrominvoice')  $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_INVOICE_TO));
-
+			if ($mode == 'emailfromsupplierproposal') $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO));
+			if ($mode == 'emailfromsupplierorder')    $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_ORDER_TO));
+			if ($mode == 'emailfromsupplierinvoice')  $sendtobcc .= (empty($conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO) ? '' : (($sendtobcc?", ":"").$conf->global->MAIN_MAIL_AUTOCOPY_SUPPLIER_INVOICE_TO));
+				
 			$deliveryreceipt = $_POST['deliveryreceipt'];
 
 			if ($action == 'send' || $action == 'relance')
@@ -215,13 +226,13 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			// Create form object
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
-
+			$formmail->trackid = $trackid;      // $trackid must be defined
+            
 			$attachedfiles=$formmail->get_attached_files();
 			$filepath = $attachedfiles['paths'];
 			$filename = $attachedfiles['names'];
 			$mimetype = $attachedfiles['mimes'];
 
-			$trackid = GETPOST('trackid','aZ09');
 
 			// Feature to push mail sent into Sent folder
 			if (! empty($conf->dolimail->enabled))
@@ -270,7 +281,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1,'','',$trackid);
 			if ($mailfile->error)
 			{
-				$mesgs[]='<div class="error">'.$mailfile->error.'</div>';
+				setEventMessage($mailfile->error, 'errors');
+				$action='presend';
 			}
 			else
 			{
@@ -351,13 +363,6 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$action = 'presend';
 				}
 			}
-			/*  }
-			 else
-			{
-			$langs->load("other");
-			$mesgs[]='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
-			dol_syslog('Recipient email is empty');
-			}*/
 		}
 		else
 		{

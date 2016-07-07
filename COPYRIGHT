@@ -40,7 +40,7 @@ jQuery blockUI         2.70.0        GPL and MIT License         Yes            
 jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors
 jQuery DataTables      1.9.4         BSD                         Yes             JS library for tables output
 jQuery FileUpload      5.0.3         GPL and MIT License         Yes             JS library to upload files
-jQuery Flot            0.7           MIT License                 Yes             JS library to build graph
+jQuery Flot            0.8.3         MIT License                 Yes             JS library to build graph
 jQuery JCrop           0.9.8         GPL and MIT License         Yes             JS library plugin Crop (to crop images)
 jQuery Jeditable       1.7.1         GPL and MIT License         Yes             JS library plugin jeditable (to edit in place)
 jQuery jNotify         1.1.00        Apache Software License 2.0 Yes             JS library plugin jNotify (to use ajax popups)

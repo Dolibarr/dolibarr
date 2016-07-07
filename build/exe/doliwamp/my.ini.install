@@ -77,10 +77,6 @@ log-error=WAMPROOT/logs/mysql.log
 #Path to the database root
 datadir=WAMPROOT/bin/mysql/data
 
-# The default character set that will be used when a new schema or table is
-# created and no character set is defined
-default-character-set=latin1
-
 # The default storage engine that will be used when create new tables when
 default-storage-engine=INNODB
 
@@ -101,13 +97,6 @@ max_connections=255
 # slowdown instead of a performance improvement.
 query_cache_size=8M
 
-# The number of open tables for all threads. Increasing this value
-# increases the number of file descriptors that mysqld requires.
-# Therefore you have to make sure to set the amount of open files
-# allowed to at least 4096 in the variable "open-files-limit" in
-# section [mysqld_safe]
-table_cache=510
-
 # Maximum size for internal (in-memory) temporary tables. If a table
 # grows larger than this value, it is automatically converted to disk
 # based table This limitation is for a single table. There can be many
@@ -124,18 +113,6 @@ tmp_table_size=13M
 thread_cache_size=12
 
 #*** MyISAM Specific options
-
-# The maximum size of the temporary file MySQL is allowed to use while
-# recreating the index (during REPAIR, ALTER TABLE or LOAD DATA INFILE.
-# If the file-size would be bigger than this, the index will be created
-# through the key cache (which is slower).
-myisam_max_sort_file_size=100G
-
-# If the temporary file used for fast index creation would be bigger
-# than using the key cache by the amount specified here, then prefer the
-# key cache method.  This is mainly used to force long character keys in
-# large tables to use the slower key cache method to create the index.
-myisam_max_extra_sort_file_size=100G
 
 # If the temporary file used for fast index creation would be bigger
 # than using the key cache by the amount specified here, then prefer the
@@ -169,13 +146,6 @@ sort_buffer_size=203K
 # but you do not plan to use it. This will save memory and disk space
 # and speed up some things.
 #skip-innodb
-
-# Additional memory pool that is used by InnoDB to store metadata
-# information.  If InnoDB requires more memory for this purpose it will
-# start to allocate it from the OS.  As this is fast enough on most
-# recent operating systems, you normally do not need to change this
-# value. SHOW INNODB STATUS will display the current amount used.
-innodb_additional_mem_pool_size=2M
 
 # If set to 1, InnoDB will flush (fsync) the transaction logs to the
 # disk at each commit, which offers full ACID behavior. If you are
@@ -226,17 +196,13 @@ port=WAMPMYSQLPORT
 
 
 #Path to installation directory. All paths are usually resolved relative to this.
-basedir=WAMPROOT/bin/mysql/mysql5.6.17
+basedir=WAMPROOT/bin/mysql/mysqlWAMPMYSQLVERSION
 
 #log file
 log-error=WAMPROOT/logs/mysql.log
 
 #Path to the database root
 datadir=WAMPROOT/bin/mysql/data
-
-# The default character set that will be used when a new schema or table is
-# created and no character set is defined
-default-character-set=latin1
 
 # The default storage engine that will be used when create new tables when
 default-storage-engine=INNODB
@@ -258,13 +224,6 @@ max_connections=255
 # slowdown instead of a performance improvement.
 query_cache_size=8M
 
-# The number of open tables for all threads. Increasing this value
-# increases the number of file descriptors that mysqld requires.
-# Therefore you have to make sure to set the amount of open files
-# allowed to at least 4096 in the variable "open-files-limit" in
-# section [mysqld_safe]
-table_cache=510
-
 # Maximum size for internal (in-memory) temporary tables. If a table
 # grows larger than this value, it is automatically converted to disk
 # based table This limitation is for a single table. There can be many
@@ -281,18 +240,6 @@ tmp_table_size=13M
 thread_cache_size=12
 
 #*** MyISAM Specific options
-
-# The maximum size of the temporary file MySQL is allowed to use while
-# recreating the index (during REPAIR, ALTER TABLE or LOAD DATA INFILE.
-# If the file-size would be bigger than this, the index will be created
-# through the key cache (which is slower).
-myisam_max_sort_file_size=100G
-
-# If the temporary file used for fast index creation would be bigger
-# than using the key cache by the amount specified here, then prefer the
-# key cache method.  This is mainly used to force long character keys in
-# large tables to use the slower key cache method to create the index.
-myisam_max_extra_sort_file_size=100G
 
 # If the temporary file used for fast index creation would be bigger
 # than using the key cache by the amount specified here, then prefer the
@@ -326,13 +273,6 @@ sort_buffer_size=203K
 # but you do not plan to use it. This will save memory and disk space
 # and speed up some things.
 #skip-innodb
-
-# Additional memory pool that is used by InnoDB to store metadata
-# information.  If InnoDB requires more memory for this purpose it will
-# start to allocate it from the OS.  As this is fast enough on most
-# recent operating systems, you normally do not need to change this
-# value. SHOW INNODB STATUS will display the current amount used.
-innodb_additional_mem_pool_size=2M
 
 # If set to 1, InnoDB will flush (fsync) the transaction logs to the
 # disk at each commit, which offers full ACID behavior. If you are

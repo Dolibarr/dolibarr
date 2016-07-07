@@ -2737,12 +2737,12 @@ class Form
 
 
     /**
-     *      Retourne la liste des types de paiements possibles
+     *      Return list of payment modes
      *
      *      @param	string	$selected        Id du type de paiement pre-selectionne
      *      @param  string	$htmlname        Nom de la zone select
-     *      @param  string	$filtertype      Pour filtre
-     *		@param	int		$addempty		Ajoute entree vide
+     *      @param  int 	$filtertype      Not used
+     *		@param	int		$addempty		 Add an empty entry
      *		@return	void
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
@@ -5109,7 +5109,7 @@ class Form
 	 * 	@param		int		$id				Id of object
  	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
  	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect (recommended)
-	 * 	@return		mixed					Array of category objects or < 0 if KO
+	 * 	@return		string					String with categories
 	 */
 	function showCategories($id, $type, $rendermode=0)
 	{
@@ -5170,7 +5170,7 @@ class Form
         {
         	$num = count($object->linkedObjects);
             $numoutput=0;
-            
+
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
         		$tplpath = $element = $subelement = $objecttype;
@@ -5217,7 +5217,10 @@ class Form
         		else if ($objecttype == 'expensereport')   {
         			$tplpath = 'expensereport';
         		}
-
+        		else if ($objecttype == 'subscription')   {
+        		    $tplpath = 'adherents';
+        		}
+        		
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
@@ -5225,7 +5228,7 @@ class Form
         		{
         		    $numoutput++;
         		    
-        		    echo '<br>';
+        		    print '<br>';
         		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
         		    
         		    print '<table class="noborder allwidth">';
@@ -5579,10 +5582,11 @@ class Form
      *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
      *	  @param	string	$morehtmlleft	More html code to show before ref
-     *	  @param	string	$morehtmlright	More html code to show before navigation arrows
+     *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place)
+     *	  @param	string	$morehtmlright	More html code to show after ref
      * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlright='')
+    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
     {
     	global $langs,$conf;
 
@@ -5601,7 +5605,7 @@ class Form
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<div style="vertical-align: middle">';
         
-		$ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		if ($morehtmlleft) $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
         
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
@@ -5621,6 +5625,8 @@ class Form
         }
 		$ret.='</div>';
 
+		if ($morehtmlright) $ret.='<div class="inline-block floatleft">'.$morehtmlright.'</div>';
+		
         if ($previous_ref || $next_ref || $morehtml)
         {
         	$ret.='<div class="pagination"><ul>';
@@ -5638,7 +5644,7 @@ class Form
         {
             $ret.='</ul></div>';
         }
-		if ($morehtmlright) $ret.='<div class="statusref">'.$morehtmlright.'</div>';
+		if ($morehtmlstatus) $ret.='<div class="statusref">'.$morehtmlstatus.'</div>';
         $ret.='</div>';
 		
         return $ret;
