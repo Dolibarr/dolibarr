@@ -2444,6 +2444,8 @@ else
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
 			// Tableau des substitutions
+			//$formmail->setSubstitFromObject($object);
+			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';
