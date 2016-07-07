@@ -82,7 +82,9 @@ class Cotisation extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			return $this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
+			$this->db->commit();
+			return $this->id;
 		}
 		else
 		{
