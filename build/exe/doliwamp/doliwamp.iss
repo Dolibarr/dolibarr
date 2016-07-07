@@ -611,14 +611,28 @@ begin
 		    destFile := pathWithSlashes+'/alias/dolibarr.conf';
 		    srcFile := pathWithSlashes+'/alias/dolibarr.conf.install';
 		
-		    if not FileExists (destFile) and FileExists(srcFile) then
+		    if FileExists(srcFile) then
 		    begin
-		      LoadStringFromFile (srcFile, srcContents);
+		      if not FileExists (destFile)
+		      begin
+  		        LoadStringFromFile (srcFile, srcContents);
 		
-		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
-		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+		        StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
-		      SaveStringToFile(destFile, srcContents, False);
+		        SaveStringToFile(destFile, srcContents, False);
+		      end
+		      else
+		      begin
+		        // We must replace to use format 2.4 of apache
+	            DeleteFile(destFile);
+  		        LoadStringFromFile (srcFile, srcContents);
+		
+		        StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+		
+		        SaveStringToFile(destFile, srcContents, False);
+		      end
 		    end
 		    DeleteFile(srcFile);
 		
@@ -632,13 +646,24 @@ begin
 		    destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
 		    srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
 		
-		    if not FileExists (destFile) and FileExists (srcFile) then
+		    if FileExists(srcFile) then
 		    begin
-	        // sinon on prends le fichier par defaut
-	        LoadStringFromFile (srcFile, srcContents);
-	        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
-	        StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
-	        SaveStringToFile(destFile,srcContents, False);
+	  	      if not FileExists (destFile) then
+		      begin
+	            LoadStringFromFile (srcFile, srcContents);
+	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+	            SaveStringToFile(destFile,srcContents, False);
+		      end
+		      else
+		      begin
+		        // We must replace to use format 2.4 of apache
+	            DeleteFile(destFile);
+	            LoadStringFromFile (srcFile, srcContents);
+	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+	            SaveStringToFile(destFile,srcContents, False);
+		      end
 		    end
 		
 		
