@@ -31,9 +31,9 @@ DownPaymentDesc=L'<b>acompte</b> = Le prix de la maison multiplié par le pource
 InterestRateDesc=Le  <b>taux d'intérêt</b> = Le pourcentage annuel d'intérêt divisé par 100.
 MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
 MonthlyInterestRateDesc=Le  <b>taux d'intérêt mensuel</b> = Le taux annuel d'intérêt divisé par 12 (pour les 12 mois de l'année)
-MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
+MonthTermDesc=Le <b>terme en mois</b> du prêt en mois = Le nombre d'années que vous avez pris pour le prêt multiplié par 12
 MonthlyPaymentDesc=Le paiement mensuel est déterminé en utilisant la formule suivante
-AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
+AmortizationPaymentDesc=L' <a href="#amortization">amortissement</a> décompose votre paiement mensuel entre l'intérêt de la banque et le remboursement du principal de votre prêt.
 AmountFinanced=Montant financé
 AmortizationMonthlyPaymentOverYears=Amortissement pour paiement mensuel : <b>%s</b> sur %s ans
 Totalsforyear=Total pour l'année
