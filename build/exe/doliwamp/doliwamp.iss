@@ -613,7 +613,7 @@ begin
 		
 		    if FileExists(srcFile) then
 		    begin
-		      if not FileExists (destFile)
+		      if not FileExists (destFile) then
 		      begin
   		        LoadStringFromFile (srcFile, srcContents);
 		
