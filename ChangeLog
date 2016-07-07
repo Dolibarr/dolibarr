@@ -118,6 +118,7 @@ NEW: Use ellipsis truncation on too large left menu text
 NEW: When a new field to show into lists is selected, the form is automatically submited and field added.
 NEW: When creating a template invoice from a draft invoice, if there is link to contract on draft invoice, link is kept on template invoice.
 NEW: When emailing is not sent completely, show progression.
+NEW: Add entity field in llx_societe_remise_except and llx_societe_remise
 
 For developers:
 
