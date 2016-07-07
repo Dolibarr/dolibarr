@@ -277,7 +277,7 @@ foreach ( $object->lines as $line ) {
     
     // Affiche un Sous-Total par compte comptable
     if ($displayed_account_number != "") {
-      print '<tr class="liste_total"><td align="right" colspan="4">'.utf8_encode($langs->trans("SubTotal")).':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+      print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
       print "<td>&nbsp;</td>\n";
       print '</tr>';
     }
@@ -323,14 +323,14 @@ foreach ( $object->lines as $line ) {
 }
 
 // Affiche un Sous-Total du dernier compte comptable affiché
-print '<tr class="liste_total"><td align="right" colspan="4">'.utf8_encode($langs->trans("SubTotal")).':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
+print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
 
 // Affiche le Total
 print '<tr class="liste_total">';
-print '<td align="right" colspan="4">'.utf8_encode($langs->trans("Total")).':</td>';
+print '<td align="right" colspan="4">'.$langs->trans("Total").':</td>';
 print '<td  align="right">';
 print price($total_debit);
 print '</td>';

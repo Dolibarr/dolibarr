@@ -235,7 +235,7 @@ else {
       
       // Affiche un Sous-Total par compte comptable
       if ($displayed_account != "") {
-        print '<tr class="liste_total"><td align="right" colspan="2">'.utf8_encode($langs->trans("SubTotal")) . ':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td><td class="nowrap" align="right">'.price($sous_total_credit-$sous_total_debit).'</td>';
+        print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td><td class="nowrap" align="right">'.price($sous_total_credit-$sous_total_debit).'</td>';
         print "<td>&nbsp;</td>\n";
         print '</tr>';
       }
@@ -268,11 +268,11 @@ else {
     
 	}
   
-  print '<tr class="liste_total"><td align="right" colspan="2">'.utf8_encode($langs->trans("SubTotal")) . ':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td><td class="nowrap" align="right">'.price($sous_total_credit-$sous_total_debit).'</td>';
+  print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td><td class="nowrap" align="right">'.price($sous_total_credit-$sous_total_debit).'</td>';
   print "<td>&nbsp;</td>\n";
   print '</tr>';
 
-  print '<tr class="liste_total"><td align="right" colspan="2">'.utf8_encode($langs->trans("AccountBalance")) . ':</td><td class="nowrap" align="right">'.price($total_debit).'</td><td class="nowrap" align="right">'.price($total_credit).'</td><td class="nowrap" align="right">'.price($total_credit-$total_debit).'</td>';
+  print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("AccountBalance") . ':</td><td class="nowrap" align="right">'.price($total_debit).'</td><td class="nowrap" align="right">'.price($total_credit).'</td><td class="nowrap" align="right">'.price($total_credit-$total_debit).'</td>';
   print "<td>&nbsp;</td>\n";
   print '</tr>';
 
