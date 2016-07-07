@@ -243,7 +243,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
     $this->db->begin();
 
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".intval($_GET['menuId']);
     $db->query($sql);
 
     if ($result == 0)
@@ -312,7 +312,7 @@ if ($action == 'create')
     $parent_rowid = $_GET['menuId'];
     if ($_GET['menuId'])
     {
-        $sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
+        $sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".intval($_GET['menuId']);
         $res  = $db->query($sql);
         if ($res)
         {
