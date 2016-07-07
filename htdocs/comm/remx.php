@@ -248,7 +248,8 @@ if ($socid > 0)
 	$remise_all=$remise_user=0;
 	$sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-	$sql.= " WHERE rc.fk_soc =". $object->id;
+	$sql.= " WHERE rc.fk_soc = " . $object->id;
+	$sql.= " AND rc.entity = " . $conf->entity;
 	$sql.= " AND (fk_facture_line IS NULL AND fk_facture IS NULL)";
 	$sql.= " GROUP BY rc.fk_user";
 	$resql=$db->query($sql);
@@ -318,7 +319,8 @@ if ($socid > 0)
 	$sql.= " fa.facnumber as ref, fa.type as type";
 	$sql.= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
-	$sql.= " WHERE rc.fk_soc =". $object->id;
+	$sql.= " WHERE rc.fk_soc = " . $object->id;
+	$sql.= " AND rc.entity = " . $conf->entity;
 	$sql.= " AND u.rowid = rc.fk_user";
 	$sql.= " AND (rc.fk_facture_line IS NULL AND rc.fk_facture IS NULL)";
 	$sql.= " ORDER BY rc.datec DESC";
