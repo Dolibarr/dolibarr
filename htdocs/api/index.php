@@ -89,16 +89,19 @@ foreach ($modulesdir as $dir)
                 if ($module == 'propale') {
                     $moduledirforclass = 'comm/propal';
                     $moduleforperm='propal';
-				}
+                }
                 elseif ($module == 'agenda') {
                     $moduledirforclass = 'comm/action';
-				}
+                }
+                elseif ($module == 'adherent') {
+                    $moduledirforclass = 'adherents';
+                }
                 elseif ($module == 'categorie') {
                     $moduledirforclass = 'categories';
-				}
+                }
                 elseif ($module == 'facture') {
                     $moduledirforclass = 'compta/facture';
-				}
+                }
 
                 // Defined if module is enabled
                 $enabled=true;
