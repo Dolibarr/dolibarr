@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  * Class Skeleton_Class
  *
  * Put here description of your class
+ *
  * @see CommonObject
  */
 class Skeleton_Class extends CommonObject
@@ -228,7 +229,7 @@ class Skeleton_Class extends CommonObject
 		if (count($sqlwhere) > 0) {
 			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
-		
+
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
@@ -463,7 +464,7 @@ class Skeleton_Class extends CommonObject
 		$result.= $link . $this->ref . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
@@ -518,8 +519,8 @@ class Skeleton_Class extends CommonObject
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen

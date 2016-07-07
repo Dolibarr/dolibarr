@@ -160,14 +160,14 @@ function CreateFolder( $resourceType, $currentFolder )
 
 				switch ( $sErrorMsg )
 				{
-					case '' :
+					case '':
 						$sErrorNumber = '0' ;
-						break ;
+						break;
 					case 'Invalid argument' :
 					case 'No such file or directory' :
 						$sErrorNumber = '102' ;		// Path too long.
 						break ;
-					default :
+					default:
 						$sErrorNumber = '110' ;
 						break ;
 				}

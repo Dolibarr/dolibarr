@@ -2734,6 +2734,7 @@ class Societe extends CommonObject
         global $conf,$langs,$hookmanager;
 
         $url='';
+        $action = '';
         
         $hookmanager->initHooks(array('idprofurl'));
         $parameters=array('idprof'=>$idprof, 'company'=>$thirdparty);

@@ -16,9 +16,9 @@ REM reg add HKLM\SYSTEM\CurrentControlSet\Services\doliwampapache /V Start /t RE
 
 REM Mysql 5.0-
 REM .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --install-manual doliwampmysqld
-REM .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --install doliwampmysqld
+.\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld-nt.exe --install doliwampmysqld
 REM Mysql 5.1+
-.\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld.exe --install doliwampmysqld
+REM .\bin\mysql\mysqlWAMPMYSQLVERSION\bin\mysqld.exe --install doliwampmysqld
 
 echo ---- End script >> doliwamp.log 2>>&1
 

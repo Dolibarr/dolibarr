@@ -163,7 +163,7 @@ if (empty($reshook))
 	// Change status of invoice
 	else if ($action == 'reopen' && $user->rights->facture->creer) {
 		$result = $object->fetch($id);
-		if ($object->statut == 2 || ($object->statut == 3 && $object->close_code != 'replaced')) {
+		if ($object->statut == 2 || ($object->statut == 3 && $object->close_code != 'replaced') || ($object->statut == 1 && $object->paye == 1)) {    // ($object->statut == 1 && $object->paye == 1) should not happened but can be found when data are corrupted
 			$result = $object->set_unpaid($user);
 			if ($result > 0) {
 				header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
@@ -2930,16 +2930,16 @@ else if ($id > 0 || ! empty($ref))
 	// Ref
 	print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
 	print '<td colspan="5">';
-	$morehtmlref = '';
+	$morehtmlright = '';
 	$discount = new DiscountAbsolute($db);
 	$result = $discount->fetch(0, $object->id);
 	if ($result > 0) {
-		$morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
+		$morehtmlright = '&nbsp; (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
 	}
 	if ($result < 0) {
 		dol_print_error('', $discount->error);
 	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref);
+	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', '', '', 0, '', '', $morehtmlright);
 	print '</td></tr>';
 
 	// Ref customer
@@ -3905,8 +3905,8 @@ else if ($id > 0 || ! empty($ref))
 			if ((($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)
 				|| ($object->type == Facture::TYPE_CREDIT_NOTE && empty($discount->id))
 				|| ($object->type == Facture::TYPE_DEPOSIT && empty($discount->id)))
-				&& ($object->statut == 2 || $object->statut == 3)
-				&& $user->rights->facture->creer)				// A paid invoice (partially or completely)
+				&& ($object->statut == 2 || $object->statut == 3 || ($object->statut == 1 && $object->paye == 1))   // Condition ($object->statut == 1 && $object->paye == 1) should not happened but can be found due to corrupted data
+			    && $user->rights->facture->creer)				// A paid invoice (partially or completely)
 			{
 				if (! $objectidnext && $object->close_code != 'replaced') 				// Not replaced by another invoice
 				{

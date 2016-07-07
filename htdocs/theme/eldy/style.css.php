@@ -1058,6 +1058,8 @@ div.tmenucenter
 div.menu_titre {
 	padding-top: 4px;
 	padding-bottom: 4px;
+	overflow: hidden;
+    text-overflow: ellipsis;	
 }
 .mainmenuaspan
 {
@@ -1421,7 +1423,7 @@ div.vmenu, td.vmenu {
 .companylogo { }
 .searchform { padding-top: 4px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -4292,7 +4294,9 @@ border-top-right-radius: 6px;
 
 /* For demo pages */
 img.demothumb {
-    box-shadow: 2px 2px 8px #888;
+    box-shadow: 2px 2px 8px #BBB;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
 
@@ -4329,6 +4333,12 @@ img.demothumb {
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
 
+    img.demothumb {
+        box-shadow: 1px 1px 4px #BBB;
+        margin-right: 6px;
+        margin-left: 4px;
+        width: 80px;
+    }
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */

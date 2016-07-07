@@ -1480,7 +1480,12 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
 	    {
 	        $qs=$_SERVER["QUERY_STRING"];
-	        $qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
+	        
+			foreach($_POST as $key=>$value) {
+				if($key!=='action')$qs.='&'.$key.'='.urlencode($value);
+			} 
+			
+			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
 	        $text.='</a>';
