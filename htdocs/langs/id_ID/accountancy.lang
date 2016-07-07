@@ -82,6 +82,13 @@ Codejournal=Jurnal
 NumPiece=Jumlah potongan
 AccountingCategory=Kategori akuntansi
 
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+
 DelBookKeeping=Hapus catatan buku besar
 
 DescSellsJournal=Jurnal Penjualan
@@ -140,6 +147,7 @@ Modelcsv_bob50=Ekspor terhadap Sage BOB 50
 Modelcsv_ciel=Ekspor terhadap Sage Ceil Compta atau Compta Evolution
 Modelcsv_quadratus=Ekspor terhadap Quadratus QuadraCompta
 Modelcsv_ebp=Ekspor terhadap EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=init akuntansi
@@ -158,3 +166,4 @@ Formula=Rumus
 ## Error
 ErrorNoAccountingCategoryForThisCountry=Tidak ada kategori akuntansi yang tersedia untuk negara ini
 ExportNotSupported=Format ekspor yang diseting tidak sesuai untuk halaman ini
+BookeppingLineAlreayExists=Lines already existing into bookeeping

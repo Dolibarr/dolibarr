@@ -169,6 +169,11 @@ ErrorSavingChanges=Wystąpił błąd podczas zapisywania zmian
 ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=File must have format %s
 ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
+ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
+ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
+ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
+ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Hasło zostało ustawione dla tego użytkownika. Jednakże nie Konto użytkownika zostało utworzone. Więc to hasło jest przechowywane, ale nie mogą być używane do logowania do Dolibarr. Może być stosowany przez zewnętrzny moduł / interfejsu, ale jeśli nie trzeba definiować dowolną logowania ani hasła do członka, można wyłączyć opcję "Zarządzaj login dla każdego członka" od konfiguracji modułu użytkownika. Jeśli potrzebujesz zarządzać logowanie, ale nie wymagają hasła, możesz zachować to pole puste, aby uniknąć tego ostrzeżenia. Uwaga: E może być również stosowany jako login, jeśli element jest połączony do użytkownika.

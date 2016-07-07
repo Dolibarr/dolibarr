@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=به روز رسانی ماهانه
 ManualUpdate=دستی به روز رسانی
 HolidaysCancelation=Leave request cancelation
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

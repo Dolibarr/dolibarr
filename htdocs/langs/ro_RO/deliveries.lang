@@ -27,4 +27,4 @@ Recipient=Recipient
 ErrorStockIsNotEnough=Nu există stoc suficient
 Shippable=Livrabil
 NonShippable=Nelivrabil
-ShowReceiving=Show delivery receipt
+ShowReceiving= Afișare notă de recepție
