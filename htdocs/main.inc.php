@@ -1038,7 +1038,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
         $ext='version='.urlencode(DOL_VERSION);
         if (GETPOST('version')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
         if (GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) $ext='testmenuhider='.GETPOST('testmenuhider','int');
-        
+
         if (! defined('DISABLE_JQUERY') && ! $disablejs && $conf->use_javascript_ajax)
         {
             print '<!-- Includes CSS for JQuery (Ajax library) -->'."\n";
@@ -1376,7 +1376,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
     $searchform='';
     $bookmarks='';
-    
+
     // Instantiate hooks of thirdparty module
     $hookmanager->initHooks(array('toprightmenu'));
 
@@ -1480,11 +1480,13 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    if (empty($conf->global->MAIN_PRINT_DISABLELINK) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && empty($conf->browser->phone))
 	    {
 	        $qs=$_SERVER["QUERY_STRING"];
-	        
+
 			foreach($_POST as $key=>$value) {
-				if($key!=='action')$qs.='&'.$key.'='.urlencode($value);
-			} 
-			
+				if (!is_array($value)) {
+					if($key!=='action')$qs.='&'.$key.'='.urlencode($value);
+				}
+			}
+
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
 	        $text ='<a href="'.$_SERVER["PHP_SELF"].'?'.$qs.($qs?'&':'').'optioncss=print" target="_blank">';
 	        $text.= img_picto(":".$langs->trans("PrintContentArea"), 'printer_top.png', 'class="printer"');
