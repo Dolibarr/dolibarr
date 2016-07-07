@@ -1482,9 +1482,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	        $qs=$_SERVER["QUERY_STRING"];
 
 			foreach($_POST as $key=>$value) {
-				if (!is_array($value)) {
-					if($key!=='action')$qs.='&'.$key.'='.urlencode($value);
-				}
+				if($key!=='action' && !is_array($value))$qs.='&'.$key.'='.urlencode($value);
 			}
 
 			$qs.=(($qs && $morequerystring)?'&':'').$morequerystring;
