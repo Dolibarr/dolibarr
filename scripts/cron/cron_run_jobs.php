@@ -80,6 +80,23 @@ if ($key != $conf->global->CRON_KEY)
 	exit(-1);
 }
 
+// If param userlogin is reserved word 'firstadmin' 
+if ($userlogin == 'firstadmin')
+{
+    $sql='SELECT login from '.MAIN_DB_PREFIX.'user WHERE admin = 1 ORDER BY entity LIMIT 1';
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj=$db->fetch_object($resql);
+        if ($obj) 
+        {
+            $userlogin = $obj->login;
+            echo "First admin user found is login '".$userlogin."'\n<br>";
+        }
+    }
+    else dol_print_error($db);
+}
+
 // Check user login
 $user=new User($db);
 $result=$user->fetch('',$userlogin);
@@ -93,8 +110,8 @@ else
 {
 	if (empty($user->id))
 	{
-		echo " User user login: ".$userlogin." do not exists";
-		dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
+		echo "User user login: ".$userlogin." does not exists";
+		dol_syslog("User user login:".$userlogin." does not exists", LOG_ERR);
 		exit(-1);
 	}
 }
@@ -178,7 +195,7 @@ function usage($path,$script_file)
 {
 	global $conf;
 
-	print "Usage: ".$script_file." securitykey userlogin [cronjobid]\n";
+	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid]\n";
 	print "The script return 0 when everything worked successfully.\n";
 	print "\n";
 	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron.\n";

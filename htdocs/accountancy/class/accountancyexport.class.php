@@ -142,7 +142,7 @@ class AccountancyExport
 			case self::$EXPORT_TYPE_COGILOG :
 				$this->exportCogilog($TData);
 				break;
-			default :
+			default:
 				$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
 				break;
 		}
@@ -156,6 +156,8 @@ class AccountancyExport
 	 * @return void
 	 */
 	public function exportNormal($objectLines) {
+		global $conf;
+		
 		foreach ( $objectLines as $line ) {
 			// Std export
 			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);

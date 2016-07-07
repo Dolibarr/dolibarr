@@ -41,6 +41,8 @@ class Mailing extends CommonObject
 	var $bgcolor;
 	var $bgimage;
 
+	var $statut;       // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
+	
 	var $email_from;
 	var $email_replyto;
 	var $email_errorsto;

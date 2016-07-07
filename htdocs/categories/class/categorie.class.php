@@ -1008,13 +1008,13 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Affiche contenu de $this->cats
+	 *	Display content of $this->cats
 	 *
 	 *	@return	void
 	 */
 	function debug_cats()
 	{
-		// Affiche $this->cats
+		// Display $this->cats
 		foreach($this->cats as $key => $val)
 		{
 			print 'id: '.$this->cats[$key]['id'];
@@ -1029,11 +1029,11 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * 	Retourne toutes les categories
+	 * 	Returns all categories 
 	 *
 	 *	@param	int			$type		Type of category
 	 *	@param	boolean		$parent		Just parent categories if true
-	 *	@return	array					Tableau d'objet Categorie
+	 *	@return	array					Table of Object Category  
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
@@ -1064,9 +1064,9 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Retourne le nombre total de categories
+	 * 	Returns total number of categories
 	 *
-	 *	@return		int		Nombre de categories
+	 *	@return		int		Number of categories
 	 *	@deprecated function not used ?
 	 */
 	function get_nb_categories()
@@ -1133,7 +1133,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 *	Retourne les categories de premier niveau (qui ne sont pas filles)
+	 *	Returns the top level categories (which are not girls)
 	 *
 	 *	@param		int		$type		Type of category
 	 *	@return		array
@@ -1144,8 +1144,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Retourne les chemin de la categorie, avec les noms des categories
-	 * separes par $sep (" >> " par defaut)
+	 * Returns the path of the category, with the names of the categories
+	 * separated by $sep (" >> " by default)
 	 *
 	 * @param	string	$sep	     Separator
 	 * @param	string	$url	     Url
@@ -1205,7 +1205,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 *	Retourne un tableau contenant la liste des categories meres
+	 *	Returns an array containing the list of parent categories
 	 *
 	 *	@return	int|array <0 KO, array OK
 	 */
@@ -1239,8 +1239,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Retourne dans un tableau tous les chemins possibles pour arriver a la categorie
-	 * 	en partant des categories principales, representes par des tableaux de categories
+	 * 	Returns in a table all possible paths to get to the category 
+	 * 	starting with the major categories represented by Tables of categories  
 	 *
 	 *	@return	array
 	 */
@@ -1324,8 +1324,8 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * 	Retourne les categories dont l'id ou le nom correspond
-	 * 	ajoute des wildcards au nom sauf si $exact = true
+	 * 	Returns categories whose id or name match
+	 * 	add wildcards in the name unless $exact = true
 	 *
 	 * 	@param		int			$id			Id
 	 * 	@param		string		$nom		Name
