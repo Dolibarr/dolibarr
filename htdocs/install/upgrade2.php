@@ -401,6 +401,9 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.9.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
+        	// Migrate to add entity value into llx_societe_remise
+        	migrate_remise_entity($db,$langs,$conf);
+
         	// Migrate to add entity value into llx_societe_remise_except
         	migrate_remise_except_entity($db,$langs,$conf);
 
@@ -3609,6 +3612,84 @@ function migrate_event_assignement($db,$langs,$conf)
 					$error++;
 					dol_print_error($db);
 				}
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate to add entity value into llx_societe_remise
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_remise_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationRemiseEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_remise_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT sr.rowid, s.entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise as sr, ".MAIN_DB_PREFIX."societe as s";
+	$sqlSelect.= " WHERE sr.fk_soc = s.rowid";
+
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
+				$sqlUpdate.= " entity = " . $obj->entity;
+				$sqlUpdate.= " WHERE rowid = " . $obj->rowid;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
 				print ". ";
 				$i++;
 			}

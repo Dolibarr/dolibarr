@@ -1377,6 +1377,18 @@ class Societe extends CommonObject
                 }
             }
 
+            // Remove societe_remise_except
+            if (! $error)
+            {
+            	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise";
+            	$sql.= " WHERE fk_soc = " . $id;
+            	if (! $this->db->query($sql))
+            	{
+            		$error++;
+            		$this->error = $this->db->lasterror();
+            	}
+            }
+
 		    // Remove societe_remise_except
             if (! $error)
             {
@@ -1488,7 +1500,7 @@ class Societe extends CommonObject
      */
     function set_remise_client($remise, $note, User $user)
     {
-        global $langs;
+        global $conf, $langs;
 
         // Nettoyage parametres
         $note=trim($note);
@@ -1520,8 +1532,8 @@ class Societe extends CommonObject
 
             // Ecrit trace dans historique des remises
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
-            $sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
-            $sql.= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
+            $sql.= " (entity, datec, fk_soc, remise_client, note, fk_user_author)";
+            $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
             $sql.= " '".$this->db->escape($note)."',";
             $sql.= " ".$user->id;
             $sql.= ")";
@@ -3481,13 +3493,10 @@ class Societe extends CommonObject
 		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
 		 * Because this function is meant to be executed within a transaction, we won't take care of it.
 		 */
-		$sql = 'SELECT rowid
-FROM '.MAIN_DB_PREFIX.'societe_commerciaux
-WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
-  SELECT fk_user
-  FROM '.MAIN_DB_PREFIX.'societe_commerciaux
-  WHERE fk_soc = '.(int) $origin_id.'
-);';
+		$sql = 'SELECT rowid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux';
+		$sql.= ' WHERE fk_soc = ' . (int) $dest_id;
+		$sql.= ' AND fk_user IN (SELECT fk_user FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE fk_soc = '.(int) $origin_id.');';
 
 		$query = $db->query($sql);
 
