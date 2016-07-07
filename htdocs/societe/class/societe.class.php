@@ -1422,7 +1422,7 @@ class Societe extends CommonObject
                 }
             }
 
-            // Remove societe_remise_except
+            // Remove societe_remise
             if (! $error)
             {
             	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise";
