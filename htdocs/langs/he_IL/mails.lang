@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=You can use the <b>comma</b> separat
 TagCheckMail=Track mail opening
 TagUnsubscribe=Unsubscribe link
 TagSignature=Signature sending user
-TagMailtoEmail=Recipient EMail
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=הודעות

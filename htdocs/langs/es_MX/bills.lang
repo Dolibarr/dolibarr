@@ -11,7 +11,5 @@ BillTo=Hacia
 ReasonDiscount=Razón
 PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito
-PaymentTypeCHQ=Verificar
-PaymentTypeShortCHQ=Verificar
 IBANNumber=CLABE Interbancaria
 BICNumber=Sucursal

@@ -51,3 +51,5 @@ IPP_Supported=Typ nośnika
 DirectPrintingJobsDesc=Ta strona pokazuje listę zadań wydruku dla dostępnych drukarek.
 GoogleAuthNotConfigured=Ustawienia Google OAuth nie zrobił. Włącz moduł OAuth i ustawić Google ID / tajemnica.
 GoogleAuthConfigured=Poświadczenia Google OAuth znaleźć w konfiguracji modułu OAuth.
+PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cloud Print.
+PrintTestDescprintgcp=List of Printers for Google Cloud Print.

@@ -169,6 +169,11 @@ ErrorSavingChanges=Hi ha hagut un error al salvar els canvis
 ErrorWarehouseRequiredIntoShipmentLine=El magatzem és obligatori en la línia a enviar
 ErrorFileMustHaveFormat=El fitxer té format %s
 ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
+ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
+ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
+ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
+ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
 
 # Warnings
 WarningPasswordSetWithNoAccount=S'ha indicat una contrasenya per aquest soci. En canvi, no s'ha creat cap compte d'usuari, de manera que aquesta contrasenya s'ha desat però no pot ser utilitzada per entrar a Dolibarr. Es pot utilitzar per un mòdul/interfície extern, però si no cal definir cap usuari i contrasenya per un soci, pots deshabilitar la opció "Gestiona l'entrada per tots els socis" des de la configuració del mòdul Socis. Si necessites gestionar una entrada sense contrasenya, pots mantenir aquest camp buit i permetre aquest avís. Nota: El correu electrònic es pot utilitzar per entrar si el soci està enllaçat a un usuarí

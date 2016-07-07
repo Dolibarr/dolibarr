@@ -82,6 +82,13 @@ Codejournal=Günlük
 NumPiece=Parça sayısı
 AccountingCategory=Muhasebe kategorisi
 
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+
 DelBookKeeping=Büyük defter kayıtlarını sil
 
 DescSellsJournal=Satış günlüğü
@@ -140,6 +147,7 @@ Modelcsv_bob50=Sage BOB 50'ye doğru dişaaktar
 Modelcsv_ciel=Sage Ciel Compta ya da Compta Evolution'a doğru dışaaktar
 Modelcsv_quadratus=Quadratus QuadraCompta'ya doğru dışaaktar
 Modelcsv_ebp=EBP'ye yönelik dışaaktarım
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı
@@ -158,3 +166,4 @@ Formula=Formül
 ## Error
 ErrorNoAccountingCategoryForThisCountry=Bu ülke için mevcut muhasebe kategorisi yok
 ExportNotSupported=Ayarlanan dışaaktarım biçimi bu sayfada desteklenmiyor
+BookeppingLineAlreayExists=Lines already existing into bookeeping

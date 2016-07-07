@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - admin
 VersionProgram=Versionsnummer
-VersionLastInstall=Installationsversion
-VersionLastUpgrade=Version nach Upgrade
 VersionDevelopment=Entwickler
 SessionId=Sitzungsnummer
 SessionSaveHandler=Sessionmanager
@@ -76,8 +74,6 @@ Permission2411=Maßnahmen (Termine oder Aufgaben) Anderer einsehen
 Permission2412=Maßnahmen (Termine oder Aufgaben) Anderer erstellen/bearbeiten
 Permission2413=Maßnahmen (Termine oder Aufgaben) Anderer löschen
 Permission2501=Dokumente hochladen oder löschen
-DictionaryCompanyType=Art des Unternehmens
-DictionaryCompanyJuridicalType=Rechtsform
 VATIsNotUsedDesc=Die vorgeschlagene MwSt. ist standardmäßig 0 für alle Fälle wie Stiftungen, Einzelpersonen oder Kleinunternehmen-
 VirtualServerName=Virtual Server Name
 PhpWebLink=Php Web-Link

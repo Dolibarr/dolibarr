@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=您可以使用<b>逗号</b>分隔�
 TagCheckMail=追踪邮件打开
 TagUnsubscribe=退订链接
 TagSignature=签名发送给用户
-TagMailtoEmail=收件人电子邮件
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=通知

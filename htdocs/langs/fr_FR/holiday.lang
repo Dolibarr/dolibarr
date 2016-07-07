@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Les %s dernières demandes de congès modifiées
 HolidaysMonthlyUpdate=Mise à jour mensuelle
 ManualUpdate=Mise à jour manuelle
 HolidaysCancelation=Annulation de la demande de congés
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
 LastUpdateCP=Dernière mise à jour automatique de l'allocation des congés

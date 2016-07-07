@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Lahko uporabite <b>vejico</b> kot lo
 TagCheckMail=Odpiranje sledenja pošte
 TagUnsubscribe=Povezava za odjavo
 TagSignature=Podpis pošiljatelja
-TagMailtoEmail=Prejemnik E-pošte
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=Email ni bil poslan. Napačen naslov pošiljatelja ali prejemnika. Preverite profil uporabnika.
 # Module Notifications
 Notifications=Obvestila

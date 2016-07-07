@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=شما می توانید جداکن�
 TagCheckMail=پیگیری پست الکترونیکی باز
 TagUnsubscribe=لینک لغو عضویت
 TagSignature=امضاء ارسال کاربر
-TagMailtoEmail=ایمیل دریافت کننده
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=اطلاعیه ها

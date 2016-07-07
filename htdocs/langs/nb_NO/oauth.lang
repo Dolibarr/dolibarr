@@ -12,4 +12,4 @@ ListOfSupportedOauthProviders=Legg inn opplysninger fra din OAuth2-leverandør. 
 OAUTH_GOOGLE_NAME=Api Google
 OAUTH_GOOGLE_ID=Api Google Id
 OAUTH_GOOGLE_SECRET=Api Google Secret
-OAUTH_GOOGLE_DESC=Go on <a href="https://console.developers.google.com/" target="_blank">this page</a> then Credentials to create Oauth credentials
+OAUTH_GOOGLE_DESC=Gå til <a href="https://console.developers.google.com/" target="_blank">denne siden</a> og opprett Oauth-legitimasjon

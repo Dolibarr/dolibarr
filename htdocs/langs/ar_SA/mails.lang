@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=يمكنك استخدام <b>الف�
 TagCheckMail=افتتاح البريد المسار
 TagUnsubscribe=رابط إلغاء الاشتراك
 TagSignature=التوقيع إرسال المستعمل
-TagMailtoEmail=البريد الإلكتروني المستلم
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=لا ترسل البريد الإلكتروني. مرسل سيئة أو البريد الإلكتروني المستلم. تحقق ملف تعريف المستخدم.
 # Module Notifications
 Notifications=الإخطارات

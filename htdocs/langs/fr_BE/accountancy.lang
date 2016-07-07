@@ -21,4 +21,3 @@ DescVentilCustomer=Consulter la subdivision comptable annuelle de vos factures c
 TotalMarge=Marge de ventes totale
 Selectmodelcsv=Sélectionnez un modèle d'export
 Modelcsv_normal=Export classique
-Modelcsv_CEGID=Export vers CEGID expert

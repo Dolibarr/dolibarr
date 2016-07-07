@@ -51,3 +51,5 @@ IPP_Supported=Тип носителя
 DirectPrintingJobsDesc=This page lists printing jobs found for available printers.
 GoogleAuthNotConfigured=Google OAuth setup not done. Enable module OAuth and set a Google ID/Secret.
 GoogleAuthConfigured=Google OAuth credentials found into setup of module OAuth.
+PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cloud Print.
+PrintTestDescprintgcp=List of Printers for Google Cloud Print.

@@ -72,14 +72,16 @@ NewSoldeCP=Ny balanse
 alreadyCPexist=En feriesøknad er allerede utført for denne perioden
 FirstDayOfHoliday=Første feriedag
 LastDayOfHoliday=Siste feriedag
-BoxTitleLastLeaveRequests=Latest %s modified leave requests
+BoxTitleLastLeaveRequests=Siste %s endrede ferieforespørsler
 HolidaysMonthlyUpdate=Månedlig oppdatering
 ManualUpdate=Manuell oppdatering
 HolidaysCancelation=Kansellering av feriesøknader
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
-LastUpdateCP=Latest automatic update of leaves allocation
-MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation
+LastUpdateCP=Siste automatiske oppdatering av ferietildeling
+MonthOfLastMonthlyUpdate=Måned for siste automatiske oppdatering av ferietildeling
 UpdateConfCPOK=Vellykket oppdatering.
 Module27130Name= Håndtering av feriesøknader
 Module27130Desc= Håndtering av feriesøknader
