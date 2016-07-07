@@ -50,6 +50,8 @@ $langs->load('users');
 
 $cp = new Holiday($db);
 
+$alltypeleaves=$cp->getTypes(1,-1);    // To have labels
+
 llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
 
 // Recent changes are more important than old changes
@@ -94,7 +96,10 @@ foreach($cp->logs as $logs_CP)
    	print '<td>'.$user_action->getNomUrl(1).'</td>';
    	print '<td>'.$user_update->getNomUrl(1).'</td>';
    	print '<td>'.$logs_CP['type_action'].'</td>';
-   	print '<td>'.$logs_CP['fk_type'].'</td>';
+   	print '<td>';
+	$label=$alltypeleaves[$logs_CP['fk_type']]['label'];
+	print $label?$label:$logs_CP['fk_type'];
+   	print '</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],5).' '.$langs->trans('days').'</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'],5).' '.$langs->trans('days').'</td>';
    	print '</tr>'."\n";

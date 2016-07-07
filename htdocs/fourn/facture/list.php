@@ -743,17 +743,20 @@ if ($resql)
 			$facturestatic->ref_supplier=$obj->ref_supplier;
 			$facturestatic->date_echeance = $db->jdate($obj->datelimite);
 			$facturestatic->statut = $obj->fk_statut;
-				
+	
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.ref']['checked']))
     		{
                 print '<td class="nowrap">';
-    
+
                 print $facturestatic->getNomUrl(1);
                 $filename=dol_sanitizeFileName($obj->ref);
+
                 $filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
-                print $formfile->getDocumentsLink('facture_fournisseur', $filename, $filedir);
-                print "</td>\n";
+				$subdir = get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
+				print $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
+
+				print "</td>\n";
 
                 if (! $i) $totalarray['nbfield']++;
     		}

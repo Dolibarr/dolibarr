@@ -276,7 +276,7 @@ if ($type_element == 'contract')
 	$thirdTypeSelect='customer';
 }
 
-if ($sql_select)
+if (!empty($sql_select)) 
 {
 	$sql = $sql_select;
 	$sql.= ' d.description as description,';
@@ -302,7 +302,7 @@ if ($sql_select)
 		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 	}
 	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
-	if ($sprod_fulldescr) 
+	if ($sprod_fulldescr)
 	{
 	    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
 	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";

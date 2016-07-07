@@ -71,7 +71,7 @@ class modAccounting extends DolibarrModules
 		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array("modComptabilite"); // List of modules are in conflict with this module
 		$this->phpmin = array(5, 3); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3, 7); // Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(3, 9); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("accountancy");
 
 		// Constants
@@ -179,7 +179,7 @@ class modAccounting extends DolibarrModules
 		$this->const[18] = array (
 				"ACCOUNTING_EXPORT_GLOBAL_ACCOUNT",
 				"yesno",
-				"1" 
+				"1"
 		);
 		$this->const[19] = array (
 				"ACCOUNTING_EXPORT_LABEL",
@@ -189,12 +189,12 @@ class modAccounting extends DolibarrModules
 		$this->const[20] = array (
 				"ACCOUNTING_EXPORT_AMOUNT",
 				"yesno",
-				"1" 
+				"1"
 		);
 		$this->const[21] = array (
 				"ACCOUNTING_EXPORT_DEVISE",
 				"yesno",
-				"1" 
+				"1"
 		);
 		*/
 		$this->const[22] = array(
@@ -270,7 +270,7 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][4] = 'fiscalyear';
 		$this->rights[$r][5] = '';
 		$r++;
-		
+
 		$this->rights[$r][0] = 50440;
 		$this->rights[$r][1] = 'Manage chart of accounts';
 		$this->rights[$r][2] = 'r';

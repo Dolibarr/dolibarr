@@ -311,14 +311,17 @@ if (empty($reshook))
 	}
 
 	// Delete payment
-	elseif ($action == 'deletepaiement' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $user->rights->fournisseur->facture->creer)
 	{
-	    $object->fetch($id);
+	 	$object->fetch($id);
 	    if ($object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0)
 	    {
 	    	$paiementfourn = new PaiementFourn($db);
 	        $result=$paiementfourn->fetch(GETPOST('paiement_id'));
-	        if ($result > 0) $result=$paiementfourn->delete(); // If fetch ok and found
+	        if ($result > 0) {
+	        	$result=$paiementfourn->delete(); // If fetch ok and found
+	        	header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+			}
 	        if ($result < 0) {
 		        setEventMessages($paiementfourn->error, $paiementfourn->errors, 'errors');
 	        }
@@ -1621,6 +1624,12 @@ else
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteBill'), $langs->trans('ConfirmDeleteBill'), 'confirm_delete', '', 0, 1);
 
         }
+        if ($action == 'deletepaiement')
+        {
+        	$payment_id = GETPOST('paiement_id');
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 1);
+
+        }
 
        	// Confirmation to delete line
 		if ($action == 'ask_deleteline')
@@ -1736,7 +1745,7 @@ else
         {
             $num = $db->num_rows($result);
             $i = 0; $totalpaye = 0;
-            print '<table class="nobordernopadding" width="100%">';
+            print '<table class="nobordernopadding paymenttable" width="100%">';
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans('Payments').'</td>';
 			print '<td>'.$langs->trans('Date').'</td>';

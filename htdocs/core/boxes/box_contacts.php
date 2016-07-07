@@ -83,7 +83,7 @@ class box_contacts extends ModeleBoxes
 				$societestatic=new Societe($db);
 
 				$line = 0;
-                while ($line < $num) 
+                while ($line < $num)
                 {
 					$objp = $db->fetch_object($result);
 					$datec=$db->jdate($objp->datec);
@@ -100,7 +100,7 @@ class box_contacts extends ModeleBoxes
                     $contactstatic->address = $objp->address;
                     $contactstatic->zip = $objp->zip;
                     $contactstatic->town = $objp->town;
-					
+
 					$societestatic->id = $objp->fk_soc;
                     $societestatic->name = $objp->socname;
                     $societestatic->name_alias = $objp->name_alias;
@@ -108,7 +108,7 @@ class box_contacts extends ModeleBoxes
                     $societestatic->code_fournisseur = $objp->code_fournisseur;
                     $societestatic->client = $objp->client;
                     $societestatic->fournisseur = $objp->fournisseur;
-                    
+
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="left"',
                         'text' => $contactstatic->getNomUrl(1),
@@ -131,7 +131,7 @@ class box_contacts extends ModeleBoxes
                         'text' => $contactstatic->getLibStatut(3),
                         'asis'=>1,
                     );
-                    
+
                     $line++;
                 }
 
@@ -163,11 +163,12 @@ class box_contacts extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

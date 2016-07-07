@@ -640,7 +640,8 @@ class ExtraFields
 		}
 		else
 		{
-			print dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 		}
 
 		return $array_name_label;
@@ -800,11 +801,7 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				$keyList=(empty($InfoFieldList[2])?'rowid':$InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3]))
-				{
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList.= ', '.$parentField;
-				}
+
 				if (count($InfoFieldList) > 4 && ! empty($InfoFieldList[4]))
 				{
 					if (strpos($InfoFieldList[4], 'extra.') !== false)
@@ -813,6 +810,11 @@ class ExtraFields
 					} else {
 						$keyList=$InfoFieldList[2].' as rowid';
 					}
+				}
+				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3]))
+				{
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$keyList.= ', '.$parentField;
 				}
 
 				$fields_label = explode('|',$InfoFieldList[1]);
