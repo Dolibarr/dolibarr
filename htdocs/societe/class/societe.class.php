@@ -1853,10 +1853,10 @@ class Societe extends CommonObject
         $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
         if (empty($notooltip))
         {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
                 $label=$langs->trans("ShowCompany");
-                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+                $link.=' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $link.=' class="classfortooltip"';
@@ -3078,7 +3078,7 @@ class Societe extends CommonObject
         }
         else return false;
     }
-    
+
     /**
      *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
      *
@@ -3370,7 +3370,7 @@ class Societe extends CommonObject
 
 	}
 
-	
+
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
@@ -3405,8 +3405,8 @@ class Societe extends CommonObject
 
 		return $result;
 	}
-	
-	
+
+
 	/**
 	 * Sets object to supplied categories.
 	 *

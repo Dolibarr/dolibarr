@@ -22,6 +22,7 @@
 create table llx_societe_remise_except
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
+  entity				integer DEFAULT 1 NOT NULL,				-- multi company id
   fk_soc				integer NOT NULL, -- client
   datec					datetime,
   amount_ht				double(24,8) NOT NULL,
