@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Copyright (C) 2016 Neil Orley	<neil.orley@oeris.fr>
  * largely based on the great work of :
  *  - Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
@@ -20,14 +20,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
- 
+
 
 /**
  * \file 		htdocs/accountancy/bookkeeping/listbyaccount.php
  * \ingroup 	Advanced accountancy
  * \brief 		List operation of book keeping ordered by account number
  */
- 
+
 require '../../main.inc.php';
 
 // Class
@@ -84,8 +84,8 @@ if ($sortorder == "")
 	$sortorder = "ASC";
 if ($sortfield == "")
 	$sortfield =  "t.rowid";
-  
-  
+
+
 $options = '';
 $filter = array ();
 
@@ -100,11 +100,11 @@ if (! empty($search_date_end)) {
 if (! empty($search_doc_date)) {
 	$filter['t.doc_date'] = $search_doc_date;
 	$options .= '&amp;doc_datemonth=' . GETPOST('doc_datemonth', 'int') . '&amp;doc_dateday=' . GETPOST('doc_dateday', 'int') . '&amp;doc_dateyear=' . GETPOST('doc_dateyear', 'int');
-} 
-   
-   
+}
+
+
 if (!GETPOST("button_removefilter_x") && !GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{  
+{
   if (! empty($search_accountancy_code_start)) {
   	$filter['t.numero_compte'] = $search_accountancy_code_start;
   	$options .= '&amp;search_accountancy_code_start=' . $search_accountancy_code_start;
@@ -217,7 +217,7 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
   $sortorder = "asc";
-else 
+else
   $sortorder = "desc";
 
 print '<div class="tabsAction">' . "\n";
@@ -274,24 +274,24 @@ foreach ( $object->lines as $line ) {
 
   // Permet d'afficher le compte comptable
   if (length_accountg($line->numero_compte) != $displayed_account_number) {
-    
+
     // Affiche un Sous-Total par compte comptable
     if ($displayed_account_number != "") {
       print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("SubTotal").':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td>';
       print "<td>&nbsp;</td>\n";
       print '</tr>';
     }
-    
+
     // Affiche le compte comptable en début de ligne
     print "<tr>";
   	print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">'.length_accountg($line->numero_compte) . ' : ' . $object->get_compte_desc($line->numero_compte).'</td>';
   	print '</tr>';
-    
+
     $displayed_account_number = length_accountg($line->numero_compte);
     $sous_total_debit = 0;
     $sous_total_credit = 0;
   }
-  
+
 	print '<tr'. $bc[$var].'>';
 	print '<td>&nbsp;</td>';
 	print '<td align="center">' . dol_print_date($line->doc_date, 'day') . '</td>';
@@ -299,14 +299,14 @@ foreach ( $object->lines as $line ) {
 
   // Affiche un lien vers la facture client/fournisseur
   $doc_ref = preg_replace('/\(.*\)/', '', $line->doc_ref);
-  if ($line->doc_type == 'supplier_invoice')  
+  if ($line->doc_type == 'supplier_invoice')
 	 print strlen(length_accounta($line->code_tiers)) == 0 ? '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a></td>' : '<td><a href="/fourn/facture/list.php?search_ref_supplier=' . $doc_ref . '">' . $line->label_compte . '</a><br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
   elseif ($line->doc_type == 'customer_invoice')
     print strlen(length_accounta($line->code_tiers)) == 0 ? '<td><a href="/compta/facture/list.php?search_ref=' . $doc_ref . '">' . $line->label_compte . '</a></td>' : '<td><a href="/compta/facture/list.php?search_ref=' . $doc_ref . '">' . $line->label_compte . '</a><br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
   else
     print strlen(length_accounta($line->code_tiers)) == 0 ? '<td>' . $line->label_compte . '</td>' : '<td>' . $line->label_compte . '<br /><span style="font-size:0.8em">(' . length_accounta($line->code_tiers) . ')</span></td>';
-    
-    
+
+
 	print '<td align="right">' . price($line->debit) . '</td>';
 	print '<td align="right">' . price($line->credit) . '</td>';
 	print '<td align="center">' . $line->code_journal . '</td>';
@@ -315,11 +315,11 @@ foreach ( $object->lines as $line ) {
 	print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $options . '&page=' . $page . '">' . img_delete() . '</a>';
 	print '</td>';
 	print "</tr>\n";
-  
+
   // Comptabilise le sous-total
   $sous_total_debit += $line->debit;
   $sous_total_credit += $line->credit;
-  
+
 }
 
 // Affiche un Sous-Total du dernier compte comptable affiché

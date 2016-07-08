@@ -232,25 +232,25 @@ else {
 
     // Permet d'afficher le compte comptable
     if ($root_account_description != $displayed_account) {
-      
+
       // Affiche un Sous-Total par compte comptable
       if ($displayed_account != "") {
         print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td><td class="nowrap" align="right">'.price($sous_total_credit-$sous_total_debit).'</td>';
         print "<td>&nbsp;</td>\n";
         print '</tr>';
       }
-      
+
       // Affiche le compte comptable en début de ligne
       print "<tr>";
     	print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">'. $root_account_description .'</td>';
     	print '</tr>';
-      
+
       $displayed_account = $root_account_description;
       $sous_total_debit = 0;
       $sous_total_credit = 0;
     }
 
-    // $object->get_compte_racine($line->numero_compte); 
+    // $object->get_compte_racine($line->numero_compte);
 
 
 		print '<td>' . length_accountg($line->numero_compte) . '</td>';
@@ -261,13 +261,13 @@ else {
 		print '<td align="center">' . $link;
 		print '</td>';
 		print "</tr>\n";
-    
+
     // Comptabilise le sous-total
     $sous_total_debit += $line->debit;
     $sous_total_credit += $line->credit;
-    
+
 	}
-  
+
   print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">'.price($sous_total_debit).'</td><td class="nowrap" align="right">'.price($sous_total_credit).'</td><td class="nowrap" align="right">'.price($sous_total_credit-$sous_total_debit).'</td>';
   print "<td>&nbsp;</td>\n";
   print '</tr>';
