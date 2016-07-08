@@ -149,6 +149,8 @@ class Commande extends CommonOrder
 	var $multicurrency_total_tva;
 	var $multicurrency_total_ttc;
 
+	var $oldcopy;
+
     /**
      * ERR Not enough stock
      */
@@ -2071,6 +2073,13 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->remise_percent = $remise;
+            	$this->update_price(1);
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2081,9 +2090,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->remise_percent = $remise;
-            	$this->update_price(1);
-
             	$this->db->commit();
             	return 1;
             }
@@ -2133,6 +2139,13 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->remise_absolue = $remise;
+            	$this->update_price(1);
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2143,9 +2156,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->remise_absolue = $remise;
-            	$this->update_price(1);
-
             	$this->db->commit();
             	return 1;
             }
@@ -2191,6 +2201,12 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->date = $date;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2201,8 +2217,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->date = $date;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2251,6 +2265,12 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->date_livraison = $date_livraison;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2261,8 +2281,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->date_livraison = $date_livraison;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2311,6 +2329,12 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->fk_availability = $id;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2321,8 +2345,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	 $this->fk_availability = $id;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2368,6 +2390,12 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->fk_input_reason = $id;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2378,8 +2406,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->fk_input_reason = $id;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2497,6 +2523,12 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->availability_id = $availability_id;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2507,8 +2539,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->availability_id = $availability_id;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2561,6 +2591,12 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->demand_reason_id = $demand_reason_id;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2571,8 +2607,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->demand_reason_id = $demand_reason_id;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2625,6 +2659,12 @@ class Commande extends CommonOrder
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->ref_client = $ref_client;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2635,8 +2675,6 @@ class Commande extends CommonOrder
 
             if (! $error)
             {
-            	$this->ref_client = $ref_client;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2660,10 +2698,11 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as invoiced
 	 *
-	 * @param      User    $user       Object user making the change
-	 * @return     int                 <0 if KO, >0 if OK
+	 * @param	User    $user       Object user making the change
+	 * @param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 * @return	int                 <0 if KO, >0 if OK
 	 */
-	function classifyBilled(User $user)
+	function classifyBilled(User $user, $notrigger=0)
 	{
 		global $user;
         $error = 0;
@@ -2676,16 +2715,24 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-            // Call trigger
-            $result=$this->call_trigger('ORDER_CLASSIFY_BILLED',$user);
-            if ($result < 0) $error++;
-            // End call triggers
+			
+			if (! $error)
+			{
+				$this->oldcopy= clone $this;
+				$this->facturee=1; // deprecated
+				$this->billed=1;
+			}
+			
+			if (! $notrigger && empty($error))
+			{
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_CLASSIFY_BILLED',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+			}
 
 			if (! $error)
 			{
-				$this->facturee=1; // deprecated
-				$this->billed=1;
-
 				$this->db->commit();
 				return 1;
 			}
@@ -2741,6 +2788,13 @@ class Commande extends CommonOrder
 	    dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
 	    if ($this->db->query($sql))
 	    {
+	    	if (! $error)
+	    	{
+	    		$this->oldcopy= clone $this;
+	    		$this->facturee=1; // deprecated
+	    		$this->billed=1;
+	    	}
+	    	
 	        // Call trigger
 	        $result=$this->call_trigger('ORDER_CLASSIFY_UNBILLED',$user);
 	        if ($result < 0) $error++;

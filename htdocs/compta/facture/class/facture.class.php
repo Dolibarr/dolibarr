@@ -1510,6 +1510,11 @@ class Facture extends CommonInvoice
 			$error++;
 		}
 
+		if (! $error)
+		{
+
+			$this->ref_client = $ref_client;
+
 		if (! $notrigger && empty($error))
 		{
 			// Call trigger
@@ -1520,6 +1525,7 @@ class Facture extends CommonInvoice
 
 		if (! $error)
 		{
+
 			$this->ref_client = $ref_client;
 
 			$this->db->commit();
