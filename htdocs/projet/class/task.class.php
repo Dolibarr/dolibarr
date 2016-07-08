@@ -679,7 +679,8 @@ class Task extends CommonObject
                     $tasks[$i]->projectstatus	= $obj->projectstatus;
                     $tasks[$i]->label			= $obj->label;
                     $tasks[$i]->description		= $obj->description;
-                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;
+                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;      // deprecated
+                    $tasks[$i]->fk_task_parent	= $obj->fk_task_parent;
                     $tasks[$i]->duration		= $obj->duration_effective;
                     $tasks[$i]->planned_workload= $obj->planned_workload;
                     $tasks[$i]->progress		= $obj->progress;
@@ -913,14 +914,18 @@ class Task extends CommonObject
     /**
      *  Calculate total of time spent for task
      *
-     *  @param	int		$id 		Id of object (here task)
      *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration')
      */
-    function getSummaryOfTimeSpent($id='')
+    function getSummaryOfTimeSpent()
     {
         global $langs;
 
-        if (empty($id)) $id=$this->id;
+        $id=$this->id;
+        if (empty($id)) 
+        {
+            dol_syslog("getSummaryOfTimeSpent called on a not loaded task", LOG_ERR);
+            return -1; 
+        }
 
         $result=array();
 
