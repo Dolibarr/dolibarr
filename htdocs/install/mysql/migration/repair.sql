@@ -202,6 +202,8 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 
 UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
 
+UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 
 -- Requests to clean old tables or external modules tables
 

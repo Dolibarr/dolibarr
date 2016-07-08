@@ -483,12 +483,12 @@ update llx_product_batch set batch = '000000' where batch = '';
 update llx_product_lot set batch = '000000' where batch = 'Undefined';
 update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
 
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
 
--- At end (higher risk of error)
 
--- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 
-ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
 
 CREATE TABLE llx_oauth_token (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -508,4 +508,10 @@ CREATE TABLE llx_oauth_state (
     entity integer
 )ENGINE=InnoDB;
 
-ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
+-- At end (higher risk of error)
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
+
+

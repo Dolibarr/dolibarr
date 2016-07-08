@@ -303,7 +303,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit + 1,$offset);
 
-
+//print $sql;
 dol_syslog("list allowed project", LOG_DEBUG);
 //print $sql;
 $resql = $db->query($sql);
