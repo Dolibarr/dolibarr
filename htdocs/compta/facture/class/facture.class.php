@@ -59,63 +59,63 @@ class Facture extends CommonInvoice
 	 */
 	protected $table_ref_field = 'facnumber';
 
-	var $socid;
+	public $socid;
 
-	var $author;
-	var $fk_user_author;
-	var $fk_user_valid;
-	var $date;              // Date invoice
-	var $date_creation;		// Creation date
-	var $date_validation;	// Validation date
-	var $datem;
-	var $ref_client;
-	var $ref_int;
+	public $author;
+	public $fk_user_author;
+	public $fk_user_valid;
+	public $date;              // Date invoice
+	public $date_creation;		// Creation date
+	public $date_validation;	// Validation date
+	public $datem;
+	public $ref_client;
+	public $ref_int;
 	//Check constants for types
-	var $type = self::TYPE_STANDARD;
+	public $type = self::TYPE_STANDARD;
 
 	//var $amount;
-	var $remise_absolue;
-	var $remise_percent;
-	var $total_ht=0;
-	var $total_tva=0;
-	var $total_ttc=0;
-	var $revenuestamp;
+	public $remise_absolue;
+	public $remise_percent;
+	public $total_ht=0;
+	public $total_tva=0;
+	public $total_ttc=0;
+	public $revenuestamp;
 
 	//! Fermeture apres paiement partiel: discount_vat, badcustomer, abandon
 	//! Fermeture alors que aucun paiement: replaced (si remplace), abandon
-	var $close_code;
+	public $close_code;
 	//! Commentaire si mis a paye sans paiement complet
-	var $close_note;
+	public $close_note;
 	//! 1 if invoice paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
-	var $paye;
+	public $paye;
 	//! id of source invoice if replacement invoice or credit note
-	var $fk_facture_source;
-	var $linked_objects=array();
-	var $date_lim_reglement;
-	var $cond_reglement_code;		// Code in llx_c_paiement
-	var $mode_reglement_code;		// Code in llx_c_paiement
-	var $fk_bank;					// Field to store bank id to use when payment mode is withdraw
+	public $fk_facture_source;
+	public $linked_objects=array();
+	public $date_lim_reglement;
+	public $cond_reglement_code;		// Code in llx_c_paiement
+	public $mode_reglement_code;		// Code in llx_c_paiement
+	public $fk_bank;					// Field to store bank id to use when payment mode is withdraw
 	/**
 	 * @deprecated
 	 */
-	var $products=array();
+	public $products=array();
 	/**
 	 * @var FactureLigne[]
 	 */
-	var $lines=array();
-	var $line;
-	var $extraparams=array();
-	var $specimen;
+	public $lines=array();
+	public $line;
+	public $extraparams=array();
+	public $specimen;
 
-	var $fac_rec;
+	public $fac_rec;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_tx;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
 	/**
 	 * @var int Situation cycle reference number
@@ -141,6 +141,8 @@ class Facture extends CommonInvoice
 	 * @var array Table of next situations
 	 */
 	public $tab_next_situation_invoice=array();
+
+	public $oldcopy;
 
     /**
      * Standard invoice
@@ -1512,8 +1514,8 @@ class Facture extends CommonInvoice
 
 		if (! $error)
 		{
-
 			$this->ref_client = $ref_client;
+		}
 
 		if (! $notrigger && empty($error))
 		{
@@ -2887,6 +2889,13 @@ class Facture extends CommonInvoice
 				$error++;
 			}
 
+			if (! $error)
+			{
+				$this->oldcopy= clone $this;
+				$this->remise_absolue = $remise;
+				$this->update_price(1);
+			}
+
 			if (! $notrigger && empty($error))
 			{
 				// Call trigger
@@ -2897,9 +2906,6 @@ class Facture extends CommonInvoice
 
 			if (! $error)
 			{
-				$this->remise_absolue = $remise;
-				$this->update_price(1);
-
 				$this->db->commit();
 				return 1;
 			}

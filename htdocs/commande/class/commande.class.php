@@ -57,99 +57,99 @@ class Commande extends CommonOrder
 	 * Client ID
 	 * @var int
 	 */
-    var $socid;
+    public $socid;
 
-    var $ref_client;
-    var $ref_int;
-    var $contactid;
+    public $ref_client;
+    public $ref_int;
+    public $contactid;
 
 	/**
 	 * Status of the order. Check the following constants:
 	 * @var int
 	 * @see Commande::STATUS_CANCELED, Commande::STATUS_DRAFT, Commande::STATUS_ACCEPTED, Commande::STATUS_CLOSED
 	 */
-    var $statut;
+    public $statut;
 	/**
 	 * @deprecated
 	 * @see billed
 	 */
-    var $facturee;
-    var $billed;		// billed or not
+    public $facturee;
+    public $billed;		// billed or not
 
-    var $brouillon;
-    var $cond_reglement_code;
+    public $brouillon;
+    public $cond_reglement_code;
 
-    var $fk_account;
+    public $fk_account;
 
     /**
      * It holds the label of the payment mode. Use it in case translation cannot be found.
      * @var string
      */
-    var $mode_reglement;
+    public $mode_reglement;
 
     /**
      * Payment mode id
      * @var int
      */
-    var $mode_reglement_id;
+    public $mode_reglement_id;
     /**
      * Payment mode code
      * @var string
      */
-    var $mode_reglement_code;
+    public $mode_reglement_code;
     /**
      * Availability delivery time id
      * @var int
      */
-    var $availability_id;
+    public $availability_id;
     /**
      * Availability delivery time code
      * @var string
      */
-    var $availability_code;
+    public $availability_code;
     /**
      * Label of availability delivery time. Use it in case translation cannot be found.
      * @var string
      */
-    var $availability;
+    public $availability;
 
-    var $demand_reason_id;
-    var $demand_reason_code;
-    var $address;
-    var $date;				// Date commande
+    public $demand_reason_id;
+    public $demand_reason_code;
+    public $address;
+    public $date;				// Date commande
 	/**
 	 * @deprecated
 	 * @see date
 	 */
-    var $date_commande;
-    var $date_livraison;	// Date livraison souhaitee
-    var $fk_remise_except;
-    var $remise_percent;
-    var $remise_absolue;
-    var $info_bits;
-    var $rang;
-    var $special_code;
-    var $source;			// Origin of order
-    var $extraparams=array();
+    public $date_commande;
+    public $date_livraison;	// Date livraison souhaitee
+    public $fk_remise_except;
+    public $remise_percent;
+    public $remise_absolue;
+    public $info_bits;
+    public $rang;
+    public $special_code;
+    public $source;			// Origin of order
+    public $extraparams=array();
 
-    var $linked_objects=array();
+    public $linked_objects=array();
 
-    var $user_author_id;
+    public $user_author_id;
 
 	/**
 	 * @var OrderLine[]
 	 */
-	var $lines = array();
+	public $lines = array();
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_tx;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
 
-	var $oldcopy;
+	public $oldcopy;
 
     /**
      * ERR Not enough stock
@@ -2715,14 +2715,14 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			
+
 			if (! $error)
 			{
 				$this->oldcopy= clone $this;
 				$this->facturee=1; // deprecated
 				$this->billed=1;
 			}
-			
+
 			if (! $notrigger && empty($error))
 			{
             	// Call trigger
@@ -2794,7 +2794,7 @@ class Commande extends CommonOrder
 	    		$this->facturee=1; // deprecated
 	    		$this->billed=1;
 	    	}
-	    	
+
 	        // Call trigger
 	        $result=$this->call_trigger('ORDER_CLASSIFY_UNBILLED',$user);
 	        if ($result < 0) $error++;

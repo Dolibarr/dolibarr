@@ -59,24 +59,24 @@ class Propal extends CommonObject
 	 * ID of the client
 	 * @var int
 	 */
-    var $socid;
+    public $socid;
 
-    var $contactid;
-    var $author;
-    var $ref_client;
+    public $contactid;
+    public $author;
+    public $ref_client;
 
 	/**
 	 * Status of the quote
 	 * @var int
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED
 	 */
-    var $statut;
+    public $statut;
 
 	/**
 	 * @deprecated
 	 * @see date_creation
 	 */
-    var $datec;
+    public $datec;
 
 	/**
 	 * Creation date
@@ -88,7 +88,7 @@ class Propal extends CommonObject
 	 * @deprecated
 	 * @see date_validation
 	 */
-    var $datev;
+    public $datev;
 
 	/**
 	 * Validation date
@@ -100,70 +100,72 @@ class Propal extends CommonObject
 	 * Date of the quote
 	 * @var
 	 */
-    var $date;
+    public $date;
 
 	/**
 	 * @deprecated
 	 * @see date
 	 */
-    var $datep;
-    var $date_livraison;
-    var $fin_validite;
+    public $datep;
+    public $date_livraison;
+    public $fin_validite;
 
-    var $user_author_id;
-    var $user_valid_id;
-    var $user_close_id;
+    public $user_author_id;
+    public $user_valid_id;
+    public $user_close_id;
 
 	/**
 	 * @deprecated
 	 * @see total_ht
 	 */
-    var $price;
+    public $price;
 	/**
 	 * @deprecated
 	 * @see total_tva
 	 */
-    var $tva;
+    public $tva;
 	/**
 	 * @deprecated
 	 * @see total_ttc
 	 */
-    var $total;
+    public $total;
 
-    var $cond_reglement_code;
-    var $mode_reglement_code;
-    var $remise;
-    var $remise_percent;
-    var $remise_absolue;
-    var $fk_address;
-    var $address_type;
-    var $address;
-    var $availability_id;
-    var $availability_code;
-    var $demand_reason_id;
-    var $demand_reason_code;
+    public $cond_reglement_code;
+    public $mode_reglement_code;
+    public $remise;
+    public $remise_percent;
+    public $remise_absolue;
+    public $fk_address;
+    public $address_type;
+    public $address;
+    public $availability_id;
+    public $availability_code;
+    public $demand_reason_id;
+    public $demand_reason_code;
 
-    var $products=array();
-    var $extraparams=array();
+    public $products=array();
+    public $extraparams=array();
 
 	/**
 	 * @var PropaleLigne[]
 	 */
-    var $lines = array();
-    var $line;
+    public $lines = array();
+    public $line;
 
-    var $labelstatut=array();
-    var $labelstatut_short=array();
+    public $labelstatut=array();
+    public $labelstatut_short=array();
 
-    var $specimen;
+    public $specimen;
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_tx;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
+	public $oldcopy;
 
 	/**
 	 * Draft status
@@ -1641,6 +1643,13 @@ class Propal extends CommonObject
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->date = $date;
+            	$this->datep = $date;    // deprecated
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -1651,9 +1660,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->date = $date;
-                $this->datep = $date;    // deprecated
-
             	$this->db->commit();
             	return 1;
             }
@@ -1697,6 +1703,13 @@ class Propal extends CommonObject
             	$error++;
             }
 
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->fin_validite = $date_fin_validite;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -1707,8 +1720,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-				$this->fin_validite = $date_fin_validite;
-
             	$this->db->commit();
             	return 1;
             }
@@ -1753,6 +1764,12 @@ class Propal extends CommonObject
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->date_livraison = $date_livraison;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -1763,8 +1780,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->date_livraison = $date_livraison;
-
             	$this->db->commit();
             	return 1;
             }
@@ -1809,6 +1824,12 @@ class Propal extends CommonObject
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->fk_availability = $id;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -1819,8 +1840,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->fk_availability = $id;
-
             	$this->db->commit();
             	return 1;
             }
@@ -1865,6 +1884,14 @@ class Propal extends CommonObject
             	$error++;
             }
 
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->fk_input_reason = $id;
+            }
+
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -1875,8 +1902,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->fk_input_reason = $id;
-
             	$this->db->commit();
             	return 1;
             }
@@ -1920,6 +1945,12 @@ class Propal extends CommonObject
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->ref_client = $ref_client;
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -1930,8 +1961,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->ref_client = $ref_client;
-
             	$this->db->commit();
             	return 1;
             }
@@ -1983,6 +2012,13 @@ class Propal extends CommonObject
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->remise_percent = $remise;
+            	$this->update_price(1);
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -1993,9 +2029,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->remise_percent = $remise;
-                $this->update_price(1);
-
             	$this->db->commit();
             	return 1;
             }
@@ -2045,6 +2078,13 @@ class Propal extends CommonObject
             	$error++;
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->remise_absolue = $remise;
+            	$this->update_price(1);
+            }
+
             if (! $notrigger && empty($error))
             {
             	// Call trigger
@@ -2055,9 +2095,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->remise_absolue = $remise;
-                $this->update_price(1);
-
             	$this->db->commit();
             	return 1;
             }
@@ -2201,6 +2238,14 @@ class Propal extends CommonObject
 	               $this->generateDocument($modelpdf, $outputlangs);
             }
 
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->statut = $statut;
+            	$this->date_cloture = $now;
+            	$this->note_private = $note;
+            }
+
             if (! $notrigger && empty($error))
             {
 	            // Call trigger
@@ -2211,8 +2256,6 @@ class Propal extends CommonObject
 
             if ( ! $error )
             {
-		        $this->statut = $statut;
-
 		        $this->db->commit();
                 return 1;
             }
@@ -2254,6 +2297,12 @@ class Propal extends CommonObject
         	$error++;
         }
 
+        if (! $error)
+        {
+        	$this->oldcopy= clone $this;
+        	$this->statut=self::STATUS_BILLED;
+        }
+
         if (! $notrigger && empty($error))
         {
         	// Call trigger
@@ -2264,8 +2313,6 @@ class Propal extends CommonObject
 
         if (! $error)
         {
-        	$this->statut=self::STATUS_BILLED;
-
         	$this->db->commit();
         	return 1;
         }
@@ -2320,6 +2367,13 @@ class Propal extends CommonObject
         	$error++;
         }
 
+        if (! $error)
+        {
+        	$this->oldcopy= clone $this;
+        	$this->statut = self::STATUS_DRAFT;
+            $this->brouillon = 1;
+        }
+        
         if (! $notrigger && empty($error))
         {
         	// Call trigger
@@ -2330,9 +2384,6 @@ class Propal extends CommonObject
 
         if (! $error)
         {
-        	$this->statut = self::STATUS_DRAFT;
-            $this->brouillon = 1;
-
         	$this->db->commit();
         	return 1;
         }
@@ -2669,6 +2720,12 @@ class Propal extends CommonObject
             	$this->errors[]=$this->db->error();
             	$error++;
             }
+            
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->availability_id = $availability_id;
+            }
 
             if (! $notrigger && empty($error))
             {
@@ -2680,8 +2737,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->availability_id = $availability_id;
-
             	$this->db->commit();
             	return 1;
             }
@@ -2732,6 +2787,12 @@ class Propal extends CommonObject
             	$this->errors[]=$this->db->error();
             	$error++;
             }
+            
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->demand_reason_id = $demand_reason_id;
+            }
 
             if (! $notrigger && empty($error))
             {
@@ -2743,8 +2804,6 @@ class Propal extends CommonObject
 
             if (! $error)
             {
-            	$this->demand_reason_id = $demand_reason_id;
-
             	$this->db->commit();
             	return 1;
             }
