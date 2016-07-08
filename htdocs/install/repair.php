@@ -545,7 +545,7 @@ if ($ok && GETPOST('clean_product_stock_batch'))
                 print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
                 
                 // Fix
-                if ($obj->reel > $obj->reelbatch)
+                if ($obj->reel != $obj->reelbatch)
                 {
                     $methodtofix='updatestock';
                     
