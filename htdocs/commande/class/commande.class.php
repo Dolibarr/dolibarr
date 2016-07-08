@@ -469,7 +469,7 @@ class Commande extends CommonOrder
 
             if (!$error) {
             	// Call trigger
-            	$result=$this->call_trigger('ORDER_SETDRAFT',$user);
+            	$result=$this->call_trigger('ORDER_UNVALIDATE',$user);
             	if ($result < 0) $error++;
             }
 
@@ -2044,7 +2044,7 @@ class Commande extends CommonOrder
      *
      * 	@param     	User		$user		User qui positionne la remise
      * 	@param     	float		$remise		Discount (percent)
-     * 	@param     	int			$notrigger	Not Trigger
+     * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return		int 					<0 if KO, >0 if OK
      */
     function set_remise($user, $remise, $notrigger=0)
@@ -2063,6 +2063,7 @@ class Commande extends CommonOrder
             $sql.= ' SET remise_percent = '.$remise;
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
 
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (!$resql)
             {
@@ -2105,7 +2106,7 @@ class Commande extends CommonOrder
      *
      * 		@param     	User		$user 		User qui positionne la remise
      * 		@param     	float		$remise		Discount
-     * 		@param     	int			$notrigger	Not Trigger
+     * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execuete triggers
      *		@return		int 					<0 if KO, >0 if OK
      */
     function set_remise_absolue($user, $remise, $notrigger=0)
@@ -2125,7 +2126,6 @@ class Commande extends CommonOrder
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
 
             dol_syslog(__METHOD__, LOG_DEBUG);
-
             $resql=$this->db->query($sql);
             if (!$resql)
             {
@@ -2168,14 +2168,13 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user       Object user making change
      *	@param      int		$date		Date
-     * 	@param     	int		$notrigger	Not Trigger
+     * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function set_date($user, $date, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
-
         	$error=0;
 
         	$this->db->begin();
@@ -2229,13 +2228,17 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user        		Objet utilisateur qui modifie
      *	@param      int		$date_livraison     Date de livraison
-     *  @param     	int		$notrigger			Not Trigger
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
      *	@return     int         				<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
             $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
@@ -2285,13 +2288,17 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user		Object user making change
      *	@param      int		$id			If of availability delay
-     *  @param     	int		$notrigger	Not Trigger
+     *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int           		<0 if KO, >0 if OK
      */
     function set_availability($user, $id, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande ";
             $sql.= " SET fk_availability = '".$id."'";
             $sql.= " WHERE rowid = ".$this->id;
@@ -2337,13 +2344,18 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user		Object user making change
      *	@param      int		$id			Id of source
-     *  @param     	int		$notrigger	Not Trigger
+     *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return     int           		<0 if KO, >0 if OK
      */
     function set_demand_reason($user, $id, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
+
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande ";
             $sql.= " SET fk_input_reason = '".$id."'";
             $sql.= " WHERE rowid = ".$this->id;
@@ -2461,7 +2473,7 @@ class Commande extends CommonOrder
      *	Update delivery delay
      *
      *	@param      int		$availability_id	Id du nouveau mode
-     *  @param     	int		$notrigger	Not Trigger
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
      *	@return     int         				>0 if OK, <0 if KO
      */
     function availability($availability_id, $notrigger=0)
@@ -2469,6 +2481,10 @@ class Commande extends CommonOrder
         dol_syslog('Commande::availability('.$availability_id.')');
         if ($this->statut >= self::STATUS_DRAFT)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql .= ' SET fk_availability = '.$availability_id;
             $sql .= ' WHERE rowid='.$this->id;
@@ -2521,7 +2537,7 @@ class Commande extends CommonOrder
      *	Update order demand_reason
      *
      *  @param      int		$demand_reason_id	Id of new demand
-     *  @param     	int		$notrigger			Not Trigger
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
      *  @return     int        			 		>0 if ok, <0 if ko
      */
     function demand_reason($demand_reason_id, $notrigger=0)
@@ -2529,6 +2545,10 @@ class Commande extends CommonOrder
         dol_syslog('Commande::demand_reason('.$demand_reason_id.')');
         if ($this->statut >= self::STATUS_DRAFT)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql .= ' SET fk_input_reason = '.$demand_reason_id;
             $sql .= ' WHERE rowid='.$this->id;
@@ -2582,12 +2602,17 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user           User that make change
      *	@param      string	$ref_client     Customer ref
+     *  @param     	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
      *	@return     int             		<0 if KO, >0 if OK
      */
-    function set_ref_client($user, $ref_client)
+    function set_ref_client($user, $ref_client, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
             $sql.= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.$this->db->escape($ref_client).'\'');
             $sql.= ' WHERE rowid = '.$this->id;

@@ -1486,25 +1486,54 @@ class Facture extends CommonInvoice
 	 *	Set customer ref
 	 *
 	 *	@param     	string	$ref_client		Customer ref
+	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function set_ref_client($ref_client)
+	function set_ref_client($ref_client, $notrigger=0)
 	{
+		$error=0;
+
+		$this->db->begin();
+
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		if (empty($ref_client))
 			$sql .= ' SET ref_client = NULL';
 		else
 			$sql .= ' SET ref_client = \''.$this->db->escape($ref_client).'\'';
 		$sql .= ' WHERE rowid = '.$this->id;
-		if ($this->db->query($sql))
+
+		dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (!$resql)
+		{
+			$this->errors[]=$this->db->error();
+			$error++;
+		}
+
+		if (! $notrigger && empty($error))
+		{
+			// Call trigger
+			$result=$this->call_trigger('BILL_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
+
+		if (! $error)
 		{
 			$this->ref_client = $ref_client;
+
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
-			dol_print_error($this->db);
-			return -1;
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
 		}
 	}
 
@@ -2070,7 +2099,7 @@ class Facture extends CommonInvoice
     					$i++;
     				}
     				if ($final) {
-    					$this->setFinal();
+    					$this->setFinal($user);
     				}
                 }
 			}
@@ -2760,9 +2789,10 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
 	 *	@return		int 		<0 if ko, >0 if ok
 	 */
-	function set_remise($user, $remise)
+	function set_remise($user, $remise, $notrigger=0)
 	{
 		// Clean parameters
 		if (empty($remise)) $remise=0;
@@ -2771,21 +2801,48 @@ class Facture extends CommonInvoice
 		{
 			$remise=price2num($remise);
 
+			$error=0;
+
+			$this->db->begin();
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 			$sql.= ' SET remise_percent = '.$remise;
 			$sql.= ' WHERE rowid = '.$this->id;
 			$sql.= ' AND fk_statut = '.self::STATUS_DRAFT;
 
-			if ($this->db->query($sql))
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (!$resql)
+			{
+				$this->errors[]=$this->db->error();
+				$error++;
+			}
+
+			if (! $notrigger && empty($error))
+			{
+				// Call trigger
+				$result=$this->call_trigger('BILL_MODIFY',$user);
+				if ($result < 0) $error++;
+				// End call triggers
+			}
+
+			if (! $error)
 			{
 				$this->remise_percent = $remise;
 				$this->update_price(1);
+
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
-				$this->error=$this->db->error();
-				return -1;
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
+				$this->db->rollback();
+				return -1*$error;
 			}
 		}
 	}
@@ -2796,14 +2853,19 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param     	User	$user 		User that set discount
 	 *	@param     	double	$remise		Discount
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
-	function set_remise_absolue($user, $remise)
+	function set_remise_absolue($user, $remise, $notrigger=0)
 	{
 		if (empty($remise)) $remise=0;
 
 		if ($user->rights->facture->creer)
 		{
+			$error=0;
+
+			$this->db->begin();
+
 			$remise=price2num($remise);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -2811,18 +2873,39 @@ class Facture extends CommonInvoice
 			$sql.= ' WHERE rowid = '.$this->id;
 			$sql.= ' AND fk_statut = '.self::STATUS_DRAFT;
 
-			dol_syslog(get_class($this)."::set_remise_absolue", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if (!$resql)
+			{
+				$this->errors[]=$this->db->error();
+				$error++;
+			}
 
-			if ($this->db->query($sql))
+			if (! $notrigger && empty($error))
+			{
+				// Call trigger
+				$result=$this->call_trigger('BILL_MODIFY',$user);
+				if ($result < 0) $error++;
+				// End call triggers
+			}
+
+			if (! $error)
 			{
 				$this->remise_absolue = $remise;
 				$this->update_price(1);
+
+				$this->db->commit();
 				return 1;
 			}
 			else
 			{
-				$this->error=$this->db->error();
-				return -1;
+				foreach($this->errors as $errmsg)
+				{
+					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+					$this->error.=($this->error?', '.$errmsg:$errmsg);
+				}
+				$this->db->rollback();
+				return -1*$error;
 			}
 		}
 	}
@@ -3818,25 +3901,49 @@ class Facture extends CommonInvoice
 	/**
 	 * Sets the invoice as a final situation
 	 *
-	 * @return int 1 if ok, -1 if error
+	 *  @param  	User	$user    	Object user
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *	@return		int 				<0 if KO, >0 if OK
 	 */
-	function setFinal()
+	function setFinal(User $user, $notrigger=0)
 	{
+		$error=0;
 
-        $this->db->begin();
+		$this->db->begin();
 
 		$this->situation_final = 1;
-		$sql = 'update ' . MAIN_DB_PREFIX . 'facture set situation_final = ' . $this->situation_final . ' where rowid = ' . $this->id;
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			// FIXME: call triggers MODIFY because we modify invoice
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture SET situation_final = ' . $this->situation_final . ' where rowid = ' . $this->id;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (!$resql)
+		{
+			$this->errors[]=$this->db->error();
+			$error++;
+		}
+
+		if (! $notrigger && empty($error))
+		{
+			// Call trigger
+			$result=$this->call_trigger('BILL_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
+		}
+
+		if (! $error)
+		{
 			$this->db->commit();
 			return 1;
-		} else {
-			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this) . "::update Error setFinal " . $sql, LOG_ERR);
+		}
+		else
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
 			$this->db->rollback();
-			return -1;
+			return -1*$error;
 		}
 	}
 
