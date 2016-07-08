@@ -702,7 +702,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
  * @param	int			$firstdaytoshow			First day to show
  * @param	User|null	$fuser					Restrict list to user if defined
  * @param   string		$parent					Id of parent project to show (0 to show all)
- * @param   Task[]		$lines					Array of lines
+ * @param   Task[]		$lines					Array of lines (list of tasks but we will show only if we have a specific role on task)
  * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
  * @param   string		$projectsrole			Array of roles user has on project
  * @param   string		$tasksrole				Array of roles user has on task
@@ -715,11 +715,14 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
 
-	$lastprojectid=0;
 
 	$var=true;
 
 	$numlines=count($lines);
+
+	$lastprojectid=0;
+	$workloadloadforid=array();
+	
 	for ($i = 0 ; $i < $numlines ; $i++)
 	{
 		if ($parent == 0) $level = 0;
@@ -733,12 +736,17 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				$lastprojectid=$lines[$i]->fk_project;
 
 				$projectstatic->id = $lines[$i]->fk_project;
-				$projectstatic->loadTimeSpent($firstdaytoshow, 0, $fuser->id);	// Load time spent into this->weekWorkLoad and this->weekWorkLoadPerTaks for all day of a week
 			}
 
 			// If we want all or we have a role on task, we show it
 			if (empty($mine) || ! empty($tasksrole[$lines[$i]->id]))
 			{
+			    if (empty($workloadforid[$projectstatic->id]))
+			    {
+				    $projectstatic->loadTimeSpent($firstdaytoshow, 0, $fuser->id);	// Load time spent from table projet_task_time for the project into this->weekWorkLoad and this->weekWorkLoadPerTask for all days of a week
+                    $workloadforid[$projectstatic->id]=1;
+			    }
+			    
 				print "<tr ".$bc[$var].">\n";
 
 				// Project
