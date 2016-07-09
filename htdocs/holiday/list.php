@@ -316,18 +316,18 @@ print '</td>';
 if ($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre" align="left">';
-    print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,32);
+    print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,32,0,'',0,'','maxwidth200');
     print '</td>';
 }
 else
 {
     //print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="left">';
-    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,32);
+    print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,32,0,'',0,'','maxwidth200');
     print '</td>';
 }
 
-// VALIDEUR
+// APPROVER
 if($user->rights->holiday->write_all)
 {
     print '<td class="liste_titre" align="left">';
@@ -337,7 +337,7 @@ if($user->rights->holiday->write_all)
     $valideurobjects = $validator->listUsersForGroup($excludefilter);
     $valideurarray = array();
     foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 32);
+    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 32,0,'',0,'','maxwidth200');
     print '</td>';
 }
 else
