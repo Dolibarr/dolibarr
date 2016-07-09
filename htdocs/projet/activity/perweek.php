@@ -100,7 +100,7 @@ if (GETPOST('submitdateselect'))
 	$action = '';
 }
 
-if ($action == 'addtime' && GETPOST('assigntask'))
+if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
     $action = 'assigntask';
     
@@ -185,9 +185,10 @@ if ($action == 'addtime' && $user->rights->projet->lire)
     }
 	else
 	{
-		foreach($timetoadd as $taskid => $value)
+		foreach($timetoadd as $taskid => $value)     // Loop on each task
 	    {
-			foreach($value as $key => $val)
+	        $updateoftaskdone=0;
+			foreach($value as $key => $val)          // Loop on each day
 			{
 				$amountoadd=$timetoadd[$taskid][$key];
 		    	if (! empty($amountoadd))
@@ -201,7 +202,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 		        	if ($newduration > 0)
 		        	{
 		       	        $object->fetch($taskid);
-					    $object->progress = GETPOST($taskid . 'progress', 'int');
+		       	        $object->progress = GETPOST($taskid . 'progress', 'int');
 				        $object->timespent_duration = $newduration;
 				        $object->timespent_fk_user = $usertoprocess->id;
 			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
@@ -213,8 +214,27 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 							$error++;
 							break;
 						}
+						
+						$updateoftaskdone++;
 		        	}
 		        }
+			}
+			
+			if (! $updateoftaskdone)  // Check to update progress if no update were done on task.
+			{
+			    $object->fetch($taskid);
+                //var_dump($object->progress);var_dump(GETPOST($taskid . 'progress', 'int')); exit;			    
+			    if ($object->progress != GETPOST($taskid . 'progress', 'int'))
+			    {
+			        $object->progress = GETPOST($taskid . 'progress', 'int');
+			        $result=$object->update($user);
+			        if ($result < 0)
+			        {
+			            setEventMessages($object->error, $object->errors, 'errors');
+			            $error++;
+			            break;
+			        }
+			    }
 			}
 	    }
 

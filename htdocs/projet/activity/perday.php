@@ -234,9 +234,9 @@ if ($action == 'addtime' && $user->rights->projet->lire)
         	exit;
     	}
     }
-    else
-    {
-	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
+    else    
+    {   
+   	    setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
     }
 }
 
