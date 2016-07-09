@@ -801,7 +801,7 @@ foreach ($listofreferent as $key => $value)
 						if ($tmp['nblinesnull'] > 0)
 						{
 							$langs->load("errors");
-							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate");
+							$warning=$langs->trans("WarningSomeLinesWithNullHourlyRate", $conf->currency);
 						}
 					}
 					else
