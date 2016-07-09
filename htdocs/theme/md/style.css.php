@@ -3919,6 +3919,9 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 }
+.dropdown dd ul li input[type="checkbox"] {
+    margin-right: 3px;
+}
 .dropdown dd ul li a {
     padding:5px;
     display:block;
