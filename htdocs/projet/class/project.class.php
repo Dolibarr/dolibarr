@@ -1728,5 +1728,54 @@ class Project extends CommonObject
         return $this->datee < ($now - $conf->projet->warning_delay);
 	}	
 
+	
+	/**
+	 *	Charge les informations d'ordre info dans l'objet commande
+	 *
+	 *	@param  int		$id       Id of order
+	 *	@return	void
+	 */
+	function info($id)
+	{
+	    $sql = 'SELECT c.rowid, datec as datec, tms as datem,';
+	    $sql.= ' date_close as datecloture,';
+	    $sql.= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
+	    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet as c';
+	    $sql.= ' WHERE c.rowid = '.$id;
+	    $result=$this->db->query($sql);
+	    if ($result)
+	    {
+	        if ($this->db->num_rows($result))
+	        {
+	            $obj = $this->db->fetch_object($result);
+	            $this->id = $obj->rowid;
+	            if ($obj->fk_user_author)
+	            {
+	                $cuser = new User($this->db);
+	                $cuser->fetch($obj->fk_user_author);
+	                $this->user_creation   = $cuser;
+	            }
+	
+	            if ($obj->fk_user_cloture)
+	            {
+	                $cluser = new User($this->db);
+	                $cluser->fetch($obj->fk_user_cloture);
+	                $this->user_cloture   = $cluser;
+	            }
+	
+	            $this->date_creation     = $this->db->jdate($obj->datec);
+	            $this->date_modification = $this->db->jdate($obj->datem);
+	            $this->date_cloture      = $this->db->jdate($obj->datecloture);
+	        }
+	
+	        $this->db->free($result);
+	
+	    }
+	    else
+	    {
+	        dol_print_error($this->db);
+	    }
+	}
+	
 }
 
