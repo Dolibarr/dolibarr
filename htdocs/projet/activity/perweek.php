@@ -176,7 +176,7 @@ if ($action == 'addtime' && GETPOST('assigntask'))
 	$action='';
 }
 
-if ($action == 'addtime' && $user->rights->projet->creer)
+if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timetoadd=$_POST['task'];
 	if (empty($timetoadd))

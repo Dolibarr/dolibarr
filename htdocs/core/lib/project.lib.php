@@ -527,6 +527,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  *
  * @param	string	   	$inc					Line number (start to 0, then increased by recursive call)
  * @param   string		$parent					Id of parent task to show (0 to show all)
+ * @param	User|null	$fuser					Restrict list to user if defined
  * @param   Task[]		$lines					Array of lines
  * @param   int			$level					Level (start to 0, then increased/decrease by recursive call)
  * @param   string		$projectsrole			Array of roles user has on project
@@ -537,13 +538,13 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  * @param   boolean     $var                    Var for css of lines
  * @return  $inc
  */
-function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1, $preselectedday='', $var=false)
+function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1, $preselectedday='', $var=false)
 {
 	global $db, $user, $bc, $langs;
 	global $form, $formother, $projectstatic, $taskstatic;
 
 	$lastprojectid=0;
-	$workloadloadforid=array();
+	$workloadforid=array();
 	$lineswithoutlevel0=array();
 	
 	$numlines=count($lines);
@@ -647,7 +648,7 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 
 				// Time spent by user
 				print '<td align="right">';
-				$tmptimespent=$taskstatic->getSummaryOfTimeSpent();
+				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
 				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'],'allhourmin');
 				else print '--:--';
 				print "</td>\n";
@@ -704,8 +705,8 @@ function projectLinesPerDay(&$inc, $parent, $lines, &$level, &$projectsrole, &$t
 			$level++;
 			if ($lines[$i]->id > 0) 
 			{
-			    if ($parent == 0) projectLinesPerDay($inc, $lines[$i]->id, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $var);
-			    else projectLinesPerDay($inc, $lines[$i]->id, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $var); 
+			    if ($parent == 0) projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lineswithoutlevel0, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $var);
+			    else projectLinesPerDay($inc, $lines[$i]->id, $fuser, $lines, $level, $projectsrole, $tasksrole, $mine, $restricteditformytask, $preselectedday, $var); 
 			}
 			$level--;
 		}
@@ -744,7 +745,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 	$numlines=count($lines);
 
 	$lastprojectid=0;
-	$workloadloadforid=array();
+	$workloadforid=array();
 	$lineswithoutlevel0=array();
 	
 	// Create a smaller array with sublevels only to be used later. This increase dramatically performances.
@@ -840,7 +841,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 				// Time spent by user
 				print '<td align="right">';
-				$tmptimespent=$taskstatic->getSummaryOfTimeSpent();
+				$tmptimespent=$taskstatic->getSummaryOfTimeSpent($fuser->id);
 				if ($tmptimespent['total_duration']) print convertSecondToTime($tmptimespent['total_duration'],'allhourmin');
 				else print '--:--';
 				print "</td>\n";

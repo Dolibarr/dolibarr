@@ -87,7 +87,7 @@ if (GETPOST('submitdateselect'))
 }
 
 
-if ($action == 'addtime' && GETPOST('assigntask'))
+if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
     $action = 'assigntask';
 
@@ -163,7 +163,7 @@ if ($action == 'addtime' && GETPOST('assigntask'))
 	$action='';
 }
 
-if ($action == 'addtime' && $user->rights->projet->creer)
+if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timespent_duration=array();
 
@@ -395,7 +395,7 @@ $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED
 if (count($tasksarray) > 0)
 {
 	$j=0;
-	projectLinesPerDay($j, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse);
+	projectLinesPerDay($j, 0, $usertoprocess, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask, $daytoparse);
 }
 else
 {
