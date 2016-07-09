@@ -540,13 +540,29 @@ begin
 	    begin
 	      //navigateur
 	      browser := 'iexplore.exe';
-	      if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
+	      
+	      if browser = 'iexplore.exe' then
 	      begin
-	        if MsgBox(CustomMessage('FirefoxDetected'),mbConfirmation,MB_YESNO) = IDYES then
+	        if FileExists (pfPath+'/Google/Chrome/Application/chrome.exe')  then
 	        begin
-	          browser := pfPath+'/Mozilla Firefox/firefox.exe';
+	          if MsgBox(CustomMessage('ChromeDetected'),mbConfirmation,MB_YESNO) = IDYES then
+	          begin
+	            browser := pfPath+'/Google/Chrome/Application/chrome.exe';
+	          end;
 	        end;
 	      end;
+
+	      if browser = 'iexplore.exe' then
+	      begin
+		    if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
+		    begin
+		      if MsgBox(CustomMessage('FirefoxDetected'),mbConfirmation,MB_YESNO) = IDYES then
+		      begin
+		        browser := pfPath+'/Mozilla Firefox/firefox.exe';
+		      end;
+		    end;
+		  end;
+	      
 	      if browser = 'iexplore.exe' then
 	      begin
             if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
