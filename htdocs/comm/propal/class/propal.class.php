@@ -7,7 +7,7 @@
  * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2014 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2011 Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2016 Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
@@ -223,15 +223,15 @@ class Propal extends CommonObject
 
     /**
      * 	Add line into array products
-     *	$this->client doit etre charge
+     *	$this->thirdparty should be loaded
      *
      * 	@param  int		$idproduct       	Product Id to add
      * 	@param  int		$qty             	Quantity
      * 	@param  int		$remise_percent  	Discount effected on Product
      *  @return	int							<0 if KO, >0 if OK
      *
-     *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
-     *			insere dans tableau $this->products
+     *	TODO	Replace calls to this function by generation objet Ligne
+     *			inserted into table $this->products
      */
     function add_product($idproduct, $qty, $remise_percent=0)
     {
@@ -253,7 +253,7 @@ class Propal extends CommonObject
             $localtax1_tx = get_localtax($tva_tx,1,$mysoc,$this->thirdparty,$tva_npr);
             $localtax2_tx = get_localtax($tva_tx,2,$mysoc,$this->thirdparty,$tva_npr);
 
-            // multiprix
+            // multiprices
             if($conf->global->PRODUIT_MULTIPRICES && $this->thirdparty->price_level)
             {
                 $price = $prod->multiprices[$this->thirdparty->price_level];
@@ -314,7 +314,7 @@ class Propal extends CommonObject
             $line->desc=$remise->description;   	// Description ligne
             $line->tva_tx=$remise->tva_tx;
             $line->subprice=-$remise->amount_ht;
-            $line->fk_product=0;					// Id produit predefini
+            $line->fk_product=0;					// Id produit predefined
             $line->qty=1;
             $line->remise=0;
             $line->remise_percent=0;
@@ -359,10 +359,10 @@ class Propal extends CommonObject
 
     /**
      *    	Add a proposal line into database (linked to product/service or not)
-     * 		Les parametres sont deja cense etre juste et avec valeurs finales a l'appel
-     *		de cette methode. Aussi, pour le taux tva, il doit deja avoir ete defini
-     *		par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,'',produit)
-     *		et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+     *      The parameters are already supposed to be appropriate and with final values to the call
+     *      of this method. Also, for the VAT rate, it must have already been defined
+     *      by whose calling the method get_default_tva (societe_vendeuse, societe_acheteuse, '' product)
+     *      and desc must already have the right value (it's up to the caller to manage multilanguage)
      *
      * 		@param    	string		$desc				Description de la ligne
      * 		@param    	float		$pu_ht				Prix unitaire
