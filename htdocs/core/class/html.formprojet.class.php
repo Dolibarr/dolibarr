@@ -569,7 +569,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'"';
+					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'" elemcode="'.$obj->code.'"';
 					if ($obj->rowid == $preselected) $sellist .= ' selected="selected"';
 					$sellist .= '>';
 					if ($useshortlabel)

@@ -710,7 +710,9 @@ else
 
 		    // Opportunity probability
 		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %';
+            print '<span id="oldopppercent"></span>';
+		    print '</td>';
 		    print '</tr>';
 		    
 		    // Opportunity amount
@@ -837,14 +839,23 @@ else
     print '</form>';
 
     // Change probability from status
-    print '<script type="text/javascript" language="javascript">
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
-                /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                var elemcode = element.attr("elemcode");
+                /* Change percent of default percent of new status is higher */
+                if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent)
+                    )
+                {
+                    if (! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->trans("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
+                    jQuery("#opp_percent").val(defaultpercent);
+                    
+                }
         	}
         	/*init_myfunc();*/
         	jQuery("#opp_status").change(function() {
@@ -852,7 +863,7 @@ else
         	});
         });
         </script>';
-    
+    }    
     
     /*
      * Boutons actions

@@ -488,6 +488,7 @@ ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
 
 UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
 UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
+UPDATE llx_c_lead_status set percent = 100 where code = 'WON';
 
 
 CREATE TABLE llx_oauth_token (
