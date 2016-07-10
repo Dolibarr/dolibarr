@@ -2104,7 +2104,10 @@ class CommandeFournisseur extends CommonOrder
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            //TODO: Add trigger for status modification
+            // Call trigger
+            $result=$this->call_trigger('ORDER_SUPPLIER_SET_STATUS',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
         }
         else
         {
