@@ -21,7 +21,6 @@
  *
  */
 
-
 /**
  * \file 		htdocs/accountancy/bookkeeping/listbyaccount.php
  * \ingroup 	Advanced accountancy
