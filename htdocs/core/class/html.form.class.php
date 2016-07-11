@@ -1767,7 +1767,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($objp->price_by_qty) && $objp->price_by_qty == 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -1915,8 +1915,8 @@ class Form
             $sql.= " WHERE fk_product='".$objp->rowid."'";
             $sql.= " AND entity IN (".getEntity('productprice', 1).")";
             $sql.= " AND price_level=".$price_level;
-            $sql.= " ORDER BY date_price, rowid";
-            $sql.= " DESC LIMIT 1";
+            $sql.= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
+            $sql.= " LIMIT 1";
 
             dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
             $result2 = $this->db->query($sql);
