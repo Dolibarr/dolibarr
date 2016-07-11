@@ -23,6 +23,7 @@
  *  \ingroup 	Advanced accountancy
  *  \brief 		Balance of book keeping
  */
+
 require '../../main.inc.php';
 
 // Class
