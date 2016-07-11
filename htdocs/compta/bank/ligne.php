@@ -83,13 +83,13 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
 
 if ($user->rights->banque->modifier && $action == 'class')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".intval($_POST["cat1"]);
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST('cat1', 'int');
     if (! $db->query($sql))
     {
         dol_print_error($db);
     }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".intval($_POST["cat1"]).")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".GETPOST('cat1', 'int').")";
     if (! $db->query($sql))
     {
         dol_print_error($db);
