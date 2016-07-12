@@ -374,7 +374,7 @@ if (empty($reshook))
 	        $object->ref           = $_POST['ref'];
 			$object->ref_supplier  = $_POST['ref_supplier'];
 	        $object->socid         = $_POST['socid'];
-	        $object->libelle       = $_POST['libelle'];
+	        $object->libelle       = $_POST['label'];
 	        $object->date          = $datefacture;
 	        $object->date_echeance = $datedue;
 	        $object->note_public   = GETPOST('note_public');
@@ -1321,7 +1321,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:'').'" type="text"></td></tr>';
+    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="label" value="'.dol_escape_htmltag(GETPOST('label')).'" type="text"></td></tr>';
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
@@ -1711,8 +1711,8 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td>'.$form->editfieldkey("Label",'libelle',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
-        print '<td colspan="3">'.$form->editfieldval("Label",'libelle',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
+        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
+        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
 
         /*
          * List of payments
