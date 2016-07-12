@@ -3449,7 +3449,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3479,6 +3479,7 @@ class Facture extends CommonInvoice
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
+				$generic_facture->statut = $obj->fk_statut;
 
 				$response->nbtodo++;
 
@@ -3486,7 +3487,7 @@ class Facture extends CommonInvoice
 					$response->nbtodolate++;
 				}
 			}
-
+	
 			return $response;
 		}
 		else
@@ -3896,7 +3897,7 @@ class Facture extends CommonInvoice
 		global $conf;
 
 		$now = dol_now();
-
+		
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 
