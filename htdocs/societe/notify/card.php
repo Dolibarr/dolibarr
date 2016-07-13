@@ -125,7 +125,7 @@ if (empty($reshook))
     // Remove a notification
     if ($action == 'delete')
     {
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"];
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST('actid', 'int');
         $db->query($sql);
     }
 }
