@@ -5257,7 +5257,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 						{
 							$substitutionarray=array();
-							complete_substitutions_array($substitutionarray,$langs,$object);
+							complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 							$label=make_substitutions($reg[1], $substitutionarray);
 						}
 						else $label=$langs->trans($values[2]);
@@ -5277,7 +5277,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 					{
 						$substitutionarray=array();
-						complete_substitutions_array($substitutionarray,$langs,$object);
+						complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 						$label=make_substitutions($reg[1], $substitutionarray);
 					}
 					else $label=$langs->trans($values[2]);
