@@ -454,6 +454,8 @@ print '<div class="centpercent websitebar">';
 
 if (count($object->records) > 0)
 {
+    // ***** Part for web sites
+    
     print '<div class="websiteselection">';
     print $langs->trans("Website").': ';
     print '</div>';
@@ -478,15 +480,44 @@ if (count($object->records) > 0)
     }
     $out.='</select>';
     print $out;
-    print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Refresh").'">';
+    print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
 
     if ($website)
     {
-        print ' - '.$langs->trans("RealURL").' ';
         $realurl=$urlwithroot.'/public/websites/index.php?website='.$website;
+        $dataroot=DOL_DATA_ROOT.'/websites/'.$website;
+        // TODO If virtual url defined, we use it
+        
+        /*print ' - '.$langs->trans("RealURL").' ';
         print '<input type="text" name="realurl" value="'.$realurl.'"> ';
-        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';*/
+
+        print ' &nbsp; ';
+
+        print $langs->trans("ViewWebsiteInProduction").': ';
+        print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" value="'.$realurl.'">';
+        //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
+        $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
+        print $form->textwithpicto('', $htmltext);
+        print '<a class="button" id="previewsite" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
+        
+        // Example : Adding jquery code
+        if (! empty($conf->use_javascript_ajax))
+        {
+            print '<script type="text/javascript" language="javascript">
+            jQuery(document).ready(function() {
+            	jQuery("#previewsite").click(function() {
+                    /* Save url */
+                
+                    newurl=jQuery("#previewsiteurl").val();
+                    console.log("Open url "+newurl);
+                    $(this).attr("href",newurl);
+                });
+            });
+            </script>';
+        }
     }
+    
     print '</div>';
 
     // Button for websites
@@ -513,7 +544,8 @@ if (count($object->records) > 0)
     print '</div>';
 
 
-    // Part for pages
+    // ***** Part for pages
+    
     if ($website)
     {
         print '</div>';
@@ -555,7 +587,7 @@ if (count($object->records) > 0)
         else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
         print $out;
-        print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Refresh").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+        print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         
@@ -563,8 +595,9 @@ if (count($object->records) > 0)
         {
             print ' - '.$langs->trans("RealURL").' ';
             $realurl=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
-            print '<input type="text" name="realurl" value="'.$realurl.'"> ';
-            print '<a href="'.$realurl.'" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+            print '<input type="text" name="realurl" class="minwidth200imp" disabled="disabled" value="'.$realurl.'"> ';
+            print '<a href="'.$realurl.'" class="button" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+            //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
         }
         
         print '</div>';
