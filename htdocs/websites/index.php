@@ -486,6 +486,7 @@ if (count($object->records) > 0)
     {
         $realurl=$urlwithroot.'/public/websites/index.php?website='.$website;
         $dataroot=DOL_DATA_ROOT.'/websites/'.$website;
+        if (! empty($object->virtualhost)) $realurl=$object->virtualhost; 
         // TODO If virtual url defined, we use it
         
         /*print ' - '.$langs->trans("RealURL").' ';
@@ -507,10 +508,21 @@ if (count($object->records) > 0)
             print '<script type="text/javascript" language="javascript">
             jQuery(document).ready(function() {
             	jQuery("#previewsite").click(function() {
-                    /* Save url */
-                
                     newurl=jQuery("#previewsiteurl").val();
                     console.log("Open url "+newurl);
+                    /* Save url */
+                    jQuery.ajax({
+                        method: "POST",
+                        url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
+                        data: {
+                            field: \'editval_virtualhost\',
+                            element: \'websites\',
+                            table_element: \'website\',
+                            fk_element: '.$object->id.',
+                            value: encodeURIComponent(newurl),
+                        },
+                        context: document.body
+                    });
                     $(this).attr("href",newurl);
                 });
             });
