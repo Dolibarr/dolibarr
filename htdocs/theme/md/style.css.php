@@ -746,7 +746,7 @@ td.showDragHandle {
 	margin-left: 0;
 }
 div.login_block {
-	border-right: none ! important; 
+	/* border-right: none ! important; */
 	top: inherit !important;
 }
 .side-nav {
@@ -771,6 +771,7 @@ div.login_block {
 #id-left {
 	z-index: 201;
 	background: #FFF;
+	border-right: 1px solid rgba(0,0,0,0.3);
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
 <?php } else { ?>
@@ -2664,7 +2665,7 @@ div.tabBar .noborder {
 <?php } ?>
 }
 span.boxstatstext {
-	opacity: 0.9;
+	/* opacity: 0.9;  Disabled. This make text on top of left menu in smartphone size */
     line-height: 18px;
 }
 span.boxstatsindicator {
