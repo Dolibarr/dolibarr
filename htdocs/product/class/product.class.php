@@ -3157,6 +3157,17 @@ class Product extends CommonObject
 
         $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
 
+	if (! is_object($hookmanager))
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager=new HookManager($this->db);
+	}
+	$hookmanager->initHooks(array('productdao'));
+	$parameters=array('id'=>$this->id);
+	$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
+
         if ($option == 'supplier') {
             $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
             $linkend='</a>';
