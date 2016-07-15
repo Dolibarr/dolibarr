@@ -136,6 +136,7 @@ CREATE TABLE llx_website
 	tms           timestamp
 ) ENGINE=innodb;
 ALTER TABLE llx_website ADD COLUMN fk_default_home integer;
+ALTER TABLE llx_website CHANGE COLUMN shortname ref varchar(24) NOT NULL;
 ALTER TABLE llx_website ADD UNIQUE INDEX uk_website_ref (ref, entity);
 
 CREATE TABLE llx_website_page
@@ -412,6 +413,7 @@ CREATE UNIQUE INDEX uk_bordereau_cheque ON llx_bordereau_cheque (ref, entity);
 ALTER TABLE llx_societe_rib ADD COLUMN date_rum	date after rum;
 
 -- Add more action to log
+update llx_c_action_trigger set rang = 140 where code = 'PROJECT_CREATE';
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_MODIFY','Project modified','Executed when a project is modified','project',141);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('PROJECT_DELETE','Project deleted','Executed when a project is deleted','project',142);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('ORDER_SUPPLIER_CREATE','Supplier order validated','Executed when a supplier order is validated','order_supplier',11);
@@ -481,12 +483,13 @@ update llx_product_batch set batch = '000000' where batch = '';
 update llx_product_lot set batch = '000000' where batch = 'Undefined';
 update llx_stock_mouvement set batch = '000000' where batch = 'Undefined';
 
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
 
--- At end (higher risk of error)
 
--- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
+UPDATE llx_c_lead_status set percent = 100 where code = 'WON';
 
-ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
 
 CREATE TABLE llx_oauth_token (
     rowid integer AUTO_INCREMENT PRIMARY KEY,
@@ -506,4 +509,10 @@ CREATE TABLE llx_oauth_state (
     entity integer
 )ENGINE=InnoDB;
 
-ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
+-- At end (higher risk of error)
+
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
+
+

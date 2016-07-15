@@ -124,7 +124,7 @@ print '<form method="post" name="sel" action="' . $_SERVER['PHP_SELF'] . '">';
 print '<table class="border" width="100%">';
 
 // Start date
-print '<td>' . $langs->trans('DateStrt') . ' (' . $langs->trans("DateValidation") . ')</td>';
+print '<td>' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
 print '<td width="20%">';
 $form->select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';

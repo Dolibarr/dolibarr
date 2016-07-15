@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Apskaita
-Globalparameters=Bendrieji parametrai
-Menuaccount=Apskaitos sąskaitos
-Menuthirdpartyaccount=Trečios šalies sąskaitos
-MenuTools=Įrankiai
 
 ConfigAccountingExpert=Apskaitos eksperto modulio konfigūracija
 Journaux=Žurnalai
 JournalFinancial=Finansiniai žurnalai
-Exports=Eksportas
-Export=Eksportas
-Modelcsv=Eksporto modelis
-OptionsDeactivatedForThisExportModel=Šiam eksporto modeliui opcijos išjungtos
-Selectmodelcsv=Pasirinkite eksporto modelį
-Modelcsv_normal=Klasikinis eksportas
-Modelcsv_CEGID=Eksportas į CEGID ekspertą
 BackToChartofaccounts=Grįžti į sąskaitų planą
 
-Definechartofaccounts=Nustatyti sąskaitų planą
 Selectchartofaccounts=Pasirinkite sąskaitų planą
 Addanaccount=Pridėti apskaitos sąskaitą
 AccountAccounting=Apskaitos sąskaita
+AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Schema
 
 MenuAccountancy=Accountancy
 CustomersVentilation=Schemos klientai
 SuppliersVentilation=Schemos tiekėjai
-TradeMargin=Prekybos marža
 Reports=Ataskaitos
-ByCustomerInvoice=Pagal sąskaitų-faktūrų klientus
 NewAccount=Nauja apskaitos sąskaita
 Create=Sukurti
 CreateMvts=Create movement
-UpdateAccount=Apskaitos sąskaitos modifikavimas
 UpdateMvts=Judėjimo modifikavimas
 WriteBookKeeping=Įrašyti sąskaitas Didžiąją knygą
 Bookkeeping=Didžioji knyga
 AccountBalance=Account balance
-
-AccountingVentilation=Aapskaitos schema
-AccountingVentilationSupplier=Apskaitos tiekėjo schema
-AccountingVentilationCustomer=Apskaitos kliento schema
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Sąskaitos eilutės, kurios turi būti apsvarstytos
@@ -59,7 +39,6 @@ InvoiceLinesDone=Svarstomos eilutės sąskaitoje-faktūroje
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=Svarstyti
-VentilationAuto=Automatinis paskirstymas
 
 Processing=Apdorojimas
 EndProcessing=Apdorojimo pabaiga
@@ -69,14 +48,10 @@ Lineofinvoice=Sąskaitos-faktūros eilutė
 VentilatedinAccount=Sėkmingai persvarstyta apskaitos sąskaitoje
 NotVentilatedinAccount=Nepersvarstyta apskaitos sąskaitoje
 
-ACCOUNTING_SEPARATORCSV=Kolonėlės skyriklis eksporto faile
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
-AccountLength=Apskaitos sąskaitų, parodytų Dolibarr, ilgis
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Bendrųjų sąskaitų ilgis
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Socialinis žurnalas
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Operacijų sąskaita
 ACCOUNTING_ACCOUNT_SUSPENSE=Laukimo sąskaita
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
@@ -99,12 +75,19 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold servi
 Doctype=Dokumento tipas
 Docdate=Data
 Docref=Nuoroda
-Numerocompte=Sąskaita
 Code_tiers=Trečioji Šalis
 Labelcompte=Sąskaitos etiketė
 Sens=Sens
 Codejournal=Žurnalas
 NumPiece=Piece number
+AccountingCategory=Accounting category
+
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
 
 DelBookKeeping=Panaikinti Didžiosios knygos įrašus
 
@@ -113,9 +96,6 @@ DescPurchasesJournal=Pirkimų žurnalas
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=Mokėjimai grynaisiais pinigais
-
-SupplierInvoicePayment=Tiekėjo sąskaitos-faktūros apmokėjimas
 CustomerInvoicePayment=Kliento sąskaitos-faktūros apmokėjimas
 
 ThirdPartyAccount=Trečios šalies sąskaita
@@ -130,7 +110,6 @@ DescThirdPartyReport=Consult here the list of the thirdparty customers and the s
 
 ListAccounts=Apskaitos sąskaitų sąrašas
 
-Pcgversion=Plano versija
 Pcgtype=Sąskaitų klasė
 Pcgsubtype=Sąskaitų poklasis
 Accountparent=Sąskaitos šaknys
@@ -143,7 +122,6 @@ DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounti
 ChangeAccount=Change the accounting account for lines selected by the account:
 Vide=-
 DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
 ValidateHistory=Patvirtinti automatiškai
@@ -153,21 +131,23 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=Suskirstymo kortelė
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Eksportas
+Export=Eksportas
+Modelcsv=Eksporto modelis
+OptionsDeactivatedForThisExportModel=Šiam eksporto modeliui opcijos išjungtos
+Selectmodelcsv=Pasirinkite eksporto modelį
+Modelcsv_normal=Klasikinis eksportas
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -177,3 +157,13 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping

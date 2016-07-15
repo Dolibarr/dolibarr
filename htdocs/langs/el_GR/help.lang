@@ -4,7 +4,6 @@ EMailSupport=Emails υποστήριξη
 RemoteControlSupport=Συνδεδεμένοι πραγματικό χρόνο / απομακρυσμένη υποστήριξη
 OtherSupport=Άλλες υποστήριξη
 ToSeeListOfAvailableRessources=Για να επικοινωνήσετε / δείτε τους διαθέσιμους πόρους:
-ClickHere=Κάντε κλικ εδώ
 HelpCenter=Κέντρο Βοήθειας
 DolibarrHelpCenter=Dolibarr Κέντρο Βοήθειας και Υποστήριξης
 ToGoBackToDolibarr=Διαφορετικά, κάντε κλικ <a href="%s">εδώ για να χρησιμοποιήσετε Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Μερικές φορές, δεν υπάρχει κα�
 BackToHelpCenter=Διαφορετικά, κάντε κλικ εδώ για να πάτε <a href="%s">πίσω για να βοηθήσει το κέντρο αρχική σελίδα</a> .
 LinkToGoldMember=Μπορείτε να καλέσετε ένα από τα πούλμαν που έχουν επιλέξει Dolibarr για τη γλώσσα σας (%s) κάνοντας κλικ Widget του (κατάσταση και μέγιστη τιμή ενημερώνονται αυτόματα):
 PossibleLanguages=Υποστηριζόμενες γλώσσες
-MakeADonation=Βοήθεια Dolibarr έργο, κάνουν μια δωρεά
 SubscribeToFoundation=Για βοήθεια του έργου Dolibarr, εγγραφείτε στο ίδρυμα
 SeeOfficalSupport=Για την επίσημη υποστήριξη Dolibarr στη γλώσσα σας: <br><b><a href="%s" target="_blank">%s</a></b>

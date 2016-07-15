@@ -6,6 +6,7 @@ NoErrorCommitIsDone=بدون خطا، ما متعهد
 ErrorButCommitIsDone=خطاهای یافت اما ما با وجود این اعتبار
 ErrorBadEMail=ایمیل٪ اشتباه است
 ErrorBadUrl=آدرس٪ s در اشتباه است
+ErrorBadValueForParamNotAString=Bad value for your parameter. It appends generally when translation is missing.
 ErrorLoginAlreadyExists=ورود به٪ s در حال حاضر وجود دارد.
 ErrorGroupAlreadyExists=گروه٪ s در حال حاضر وجود دارد.
 ErrorRecordNotFound=صفحه موجود نیست.
@@ -16,7 +17,6 @@ ErrorFailToCreateFile=برای ایجاد پرونده <b>«٪ s»</b> شکست 
 ErrorFailToRenameDir=برای تغییر نام دایرکتوری <b>'٪ s'</b> را به <b>'٪ s</b> »شکست خورد.
 ErrorFailToCreateDir=برای ایجاد دایرکتوری <b>'٪ s</b> »شکست خورد.
 ErrorFailToDeleteDir=دایرکتوری <b>'٪ s' به</b> حذف انجام نشد.
-ErrorFailedToDeleteJoinedFiles=می تواند محیط زیست را حذف کنید چون برخی از فایل های پیوست وجود دارد. حذف اولین پیوستن به فایل های.
 ErrorThisContactIsAlreadyDefinedAsThisType=این تماس در حال حاضر به عنوان تماس برای این نوع تعریف شده است.
 ErrorCashAccountAcceptsOnlyCashMoney=این حساب بانکی یک حساب نقدی، پس از آن پرداخت و تنها نوع پول نقد را می پذیرد.
 ErrorFromToAccountsMustDiffers=منبع و اهداف حساب های بانکی باید متفاوت باشد.
@@ -29,18 +29,17 @@ ErrorBarCodeRequired=کد نوار مورد نیاز
 ErrorCustomerCodeAlreadyUsed=کد مشتری در حال حاضر استفاده می شود
 ErrorBarCodeAlreadyUsed=کد نوار در حال حاضر استفاده می شود
 ErrorPrefixRequired=پیشوند مورد نیاز
-ErrorUrlNotValid=آدرس وب سایت اشتباه است
 ErrorBadSupplierCodeSyntax=نحو بد برای کد منبع
 ErrorSupplierCodeRequired=کد تامین کننده مورد نیاز
 ErrorSupplierCodeAlreadyUsed=کد تامین کننده در حال حاضر استفاده می شود
 ErrorBadParameters=پارامترهای بد
-ErrorBadValueForParameter=ارزش اشتباه '٪ s' را برای پارامتر نادرست '٪ s' را
+ErrorBadValueForParameter=Wrong value '%s' for parameter '%s'
 ErrorBadImageFormat=Image file has not a supported format (Your PHP does not support functions to convert images of this format)
 ErrorBadDateFormat=مقدار «٪ s 'است قالب تاریخ اشتباه
 ErrorWrongDate=تاریخ صحیح نمی باشد!
 ErrorFailedToWriteInDir=برای نوشتن در پوشه٪ s شکست خورد
 ErrorFoundBadEmailInFile=یافت نحو ایمیل نادرست برای٪ s خط در فایل (به عنوان مثال خط٪ با ایمیل =٪ بازدید کنندگان)
-ErrorUserCannotBeDelete=کاربر نمی تواند حذف شود. ممکن است آن را در نهادهای Dolibarr همراه است.
+ErrorUserCannotBeDelete=User cannot be deleted. May be it is associated to Dolibarr entities.
 ErrorFieldsRequired=برخی از زمینه های مورد نیاز است نه شد.
 ErrorFailedToCreateDir=برای ایجاد یک دایرکتوری شکست خورده است. بررسی کنید که کاربر وب سرور دارای مجوز به ارسال به Dolibarr دایرکتوری اسناد. اگر <b>safe_mode</b> پارامتر در این PHP را فعال کنید، بررسی کنید که فایل های پی اچ پی Dolibarr صاحب به کاربر وب سرور (یا گروه).
 ErrorNoMailDefinedForThisUser=بدون پست تعریف شده برای این کاربر
@@ -82,22 +81,19 @@ ErrorFieldRefNotIn=ارزش اشتباه برای تعداد <b>فیلد٪ s</b>
 ErrorsOnXLines=خطا <b>در٪ s را</b> ثبت منبع (ها)
 ErrorFileIsInfectedWithAVirus=برنامه آنتی ویروس قادر به اعتبار فایل (فایل ممکن است توسط یک ویروس آلوده)
 ErrorSpecialCharNotAllowedForField=شخصیت های ویژه برای رشته "٪ s" مجاز نیست
-ErrorDatabaseParameterWrong=پایگاه داده های پارامتر راه اندازی <b>'٪ s' را</b> تا به ارزش سازگار به استفاده از Dolibarr (باید مقدار <b>«٪ s</b> 'داشته باشد).
 ErrorNumRefModel=مرجع به پایگاه داده وجود دارد (٪ s) و سازگار با این قانون شماره نیست. حذف رکورد و یا مرجع تغییر نام داد و به این ماژول را فعال کنید.
 ErrorQtyTooLowForThisSupplier=مقدار خیلی کم برای این عرضه کننده کالا یا بدون قیمت در این محصول برای این کالا تعریف شده
-ErrorModuleSetupNotComplete=راه اندازی ماژول به نظر می رسد ناقص. برو در راه اندازی - ماژول ها را پر کنید.
+ErrorModuleSetupNotComplete=Setup of module looks to be uncomplete. Go on Home - Setup - Modules to complete.
 ErrorBadMask=خطا در ماسک
 ErrorBadMaskFailedToLocatePosOfSequence=خطا، ماسک بدون شماره ترتیب
 ErrorBadMaskBadRazMonth=خطا، مقدار تنظیم مجدد بد
 ErrorMaxNumberReachForThisMask=Max number reach for this mask
 ErrorCounterMustHaveMoreThan3Digits=Counter must have more than 3 digits
 ErrorSelectAtLeastOne=خطا. حداقل یک ورودی را انتخاب کنید.
-ErrorProductWithRefNotExist=محصولات با مرجع <i>'٪ s' را</i> وجود ندارد
 ErrorDeleteNotPossibleLineIsConsolidated=حذف ممکن نیست چون رکورد به یک transation بانکی است که با آشتی خاتمه نیافت مرتبط
 ErrorProdIdAlreadyExist=٪ s را به یک سوم دیگر اختصاص داده
 ErrorFailedToSendPassword=برای ارسال رمز عبور ناموفق
 ErrorFailedToLoadRSSFile=نتواند به دریافت خوراک RSS. سعی کنید برای اضافه کردن MAIN_SIMPLEXMLLOAD_DEBUG ثابت اگر پیغام خطا می کند اطلاعات کافی را فراهم نمی کند.
-ErrorPasswordDiffers=کلمات عبور متفاوت است، لطفا دوباره آنها را تایپ کنید.
 ErrorForbidden=Access denied.<br>You try to access to a page, area or feature of a disabled module or without being in an authenticated session or that is not allowed to your user.
 ErrorForbidden2=اجازه این ورود می تواند توسط مدیر Dolibarr خود را از منوی٪ s->٪ s را تعریف شده است.
 ErrorForbidden3=به نظر می رسد که Dolibarr از طریق یک جلسه تصدیق استفاده نمی شود. نگاهی به اسناد و مدارک راه اندازی Dolibarr بدانید که چگونه برای مدیریت احراز اصالت (htaccess تغییر نام دهید، mod_auth و یا دیگر ...).
@@ -105,7 +101,6 @@ ErrorNoImagickReadimage=کلاس Imagick در این PHP یافت نشد. بدو
 ErrorRecordAlreadyExists=ضبط از قبل وجود دارد
 ErrorCantReadFile=برای خواندن پرونده «٪ s» شکست خورد
 ErrorCantReadDir=برای خواندن دایرکتوری شکست خورد '٪ s' را
-ErrorFailedToFindEntity=برای خواندن محیط زیست «٪ s» شکست خورد
 ErrorBadLoginPassword=ارزش بد برای ورود و یا کلمه عبور
 ErrorLoginDisabled=حساب شما غیر فعال شده است
 ErrorFailedToRunExternalCommand=برای اجرای دستور خارجی ها انجام نشد. آن را چک کنید در دسترس است و شده runnable توسط سرور PHP شما می باشد. اگر PHP <b>حالت Safe Mode</b> را فعال کنید، بررسی کنید که فرمان است در داخل یک پوشه تعریف شده توسط <b>safe_mode_exec_dir</b> پارامتر.
@@ -128,7 +123,7 @@ ErrorNewValueCantMatchOldValue=ارزش های جدید را نمی توان ب�
 ErrorFailedToValidatePasswordReset=به راه اندازی مجدد کنتور رمز عبور شکست خورده است. ممکن است راه اندازی مجدد کنتور در حال حاضر انجام شده است (این لینک را می توان مورد استفاده فقط یک بار). اگر نه، سعی کنید به راه اندازی مجدد فرآیند راه اندازی مجدد کنتور.
 ErrorToConnectToMysqlCheckInstance=اتصال به پایگاه داده نتواند. چک کردن سرور خروجی زیر در حال اجرا است (در بیشتر موارد، شما می توانید آن را از خط فرمان با 'کد: sudo / و غیره / init.d / خروجی زیر شروع به' راه اندازی).
 ErrorFailedToAddContact=برای اضافه کردن مخاطب انجام نشد
-ErrorDateMustBeBeforeToday=تاریخ نمی تواند بیشتر از امروز
+ErrorDateMustBeBeforeToday=The date cannot be greater than today
 ErrorPaymentModeDefinedToWithoutSetup=حالت پرداخت به نوع٪ s را تعیین شد، اما راه اندازی فاکتور ماژول شد کامل نیست برای تعریف اطلاعات به این حالت پرداخت نشان می دهد.
 ErrorPHPNeedModule=خطا، PHP شما باید <b>بخش٪ s</b> نصب کرده باشید برای استفاده از این ویژگی.
 ErrorOpenIDSetupNotComplete=شما راه اندازی Dolibarr فایل پیکربندی اجازه می دهد تا احراز هویت ایجاد حساب کاربری، اما URL خدمات ایجاد حساب کاربری به٪ ثابت تعریف نشده
@@ -167,20 +162,23 @@ ErrorGlobalVariableUpdater3=The requested data was not found in result
 ErrorGlobalVariableUpdater4=SOAP client failed with error '%s'
 ErrorGlobalVariableUpdater5=No global variable selected
 ErrorFieldMustBeANumeric=Field <b>%s</b> must be a numeric value
-ErrorFieldMustBeAnInteger=Field <b>%s</b> must be an integer
 ErrorMandatoryParametersNotProvided=Mandatory parameter(s) not provided
 ErrorOppStatusRequiredIfAmount=You set an estimated amount for this opportunity/lead. So you must also enter its status
 ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In Module Descriptor (bad value for key fk_menu)
 ErrorSavingChanges=An error has ocurred when saving the changes
 ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=File must have format %s
+ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
+ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
+ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
+ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
+ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
 
 # Warnings
 WarningPasswordSetWithNoAccount=A password was set for this member. However, no user account was created. So this password is stored but can't be used to login to Dolibarr. It may be used by an external module/interface but if you don't need to define any login nor password for a member, you can disable option "Manage a login for each member" from Member module setup. If you need to manage a login but don't need any password, you can keep this field empty to avoid this warning. Note: Email can also be used as a login if the member is linked to a user.
 WarningMandatorySetupNotComplete=پارامترهای راه اندازی اجباری هنوز تعریف نشده
 WarningSafeModeOnCheckExecDir=هشدار، <b>safe_mode</b> گزینه PHP در تا دستور باید در داخل یک دایرکتوری اعلام شده توسط پی اچ پی <b>safe_mode_exec_dir</b> پارامتر های ذخیره شده است.
-WarningAllowUrlFopenMustBeOn=<b>خاموش allow_url_fopen</b> پارامتر باید به <b>در</b> در <b>فایل php.ini</b> فیلتر برای داشتن این ماژول کار کاملا تنظیم شده است. شما باید این فایل را به صورت دستی تغییر دهید.
-WarningBuildScriptNotRunned=<b>اسکریپت٪ بود</b> هنوز اجرا نشده است برای ساخت گرافیک، و یا هیچ اطلاعات برای نشان دادن وجود ندارد.
 WarningBookmarkAlreadyExists=چوب الف با این عنوان و یا این هدف (URL) وجود دارد.
 WarningPassIsEmpty=هشدار، رمز عبور پایگاه داده خالی است. این یک حفره امنیتی است. شما باید یک رمز عبور را به پایگاه داده خود اضافه کنید و تغییر فایل conf.php خود را به منعکس کننده این.
 WarningConfFileMustBeReadOnly=اخطار، فایل پیکربندی خود را <b>(htdocs / کنفرانس / conf.php)</b> می تواند توسط وب سرور رونویسی. این یک حفره امنیتی جدی است. تغییر مجوز فایل را در حالت فقط خواندنی است برای کاربر سیستم عامل های استفاده شده توسط وب سرور. در صورت استفاده از ویندوز و FAT فرمت برای هارد دیسک شما، شما باید بدانید که این فایل سیستم اجازه نمی دهد برای اضافه کردن مجوز در فایل، بنابراین نمی تواند به طور کامل امن است.
@@ -191,8 +189,8 @@ WarningUntilDirRemoved=تمام هشدارهای امنیتی (قابل مشاه
 WarningCloseAlways=هشدار، بسته شدن انجام می شود حتی اگر مقدار بین منبع و مقصد عناصر متفاوت است. فعال کردن این ویژگی با احتیاط.
 WarningUsingThisBoxSlowDown=اخطار، با استفاده از این جعبه کاهش سرعت به طور جدی تمام صفحات نشان دادن جعبه.
 WarningClickToDialUserSetupNotComplete=راه اندازی از اطلاعات ClickToDial برای کاربر شما کامل نیست (ClickToDial زبانه دیدن بر روی کارت کاربر خود را).
-WarningNotRelevant=عملیات بی ربط برای این مجموعه داده
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=قابلیت غیر فعال زمانی که راه اندازی صفحه نمایش برای فرد نابینا یا از مرورگرهای متن بهینه شده است.
 WarningPaymentDateLowerThanInvoiceDate=Payment date (%s) is earlier than invoice date (%s) for invoice %s.
 WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
 WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
+WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.

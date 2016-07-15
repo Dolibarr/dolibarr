@@ -5,8 +5,6 @@ Warehouses=المستودعات
 NewWarehouse=المستودع الجديد / بورصة المنطقة
 WarehouseEdit=تعديل مستودع
 MenuNewWarehouse=مستودع جديد
-WarehouseOpened=مستودع مفتوح
-WarehouseClosed=مخزن مغلق
 WarehouseSource=مصدر مخزن
 WarehouseSourceNotDefined=لا يعرف مستودع،
 AddOne=أضف واحدا
@@ -17,11 +15,8 @@ DeleteSending=حذف ارسال
 Stock=الأسهم
 Stocks=الاسهم
 StocksByLotSerial=الأسهم عن طريق القرعة / المسلسل
-Movement=الحركة
 Movements=حركات
 ErrorWarehouseRefRequired=مستودع الاشارة اسم مطلوب
-ErrorWarehouseLabelRequired=مستودع العلامة مطلوبة
-CorrectStock=تصحيح الأوراق المالية
 ListOfWarehouses=لائحة المخازن
 ListOfStockMovements=قائمة الحركات الأسهم
 StocksArea=منطقة المستودعات
@@ -41,7 +36,6 @@ StockMovements=تحركات الأسهم
 LabelMovement=تسمية الحركة
 NumberOfUnit=عدد الوحدات
 UnitPurchaseValue=وحدة سعر الشراء
-TotalStock=إجمالي المخزون
 StockTooLow=الاسهم منخفضة جدا
 StockLowerThanLimit=الأسهم أقل من الحد في حالة تأهب
 EnhancedValue=القيمة
@@ -59,10 +53,10 @@ RuleForStockManagementIncrease=حكم لآلية الزيادة إدارة ال�
 DeStockOnBill=خفض مخزونات حقيقية على فواتير الزبائن / الائتمان التحقق من صحة الملاحظات
 DeStockOnValidateOrder=خفض مخزونات حقيقية على التحقق من صحة أوامر العملاء
 DeStockOnShipment=انخفاض أسهم حقيقي على التحقق من صحة الشحن
+DeStockOnShipmentOnClosing=Decrease real stocks on shipping classification closed
 ReStockOnBill=زيادة المخزون الحقيقي في فواتير الموردين / الائتمان التحقق من صحة الملاحظات
 ReStockOnValidateOrder=زيادة مخزونات حقيقية على استحسان أوامر الموردين
 ReStockOnDispatchOrder=زيادة مخزونات دليل حقيقي على إيفاد في المستودعات ، وبعد تلقي أمر المورد
-ReStockOnDeleteInvoice=زيادة أسهم حقيقي على حذف الفاتورة
 OrderStatusNotReadyToDispatch=أمر لم يتم بعد أو لا أكثر من ذلك الوضع الذي يسمح بإرسال من المنتجات في مخازن المخزون.
 StockDiffPhysicTeoric=تفسير الفرق بين المخزون المادي والنظري
 NoPredefinedProductToDispatch=لا توجد منتجات محددة سلفا لهذا الكائن. لذلك لا إرسال في المخزون المطلوب.
@@ -72,10 +66,6 @@ StockLimit=حد الأسهم للتنبيه
 PhysicalStock=المخزون المادي
 RealStock=الحقيقية للاسهم
 VirtualStock=الأسهم الافتراضية
-MininumStock=الحد الأدنى للرصيد
-StockUp=تخزين
-MininumStockShort=الأسهم دقيقة
-StockUpShort=تخزين
 IdWarehouse=معرف مخزن
 DescWareHouse=وصف المخزن
 LieuWareHouse=المكان مخزن
@@ -95,9 +85,8 @@ ThisWarehouseIsPersonalStock=هذا يمثل مستودع للطبيعة الش�
 SelectWarehouseForStockDecrease=اختيار مستودع لاستخدامها لانخفاض الأسهم
 SelectWarehouseForStockIncrease=اختيار مستودع لاستخدامها لزيادة المخزون
 NoStockAction=أي إجراء الأسهم
-LastWaitingSupplierOrders=أوامر الانتظار لحفلات
-DesiredStock=الحد الأدنى المطلوب الأسهم
-DesiredMaxStock=الحد الأقصى الأسهم المطلوب
+DesiredStock=Desired optimal stock
+DesiredStockDesc=This stock amount will be the value used to fill the stock by replenishment feature.
 StockToBuy=أن تأمر
 Replenishment=التجديد
 ReplenishmentOrders=أوامر التجديد
@@ -115,12 +104,11 @@ WarehouseForStockDecrease=سيتم استخدام <b>مستودع٪ الصورة
 WarehouseForStockIncrease=سيتم استخدام <b>مستودع٪ s للزيادة</b> المخزون
 ForThisWarehouse=لهذا المستودع
 ReplenishmentStatusDesc=هذه هي قائمة من جميع المنتجات مع مخزون أقل من الأسهم المطلوب (أو أقل من قيمة التنبيه إذا مربع "التنبيه فقط" يتم التحقق). باستخدام مربع، يمكنك إنشاء أوامر المورد لملء الفرق.
-ReplenishmentOrdersDesc=هذه قائمة لجميع أوامر المورد افتتح بما في ذلك المنتجات المحددة مسبقا. فتح فقط أوامر مع منتجات محددة مسبقا، لذلك الأوامر التي قد تؤثر على الأسهم ومرئية هنا.
+ReplenishmentOrdersDesc=This is a list of all open supplier orders including predefined products. Only open orders with predefined products, so orders that may affect stocks, are visible here.
 Replenishments=التجديد
 NbOfProductBeforePeriod=كمية من الناتج٪ الصورة في الأوراق المالية قبل الفترة المختارة (<٪ ق)
 NbOfProductAfterPeriod=كمية من الناتج٪ الصورة في الأوراق المالية بعد الفترة المختارة (>٪ ق)
 MassMovement=حركة جماهيرية
-MassStockMovement=حركة المخزون الجماعية
 SelectProductInAndOutWareHouse=حدد المنتج، والكمية، ومستودع مصدر ومستودع الهدف، ثم انقر فوق "٪ الصورة". حالما يتم ذلك لجميع الحركات المطلوبة، انقر على "٪ الصورة".
 RecordMovement=سجل TRANSFERT
 ReceivingForSameOrder=إيصالات لهذا النظام
@@ -135,7 +123,10 @@ IsInPackage=الواردة في حزمة
 ShowWarehouse=مشاهدة مستودع
 MovementCorrectStock=تصحيح الأسهم للمنتج٪ الصورة
 MovementTransferStock=نقل الأسهم من الناتج٪ الصورة إلى مستودع آخر
-WarehouseMustBeSelectedAtFirstStepWhenProductBatchModuleOn=يجب تعريف مستودع المصدر هنا عندما "الكثير المنتج" الوحدة هي جرا. سيتم استخدامها لسرد الكثير الذي / مسلسل المتاحة للمنتجات التي تتطلب الكثير / البيانات التسلسلية للحركة. إذا كنت تريد أن ترسل المنتجات من المستودعات المختلفة، وجعل مجرد شحنة إلى العديد من الخطوات.
 InventoryCodeShort=الجرد. / وسائل التحقق. رمز
 NoPendingReceptionOnSupplierOrder=لا استقبال في انتظار المقرر أن يفتتح المورد أجل
 ThisSerialAlreadyExistWithDifferentDate=هذا الكثير / الرقم التسلسلي <strong>(٪ ق)</strong> موجودة بالفعل ولكن مع eatby مختلفة أو تاريخ sellby <strong>(وجدت٪ الصورة</strong> ولكن قمت <strong>بإدخال%s).</strong>
+OpenAll=Open for all actions
+OpenInternal=Open for internal actions
+OpenShipping=Open for shippings
+OpenDispatch=Open for dispatch

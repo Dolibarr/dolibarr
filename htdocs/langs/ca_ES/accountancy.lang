@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna pel fitxer d'exportació
 ACCOUNTING_EXPORT_DATE=Format de data pel fitxer d'exportació
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Exporta l'etiqueta
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Comptabilitat experta
-Globalparameters=Paràmetres globals
-Menuaccount=Comptes de comptabilitat
-Menuthirdpartyaccount=Comptes de tercers
-MenuTools=Utilitats
 
 ConfigAccountingExpert=Configuració del mòdul Compatibilitat avançada
 Journaux=Diaris
 JournalFinancial=Diaris financers
-Exports=Exportacions
-Export=Exporta
-Modelcsv=Model d'exportació
-OptionsDeactivatedForThisExportModel=Per aquest model d'exportació les opcions estan desactivades
-Selectmodelcsv=Selecciona un model d'exportació
-Modelcsv_normal=Exportació clàssica
-Modelcsv_CEGID=Exporta cap a CEGID Expert
 BackToChartofaccounts=Tornar al Pla comptable
 
-Definechartofaccounts=Definir el Pla comptable
 Selectchartofaccounts=Seleccionar el Pla comptable
 Addanaccount=Afegir un compte comptable
 AccountAccounting=Compte comptable
+AccountAccountingShort=Compte
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Desglossament
 
 MenuAccountancy=Comptabilitat
 CustomersVentilation=Desglossament de clients
 SuppliersVentilation=Desglossament de proveïdors
-TradeMargin=Marge comercial
 Reports=Informes
-ByCustomerInvoice=Per factures de clients
 NewAccount=Nou compte comptable
 Create=Crear
 CreateMvts=Crear moviment
-UpdateAccount=Modificació d'un compte comptable
 UpdateMvts=Modificació d'un moviment
 WriteBookKeeping=Registre de comptabilitat en el llibre major
 Bookkeeping=Llibre major
 AccountBalance=Compte saldo
-
-AccountingVentilation=Desglossament de comptabilitat
-AccountingVentilationSupplier=Desglossament de comptabilitat de proveïdor
-AccountingVentilationCustomer=Desglossament de comptabilitat de clients
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Línies de factura per ser ventilades
@@ -59,7 +39,6 @@ InvoiceLinesDone=Línies de factura ventilades
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=Ventilar
-VentilationAuto=Desglossament automàtic
 
 Processing=Processant
 EndProcessing=Final del procés
@@ -69,14 +48,10 @@ Lineofinvoice=Línia de factura
 VentilatedinAccount=Ventilat satisfactòriament en els comptes comptables
 NotVentilatedinAccount=No ventilat en el compte comptable
 
-ACCOUNTING_SEPARATORCSV=Separador de columna en fitxer d'exportació
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Número d'elements per visualitzar el desglossament per pàgina (màxim recomanat : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Comença la classificació de les pàgines de desglossament "S'ha de desglossar" pels elements més recents
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Comença la classificació de les pàgines de desglossament "Desglossar" pels elements més recents
 
-AccountLength=Longitud dels comptes comptables mostrats a Dolibarr
-AccountLengthDesc=Funció que permet fingir una longitud de compte comptable mitjançant la substitució d'espais per la xifra zero. Aquesta funció només toca la pantalla, no modifica els comptes comptables registrats a Dolibarr. Per a l'exportació, aquesta funció és necessària per ser compatible amb un determinat programari.
 ACCOUNTING_LENGTH_DESCRIPTION=Longitud per mostrar la descripció de productes i serveis en llistats (Recomanat = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Longitud per mostrar la el formulari de descripció comptes de productes i serveis en llistats (Recomanat = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Mida dels comptes generals
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Diari social
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Transferència de compte
 ACCOUNTING_ACCOUNT_SUSPENSE=Compte d'espera
+DONATION_ACCOUNTINGACCOUNT=Compte per registrar donacions
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable per defecte per productes comprats (si no s'ha definit en la fitxa de producte)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable per defecte per productes venuts (si no s'ha definit en la fitxa de producte)
@@ -99,12 +75,19 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable per defecte per serveis venuts 
 Doctype=Tipus de document
 Docdate=Data
 Docref=Referència
-Numerocompte=Compte
 Code_tiers=Tercer
 Labelcompte=Etiqueta de compte
 Sens=Significat
 Codejournal=Diari
 NumPiece=Número de peça
+AccountingCategory=Categoria de comptabilitat
+
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
 
 DelBookKeeping=Eliminar els registres del llibre major
 
@@ -113,9 +96,6 @@ DescPurchasesJournal=Diari de compres
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=Pagament al comptat
-
-SupplierInvoicePayment=Pagament de factura de proveïdor
 CustomerInvoicePayment=Pagament de factura de client
 
 ThirdPartyAccount=Compte de tercer
@@ -130,7 +110,6 @@ DescThirdPartyReport=Consulta aquí el llistat dels tercers clients i proveïdor
 
 ListAccounts=Llistat dels comptes comptables
 
-Pcgversion=Versió del pla
 Pcgtype=Classe de compte
 Pcgsubtype=Sota la classe de compte
 Accountparent=Arrel del compte
@@ -143,7 +122,6 @@ DescVentilTodoCustomer=Ventila les teves línies de factures de client amb un co
 ChangeAccount=Canvia el compte comptable per les línies seleccionades pel compte:
 Vide=-
 DescVentilSupplier=Consulta aquí el desglossament anual comptable de les teves factures de proveïdors
-DescVentilTodoSupplier=Ventila les teves línies de factures de proveïdor amb un compte comptable
 DescVentilDoneSupplier=Consulta aquí el llistat de línies de factures de proveïdors i els seus comptes comptables
 
 ValidateHistory=Valida automàticament
@@ -153,21 +131,23 @@ MvtNotCorrectlyBalanced=Moviment no balancejat correctament. Crèdit = %s. Dèbi
 FicheVentilation=Desglossament de targetes
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
-MvtNotCorrectlyBalanced=Moviment no balancejat correctament. Crèdit = %s. Dèbit = %s
+## Admin
+ApplyMassCategories=Aplica categories massives
 
-##Export Journal Feature
-ExportFormat=Format d'exportació
-Prefixname=Prefix del fitxer d'exportació
-Separate=Separador d'exportació
-Textframe=Finestra del valor del text
-Headercol=Nom de columna en capçalera del fitxer
-Fieldname=Nom del camp
-Headername=Nom en la capçalera
-Type=Tipus de camps
-Param=Paràmetres addicionals
-EnabledProduct=En producte
-EnabledTiers=En el tercer
-EnabledVat=En CIF/NIF
+## Export
+Exports=Exportacions
+Export=Exporta
+Modelcsv=Model d'exportació
+OptionsDeactivatedForThisExportModel=Per aquest model d'exportació les opcions estan desactivades
+Selectmodelcsv=Selecciona un model d'exportació
+Modelcsv_normal=Exportació clàssica
+Modelcsv_CEGID=Exporta cap a CEGID Expert Comptabilité
+Modelcsv_COALA=Exporta cap a Sage Coala
+Modelcsv_bob50=Exporta cap a Sage BOB 50
+Modelcsv_ciel=Exporta cap a Sage Ciel Compta o Compta Evolution
+Modelcsv_quadratus=Exporta cap a Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Inicialitza la comptabilitat
@@ -177,3 +157,13 @@ OptionModeProductSell=En mode vendes
 OptionModeProductBuy=En mode compres
 OptionModeProductSellDesc=Mostra tots els productes sense compte comptable definit per vendes.
 OptionModeProductBuyDesc=Mostra tots els productes sense compte comptable definit per compres.
+
+## Dictionary
+Range=Rang de compte comptable
+Calculated=Calculat
+Formula=Fórmula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Sense categoria contable per aquest pais
+ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping

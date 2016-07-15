@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  *
@@ -483,20 +483,27 @@ if ($object->id > 0)
 	// Add a withdraw request
 	if ($object->statut > Facture::STATUS_DRAFT && $object->paye == 0 && $num == 0)
 	{
-		if ($user->rights->prelevement->bons->creer)
-		{
-			print '<form method="POST" action="">';
-			print '<input type="hidden" name="id" value="' . $object->id . '" />';
-			print '<input type="hidden" name="action" value="new" />';
-			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
-			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
-			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
-			print '</form>';
-		}
-		else
-		{
-			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
-		}
+	    if ($resteapayer > 0)
+	    {
+    		if ($user->rights->prelevement->bons->creer)
+    		{
+    			print '<form method="POST" action="">';
+    			print '<input type="hidden" name="id" value="' . $object->id . '" />';
+    			print '<input type="hidden" name="action" value="new" />';
+    			print '<label for="withdraw_request_amount">' . $langs->trans('WithdrawRequestAmount') . ' </label>';
+    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="' . $resteapayer . '" size="10" />';
+    			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
+    			print '</form>';
+    		}
+    		else
+    		{
+    			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+    		}
+	    }
+	    else
+        {
+            print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+        }
 	}
 	else
 	{

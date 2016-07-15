@@ -560,6 +560,18 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100 {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax300 {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowauto {
     max-width: 0;
     overflow: auto;
@@ -583,11 +595,18 @@ div.myavailability {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth50  { min-width: 50px; }
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }
 .minwidth400 { min-width: 400px; }
 .minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -615,6 +634,7 @@ div.myavailability {
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -683,9 +703,12 @@ td.showDragHandle {
 	display: block;
 	font-family: "RobotoDraft","Roboto",sans-serif;
 	left: 0;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	position: fixed;
 	top: 50px;
-	z-index: 4;
+<?php } ?>
+	z-index: 200;
 	-webkit-transform: translateZ(0);
 	-moz-transform: translateZ(0);
 	-ms-transform: translateZ(0);
@@ -709,15 +732,18 @@ td.showDragHandle {
 	-moz-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 	-webkit-overflow-scrolling: touch;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	overflow-x: hidden;
 	overflow-y: auto;
+<?php } ?>
 <?php } ?>
 }
 .side-nav-vert {
 	margin-left: 228px;
 }
 
-/* For desktop */
+/* For smartphone (testmenuhider is on) */
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
@@ -726,15 +752,20 @@ td.showDragHandle {
 	margin-left: 0;
 }
 div.login_block {
-	border-right: none ! important; 
+	/* border-right: none ! important; */
 	top: inherit !important;
 }
 .side-nav {
-	/*top: inherit !important;*/
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+<?php } else { ?>
 	overflow-x: initial !important;
 	overflow-y: scroll;
-	/*position: initial !important;*/
+<?php } ?>
 	display: none;
+
+	position: auto;
+	top: auto;
+	z-index: 200;
 }
 div.login_block {
 	/* position: initial !important;*/
@@ -744,7 +775,18 @@ div.login_block {
 	padding-left: 0 ! important;
 }
 #id-left {
+	z-index: 201;
+	background: #FFF;
+	border-right: 1px solid rgba(0,0,0,0.3);
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+	top: 50px ! important;
+<?php } else { ?>
 	top: 60px ! important;
+<?php } ?>
+}
+div.fiche {
+	margin-<?php print $left; ?>: 6px !important;
+	margin-<?php print $right; ?>: 6px !important;
 }
 <?php } ?>
 
@@ -838,7 +880,7 @@ table.noborder tr.liste_titre td {
 }
 
 #pictotitle {
-	margin-right: 8px;
+	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
 .pictosubstatus {
@@ -1064,6 +1106,8 @@ div.tmenucenter
 }
 div.menu_titre {
 	padding-bottom: 2px;
+	overflow: hidden;
+    text-overflow: ellipsis;	
 }
 .mainmenuaspan
 {
@@ -1319,7 +1363,11 @@ div.login_block {
     padding-bottom: 3px;
 	<?php print $left; ?>: 0;
 	top: 0px;
+<?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
+	position: absolute;
+<?php } else { ?>
 	position: fixed;
+<?php } ?>
 	font-weight: bold;
 	z-index: 10;
 	text-align: center;
@@ -1431,7 +1479,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 8px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -1491,7 +1539,7 @@ div.blockvmenuhelp
 	text-align: center;
 	text-decoration: none;
     padding-left: 0px;
-    padding-right: 3px;
+    padding-right: 8px;
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 4px 0px 0px 0px;
@@ -2572,7 +2620,10 @@ input.liste_titre {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 }
-
+.paymenttable tr td:first-child, .margintable tr td:first-child
+{
+	padding-left: 2px;
+}
 .margintable td {
 	border: 0px !important;
 }
@@ -2620,7 +2671,7 @@ div.tabBar .noborder {
 <?php } ?>
 }
 span.boxstatstext {
-	opacity: 0.9;
+	/* opacity: 0.9;  Disabled. This make text on top of left menu in smartphone size */
     line-height: 18px;
 }
 span.boxstatsindicator {
@@ -2799,6 +2850,8 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 .product_line_stock_too_low { color: #664400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
+
+.widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { margin: 0px; }
@@ -3885,6 +3938,9 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 }
+.dropdown dd ul li input[type="checkbox"] {
+    margin-right: 3px;
+}
 .dropdown dd ul li a {
     padding:5px;
     display:block;
@@ -3910,8 +3966,8 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 
 .ui-btn-inner {
 	min-width: .4em;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 6px;
+	padding-right: 6px;
 	<?php if (! empty($dol_use_jmobile)) { ?>
 	font-size: 13px;
 	<?php } else { ?>
@@ -3920,16 +3976,29 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 34px;
+	padding-right: 30px;
 }
 .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 34px;
+	padding-left: 30px;
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 38px;
+	padding-right: 30px;
 }
 .ui-select .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 38px;
+	padding-left: 30px;
+}
+.ui-select .ui-btn-icon-right .ui-icon {
+    right: 8px;
+}
+.ui-btn-icon-left > .ui-btn-inner > .ui-icon, .ui-btn-icon-right > .ui-btn-inner > .ui-icon {
+    margin-top: -10px;
+}
+select {
+    /* display: inline-block; */	/* We can't set this. This disable ability to make */
+    /* TODO modified by jmobile, replace jmobile with pure css*/
+    overflow:hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
 	margin: 0px;

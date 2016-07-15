@@ -87,8 +87,6 @@ class BonPrelevement extends CommonObject
 
         $this->factures = array();
 
-        $this->numero_national_emetteur = "";
-
         $this->methodes_trans = array();
 
         $this->methodes_trans[0] = "Internet";
@@ -919,7 +917,10 @@ class BonPrelevement extends CommonObject
 					$row = $this->db->fetch_row($resql);
 					$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1,0,2),2,"0",STR_PAD_LEFT);
 
-					$this->filename = $conf->prelevement->dir_output.'/receipts/'.$ref.'.xml';
+					$dir=$conf->prelevement->dir_output.'/receipts';
+					if (! is_dir($dir)) dol_mkdir($dir);
+					
+					$this->filename = $dir.'/receipts/'.$ref.'.xml';
 
 	                // Create withdraw receipt in database
 	                $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
@@ -935,10 +936,6 @@ class BonPrelevement extends CommonObject
 	                {
 	                    $prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 						$this->id = $prev_id;
-
-	                    $dir=$conf->prelevement->dir_output.'/receipts';
-	                    $file=$filebonprev;
-	                    if (! is_dir($dir)) dol_mkdir($dir);
 	                }
 	                else
 					{
@@ -1018,7 +1015,6 @@ class BonPrelevement extends CommonObject
                     $this->date_echeance = $datetimeprev;
                     $this->reference_remise = $ref;
 
-                    $this->numero_national_emetteur    = $conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR;
                     $this->raison_sociale              = $conf->global->PRELEVEMENT_RAISON_SOCIALE;
 
                     $this->emetteur_code_banque 		  = $conf->global->PRELEVEMENT_CODE_BANQUE;
@@ -1027,14 +1023,14 @@ class BonPrelevement extends CommonObject
                     $this->emetteur_number_key		  = $conf->global->PRELEVEMENT_NUMBER_KEY;
                     $this->emetteur_iban               = $conf->global->PRELEVEMENT_IBAN;
                     $this->emetteur_bic                = $conf->global->PRELEVEMENT_BIC;
-                    $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// TODO Add this into setup of admin/prelevement.php. Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+                    $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
 
                     $this->factures = $factures_prev_id;
 
                     // Generation of SEPA file
                     $this->generate();
                 }
-                dol_syslog(__METHOD__."::End withdraw receipt, file ".$filebonprev, LOG_DEBUG);
+                dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
             }
 
             /*
@@ -1462,7 +1458,7 @@ class BonPrelevement extends CommonObject
 
         fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->emetteur_ics); // ICS
 
         // Date d'echeance C1
 
@@ -1611,7 +1607,7 @@ class BonPrelevement extends CommonObject
 
         fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->emetteur_ics); // ICS
 
         // Date d'echeance C1
 
@@ -1778,7 +1774,7 @@ class BonPrelevement extends CommonObject
 
         fputs($this->file, "        "); // Zone Reservee B2
 
-        fputs($this->file, $this->numero_national_emetteur); // Numero National d'emmetteur B3
+        fputs($this->file, $this->emetteur_ics); // ICS
 
         // Reserve C1
 

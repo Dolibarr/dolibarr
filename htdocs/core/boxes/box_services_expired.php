@@ -103,8 +103,8 @@ class box_services_expired extends ModeleBoxes
     				'logo' => 'company',
     				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
-    				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-    				'text' => dol_trunc($objp->name,40),
+    				$this->info_box_contents[$i][3] = array('td' => 'class="tdoverflow maxwidth100onsmartphone" align="left"',
+    				'text' => $objp->name,
     				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
 
     				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
@@ -118,7 +118,7 @@ class box_services_expired extends ModeleBoxes
     				$i++;
     			}
 
-    			if ($num==0) 
+    			if ($num==0)
     			{
     			    $langs->load("contracts");
     			    $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
@@ -147,11 +147,12 @@ class box_services_expired extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-    function showBox($head = null, $contents = null)
+    function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents);
+        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 
  }

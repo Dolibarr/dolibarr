@@ -339,7 +339,7 @@ class CommandeFournisseur extends CommonOrder
 					$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 					$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 					
-	                $this->special_line        = $objp->special_line;
+	                $this->special_code        = $objp->special_code;
 	                $this->fk_parent_line      = $objp->fk_parent_line;
 
                     $this->rang                = $objp->rang;

@@ -292,12 +292,16 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^ErrorPriceExpression/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^Language_/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^DescADHERENT_/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^SubmitTranslation/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^ModuleCompanyCode/', $value)) $qualifiedforclean=0;
+	    
 	    // main.lang
 	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^FormatDate/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^DateFormat/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^.b$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^.*Bytes$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^NoteSomeFeaturesAreDisabled/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^(DoTest|Under|Limits|Cards|CurrentValue|DateLimit|DateAndHour|NbOfLines|NbOfObjects|NbOfReferes|TotalTTCShort|VATs)/', $value)) $qualifiedforclean=0;
 	    // orders
 	    if (preg_match('/^OrderSource/', $value)) $qualifiedforclean=0;
@@ -314,12 +318,16 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^EMailText/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/ById$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/ByLogin$/', $value)) $qualifiedforclean=0;
+	    // printing
+	    if (preg_match('/PrintingDriverDesc$/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/PrintTestDesc$/', $value)) $qualifiedforclean=0;
 	    // products
 	    if (preg_match('/GlobalVariableUpdaterType$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/GlobalVariableUpdaterHelp$/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/OppStatus/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/AvailabilityType/', $value)) $qualifiedforclean=0;
-
+	    if (preg_match('/CardProduct/', $value)) $qualifiedforclean=0;
+	    
 	    if (preg_match('/sms/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/TF_/i', $value)) $qualifiedforclean=0;
 	    if (preg_match('/WithBankUsing/i', $value)) $qualifiedforclean=0;
@@ -331,7 +339,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    }
 	    
 	    //$search = '\'trans("'.$value.'")\'';
-	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\'';
+	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\' -e "('.$value.')"';
 		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'* '.$scripts.'*';
 		//print $string."<br>\n";
 		exec($string,$output);

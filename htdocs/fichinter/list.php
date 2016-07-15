@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015           Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,13 +64,13 @@ $search_status=GETPOST('search_status');
 $sall=GETPOST('sall');
 $optioncss = GETPOST('optioncss','alpha');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-	$search_ref="";
-	$search_company="";
-	$search_desc="";
-	$search_status="";
-}
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('interventionlist'));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('fichinter');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -81,6 +81,52 @@ $fieldstosearchall = array(
 );
 if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
 if (! empty($conf->global->FICHINTER_DISABLE_DETAILS)) unset($fieldstosearchall['f.description']);
+
+// Definition of fields for list
+$arrayfields=array(
+    'f.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+	'f.fk_project'=>array('label'=>$langs->trans("Project"), 'checked'=>1),
+    'f.fk_contrat'=>array('label'=>$langs->trans("Contract"), 'checked'=>1),
+    'f.description'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
+    'fd.description'=>array('label'=>"xx", 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
+    'fd.date'=>array('label'=>$langs->trans("Date"), 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
+    'fd.duree'=>array('label'=>$langs->trans("Duration"), 'checked'=>1, 'enabled'=>empty($conf->global->FICHINTER_DISABLE_DETAILS)?1:0),
+	'f.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'f.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    'f.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+   foreach($extrafields->attribute_label as $key => $val) 
+   {
+       $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+   }
+}
+
+
+/*
+ * Acions
+ */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_ref="";
+	$search_company="";
+	$search_project="";
+	$search_contract="";
+	$search_desc="";
+	$search_status="";
+    $search_array_options=array();
+}
+
 
 
 /*
@@ -94,13 +140,20 @@ llxHeader('', $langs->trans("Intervention"));
 
 
 $sql = "SELECT";
-$sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description,";
+$sql.= " f.ref, f.rowid as fichid, f.fk_statut, f.description, f.datec as date_creation, f.tms as date_update,";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sql.= " fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql.= " s.nom as name, s.rowid as socid, s.client";
-$sql.= " FROM (".MAIN_DB_PREFIX."societe as s";
-if (! $user->rights->societe->client->voir && empty($socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ", ".MAIN_DB_PREFIX."fichinter as f)";
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields as ef on (f.rowid = ef.fk_object)";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
+if (! $user->rights->societe->client->voir && empty($socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 $sql.= " WHERE f.fk_soc = s.rowid ";
 $sql.= " AND f.entity = ".$conf->entity;
 if ($search_ref) {
@@ -123,6 +176,23 @@ if ($socid)
 if ($sall) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
+}
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= $db->order($sortfield,$sortorder);
 
 $totalnboflines=0;
@@ -149,7 +219,14 @@ if ($result)
 	if ($search_desc) $param.="&search_desc=".urlencode($search_desc);
 	if ($search_status != '' && $search_status > -1) $param.="&search_status=".urlencode($search_status);
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-
+    // Add $param from extra fields
+    foreach ($search_array_options as $key => $val)
+    {
+        $crit=$val;
+        $tmpkey=preg_replace('/search_options_/','',$key);
+        if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    } 	
+	
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -165,42 +242,120 @@ if ($result)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
-    
-    print '<table class="noborder" width="100%">';
 
+    $moreforfilter='';
+    
+	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    
+    print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$param,'width="15%"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$param,'',$sortfield,$sortorder);
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+	if (! empty($arrayfields['f.ref']['checked']))          print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.ref","",$param,'width="15%"',$sortfield,$sortorder);
+	if (! empty($arrayfields['s.nom']['checked']))          print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.description']['checked']))  print_liste_field_titre($langs->trans("Description"),$_SERVER["PHP_SELF"],"f.description","",$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['fd.description']['checked'])) print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
+	if (! empty($arrayfields['fd.date']['checked'])) print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['fd.duree']['checked'])) print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$param,'align="right"',$sortfield,$sortorder);
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
-		print_liste_field_titre('',$_SERVER["PHP_SELF"],'');
-		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"fd.date","",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],"fd.duree","",$param,'align="right"',$sortfield,$sortorder);
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+           if (! empty($arrayfields["ef.".$key]['checked'])) 
+           {
+				$align=$extrafields->getAlignFlag($key);
+				print_liste_field_titre($extralabels[$key],$_SERVER["PHP_SELF"],"ef.".$key,"",$param,($align?'align="'.$align.'"':''),$sortfield,$sortorder);
+           }
+	   }
 	}
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+    // Hook fields
+	$parameters=array('arrayfields'=>$arrayfields);
+    $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+	if (! empty($arrayfields['f.datec']['checked']))  print_liste_field_titre($langs->trans("DateCreationShort"),$_SERVER["PHP_SELF"],"f.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.tms']['checked']))    print_liste_field_titre($langs->trans("DateModificationShort"),$_SERVER["PHP_SELF"],"f.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.fk_statut']['checked'])) print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.fk_statut","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
-	print '</td><td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
-	print '</td><td class="liste_titre">';
-	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
-	print '</td>';
-    if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
-	{
-		// Desc of line
+    if (! empty($arrayfields['f.ref']['checked']))
+    {
+		print '<td class="liste_titre">';
+		print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
+		print '</td>';
+    }
+    if (! empty($arrayfields['s.nom']['checked']))
+    {
+    	print '<td class="liste_titre">';
+		print '<input type="text" class="flat" name="search_company" value="'.$search_company.'" size="10">';
+		print '</td>';
+    }
+    if (! empty($arrayfields['f.description']['checked']))
+    {
+		print '<td class="liste_titre">';
+    	print '<input type="text" class="flat" name="search_desc" value="'.$search_desc.'" size="12">';
+		print '</td>';
+    }
+    if (! empty($arrayfields['fd.description']['checked']))
+    {
+    	// Desc of line
 		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre">&nbsp;</td>';
-		print '<td class="liste_titre">&nbsp;</td>';
+    }
+    if (! empty($arrayfields['fd.date']['checked']))
+    {
+    	print '<td class="liste_titre">&nbsp;</td>';
+    }
+    if (! empty($arrayfields['fd.duree']['checked']))
+    {
+    	print '<td class="liste_titre">&nbsp;</td>';
 	}
-	print '<td class="liste_titre" align="right">';
-	$liststatus=$interventionstatic->statuts_short;
-	print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
-	print '</td>';
+	// Extra fields
+	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+	{
+	   foreach($extrafields->attribute_label as $key => $val) 
+	   {
+			if (! empty($arrayfields["ef.".$key]['checked'])) 
+			{
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+    		    if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
+				print '</td>';
+			}
+	   }
+	}
+    // Fields from hook
+	$parameters=array('arrayfields'=>$arrayfields);
+    $reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+    if (! empty($arrayfields['f.datec']['checked']))
+    {
+        // Date creation
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+    if (! empty($arrayfields['f.tms']['checked']))
+    {
+        // Date modification
+        print '<td class="liste_titre">';
+        print '</td>';
+    }
+	if (! empty($arrayfields['f.fk_statut']['checked']))
+    {
+		print '<td class="liste_titre" align="right">';
+		$liststatus=$interventionstatic->statuts_short;
+		print $form->selectarray('search_status', $liststatus, $search_status, 1, 0, 0, '', 1);
+		print '</td>';
+    }
 	print '<td class="liste_titre" align="right">';
 	$searchpitco=$form->showFilterAndCheckAddButtons(0);
 	print $searchpitco;
@@ -212,44 +367,129 @@ if ($result)
 	$var=True;
 	$total = 0;
 	$i = 0;
+	$totalarray=array();
 	while ($i < min($num, $limit))
 	{
-		$objp = $db->fetch_object($result);
+		$obj = $db->fetch_object($result);
+		
+		$interventionstatic->id=$obj->fichid;
+		$interventionstatic->ref=$obj->ref;
+		$interventionstatic->statut=$obj->fk_statut;
+		
 		$var=!$var;
 		print "<tr ".$bc[$var].">";
-		print "<td>";
-		$interventionstatic->id=$objp->fichid;
-		$interventionstatic->ref=$objp->ref;
-		print $interventionstatic->getNomUrl(1);
-		print "</td>\n";
-		print '<td>';
-		$companystatic->name=$objp->name;
-		$companystatic->id=$objp->socid;
-		$companystatic->client=$objp->client;
-		print $companystatic->getNomUrl(1,'',44);
-		print '</td>';
-        print '<td>'.dol_trunc(dolGetFirstLineOfText($objp->description),48).'</td>';
-		if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+        if (! empty($arrayfields['f.ref']['checked']))
 		{
-			//print '<td>'.dol_trunc(dol_escape_htmltag(dolGetFirstLineOfText($objp->descriptiondetail)),48).'</td>';
-			print '<td>'.dolGetFirstLineOfText($objp->descriptiondetail).'</td>';
-			print '<td align="center">'.dol_print_date($db->jdate($objp->dp),'dayhour')."</td>\n";
-			print '<td align="right">'.convertSecondToTime($objp->duree).'</td>';
+			print "<td>";
+			print $interventionstatic->getNomUrl(1);
+			print "</td>\n";
+        	if (! $i) $totalarray['nbfield']++;
 		}
-		print '<td align="right">'.$interventionstatic->LibStatut($objp->fk_statut,5).'</td>';
+        if (! empty($arrayfields['s.nom']['checked']))
+		{
+			print '<td>';
+			$companystatic->name=$obj->name;
+			$companystatic->id=$obj->socid;
+			$companystatic->client=$obj->client;
+			print $companystatic->getNomUrl(1,'',44);
+			print '</td>';
+        	if (! $i) $totalarray['nbfield']++;
+		}
+        if (! empty($arrayfields['f.description']['checked']))
+		{
+			print '<td>'.dol_trunc(dolGetFirstLineOfText($obj->description),48).'</td>';
+        	if (! $i) $totalarray['nbfield']++;
+		}
+        if (! empty($arrayfields['fd.description']['checked']))
+		{
+			//print '<td>'.dol_trunc(dol_escape_htmltag(dolGetFirstLineOfText($obj->descriptiondetail)),48).'</td>';
+			print '<td>'.dolGetFirstLineOfText($obj->descriptiondetail).'</td>';
+        	if (! $i) $totalarray['nbfield']++;
+		}
+        if (! empty($arrayfields['fd.date']['checked']))
+		{
+			print '<td align="center">'.dol_print_date($db->jdate($obj->dp),'dayhour')."</td>\n";
+        	if (! $i) $totalarray['nbfield']++;
+		}
+        if (! empty($arrayfields['fd.duree']['checked']))
+		{
+			print '<td align="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
+			if (! $i) $totalarray['nbfield']++;
+        	if (! $i) $totalarray['totaldurationfield']=$totalarray['nbfield'];
+        	$totalarray['totalduration']+=$obj->duree;
+		}
 
-		print '<td>&nbsp;</td>';
+    	// Extra fields
+		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+		{
+		   foreach($extrafields->attribute_label as $key => $val) 
+		   {
+				if (! empty($arrayfields["ef.".$key]['checked'])) 
+				{
+					print '<td';
+					$align=$extrafields->getAlignFlag($key);
+					if ($align) print ' align="'.$align.'"';
+					print '>';
+					$tmpkey='options_'.$key;
+					print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
+					print '</td>';
+        			if (! $i) $totalarray['nbfield']++;
+				}
+		   }
+		}
+        // Fields from hook
+	    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+    	// Date creation
+        if (! empty($arrayfields['f.datec']['checked']))
+        {
+            print '<td align="center">';
+            print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
+            print '</td>';
+        	if (! $i) $totalarray['nbfield']++;
+        }
+        // Date modification
+        if (! empty($arrayfields['f.tms']['checked']))
+        {
+            print '<td align="center">';
+            print dol_print_date($db->jdate($obj->date_update), 'dayhour');
+            print '</td>';
+        	if (! $i) $totalarray['nbfield']++;
+        }
+        // Status
+        if (! empty($arrayfields['f.fk_statut']['checked']))
+        {
+			print '<td align="right">'.$interventionstatic->LibStatut($obj->fk_statut,5).'</td>';
+        	if (! $i) $totalarray['nbfield']++;
+        }
+        // Action column
+        print '<td></td>';
+        if (! $i) $totalarray['nbfield']++;
+        
 		print "</tr>\n";
 
-		$total += $objp->duree;
+		$total += $obj->duree;
 		$i++;
 	}
-	$rowspan=3;
-	if (empty($conf->global->FICHINTER_DISABLE_DETAILS))
+
+	// Show total line
+	if (isset($totalarray['totalduration']))
 	{
-		print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total).'</td><td>&nbsp;</td><td>&nbsp;</td>';
-		print '</tr>';
+	    print '<tr class="liste_total">';
+	    $i=0;
+	    while ($i < $totalarray['nbfield'])
+	    {
+	        $i++;
+	        if ($i == 1)
+	        {
+	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+	        }
+	        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'], 'allhourmin').'</td>';
+	        else print '<td></td>';
+	    }
+	    print '</tr>';
 	}
 
 	print '</table>';

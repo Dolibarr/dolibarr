@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
  *
@@ -87,8 +87,7 @@ class HookManager
 				{
 				    if (is_array($hooks)) $arrayhooks=$hooks;    // New system
 				    else $arrayhooks=explode(':',$hooks);        // Old system (for backward compatibility)
-
-					if (in_array($context,$arrayhooks))    // We instantiate action class only if hook is required
+					if (in_array($context,$arrayhooks) || in_array('all',$arrayhooks))    // We instantiate action class only if hook is required
 					{
 						$path 		= '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
@@ -143,6 +142,7 @@ class HookManager
 				'formObjectOptions',
 				'formattachOptions',
 				'formBuilddocLineOptions',
+				'getIdProfUrl',
 				'moveUploadedFile',
 			    'pdf_build_address',
 				'pdf_writelinedesc',
@@ -247,11 +247,7 @@ class HookManager
             }
         }
 
-        // TODO remove this. When there is something to print for an output hook, ->resPrint is filled.
-        //if ($hooktype == 'output') return $this->resPrint;
-		//if ($hooktype == 'returnvalue') return $result;
         return ($error?-1:$resaction);
 	}
 
 }
-

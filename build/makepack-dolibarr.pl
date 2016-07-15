@@ -53,7 +53,7 @@ if (-d "/usr/src/RPM")      { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$VERSION="3.3";
+$VERSION="4.0";
 
 
 
@@ -356,6 +356,7 @@ if ($nboftargetok) {
 		# Test that the ChangeLog is ok
 		$TMPBUILDTOCHECKCHANGELOG=$BUILD;
 		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc\d*//;
+		$TMPBUILDTOCHECKCHANGELOG =~ s/\-beta\d*//;
 		print "Check if ChangeLog is ok for version $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret=`grep "ChangeLog for $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG" "$SOURCE/ChangeLog" 2>&1`;
 		if (! $ret)
@@ -458,6 +459,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdemo`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
@@ -1121,7 +1123,7 @@ if ($nboftargetok) {
 	{
 		if ($CHOOSEDPUBLISH{$target} < 0) { next; }
 	
-		print "\nList of files to publish\n";
+		print "\nList of files to publish (BUILD=$BUILD)\n";
 		%filestoscansf=(
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
@@ -1136,6 +1138,22 @@ if ($nboftargetok) {
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'standard'
 		);
+		if ($target eq 'ASSO' && $BUILD =~ /[a-z]/i)   { 	# Not stable
+			%filestoscansf=(
+				"$DESTI/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
+				"$DESTI/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
+				"$DESTI/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
+				"$DESTI/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
+				"$DESTI/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
+			);
+			%filestoscanstableasso=(
+				"$DESTI/$FILENAMERPM"=>'',
+				"$DESTI/${FILENAMEDEB}_all.deb"=>'',
+				"$DESTI/$FILENAMEEXEDOLIWAMP.exe"=>'',
+				"$DESTI/$FILENAMETGZ.tgz"=>'',
+				"$DESTI/$FILENAMETGZ.zip"=>''
+			);
+		}
 
 		use POSIX qw/strftime/;
 		foreach my $file (sort keys %filestoscansf)

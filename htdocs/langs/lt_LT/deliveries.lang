@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Pristatymas
-Deliveries=Pristatymai
+DeliveryRef=Ref Delivery
 DeliveryCard=Pristatymo kortelė
 DeliveryOrder=Pristatymo užsakymas
-DeliveryOrders=Pristatymo užsakymai
 DeliveryDate=Pristatymo data
-DeliveryDateShort=Pristatymo data
 CreateDeliveryOrder=Sukurti pristatymo užsakymą
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=Pristatytas Kiekis
 SetDeliveryDate=Nustatyti pakrovimo datą
 ValidateDeliveryReceipt=Patvirtinti pristatymo kvitą
 ValidateDeliveryReceiptConfirm=Ar tikrai norite patvirtinti šitą pristatymo kvitą ?
@@ -30,3 +27,4 @@ Recipient=Gavėjas
 ErrorStockIsNotEnough=Nėra pakankamai atsargų
 Shippable=Pristatomas
 NonShippable=Nepristatomas
+ShowReceiving=Show delivery receipt

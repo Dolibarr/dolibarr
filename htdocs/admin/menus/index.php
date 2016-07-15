@@ -361,7 +361,7 @@ if ($conf->use_javascript_ajax)
 	
 	if (count($remainingdata))
 	{
-    	print '<table class="border" width="100%">';
+    	print '<table class="noborder centpercent">';
     	
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';

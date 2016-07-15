@@ -1,7 +1,4 @@
 # Dolibarr language file - Source file is en_US - compta
-Accountancy=المحاسبة
-AccountancyCard=بطاقة المحاسبة
-Treasury=الخزانة
 MenuFinancial=المالية
 TaxModuleSetupToModifyRules=الذهاب إلى <a href="%s">الإعداد حدة الضرائب</a> لتعديل قواعد حساب
 TaxModuleSetupToModifyRulesLT=الذهاب إلى <a href="%s">إعداد الشركة</a> لتعديل قواعد حساب
@@ -15,13 +12,9 @@ VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا ي�
 LTReportBuildWithOptionDefinedInModule=وتحسب المبالغ المبينة هنا باستخدام القواعد التي يحددها الإعداد الشركة.
 Param=الإعداد
 RemainingAmountPayment=دفع المبلغ المتبقي :
-AmountToBeCharged=المبلغ الإجمالي للدفع :
-AccountsGeneral=الحسابات
 Account=حساب
-Accounts=الحسابات
 Accountparent=الوالد حساب
 Accountsparent=حسابات الأم
-BillsForSuppliers=فواتير الموردين
 Income=الدخل
 Outcome=نتائج
 ReportInOut=دخل / نتائج
@@ -34,8 +27,6 @@ Balance=التوازن
 Debit=الخصم
 Credit=الائتمان
 Piece=تمثل الوثيقة.
-Withdrawal=انسحاب
-Withdrawals=انسحابات
 AmountHTVATRealReceived=جمعت HT
 AmountHTVATRealPaid=HT المدفوعة
 VATToPay=ضريبة القيمة المضافة وتبيع
@@ -45,7 +36,6 @@ VATSummary=رصيد الضريبة على القيمة المضافة
 LT2SummaryES=IRPF الرصيد
 LT1SummaryES=RE الميزان
 VATPaid=دفع ضريبة القيمة المضافة
-SalaryPaid=دفع الرواتب
 LT2PaidES=مدفوع IRPF
 LT1PaidES=RE المدفوعة
 LT2CustomerES=مبيعات IRPF
@@ -54,34 +44,27 @@ LT1CustomerES=RE المبيعات
 LT1SupplierES=RE المشتريات
 VATCollected=جمعت ضريبة القيمة المضافة
 ToPay=دفع
-ToGet=العودة
 SpecialExpensesArea=منطقة لجميع المدفوعات الخاصة
-TaxAndDividendsArea=بيع الضرائب، والمساهمات الاجتماعية / مالية الضرائب والأرباح المنطقة
 SocialContribution=الضريبة الاجتماعية أو المالية
 SocialContributions=الضرائب الاجتماعية أو المالية
+SocialContributionsDeductibles=Deductible social or fiscal taxes
+SocialContributionsNondeductibles=Nondeductible social or fiscal taxes
 MenuSpecialExpenses=المصروفات الخاصة
 MenuTaxAndDividends=الضرائب وعوائد
-MenuSalaries=الرواتب
 MenuSocialContributions=الضرائب الاجتماعية / المالية
 MenuNewSocialContribution=الضريبة الاجتماعية / مالية جديدة
 NewSocialContribution=الضريبة الاجتماعية / مالية جديدة
 ContributionsToPay=الضرائب الاجتماعية / المالية لدفع
 AccountancyTreasuryArea=المحاسبة / الخزانة المنطقة
-AccountancySetup=المحاسبة الإعداد
 NewPayment=دفع جديدة
 Payments=المدفوعات
 PaymentCustomerInvoice=الزبون تسديد الفاتورة
-PaymentSupplierInvoice=دفع فاتورة المورد
 PaymentSocialContribution=اجتماعي / دفع الضرائب المالية
 PaymentVat=دفع ضريبة القيمة المضافة
-PaymentSalary=دفع المرتبات
 ListPayment=قائمة المدفوعات
-ListOfPayments=قائمة المدفوعات
 ListOfCustomerPayments=قائمة مدفوعات العملاء
-ListOfSupplierPayments=قائمة الموردين المدفوعات
 DateStartPeriod=تاريخ بداية الفترة
 DateEndPeriod=تاريخ انتهاء الفترة
-NewVATPayment=دفع ضريبة القيمة المضافة الجديدة
 newLT1Payment=جديد الضريبية 2 الدفع
 newLT2Payment=الجديد الضريبة 3 دفع
 LT1Payment=ضريبة دفع 2
@@ -94,35 +77,31 @@ LT1PaymentES=RE الدفع
 LT1PaymentsES=المدفوعات RE
 LT2PaymentES=IRPF الدفع
 LT2PaymentsES=الدفعات IRPF
-VATPayment=دفع ضريبة القيمة المضافة
-VATPayments=دفع ضريبة القيمة المضافة
-VATRefund=استرداد ضريبة القيمة المضافة
+VATPayment=Sales tax payment
+VATPayments=Sales tax payments
+VATRefund=Sales tax refund Refund
 Refund=رد
 SocialContributionsPayments=الاجتماعية المدفوعات / الضرائب المالية
 ShowVatPayment=وتظهر دفع ضريبة القيمة المضافة
 TotalToPay=على دفع ما مجموعه
-TotalVATReceived=تلقى مجموع الضريبة على القيمة المضافة
 CustomerAccountancyCode=قانون محاسبة العملاء
 SupplierAccountancyCode=مورد قانون المحاسبة
 CustomerAccountancyCodeShort=الزبون. حساب. رمز
 SupplierAccountancyCodeShort=سوب. حساب. رمز
-AccountNumberShort=رقم الحساب
 AccountNumber=رقم الحساب
 NewAccount=حساب جديد
 SalesTurnover=مبيعات
 SalesTurnoverMinimum=الحد الأدنى حجم مبيعات
+ByExpenseIncome=By expenses & incomes
 ByThirdParties=بو أطراف ثالثة
 ByUserAuthorOfInvoice=فاتورة من قبل المؤلف
-AccountancyExport=المحاسبة التصدير
-ErrorWrongAccountancyCodeForCompany=قانون محاسبة العملاء سيئة للق ٪
-SuppliersProductsSellSalesTurnover=وقد ولدت عن طريق الدوران مبيعات الموردين المنتجات.
 CheckReceipt=التحقق من إيداع
 CheckReceiptShort=التحقق من إيداع
-LastCheckReceiptShort=مشاركة الصورة٪ إيصالات الاختيار
+LastCheckReceiptShort=Latest %s check receipts
 NewCheckReceipt=خصم جديد
 NewCheckDeposit=تأكد من ايداع جديدة
 NewCheckDepositOn=تهيئة لتلقي الودائع على حساب : ٪ ق
-NoWaitingChecks=لم ينتظر إيداع الشيكات.
+NoWaitingChecks=No checks awaiting deposit.
 DateChequeReceived=استقبال المدخلات تاريخ الشيك
 NbOfCheques=ملاحظة : للشيكات
 PaySocialContribution=دفع ضريبة اجتماعية / مالية
@@ -186,19 +165,15 @@ DescSellsJournal=مبيعات المجلة
 DescPurchasesJournal=شراء مجلة
 InvoiceRef=فاتورة المرجع.
 CodeNotDef=لم يتم تعريف
-AddRemind=ارسال المبلغ المتاح
-RemainToDivide= يبقى أن يوفد :
 WarningDepositsNotIncluded=لا يتم تضمين فواتير الودائع في هذا الإصدار مع هذه الوحدة المحاسبة.
 DatePaymentTermCantBeLowerThanObjectDate=تاريخ الدفع الأجل لا يمكن أن يكون أقل من تاريخ الكائن.
 Pcg_version=نسخة PCG
 Pcg_type=نوع PCG
 Pcg_subtype=PCG النوع الفرعي
 InvoiceLinesToDispatch=خطوط الفاتورة لارسال
-InvoiceDispatched=أرسلت الفواتير
-AccountancyDashboard=ملخص المحاسبة
 ByProductsAndServices=المنتجات والخدمات
 RefExt=المرجع الخارجي
-ToCreateAPredefinedInvoice=لإنشاء فاتورة محددة مسبقا، إنشاء فاتورة القياسية ثم، دون التحقق من صحة ذلك، انقر على زر "تحويل إلى فاتورة محددة مسبقا".
+ToCreateAPredefinedInvoice=To create a template invoice, create a standard invoice, then, without validating it, click onto button "%s".
 LinkedOrder=تصل إلى النظام
 Mode1=طريقة 1
 Mode2=طريقة 2
@@ -222,3 +197,6 @@ BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=استنا
 SameCountryCustomersWithVAT=تقرير عملاء الوطني
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة هي نفس رمز البلد شركتك الخاصة لل
 LinkedFichinter=Link to an intervention
+ImportDataset_tax_contrib=Import social/fiscal taxes
+ImportDataset_tax_vat=Import vat payments
+ErrorBankAccountNotFound=Error: Bank account not found

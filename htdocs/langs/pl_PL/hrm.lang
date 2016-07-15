@@ -12,9 +12,6 @@ CloseEtablishment=Zakończ kierownictwo
 DictionaryDepartment=HR - Lisa departamentów
 DictionaryFunction=HR - lista funkcji
 # Module
-ListOfEmployees=Lista pracowników
 Employees=Zatrudnionych
 Employee=Zatrudnieni
-Employe=Employe
 NewEmployee=Nowe zatrudnienie
-EmployeeCard=Karta pracownika

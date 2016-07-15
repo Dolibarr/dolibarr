@@ -137,6 +137,8 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
  * Actions
  */
 
+if (GETPOST('refreshsite')) $pageid=0;      // If we change the site, we reset the pageid.
+
 // Add page
 if ($action == 'add')
 {
@@ -321,7 +323,7 @@ if ($action == 'updatemeta')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
-    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
+        $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
         $objectpage->title = GETPOST('WEBSITE_TITLE');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
         $objectpage->keywords = GETPOST('WEBSITE_KEYWORDS');
@@ -452,6 +454,8 @@ print '<div class="centpercent websitebar">';
 
 if (count($object->records) > 0)
 {
+    // ***** Part for web sites
+    
     print '<div class="websiteselection">';
     print $langs->trans("Website").': ';
     print '</div>';
@@ -476,15 +480,56 @@ if (count($object->records) > 0)
     }
     $out.='</select>';
     print $out;
-    print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+    print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
 
     if ($website)
     {
-        print ' - '.$langs->trans("RealURL").' ';
         $realurl=$urlwithroot.'/public/websites/index.php?website='.$website;
+        $dataroot=DOL_DATA_ROOT.'/websites/'.$website;
+        if (! empty($object->virtualhost)) $realurl=$object->virtualhost; 
+        // TODO If virtual url defined, we use it
+        
+        /*print ' - '.$langs->trans("RealURL").' ';
         print '<input type="text" name="realurl" value="'.$realurl.'"> ';
-        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';*/
+
+        print ' &nbsp; ';
+
+        print $langs->trans("ViewWebsiteInProduction").': ';
+        print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" value="'.$realurl.'">';
+        //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
+        $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
+        print $form->textwithpicto('', $htmltext);
+        print '<a class="button" id="previewsite" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
+        
+        // Example : Adding jquery code
+        if (! empty($conf->use_javascript_ajax))
+        {
+            print '<script type="text/javascript" language="javascript">
+            jQuery(document).ready(function() {
+            	jQuery("#previewsite").click(function() {
+                    newurl=jQuery("#previewsiteurl").val();
+                    console.log("Open url "+newurl);
+                    /* Save url */
+                    jQuery.ajax({
+                        method: "POST",
+                        url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
+                        data: {
+                            field: \'editval_virtualhost\',
+                            element: \'websites\',
+                            table_element: \'website\',
+                            fk_element: '.$object->id.',
+                            value: encodeURIComponent(newurl),
+                        },
+                        context: document.body
+                    });
+                    $(this).attr("href",newurl);
+                });
+            });
+            </script>';
+        }
     }
+    
     print '</div>';
 
     // Button for websites
@@ -511,7 +556,8 @@ if (count($object->records) > 0)
     print '</div>';
 
 
-    // Part for pages
+    // ***** Part for pages
+    
     if ($website)
     {
         print '</div>';
@@ -529,22 +575,31 @@ if (count($object->records) > 0)
         $out.='<select name="pageid">';
         if ($atleastonepage)
         {
+            if (empty($pageid) && $action != 'create')      // Page id is not defined, we try to take one
+            {
+                $firstpageid=0;$homepageid=0;
+                foreach($array as $key => $valpage)
+                {
+                    if (empty($firstpageid)) $firstpageid=$valpage->id;
+                    if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid=$valpage->id;
+                }
+                $pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
+            }
+
             foreach($array as $key => $valpage)
             {
-                if (empty($pageid) && $action != 'create') $pageid=$valpage->id;
-    
                 $out.='<option value="'.$key.'"';
                 if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
                 $out.='>';
                 $out.=$valpage->title;
-                    if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
+                if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
                 $out.='</option>';
             }
         }
         else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
         print $out;
-        print '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+        print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         
@@ -552,8 +607,9 @@ if (count($object->records) > 0)
         {
             print ' - '.$langs->trans("RealURL").' ';
             $realurl=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
-            print '<input type="text" name="realurl" value="'.$realurl.'"> ';
-            print '<a href="'.$realurl.'" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+            print '<input type="text" name="realurl" class="minwidth200imp" disabled="disabled" value="'.$realurl.'"> ';
+            print '<a href="'.$realurl.'" class="button" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+            //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
         }
         
         print '</div>';

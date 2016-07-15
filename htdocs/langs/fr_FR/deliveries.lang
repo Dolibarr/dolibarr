@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Livraison
-Deliveries=Livraisons
+DeliveryRef=Référence de livraison
 DeliveryCard=Fiche réception
 DeliveryOrder=Bon de réception
-DeliveryOrders=Bons de réception
 DeliveryDate=Date de livraison
-DeliveryDateShort=Date réc.
 CreateDeliveryOrder=Générer bon de réception
 DeliveryStateSaved=Le statut de livraison est enregistré
-QtyDelivered=Qté livrée
 SetDeliveryDate=Définir la date d'expédition
 ValidateDeliveryReceipt=Valider le bon de livraison
 ValidateDeliveryReceiptConfirm=Êtes-vous sûr de vouloir valider ce bon de livraison ?
@@ -30,3 +27,4 @@ Recipient=Destinataire
 ErrorStockIsNotEnough=Le stock est insuffisant
 Shippable=Expédiable
 NonShippable=Non expédiable
+ShowReceiving=Afficher le bon de réception

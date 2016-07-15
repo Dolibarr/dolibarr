@@ -1,82 +1,57 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
-ACCOUNTING_EXPORT_PIECE=Export the number of piece
+ACCOUNTING_EXPORT_SEPARATORCSV=Kolom pemisah untuk ekspor data
+ACCOUNTING_EXPORT_DATE=Format tanggal untuk ekspor data
+ACCOUNTING_EXPORT_PIECE=Ekspor jumlah potongan
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=Akuntansi
-Globalparameters=Parameter Global
-Menuaccount=Akun akuntansi
-Menuthirdpartyaccount=Akun Pihak Ketiga
-MenuTools=Alat
+ACCOUNTING_EXPORT_LABEL=Label ekspor
+ACCOUNTING_EXPORT_AMOUNT=Jumlah ekspor
+ACCOUNTING_EXPORT_DEVISE=Mata uang ekspor
+Selectformat=Pilih format untuk data
+ACCOUNTING_EXPORT_PREFIX_SPEC=Tentukan awalan untuk nama file
 
 ConfigAccountingExpert=Konfigurasi modul ahli akuntansi
 Journaux=Jurnal
 JournalFinancial=Jurnal Keuangan
-Exports=Ekspor
-Export=Export
-Modelcsv=Model Ekspor
-OptionsDeactivatedForThisExportModel=For this export model, options are deactivated
-Selectmodelcsv=Pilih satu model Ekspor
-Modelcsv_normal=Ekspor Klasik
-Modelcsv_CEGID=Ekspor terhadap CEGID Ahli
-BackToChartofaccounts=Akun pembalik
+BackToChartofaccounts=Akun grafik pembalik
 
-Definechartofaccounts=Menetapkan bagan akun
 Selectchartofaccounts=Pilih bagan akun
 Addanaccount=Tambahkan sebuah akun akuntansi
 AccountAccounting=Akun akuntansi
-AccountAccountingSuggest=Accounting account suggest
+AccountAccountingShort=Akun
+AccountAccountingSuggest=Menyarankan akun akuntansi 
 Ventilation=Perincian
 
-MenuAccountancy=Accountancy
+MenuAccountancy=Akuntansi
 CustomersVentilation=Perincian pelanggan
 SuppliersVentilation=Perincian pemasok
-TradeMargin=Margin Perdagangan
 Reports=Laporan
-ByCustomerInvoice=Berdasarkan invoice langganan
 NewAccount=Akun akuntansi baru
 Create=Buat
-CreateMvts=Create movement
-UpdateAccount=Modifikasi akun akuntansi
+CreateMvts=Buat perpindahan
 UpdateMvts=Modifikasi gerakan
 WriteBookKeeping=Mencatat akun di buku besar
 Bookkeeping=Buku besar
-AccountBalance=Account balance
+AccountBalance=Saldo akun
 
-AccountingVentilation=Perincian Akunting
-AccountingVentilationSupplier=Perincian Akunting Pemasok
-AccountingVentilationCustomer=Perincian Akunting Pelanggan
+CAHTF=Total pembelian pemasok sebelum pajak
+InvoiceLines=Baris faktur untuk ventilasi
+InvoiceLinesDone=Tagihan baris berventilasi
+IntoAccount=Ventilasi di akun akuntansi
 
-CAHTF=Total purchase supplier before tax
-InvoiceLines=\nBaris faktur untuk ventilasi
-InvoiceLinesDone=Baris berventilasi faktur
-IntoAccount=Ventilate in the accounting account
-
-Ventilate=Ventilate
-VentilationAuto=Perincian Otomatis
+Ventilate=Ventilasi
 
 Processing=Pengolahan
 EndProcessing=Akhir dari pengolahan
-AnyLineVentilate=Any lines to ventilate
+AnyLineVentilate=Setiap baris untuk diventilasi
 SelectedLines=Baris yg dipilih
-Lineofinvoice=Line of invoice
+Lineofinvoice=Baris tagihan
 VentilatedinAccount=Ventilated successfully in the accounting account
 NotVentilatedinAccount=Not ventilated in the accounting account
-
-ACCOUNTING_SEPARATORCSV=Column separator in export file
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "Breakdown" by the most recent elements
 
-AccountLength=Length of the accounting accounts shown in Dolibarr
-AccountLengthDesc=Function allowing to feign a length of accounting account by replacing spaces by the zero figure. This function touches only the display, it does not modify the accounting accounts registered in Dolibarr. For the export, this function is necessary to be compatible with certain software.
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Panjang akun umum
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Jurnal Sosial
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Akun transfer
 ACCOUNTING_ACCOUNT_SUSPENSE=Account of wait
+DONATION_ACCOUNTINGACCOUNT=Rekening untuk mendaftar sumbangan
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for bought products (if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Accounting account by default for the sold products (if not defined in the product sheet)
@@ -99,12 +75,19 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold servi
 Doctype=Tipe Dokumen
 Docdate=Tanggal
 Docref=Referensi
-Numerocompte=Akun
 Code_tiers=Pihak ketiga
 Labelcompte=Label Akun
 Sens=Sen
 Codejournal=Jurnal
-NumPiece=Piece number
+NumPiece=Jumlah potongan
+AccountingCategory=Kategori akuntansi
+
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
 
 DelBookKeeping=Hapus catatan buku besar
 
@@ -113,9 +96,6 @@ DescPurchasesJournal=Jurnal Pembelian
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=Pembayaran Tunai
-
-SupplierInvoicePayment=Pembayaran Nota Pemasok
 CustomerInvoicePayment=Pembayaran Nota Pelanggan
 
 ThirdPartyAccount=Akun pihak ketiga
@@ -130,7 +110,6 @@ DescThirdPartyReport=Consult here the list of the thirdparty customers and the s
 
 ListAccounts=Daftar akun-akun akunting
 
-Pcgversion=Version of the plan
 Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
@@ -143,37 +122,48 @@ DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounti
 ChangeAccount=Change the accounting account for lines selected by the account:
 Vide=-
 DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilTodoSupplier=Ventilate your lines of invoice supplier with an accounting account
 DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
 
 ValidateHistory=Validasi Otomatis
 
 ErrorAccountancyCodeIsAlreadyUse=Kesalahan, Anda tidak dapat menghapus akun akuntansi ini karena digunakan
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
-FicheVentilation=Breakdown card
-GeneralLedgerIsWritten=Operations are written in the general ledger
+MvtNotCorrectlyBalanced=Perpindahan tidak benar seimbang . Kredit = %s . Debit = %s
+FicheVentilation=Kartu rincian
+GeneralLedgerIsWritten=Operasi ditulis dalam buku besar
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Terapkan kategori secara massal
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=Ekspor
+Export=Ekspor
+Modelcsv=Model Ekspor
+OptionsDeactivatedForThisExportModel=Untuk model ekspor ini , opsi dinonaktifkan
+Selectmodelcsv=Pilih satu model Ekspor
+Modelcsv_normal=Ekspor Klasik
+Modelcsv_CEGID=Ekspor terhadap CEGID Ahli komtabilitas
+Modelcsv_COALA=Ekspor terhadap Sage Coala
+Modelcsv_bob50=Ekspor terhadap Sage BOB 50
+Modelcsv_ciel=Ekspor terhadap Sage Ceil Compta atau Compta Evolution
+Modelcsv_quadratus=Ekspor terhadap Quadratus QuadraCompta
+Modelcsv_ebp=Ekspor terhadap EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
-InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
-Options=Options
-OptionModeProductSell=Mode sales
-OptionModeProductBuy=Mode purchases
-OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
-OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+InitAccountancy=init akuntansi
+InitAccountancyDesc=Halaman ini dapat digunakan untuk menginisialisasi akun akuntansi pada produk dan jasa yang tidak memiliki akun akuntansi yang ditetapkan untuk penjualan dan pembelian. Periksa dahulu seting modul akuntansi apakah selesai .
+Options=Pilihan
+OptionModeProductSell=Mode penjualan
+OptionModeProductBuy=Mode pembelian
+OptionModeProductSellDesc=Tampilkan semua produk yang belum ditetapkan akun akuntansi untuk penjualan.
+OptionModeProductBuyDesc=Tampilkan semua produk yang belum ditetapkan akun akuntansi untuk pembelian.
+
+## Dictionary
+Range=Rentang akun-akun akuntansi
+Calculated=Terhitung
+Formula=Rumus
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=Tidak ada kategori akuntansi yang tersedia untuk negara ini
+ExportNotSupported=Format ekspor yang diseting tidak sesuai untuk halaman ini
+BookeppingLineAlreayExists=Lines already existing into bookeeping

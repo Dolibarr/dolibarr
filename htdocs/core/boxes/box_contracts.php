@@ -55,14 +55,14 @@ class box_contracts extends ModeleBoxes
     	$this->max=$max;
 
     	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-    	
+
     	$this->info_box_head = array('text' => $langs->trans("BoxTitleLastContracts",$max));
 
     	if ($user->rights->contrat->lire)
     	{
         	$contractstatic=new Contrat($db);
         	$thirdpartytmp=new Societe($db);
-        	
+
     	    $sql = "SELECT s.nom as name, s.rowid as socid,";
     		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
@@ -83,8 +83,8 @@ class box_contracts extends ModeleBoxes
     			$line = 0;
 
     			$langs->load("contracts");
-    			
-                while ($line < $num) 
+
+                while ($line < $num)
                 {
     				$objp = $db->fetch_object($resql);
     				$datec=$db->jdate($objp->datec);
@@ -99,7 +99,7 @@ class box_contracts extends ModeleBoxes
 
     				$thirdpartytmp->name = $objp->name;
     				$thirdpartytmp->id = $objp->socid;
-    				
+
     				// fin_validite is no more on contract but on services
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
@@ -157,11 +157,12 @@ class box_contracts extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
+	 *  @param	int		$nooutput	No print, only return string
 	 *	@return	void
 	 */
-    function showBox($head = null, $contents = null)
+    function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents);
+        parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 
 }

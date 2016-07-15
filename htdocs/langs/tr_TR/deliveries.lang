@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Teslimat
-Deliveries=Teslimatlar
+DeliveryRef=Teslimat Ref
 DeliveryCard=Teslimat kartı
 DeliveryOrder=Teslimat emri
-DeliveryOrders=Teslimat emirleri
 DeliveryDate=Teslim tarihi
-DeliveryDateShort=Tes. tarihİ
 CreateDeliveryOrder=Teslimat emri oluştur
 DeliveryStateSaved=Teslimat durumu kaydedildi
-QtyDelivered=Teslimat Mik
 SetDeliveryDate=Nakliye tarihini ayarla
 ValidateDeliveryReceipt=Teslimat fişini doğrula
 ValidateDeliveryReceiptConfirm=Bu teslimat fişini doğrulamak istediğinizden emin misiniz?
@@ -30,3 +27,4 @@ Recipient=Alıcı
 ErrorStockIsNotEnough=Yeterli stok yok
 Shippable=Sevkedilebilir
 NonShippable=Sevkedilemez
+ShowReceiving=Teslimat Fişini göster

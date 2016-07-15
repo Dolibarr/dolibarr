@@ -83,13 +83,13 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
 
 if ($user->rights->banque->modifier && $action == 'class')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".$_POST["cat1"];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST('cat1', 'int');
     if (! $db->query($sql))
     {
         dol_print_error($db);
     }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".$_POST["cat1"].")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".GETPOST('cat1', 'int').")";
     if (! $db->query($sql))
     {
         dol_print_error($db);
@@ -312,8 +312,11 @@ if ($result)
                 }
                 else if ($links[$key]['type']=='company') {
                     print '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$links[$key]['url_id'].'">';
-                    print img_object($langs->trans('ShowCompany'),'company').' ';
-                    print $links[$key]['label'];
+                    //print img_object($langs->trans('ShowCompany'),'company').' ';
+                    $societe=new Societe($db);
+                    $societe->fetch($links[$key]['url_id']);
+                    //print $links[$key]['label'];
+                    print $societe->getNomUrl(1);
                     print '</a>';
                 }
                 else if ($links[$key]['type']=='sc') {

@@ -43,7 +43,7 @@ class Societe extends CommonObject
     public $element='societe';
     public $table_element = 'societe';
 	public $fk_element='fk_soc';
-    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet");    // To test if we can delete object
+    protected $childtables=array("supplier_proposal","propal","commande","facture","contrat","facture_fourn","commande_fournisseur","projet","expedition");    // To test if we can delete object
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -1002,14 +1002,16 @@ class Societe extends CommonObject
      *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
      *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
      *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
+     *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
+     *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
      *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
      */
-    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='')
+    function fetch($rowid, $ref='', $ref_ext='', $ref_int='', $idprof1='',$idprof2='',$idprof3='',$idprof4='',$idprof5='',$idprof6='')
     {
         global $langs;
         global $conf;
 
-        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4)) return -1;
+        if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6)) return -1;
 
         $sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
         $sql .= ', s.status';
@@ -1049,9 +1051,11 @@ class Societe extends CommonObject
         else if ($ref_int) $sql .= " WHERE s.ref_int = '".$this->db->escape($ref_int)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof1) $sql .= " WHERE s.siren = '".$this->db->escape($idprof1)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof2) $sql .= " WHERE s.siret = '".$this->db->escape($idprof2)."' AND s.entity IN (".getEntity($this->element, 1).")";
-        else if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($idprof3)."' AND s.entity IN (".getEntity($this->element, 1).")"; 		// TODO This request is used ? Multiple database recording provided !!
+        else if ($idprof3) $sql .= " WHERE s.ape = '".$this->db->escape($idprof3)."' AND s.entity IN (".getEntity($this->element, 1).")";
         else if ($idprof4) $sql .= " WHERE s.idprof4 = '".$this->db->escape($idprof4)."' AND s.entity IN (".getEntity($this->element, 1).")";
-
+        else if ($idprof5) $sql .= " WHERE s.idprof5 = '".$this->db->escape($idprof5)."' AND s.entity IN (".getEntity($this->element, 1).")";
+        else if ($idprof6) $sql .= " WHERE s.idprof6 = '".$this->db->escape($idprof6)."' AND s.entity IN (".getEntity($this->element, 1).")";
+        
         $resql=$this->db->query($sql);
         dol_syslog(get_class($this)."::fetch ".$sql);
         if ($resql)
@@ -1059,11 +1063,11 @@ class Societe extends CommonObject
             $num=$this->db->num_rows($resql);
             if ($num > 1)
             {
-                $this->error='Fetch several records found request';
+                $this->error='Fetch found several records. Rename one of tirdparties to avoid duplicate.';
                 dol_syslog($this->error, LOG_ERR);
                 $result = -2;
             }
-            if ($num)
+            elseif ($num)   // $num = 1
             {
                 $obj = $this->db->fetch_object($resql);
 
@@ -2604,7 +2608,7 @@ class Societe extends CommonObject
      *  @param	int			$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *  @param  Societe		$soc            Objet societe
      *  @return int             			<=0 if KO, >0 if OK
-     *  TODO not in business class
+     *  TODO better to have this in a lib than into a business class
      */
     function id_prof_check($idprof,$soc)
     {
@@ -2716,27 +2720,39 @@ class Societe extends CommonObject
     }
 
     /**
-     *   Renvoi url de verification d'un identifiant professionnal
+     *   Return an url to check online a professional id or empty string
      *
-     *   @param		int		$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *   @param 	Societe	$soc            Objet societe
-     *   @return	string          		url ou chaine vide si aucune url connue
-     *   TODO not in business class
+     *   @param		int		$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *   @param 	Societe	$thirdparty     Object thirdparty
+     *   @return	string          		Url or empty string if no URL known
+     *   TODO better in a lib than into business class
      */
-    function id_prof_url($idprof,$soc)
+    function id_prof_url($idprof,$thirdparty)
     {
-        global $conf,$langs;
-
-        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
+        global $conf,$langs,$hookmanager;
 
         $url='';
+        $action = '';
+        
+        $hookmanager->initHooks(array('idprofurl'));
+        $parameters=array('idprof'=>$idprof, 'company'=>$thirdparty);
+        $reshook=$hookmanager->executeHooks('getIdProfUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if (empty($reshook))
+        {
+            if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
 
-        if ($idprof == 1 && $soc->country_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->idprof1;
-        if ($idprof == 1 && ($soc->country_code == 'GB' || $soc->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
-        if ($idprof == 1 && $soc->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->idprof1;
-        if ($idprof == 1 && $soc->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$soc->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
-
-        if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
+            if ($idprof == 1 && $thirdparty->country_code == 'FR') $url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
+            if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+            if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
+            if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+        
+            if ($url) return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+        }
+        else
+        {
+            return $hookmanager->resPrint;
+        }
+        
         return '';
     }
 
@@ -3463,17 +3479,17 @@ class Societe extends CommonObject
 		 * Because this function is meant to be executed within a transaction, we won't take care of it.
 		 */
 		$sql = 'SELECT rowid
-FROM llx_societe_commerciaux
+FROM '.MAIN_DB_PREFIX.'societe_commerciaux
 WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
   SELECT fk_user
-  FROM llx_societe_commerciaux
+  FROM '.MAIN_DB_PREFIX.'societe_commerciaux
   WHERE fk_soc = '.(int) $origin_id.'
 );';
 
 		$query = $db->query($sql);
 
 		while ($result = $db->fetch_object($query)) {
-			$db->query('DELETE FROM llx_societe_commerciaux WHERE rowid = '.$result->rowid);
+			$db->query('DELETE FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE rowid = '.$result->rowid);
 		}
 
 		/**

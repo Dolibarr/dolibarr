@@ -1,14 +1,8 @@
 # Dolibarr language file - Source file is en_US - mails
+ConfirmResetMailing=Achtung, wenn Sie diese E-Mail Kampangne (<b>%s</b>), können Sie diese Aktion nochmals versenden. Sind Sie sicher, das ist tun möchten?
 ActivateCheckReadKey=Schlüssel um die URL für "Lesebestätigung" und "Abmelden/Unsubscribe" zu verschlüsseln
-NoRemindSent=Keine eMail-Erinnerung versandt
-MailingModuleDescContactCompanies=Kontakte aller Geschäftspartner (Kunden, Leads, Lieferanten, ...)
-MailingModuleDescContactsCategories=Geschäftspartner-Kontakte (nach Kategorie)
-MailingModuleDescDolibarrContractsLinesExpired=Geschäftspartner mit abgelaufenen Vertragspositionen
-MailingModuleDescContactsByCompanyCategory=Kontakt über Geschäftspartner (durch Kategorie)
-MailingModuleDescContactsByFunction=Kontakt über Geschäftspartner (durch Position/Funktion)
 RecipientSelectionModules=Definiert Empfängerauswahlen
 NbOfCompaniesContacts=Einzigartige Geschäftspartner-Kontakte
-TagMailtoEmail=E-Mailadresses des Empfängers
 NoNotificationsWillBeSent=Für dieses Ereignis und diesen Geschäftspartner sind keine Benachrichtigungen geplant
 AddNewNotification=Neues E-Mail-Beachrichtigungsziel aktivieren
 ListOfActiveNotifications=Liste aller aktiven E-Mail-Beachrichtigungsziele

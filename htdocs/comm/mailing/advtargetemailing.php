@@ -221,7 +221,7 @@ if ($action == 'add') {
 	if ((count($advTarget->thirdparty_lines) > 0) || (count($advTarget->contact_lines) > 0)) {
 		// Add targets into database
 		$obj = new mailing_advthirdparties($db);
-		$result = $obj->add_to_target($id, $advTarget->thirdparty_lines, $array_query['type_of_target'], $advTarget->contact_lines);
+		$result = $obj->add_to_target_spec($id, $advTarget->thirdparty_lines, $array_query['type_of_target'], $advTarget->contact_lines);
 	} else {
 		$result = 0;
 	}
@@ -967,11 +967,11 @@ if ($object->fetch($id) >= 0) {
 		print '</form>';
 		print '<br>';
 	}
-	
 
-	if (empty($conf->mailchimp->enabled) || (! empty($conf->mailchimp->enabled) && $object->statut != 3)) 
+
+	if (empty($conf->mailchimp->enabled) || (! empty($conf->mailchimp->enabled) && $object->statut != 3))
 	{
-	    // List of recipients (TODO Move code of page cibles.php into a .tpl.php file and make an include here to avoid duplicate content) 
+	    // List of recipients (TODO Move code of page cibles.php into a .tpl.php file and make an include here to avoid duplicate content)
 	}
 }
 

@@ -4,7 +4,6 @@ EMailSupport=E-pasta atbalsts
 RemoteControlSupport=Tiešsaistes reālā laika / attālinātais atbalsts
 OtherSupport=Cits atbalsts
 ToSeeListOfAvailableRessources=Lai sazinātos / skatītu pieejamos resursus:
-ClickHere=Noklikšķiniet šeit
 HelpCenter=Palīdzības centrs
 DolibarrHelpCenter=Dolibarr palīdzības un atbalsta centrs
 ToGoBackToDolibarr=Pretējā gadījumā, klikšķiniet <a href="%s">šeit, lai izmantotu Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Dažreiz nav uzņēmums pieejams brīdī, kad jūs vei
 BackToHelpCenter=Pretējā gadījumā, klikšķiniet šeit, lai dotos <a href="%s">atpakaļ uz palīdzības centra mājas lapu</a> .
 LinkToGoldMember=Jūs varat zvanīt vienu no autobusa izraudzītās Dolibarr jūsu valodā (%s), noklikšķinot uz savu logrīku (statuss un maksimālo cenu tiek atjauninātas automātiski):
 PossibleLanguages=Atbalstītās valodas
-MakeADonation=Palīdzība Dolibarr projektam, ziedot
 SubscribeToFoundation=Palīdzi Dolibarr projektam, piesakies fondam
 SeeOfficalSupport=Oficiālaiā Dolibarr palīdzība jūsu valodā: <br><b><a href="%s" target="_blank">%s</a></b>

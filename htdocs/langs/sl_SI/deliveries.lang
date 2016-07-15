@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dobava
-Deliveries=Dobave
+DeliveryRef=Ref Delivery
 DeliveryCard=Kartica dobav
 DeliveryOrder=Dobavnica
-DeliveryOrders=Dobavnice
 DeliveryDate=Datum dobave
-DeliveryDateShort=Datum dobave
 CreateDeliveryOrder=Kreiranje dobavnice
 DeliveryStateSaved=Shranjen status dobave
-QtyDelivered=Količina za dobavo
 SetDeliveryDate=Nastavitev datuma dobave
 ValidateDeliveryReceipt=Potrditev prejemnice
 ValidateDeliveryReceiptConfirm=Ali zares želite potrditi prejemnico?
@@ -30,3 +27,4 @@ Recipient=Prejemnik
 ErrorStockIsNotEnough=Zaloga je premajhna
 Shippable=Možna odprema
 NonShippable=Ni možna odprema
+ShowReceiving=Show delivery receipt

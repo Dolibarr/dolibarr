@@ -280,6 +280,7 @@ class Form
             $savemethod		= false;
             $ext_element	= false;
             $button_only	= false;
+            $inputOption    = '';
 
             if (is_object($object))
             {
@@ -1435,7 +1436,7 @@ class Form
 		            $nodatarole=($comboenhancement?' data-role="none"':'');
 		        }
 
-                $out.= '<select class="flat minwidth200'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
+                $out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected':'').'>&nbsp;</option>'."\n";
 				if ($show_every) $out.= '<option value="-2"'.(($selected==-2)?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
@@ -1766,7 +1767,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($objp->price_by_qty) && $objp->price_by_qty == 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -1914,8 +1915,8 @@ class Form
             $sql.= " WHERE fk_product='".$objp->rowid."'";
             $sql.= " AND entity IN (".getEntity('productprice', 1).")";
             $sql.= " AND price_level=".$price_level;
-            $sql.= " ORDER BY date_price, rowid";
-            $sql.= " DESC LIMIT 1";
+            $sql.= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
+            $sql.= " LIMIT 1";
 
             dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
             $result2 = $this->db->query($sql);
@@ -2736,12 +2737,12 @@ class Form
 
 
     /**
-     *      Retourne la liste des types de paiements possibles
+     *      Return list of payment modes
      *
      *      @param	string	$selected        Id du type de paiement pre-selectionne
      *      @param  string	$htmlname        Nom de la zone select
-     *      @param  string	$filtertype      Pour filtre
-     *		@param	int		$addempty		Ajoute entree vide
+     *      @param  int 	$filtertype      Not used
+     *		@param	int		$addempty		 Add an empty entry
      *		@return	void
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
@@ -5108,7 +5109,7 @@ class Form
 	 * 	@param		int		$id				Id of object
  	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
  	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect (recommended)
-	 * 	@return		mixed					Array of category objects or < 0 if KO
+	 * 	@return		string					String with categories
 	 */
 	function showCategories($id, $type, $rendermode=0)
 	{
@@ -5169,7 +5170,7 @@ class Form
         {
         	$num = count($object->linkedObjects);
             $numoutput=0;
-            
+
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
         		$tplpath = $element = $subelement = $objecttype;
@@ -5216,7 +5217,10 @@ class Form
         		else if ($objecttype == 'expensereport')   {
         			$tplpath = 'expensereport';
         		}
-
+        		else if ($objecttype == 'subscription')   {
+        		    $tplpath = 'adherents';
+        		}
+        		
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
@@ -5224,7 +5228,7 @@ class Form
         		{
         		    $numoutput++;
         		    
-        		    echo '<br>';
+        		    print '<br>';
         		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
         		    
         		    print '<table class="noborder allwidth">';
@@ -5578,10 +5582,11 @@ class Form
      *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
      *	  @param	string	$morehtmlleft	More html code to show before ref
-     *	  @param	string	$morehtmlright	More html code to show before navigation arrows
+     *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place)
+     *	  @param	string	$morehtmlright	More html code to show after ref
      * 	  @return	string    				Portion HTML avec ref + boutons nav
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlright='')
+    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
     {
     	global $langs,$conf;
 
@@ -5600,7 +5605,7 @@ class Form
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<div style="vertical-align: middle">';
         
-		$ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		if ($morehtmlleft) $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
         
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
@@ -5620,6 +5625,8 @@ class Form
         }
 		$ret.='</div>';
 
+		if ($morehtmlright) $ret.='<div class="inline-block floatleft">'.$morehtmlright.'</div>';
+		
         if ($previous_ref || $next_ref || $morehtml)
         {
         	$ret.='<div class="pagination"><ul>';
@@ -5637,7 +5644,7 @@ class Form
         {
             $ret.='</ul></div>';
         }
-		if ($morehtmlright) $ret.='<div class="statusref">'.$morehtmlright.'</div>';
+		if ($morehtmlstatus) $ret.='<div class="statusref">'.$morehtmlstatus.'</div>';
         $ret.='</div>';
 		
         return $ret;
@@ -5921,7 +5928,7 @@ class Form
     /**
      *	Return HTML to show the search and clear seach button
      *
-     *  @param	int  	$addcheckuncheckall        Add the check all uncheck al button
+     *  @param	int  	$addcheckuncheckall        Add the check all uncheck all button
      *  @param  string  $cssclass                  CSS class
      *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
      *  @return	string                          

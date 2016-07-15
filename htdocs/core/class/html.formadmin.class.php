@@ -124,7 +124,7 @@ class FormAdmin
      *    @param    string		$htmlname        Name of html select
      *    @param    array		$dirmenuarray    Array of directories to scan
      *    @param    string		$moreattrib      More attributes on html select tag
-     *    @return	void
+     *    @return	integer|null
      */
     function select_menu($selected, $htmlname, $dirmenuarray, $moreattrib='')
     {

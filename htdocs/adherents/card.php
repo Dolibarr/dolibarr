@@ -404,11 +404,7 @@ if (empty($reshook))
 			}
 			else
 			{
-				if ($object->error) {
-					setEventMessages($object->error, $object->errors, 'errors');
-				} else {
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action='';
 			}
 		}
@@ -554,7 +550,7 @@ if (empty($reshook))
 			$result=$object->create($user);
 			if ($result > 0)
 			{
-				// Fundation categories
+				// Foundation categories
 				$memcats = GETPOST('memcats', 'array');
 				$object->setCategories($memcats);
 
@@ -864,7 +860,7 @@ else
 
 		// Address
 		print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(GETPOST('address','alpha')?GETPOST('address','alpha'):$object->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1125,7 +1121,7 @@ else
 
 		// Address
 		print '<tr><td>'.$langs->trans("Address").'</td><td>';
-		print '<textarea name="address" wrap="soft" cols="40" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
+		print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="2">'.(isset($_POST["address"])?$_POST["address"]:$object->address).'</textarea>';
 		print '</td></tr>';
 
 		// Zip / Town
@@ -1443,6 +1439,12 @@ else
 		if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
 		{
 			print '<tr><td>'.$langs->trans("Password").'</td><td>'.preg_replace('/./i','*',$object->pass);
+			if ($object->pass) print preg_replace('/./i','*',$object->pass);
+			else
+			{
+			    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+			    else print $langs->trans("Hidden");
+			}
 			if ((! empty($object->pass) || ! empty($object->pass_crypted)) && empty($object->user_id))
 			{
 			    $langs->load("errors");
@@ -1451,7 +1453,7 @@ else
 			}
 			print '</td></tr>';
 		}
-
+		
         print '</table>';
         
         print '</div>';
@@ -1483,6 +1485,30 @@ else
 			print $object->showOptionals($extrafields, 'view', $parameters);
 		}
 
+        // Date end subscription
+        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+        if ($object->datefin)
+        {
+            print dol_print_date($object->datefin,'day');
+            if ($object->hasDelay()) {
+                print " ".img_warning($langs->trans("Late"));
+            }
+        }
+        else
+        {
+	        if (! $adht->cotisation)
+	        {
+	        	print $langs->trans("SubscriptionNotRecorded");
+		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+	        }
+	        else
+	        {
+	            print $langs->trans("SubscriptionNotReceived");
+	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+	        }
+        }
+        print '</td></tr>';
+		
 		// Third party Dolibarr
 		if (! empty($conf->societe->enabled))
 		{
@@ -1552,30 +1578,6 @@ else
 			else print $langs->trans("NoDolibarrAccess");
 		}
 		print '</td></tr>';
-
-        // Date end subscription
-        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
-        if ($object->datefin)
-        {
-            print dol_print_date($object->datefin,'day');
-            if ($object->hasDelay()) {
-                print " ".img_warning($langs->trans("Late"));
-            }
-        }
-        else
-        {
-	        if (! $adht->cotisation)
-	        {
-	        	print $langs->trans("SubscriptionNotRecorded");
-		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
-	        }
-	        else
-	        {
-	            print $langs->trans("SubscriptionNotReceived");
-	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
-	        }
-        }
-        print '</td></tr>';
 
 		print "</table>\n";
 

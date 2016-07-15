@@ -561,6 +561,18 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100 {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax300 {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowauto {
     max-width: 0;
     overflow: auto;
@@ -585,11 +597,18 @@ div.myavailability {
 
 .clearboth  { clear:both; }
 .hideobject { display: none; }
+.minwidth50  { min-width: 50px; }
 .minwidth100 { min-width: 100px; }
 .minwidth200 { min-width: 200px; }
 .minwidth300 { min-width: 300px; }
 .minwidth400 { min-width: 400px; }
 .minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -617,6 +636,7 @@ div.myavailability {
     .maxwidth100onsmartphone { max-width: 100px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
+    .maxwidth400onsmartphone { max-width: 400px; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -651,7 +671,7 @@ td.showDragHandle {
 	table-layout: fixed;
 }
 #id-right, #id-left {
-	padding-top: 12px;
+	padding-top: 16px;
 	padding-bottom: 8px;
 
 	display: table-cell;			/* DOL_XXX Empeche fonctionnement correct du scroll horizontal sur tableau, avec datatable ou CSS */
@@ -692,7 +712,7 @@ div.vmenu, td.vmenu {
 
 
 
-/* For desktop */
+/* For smartphone (testmenuhider is on) */
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 #id-container {
 	width: 100%;
@@ -735,7 +755,8 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST("optioncss") == 'print'?8:(empty($conf->dol_optimize_smallscreen)?'12':'6')); ?>px;
-	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
+	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
+	<?php if (! empty($conf->dol_use_jmobile)) print ' margin-bottom: 10px;'."\n"; ?>
 }
 div.fichecenter {
 	width: 100%;
@@ -766,8 +787,8 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
-/* Force values for small screen */
-@media only screen and (max-width: 900px)
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 960px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
@@ -816,7 +837,7 @@ div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
 }
 
 #pictotitle {
-	margin-right: 8px;
+	margin-<?php echo $right; ?>: 8px;
 	margin-bottom: 4px;
 }
 .pictosubstatus {
@@ -1055,6 +1076,8 @@ div.tmenucenter
 div.menu_titre {
 	padding-top: 4px;
 	padding-bottom: 4px;
+	overflow: hidden;
+    text-overflow: ellipsis;	
 }
 .mainmenuaspan
 {
@@ -1418,7 +1441,7 @@ div.vmenu, td.vmenu {
 .companylogo { }
 .searchform { padding-top: 4px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -1509,7 +1532,7 @@ div.blockvmenuhelp
 	text-align: center;
 	text-decoration: none;
     padding-left: 0px;
-    padding-right: 3px;
+    padding-right: 6px;
     padding-top: 3px;
     padding-bottom: 3px;
     margin: 4px 0px 0px 0px;
@@ -2728,7 +2751,10 @@ form.liste_total div {
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 }
-
+.paymenttable tr td:first-child, .margintable tr td:first-child
+{
+	padding-left: 2px;
+}
 .margintable td {
 	border: 0px !important;
 }
@@ -2950,6 +2976,8 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 .product_line_stock_too_low { color: #664400; }
 
 .fieldrequired { font-weight: bold; color: #000055; }
+
+.widthpictotitle { width: 40px; text-align: <?php echo $left; ?>; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { margin: 0px; }
@@ -4026,6 +4054,9 @@ dl.dropdown {
 	white-space: nowrap;
 	font-weight: normal;
 }
+.dropdown dd ul li input[type="checkbox"] {
+    margin-right: 3px;
+}
 .dropdown dd ul li a {
     padding:5px;
     display:block;
@@ -4054,8 +4085,8 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 
 .ui-btn-inner {
 	min-width: .4em;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 6px;
+	padding-right: 6px;
 	<?php if (! empty($dol_use_jmobile)) { ?>
 	font-size: 13px;
 	<?php } else { ?>
@@ -4064,22 +4095,28 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 34px;
+	padding-right: 30px;
 }
 .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 34px;
+	padding-left: 30px;
 }
 .ui-select .ui-btn-icon-right .ui-btn-inner {
-	padding-right: 38px;
+	padding-right: 30px;
 }
 .ui-select .ui-btn-icon-left .ui-btn-inner {
-	padding-left: 38px;
+	padding-left: 30px;
+}
+.ui-select .ui-btn-icon-right .ui-icon {
+    right: 8px;
+}
+.ui-btn-icon-left > .ui-btn-inner > .ui-icon, .ui-btn-icon-right > .ui-btn-inner > .ui-icon {
+    margin-top: -10px;
 }
 select {
     /* display: inline-block; */	/* We can't set this. This disable ability to make */
-    /* TODO added by jmobile, replace jmobile with pure css*/
+    /* TODO modified by jmobile, replace jmobile with pure css*/
     overflow:hidden;
-    white-space: nowrap;
+    white-space: nowrap;			/* Enabling this make behaviour strange when selecting the empty value if this empty value is '' instead of '&nbsp;' */
     text-overflow: ellipsis;
 }
 .fiche .ui-controlgroup {
@@ -4278,7 +4315,9 @@ border-top-right-radius: 6px;
 
 /* For demo pages */
 img.demothumb {
-    box-shadow: 2px 2px 8px #888;
+    box-shadow: 2px 2px 8px #BBB;
+    margin-right: 20px;
+    margin-left: 10px;
 }
 
 
@@ -4315,6 +4354,12 @@ img.demothumb {
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
 
+    img.demothumb {
+        box-shadow: 1px 1px 4px #BBB;
+        margin-right: 6px;
+        margin-left: 4px;
+        width: 80px;
+    }
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */

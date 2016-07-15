@@ -414,7 +414,7 @@ if ($resql)
 	if ($search_total_ttc != '') $param.="&search_total_ttc=".$search_total_ttc;
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($billed != '')          $param.="billed=".$billed; 
+	if ($billed != '')          $param.="&billed=".$billed; 
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)

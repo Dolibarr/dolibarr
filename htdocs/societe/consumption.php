@@ -276,7 +276,7 @@ if ($type_element == 'contract')
 	$thirdTypeSelect='customer';
 }
 
-if ($sql_select)
+if (!empty($sql_select)) 
 {
 	$sql = $sql_select;
 	$sql.= ' d.description as description,';
@@ -302,7 +302,7 @@ if ($sql_select)
 		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 	}
 	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
-	if ($sprod_fulldescr) 
+	if ($sprod_fulldescr)
 	{
 	    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
 	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
@@ -569,7 +569,7 @@ else if (empty($type_element) || $type_element == -1)
     print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
-	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
+	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
 
 	print "</table>";
 }
@@ -578,7 +578,7 @@ else {
 
     print '<table class="liste" width="100%">'."\n";
 
-	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 
 	print "</table>";
 }

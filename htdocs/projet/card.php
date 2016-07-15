@@ -307,17 +307,19 @@ if (empty($reshook))
 	// Delete file in doc form
 	if ($action == 'remove_file' && $user->rights->projet->creer)
 	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 	    if ($object->id > 0)
 	    {
-	        $langs->load("other");
-	        $upload_dir =	$conf->projet->dir_output . "/";
-	        $urlfile=GETPOST('urlfile','alpha');
-	        $file =	$upload_dir	. '/' .	$filetodelete;
-	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
-	        else setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	    	
+			$langs->load("other");
+			$upload_dir = $conf->projet->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			if ($ret)
+				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else
+				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+			$action = '';
 	    }
 	}
 
@@ -666,9 +668,13 @@ else
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
             $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
-            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-            print '</td></tr>';
+	        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+		    {
+	            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+	            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
+	    	}
+	    	else print $text;
+	        print '</td></tr>';
         }
         
         // Visibility
@@ -704,7 +710,9 @@ else
 
 		    // Opportunity probability
 		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %';
+            print '<span id="oldopppercent"></span>';
+		    print '</td>';
 		    print '</tr>';
 		    
 		    // Opportunity amount
@@ -741,7 +749,7 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
@@ -831,14 +839,23 @@ else
     print '</form>';
 
     // Change probability from status
-    print '<script type="text/javascript" language="javascript">
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
-                /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                var elemcode = element.attr("elemcode");
+                /* Change percent of default percent of new status is higher */
+                if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent)
+                    )
+                {
+                    if (! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->trans("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
+                    jQuery("#opp_percent").val(defaultpercent);
+                    
+                }
         	}
         	/*init_myfunc();*/
         	jQuery("#opp_status").change(function() {
@@ -846,7 +863,7 @@ else
         	});
         });
         </script>';
-    
+    }    
     
     /*
      * Boutons actions

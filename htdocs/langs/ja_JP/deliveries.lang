@@ -1,14 +1,11 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=配達
-Deliveries=配達
+DeliveryRef=Ref Delivery
 DeliveryCard=配信カード
 DeliveryOrder=配送指示書
-DeliveryOrders=配信の注文
 DeliveryDate=配達日
-DeliveryDateShort=配送は。日付
 CreateDeliveryOrder=配信順序を生成します。
 DeliveryStateSaved=Delivery state saved
-QtyDelivered=個数配信
 SetDeliveryDate=出荷の日付を設定する
 ValidateDeliveryReceipt=配信の領収書を検証する
 ValidateDeliveryReceiptConfirm=この配信の領収書を検証してもよろしいですか？
@@ -30,3 +27,4 @@ Recipient=受信者
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
+ShowReceiving=Show delivery receipt

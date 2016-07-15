@@ -159,7 +159,7 @@ if ($resql)
     }
     else
     {
-        print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
+        print '<tr '.$bc[false].'><td colspan="2" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw").'</td></tr>';
     }
     print "</table><br>";
 }

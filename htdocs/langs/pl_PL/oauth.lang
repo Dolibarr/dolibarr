@@ -12,3 +12,4 @@ ListOfSupportedOauthProviders=Enter here credential provided by your OAuth2 prov
 OAUTH_GOOGLE_NAME=API Google
 OAUTH_GOOGLE_ID=ID API Google
 OAUTH_GOOGLE_SECRET=ID API Google Secret
+OAUTH_GOOGLE_DESC=Go on <a href="https://console.developers.google.com/" target="_blank">this page</a> then Credentials to create Oauth credentials

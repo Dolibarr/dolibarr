@@ -896,7 +896,8 @@ class Expedition extends CommonObject
 				$product_type=$product->type;
 				if ($product_type == 0 && $product_stock < $qty)
 				{
-					$this->error=$langs->trans('ErrorStockIsNotEnough');
+                    $langs->load("errors");
+				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $product->ref);
 					$this->db->rollback();
 					return -3;
 				}
@@ -952,7 +953,8 @@ class Expedition extends CommonObject
 
 						if ($prod_batch->qty < $linebatch->dluo_qty)
 						{
-							$this->errors[] = $langs->trans('ErrorStockIsNotEnough');
+                            $langs->load("errors");
+        				    $this->errors[]=$langs->trans('ErrorStockIsNotEnoughToAddProductOnShipment', $prod_batch->fk_product);
 							dol_syslog(get_class($this)."::addline_batch error=Product ".$prod_batch->batch.": ".$this->errorsToString(), LOG_ERR);
 							$this->db->rollback();
 							return -1;
@@ -1300,9 +1302,9 @@ class Expedition extends CommonObject
 		global $conf, $mysoc;
 		// TODO: recuperer les champs du document associe a part
 
-		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.label as custom_label, cd.description, cd.qty as qty_asked, cd.product_type";
 		$sql.= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
-		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice, cd.remise_percent";
+		$sql.= ", cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
 		$sql.= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_origin_line, ed.fk_entrepot";
 		$sql.= ", p.ref as product_ref, p.label as product_label, p.fk_product_type";
 		$sql.= ", p.weight, p.weight_units, p.length, p.length_units, p.surface, p.surface_units, p.volume, p.volume_units, p.tobatch as product_tobatch";
@@ -1353,6 +1355,7 @@ class Expedition extends CommonObject
                 $line->id               = $obj->line_id;
 				$line->fk_origin_line 	= $obj->fk_origin_line;
 				$line->origin_line_id 	= $obj->fk_origin_line;	    // TODO deprecated
+				$line->product_type     = $obj->product_type;
 				$line->fk_product     	= $obj->fk_product;
 				$line->fk_product_type	= $obj->fk_product_type;
 				$line->ref				= $obj->product_ref;		// TODO deprecated
@@ -1372,6 +1375,8 @@ class Expedition extends CommonObject
 				$line->volume         	= $obj->volume;
 				$line->volume_units   	= $obj->volume_units;
 
+				$line->pa_ht 			= $obj->pa_ht;
+		    	
 				// For invoicing
 				$tabprice = calcul_price_total($obj->qty_shipped, $obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->fk_product_type, $mysoc);	// We force type to 0
 				$line->desc	         	= $obj->description;		// We need ->desc because some code into CommonObject use desc (property defined for other elements)
@@ -1546,7 +1551,8 @@ class Expedition extends CommonObject
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
-		// Charge tableau des produits prodids
+        // Load array of products prodids
+		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -1832,10 +1838,10 @@ class Expedition extends CommonObject
 				{
 					$lineid = $line->id;
 					$qty = $line->qty;
-					if (($type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->expeditions[$lineid] != $qty)
+					if (($line->product_type == 0 || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $order->expeditions[$lineid] != $qty)
 					{
 						$shipments_match_order = 0;
-						$text='Qty for order line id '.$lineid.' is '.$qty.' but in shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.', we have '.$order->expeditions[$lineid].' so we can t close order';
+						$text='Qty for order line id '.$lineid.' is '.$qty.'. However in the shipments with status Expedition::STATUS_CLOSED='.self::STATUS_CLOSED.' we have qty = '.$order->expeditions[$lineid].', so we can t close order';
 						dol_syslog($text);
 						break;
 					}
