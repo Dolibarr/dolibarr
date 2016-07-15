@@ -240,31 +240,45 @@ class MouvementStock extends CommonObject
 			}
 		}
 		
-		// TODO Check qty is ok for stock move.
-		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
-		{
-
-		}
-		else
-		{
-
-		}
-	
-		if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) && in_array($type, array(1, 2)))
-		{
-			if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) 
-			{
-				$this->error = $langs->trans('qtyToTranferIsNotEnough');
-				$this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
-				$this->db->rollback();
-				return -8;
-			}
-		}
-
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock=0;
 		if ($product->type != Product::TYPE_SERVICE || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
 
+		// Check if stock is enough when qty is < 0
+		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
+		if ($qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER))
+		{
+    		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
+    		{
+    		    $foundforbatch=0;
+    		    $qtyisnotenough=0;
+    		    foreach($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch)
+    		    {
+    		        if ($batch != $batchcursor) continue;
+    		        $foundforbatch=1;
+    		        if ($prodbatch->qty < abs($qty)) $qtyisnotenough=1;
+        		    break;
+    		    }
+    		    if (! $foundforbatch || $qtyisnotenough)
+    		    {
+        		    $this->error = $langs->trans('qtyToTranferLotIsNotEnough');
+        		    $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough');
+        		    $this->db->rollback();
+        		    return -8;
+    		    }		    
+    		}
+    		else
+    		{
+    		    if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))
+    		    {
+    		        $this->error = $langs->trans('qtyToTranferIsNotEnough');
+    		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
+    		        $this->db->rollback();
+    		        return -8;
+    		    }
+    		}
+		}		
+		
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
 			if(!empty($this->origin)) {			// This is set by caller for tracking reason
