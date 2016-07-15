@@ -239,7 +239,7 @@ class MouvementStock extends CommonObject
             	return -1;
 			}
 		}
-
+		
 		// TODO Check qty is ok for stock move.
 		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
 		{
@@ -248,6 +248,17 @@ class MouvementStock extends CommonObject
 		else
 		{
 
+		}
+	
+		if (empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER) && in_array($type, array(1, 2)))
+		{
+			if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) 
+			{
+				$this->error = $langs->trans('qtyToTranferIsNotEnough');
+				$this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
+				$this->db->rollback();
+				return -8;
+			}
 		}
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
