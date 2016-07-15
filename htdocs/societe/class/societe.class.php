@@ -1810,7 +1810,7 @@ class Societe extends CommonObject
      */
     function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
     {
-        global $conf,$langs;
+        global $conf,$langs, $hookmanager;
 
         $name=$this->name?$this->name:$this->nom;
 
@@ -1898,6 +1898,7 @@ class Societe extends CommonObject
 
         // Add type of canvas
         $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $linkclose='';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
