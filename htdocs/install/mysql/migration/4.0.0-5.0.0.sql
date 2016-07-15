@@ -25,6 +25,7 @@
 ALTER TABLE llx_website ADD COLUMN virtualhost   varchar(255) after fk_default_home;
 
 DROP TABLE llx_document_generator;
+DROP TABLE llx_ecm_documents;
 
 
 
