@@ -3132,7 +3132,7 @@ class Product extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result='';
