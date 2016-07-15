@@ -24,6 +24,6 @@
 
 ALTER TABLE llx_website ADD COLUMN virtualhost   varchar(255) after fk_default_home;
 
-
-
+ALTER TABLE llx_chargesociales ADD COLUMN fk_account integer after fk_type;
+ALTER TABLE llx_chargesociales ADD COLUMN fk_mode_reglement integer after fk_account;
 
