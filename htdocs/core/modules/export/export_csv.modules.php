@@ -299,7 +299,9 @@ class ExportCsv extends ModeleExports
 	 */
 	function csv_clean($newvalue, $charset)
 	{
+		global $conf;
 		$addquote=0;
+		
 
 		// Rule Dolibarr: No HTML
 		//print $charset.' '.$newvalue."\n";
@@ -307,9 +309,16 @@ class ExportCsv extends ModeleExports
 		//print $charset.' '.$newvalue."\n";
 
 		// Rule 1 CSV: No CR, LF in cells
-		$newvalue=str_replace("\r",'',$newvalue);
+		$oldvalue=$newvalue;
+		$newvalue=str_replace("\r",'\r',$newvalue);
 		$newvalue=str_replace("\n",'\n',$newvalue);
-
+		if (! empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue)
+		{
+			// If strict use of CSV rules, we just add quote
+			$newvalue=$oldvalue;
+			$addquote=1;
+		}
+		
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
 		if (preg_match('/"/',$newvalue))
 		{
