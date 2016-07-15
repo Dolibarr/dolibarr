@@ -22,6 +22,8 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+ALTER TABLE llx_societe ADD COLUMN fk_account integer;
+
 ALTER TABLE llx_website ADD COLUMN virtualhost varchar(255) after fk_default_home;
 
 ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12) after cover; 
