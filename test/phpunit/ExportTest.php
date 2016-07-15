@@ -143,31 +143,31 @@ class ExportTest extends PHPUnit_Framework_TestCase
         
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, 'A simple string');
         
         $valtotest='A string with , and ; inside';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with , and ; inside"');
         
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with "" inside"');
 
         $valtotest='A string with " inside and '."\r\n".' carriage returns';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
         
         $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
         
@@ -176,31 +176,31 @@ class ExportTest extends PHPUnit_Framework_TestCase
         
         $valtotest='A simple string';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, 'A simple string');
         
         $valtotest='A string with , and ; inside';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with , and ; inside"');
         
         $valtotest='A string with " inside';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with "" inside"');
         
         $valtotest='A string with " inside and '."\r\n".' carriage returns';
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
         
         $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
         print __METHOD__." valtotest=".$valtotest."\n";
-        $result = $objmodel->csvClean($valtotest ,$langs->charset_output);
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
         
