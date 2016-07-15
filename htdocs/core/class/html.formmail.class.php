@@ -256,7 +256,7 @@ class FormMail extends Form
         );
         $reshook=$hookmanager->executeHooks('getFormMail', $parameters, $this);
 
-        if (!empty($reshook))
+        if (is_numeric($reshook))
         {
         	return $hookmanager->resPrint;
         }
