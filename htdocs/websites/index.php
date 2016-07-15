@@ -519,7 +519,7 @@ if (count($object->records) > 0)
                             element: \'websites\',
                             table_element: \'website\',
                             fk_element: '.$object->id.',
-                            value: encodeURIComponent(newurl),
+                            value: newurl,
                         },
                         context: document.body
                     });
