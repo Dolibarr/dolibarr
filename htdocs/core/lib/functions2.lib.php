@@ -1971,6 +1971,11 @@ function getElementProperties($element_type)
         $module='resource';
         $subelement='dolresource';
     }
+    if ($element_type == 'propaldet') {
+        $classpath = 'comm/propal/class';
+        $module='propal';
+        $subelement='propaleligne';
+    }
     $classfile = strtolower($subelement);
     $classname = ucfirst($subelement);
 
