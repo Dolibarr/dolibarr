@@ -369,7 +369,7 @@ if (! empty($force_install_message))
 
 	<tr class="hidesqlite">
 		<td valign="top" class="label"><?php echo $langs->trans("Port"); ?></td>
-		<td valign="top" class="label"><input type="text"
+		<td valign="top" class="label"><input type="text" id="db_port"
 			name="db_port<?php print ($force_install_noedit==2 && $force_install_port)?'_bis':''; ?>"
 			<?php if ($force_install_noedit==2 && $force_install_port) print ' disabled'; ?>
 			value="<?php print (! empty($dolibarr_main_db_port))?$dolibarr_main_db_port:$force_install_port; ?>">
@@ -484,9 +484,27 @@ if (! empty($force_install_message))
 <script type="text/javascript">
 jQuery(document).ready(function() {
 
-	jQuery("#db_type").change(function() {
-		if (jQuery("#db_type").val()=='sqlite' || jQuery("#db_type").val()=='sqlite3') { jQuery(".hidesqlite").hide(); }
-		else  { jQuery(".hidesqlite").show(); }
+	var dbtype = jQuery("#db_type");
+
+	dbtype.change(function () {
+		if (dbtype.val() == 'sqlite' || dbtype.val() == 'sqlite3') {
+			jQuery(".hidesqlite").hide();
+		} else {
+			jQuery(".hidesqlite").show();
+		}
+
+		// Automatically set default database ports and admin user
+		if (dbtype.val() == 'mysql' || dbtype.val() == 'mysqli') {
+			jQuery("#db_port").val(3306);
+			jQuery("#db_user_root").val('root');
+		} else if (dbtype.val() == 'pgsql') {
+			jQuery("#db_port").val(5432);
+			jQuery("#db_user_root").val('postgres');
+		} else if (dbtype.val() == 'mssql') {
+			jQuery("#db_port").val(1433);
+			jQuery("#db_user_root").val('sa');
+		}
+
 	});
 
 	function init_needroot()
