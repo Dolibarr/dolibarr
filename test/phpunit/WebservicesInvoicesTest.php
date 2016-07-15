@@ -54,7 +54,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	protected $savlangs;
 	protected $savdb;
 	protected $soapclient;
-	protected $socid;
+	
+	private static $socid;
 	
 	protected $ns = 'http://www.dolibarr.org/ns/';
 	
@@ -72,10 +73,9 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
-		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-		
 		
 		// Set the WebService URL
+		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$this->soapclient = new nusoap_client($WS_DOL_URL);
 		if ($this->soapclient)
@@ -84,7 +84,28 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			$this->soapclient->decodeUTF8(false);
 		}
 		
-		// create third_parties, needed to test an invoice
+		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
+		//print " - db ".$db->db;
+		print "\n";
+	}
+
+    public static function setUpBeforeClass()
+    {
+        global $conf,$user,$langs,$db;
+
+		// create a third_party, needed to create an invoice
+		//
+		// The third party is created in setUpBeforeClass() and not in the
+		// constructor to avoid creating several objects (the constructor is
+		// called for each test).
+		//
+		// The third party must be created before beginning the DB transaction
+		// because there is a foreign key constraint between invoices and third
+		// parties (tables: lx_facture and llx_societe) and with MySQL,
+		// constraints are checked immediately, they are not deferred to
+		// transaction commit. So if the invoice is created in the same
+		// transaction than the third party, the FK constraint fails.
+		// See this post for more detail: http://stackoverflow.com/a/5014744/5187108
 		$societe=new Societe($db);
 		$societe->ref='';
 		$societe->name='name';
@@ -97,24 +118,15 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$societe->particulier=0;
 		
 		$societe->create($user);
-		
-		$this->socid = $societe->id;
-		
+
+		self::$socid = $societe->id;
 		print __METHOD__." societe created id=".$societe->id."\n";
 
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	// Static methods
-  	public static function setUpBeforeClass()
-    {
-    	global $conf,$user,$langs,$db;
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
+
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -135,9 +147,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-				
+
 		print __METHOD__."\n";
-		
     }
 
 	/**
@@ -166,17 +177,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	$WS_METHOD  = 'createInvoice';
 
-    	// load societe first
-    	/*$societe=new Societe($db);
-    	$societe->fetch('', '', 'ref-phpunit');
-    	print __METHOD__." societe loaded id=".$societe->id."\n";
-        */
-    	
     	$body = array (
     			"id" => NULL,
 				"ref" => NULL,
 				"ref_ext" => "ref-phpunit-2",
-				"thirdparty_id" => $this->socid,
+				"thirdparty_id" => self::$socid,
 				"fk_user_author" => NULL,
 				"fk_user_valid" => NULL,
 				"date" => "2015-04-19 20:16:53",
@@ -333,7 +338,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     		"id" => NULL,
 			"ref" => NULL,
 			"ref_ext" => "ref-phpunit-2",
-			"thirdparty_id" => $this->socid,
+			"thirdparty_id" => self::$socid,
 			"fk_user_author" => NULL,
 			"fk_user_valid" => NULL,
 			"date" => "2015-04-19 20:16:53",

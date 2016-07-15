@@ -904,7 +904,7 @@ else
 
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td>';
-            print '<td>';
+            print '<td colspan="3">';
             print $object->getLibStatut(4);
             print '</td></tr>';
 

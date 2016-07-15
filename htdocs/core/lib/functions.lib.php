@@ -4267,7 +4267,7 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *
  *	@param	string	$StringHtml			String to clean
- *	@param	integer	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
+ *	@param	integer	$removelinefeed		1=Replace also all lines feeds by a space, 0=Only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
@@ -5257,7 +5257,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 						{
 							$substitutionarray=array();
-							complete_substitutions_array($substitutionarray,$langs,$object);
+							complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 							$label=make_substitutions($reg[1], $substitutionarray);
 						}
 						else $label=$langs->trans($values[2]);
@@ -5277,7 +5277,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 					{
 						$substitutionarray=array();
-						complete_substitutions_array($substitutionarray,$langs,$object);
+						complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 						$label=make_substitutions($reg[1], $substitutionarray);
 					}
 					else $label=$langs->trans($values[2]);

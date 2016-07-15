@@ -169,9 +169,6 @@ if ($lastUpdate)
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
 }
 else print $langs->trans('None');
-
-
-
 print "</div><br>\n";
 
 $result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
