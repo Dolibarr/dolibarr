@@ -69,7 +69,7 @@
 		print '<td width="20%">';
 		print '<select name="mouvement" id="mouvement" class="flat">';
 		print '<option value="0">'.$langs->trans("Add").'</option>';
-		print '<option value="1">'.$langs->trans("Delete").'</option>';
+		print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';
 		print '</select></td>';
 		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" id="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
 		print '</tr>';
