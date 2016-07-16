@@ -1918,6 +1918,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background-image: none !important;
 }
 
+
+.tabunactive {	/* We add some border on tabunactive to avoid change of position of title when switching tabs (border of tabunactive = border of tabactive) */
+    border-right: 1px solid rgb(<?php echo $colorbackbody; ?>);
+    border-left: 1px solid rgb(<?php echo $colorbackbody; ?>);
+}
+
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
@@ -2159,7 +2165,7 @@ div.tabBar table.border tr {
 
 table.border td, div.border div div.tagtd {
 	padding: 2px 2px 2px 2px;
-	border: 1px solid #f4f4f4;
+	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
 

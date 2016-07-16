@@ -429,7 +429,7 @@ if (! empty($holiday->holiday))
 // Si il n'y a pas d'enregistrement suite à une recherche
 if($holiday_payes == '2')
 {
-    print '<tr>';
+    print '<tr '.$bc[false].'>';
     print '<td colspan="10" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
     print '</tr>';
 }

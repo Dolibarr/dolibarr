@@ -4262,7 +4262,8 @@ class Form
         }
 
         // Now we get list
-        $num = $this->load_cache_vatrates($code_country);
+        $num = $this->load_cache_vatrates($code_country);   // If no vat defined, return -1 with message into this->error
+ 
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
