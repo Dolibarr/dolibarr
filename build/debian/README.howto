@@ -291,8 +291,8 @@ If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VER
 * Edit tgz file to remove 
 - htdocs/includes/ckeditor
 - htdocs/includes/jquery/plugins/datatables/extras/TableTools/swf
-- htdocs/includes/phpexcel
-- htdocs/includes/tcpdf
+- htdocs/includes/phpexcel or htdocs/includes/phpoffice
+- htdocs/includes/tcpdf or htdocs/includes/tecknicom
 And rename file into 
 dolibarr-x.y.z+dfsgw.tgz
 (x.y.z = version, w start from 1 and is increased for each new git-import-orig already done)
