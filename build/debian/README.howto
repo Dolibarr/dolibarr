@@ -288,11 +288,11 @@ from origin/upstream and origin/pristine.
 > debian/get-orig-source.sh
 If script fails with error Bad certificate, you can set "export PERL_LWP_SSL_VERIFY_HOSTNAME=0" to solve this.
 
-* Edit tgz file to remove 
+* Edit orig.tar.gz file to remove 
+- debian
 - htdocs/includes/ckeditor
-- htdocs/includes/jquery/plugins/datatables/extras/TableTools/swf
 - htdocs/includes/phpexcel or htdocs/includes/phpoffice
-- htdocs/includes/tcpdf or htdocs/includes/tecknicom
+- htdocs/includes/tcpdf or htdocs/includes/tecnickom
 And rename file into 
 dolibarr-x.y.z+dfsgw.tgz
 (x.y.z = version, w start from 1 and is increased for each new git-import-orig already done)
