@@ -1741,13 +1741,14 @@ class ExpenseReportLine
         // Clean parameters
         $this->comments=trim($this->comments);
         $this->vatrate = price2num($this->vatrate);
+        $this->value_unit = price2num($this->value_unit);
 
         $this->db->begin();
 
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
-        $sql.= ",value_unit=".price2num($this->value_unit)."";
+        $sql.= ",value_unit=".$this->value_unit."";
         $sql.= ",qty=".$this->qty."";
         $sql.= ",date='".$this->db->idate($this->date)."'";
         $sql.= ",total_ht=".$this->total_ht."";
