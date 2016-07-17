@@ -173,6 +173,7 @@ $build =~ s/-.*$//g;
 # now build is 0+nmu1 for example
 $FILENAMEDEBNATIVE="${PROJECT}_${MAJOR}.${MINOR}.${build}";
 $FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${newbuild}";
+$FILENAMEDEBSHORT="${PROJECT}_${MAJOR}.${MINOR}.${build}";
 
 
 my $copyalreadydone=0;
@@ -389,10 +390,15 @@ if ($nboftargetok) {
 			{
 				print 'Run git tag -a -f -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
+				print 'Run git push -f --tags'."\n";
+				$ret=`git push -f --tags`;
 			}
 		}
-		print 'Run git push --tags'."\n";
-		$ret=`git push --tags`;
+		else
+		{
+			print 'Run git push --tags'."\n";
+			$ret=`git push --tags`;
+		}
 		chdir("$olddir");
 	}
 	
@@ -824,7 +830,7 @@ if ($nboftargetok) {
 			$ret=`$cmd`;
 
 			print "Remove other files\n";
-			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/README-FR`;
+			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/README-FR.md`;
 			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/README`;
 			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/README-FR`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/aps`;
@@ -1127,6 +1133,7 @@ if ($nboftargetok) {
 		%filestoscansf=(
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
@@ -1134,6 +1141,7 @@ if ($nboftargetok) {
 		%filestoscanstableasso=(
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'package_rpm_generic',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'standard'
@@ -1195,7 +1203,7 @@ if ($nboftargetok) {
 
 				print "\n";
 	    		
-	    		if ($target eq 'SF') { 
+	    		if ($target eq 'SF' && $filestoscan{$file} ne 'none') { 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
 	    		}
 	    		elsif ($target eq 'ASSO' and $NEWPUBLISH =~ /stable/) {
