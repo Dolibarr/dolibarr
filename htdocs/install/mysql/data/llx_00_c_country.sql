@@ -105,7 +105,7 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (74
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (75,'CR','CRI','Costa Rica',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (76,'HR','HRV','Croatie',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (77,'CU','CUB','Cuba',1,0);
-INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (78,'CY','CYP','Chypre',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (78,'CY','CYP','Cyprus',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (79,'CZ','CZE','République Tchèque',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (80,'DK','DNK','Danemark',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (81,'DJ','DJI','Djibouti',1,0);
