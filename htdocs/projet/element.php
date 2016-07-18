@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -581,7 +581,7 @@ foreach ($listofreferent as $key => $value)
 		$addform='';
 
 		$idtofilterthirdparty=0;
-		if (! in_array($tablename, array('facture_fourn', 'commande_fourn'))) $idtofilterthirdparty=$object->thirdparty->id;
+		if (! in_array($tablename, array('facture_fourn', 'commande_fournisseur'))) $idtofilterthirdparty=$object->thirdparty->id;
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty > 0) 
        	{
