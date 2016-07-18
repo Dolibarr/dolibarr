@@ -916,7 +916,10 @@ class BonPrelevement extends CommonObject
 					$row = $this->db->fetch_row($resql);
 					$ref = "T".$ref.str_pad(dol_substr("00".intval($row[0])+1,0,2),2,"0",STR_PAD_LEFT);
 
-					$this->filename = $conf->prelevement->dir_output.'/receipts/'.$ref.'.xml';
+					$dir=$conf->prelevement->dir_output.'/receipts';
+					if (! is_dir($dir)) dol_mkdir($dir);
+					
+					$this->filename = $dir.'/receipts/'.$ref.'.xml';
 
 	                // Create withdraw receipt in database
 	                $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
@@ -932,10 +935,6 @@ class BonPrelevement extends CommonObject
 	                {
 	                    $prev_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 						$this->id = $prev_id;
-
-	                    $dir=$conf->prelevement->dir_output.'/receipts';
-	                    $file=$filebonprev;
-	                    if (! is_dir($dir)) dol_mkdir($dir);
 	                }
 	                else
 					{
@@ -1031,7 +1030,7 @@ class BonPrelevement extends CommonObject
                     // Generation of SEPA file
                     $this->generate();
                 }
-                dol_syslog(__METHOD__."::End withdraw receipt, file ".$filebonprev, LOG_DEBUG);
+                dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
             }
 
             /*

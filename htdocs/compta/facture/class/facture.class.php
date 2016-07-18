@@ -2138,7 +2138,8 @@ class Facture extends CommonInvoice
 				$product_type=$product->type;
 
 				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE) && $product_type == 0 && $product->stock_reel < $qty) {
-					$this->error=$langs->trans('ErrorStockIsNotEnough');
+                    $langs->load("errors");
+				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
 					$this->db->rollback();
 					return -3;
 				}
@@ -2348,7 +2349,8 @@ class Facture extends CommonInvoice
 				$product_type=$product->type;
 
 				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_INVOICE) && $product_type == 0 && $product->stock_reel < $qty) {
-					$this->error=$langs->trans('ErrorStockIsNotEnough');
+                    $langs->load("errors");
+				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
 					$this->db->rollback();
 					return -3;
 				}
@@ -3210,7 +3212,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3240,6 +3242,7 @@ class Facture extends CommonInvoice
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
+				$generic_facture->statut = $obj->fk_statut;
 
 				$response->nbtodo++;
 
@@ -3247,7 +3250,7 @@ class Facture extends CommonInvoice
 					$response->nbtodolate++;
 				}
 			}
-
+	
 			return $response;
 		}
 		else
@@ -3725,7 +3728,7 @@ class Facture extends CommonInvoice
 		global $conf;
 
 		$now = dol_now();
-
+		
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 		
