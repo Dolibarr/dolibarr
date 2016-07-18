@@ -71,6 +71,11 @@ $date_end = dol_mktime(23, 59, 59, $_REQUEST["date_endmonth"], $_REQUEST["date_e
 $date_starty = dol_mktime(0, 0, 0, $_REQUEST["date_start_delymonth"], $_REQUEST["date_start_delyday"], $_REQUEST["date_start_delyyear"]); // Date for local PHP server
 $date_endy = dol_mktime(23, 59, 59, $_REQUEST["date_end_delymonth"], $_REQUEST["date_end_delyday"], $_REQUEST["date_end_delyyear"]);
 
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label('facture_fourn');
+
 if ($action == 'create') {
 	if (is_array($selected) == false) {
 		$mesgs = array (
@@ -159,6 +164,9 @@ if (($action == 'create' || $action == 'add') && empty($mesgs)) {
 				// Auto calculation of date due if not filled by user
 			if (empty($object->date_echeance))
 				$object->date_echeance = $object->calculate_date_lim_reglement();
+
+			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+			if ($ret < 0) $error++;
 
 			if ($_POST['origin'] && $_POST['originid']) {
 				$object->linked_objects = $orders_id;
@@ -359,6 +367,12 @@ if ($action == 'create' && !$error) {
 			'colspan' => ' colspan="3"'
 	);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+
+	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	{
+		$object=new FactureFournisseur($db);
+		print $object->showOptionals($extrafields,'edit');
+	}
 
 	// Modele PDF
 	print '<tr><td>' . $langs->trans('Model') . '</td>';
