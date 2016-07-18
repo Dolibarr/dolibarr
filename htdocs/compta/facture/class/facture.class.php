@@ -4006,10 +4006,10 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= ' fd.fk_unit,';
 		$sql.= ' fd.situation_percent, fd.fk_prev_id,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
-		$sql.= ' , multicurrency_subprice';
-		$sql.= ' , multicurrency_total_ht';
-		$sql.= ' , multicurrency_total_tva';
-		$sql.= ' , multicurrency_total_ttc';
+		$sql.= ' , fd.multicurrency_subprice';
+		$sql.= ' , fd.multicurrency_total_ht';
+		$sql.= ' , fd.multicurrency_total_tva';
+		$sql.= ' , fd.multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql.= ' WHERE fd.rowid = '.$rowid;
