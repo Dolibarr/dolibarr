@@ -80,17 +80,16 @@ class modAgenda extends DolibarrModules
 		$resql = $this->db->query($sqlreadactions);
 		if ($resql)
 		{
-		    while ($obj = $this->db->fetch_object($sqlreadactions))
-		    {
-		        if (preg_match('/_CREATE$/',$obj->code)) continue;    // We don't track such events (*_CREATE) by default. 
-		        if (preg_match('/^PROJECT_/',$obj->code)) continue;   // We don't track such events by default.
-		        if (preg_match('/^TASK_/',$obj->code)) continue;      // We don't track such events by default.
-		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1");
-		    }
+			while ($obj = $this->db->fetch_object($sqlreadactions))
+			{
+				if (preg_match('/_SENTBYMAIL$/',$obj->code)) {
+					$this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1");
+				}
+			}
 		}
 		else 
 		{
-		    dol_print_error($this->db->lasterror());
+			dol_print_error($this->db->lasterror());
 		}
 		
 		// New pages on tabs
