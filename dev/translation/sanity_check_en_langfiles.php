@@ -294,7 +294,9 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    if (preg_match('/^DescADHERENT_/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^SubmitTranslation/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^ModuleCompanyCode/', $value)) $qualifiedforclean=0;
-	    
+	    // boxes.lang
+	    if (preg_match('/^BoxTitleLast/', $value)) $qualifiedforclean=0;
+	    if (preg_match('/^BoxTitleLatest/', $value)) $qualifiedforclean=0;
 	    // main.lang
 	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^FormatDate/', $value)) $qualifiedforclean=0;

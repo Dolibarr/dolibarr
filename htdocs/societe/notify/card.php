@@ -51,8 +51,8 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="c.lastname";
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="a.daten";
 
 $now=dol_now();
 
