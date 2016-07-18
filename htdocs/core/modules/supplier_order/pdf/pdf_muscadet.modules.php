@@ -1071,12 +1071,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 			}
 		}
 
-		if (! empty($object->date_commande))
+		if (! empty($object->date))
 		{
 			$posy+=4;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date_commande,"day",false,$outputlangs,true), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dol_print_date($object->date,"day",false,$outputlangs,true), '', 'R');
 		}
 		else
 		{
