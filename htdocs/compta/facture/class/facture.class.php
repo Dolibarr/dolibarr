@@ -3487,7 +3487,7 @@ class Facture extends CommonInvoice
 					$response->nbtodolate++;
 				}
 			}
-	
+
 			return $response;
 		}
 		else
@@ -3897,7 +3897,7 @@ class Facture extends CommonInvoice
 		global $conf;
 
 		$now = dol_now();
-		
+
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 
@@ -4006,6 +4006,10 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= ' fd.fk_unit,';
 		$sql.= ' fd.situation_percent, fd.fk_prev_id,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' , fd.multicurrency_subprice';
+		$sql.= ' , fd.multicurrency_total_ht';
+		$sql.= ' , fd.multicurrency_total_tva';
+		$sql.= ' , fd.multicurrency_total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
 		$sql.= ' WHERE fd.rowid = '.$rowid;
@@ -4055,6 +4059,11 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->situation_percent    = $objp->situation_percent;
 			$this->fk_prev_id           = $objp->fk_prev_id;
+
+			$this->multicurrency_subprice = $objp->multicurrency_subprice;
+			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
+			$this->multicurrency_total_tva= $objp->multicurrency_total_tva;
+			$this->multicurrency_total_ttc= $objp->multicurrency_total_ttc;
 
 			$this->db->free($result);
 
@@ -4308,6 +4317,11 @@ class FactureLigne extends CommonInvoiceLine
 		if (empty($this->fk_parent_line)) $this->fk_parent_line=0;
 		if (! isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
 		if (empty($this->pa_ht)) $this->pa_ht=0;
+
+		if (empty($this->multicurrency_subprice)) $this->multicurrency_subprice=0;
+		if (empty($this->multicurrency_total_ht)) $this->multicurrency_total_ht=0;
+		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva=0;
+		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
 
 		// Check parameters
 		if ($this->product_type < 0) return -1;
