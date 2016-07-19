@@ -2811,7 +2811,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog("CommandeFournisseurLigne.class.php::update_total", LOG_DEBUG);
+        dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
