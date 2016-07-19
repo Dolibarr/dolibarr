@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2014       Charles-Fr BENKE        <charles.fr@benke.fr>
+ * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -347,7 +347,7 @@ else
 // TODO Move this into a page that should be available into menu "accountancy - report - turnover - per quarter"
 // Also method used for counting must provide the 2 possible methods like done by all other reports into menu "accountancy - report - turnover":
 // "commitment engagment" method and "cash accounting" method
-if ($conf->global->MAIN_FEATURES_LEVEL)
+if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 {
 	if (! empty($conf->product->enabled)) activitytrim(0);
 	if (! empty($conf->service->enabled)) activitytrim(1);
