@@ -2798,7 +2798,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
      *
      *  @return		int		<0 si ko, >0 si ok
      */
-    public function update_total()
+    public function updateTotal()
     {
         $this->db->begin();
 
@@ -2811,7 +2811,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
         $sql.= " WHERE rowid = ".$this->rowid;
 
-        dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
+        dol_syslog(get_class($this)."::updateTotal", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)
