@@ -2451,19 +2451,19 @@ abstract class CommonObject
         {
             if ($justsource)
             {
-            	$sql.= "fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."'";
+            	$sql.= "fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
             	if ($withtargettype) $sql.= " AND targettype = '".$targettype."'";
             }
             else if ($justtarget)
             {
-            	$sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
+            	$sql.= "fk_target = ".$targetid." AND targettype = '".$targettype."'";
             	if ($withsourcetype) $sql.= " AND sourcetype = '".$sourcetype."'";
             }
         }
         else
 		{
-            $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
-            $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
+            $sql.= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
+            $sql.= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
         }
         $sql .= ' ORDER BY sourcetype';
         //print $sql;
