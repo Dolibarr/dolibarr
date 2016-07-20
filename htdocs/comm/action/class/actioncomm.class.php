@@ -1096,21 +1096,36 @@ class ActionComm extends CommonObject
      */
     function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0)
     {
-        global $conf,$langs;
+		global $conf,$langs, $hookmanager;
 
-        $result='';
-        $tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
-        if (! empty($this->ref))
-            $tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->label))
-            $tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $this->label;
-        $label = $this->label;
-        if (empty($label)) $label=$this->libelle;   // For backward compatibility
-        $linkclose = '" title="'.dol_escape_htmltag($tooltip, 1).'">';
-        if ($option=='birthday') $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.$linkclose;
-        else $link = '<a class="'.$classname.' classfortooltip" href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.$linkclose;
-        $linkend='</a>';
-        //print 'rrr'.$this->libelle.'-'.$withpicto;
+		$result='';
+		$tooltip = '<u>' . $langs->trans('ShowAction'.$objp->code) . '</u>';
+		if (! empty($this->ref))
+			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		$label = $this->label;
+		if (empty($label)) $label=$this->libelle;   // For backward compatibility
+		if (! empty($label))
+			$tooltip .= '<br><b>' . $langs->trans('Title') . ':</b> ' . $label;
+		if (! empty($this->location))
+			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
+		
+		$linkclose = ' class="'.$classname.' classfortooltip" title="'.dol_escape_htmltag($tooltip, 1).'">';
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('actiondao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		$linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
+
+		if ($option=='birthday') 
+			$link = '<a href="'.DOL_URL_ROOT.'/contact/perso.php?id='.$this->id.'"'.$linkclose;
+		else 
+			$link = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id.'"'.$linkclose;
+		$linkend='</a>';
+		//print 'rrr'.$this->libelle.'-'.$withpicto;
 
         if ($withpicto == 2)
         {
