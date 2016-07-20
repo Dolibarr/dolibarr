@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +50,7 @@ class ChargeSociales extends CommonObject
     var $date_creation;
     var $date_modification;
     var $date_validation;
+    var $fk_account;
 
 
     /**
@@ -71,13 +73,16 @@ class ChargeSociales extends CommonObject
      */
     function fetch($id, $ref='')
     {
-        $sql = "SELECT cs.rowid, cs.date_ech,";
-        $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode, cs.import_key,";
-        $sql.= " c.libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
-        $sql.= " WHERE cs.fk_type = c.id";
-        if ($ref) $sql.= " AND cs.rowid = ".$ref;
-        else $sql.= " AND cs.rowid = ".$id;
+        $sql = "SELECT cs.rowid, cs.date_ech";
+        $sql.= ", cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, cs.periode, cs.import_key";
+        $sql.= ", cs.fk_account, cs.fk_mode_reglement";
+        $sql.= ", c.libelle";
+        $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
+        if ($ref) $sql.= " WHERE cs.rowid = ".$ref;
+        else $sql.= " WHERE cs.rowid = ".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql=$this->db->query($sql);
@@ -93,6 +98,10 @@ class ChargeSociales extends CommonObject
                 $this->lib            = $obj->lib;
                 $this->type           = $obj->fk_type;
                 $this->type_libelle   = $obj->libelle;
+                $this->fk_account = $obj->fk_account;
+                $this->mode_reglement_id = $obj->fk_mode_reglement;
+                $this->mode_reglement_code = $obj->mode_reglement_code;
+                $this->mode_reglement = $obj->mode_reglement_libelle;
                 $this->amount         = $obj->amount;
                 $this->paye           = $obj->paye;
                 $this->periode        = $this->db->jdate($obj->periode);
@@ -155,8 +164,11 @@ class ChargeSociales extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount, entity)";
-        $sql.= " VALUES (".$this->type.",'".$this->db->escape($this->lib)."',";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, fk_account, fk_mode_reglement, libelle, date_ech, periode, amount, entity)";
+        $sql.= " VALUES (".$this->type;
+        $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
+        $sql.= ", ".($this->mode_reglement_id>0?"'".$this->mode_reglement_id."'":"NULL");
+        $sql.= ", '".$this->db->escape($this->lib)."',";
         $sql.= " '".$this->db->idate($this->date_ech)."','".$this->db->idate($this->periode)."',";
         $sql.= " '".price2num($newamount)."',";
         $sql.= " ".$conf->entity;
@@ -216,7 +228,7 @@ class ChargeSociales extends CommonObject
         // Delete payments
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge where fk_charge='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementcharge WHERE fk_charge='".$this->id."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -228,7 +240,7 @@ class ChargeSociales extends CommonObject
 
         if (! $error)
         {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$this->id."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales WHERE rowid='".$this->id."'";
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if (! $resql)

@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2009 Laurent Destailleur (Eldy)  <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2015	   Marcos García			   <marcosgdf@gmail.com
+ * Copyright (C) 2016      Frédéric France              <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,10 +167,12 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Social contributions
 	$sql3= " SELECT 'social_contribution' as family, cs.rowid as objid, cs.libelle as ref, (-1*cs.amount) as total_ttc, ccs.libelle as type, cs.date_ech as dlr";
+    $sql3.= ", cs.fk_account";
 	$sql3.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql3.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as ccs ON cs.fk_type = ccs.id";
 	$sql3.= " WHERE cs.entity = ".$conf->entity;
 	$sql3.= " AND cs.paye = 0";	// Not paid
+    $sql3.= " AND (cs.fk_account IN (0, ".$acct->id.") OR cs.fk_account IS NULL)"; // Id bank account of social contribution
 	$sql3.= " ORDER BY dlr ASC";
 
 	$error=0;
