@@ -262,6 +262,7 @@ $formproject=new FormProjets($db);
 $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
+$thirdpartystatic = new Societe($db);
 
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
@@ -371,6 +372,10 @@ print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
+if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
+{
+    print '<td>'.$langs->trans("ThirdParty").'</td>';
+}
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';

@@ -744,8 +744,8 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  */
 function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask=1, $var=false)
 {
-	global $db, $user, $bc, $langs;
-	global $form, $formother, $projectstatic, $taskstatic;
+	global $conf, $db, $user, $bc, $langs;
+	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
 
 	$numlines=count($lines);
 
@@ -791,12 +791,23 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 			    
 				print "<tr ".$bc[$var].">\n";
 
+				if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
+				{
+				    // Thirdparty
+				    print '<td class="nowrap">';
+				    $thirdpartystatic->id=$lines[$i]->socid;
+				    $thirdpartystatic->name=$lines[$i]->thirdparty_name;
+				    print $thirdpartystatic->getNomUrl(1, 'project', 10);
+				    print '</td>';
+				}
+				
 				// Project
 				print '<td class="nowrap">'.$var;
 				$projectstatic->id=$lines[$i]->fk_project;
 				$projectstatic->ref=$lines[$i]->projectref;
 				$projectstatic->title=$lines[$i]->projectlabel;
 				$projectstatic->public=$lines[$i]->public;
+				$projectstatic->thirdparty_name=$lines[$i]->thirdparty_name;
 				print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
 				print "</td>";
 

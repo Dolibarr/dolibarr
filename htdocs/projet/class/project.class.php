@@ -54,7 +54,10 @@ class Project extends CommonObject
     var $date_start;
     var $date_end;
     var $date_close;
-    var $socid;
+    
+    var $socid;             // To store id of thirdparty
+    var $thirdparty_name;   // To store name of thirdparty (defined only in some cases)
+    
     var $user_author_id;    //!< Id of project creator. Not defined if shared project.
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
@@ -893,6 +896,8 @@ class Project extends CommonObject
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('Ref') . ': </b>' . $this->ref;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->title))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('Label') . ': </b>' . $this->title;	// The space must be after the : to not being explode when showing the title in img_picto
+        if (! empty($this->thirdparty_name))
+            $label .= ($label?'<br>':'').'<b>' . $langs->trans('ThirdParty') . ': </b>' . $this->thirdparty_name;	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->dateo))
             $label .= ($label?'<br>':'').'<b>' . $langs->trans('DateStart') . ': </b>' . dol_print_date($this->dateo, 'day');	// The space must be after the : to not being explode when showing the title in img_picto
         if (! empty($this->datee))

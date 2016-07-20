@@ -573,10 +573,12 @@ class Task extends CommonObject
         // List of tasks (does not care about permissions. Filtering will be done later)
         $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
         $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
-        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang";
+        $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+        $sql.= " s.nom as thirdparty_name";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
         if ($mode == 0)
         {
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             if ($filteronprojuser > 0)
             {
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -593,7 +595,6 @@ class Task extends CommonObject
         }
         elseif ($mode == 1)
         {
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
             if ($filteronprojuser > 0)
             {
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec";
@@ -689,6 +690,8 @@ class Task extends CommonObject
                     $tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
                     $tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
                     $tasks[$i]->rang	   		= $obj->rang;
+                    
+                    $tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
                 }
 
                 $i++;
