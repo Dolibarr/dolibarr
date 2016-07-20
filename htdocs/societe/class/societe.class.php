@@ -310,7 +310,15 @@ class Societe extends CommonObject
      * @var int
      */
     var $commercial_id;
+    /**
+     * Id of parent thirdparty (if one)
+     * @var int
+     */
     var $parent;
+    /**
+     * Default language code of thirdparty (en_US, ...)
+     * @var string
+     */
     var $default_lang;
 
     var $ref;
