@@ -1811,7 +1811,7 @@ class Societe extends CommonObject
      */
     function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
     {
-        global $conf,$langs;
+        global $conf,$langs, $hookmanager;
 
         $name=$this->name?$this->name:$this->nom;
 
@@ -1899,17 +1899,29 @@ class Societe extends CommonObject
 
         // Add type of canvas
         $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $linkclose='';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
             {
                 $label=$langs->trans("ShowCompany");
-                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
             }
-            $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $link.=' class="classfortooltip"';
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        
+         	if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('societedao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
         }
-        $link.='>';
+        $link.=$linkclose.'>';
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);
