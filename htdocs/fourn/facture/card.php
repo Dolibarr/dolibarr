@@ -476,7 +476,8 @@ if (empty($reshook))
 	                        	$lines[$i]->rang,
 	                        	0,
 	                        	$lines[$i]->array_options,
-	                        	$lines[$i]->fk_unit
+	                        	$lines[$i]->fk_unit,
+								$lines[$i]->id
 	                        );
 
 	                        if ($result < 0)
