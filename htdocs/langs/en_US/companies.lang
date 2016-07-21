@@ -392,3 +392,5 @@ ThirdpartiesMergeSuccess=Thirdparties have been merged
 SaleRepresentativeLogin=Login of sales representative
 SaleRepresentativeFirstname=Firstname of sales representative
 SaleRepresentativeLastname=Lastname of sales representative
+ErrorThirdpartiesMerge=There was an error when deleting the thirdparties. Please check the log. Changes have been reverted.
+NewCustomerSupplierCodeProposed=New customer or supplier proposed on duplicate code
