@@ -149,8 +149,12 @@ class MouvementStock extends CommonObject
                         {
                             if ($eatby)
                             {
-                        		if ($this->db->jdate($obj->eatby) != $eatby)  // If found and eatby/sellby defined into table and provided and differs, return error
+                                $eatbywithouthour=$eatby;
+                                $tmparray=dol_getdate($eatby, true);
+                                $eatbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+                        		if ($this->db->jdate($obj->eatby) != $eatby && $this->db->jdate($obj->eatby) != $eatbywithouthour)    // We test date without hours and with hours for backward compatibility 
                                 {
+                                    // If found and eatby/sellby defined into table and provided and differs, return error
                                     $this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby));
                                     dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby)), LOG_ERR);
                                     $this->db->rollback();
@@ -183,8 +187,12 @@ class MouvementStock extends CommonObject
                         {
                             if ($sellby)
                             {
-                                if ($this->db->jdate($obj->sellby) != $sellby) // If found and eatby/sellby defined into table and provided and differs, return error
+                                $sellbywithouthour=$sellby;
+                                $tmparray=dol_getdate($eatby, true);
+                                $eatbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+                                if ($this->db->jdate($obj->sellby) != $sellby && $this->db->jdate($obj->sellby) != $sellbywithouthour)    // We test date without hours and with hours for backward compatibility
                         		{
+                        		    // If found and eatby/sellby defined into table and provided and differs, return error
             						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby));
             						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby)), LOG_ERR);
             						$this->db->rollback();
@@ -222,6 +230,9 @@ class MouvementStock extends CommonObject
             	    $productlot = new Productlot($this->db);
             	    $productlot->fk_product = $fk_product;
             	    $productlot->batch = $batch;
+            	    // If we are here = first time we manage this batch, so we used dates provided by users to create lot
+            	    $productlot->eatby = $eatby;
+            	    $productlot->sellby = $sellby;
             	    $result = $productlot->create($user);
             	    if ($result <= 0)
             	    {

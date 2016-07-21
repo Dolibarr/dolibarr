@@ -1984,6 +1984,11 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 
+	if ($user->rights->expensereport->approve && $object->fk_statut == 5)
+	{
+	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a>';
+	}
+	
 	/* Si l'état est "A payer"
 	 *	ET user à droit de "to_paid"
 	 *	Afficher : "Annuler" / "Payer" / "Supprimer"
