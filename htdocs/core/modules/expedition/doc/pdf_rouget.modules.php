@@ -102,7 +102,8 @@ class pdf_rouget extends ModelePdfExpedition
 		$outputlangs->load("propal");
 		$outputlangs->load("deliveries");
         $outputlangs->load("sendings");
-
+        $outputlangs->load("productbatch");
+        
 		if ($conf->expedition->dir_output)
 		{
 			// Definition de $dir et $file
