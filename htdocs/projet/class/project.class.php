@@ -1123,16 +1123,17 @@ class Project extends CommonObject
       * Load an object from its id and create a new one in database
 	  *
 	  *	@param	int		$fromid     	Id of object to clone
-	  *	@param	bool	$clone_contact	clone contact of project
-	  *	@param	bool	$clone_task		clone task of project
-	  *	@param	bool	$clone_project_file		clone file of project
-	  *	@param	bool	$clone_task_file		clone file of task (if task are copied)
-      *	@param	bool	$clone_note		clone note of project
-      * @param	bool	$move_date		move task date on clone
-      *	@param	integer	$notrigger		no trigger flag
+	  *	@param	bool	$clone_contact	Clone contact of project
+	  *	@param	bool	$clone_task		Clone task of project
+	  *	@param	bool	$clone_project_file		Clone file of project
+	  *	@param	bool	$clone_task_file		Clone file of task (if task are copied)
+      *	@param	bool	$clone_note		Clone note of project
+      * @param	bool	$move_date		Move task date on clone
+      *	@param	integer	$notrigger		No trigger flag
+      * @param  int     $newthirdpartyid  New thirdparty id
 	  * @return	int						New id of clone
 	  */
-	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0)
+	function createFromClone($fromid,$clone_contact=false,$clone_task=true,$clone_project_file=false,$clone_task_file=false,$clone_note=true,$move_date=true,$notrigger=0,$newthirdpartyid=0)
 	{
 		global $user,$langs,$conf;
 
@@ -1151,6 +1152,7 @@ class Project extends CommonObject
 		// Load source object
 		$clone_project->fetch($fromid);
 		$clone_project->fetch_optionals();
+		if ($newthirdpartyid > 0) $clone_project->socid = $newthirdpartyid;
 		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start=$clone_project->date_start;
