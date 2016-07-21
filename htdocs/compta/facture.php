@@ -407,7 +407,7 @@ if (empty($reshook))
     			}
     		}
 		}
-		
+
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
@@ -962,7 +962,7 @@ if (empty($reshook))
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
-						
+
 					    // If deposit invoice
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 						{
@@ -1130,7 +1130,7 @@ if (empty($reshook))
 								$error ++;
 							}
 						}
-						
+
 						// Now we create same links to contact than the ones found on origin object
 						if (empty($conf->global->INVOICE_NO_PROPAGATE_CONTACTS_FROM_ORIGIN))
 						{
@@ -1143,24 +1143,24 @@ if (empty($reshook))
     						}
     						$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
     						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-    
+
     						$resqlcontact = $db->query($sqlcontact);
     						if ($resqlcontact)
     						{
                                 while($objcontact = $db->fetch_object($resqlcontact))
                                 {
-                                    //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";                                
+                                    //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
                                     $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
                                 }
     						}
-    						else dol_print_error($resqlcontact);					
-						}						
+    						else dol_print_error($resqlcontact);
+						}
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error ++;
 					}
-				} 			
-				else 
+				}
+				else
 				{   // If some invoice's lines coming from page
 					$id = $object->create($user);
 
@@ -1317,7 +1317,7 @@ if (empty($reshook))
 			// Ecrase $txtva par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
-			if (! empty($idprod)) 
+			if (! empty($idprod))
 			{
 				$prod = new Product($db);
 				$prod->fetch($idprod);
@@ -1328,7 +1328,7 @@ if (empty($reshook))
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
-					
+
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -1375,13 +1375,13 @@ if (empty($reshook))
 					}
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
 					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-					elseif ($tva_tx != $prod->tva_tx) 
+					elseif ($tva_tx != $prod->tva_tx)
 					{
-						if ($price_base_type != 'HT') 
+						if ($price_base_type != 'HT')
 						{
 							$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
 						}
-						else 
+						else
 						{
 							$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
 						}
@@ -1443,7 +1443,7 @@ if (empty($reshook))
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
-			
+
 			$info_bits = 0;
 			if ($tva_npr)
 				$info_bits |= 0x01;
@@ -1546,7 +1546,7 @@ if (empty($reshook))
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');       // If buying_price is '0', we muste keep this value
-		
+
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
@@ -2028,7 +2028,7 @@ if ($action == 'create')
 	{
 	    $invoice_predefined = new FactureRec($db);
 	    $invoice_predefined->fetch(GETPOST('fac_rec','int'));
-	    
+
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
 		$sql .= ' WHERE r.fk_soc = ' . $invoice_predefined->socid;
@@ -2983,7 +2983,7 @@ else if ($id > 0 || ! empty($ref))
 			// Remise dispo de type avoir
 			if (! $absolute_discount)
 				print '<br>';
-			// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer		
+			// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer
 			$more=' ('.$addcreditnote.')';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, 0, $more); // We allow credit note even if amount is higher
 		}
@@ -3316,7 +3316,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('BankAccount');
 	print '<td>';
-	if (($action != 'editbankaccount') && $user->rights->commande->creer && ! empty($object->brouillon))
+	if (($action != 'editbankaccount') && $user->rights->facture->creer && ! empty($object->brouillon))
 	    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
 	print '</tr></table>';
 	print '</td><td colspan="3">';
@@ -3754,7 +3754,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
 			}
-			
+
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $user->rights->facture->creer)
 			{
@@ -3912,7 +3912,7 @@ else if ($id > 0 || ! empty($ref))
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'inv'.$object->id);
-		}		
+		}
 		$formmail->withfrom = 1;
 		$liste = array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
