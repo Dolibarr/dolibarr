@@ -349,6 +349,7 @@ ExtrafieldMail = Email
 ExtrafieldSelect = Select list
 ExtrafieldSelectList = Select from table
 ExtrafieldSeparator=Separator
+ExtrafieldPassword=Password
 ExtrafieldCheckBox=Checkbox
 ExtrafieldRadio=Radio button
 ExtrafieldCheckBoxFromList= Checkbox from table
