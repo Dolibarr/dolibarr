@@ -61,7 +61,7 @@ $langs->load("productbatch");
 		{
 			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Product").'</td>';
 	        print '<td width="20%">';
-	        print $form->select_produits(GETPOST('product_id'),'product_id',(empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''));
+	        print $form->select_produits(GETPOST('product_id'),'product_id',(empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''),20,0,-1);
 	        print '</td>';
 		}
 		print '<td width="20%">';
