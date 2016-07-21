@@ -2417,7 +2417,7 @@ if ($action == 'create')
 
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
-		$formmail->substit['__PROPREF__'] = $object->ref;
+		$formmail->substit['__PROPREF__'] = $object->ref; // For backward compatibility
 
 		// Find the good contact adress
 		$custcontact = '';

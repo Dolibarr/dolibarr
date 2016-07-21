@@ -935,11 +935,17 @@ class FormMail extends Form
 	{
 		global $user;
 		$this->substit['__REF__'] = $object->ref;
-		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__REFCLIENT__'] = $object->ref_client;
-		$this->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
+		$this->substit['__REFSUPPLIER__'] = $object->ref_supplier;
+		
+		$this->substit['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
+		$this->substit['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+		
+		$this->substit['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
 		$this->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$this->substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+		
+		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
 	}
