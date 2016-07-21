@@ -2184,7 +2184,7 @@ else
         print '<table class="border tableforfield" width="100%">';
         
         // Legal
-        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
