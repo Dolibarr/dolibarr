@@ -2302,127 +2302,6 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Set availability
-     *
-     *	@param      User	$user		Object user making change
-     *	@param      int		$id			If of availability delay
-     *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
-     *	@return     int           		<0 if KO, >0 if OK
-     */
-    function set_availability($user, $id, $notrigger=0)
-    {
-        if ($user->rights->commande->creer)
-        {
-        	$error=0;
-
-        	$this->db->begin();
-
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande ";
-            $sql.= " SET fk_availability = '".$id."'";
-            $sql.= " WHERE rowid = ".$this->id;
-
-            dol_syslog(__METHOD__, LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if (!$resql)
-            {
-            	$this->errors[]=$this->db->error();
-            	$error++;
-            }
-
-            if (! $error)
-            {
-            	$this->oldcopy= clone $this;
-            	$this->fk_availability = $id;
-            }
-
-            if (! $notrigger && empty($error))
-            {
-            	// Call trigger
-            	$result=$this->call_trigger('ORDER_MODIFY',$user);
-            	if ($result < 0) $error++;
-            	// End call triggers
-            }
-
-            if (! $error)
-            {
-            	$this->db->commit();
-            	return 1;
-            }
-            else
-            {
-            	foreach($this->errors as $errmsg)
-            	{
-            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
-            		$this->error.=($this->error?', '.$errmsg:$errmsg);
-            	}
-            	$this->db->rollback();
-            	return -1*$error;
-            }
-        }
-    }
-
-    /**
-     *	Set source of demand
-     *
-     *	@param      User	$user		Object user making change
-     *	@param      int		$id			Id of source
-     *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
-     *	@return     int           		<0 if KO, >0 if OK
-     */
-    function set_demand_reason($user, $id, $notrigger=0)
-    {
-        if ($user->rights->commande->creer)
-        {
-
-        	$error=0;
-
-        	$this->db->begin();
-
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande ";
-            $sql.= " SET fk_input_reason = '".$id."'";
-            $sql.= " WHERE rowid = ".$this->id;
-
-            dol_syslog(__METHOD__, LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if (!$resql)
-            {
-            	$this->errors[]=$this->db->error();
-            	$error++;
-            }
-
-            if (! $error)
-            {
-            	$this->oldcopy= clone $this;
-            	$this->fk_input_reason = $id;
-            }
-
-            if (! $notrigger && empty($error))
-            {
-            	// Call trigger
-            	$result=$this->call_trigger('ORDER_MODIFY',$user);
-            	if ($result < 0) $error++;
-            	// End call triggers
-            }
-
-            if (! $error)
-            {
-            	$this->db->commit();
-            	return 1;
-            }
-            else
-            {
-            	foreach($this->errors as $errmsg)
-            	{
-            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
-            		$this->error.=($this->error?', '.$errmsg:$errmsg);
-            	}
-            	$this->db->rollback();
-            	return -1*$error;
-            }
-        }
-    }
-
-    /**
      *  Return list of orders (eventuelly filtered on a user) into an array
      *
      *  @param		int		$shortlist		0=Return array[id]=ref, 1=Return array[](id=>id,ref=>ref,name=>name)
@@ -2504,6 +2383,8 @@ class Commande extends CommonOrder
      */
     function availability($availability_id, $notrigger=0)
     {
+        global $user;
+        
         dol_syslog('Commande::availability('.$availability_id.')');
         if ($this->statut >= self::STATUS_DRAFT)
         {
@@ -2572,6 +2453,8 @@ class Commande extends CommonOrder
      */
     function demand_reason($demand_reason_id, $notrigger=0)
     {
+        global $user;
+        
         dol_syslog('Commande::demand_reason('.$demand_reason_id.')');
         if ($this->statut >= self::STATUS_DRAFT)
         {
@@ -2704,7 +2587,6 @@ class Commande extends CommonOrder
 	 */
 	function classifyBilled(User $user, $notrigger=0)
 	{
-		global $user;
         $error = 0;
 
 		$this->db->begin();
