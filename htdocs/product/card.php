@@ -1762,12 +1762,11 @@ if (($action == 'clone' && (empty($conf->use_javascript_ajax) || ! empty($conf->
 /* ************************************************************************** */
 
 print "\n".'<div class="tabsAction">'."\n";
-
-$parameters=array();
-$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-if (empty($reshook))
+if ($action == '' || $action == 'view')
 {
-	if ($action == '' || $action == 'view')
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook))
 	{
 	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
 	       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
