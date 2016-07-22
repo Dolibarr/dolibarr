@@ -131,7 +131,7 @@ if (! empty($force_install_message))
 			       value="<?php print $dolibarr_main_document_root ?>"
 			       name="main_dir"
 				<?php if (!empty($force_install_noedit)) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -162,7 +162,7 @@ if (! empty($force_install_message))
 			       value="<?php print $dolibarr_main_data_root ?>"
 			       name="main_data_dir"
 				<?php if (!empty($force_install_noedit)) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -193,7 +193,7 @@ if (! empty($force_install_message))
 			       name="main_url"
 			       value="<?php print $dolibarr_main_url_root; ?> "
 				<?php if (!empty($force_install_noedit)) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -214,10 +214,10 @@ if (! empty($force_install_message))
 			<input type="checkbox"
 			       name="main_force_https"
 				<?php if (!empty($force_install_mainforcehttps)) {
-					print 'checked';
+					print ' checked';
 				} ?>
 				<?php if ($force_install_noedit == 2 && $force_install_mainforcehttps !== null) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -245,7 +245,7 @@ if (! empty($force_install_message))
 			       name="db_name"
 			       value="<?php echo (!empty($dolibarr_main_db_name)) ? $dolibarr_main_db_name : ($force_install_database ? $force_install_database : 'dolibarr'); ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_database !== null) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -325,7 +325,7 @@ if (! empty($force_install_message))
 			<select id="db_type"
 			        name="db_type"
 				<?php if ($force_install_noedit && $force_install_type !== null) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 				<?php print $option; ?>
@@ -434,7 +434,7 @@ if (! empty($force_install_message))
 			       print dol_escape_htmltag($autofill);
 			       ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -448,10 +448,10 @@ if (! empty($force_install_message))
 			<input type="checkbox"
 			       id="db_create_user" name="db_create_user"
 				<?php if (!empty($force_install_createuser)) {
-					print 'checked';
+					print ' checked';
 				} ?>
 				<?php if ($force_install_noedit == 2 && $force_install_createuser !== null) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
@@ -480,7 +480,7 @@ if (! empty($force_install_message))
 			       class="needroot"
 			       value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : @$db_user_root; ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databaserootlogin !== null) {
-					print 'disabled';
+					print ' disabled';
 				} ?>
 			>
 		</td>
