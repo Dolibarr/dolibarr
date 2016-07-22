@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016       Neil Orley			 <neil.orley@oeris.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -83,7 +86,7 @@ if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdpa
 
 /*
  * Actions
- */       
+ */
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -105,6 +108,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 $companystatic=new Societe($db);
 $bankaccountstatic=new Account($db);
+$paymentstatic = new Paiement($db);
+$paymentsupplierstatic = new PaiementFourn($db);
 
 llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 
@@ -166,6 +171,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit+1,$offset);
 
+
 dol_syslog('compta/bank/search.php::', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
@@ -184,7 +190,8 @@ if ($resql)
 
 	print '<input type="hidden" name="action" value="search">';
 	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
-	
+
+
 	// Title
 	$bankcateg=new BankCateg($db);
 	if (GETPOST("bid"))
@@ -196,7 +203,16 @@ if ($resql)
 	{
 		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', 0, '', '', $limit);
 	}
-	
+
+
+	print '<div class="tabsAction">';
+	if (empty($conf->global->BANK_EXPORT_SEPARATOR)) {
+		print '<a class="butActionRefused" title="' . $langs->trans("ConfigurationError") . '" href="#">' . $langs->trans("FullExport") . '</a>';
+	} else {
+		print '<a class="butAction" target="_blank" href="' . DOL_URL_ROOT . '/compta/bank/search_export.php?action=export' . $object->id .'">' . $langs->trans("FullExport") . '</a>';
+	}
+	print '</div>';
+
 	$moreforfilter = '';
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('DateStart') . ' ';
@@ -205,7 +221,7 @@ if ($resql)
 	$moreforfilter .= $langs->trans('DateEnd') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
 	$moreforfilter .= '</div>';
 
-	if ($moreforfilter) 
+	if ($moreforfilter)
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
@@ -217,6 +233,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Value'),$_SERVER['PHP_SELF'],'b.datev','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Invoice"),$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Numero"),$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
@@ -229,6 +246,7 @@ if ($resql)
 
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="center">';
@@ -289,6 +307,22 @@ if ($resql)
 	        // Date value
 	        print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($objp->dv),"day")."</td>\n";
 
+	        // Invoice
+	        // Add links to invoices for customers and suppliers only
+	        print '<td align="center" class="nowrap">';
+	        $links = $bankaccountstatic->get_url($objp->rowid);
+	        foreach ( $links as $key => $val ) {
+	        	//var_dump($links);
+	        	if ($links[$key]['type'] == 'payment') {
+	        		$paymentstatic->id = $objp->rowid;
+	        		print ' '.$paymentstatic->getInvoiceUrl(1);
+	        	} elseif ($links[$key]['type'] == 'payment_supplier') {
+	        		$paymentsupplierstatic->id = $objp->rowid;
+	        		print ' '.$paymentsupplierstatic->getInvoiceUrl(1);
+	        	}
+	        }
+	        print "</td>\n";
+
 	        // Payment type
 	        print '<td align="center" class="nowrap">';
 	        $labeltype=($langs->trans("PaymentTypeShort".$objp->fk_type)!="PaymentTypeShort".$objp->fk_type)?$langs->trans("PaymentTypeShort".$objp->fk_type):$langs->getLabelFromKey($db,$objp->fk_type,'c_paiement','code','libelle');
@@ -348,9 +382,9 @@ if ($resql)
 			$bankaccountstatic->label=$objp->bankref;
 			print $bankaccountstatic->getNomUrl(1);
 			print "</td>\n";
-			
+
 			print '<td></td>';
-			
+
 			print "</tr>";
 		}
 		$i++;
@@ -358,7 +392,7 @@ if ($resql)
 	if ($num>0) {
 		print '<tr  class="liste_total">';
 		print '<td>' . $langs->trans('Total') . '</td>';
-		print '<td colspan="6"></td>';
+		print '<td colspan="7"></td>';
 		print '<td  align="right">' . price($total_debit * - 1) . '</td>';
 		print '<td  align="right">' . price($total_credit) . '</td>';
 		print '<td></td>';

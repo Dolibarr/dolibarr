@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Neil Orley			<neil.orley@oeris.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ class PaiementFourn extends Paiement
 	function fetch($id, $ref='', $fk_bank='')
 	{
 	    $error=0;
-	    
+
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
@@ -140,7 +141,7 @@ class PaiementFourn extends Paiement
 		// Clean parameters
 		$totalamount = 0;
 		$totalamount_converted = 0;
-		
+
 		if ($way == 'dolibarr')
 		{
 			$amounts = &$this->amounts;
@@ -151,13 +152,13 @@ class PaiementFourn extends Paiement
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
-		
+
 		foreach ($amounts as $key => $value)
 		{
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture_fourn');
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
-			
+
 			$newvalue = price2num($value,'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
@@ -171,7 +172,7 @@ class PaiementFourn extends Paiement
 		{
 			$ref = $this->getNextNumRef('');
 			$now=dol_now();
-			
+
 			if ($way == 'dolibarr')
 			{
 				$total = $totalamount;
@@ -182,7 +183,7 @@ class PaiementFourn extends Paiement
 				$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 				$mtotal = $totalamount;
 			}
-		
+
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
 			$sql.= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
 			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
@@ -287,7 +288,7 @@ class PaiementFourn extends Paiement
 	function delete($notrigger=0)
 	{
 	    global $conf, $user, $langs;
-	    
+
 		$bank_line_id = $this->bank_line;
 
 		$this->db->begin();
@@ -356,7 +357,7 @@ class PaiementFourn extends Paiement
     	    		return -4;
     		    }
 			}
-			
+
 			if (! $notrigger)
 			{
 			    // Appel des triggers
@@ -368,7 +369,7 @@ class PaiementFourn extends Paiement
 			    }
 			    // Fin appel triggers
 			}
-			
+
 			$this->db->commit();
 			return 1;
 		}
@@ -548,7 +549,70 @@ class PaiementFourn extends Paiement
 		if ($withpicto != 2) $result.=$link.$text.$linkend;
 		return $result;
 	}
-	
+
+
+	/**
+	 *	Return clicable name (with picto eventually)
+	 *
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@return		string					Chaine avec URL
+	 */
+	function getInvoiceUrl($withpicto=0)
+	{
+		global $langs;
+
+		$result='';
+
+		//SELECT f.ref as text, f.rowid as facid FROM llx_paiementfourn_facturefourn as pf, llx_paiementfourn as p, llx_bank as b, llx_facture_fourn as f where pf.fk_paiementfourn = p.rowid and p.fk_bank = b.rowid and pf.fk_facturefourn=f.rowid and f.paye = 1
+		$sql = 'SELECT f.ref as text, f.rowid as facid ';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'paiementfourn as p, '.MAIN_DB_PREFIX.'bank as b, '.MAIN_DB_PREFIX.'facture_fourn as f';
+		$sql.= ' WHERE b.rowid = '.$this->id.' AND pf.fk_paiementfourn = p.rowid AND p.fk_bank = b.rowid AND pf.fk_facturefourn=f.rowid AND f.paye = 1';
+
+		dol_syslog(get_class($this).'::getInvoiceUrl', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$text=$obj->text;
+			if (preg_match('/^\((.*)\)$/i',$text,$reg)) {
+				// Label generique car entre parentheses. On l'affiche en le traduisant
+				if ($reg[1]=='invoice') $reg[1]='Invoice';
+					$text=$langs->trans($reg[1]);
+			}
+			$label = $langs->trans("ShowInvoice").': '.$text;
+
+			$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkend='</a>';
+
+
+			switch ($withpicto) {
+				case 0 :
+					$result .= $link . $text . $linkend;
+					break;
+				case 1 :
+					$result.=($link.img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"').$linkend);
+					$result .= ' ';
+					$result .= $link . $text . $linkend;
+					break;
+				case 2 :
+					$result .= ($link . img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"') . $linkend);
+					break;
+				case 3 :
+					$result .=  ' '.$text;
+			}
+
+			return $result;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog(get_class($this).'::getInvoiceUrl Error '.$this->error);
+			return '';
+		}
+
+
+	}
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
@@ -572,7 +636,7 @@ class PaiementFourn extends Paiement
 		$this->facid = 1;
 		$this->datepaye = $nownotime;
 	}
-	
+
 	/**
 	 *      Return next reference of supplier invoice not already used (or last reference)
 	 *      according to numbering module defined into constant SUPPLIER_PAYMENT_ADDON
@@ -661,13 +725,13 @@ class PaiementFourn extends Paiement
 
 	/**
 	 * 	get the right way of payment
-	 * 
+	 *
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
 	 */
 	function getWay()
 	{
 		global $conf;
-		
+
 		$way = 'dolibarr';
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -680,7 +744,7 @@ class PaiementFourn extends Paiement
 				}
 			}
 		}
-		
+
 		return $way;
 	}
 }

@@ -142,3 +142,7 @@ ConfirmRejectCheck=Are you sure you want to mark this check as rejected ?
 RejectCheckDate=Date the check was returned
 CheckRejected=Check returned
 CheckRejectedAndInvoicesReopened=Check returned and invoices reopened
+ConfigurationError=Please check the module configuration
+FullExport=Full export
+ExpenseReportPayment=Expense report payment
+ThirdParty=Third party

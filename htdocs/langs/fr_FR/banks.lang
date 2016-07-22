@@ -140,3 +140,7 @@ ConfirmRejectCheck=Êtes-vous sûr de vouloir marquer ce chèque comme rejeté ?
 RejectCheckDate=Date du rejet du chèque
 CheckRejected=Chèque rejeté
 CheckRejectedAndInvoicesReopened=Chèque rejeté et factures réouvertes
+ConfigurationError=Verifiez la configuration du module
+FullExport=Export complet
+ExpenseReportPayment=Paiement de note de frais
+ThirdParty=Tiers
