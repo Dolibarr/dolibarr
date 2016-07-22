@@ -151,7 +151,7 @@ if (! empty($force_install_message))
 		<td valign="top" class="label"><b> <?php print $langs->trans("DocumentsDirectory"); ?></b>
 		</td>
 		<?php
-		$dolibarr_main_data_root = $force_install_main_data_root;
+		$dolibarr_main_data_root = @$force_install_main_data_root;
 		if (empty($dolibarr_main_data_root)) {
 			$dolibarr_main_data_root = detect_dolibarr_main_data_root($dolibarr_main_document_root);
 		}
@@ -478,7 +478,7 @@ if (! empty($force_install_message))
 			       id="db_user_root"
 			       name="db_user_root"
 			       class="needroot"
-			       value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : $db_user_root; ?>"
+			       value="<?php print (!empty($force_install_databaserootlogin)) ? $force_install_databaserootlogin : @$db_user_root; ?>"
 				<?php if ($force_install_noedit == 2 && $force_install_databaserootlogin !== null) {
 					print 'disabled';
 				} ?>
@@ -506,7 +506,7 @@ if (! empty($force_install_message))
 			       class="needroot"
 			       value="<?php
 			       // We don't want to set password. It will be extracted from the forced install file at step1.
-			       $autofill = ((!empty($force_install_database_rootpass)) ? '' : $db_pass_root);
+			       $autofill = ((!empty($force_install_database_rootpass)) ? '' : @$db_pass_root);
 			       if (!empty($dolibarr_main_prod)) {
 				       $autofill = '';
 			       }    // Do not autofill password if instance is a production instance
