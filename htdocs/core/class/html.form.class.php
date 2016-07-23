@@ -5929,7 +5929,7 @@ class Form
     /**
      *	Return HTML to show the search and clear seach button
      *
-     *  @param	int  	$addcheckuncheckall        Add the check all uncheck all button
+     *  @param	int  	$addcheckuncheckall        Add the check all/uncheck all checkbox (use javascript) and code to manage this
      *  @param  string  $cssclass                  CSS class
      *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
      *  @return	string                          
@@ -5944,8 +5944,7 @@ class Form
         if ($addcheckuncheckall)
         {
             if (! empty($conf->use_javascript_ajax)) $out.='<input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions">';
-        }
-        $out.='<script type="text/javascript">
+            $out.='<script type="text/javascript">
                 $(document).ready(function() {
                 	$("#checkallactions").click(function() {
                         if($(this).is(\':checked\')){
@@ -5957,10 +5956,11 @@ class Form
                             console.log("We uncheck all");
                     		$(".'.$cssclass.'").prop(\'checked\', false);
                         }'."\n";
-        if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t done."); }';
-        $out.='         });
-                });
-              </script>';
+            if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
+            $out.='         });
+                    });
+                </script>';
+        }
         return $out;
     }
 }
