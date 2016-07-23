@@ -36,6 +36,8 @@ ALTER TABLE llx_ecm_files ADD COLUMN gen_or_uploaded varchar(12) after cover;
 
 DROP TABLE llx_document_generator;
 DROP TABLE llx_ecm_documents;
+DROP TABLE llx_holiday_events;
+DROP TABLE llx_holiday_types;
 
 ALTER TABLE llx_notify ADD COLUMN type_target varchar(16) NULL;
 

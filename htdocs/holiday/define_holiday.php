@@ -186,6 +186,7 @@ if (is_numeric($listUsers) && $listUsers < 0)
 $var=true;
 $i = 0;
 
+/*
 $cp_events = $holiday->fetchEventsCP();
 if ($cp_events == 1)
 {
@@ -202,7 +203,7 @@ if ($cp_events == 1)
 
 	print '</form><br>';
 }
-
+*/
 
 $typeleaves=$holiday->getTypes(1,1);
 
