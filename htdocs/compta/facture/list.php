@@ -59,6 +59,7 @@ $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For ba
 $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
 $action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $lineid=GETPOST('lineid','int');
