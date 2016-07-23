@@ -304,7 +304,7 @@ $h++;
 print "<br>\n";
 
 
-dol_fiche_head($head, $mode, $langs->trans("Modules"));
+dol_fiche_head($head, $mode, '');
 
 $var=true;
 
