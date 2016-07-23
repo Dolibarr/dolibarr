@@ -759,3 +759,5 @@ SearchIntoContracts=Contracts
 SearchIntoCustomerShipments=Customer shipments
 SearchIntoExpenseReports=Expense reports
 SearchIntoLeaves=Leaves
+
+BulkActions=Bulk actions

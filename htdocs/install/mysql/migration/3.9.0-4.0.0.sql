@@ -515,4 +515,3 @@ CREATE TABLE llx_oauth_state (
 
 ALTER TABLE llx_product_batch ADD UNIQUE INDEX uk_product_batch (fk_product_stock, batch);
 
-

@@ -2,7 +2,7 @@
 /* Copyright (C) 2008-2011  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin               <regis.houssin@capnetworks.com>
  * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2014       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet               <fmarcet@2byte.es>
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  *
@@ -2058,4 +2058,31 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
 	return array(hexdec($reg[1]),hexdec($reg[2]),hexdec($reg[3]));
 }
 
+/**
+ * Applies the Cartesian product algorithm to an array
+ * Source: http://stackoverflow.com/a/15973172
+ *
+ * @param array $input Array of products
+ * @return array Array of combinations
+ */
+function cartesianArray(array $input) {
+    // filter out empty values
+    $input = array_filter($input);
 
+    $result = array(array());
+
+    foreach ($input as $key => $values) {
+        $append = array();
+
+        foreach($result as $product) {
+            foreach($values as $item) {
+                $product[$key] = $item;
+                $append[] = $product;
+            }
+        }
+
+        $result = $append;
+    }
+
+    return $result;
+}

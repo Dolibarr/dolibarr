@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,10 @@ if (!empty($conf->produit->enabled))
 if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
+if (!empty($conf->attributes->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
 }
 
 
@@ -668,7 +672,8 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$prod_entry_mode = GETPOST('prod_entry_mode');
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
 			$price_ht = GETPOST('price_ht');
@@ -699,22 +704,22 @@ if (empty($reshook))
 	    	}
 	    }
 
-	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht') < 0 && $qty < 0)
+	    if ($prod_entry_mode =='free' && GETPOST('price_ht') < 0 && $qty < 0)
 	    {
 	        setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
+	    if ($prod_entry_mode =='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
 	    {
 	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
+	    if ($prod_entry_mode =='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
 	    {
 	        setEventMessages($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free' && ! GETPOST('dp_desc'))
+	    if ($prod_entry_mode =='free' && ! GETPOST('dp_desc'))
 	    {
 	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 	        $error++;
@@ -725,7 +730,21 @@ if (empty($reshook))
 	        $error++;
 	    }
 
-	    if (GETPOST('prod_entry_mode') != 'free')	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+		if (!$error && !empty($conf->attributes->enabled) && $prod_entry_mode != 'free') {
+			if ($combinations = GETPOST('combinations', 'array')) {
+				//Check if there is a product with the given combination
+				$prodcomb = new ProductCombination($db);
+
+				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
+					$idprod = $res->fk_product_child;
+				} else {
+					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					$error ++;
+				}
+			}
+		}
+
+		if ($prod_entry_mode != 'free')	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 	    {
 	    	$idprod=0;
 	    	$productsupplier=new ProductFournisseur($db);

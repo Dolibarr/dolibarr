@@ -13,7 +13,7 @@
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014	   Ferran Marcet	 	 <fmarcet@2byte.es>
- * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2016 Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,10 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+
+if (!empty($conf->attributes->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+}
 
 $langs->load('bills');
 $langs->load('companies');
@@ -1322,7 +1326,8 @@ if (empty($reshook))
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$price_ht = GETPOST('price_ht');
-		if (GETPOST('prod_entry_mode') == 'free')
+		$prod_entry_mode = GETPOST('prod_entry_mode');
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
@@ -1352,11 +1357,11 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPriceHT'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && GETPOST('type') < 0) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && GETPOST('type') < 0) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
+		if ($prod_entry_mode == 'free' && empty($idprod) && (! ($price_ht >= 0) || $price_ht == '')) 	// Unit price can be 0 but not ''
 		{
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error ++;
@@ -1365,7 +1370,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 			$error ++;
 		}
-		if (GETPOST('prod_entry_mode') == 'free' && empty($idprod) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && empty($idprod) && empty($product_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error ++;
 		}
@@ -1374,7 +1379,23 @@ if (empty($reshook))
 			setEventMessages($langs->trans('ErrorQtyForCustomerInvoiceCantBeNegative'), null, 'errors');
 			$error ++;
 		}
+
+		if (!$error && !empty($conf->attributes->enabled) && $prod_entry_mode != 'free') {
+			if ($combinations = GETPOST('combinations', 'array')) {
+				//Check if there is a product with the given combination
+				$prodcomb = new ProductCombination($db);
+
+				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
+					$idprod = $res->fk_product_child;
+				} else {
+					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					$error ++;
+				}
+			}
+		}
+
 		if (! $error && ($qty >= 0) && (! empty($product_desc) || ! empty($idprod))) {
+
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);

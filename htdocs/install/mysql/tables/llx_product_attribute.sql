@@ -1,5 +1,5 @@
--- ===================================================================
--- Copyright (C) 2012      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- ============================================================================
+-- Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,13 +14,13 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===================================================================
+-- ============================================================================
 
-CREATE TABLE llx_holiday_events 
+CREATE TABLE llx_product_attribute
 (
-  rowid    integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  entity   integer DEFAULT 1 NOT NULL,     -- multi company id
-  name     VARCHAR( 255 ) NOT NULL,
-  value    TEXT NOT NULL
-) 
-ENGINE=innodb;
+  rowid INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  ref VARCHAR(255) NOT NULL,
+  label VARCHAR(255) NOT NULL,
+  rang INT DEFAULT 0 NOT NULL,
+  entity INT DEFAULT 1 NOT NULL
+);

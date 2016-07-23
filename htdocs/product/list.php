@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2012-2013  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2016	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Jean Heimburger         <jean@tiaris.info>
@@ -50,7 +50,7 @@ $sref=GETPOST("sref");
 $sbarcode=GETPOST("sbarcode");
 $snom=GETPOST("snom");
 $sall=GETPOST("sall");
-$type=GETPOST("type","int");
+$type= (int) GETPOST("type","int");
 $search_sale = GETPOST("search_sale");
 $search_categ = GETPOST("search_categ",'int');
 $tosell = GETPOST("tosell", 'int');
@@ -61,6 +61,13 @@ $search_tobatch = GETPOST("search_tobatch",'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
+
+//Show/hide child products. Hidden by default
+if (!$_POST) {
+	$search_hidechildproducts = 'on';
+} else {
+	$search_hidechildproducts = GETPOST('search_hidechildproducts');
+}
 
 $limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -170,7 +177,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 
 
-		    
+
 /*
  * Actions
  */
@@ -230,6 +237,9 @@ else
     $sql.= ' p.datec as date_creation, p.tms as date_update,';
     //$sql.= ' pfp.ref_fourn as ref_supplier, ';
     $sql.= ' MIN(pfp.unitprice) as minsellprice';
+	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+		$sql .= ', pac.rowid prod_comb_id';
+	}
 	// Add fields from extrafields
     foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 	// Add fields from hooks
@@ -242,6 +252,10 @@ else
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
 	if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$langs->getDefaultLang() ."'";
+	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+	}
+
 	$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 	if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
     // if the type is not 1, we show all products (type = 0,2,3)
@@ -265,6 +279,12 @@ else
     if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
     if ($search_accountancy_code_sell)   $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
     // Add where from extra fields
+
+	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+		$sql .= " AND pac.rowid IS NULL";
+	}
+
+	// Add where from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
 	    $crit=$val;
@@ -284,6 +304,9 @@ else
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
     $sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy';
+	if (!empty($conf->attributes->enabled) && $search_hidechildproducts && ($type === 0)) {
+		$sql .= ', pac.rowid';
+	}
 	// Add fields from extrafields
     foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 	// Add fields from hooks
@@ -415,6 +438,15 @@ else
     			$moreforfilter.=$htmlother->select_categories(Categorie::TYPE_PRODUCT,$search_categ,'search_categ',1);
     		 	$moreforfilter.='</div>';
     		}
+
+			//Show/hide child products. Hidden by default
+			if (!empty($conf->attributes->enabled) && $type === 0) {
+				$moreforfilter.='<div class="divsearchfield">';
+				$moreforfilter.= '<input type="checkbox" id="search_hidechildproducts" name="search_hidechildproducts" value="on"'.($search_hidechildproducts ? 'checked="checked"' : '').'>';
+				$moreforfilter.= ' <label for="search_hidechildproducts">'.$langs->trans('HideChildProducts').'</label>';
+				$moreforfilter.='</div>';
+			}
+
     	 	if ($moreforfilter)
     		{
         		print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -614,7 +646,7 @@ else
     			$product_static->status_buy = $objp->tobuy;
                 $product_static->status     = $objp->tosell;
 				$product_static->entity = $objp->entity;
-				
+
 				if (! empty($conf->stock->enabled) && $user->rights->stock->lire && $type != 1)	// To optimize call of load_stock
 				{
 				    if ($objp->fk_product_type != 1)    // Not a service
@@ -622,8 +654,8 @@ else
 				        $product_static->load_stock('nobatch');             // Load stock_reel + stock_warehouse. This also call load_virtual_stock()
 				    }
 				}
-				 
-				
+
+
     			$var=!$var;
     			print '<tr '.$bc[$var].'>';
 
@@ -752,7 +784,7 @@ else
                     print '<td align="center">';
     				print yn($objp->tobatch);
     				print '</td>';
-        		}        		
+        		}
     			// Accountancy code sell
 		        if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td>'.$objp->accountancy_code_sell.'</td>';
     			// Accountancy code sell

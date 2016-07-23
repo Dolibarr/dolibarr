@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  *
@@ -49,6 +49,10 @@ if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 require_once NUSOAP_PATH.'/nusoap.php';     // Include SOAP
+
+if (!empty($conf->attributes->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+}
 
 $langs->load('admin');
 $langs->load('orders');
@@ -285,7 +289,7 @@ if (empty($reshook))
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
 		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
 		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
-		if (GETPOST('prod_entry_mode') == 'free')
+		if ($prod_entry_mode == 'free')
 		{
 			$idprod=0;
 			$price_ht = GETPOST('price_ht');
@@ -313,22 +317,22 @@ if (empty($reshook))
 	    	}
 	    }
 
-	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht') < 0 && $qty < 0)
+	    if ($prod_entry_mode =='free' && GETPOST('price_ht') < 0 && $qty < 0)
 	    {
 	        setEventMessages($langs->trans('ErrorBothFieldCantBeNegative', $langs->transnoentitiesnoconv('UnitPrice'), $langs->transnoentitiesnoconv('Qty')), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
+	    if ($prod_entry_mode =='free'  && ! GETPOST('idprodfournprice') && GETPOST('type') < 0)
 	    {
 	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
+	    if ($prod_entry_mode =='free' && GETPOST('price_ht')==='' && GETPOST('price_ttc')==='') // Unit price can be 0 but not ''
 	    {
 	        setEventMessages($langs->trans($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('UnitPrice'))), null, 'errors');
 	        $error++;
 	    }
-	    if (GETPOST('prod_entry_mode')=='free' && ! GETPOST('dp_desc'))
+	    if ($prod_entry_mode =='free' && ! GETPOST('dp_desc'))
 	    {
 	        setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 	        $error++;
@@ -339,10 +343,24 @@ if (empty($reshook))
 	        $error++;
 	    }
 
-	    // Ecrase $pu par celui	du produit
+		if (!$error && !empty($conf->attributes->enabled) && $prod_entry_mode != 'free') {
+			if ($combinations = GETPOST('combinations', 'array')) {
+				//Check if there is a product with the given combination
+				$prodcomb = new ProductCombination($db);
+
+				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
+					$idprod = $res->fk_product_child;
+				} else {
+					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					$error ++;
+				}
+			}
+		}
+
+		// Ecrase $pu par celui	du produit
 	    // Ecrase $desc	par	celui du produit
 	    // Ecrase $txtva  par celui du produit
-	    if ((GETPOST('prod_entry_mode') != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
+	    if (($prod_entry_mode != 'free') && empty($error))	// With combolist mode idprodfournprice is > 0 or -1. With autocomplete, idprodfournprice is > 0 or ''
 	    {
 	    	$productsupplier = new ProductFournisseur($db);
 

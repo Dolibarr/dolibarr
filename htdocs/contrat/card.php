@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Ferran Marcet		  	<fmarcet@2byte.es>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -471,7 +471,7 @@ if (empty($reshook))
 	    		unset($_POST["options_" . $key]);
 	    	}
 	    }
-	
+
 	    if (! $error)
 	    {
 			// Clean parameters

@@ -839,6 +839,17 @@ class Product extends CommonObject
 
 				if (! $error)
 				{
+					if ($conf->attributes->enabled) {
+
+						require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+
+						$comb = new ProductCombination($this->db);
+
+						foreach ($comb->fetchAllByFkProductParent($this->id) as $currcomb) {
+							$currcomb->updateProperties($this);
+						}
+					}
+
 					$this->db->commit();
 					return 1;
 				}
@@ -942,6 +953,25 @@ class Product extends CommonObject
     					}
     				}
     			}
+			}
+
+			if (!$error) {
+
+				require_once DOL_DOCUMENT_ROOT.'/attributes/class/ProductCombination.class.php';
+
+				//If it is a parent product, then we remove the association with child products
+				$prodcomb = new ProductCombination($this->db);
+
+				if ($prodcomb->deleteByFkProductParent($id) < 0) {
+					$error++;
+					$this->errors[] = 'Error deleting combinations';
+				}
+
+				//We also check if it is a child product
+				if (!$error && ($prodcomb->fetchByFkProductChild($id) > 0) && ($prodcomb->delete() < 0)) {
+					$error++;
+					$this->errors[] = 'Error deleting child combination';
+				}
 			}
 
 			// Delete product

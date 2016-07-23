@@ -12,7 +12,7 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2010-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -1605,9 +1605,10 @@ class Form
      *  @param		int			$hidelabel				Hide label (0=no, 1=yes, 2=show search icon (before) and placeholder, 3 search icon after)
      *  @param		array		$ajaxoptions			Options for ajax_autocompleter
      *  @param      int			$socid					Thirdparty Id (to get also price dedicated to this customer)
+     * @param array $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
      *  @return		void
      */
-    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0)
+    function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $selected_combinations = array())
     {
         global $langs,$conf;
 
@@ -1632,6 +1633,80 @@ class Form
             	$urloption.='&socid='.$socid;
             }
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
+
+			if (!empty($conf->attributes->enabled)) {
+				?>
+				<script>
+
+					selected = <?php echo json_encode($selected_combinations) ?>;
+					combvalues = {};
+
+					jQuery(document).ready(function () {
+
+						jQuery("input[name='prod_entry_mode']").change(function () {
+							if (jQuery(this).val() == 'free') {
+								jQuery('div#attributes_box').empty();
+							}
+						});
+
+						jQuery("input#<?php echo $htmlname ?>").change(function () {
+
+							if (!jQuery(this).val()) {
+								jQuery('div#attributes_box').empty();
+								return;
+							}
+
+							jQuery.getJSON("<?php echo dol_buildpath('/attributes/ajax/getCombinations.php', 2) ?>", {
+								id: jQuery(this).val()
+							}, function (data) {
+								jQuery('div#attributes_box').empty();
+
+								jQuery.each(data, function (key, val) {
+
+									combvalues[val.id] = val.values;
+
+									var span = jQuery(document.createElement('div')).css({
+										'display': 'table-row'
+									});
+
+									span.append(
+										jQuery(document.createElement('div')).text(val.label).css({
+											'font-weight': 'bold',
+											'display': 'table-cell',
+											'text-align': 'right'
+										})
+									);
+
+									var html = jQuery(document.createElement('select')).attr('name', 'combinations[' + val.id + ']').css({
+										'margin-left': '15px',
+										'white-space': 'pre'
+									}).append(
+										jQuery(document.createElement('option')).val('')
+									);
+
+									jQuery.each(combvalues[val.id], function (key, val) {
+										var tag = jQuery(document.createElement('option')).val(val.id).html(val.value);
+
+										if (selected[val.fk_product_attribute] == val.id) {
+											tag.attr('selected', 'selected');
+										}
+
+										html.append(tag);
+									});
+
+									span.append(html);
+									jQuery('div#attributes_box').append(span);
+								});
+							})
+						});
+
+						<?php if ($selected): ?>
+						jQuery("input#<?php echo $htmlname ?>").change();
+						<?php endif ?>
+					});
+				</script>
+                <?php
+            }
             if (empty($hidelabel)) print $langs->trans("RefOrLabel").' : ';
             else if ($hidelabel > 1) {
             	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $placeholder=' placeholder="'.$langs->trans("RefOrLabel").'"';
@@ -1709,7 +1784,17 @@ class Form
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang='". $langs->getDefaultLang() ."'";
         }
+
+        if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+            $sql .= " LEFT JOIN llx_product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+        }
+
         $sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
+
+        if (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD)) {
+            $sql .= " AND pac.rowid IS NULL";
+        }
+
         if ($finished == 0)
         {
             $sql.= " AND p.finished = ".$finished;
@@ -1881,7 +1966,7 @@ class Form
         $outlabel=$objp->label;
         $outdesc=$objp->description;
         $outbarcode=$objp->barcode;
-        
+
         $outtype=$objp->fk_product_type;
         $outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration,0,dol_strlen($objp->duration)-1):'';
         $outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration,-1):'';
@@ -1898,13 +1983,13 @@ class Form
         $opt.= $objp->ref;
         if ($outbarcode) $opt.=' ('.$outbarcode.')';
         $opt.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
-        
+
         $objRef = $objp->ref;
         if (! empty($filterkey) && $filterkey != '') $objRef=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$objRef,1);
         $outval.=$objRef;
         if ($outbarcode) $outval.=' ('.$outbarcode.')';
         $outval.=' - '.dol_trunc($label,$maxlengtharticle).' - ';
-        
+
         $found=0;
 
         // Multiprice
@@ -2066,7 +2151,7 @@ class Form
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
-        
+
         $selected_input_value='';
         if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
         {
@@ -3174,7 +3259,7 @@ class Form
 		{
 		    dol_syslog(__METHOD__ . ': using numeric value for parameter type is deprecated. Use string code instead.', LOG_WARNING);
 		}
-		
+
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
@@ -3837,7 +3922,7 @@ class Form
     function form_multicurrency_rate($page, $rate='', $htmlname='multicurrency_tx', $currency='')
     {
         global $langs, $mysoc, $conf;
-        
+
         if ($htmlname != "none")
         {
             print '<form method="POST" action="'.$page.'">';
@@ -4107,7 +4192,7 @@ class Form
 		        	$out.= '</option>';	
 				}
 	        }
-	        
+
 		}
         
         $out.= '</select>';
@@ -4204,7 +4289,7 @@ class Form
             $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
         }
         //var_dump($selectedrate.'-'.$defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
-        
+
         // Check parameters
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->country_code)
         {
@@ -4263,7 +4348,7 @@ class Form
 
         // Now we get list
         $num = $this->load_cache_vatrates($code_country);   // If no vat defined, return -1 with message into this->error
- 
+
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -4304,7 +4389,7 @@ class Form
         		$return.= '"';
         		if ($defaultcode) // If defaultcode is defined, we used it in priority to select combo option instead of using rate+npr flag
         		{
-                    if ($defaultcode == $rate['code']) $return.= ' selected';    	
+                    if ($defaultcode == $rate['code']) $return.= ' selected';
         		}
         		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
            		{
@@ -5036,7 +5121,7 @@ class Form
            /* var_dump($val);
             var_dump(array_key_exists('enabled', $val));
             var_dump(!$val['enabled']);*/
-           if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) 
+           if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled'])
            {
                unset($array[$key]);     // We don't want this field
                continue; 
@@ -5221,17 +5306,17 @@ class Form
         		else if ($objecttype == 'subscription')   {
         		    $tplpath = 'adherents';
         		}
-        		
+
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
         		if (empty($numoutput))
         		{
         		    $numoutput++;
-        		    
+
         		    print '<br>';
         		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
-        		    
+
         		    print '<table class="noborder allwidth">';
 
         		    print '<tr class="liste_titre">';
@@ -5244,7 +5329,7 @@ class Form
         			print '<td></td>';
         		    print '</tr>';
         		}
-        		        		
+
         		// Output template part (modules that overwrite templates must declare this into descriptor)
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
@@ -5254,11 +5339,11 @@ class Form
         		}
         	}
 
-        	if ($numoutput) 
+        	if ($numoutput)
         	{
         	    print '</table>';
         	}
-        	    
+
         	return $num;
         }
     }
@@ -5627,7 +5712,7 @@ class Form
 		$ret.='</div>';
 
 		if ($morehtmlright) $ret.='<div class="inline-block floatleft">'.$morehtmlright.'</div>';
-		
+
         if ($previous_ref || $next_ref || $morehtml)
         {
         	$ret.='<div class="pagination"><ul>';

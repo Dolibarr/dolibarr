@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2006		Auguria SARL			<info@auguria.org>
  * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2013-2014	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2013-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2012-2013	Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2011-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014		Cédric Gross			<c.gross@kreiz-it.fr>
@@ -1573,6 +1573,22 @@ else
             print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="2">';
 			print dol_print_url($object->url);
             print '</td></tr>';
+
+            //Parent product.
+            if (!empty($conf->attributes->enabled) && $object->isProduct()) {
+
+                $combination = new ProductCombination($db);
+
+                if ($combination->fetchByFkProductChild($object->id) > 0) {
+                    $prodstatic = new Product($db);
+                    $prodstatic->fetch($combination->fk_product_parent);
+
+                    // Parent product
+                    print '<tr><td>'.$langs->trans("ParentProduct").'</td><td colspan="2">';
+                    print $prodstatic->getNomUrl(1);
+                    print '</td></tr>';
+                }
+            }
 
             print '</table>';
             print '</div>';
