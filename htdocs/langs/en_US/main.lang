@@ -567,6 +567,7 @@ CanBeModifiedIfOk=Can be modified if valid
 CanBeModifiedIfKo=Can be modified if not valid
 RecordModifiedSuccessfully=Record modified successfully
 RecordsModified=%s records modified
+RecordsDeleted=%s records deleted
 AutomaticCode=Automatic code
 FeatureDisabled=Feature disabled
 MoveBox=Move widget

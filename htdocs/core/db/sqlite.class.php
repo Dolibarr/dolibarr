@@ -747,9 +747,12 @@ class DoliDBSqlite extends DoliDB
         $sql="SHOW TABLES FROM ".$database." ".$like.";";
         //print $sql;
         $result = $this->query($sql);
-        while($row = $this->fetch_row($result))
+        if ($result)
         {
-            $listtables[] = $row[0];
+            while($row = $this->fetch_row($result))
+            {
+                $listtables[] = $row[0];
+            }
         }
         return $listtables;
     }
@@ -769,9 +772,12 @@ class DoliDBSqlite extends DoliDB
 
         dol_syslog($sql,LOG_DEBUG);
         $result = $this->query($sql);
-        while($row = $this->fetch_row($result))
+        if ($result)
         {
-            $infotables[] = $row;
+            while($row = $this->fetch_row($result))
+            {
+                $infotables[] = $row;
+            }
         }
         return $infotables;
     }
