@@ -173,7 +173,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -324,6 +324,7 @@ if (empty($reshook))
 					if ($object->statut != Facture::STATUS_VALIDATED)
 					{
 						$nbignored++;
+						$resaction.='<div class="error">'.$langs->trans('ErrorOnlyInvoiceValidatedCanBeSentInMassAction',$object->ref).'</div><br>';
 						continue; // Payment done or started or canceled
 					}
 	
@@ -366,8 +367,8 @@ if (empty($reshook))
 					else
 					{  
 						$nbignored++;
-						$langs->load("other");
-						$resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+						$langs->load("errors");
+						$resaction.='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div><br>';
 						dol_syslog('Failed to read file: '.$file, LOG_WARNING);
 						continue;
 					}
