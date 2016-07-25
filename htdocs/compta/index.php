@@ -199,7 +199,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -275,7 +275,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);
@@ -387,7 +387,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		{
 			$colspan=5;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
-			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table><br>';
 		$db->free($resql);
@@ -474,7 +474,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		{
 			$colspan=5;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
-			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -842,7 +842,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 		{
 			$colspan=6;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
-			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table><br>';
 		$db->free($resql);
@@ -942,7 +942,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 		{
 			$colspan=6;
 			if (! empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
-			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">'.$langs->trans("NoInvoice").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table><br>';
 	}

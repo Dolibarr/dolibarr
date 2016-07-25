@@ -241,7 +241,7 @@ if ($search_task_user > 0)
 }
 $sql.= " WHERE t.fk_projet = p.rowid";
 $sql.= " AND p.entity IN (".getEntity('project',1).')';
-if (! $user->rights->projet->all->lire) $sql.=" p.rowid IN (".join(',',$projectsListId).")";    // public and assigned to projects, or restricted to company for external users
+if (! $user->rights->projet->all->lire) $sql.=" AND p.rowid IN (".($projectsListId?$projectsListId:'0').")";    // public and assigned to projects, or restricted to company for external users
 // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 if ($search_project_ref)   $sql .= natural_search('p.ref', $search_project_ref);
@@ -307,7 +307,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
-
+//print $sql;
 
 dol_syslog("list allowed project", LOG_DEBUG);
 //print $sql;
@@ -362,8 +362,8 @@ if ($resql)
     if ($search_task_user == $user->id) print $langs->trans("MyTasksDesc").'<br><br>';
     else
     {
-        if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("ProjectsDesc").'<br><br>';
-        else print $langs->trans("ProjectsPublicDesc").'<br><br>';
+        if ($user->rights->projet->all->lire && ! $socid) print $langs->trans("TasksOnProjectsDesc").'<br><br>';
+        else print $langs->trans("TasksOnProjectsPublicDesc").'<br><br>';
     }
     
     if ($search_all)

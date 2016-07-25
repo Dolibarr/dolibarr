@@ -233,7 +233,7 @@ if ($action == "transfert_stock" && ! $cancel)
 			$pricesrc=0;
 			if (isset($object->pmp)) $pricesrc=$object->pmp;
 			$pricedest=$pricesrc;
-
+			
 			if ($object->hasbatch())
 			{
 				$pdluo = new Productbatch($db);
@@ -324,6 +324,8 @@ if ($action == "transfert_stock" && ! $cancel)
     				if ($result2 < 0) $error++;
 				}
 			}
+
+
 			if (! $error && $result1 >= 0 && $result2 >= 0)
 			{
 				$db->commit();

@@ -48,6 +48,8 @@ $langs->load('companies');
 $langs->load('compta');
 $langs->load('bills');
 
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $orderday=GETPOST("orderday","int");
@@ -70,6 +72,7 @@ $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
+$toselect = GETPOST('toselect', 'array');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
@@ -183,6 +186,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
     $deliveryyear='';
     $viewstatut='';
     $billed='';
+    $toselect='';
     $search_array_options=array();
 }
 
@@ -201,6 +205,148 @@ if (empty($reshook))
         $error++;
     }
 
+    // TODO Use a common inc.php file
+    if (! $error && $massaction == 'delete' && $user->rights->commande->supprimer)
+    {
+        $db->begin();
+
+        $objecttmp=new Commande($db);
+        $nbok = 0;
+        foreach($toselect as $toselectid)
+        {
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $result = $objecttmp->delete($user);
+                if ($result <= 0)
+                {
+                    setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                    $error++;
+                    break;
+                }
+                else $nbok++;
+            }
+            else
+            {
+                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                $error++;
+                break;
+            }
+        }
+        
+        if (! $error)
+        {
+            if ($nbok > 1) setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+            else setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+        }
+        //var_dump($listofobjectthirdparties);exit;
+    }
+    
+    if (! $error && $massaction == "builddoc" && $user->rights->commande->lire && ! GETPOST('button_search'))
+    {
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+         
+        $objecttmp=new Commande($db);
+        $listofobjectid=array();
+        $listofobjectthirdparties=array();
+        $listofobjectref=array();
+        foreach($toselect as $toselectid)
+        {
+            $objecttmp=new Commande($db);	// must create new instance because instance is saved into $listofobjectref array for future use
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $listoinvoicesid[$toselectid]=$toselectid;
+                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+                $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
+                $listofobjectref[$toselectid]=$objecttmp->ref;
+            }
+        }
+    
+        $arrayofinclusion=array();
+        foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
+        $listoffiles = dol_dir_list($conf->commande->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+    
+        // build list of files with full path
+        $files = array();
+        foreach($listofobjectref as $basename)
+        {
+            foreach($listoffiles as $filefound)
+            {
+                if (strstr($filefound["name"],$basename))
+                {
+                    $files[] = $conf->commande->dir_output.'/'.$basename.'/'.$filefound["name"];
+                    break;
+                }
+            }
+        }
+    
+        // Define output language (Here it is not used because we do only merging existing PDF)
+        $outputlangs = $langs;
+        $newlang='';
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
+        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
+        if (! empty($newlang))
+        {
+            $outputlangs = new Translate("",$conf);
+            $outputlangs->setDefaultLang($newlang);
+        }
+    
+        // Create empty PDF
+        $pdf=pdf_getInstance();
+        if (class_exists('TCPDF'))
+        {
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+        }
+        $pdf->SetFont(pdf_getPDFFont($outputlangs));
+    
+        if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
+    
+        // Add all others
+        foreach($files as $file)
+        {
+            // Charge un document PDF depuis un fichier.
+            $pagecount = $pdf->setSourceFile($file);
+            for ($i = 1; $i <= $pagecount; $i++)
+            {
+                $tplidx = $pdf->importPage($i);
+                $s = $pdf->getTemplatesize($tplidx);
+                $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
+                $pdf->useTemplate($tplidx);
+            }
+        }
+    
+        // Create output dir if not exists
+        dol_mkdir($diroutputmassaction);
+    
+        // Save merged file
+        $filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Orders")));
+        if ($year) $filename.='_'.$year;
+        if ($month) $filename.='_'.$month;
+        if ($pagecount)
+        {
+            $now=dol_now();
+            $file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
+            $pdf->Output($file,'F');
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($file, octdec($conf->global->MAIN_UMASK));
+    
+                $langs->load("exports");
+                setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
+        }
+        else
+        {
+            setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
+        }
+    }    
 }
 
 
@@ -380,6 +526,8 @@ if ($resql)
 
 	$num = $db->num_rows($resql);
 	
+	$arrayofselected=is_array($toselect)?$toselect:array();
+	
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
@@ -408,8 +556,14 @@ if ($resql)
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	
-	//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
-	
+	$arrayofmassactions =  array(
+	    //'presend'=>$langs->trans("SendByMail"),
+	    //'builddoc'=>$langs->trans("PDFMerge"),
+	);
+	if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	if ($massaction == 'presend') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
 	// Lignes des champs de filtre
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -420,7 +574,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
 	
 	if ($sall)
     {
@@ -657,7 +811,7 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpitco;
 	print '</td>';
 	
@@ -1001,7 +1155,14 @@ if ($resql)
         }
         
         // Action column
-        print '<td></td>';
+        print '<td class="nowrap" align="center">';
+        if ($massactionbutton)
+        {
+            $selected=0;
+    		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+    		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+        }
+        print '</td>';
         if (! $i) $totalarray['nbfield']++;
 		
 		print '</tr>';

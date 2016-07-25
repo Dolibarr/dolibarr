@@ -1437,7 +1437,7 @@ class Form
 		            $nodatarole=($comboenhancement?' data-role="none"':'');
 		        }
 
-                $out.= '<select class="flat minwidth200'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
+                $out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected':'').'>&nbsp;</option>'."\n";
 				if ($show_every) $out.= '<option value="-2"'.(($selected==-2)?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
@@ -1768,7 +1768,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($objp->price_by_qty) && $objp->price_by_qty == 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -1916,8 +1916,8 @@ class Form
             $sql.= " WHERE fk_product='".$objp->rowid."'";
             $sql.= " AND entity IN (".getEntity('productprice', 1).")";
             $sql.= " AND price_level=".$price_level;
-            $sql.= " ORDER BY date_price, rowid";
-            $sql.= " DESC LIMIT 1";
+            $sql.= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
+            $sql.= " LIMIT 1";
 
             dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
             $result2 = $this->db->query($sql);
@@ -4263,7 +4263,8 @@ class Form
         }
 
         // Now we get list
-        $num = $this->load_cache_vatrates($code_country);
+        $num = $this->load_cache_vatrates($code_country);   // If no vat defined, return -1 with message into this->error
+ 
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -5929,7 +5930,7 @@ class Form
     /**
      *	Return HTML to show the search and clear seach button
      *
-     *  @param	int  	$addcheckuncheckall        Add the check all uncheck all button
+     *  @param	int  	$addcheckuncheckall        Add the check all/uncheck all checkbox (use javascript) and code to manage this
      *  @param  string  $cssclass                  CSS class
      *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
      *  @return	string
@@ -5944,8 +5945,7 @@ class Form
         if ($addcheckuncheckall)
         {
             if (! empty($conf->use_javascript_ajax)) $out.='<input type="checkbox" id="checkallactions" name="checkallactions" class="checkallactions">';
-        }
-        $out.='<script type="text/javascript">
+            $out.='<script type="text/javascript">
                 $(document).ready(function() {
                 	$("#checkallactions").click(function() {
                         if($(this).is(\':checked\')){
@@ -5957,10 +5957,11 @@ class Form
                             console.log("We uncheck all");
                     		$(".'.$cssclass.'").prop(\'checked\', false);
                         }'."\n";
-        if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t done."); }';
-        $out.='         });
-                });
-              </script>';
+            if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
+            $out.='         });
+                    });
+                </script>';
+        }
         return $out;
     }
 }

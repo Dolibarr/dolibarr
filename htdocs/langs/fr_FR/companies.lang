@@ -368,6 +368,7 @@ AllocateCommercial=Affecter un commercial
 Organization=Organisme
 FiscalYearInformation=Information sur l'année fiscale
 FiscalMonthStart=Mois de début d'exercice
+YouMustAssignUserMailFirst=Vous devez créer une adresse email pour cet utilisateur avant de pouvoir lui définir des notifications par emails.
 YouMustCreateContactFirst=Vous devez créer un contact avec une adresse email sur le tiers avant de pouvoir lui définir des notifications par emails.
 ListSuppliersShort=Liste fournisseurs
 ListProspectsShort=Liste prospects

@@ -72,6 +72,18 @@ class pdf_rouget extends ModelePdfExpedition
 		$this->posxweightvol=$this->page_largeur - $this->marge_droite - 76;
 		$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 56;
 		$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 28;
+		$this->posxpuht=$this->page_largeur - $this->marge_droite;
+
+		if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) {
+
+			$this->posxweightvol=$this->page_largeur - $this->marge_droite - 130;
+			$this->posxqtyordered=$this->page_largeur - $this->marge_droite - 100;
+			$this->posxqtytoship=$this->page_largeur - $this->marge_droite - 70;
+			$this->posxpuht=$this->page_largeur - $this->marge_droite - 40;
+			$this->posxtotalht=$this->page_largeur - $this->marge_droite - 20;
+
+		}
+
 		$this->posxpicture=$this->posxweightvol - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -464,10 +476,20 @@ class pdf_rouget extends ModelePdfExpedition
 					}
 					
 					$pdf->SetXY($this->posxqtytoship, $curY);
-					$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
+					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped,'','C');
+
+					if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) 
+{
+						$pdf->SetXY($this->posxpuht, $curY);
+						$pdf->MultiCell(($this->posxtotalht - $this->posxpuht-1), 3, price($object->lines[$i]->subprice, 0, $outputlangs),'','R');
+
+						$pdf->SetXY($this->posxtotalht, $curY);
+						$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 3, price($object->lines[$i]->total_ht, 0, $outputlangs),'','R');
+
+					}
 
 					// Add line
-					if ($conf->global->MAIN_PDF_DASH_BETWEEN_LINES && $i < ($nblignes - 1))
+					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
@@ -628,7 +650,17 @@ class pdf_rouget extends ModelePdfExpedition
         }
         
     	$pdf->SetXY($this->posxqtytoship, $tab2_top + $tab2_hl * $index);
-    	$pdf->MultiCell($this->largeur_page - $this->marge_droite - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
+    	$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', 1);
+        
+	if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) {
+
+	    	$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
+	    	$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
+        
+	    	$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
+	    	$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
+
+	}
     	 
 		// Total Weight
 		if ($totalWeighttoshow)
@@ -713,8 +745,27 @@ class pdf_rouget extends ModelePdfExpedition
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxqtytoship, $tab_top+1);
-			$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
+			$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 2, $outputlangs->transnoentities("QtyToShip"),'','C');
 		}
+		
+		if(!empty($conf->global->MAIN_PDF_SHIPPING_DISPLAY_AMOUNT_HT)) {
+
+			$pdf->line($this->posxpuht-1, $tab_top, $this->posxpuht-1, $tab_top + $tab_height);
+			if (empty($hidetop))
+			{
+				$pdf->SetXY($this->posxpuht-1, $tab_top+1);
+				$pdf->MultiCell(($this->posxtotalht - $this->posxpuht), 2, $outputlangs->transnoentities("PriceUHT"),'','C');
+			}
+		
+			$pdf->line($this->posxtotalht-1, $tab_top, $this->posxtotalht-1, $tab_top + $tab_height);
+			if (empty($hidetop))
+			{
+				$pdf->SetXY($this->posxtotalht-1, $tab_top+1);
+				$pdf->MultiCell(($this->page_largeur - $this->marge_droite - $this->posxtotalht), 2, $outputlangs->transnoentities("TotalHT"),'','C');
+			}
+
+		}
+		
 	}
 
 	/**

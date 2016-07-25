@@ -205,12 +205,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
     $day='';
     $year='';
     $month='';
-    $toselect='';
     $option='';
     $filter='';
     $day_lim='';
     $year_lim='';
     $month_lim='';
+    $toselect='';
     $search_array_options=array();
 }
 
@@ -229,6 +229,7 @@ if (empty($reshook))
 	    $error++;
 	}
 	
+	// TODO Use a common inc.php file
 	if (! $error && $massaction == 'confirm_presend')
 	{
 		$resaction = '';
@@ -522,17 +523,17 @@ if (empty($reshook))
 
         $arrayofinclusion=array();
         foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
-        $factures = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
+        $listoffiles = dol_dir_list($conf->facture->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
-        // liste les fichiers
+        // build list of files with full path
         $files = array();
         foreach($listofobjectref as $basename)
         {
-            foreach($factures as $facture)
+            foreach($listoffiles as $filefound)
             {
-                if (strstr($facture["name"],$basename))
+                if (strstr($filefound["name"],$basename))
                 {
-                    $files[] = $conf->facture->dir_output.'/'.$basename.'/'.$facture["name"];
+                    $files[] = $conf->facture->dir_output.'/'.$basename.'/'.$filefound["name"];
                     break;
                 }
             }
@@ -831,7 +832,12 @@ if ($resql)
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	
-	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
+	$arrayofmassactions=array(
+	    'presend'=>$langs->trans("SendByMail"),
+	    'builddoc'=>$langs->trans("PDFMerge")
+	);
+	if ($massaction == 'presend') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
     
     $i = 0;
     print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -843,7 +849,7 @@ if ($resql)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
     
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,$massactionbutton,$num,$nbtotalofrecords,'title_accountancy.png',0,'','',$limit);
+	print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
 
 	if ($massaction == 'presend')
 	{
@@ -1183,7 +1189,7 @@ if ($resql)
 	}
 	// Action column
 	print '<td class="liste_titre" align="middle">';
-	$searchpitco=$form->showFilterAndCheckAddButtons(1, 'checkforselect', 1);
+	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpitco;
     print '</td>';
     print "</tr>\n";
@@ -1423,9 +1429,12 @@ if ($resql)
             
     		// Action column
             print '<td class="nowrap" align="center">';
-            $selected=0;
-    		if (in_array($obj->facid, $arrayofselected)) $selected=1;
-    		print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected?' checked="checked"':'').'>';
+            if ($massactionbutton)
+            {
+                $selected=0;
+        		if (in_array($obj->facid, $arrayofselected)) $selected=1;
+        		print '<input id="cb'.$obj->facid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->facid.'"'.($selected?' checked="checked"':'').'>';
+            }
     		print '</td>' ;
     		if (! $i) $totalarray['nbfield']++;
 				

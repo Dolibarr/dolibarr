@@ -128,22 +128,22 @@ class box_services_contracts extends ModeleBoxes
 						}
 					}
 
-					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflow maxwidth100onsmartphone" align="left"',
+					$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                     'text' => $contratlignestatic->getNomUrl(1),
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][] = array('td' => '',
                     'text' => $contractstatic->getNomUrl(1),
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'align="left"',
+					$this->info_box_contents[$i][] = array('td' => '',
                     'text' => $thirdpartytmp->getNomUrl(1),
 					'asis' => 1
                     );
 
-					$this->info_box_contents[$i][] = array('td' => 'align="right"',
+					$this->info_box_contents[$i][] = array('td' => '',
                     'text' => dol_print_date($datem,'day'));
 
 					$this->info_box_contents[$i][] = array('td' => 'align="right" width="18"',

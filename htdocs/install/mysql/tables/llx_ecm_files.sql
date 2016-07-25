@@ -27,7 +27,8 @@ CREATE TABLE llx_ecm_files
   description		text,
   keywords          text,                           -- list of keywords, separated with comma
   cover             text,                           -- is this file a file to use for a cover
-  extraparams		varchar(255),					-- for stock other parameters with json format
+  gen_or_uploaded   varchar(12),                    -- 'generated' or 'uploaded' 
+  extraparams		varchar(255),					-- for stocking other parameters with json format
   date_c			datetime,
   date_m			timestamp,
   fk_user_c			integer,

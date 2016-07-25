@@ -250,7 +250,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	       $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 			
 			// Ref
-			print '<tr><td width="30%">';
+			print '<tr><td class="titlefield">';
 			print $langs->trans("Ref");
 			print '</td><td>';
 			// Define a complementary filter for search of next/prev ref.
@@ -291,6 +291,19 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print dol_print_date($projectstatic->date_end,'day');
 			print '</td></tr>';
 
+			// Budget
+        	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+        	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
+        	print '</td></tr>';
+        	
+        	// Other options
+        	$parameters=array();
+        	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
+        	if (empty($reshook) && ! empty($extrafields_project->attribute_label))
+        	{
+        		print $object->showOptionals($extrafields_project);
+        	}
+        
 			print '</table>';
 
 			dol_fiche_end();
