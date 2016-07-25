@@ -16,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Class ProductCombination2ValuePair
+ * Used to represent the relation between a product combination, a product attribute and a product attribute value
+ */
 class ProductCombination2ValuePair
 {
 	/**

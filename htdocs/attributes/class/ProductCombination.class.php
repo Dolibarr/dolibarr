@@ -16,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Class ProductCombination
+ * Used to represent a product combination
+ */
 class ProductCombination
 {
 	/**

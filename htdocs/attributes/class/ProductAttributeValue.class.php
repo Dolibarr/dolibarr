@@ -16,6 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * Class ProductAttributeValue
+ * Used to represent a product attribute value
+ */
 class ProductAttributeValue
 {
 	/**
