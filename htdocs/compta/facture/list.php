@@ -58,10 +58,13 @@ $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');
 $socid=GETPOST('socid','int');
+
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 $lineid=GETPOST('lineid','int');
 $userid=GETPOST('userid','int');
 $search_product_category=GETPOST('search_product_category','int');
@@ -86,7 +89,6 @@ $year	= GETPOST('year','int');
 $day_lim	= GETPOST('day_lim','int');
 $month_lim	= GETPOST('month_lim','int');
 $year_lim	= GETPOST('year_lim','int');
-$toselect = GETPOST('toselect', 'array');
 
 $option = GETPOST('option');
 if ($option == 'late') $filter = 'paye:0';
@@ -1494,7 +1496,7 @@ if ($resql)
         $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
         $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
         
-        print $formfile->showdocuments('massfilesarea_facture','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+        print $formfile->showdocuments('massfilesarea_invoice','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
     }
     else
     {

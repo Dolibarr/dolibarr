@@ -50,6 +50,10 @@ $langs->load('bills');
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $orderday=GETPOST("orderday","int");
@@ -72,7 +76,6 @@ $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
-$toselect = GETPOST('toselect', 'array');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
@@ -346,6 +349,20 @@ if (empty($reshook))
         {
             setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
         }
+    }
+    
+    // Remove file
+    if ($action == 'remove_file')
+    {
+        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    
+        $langs->load("other");
+        $upload_dir = $diroutputmassaction;
+        $file = $upload_dir . '/' . GETPOST('file');
+        $ret=dol_delete_file($file);
+        if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+        else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+        $action='';
     }    
 }
 
@@ -557,8 +574,8 @@ if ($resql)
 	}
 	
 	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
-	    //'builddoc'=>$langs->trans("PDFMerge"),
+	    'presend'=>$langs->trans("SendByMail"),
+	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	if ($massaction == 'presend') $arrayofmassactions=array();
@@ -1204,6 +1221,30 @@ if ($resql)
 	print '</form>'."\n";
 
 	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
+	
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+	{
+	    /*
+	     * Show list of available documents
+	     */
+	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	    $urlsource.=str_replace('&amp;','&',$param);
+	
+	    $filedir=$diroutputmassaction;
+	    $genallowed=$user->rights->facture->lire;
+	    $delallowed=$user->rights->facture->lire;
+	
+	    print '<br><a name="show_files"></a>';
+	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
+	    $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
+	
+	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+	}
+	else
+	{
+	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+	}
+	
 }
 else
 {
