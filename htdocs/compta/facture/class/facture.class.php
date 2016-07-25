@@ -1548,14 +1548,14 @@ class Facture extends CommonInvoice
 	/**
 	 *	Delete invoice
 	 *
-	 *	@param     	int		$rowid      	Id of invoice to delete. If empty, we delete current instance of invoice
+	 *	@param     	User	$user      	    User to delete.
 	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-	function delete($rowid=0, $notrigger=0, $idwarehouse=-1)
+	function delete($user, $notrigger=0, $idwarehouse=-1)
 	{
-		global $user,$langs,$conf;
+		global $langs,$conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if (empty($rowid)) $rowid=$this->id;

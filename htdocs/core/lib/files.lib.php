@@ -1990,7 +1990,7 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		$original_file=$conf->facture->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
 	}
-	else if ($modulepart == 'massfilesarea_facture')
+	else if ($modulepart == 'massfilesarea_invoices')
 	{
 		if ($fuser->rights->facture->lire || preg_match('/^specimen/i',$original_file))
 		{
@@ -1998,7 +1998,15 @@ function dol_check_secure_access_document($modulepart,$original_file,$entity,$fu
 		}
 		$original_file=$conf->facture->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
 	}
-
+	else if ($modulepart == 'massfilesarea_orders')
+	{
+	    if ($fuser->rights->commande->lire || preg_match('/^specimen/i',$original_file))
+	    {
+	        $accessallowed=1;
+	    }
+	    $original_file=$conf->commande->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
+	}
+	
 	// Wrapping pour les fiches intervention
 	else if ($modulepart == 'ficheinter')
 	{

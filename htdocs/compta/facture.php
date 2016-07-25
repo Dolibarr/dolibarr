@@ -188,7 +188,7 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		$result = $object->delete(0, 0, $idwarehouse);
+		$result = $object->delete($user, 0, $idwarehouse);
 		if ($result > 0) {
 			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
 			exit();
