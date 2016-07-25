@@ -387,8 +387,8 @@ class Facture extends CommonInvoice
 				{
 					$newinvoiceline=$this->lines[$i];
 					$newinvoiceline->fk_facture=$this->id;
-                    $newinvoiceline->origin = $this->element;
-                    $newinvoiceline->origin_id = $this->lines[$i]->id;
+                    $newinvoiceline->origin = $this->element;           // TODO This seems not used. Here we but origin 'facture' but after
+                    $newinvoiceline->origin_id = $this->lines[$i]->id;  // we put an id of object !
 					if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
 					{
 						// Reset fk_parent_line for no child products and special product
@@ -3212,7 +3212,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3242,6 +3242,7 @@ class Facture extends CommonInvoice
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$generic_facture->date_lim_reglement = $this->db->jdate($obj->datefin);
+				$generic_facture->statut = $obj->fk_statut;
 
 				$response->nbtodo++;
 
@@ -3249,7 +3250,7 @@ class Facture extends CommonInvoice
 					$response->nbtodolate++;
 				}
 			}
-
+	
 			return $response;
 		}
 		else
@@ -3727,7 +3728,7 @@ class Facture extends CommonInvoice
 		global $conf;
 
 		$now = dol_now();
-
+		
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->statut != Facture::STATUS_VALIDATED) return false;
 		
