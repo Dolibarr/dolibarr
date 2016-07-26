@@ -59,43 +59,73 @@ if ($action == 'update' && ! $_POST["cancel"])
 	// Modification
 	$account = new CompanyBankAccount($db);
 
-    $account->fetch($id);
 
-    $account->socid           = $object->id;
-
-	$account->bank            = $_POST["bank"];
-	$account->label           = $_POST["label"];
-	$account->courant         = $_POST["courant"];
-	$account->clos            = $_POST["clos"];
-	$account->code_banque     = $_POST["code_banque"];
-	$account->code_guichet    = $_POST["code_guichet"];
-	$account->number          = $_POST["number"];
-	$account->cle_rib         = $_POST["cle_rib"];
-	$account->bic             = $_POST["bic"];
-	$account->iban            = $_POST["iban"];
-	$account->domiciliation   = $_POST["domiciliation"];
-	$account->proprio         = $_POST["proprio"];
-	$account->owner_address   = $_POST["owner_address"];
-	$account->frstrecur       = GETPOST('frstrecur');
-
-	$result = $account->update($user);
-	if (! $result)
+	if (! GETPOST('label'))
 	{
-		setEventMessages($account->error, $account->errors, 'errors');
-		$_GET["action"]='edit';     // Force chargement page edition
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+		$action='update';
+		$error++;
 	}
-	else
+	if (! GETPOST('bank'))
 	{
-		// If this account is the default bank account, we disable others
-		if ($account->default_rib)
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankName")), null, 'errors');
+		$action='update';
+		$error++;
+	}
+	if ($account->needIBAN() == 1)
+	{
+		if (! GETPOST('iban'))
 		{
-			$account->setAsDefault($id);	// This will make sure there is only one default rib
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
+			$action='update';
+			$error++;
 		}
-
-		$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
-        header('Location: '.$url);
-        exit;
+		if (! GETPOST('bic'))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
+			$action='update';
+			$error++;
+		}
 	}
+
+    $account->fetch($id);
+    if (! $error)
+    {
+	    $account->socid           = $object->id;
+
+		$account->bank            = GETPOST('bank','alpha');
+		$account->label           = GETPOST('label','alpha');
+		$account->courant         = GETPOST('courant','alpha');
+		$account->clos            = GETPOST('clos','alpha');
+		$account->code_banque     = GETPOST('code_banque','alpha');
+		$account->code_guichet    = GETPOST('code_guichet','alpha');
+		$account->number          = GETPOST('number','alpha');
+		$account->cle_rib         = GETPOST('cle_rib','alpha');
+		$account->bic             = GETPOST('bic','alpha');
+		$account->iban            = GETPOST('iban','alpha');
+		$account->domiciliation   = GETPOST('domiciliation','alpha');
+		$account->proprio         = GETPOST('proprio','alpha');
+		$account->owner_address   = GETPOST('owner_address','alpha');
+		$account->frstrecur       = GETPOST('frstrecur','alpha');
+
+		$result = $account->update($user);
+		if (! $result)
+		{
+			setEventMessages($account->error, $account->errors, 'errors');
+		}
+		else
+		{
+			// If this account is the default bank account, we disable others
+			if ($account->default_rib)
+			{
+				$account->setAsDefault($id);	// This will make sure there is only one default rib
+			}
+
+			$url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
+	        header('Location: '.$url);
+	        exit;
+		}
+    }
 }
 
 if ($action == 'add' && ! $_POST["cancel"])
@@ -114,6 +144,21 @@ if ($action == 'add' && ! $_POST["cancel"])
 		$action='create';
 		$error++;
 	}
+	if ($account->needIBAN() == 1)
+	{
+		if (! GETPOST('iban'))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
+			$action='create';
+			$error++;
+		}
+		if (! GETPOST('bic'))
+		{
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
+			$action='create';
+			$error++;
+		}
+	}
 
 	if (! $error)
 	{
@@ -122,19 +167,19 @@ if ($action == 'add' && ! $_POST["cancel"])
 
 	    $account->socid           = $object->id;
 
-	    $account->bank            = $_POST["bank"];
-	    $account->label           = $_POST["label"];
-	    $account->courant         = $_POST["courant"];
-	    $account->clos            = $_POST["clos"];
-	    $account->code_banque     = $_POST["code_banque"];
-	    $account->code_guichet    = $_POST["code_guichet"];
-	    $account->number          = $_POST["number"];
-	    $account->cle_rib         = $_POST["cle_rib"];
-	    $account->bic             = $_POST["bic"];
-	    $account->iban            = $_POST["iban"];
-	    $account->domiciliation   = $_POST["domiciliation"];
-	    $account->proprio         = $_POST["proprio"];
-	    $account->owner_address   = $_POST["owner_address"];
+	    $account->bank            = GETPOST('bank','alpha');
+		$account->label           = GETPOST('label','alpha');
+		$account->courant         = GETPOST('courant','alpha');
+		$account->clos            = GETPOST('clos','alpha');
+		$account->code_banque     = GETPOST('code_banque','alpha');
+		$account->code_guichet    = GETPOST('code_guichet','alpha');
+		$account->number          = GETPOST('number','alpha');
+		$account->cle_rib         = GETPOST('cle_rib','alpha');
+		$account->bic             = GETPOST('bic','alpha');
+		$account->iban            = GETPOST('iban','alpha');
+		$account->domiciliation   = GETPOST('domiciliation','alpha');
+		$account->proprio         = GETPOST('proprio','alpha');
+		$account->owner_address   = GETPOST('owner_address','alpha');
 		$account->frstrecur       = GETPOST('frstrecur');
 
 	    $result = $account->update($user);	// TODO Use create and include update into create method
@@ -161,8 +206,8 @@ if ($action == 'setasdefault')
         $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
         header('Location: '.$url);
         exit;
-    } 
-    else 
+    }
+    else
     {
 	    setEventMessages($db->lasterror, null, 'errors');
     }
@@ -239,9 +284,9 @@ if ($socid && $action != 'edit' && $action != "create")
     }
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print load_fiche_titre($langs->trans("DefaultRIB"), '', '');
 
     print '<div class="underbanner clearboth"></div>';
@@ -265,34 +310,30 @@ if ($socid && $action != 'edit' && $action != "create")
 			$content = $account->number;
 		} elseif ($val == 'BankAccountNumberKey') {
 			$content = $account->cle_rib;
+		}elseif ($val == 'IBAN') {
+			$content = $account->iban;
+			if (! empty($account->iban)) {
+				if (! checkIbanForAccount($account)) {
+					$content.= img_picto($langs->trans("IbanNotValid"),'warning');
+				} else {
+					$content.= img_picto($langs->trans("IbanValid"),'info');
+				}
+			}
+		}elseif ($val == 'BIC') {
+			$content = $account->bic;
+			if (! empty($account->bic)) {
+				if (! checkSwiftForAccount($account)) {
+					$content.= img_picto($langs->trans("SwiftNotValid"),'warning');
+				} else {
+					$content.= img_picto($langs->trans("SwiftValid"),'info');
+				}
+			}
 		}
 
 		print '<tr><td>'.$langs->trans($val).'</td>';
-		print '<td colspan="3">'.$content.'</td>';
+		print '<td colspan="4">'.$content.'</td>';
 		print '</tr>';
 	}
-
-	print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-	print '<td colspan="4">'.$account->iban . '&nbsp;';
-    if (! empty($account->iban)) {
-        if (! checkIbanForAccount($account)) {
-            print img_picto($langs->trans("IbanNotValid"),'warning');
-        } else {
-            print img_picto($langs->trans("IbanValid"),'info');
-        }
-    }
-    print '</td></tr>';
-
-	print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-	print '<td colspan="4">'.$account->bic.'&nbsp;';
-    if (! empty($account->bic)) {
-        if (! checkSwiftForAccount($account)) {
-            print img_picto($langs->trans("SwiftNotValid"),'warning');
-        } else {
-            print img_picto($langs->trans("SwiftValid"),'info');
-        }
-    }
-    print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
 	print $account->domiciliation;
@@ -315,7 +356,7 @@ if ($socid && $action != 'edit' && $action != "create")
 	}
 
     print "</div>";
-    
+
     dol_fiche_end();
 
 
@@ -418,9 +459,9 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
@@ -432,6 +473,8 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 
 	// Show fields of bank account
 	foreach ($account->getFieldsToShow() as $val) {
+
+		$require=false;
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
@@ -448,19 +491,22 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 			$name = 'cle_rib';
 			$size = 3;
 			$content = $account->cle_rib;
+		} elseif ($val == 'IBAN') {
+			$name = 'iban';
+			$size = 30;
+			$content = $account->iban;
+			if ($account->needIBAN()) $require=true;
+		} elseif ($val == 'BIC') {
+			$name = 'bic';
+			$size = 12;
+			$content = $account->bic;
+			if ($account->needIBAN()) $require=true;
 		}
 
-		print '<tr><td>'.$langs->trans($val).'</td>';
+		print '<tr><td'.($require?' class="fieldrequired" ':'').'>'.$langs->trans($val).'</td>';
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
 		print '</tr>';
 	}
-
-    // IBAN
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.$account->iban.'"></td></tr>';
-
-    print '<tr><td valign="top" class="fieldrequired">'.$langs->trans("BIC").'</td>';
-    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40">';
@@ -498,7 +544,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     }
 
     print '</div>';
-    
+
     dol_fiche_end();
 
 	print '<div align="center">';
@@ -515,9 +561,9 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
@@ -526,6 +572,13 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
     print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
+
+    // IBAN
+    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("IBAN").'</td>';
+    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
+
+    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("BIC").'</td>';
+    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
     // BBAN
     if ($account->useDetailedBBAN() == 1)
@@ -555,13 +608,6 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
         print '<td><input size="3" type="text" class="flat" name="cle_rib" value="'.GETPOST('value').'"></td>';
         print '</tr>';
     }
-
-    // IBAN
-    print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
-
-    print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
-    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
     print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40">';
@@ -597,7 +643,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     }
 
     print '</div>';
-    
+
 	dol_fiche_end();
 
 	print '<div align="center">';
