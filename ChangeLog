@@ -12,9 +12,23 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+
+***** ChangeLog for 5.0.0 compared to 4.0.* *****
+For users:
+...
+
+WARNING: 
+
+Following changes may create regression for some external modules, but were necessary to make
+Dolibarr better:
+- Function delete of class Facture (invoice) need the object $user as first parameter. Also you must
+check you make a fetch on object before calling the delete.
+
+
+
+
 ***** ChangeLog for 4.0.0 compared to 3.9.* *****
 For users:
-
 NEW: Add reccuring invoice feature and automatic generation of invoices.
 NEW: Add module "Loan" as stable.
 NEW: Add module "Supplier commercial proposal" (price request) is set to stable status.
@@ -120,7 +134,6 @@ NEW: When creating a template invoice from a draft invoice, if there is link to 
 NEW: When emailing is not sent completely, show progression.
 
 For developers:
-
 NEW: Add a css class style called 'reposition', so when clicking on a link with this class will move scrollbarr to be placed at same page location.
 NEW: TimeZone can be supplied to mktime
 NEW: hook in shipment card
