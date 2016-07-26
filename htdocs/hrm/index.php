@@ -19,7 +19,7 @@
  */
 
 /**
- *   	\file       htdocs/hrm/hrm.php
+ *   	\file       htdocs/hrm/index.php
  *		\ingroup    hrm
  *		\brief      Home page for HRM area.
  */
