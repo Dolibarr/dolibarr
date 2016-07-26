@@ -3501,13 +3501,11 @@ class Societe extends CommonObject
 		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
 		 * Because this function is meant to be executed within a transaction, we won't take care of it.
 		 */
-		$sql = 'SELECT rowid
-FROM '.MAIN_DB_PREFIX.'societe_commerciaux
-WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN (
-  SELECT fk_user
-  FROM '.MAIN_DB_PREFIX.'societe_commerciaux
-  WHERE fk_soc = '.(int) $origin_id.'
-);';
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
+		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';
+		$sql = ' SELECT fk_user ';
+		$sql = ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
+		$sql = ' WHERE fk_soc = '.(int) $origin_id.') ';
 
 		$query = $db->query($sql);
 
