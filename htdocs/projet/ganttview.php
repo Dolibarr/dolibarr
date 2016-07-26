@@ -268,7 +268,11 @@ if (count($tasksarray)>0)
  	if (! empty($conf->use_javascript_ajax))
 	{
 	    //var_dump($_SESSION);
-  		print '<div id="tabs" class="gantt" style="width: 80vw;border: 1px solid #ACACAC;">'."\n";
+	    $dateformatinput='mm/dd/yyyy';  // How the date for data are formated
+	    $dateformatinput2="%m/%d/%Y";   // How the date for data are formated
+  		//var_dump($dateformatinput);
+  		//var_dump($dateformatinput2);
+	    print '<div id="tabs" class="gantt" style="border: 1px solid #ACACAC;">'."\n";
 		include_once DOL_DOCUMENT_ROOT.'/projet/ganttchart.inc.php';
 		print '</div>'."\n";
 	}
