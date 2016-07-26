@@ -753,7 +753,11 @@ class MouvementStock extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$origin = new FactureFournisseur($this->db);
 				break;
-				
+			case 'project':
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$origin = new Project($this->db);
+				break;
+
 			default:
 				if ($origintype)
 				{
