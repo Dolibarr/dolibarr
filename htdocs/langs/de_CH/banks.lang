@@ -2,3 +2,8 @@
 Conciliable=Ausgleichsfähig
 ConfirmValidateCheckReceipt=Scheck wirklich annehmen? Eine Änderung ist anschliessend nicht mehr möglich.
 DefaultRIB=Standart Bankkonto-Nummer
+RejectCheck=Überprüfung zurückgewiesen
+ConfirmRejectCheck=Wollen sie diesen Check wirklich als zurückgewiesen Kennzeichnen?
+RejectCheckDate=Datum die Überprüfung wurde zurückgewiesen
+CheckRejected=Überprüfung zurückgewiesen
+CheckRejectedAndInvoicesReopened=Überprüfung zurückgewiesen und Rechnungen wieder geöffnet

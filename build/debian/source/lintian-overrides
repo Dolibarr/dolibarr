@@ -1,3 +1,5 @@
 # Remove warning, we want to keep both standard and minified sources.
 dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jsgantt/*
 dolibarr: source-contains-prebuilt-javascript-object htdocs/includes/jquery/*
+# This is a textual data file
+source-is-missing htdocs/includes/mobiledetect/mobiledetectlib/Mobile_Detect.json

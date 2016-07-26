@@ -12,6 +12,7 @@ RequestsOpened=طلبات السعر المفتوحة
 SupplierProposalArea=منطقة مقترحات المورد
 SupplierProposalShort=Supplier proposal
 SupplierProposals=مقترحات المورد
+SupplierProposalsShort=Supplier proposals
 NewAskPrice=طلب السعر الجديد
 ShowSupplierProposal=طلب عرض أسعار
 AddSupplierProposal=إنشاء طلب السعر

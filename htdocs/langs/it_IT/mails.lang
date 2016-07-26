@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Utilizzare il separatore <b>virgola<
 TagCheckMail=Traccia apertura mail
 TagUnsubscribe=Link di cancellazione alla mailing list
 TagSignature=Firma di invio per l'utente
-TagMailtoEmail=Mail destinatario
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=Nessuna email inviata. Mittente o destinatario errati. Verifica il profilo utente.
 # Module Notifications
 Notifications=Notifiche

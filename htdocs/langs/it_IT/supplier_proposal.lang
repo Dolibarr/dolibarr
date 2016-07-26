@@ -12,6 +12,7 @@ RequestsOpened=Open price requests
 SupplierProposalArea=Supplier proposals area
 SupplierProposalShort=Supplier proposal
 SupplierProposals=Proposte Fornitore
+SupplierProposalsShort=Supplier proposals
 NewAskPrice=New price request
 ShowSupplierProposal=Show price request
 AddSupplierProposal=Create a price request

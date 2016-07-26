@@ -579,7 +579,7 @@ class FormOther
                     {
                         print "&nbsp;&nbsp;&nbsp;";
                     }
-                    print $lines[$i]->label."</option>\n";
+                    print $lines[$i]->ref.' '.$lines[$i]->label."</option>\n";
                     $inc++;
                 }
 

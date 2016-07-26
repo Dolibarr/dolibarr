@@ -60,7 +60,14 @@ $log_holiday = $cp->fetchLog('ORDER BY cpl.rowid DESC', " AND date_action BETWEE
 print load_fiche_titre($langs->trans('LogCP'), '<div class="pagination"><ul><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'">&lt;</a><li class="pagination"><a href="">'.$langs->trans("Year").' '.$year.'</a></li><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'">&gt;</a></li></lu></div>', 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
-if ($cp->getConfCP('lastUpdate')) print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+$lastUpdate = $cp->getConfCP('lastUpdate');
+if ($lastUpdate)
+{
+    $monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
+    $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
+    print '<strong>'.dol_print_date($db->jdate($cp->getConfCP('lastUpdate')),'dayhour','tzuser').'</strong>';
+    print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
+}
 else print $langs->trans('None');
 print "</div><br>\n";
 
@@ -108,8 +115,8 @@ foreach($cp->logs as $logs_CP)
 
 if ($log_holiday == '2')
 {
-    print '<tr>';
-    print '<td colspan="8" '.$bc[false].'>'.$langs->trans('None').'</td>';
+    print '<tr '.$bc[false].'>';
+    print '<td colspan="8" class="opacitymedium">'.$langs->trans('NoRecordFound').'</td>';
     print '</tr>';
 }
 

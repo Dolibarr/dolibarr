@@ -26,8 +26,6 @@ ErrorFailedToSendMail=Fehler beim Senden des Mails (Absender=%s, Empfänger=%s)
 ErrorDuplicateField=Dieser Wert muß einzigartig sein
 LevelOfFeature=Funktions-Level
 PreviousConnexion=Vorherige Verbindung
-RequestLastAccessInError=Anfrage des letzten Datenbankzugriffs mit Fehler
-ReturnCodeLastAccessInError=Return-Code des letzten Datenbankzugriffs mit Fehler
 Of=Von
 Search=Suche
 Upload=Upload

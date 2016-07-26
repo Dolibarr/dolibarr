@@ -3132,7 +3132,7 @@ class Product extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result='';
@@ -3157,6 +3157,17 @@ class Product extends CommonObject
 
         $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
 
+	if (! is_object($hookmanager))
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager=new HookManager($this->db);
+	}
+	$hookmanager->initHooks(array('productdao'));
+	$parameters=array('id'=>$this->id);
+	$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
+
         if ($option == 'supplier') {
             $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
             $linkend='</a>';
@@ -3174,8 +3185,8 @@ class Product extends CommonObject
         }
 
 		if ($withpicto) {
-			if ($this->type == Product::TYPE_PRODUCT) $result.=($link.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$linkend.' ');
-			if ($this->type == Product::TYPE_SERVICE) $result.=($link.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$linkend.' ');
+			if ($this->type == Product::TYPE_PRODUCT) $result.=($link.img_object('', 'product', '').$linkend.' ');
+			if ($this->type == Product::TYPE_SERVICE) $result.=($link.img_object('', 'service', '').$linkend.' ');
 		}
 		$result.=$link.$newref.$linkend;
 		return $result;

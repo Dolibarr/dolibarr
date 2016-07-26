@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,7 +413,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
     $error=0;
     $fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
 
-	if ($fuser->societe_id) $socid=$fuser->societe_id;
+	if ($fuser->socid) $socid=$fuser->socid;
 
 	// Check parameters
 	if (! $error && empty($idthirdparty))
@@ -425,7 +426,7 @@ function getInvoicesForThirdParty($authentication,$idthirdparty)
 	{
 		$linesinvoice=array();
 
-		$sql.='SELECT f.rowid as facid, facnumber as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
+		$sql ='SELECT f.rowid as facid, facnumber as ref, ref_ext, type, fk_statut as status, total_ttc, total, tva';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.=" WHERE f.entity = ".$conf->entity;
 		if ($idthirdparty != 'all' ) $sql.=" AND f.fk_soc = ".$db->escape($idthirdparty);
@@ -660,7 +661,7 @@ function createInvoice($authentication,$invoice)
 function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $ref_ext_order='', 
 		$id_invoice='', $ref_invoice='', $ref_ext_invoice='')
 {
-	global $db,$conf,$langs;
+	global $db,$conf;
 
 	$now=dol_now();
 
@@ -674,6 +675,7 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
 	$errorcode='';$errorlabel='';
 	$error=0;
 	$fuser=check_authentication($authentication,$error,$errorcode,$errorlabel);
+    if ($fuser->socid) $socid=$fuser->socid;
 
 	// Check parameters
 	if (empty($id_order) && empty($ref_order) && empty($ref_ext_order))	{
@@ -690,7 +692,7 @@ function createInvoiceFromOrder($authentication,$id_order='', $ref_order='', $re
 		if ($fuser->rights->commande->lire)
 		{
 			$order=new Commande($db);
-			$result=$order->fetch($id,$ref,$ref_ext);
+			$result=$order->fetch($id_order,$ref_order,$ref_ext_order);
 			if ($result > 0)
 			{
 				// Security for external user

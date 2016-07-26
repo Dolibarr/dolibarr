@@ -95,36 +95,41 @@ if ($action == 'create')
 	    // If no start date
 	    if (empty($date_debut))
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=nodatedebut');
-	        exit;
+	        setEventMessages($langs->trans("NoDateDebut"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 	    // If no end date
 	    if (empty($date_fin))
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=nodatefin');
-	        exit;
+	        setEventMessages($langs->trans("NoDateFin"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 	    // If start date after end date
 	    if ($date_debut > $date_fin)
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=datefin');
-	        exit;
+	        setEventMessages($langs->trans("ErrorEndDateCP"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // Check if there is already holiday for this period
 	    $verifCP = $cp->verifDateHolidayCP($userID, $date_debut, $date_fin, $halfday);
 	    if (! $verifCP)
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=alreadyCP');
-	        exit;
+	        setEventMessages($langs->trans("alreadyCPexist"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // If there is no Business Days within request
 	    $nbopenedday=num_open_day($date_debut_gmt, $date_fin_gmt, 0, 1, $halfday);
 	    if($nbopenedday < 0.5)
 	    {
-	        header('Location: '.$_SERVER["PHP_SELF"].'?action=request&error=DureeHoliday');
-	        exit;
+	        setEventMessages($langs->trans("ErrorDureeCP"), null, 'errors');
+	        $error++;
+	        $action='create';
 	    }
 
 	    // If no validator designated
@@ -823,10 +828,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_debut_')) {
-            $form->select_date(-1,'date_debut_');
+            $form->select_date(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-            $form->select_date($tmpdate,'date_debut_');
+            $form->select_date($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday')?GETPOST('starthalfday'):'morning'));
@@ -839,10 +844,10 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<td>';
         // Si la demande ne vient pas de l'agenda
         if (! GETPOST('date_fin_')) {
-            $form->select_date(-1,'date_fin_');
+            $form->select_date(-1,'date_fin_', 0, 0, 0, '', 1, 1);
         } else {
             $tmpdate = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-            $form->select_date($tmpdate,'date_fin_');
+            $form->select_date($tmpdate,'date_fin_', 0, 0, 0, '', 1, 1);
         }
         print ' &nbsp; &nbsp; ';
         print $form->selectarray('endhalfday', $listhalfday, (GETPOST('endhalfday')?GETPOST('endhalfday'):'afternoon'));
@@ -861,7 +866,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td>'.$langs->trans("DescCP").'</td>';
         print '<td>';
-        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70"></textarea>';
+        print '<textarea name="description" class="flat" rows="'.ROWS_3.'" cols="70">'.GETPOST('description').'</textarea>';
         print '</td>';
         print '</tr>';
 

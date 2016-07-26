@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Cập nhật hàng tháng
 ManualUpdate=Cập nhật thủ công
 HolidaysCancelation=Để lại yêu cầu hủy bỏ
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

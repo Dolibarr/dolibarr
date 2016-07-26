@@ -1513,7 +1513,7 @@ else
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
-                        print '<td align="right" '.$bc[$var].'>'.$objp->remise_percent."%</td>\n";
+                        print '<td align="right">'.$objp->remise_percent."%</td>\n";
                     }
                     else
                     {

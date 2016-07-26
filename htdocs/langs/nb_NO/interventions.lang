@@ -14,10 +14,12 @@ DeleteIntervention=Slett intervensjon
 ValidateIntervention=Valider intervensjon
 ModifyIntervention=Endre intervensjon
 DeleteInterventionLine=Slett intervensjonslinje
+CloneIntervention=Clone intervention
 ConfirmDeleteIntervention=Er du sikker på at du vil slette denne intervensjonen?
 ConfirmValidateIntervention=Er du sikker på at du vil validere denne intervensjonen under navnet <b>%s</b>?
 ConfirmModifyIntervention=Er du sikker på at du vil endre denne intervensjonen?
 ConfirmDeleteInterventionLine=Er du sikker på at du vil slette denne intervensjonslinjen?
+ConfirmCloneIntervention=Are you sure you want to clone this intervention ?
 NameAndSignatureOfInternalContact=Kundebehandlers navn og signatur :
 NameAndSignatureOfExternalContact=Kundes navn og signatur :
 DocumentModelStandard=Standard dokumentet modell for intervensjoner
@@ -37,7 +39,7 @@ InterventionSentByEMail=Intervensjon %s sendt med e-post
 InterventionDeletedInDolibarr=Intervensjon %s ble slettet
 InterventionsArea=Område for intervensjoner
 DraftFichinter=Intervensjonskladder
-LastModifiedInterventions=Latest %s modified interventions
+LastModifiedInterventions=Siste %s endrede intervensjoner
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Ansvarlig for kundeoppfølging
 # Modele numérotation

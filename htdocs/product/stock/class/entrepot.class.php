@@ -108,7 +108,9 @@ class Entrepot extends CommonObject
 	function create($user)
 	{
 		global $conf;
-
+		
+		$this->libelle = trim($this->libelle);
+		
 		// Si libelle non defini, erreur
 		if ($this->libelle == '')
 		{

@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Jūs varat izmantot <b>komatu</b> at
 TagCheckMail=Izsekot pasta atvēršanu
 TagUnsubscribe=Atrakstīšanās saite
 TagSignature=Paraksts sūtītājam
-TagMailtoEmail=Saņēmēja e-pasts
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Paziņojumi

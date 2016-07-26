@@ -258,7 +258,6 @@ if ($action == 'export_csv') {
  */
 
 $title_page = $langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
-
 llxHeader('', $title_page);
 
 // List
@@ -315,6 +314,7 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield
 
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="tabsAction">' . "\n";
+print '<div class="inline-block divButAction"><a class="butAction" href="./listbyaccount.php">' . $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . strtolower($langs->trans("AccountAccounting")) . '</a></div>';
 print '<div class="inline-block divButAction"><input type="submit" name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';

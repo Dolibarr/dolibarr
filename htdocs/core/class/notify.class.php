@@ -69,23 +69,29 @@ class Notify
 		global $langs;
 		$langs->load("mails");
 
-		$listofnotiftodo=$this->getNotificationsArray($action,$socid,$object);
-		$nb=count($listofnotiftodo);
-		if ($nb <= 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
-		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
-		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
-
-		$i=0;
-		foreach ($listofnotiftodo as $key => $val)
-		{
-			if ($i) $texte.=', ';
-			else $texte.=' (';
-			if ($val['isemailvalid']) $texte.=$val['email'];
-			else $texte.=$val['emaildesc'];
-			$i++;
-		}
-		if ($i) $texte.=')';
-
+		$listofnotiftodo=$this->getNotificationsArray($action,$socid,$object,0);
+		
+		$nb=-1;
+		if (is_array($listofnotiftodo)) $nb=count($listofnotiftodo);
+		if ($nb < 0)  $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ErrorFailedToGetListOfNotificationsToSend");
+		if ($nb == 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
+   		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
+   		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
+		
+   		if (is_array($listofnotiftodo))
+   		{
+    		$i=0;
+    		foreach ($listofnotiftodo as $key => $val)
+    		{
+    			if ($i) $texte.=', ';
+    			else $texte.=' (';
+    			if ($val['isemailvalid']) $texte.=$val['email'];
+    			else $texte.=$val['emaildesc'];
+    			$i++;
+    		}
+    		if ($i) $texte.=')';
+   		}
+   		
 		return $texte;
 	}
 
@@ -93,11 +99,12 @@ class Notify
      * Return number of notifications activated for action code (and third party)
      *
      * @param	string	$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-     * @param	int		$socid			Id of third party or 0 for all thirdparties
+     * @param	int		$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
      * @param	Object	$object			Object the notification is about (need it to check threshold value of some notifications)
+     * @param	int		$userid         Id of user or 0 for all users or -1 for no users
      * @return	array|int				<0 if KO, array of notifications to send if OK
      */
-	function getNotificationsArray($notifcode,$socid,$object=null)
+	function getNotificationsArray($notifcode,$socid=0,$object=null,$userid=0)
 	{
 		global $conf, $user;
 
@@ -109,45 +116,94 @@ class Notify
 
         if (! $error)
         {
-	        $sql = "SELECT a.code, c.email, c.rowid";
-	        $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
-	        $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
-	        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-	        $sql.= " ".MAIN_DB_PREFIX."societe as s";
-	        $sql.= " WHERE n.fk_contact = c.rowid";
-	        $sql.= " AND a.rowid = n.fk_action";
-	        $sql.= " AND n.fk_soc = s.rowid";
-	        if ($notifcode)
-	        {
-		        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-		        else $sql.= " AND a.code = '".$notifcode."'";			// New usage
-	        }
-	        $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
-
-			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
-
-	        $resql = $this->db->query($sql);
-	        if ($resql)
-	        {
-	        	$num = $this->db->num_rows($resql);
-	            $i=0;
-	            while ($i < $num)
-	            {
-	        		$obj = $this->db->fetch_object($resql);
-	            	if ($obj)
-	            	{
-	            		$isvalid=isValidEmail($newval2);
-	            		$resarray[] = array('type'=> 'tocontact', 'code'=>trim($obj->code), 'emaildesc'=>'Contact id '.$obj->rowid, 'email'=>trim($obj->email), 'contactid'=>$obj->rowid, 'isemailvalid'=>$isvalid);
-	            	}
-	            	$i++;
-	            }
-			}
-			else
-			{
-				$error++;
-				$this->error=$this->db->lasterror();
-			}
+            if ($socid >= 0)
+            {
+    	        $sql = "SELECT a.code, c.email, c.rowid";
+    	        $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
+                $sql.= " ".MAIN_DB_PREFIX."socpeople as c,";
+    	        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+    	        $sql.= " ".MAIN_DB_PREFIX."societe as s";
+    	        $sql.= " WHERE n.fk_contact = c.rowid";
+    	        $sql.= " AND a.rowid = n.fk_action";
+    	        $sql.= " AND n.fk_soc = s.rowid";
+    	        if ($notifcode)
+    	        {
+    		        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+    		        else $sql.= " AND a.code = '".$notifcode."'";			// New usage
+    	        }
+    	        $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+    	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
+    
+    			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+    
+    	        $resql = $this->db->query($sql);
+    	        if ($resql)
+    	        {
+    	        	$num = $this->db->num_rows($resql);
+    	            $i=0;
+    	            while ($i < $num)
+    	            {
+    	        		$obj = $this->db->fetch_object($resql);
+    	            	if ($obj)
+    	            	{
+    	            	    $newval2=trim($obj->email);
+    	            		$isvalid=isValidEmail($newval2);
+    	            		if (empty($resarray[$newval2])) $resarray[$newval2] = array('type'=> 'tocontact', 'code'=>trim($obj->code), 'emaildesc'=>'Contact id '.$obj->rowid, 'email'=>$newval2, 'contactid'=>$obj->rowid, 'isemailvalid'=>$isvalid);
+    	            	}
+    	            	$i++;
+    	            }
+    			}
+    			else
+    			{
+    				$error++;
+    				$this->error=$this->db->lasterror();
+    			}
+            }
+        }
+        
+        if (! $error)
+        {
+            if ($userid >= 0)
+            {
+    			$sql = "SELECT a.code, c.email, c.rowid";
+    			$sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
+    			$sql.= " ".MAIN_DB_PREFIX."user as c,";
+    			$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a";
+    			$sql.= " WHERE n.fk_user = c.rowid";
+    			$sql.= " AND a.rowid = n.fk_action";
+    			if ($notifcode)
+    			{
+    			    if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+    			    else $sql.= " AND a.code = '".$notifcode."'";			// New usage
+    			}
+    			$sql.= " AND c.entity IN (".getEntity('user', 1).")";
+    			if ($userid > 0) $sql.= " AND c.rowid = ".$userid;
+    			
+    			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
+    			
+    			$resql = $this->db->query($sql);
+    			if ($resql)
+    			{
+    			    $num = $this->db->num_rows($resql);
+    			    $i=0;
+    			    while ($i < $num)
+    			    {
+    			        $obj = $this->db->fetch_object($resql);
+    			        if ($obj)
+    			        {
+    	            	    $newval2=trim($obj->email);
+    			            $isvalid=isValidEmail($newval2);
+    			            if (empty($resarray[$newval2])) $resarray[$newval2] = array('type'=> 'touser', 'code'=>trim($obj->code), 'emaildesc'=>'User id '.$obj->rowid, 'email'=>$newval2, 'userid'=>$obj->rowid, 'isemailvalid'=>$isvalid);
+    			        }
+    			        $i++;
+    			    }
+    			}
+    			else
+    			{
+    			    $error++;
+    			    $this->error=$this->db->lasterror();
+    			}
+            }
         }
 
 		if (! $error)
@@ -177,7 +233,7 @@ class Notify
 		    			{
 							$tmpuser=new User($this->db);
 							$tmpuser->fetch($user->fk_user);
-							if ($tmpuser->email) $newval2=$tmpuser->email;
+							if ($tmpuser->email) $newval2=trim($tmpuser->email);
 							else $newval2='';
 		    			}
 		    			else $newval2='';
@@ -185,7 +241,7 @@ class Notify
 		    		if ($newval2)
 		    		{
 		    			$isvalid=isValidEmail($newval2, 0);
-		    			$resarray[]=array('type'=> 'tofixedemail', 'code'=>trim($key), 'emaildesc'=>trim($val2), 'email'=>trim($newval2), 'isemailvalid'=>$isvalid);
+		    			if (empty($resarray[$newval2])) $resarray[$newval2]=array('type'=> 'tofixedemail', 'code'=>trim($key), 'emaildesc'=>trim($val2), 'email'=>$newval2, 'isemailvalid'=>$isvalid);
 		    		}
 		    	}
 		    }
@@ -254,7 +310,7 @@ class Notify
 		$newref=(empty($object->newref)?$object->ref:$object->newref);
 
 		// Check notification per third party
-		$sql = "SELECT s.nom, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
+		$sql = "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
         $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
@@ -266,6 +322,29 @@ class Notify
         else $sql.= " AND a.code = '".$notifcode."'";	// New usage
         $sql .= " AND s.rowid = ".$object->socid;
 
+		// Check notification per user
+        $sql.= "\nUNION\n";
+        /*
+		$sql.= "SELECT  1 as user, c.email, c.rowid as cid, c.lastname, c.firstname, '$langs->defaultlang' as default_lang,";
+		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
+        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+        $sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
+        $sql.= " ".MAIN_DB_PREFIX."element_contact as ec";
+        $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+        $sql.= " AND n.fk_user = ec.fk_socpeople";
+        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+        else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+        $sql .= " AND ec.element_id = ".$object->id;*/
+        $sql.= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
+        $sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
+        $sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+        $sql.= " ".MAIN_DB_PREFIX."notify_def as n";
+        $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
+        else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+        
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -393,9 +472,17 @@ class Notify
 	                    );
 
 	                    if ($mailfile->sendfile())
-	                    {
-	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, objet_id, email)";
-	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".$object->socid.", ".$obj->cid.", '".$obj->type."', '".$object_type."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+	                    {   
+	                        if ($obj->type_target == 'touserid') {
+     	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
+    	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+                           
+                            }
+                            else {
+    	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
+    	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
+                                
+                            }
 	                        if (! $this->db->query($sql))
 	                        {
 	                            dol_print_error($this->db);
@@ -420,10 +507,11 @@ class Notify
 			}
         }
         else
-       {
+        {
        		$error++;
             $this->errors[]=$this->db->lasterror();
-            return -1;
+            dol_syslog("Failed to get list of notification to send ".$this->db->lasterror(), LOG_ERR);
+       		return -1;
         }
 
         // Check notification using fixed email
@@ -579,8 +667,8 @@ class Notify
 
 		        	if ($mailfile->sendfile())
 		        	{
-		        		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, objet_id, email)";
-		        		$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".$object->socid.", null, 'email', '".$object_type."', ".$object->id.", '".$this->db->escape($conf->global->$param)."')";
+		        		$sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, type_target, objet_type, objet_id, email)";
+		        		$sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", null, 'email', 'tofixedemail', '".$object_type."', ".$object->id.", '".$this->db->escape($conf->global->$param)."')";
 		        		if (! $this->db->query($sql))
 		        		{
 		        			dol_print_error($this->db);

@@ -162,6 +162,41 @@ So if you included it into your module, change your code like this to be compati
 
 
 
+***** ChangeLog for 3.9.3 compared to 3.9.2 *****
+FIX: #4383 $userid not defined
+FIX: #4448 $filebonprev is not used, $this->filename now
+FIX: #4455
+FIX: #4749
+FIX: #4756
+FIX: #4828
+FIX: #4926
+FIX: #4964 buyprice in customer from shipping buyprice wasn't load in expedition::fetch_lines
+FIX: #5004
+FIX: #5068
+FIX: #5170 tva sign with INVOICE_POSITIVE_CREDIT_NOTE option
+FIX: #5338 use of not initialized var $aphour, $apmin, etc
+FIX: #5343
+FIX: #5380
+FIX: #5383 bad object id on don delete
+FIX: #5414
+FIX: #5470 User of expense report in bank transactions page is not correct
+FIX: a case of corrupted ODT by Word that insert <text:s> when it should not.
+FIX: Can't create thirdparty or validate invoice if profid is mandatory and profid does not exists for other countries
+FIX: dasboard wrong for late invoice
+FIX: duplicate jquery.js files
+FIX: extrafield cloned on project clone
+FIX: Failed to open file
+FIX: Filter on opportunity amount and budget
+FIX: form_confirm to delete payment on supplier invoice
+FIX: javascript error with german-switzerland language
+FIX: large expense note
+FIX: Missing original .js file (license violation if sources are not provided)
+FIX: Option strict mode compatibility
+FIX: product stats all bloc module without enbaled test
+FIX: receiving link never works
+FIX: task ODT company object not correctly retrieved
+FIX: Translate group perms as it is done into user perms
+FIX: We must take the last recent defined price when using price level
 
 ***** ChangeLog for 3.9.2 compared to 3.9.1 *****
 FIX: #4813 Won translation for the key OppStatusWON instead OppStatusWIN

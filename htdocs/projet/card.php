@@ -376,14 +376,21 @@ if (empty($reshook))
 		$clone_task_files = GETPOST('clone_task_files') ? 1 : 0;
 	    $clone_notes=GETPOST('clone_notes')?1:0;
 	    $move_date=GETPOST('move_date')?1:0;
-	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes,$move_date);
+	    $clone_thirdparty=GETPOST('socid','int')?GETPOST('socid','int'):0;
+	    
+	    $result=$object->createFromClone($object->id,$clone_contacts,$clone_tasks,$clone_project_files,$clone_task_files,$clone_notes,$move_date,0,$clone_thirdparty);
 	    if ($result <= 0)
 	    {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	    else
 	    {
-	    	$object->fetch($result);	// Load new object
+	        // Load new object
+	    	$newobject=new Project($db);
+	    	$newobject->fetch($result);
+	    	$newobject->fetch_optionals();
+	    	$newobject->fetch_thirdparty();	// Load new object
+	    	$object=$newobject;
 	    	$action='edit';
 	    	$comefromclone=true;
 	    }
@@ -623,6 +630,7 @@ else
     {
         $formquestion=array(
     		'text' => $langs->trans("ConfirmClone"),
+			array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int')>0?GETPOST('socid', 'int'):$object->socid, 'socid', '', "None")),
             array('type' => 'checkbox', 'name' => 'clone_contacts',		'label' => $langs->trans("CloneContacts"), 			'value' => true),
             array('type' => 'checkbox', 'name' => 'clone_tasks',   		'label' => $langs->trans("CloneTasks"), 			'value' => true),
         	array('type' => 'checkbox', 'name' => 'move_date',   		'label' => $langs->trans("CloneMoveDate"), 			'value' => true),
@@ -631,7 +639,7 @@ else
         	array('type' => 'checkbox', 'name' => 'clone_task_files',	'label' => $langs->trans("CloneTaskFiles"),         'value' => false)
         );
 
-        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 240);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("CloneProject"), $langs->trans("ConfirmCloneProject"), "confirm_clone", $formquestion, '', 1, 300);
     }
 
 
@@ -710,7 +718,9 @@ else
 
 		    // Opportunity probability
 		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %';
+            print '<span id="oldopppercent"></span>';
+		    print '</td>';
 		    print '</tr>';
 		    
 		    // Opportunity amount
@@ -837,14 +847,22 @@ else
     print '</form>';
 
     // Change probability from status
-    print '<script type="text/javascript" language="javascript">
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
-                /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                var elemcode = element.attr("elemcode");
+                /* Change percent of default percent of new status is higher */
+                if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
+                {
+                    if (jQuery("#opp_percent").val() != \'\' && ! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->trans("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
+                    jQuery("#opp_percent").val(defaultpercent);
+                    
+                }
         	}
         	/*init_myfunc();*/
         	jQuery("#opp_status").change(function() {
@@ -852,7 +870,7 @@ else
         	});
         });
         </script>';
-    
+    }    
     
     /*
      * Boutons actions

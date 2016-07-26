@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Du kan bruke <b>komma</b> som skille
 TagCheckMail=Spor post åpning
 TagUnsubscribe=Avmeldingslink
 TagSignature=Signatur avsender
-TagMailtoEmail=Mottaker e-post
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=Ingen e-post sendt. Feil på avsender eller mottaker. Verifiser brukerprofil
 # Module Notifications
 Notifications=Varsler

@@ -89,7 +89,8 @@ if ($_POST["action"] == 'add')
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-    $account->account_number  = GETPOST('account_number');
+	$account_number 		 = GETPOST('account_number','alpha');
+	if ($account_number <= 0) { $account->account_number = ''; } else { $account->account_number = $account_number; }
 	$account->accountancy_journal  = trim($_POST["accountancy_journal"]);
 
     $account->solde           = $_POST["solde"];
@@ -171,7 +172,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-    $account->account_number  = GETPOST('account_number');
+	$account_number 		 = GETPOST('account_number', 'int');
+	if ($account_number <= 0) { $account->account_number = ''; } else { $account->account_number = $account_number; }
 	$account->accountancy_journal = trim($_POST["accountancy_journal"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);

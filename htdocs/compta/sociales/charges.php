@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +72,23 @@ if ($action == 'reopen' && $user->rights->tax->charges->creer) {
     }
 }
 
+// payment mode
+if ($action == 'setmode' && $user->rights->tax->charges->creer) {
+    $object->fetch($id);
+    $result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+    if ($result < 0)
+        setEventMessages($object->error, $object->errors, 'errors');
+}
+
+// bank account
+if ($action == 'setbankaccount' && $user->rights->tax->charges->creer) {
+    $object->fetch($id);
+    $result=$object->setBankAccount(GETPOST('fk_account', 'int'));
+    if ($result < 0) {
+        setEventMessages($object->error, $object->errors, 'errors');
+    }
+}
+
 // Delete social contribution
 if ($action == 'confirm_delete' && $confirm == 'yes')
 {
@@ -127,6 +145,8 @@ if ($action == 'add' && $user->rights->tax->charges->creer)
 		$object->date_ech=$dateech;
 		$object->periode=$dateperiod;
 		$object->amount=$amount;
+        $object->mode_reglement_id = GETPOST('mode_reglement_id');
+        $object->fk_account = GETPOST('fk_account', 'int');
 
 		$id=$object->create($user);
 		if ($id <= 0)
@@ -290,6 +310,17 @@ if ($action == 'create')
     print '</td>';
 	print '<td><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
     print '</tr>';
+    // Payment Mode
+    print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
+    $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
+    print '</td></tr>';
+    // Bank Account
+    if (! empty($conf->banque->enabled))
+    {
+        print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+        $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+        print '</td></tr>';
+    }
     // Date due
     print '<tr>';
     print '<td class="fieldrequired">';
@@ -313,7 +344,7 @@ if ($action == 'create')
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Mode fiche                                                                  */
+/* Card Mode                                                                   */
 /*                                                                             */
 /* *************************************************************************** */
 if ($id > 0)
@@ -382,7 +413,8 @@ if ($id > 0)
 		// Type
 		print "<tr><td>".$langs->trans("Type")."</td><td>".$object->type_libelle."</td>";
 
-		$rowspan=5;
+		$rowspan=6;
+        if (! empty($conf->banque->enabled)) $rowspan++;
 		print '<td rowspan="'.$rowspan.'" valign="top">';
 
 		/*
@@ -422,8 +454,8 @@ if ($id > 0)
 				print "<tr ".$bc[$var]."><td>";
 				print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
-			        $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
-                                print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
+                $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
+                print "<td>".$labeltype.' '.$objp->num_paiement."</td>\n";
 				print '<td align="right">'.price($objp->amount)."</td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td>\n";
 				print "</tr>";
 				$totalpaye += $objp->amount;
@@ -432,12 +464,12 @@ if ($id > 0)
 
 			if ($object->paye == 0)
 			{
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AlreadyPaid")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
+				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($object->amount)."</td><td bgcolor=\"#d0d0d0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
 
 				$resteapayer = $object->amount - $totalpaye;
 
-				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
+				print "<tr><td colspan=\"3\" align=\"right\">".$langs->trans("RemainderToPay")." :</td>";
 				print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">&nbsp;".$langs->trans("Currency".$conf->currency)."</td></tr>\n";
 			}
 			print "</table>";
@@ -486,6 +518,42 @@ if ($id > 0)
             print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
         }
 
+        // Mode of payment
+        print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('PaymentMode');
+        print '</td>';
+        if ($action != 'editmode')
+            print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
+        print '</tr></table>';
+        print '</td><td>';
+        if ($action == 'editmode') {
+            $form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
+        } else {
+            $form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none');
+        }
+        print '</td></tr>';
+
+        // Bank Account
+        if (! empty($conf->banque->enabled))
+        {
+            print '<tr><td class="nowrap">';
+            print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+            print $langs->trans('BankAccount');
+            print '<td>';
+            if ($action != 'editbankaccount' && $user->rights->tax->charges->creer)
+                print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+            print '</tr></table>';
+            print '</td><td>';
+            if ($action == 'editbankaccount') {
+                $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+            } else {
+                $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+            }
+            print '</td>';
+            print '</tr>';
+        }
+
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4, $totalpaye).'</td></tr>';
 
@@ -500,7 +568,7 @@ if ($id > 0)
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div';
+			print '</div>';
 		}
 
 		if ($action == 'edit') print "</form>\n";
