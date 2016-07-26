@@ -132,7 +132,7 @@ else
  * Add a gant chart line
  *
  * @param 	string	$tarr					tarr
- * @param	array	$task					Task object
+ * @param	array	$task					Array with properties of one task
  * @param 	Project	$project_dependencies	Project object
  * @param 	int		$level					Level
  * @param 	int		$project_id				Id of project
