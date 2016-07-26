@@ -2104,8 +2104,20 @@ class CommandeFournisseur extends CommonOrder
         $resql = $this->db->query($sql);
         if ($resql)
         {
+            // Trigger names for each status
+            $trigger_name[0] = 'DRAFT';
+            $trigger_name[1] = 'VALIDATED';
+            $trigger_name[2] = 'APPROVED';
+            $trigger_name[3] = 'ONPROCESS';
+            $trigger_name[4] = 'RECEIVED_PARTIALLY';
+            $trigger_name[5] = 'RECEIVED_ALL';
+            $trigger_name[6] = 'CANCELED';
+            $trigger_name[7] = 'CANCELED';
+            $trigger_name[8] = 'BILLED';
+            $trigger_name[9] = 'REFUSED';
+
             // Call trigger
-            $result=$this->call_trigger('ORDER_SUPPLIER_SET_STATUS',$user);
+            $result=$this->call_trigger("ORDER_SUPPLIER_STATUS_".$trigger_name[$status],$user);
             if ($result < 0) { $error++; }
             // End call triggers
         }
