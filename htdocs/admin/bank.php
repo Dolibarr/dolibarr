@@ -3,6 +3,7 @@
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2013-2014  Philippe Grand             <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
+ * Copyright (C) 2016       Neil Orley			<neil.orley@oeris.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,31 @@ if (!$user->admin)
 
 $action = GETPOST('action','alpha');
 
+// Other parameters BANK_*
+$list = array (
+		'BANK_EXPORT_SEPARATOR'
+);
+
+/*
+ * Actions
+ */
+if ($action == 'update') {
+	$error = 0;
+
+	foreach ($list as $constname) {
+		$constvalue = GETPOST($constname, 'alpha');
+
+		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+			$error ++;
+		}
+	}
+
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 /*
  * Actions
@@ -138,6 +164,50 @@ while ($i < $nbofbank)
 print '</table>'."\n";
 
 dol_fiche_end();
+
+
+
+//Show Export separator
+print load_fiche_titre($langs->trans("ExportOptions"));
+
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="update">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans('Name') . '</td>';
+print '<td >' . $langs->trans('Value') . '</td>';
+print "</tr>\n";
+
+foreach ( $list as $key ) {
+	$var = ! $var;
+
+	print '<tr ' . $bc[$var] . ' class="value">';
+
+	// Key
+	print '<td width="50%"><label for="' . $key . '">' . $langs->trans('ExtrafieldSeparator') . ' ('.$key.')</label></td>';
+	// Value
+	print '<td><input type="text" size="20" id="' . $key . '" name="' . $key . '" value="' . ( empty($conf->global->$key) ? ';' : $conf->global->$key ) . '"></td>';
+
+	print '</tr>';
+}
+
+//Save
+print '<tr>';
+print '<td colspan="2">';
+print '<div class="right"><input type="submit" class="button" value="' . $langs->trans('Save') . '" name="button"></div>';
+print '</td>';
+print '</tr>';
+
+print "</table>\n";
+
+
+dol_fiche_end();
+
+print "</form>";
+
+
+
 
 llxFooter();
 
