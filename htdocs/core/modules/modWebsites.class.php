@@ -99,7 +99,7 @@ class modWebsites extends DolibarrModules
 		$this->rights[$r][0] = 10002;
 		$this->rights[$r][1] = 'Create/modify website content';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'create';
+		$this->rights[$r][4] = 'write';
 		$r++;
 
 		$this->rights[$r][0] = 10003;

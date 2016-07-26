@@ -4,7 +4,6 @@ CommRequest=Generelle Preisanfrage
 CommRequests=Generelle Preisanfragen
 SearchRequest=Anfragen finden
 DraftRequests=Entwürfe Preisanfragen
-LastModifiedRequests=Die letzten %s geänderten Preisanfragen
 RequestsOpened=Offene Preisanfragen
 NewAskPrice=Neue Preisanfrage
 ConfirmValidateAsk=Sind Sie sicher, dass Sie diese Preisanfrage unter dem Namen <b>%s</b> bestätigen wollen?

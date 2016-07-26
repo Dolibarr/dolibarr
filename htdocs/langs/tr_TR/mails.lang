@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Birçok alıcı belirtmek için <b>v
 TagCheckMail=Eposta açılışlarını izle
 TagUnsubscribe=Aboneliğini kaldır bağlantısı
 TagSignature=Gönderen kullanıcı imzası
-TagMailtoEmail=Alıcı epostası
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=Gönderilen eposta yok. Hatalı gönderici ya da alıcı epostası. Kullanıcı profilini doğrula.
 # Module Notifications
 Notifications=Bildirimler

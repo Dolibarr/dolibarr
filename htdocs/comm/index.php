@@ -197,7 +197,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoProposal").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -277,7 +277,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         else
         {
             $var=!$var;
-            print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoProposal").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table><br>";
 
@@ -357,7 +357,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -438,7 +438,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         else
         {
 			$var=!$var;
-            print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoSupplierOrder").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";
 

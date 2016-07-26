@@ -57,98 +57,100 @@ class Commande extends CommonOrder
 	 * Client ID
 	 * @var int
 	 */
-    var $socid;
+    public $socid;
 
-    var $ref_client;
-    var $ref_int;
-    var $contactid;
+    public $ref_client;
+    public $ref_int;
+    public $contactid;
 
 	/**
 	 * Status of the order. Check the following constants:
 	 * @var int
 	 * @see Commande::STATUS_CANCELED, Commande::STATUS_DRAFT, Commande::STATUS_ACCEPTED, Commande::STATUS_CLOSED
 	 */
-    var $statut;
+    public $statut;
 	/**
 	 * @deprecated
 	 * @see billed
 	 */
-    var $facturee;
-    var $billed;		// billed or not
+    public $facturee;
+    public $billed;		// billed or not
 
-    var $brouillon;
-    var $cond_reglement_code;
+    public $brouillon;
+    public $cond_reglement_code;
 
-    var $fk_account;
+    public $fk_account;
 
     /**
      * It holds the label of the payment mode. Use it in case translation cannot be found.
      * @var string
      */
-    var $mode_reglement;
+    public $mode_reglement;
 
     /**
      * Payment mode id
      * @var int
      */
-    var $mode_reglement_id;
+    public $mode_reglement_id;
     /**
      * Payment mode code
      * @var string
      */
-    var $mode_reglement_code;
+    public $mode_reglement_code;
     /**
      * Availability delivery time id
      * @var int
      */
-    var $availability_id;
+    public $availability_id;
     /**
      * Availability delivery time code
      * @var string
      */
-    var $availability_code;
+    public $availability_code;
     /**
      * Label of availability delivery time. Use it in case translation cannot be found.
      * @var string
      */
-    var $availability;
+    public $availability;
 
-    var $demand_reason_id;
-    var $demand_reason_code;
-    var $address;
-    var $date;				// Date commande
+    public $demand_reason_id;
+    public $demand_reason_code;
+    public $address;
+    public $date;				// Date commande
 	/**
 	 * @deprecated
 	 * @see date
 	 */
-    var $date_commande;
-    var $date_livraison;	// Date livraison souhaitee
-    var $fk_remise_except;
-    var $remise_percent;
-    var $remise_absolue;
-    var $info_bits;
-    var $rang;
-    var $special_code;
-    var $source;			// Origin of order
-    var $extraparams=array();
+    public $date_commande;
+    public $date_livraison;	// Date livraison souhaitee
+    public $fk_remise_except;
+    public $remise_percent;
+    public $remise_absolue;
+    public $info_bits;
+    public $rang;
+    public $special_code;
+    public $source;			// Origin of order
+    public $extraparams=array();
 
-    var $linked_objects=array();
+    public $linked_objects=array();
 
-    var $user_author_id;
+    public $user_author_id;
 
 	/**
 	 * @var OrderLine[]
 	 */
-	var $lines = array();
+	public $lines = array();
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
-	var $multicurrency_tx;
-	var $multicurrency_total_ht;
-	var $multicurrency_total_tva;
-	var $multicurrency_total_ttc;
-	
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_tx;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
+	public $oldcopy;
+
     /**
      * ERR Not enough stock
      */
@@ -450,7 +452,7 @@ class Commande extends CommonOrder
             if (! empty($conf->stock->enabled) && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
             {
                 $result = 0;
-                
+
                 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
                 $langs->load("agenda");
 
@@ -469,10 +471,10 @@ class Commande extends CommonOrder
 
             if (!$error) {
             	// Call trigger
-            	$result=$this->call_trigger('ORDER_SETDRAFT',$user);
+            	$result=$this->call_trigger('ORDER_UNVALIDATE',$user);
             	if ($result < 0) $error++;
             }
-            
+
             if (!$error) {
            		$this->statut=self::STATUS_DRAFT;
             	$this->db->commit();
@@ -701,7 +703,7 @@ class Commande extends CommonOrder
 
         // Clean parameters
         $this->brouillon = 1;		// set command as draft
-		
+
 		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -711,7 +713,7 @@ class Commande extends CommonOrder
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
-		
+
         dol_syslog(get_class($this)."::create user=".$user->id);
 
         // Check parameters
@@ -1231,7 +1233,7 @@ class Commande extends CommonOrder
         if (empty($txlocaltax2)) $txlocaltax2=0;
         if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
         if (empty($this->fk_multicurrency)) $this->fk_multicurrency=0;
-        
+
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
@@ -1281,7 +1283,7 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
 
             $total_ht  = $tabprice[0];
@@ -1294,7 +1296,7 @@ class Commande extends CommonOrder
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
-			
+
             // Rang to use
             $rangtouse = $rang;
             if ($rangtouse == -1)
@@ -1596,7 +1598,7 @@ class Commande extends CommonOrder
 				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-				
+
                 $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
                 $this->lines				= array();
@@ -1787,7 +1789,7 @@ class Commande extends CommonOrder
                 $line->product_desc     = $objp->product_desc;
                 $line->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 	            $line->fk_unit          = $objp->fk_unit;
-	            
+
 	            $line->weight           = $objp->weight;
 	            $line->weight_units     = $objp->weight_units;
 	            $line->volume           = $objp->volume;
@@ -1803,7 +1805,7 @@ class Commande extends CommonOrder
 				$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
-			
+
                 $this->lines[$i] = $line;
 
                 $i++;
@@ -1854,7 +1856,7 @@ class Commande extends CommonOrder
     /**
      *	Load array this->expeditions of lines of shipments with nb of products sent for each order line
      *  Note: For a dedicated shipment, the fetch_lines can be used to load the qty_asked and qty_shipped. This function is use to return qty_shipped cumulated for the order
-     *   
+     *
      *	@param      int		$filtre_statut      Filter on shipment status
      * 	@return     int                			<0 if KO, Nb of lines found if OK
      */
@@ -2044,30 +2046,62 @@ class Commande extends CommonOrder
      *
      * 	@param     	User		$user		User qui positionne la remise
      * 	@param     	float		$remise		Discount (percent)
+     * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execuete triggers
      *	@return		int 					<0 if KO, >0 if OK
      */
-    function set_remise($user, $remise)
+    function set_remise($user, $remise, $notrigger=0)
     {
         $remise=trim($remise)?trim($remise):0;
 
         if ($user->rights->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $remise=price2num($remise);
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql.= ' SET remise_percent = '.$remise;
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
 
-            if ($this->db->query($sql))
+            dol_syslog(__METHOD__, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if (!$resql)
             {
-                $this->remise_percent = $remise;
-                $this->update_price(1);
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->remise_percent = $remise;
+            	$this->update_price(1);
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                $this->error=$this->db->error();
-                return -1;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
     }
@@ -2078,32 +2112,62 @@ class Commande extends CommonOrder
      *
      * 		@param     	User		$user 		User qui positionne la remise
      * 		@param     	float		$remise		Discount
+     * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execuete triggers
      *		@return		int 					<0 if KO, >0 if OK
      */
-    function set_remise_absolue($user, $remise)
+    function set_remise_absolue($user, $remise, $notrigger=0)
     {
         $remise=trim($remise)?trim($remise):0;
 
         if ($user->rights->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $remise=price2num($remise);
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql.= ' SET remise_absolue = '.$remise;
             $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut = '.self::STATUS_DRAFT.' ;';
 
-            dol_syslog(get_class($this)."::set_remise_absolue", LOG_DEBUG);
-
-            if ($this->db->query($sql))
+            dol_syslog(__METHOD__, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if (!$resql)
             {
-                $this->remise_absolue = $remise;
-                $this->update_price(1);
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->remise_absolue = $remise;
+            	$this->update_price(1);
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                $this->error=$this->db->error();
-                return -1;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
     }
@@ -2112,29 +2176,59 @@ class Commande extends CommonOrder
     /**
      *	Set the order date
      *
-     *	@param      User		$user       Object user making change
-     *	@param      int	$date		Date
-     *	@return     int         			<0 if KO, >0 if OK
+     *	@param      User	$user       Object user making change
+     *	@param      int		$date		Date
+     * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *	@return     int         		<0 if KO, >0 if OK
      */
-    function set_date($user, $date)
+    function set_date($user, $date, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
             $sql.= " SET date_commande = ".($date ? $this->db->idate($date) : 'null');
             $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
-            dol_syslog(get_class($this)."::set_date",LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
-            if ($resql)
+            if (!$resql)
             {
-                $this->date = $date;
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->date = $date;
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                $this->error=$this->db->error();
-                return -1;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
         else
@@ -2146,92 +2240,64 @@ class Commande extends CommonOrder
     /**
      *	Set the planned delivery date
      *
-     *	@param      User			$user        		Objet utilisateur qui modifie
+     *	@param      User	$user        		Objet utilisateur qui modifie
      *	@param      int		$date_livraison     Date de livraison
-     *	@return     int         						<0 si ko, >0 si ok
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *	@return     int         				<0 si ko, >0 si ok
      */
-    function set_date_livraison($user, $date_livraison)
+    function set_date_livraison($user, $date_livraison, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
             $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
-            if ($resql)
+            if (!$resql)
             {
-                $this->date_livraison = $date_livraison;
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->date_livraison = $date_livraison;
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                $this->error=$this->db->error();
-                return -1;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
         else
         {
             return -2;
-        }
-    }
-
-    /**
-     *	Set availability
-     *
-     *	@param      User	$user		Object user making change
-     *	@param      int		$id			If of availability delay
-     *	@return     int           		<0 if KO, >0 if OK
-     */
-    function set_availability($user, $id)
-    {
-        if ($user->rights->commande->creer)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande ";
-            $sql.= " SET fk_availability = '".$id."'";
-            $sql.= " WHERE rowid = ".$this->id;
-
-            if ($this->db->query($sql))
-            {
-                $this->fk_availability = $id;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_availability Erreur SQL");
-                return -1;
-            }
-        }
-    }
-
-    /**
-     *	Set source of demand
-     *
-     *	@param      User	$user		  	Object user making change
-     *	@param      int		$id				Id of source
-     *	@return     int           			<0 if KO, >0 if OK
-     */
-    function set_demand_reason($user, $id)
-    {
-        if ($user->rights->commande->creer)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande ";
-            $sql.= " SET fk_input_reason = '".$id."'";
-            $sql.= " WHERE rowid = ".$this->id;
-
-            if ($this->db->query($sql))
-            {
-                $this->fk_input_reason = $id;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                dol_syslog(get_class($this)."::set_demand_reason Erreur SQL");
-                return -1;
-            }
         }
     }
 
@@ -2309,69 +2375,141 @@ class Commande extends CommonOrder
     }
 
     /**
-     *	Change le delai de livraison
+     *	Update delivery delay
      *
      *	@param      int		$availability_id	Id du nouveau mode
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
      *	@return     int         				>0 if OK, <0 if KO
      */
-    function availability($availability_id)
+    function availability($availability_id, $notrigger=0)
     {
+        global $user;
+        
         dol_syslog('Commande::availability('.$availability_id.')');
         if ($this->statut >= self::STATUS_DRAFT)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql .= ' SET fk_availability = '.$availability_id;
             $sql .= ' WHERE rowid='.$this->id;
-            if ( $this->db->query($sql) )
+
+            dol_syslog(__METHOD__, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if (!$resql)
             {
-                $this->availability_id = $availability_id;
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->availability_id = $availability_id;
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                dol_syslog('Commande::availability Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
-                $this->error=$this->db->lasterror();
-                return -1;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
         else
         {
-            dol_syslog('Commande::availability, etat facture incompatible', LOG_ERR);
-            $this->error='Etat commande incompatible '.$this->statut;
+        	$error_str='Command status do not meet requirement '.$this->statut;
+            dol_syslog(__METHOD__.$error_str, LOG_ERR);
+            $this->error=$error_str;
+            $this->errors[]= $this->error;
             return -2;
         }
     }
 
     /**
-     *	Change la source de la demande
+     *	Update order demand_reason
      *
      *  @param      int		$demand_reason_id	Id of new demand
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
      *  @return     int        			 		>0 if ok, <0 if ko
      */
-    function demand_reason($demand_reason_id)
+    function demand_reason($demand_reason_id, $notrigger=0)
     {
+        global $user;
+        
         dol_syslog('Commande::demand_reason('.$demand_reason_id.')');
         if ($this->statut >= self::STATUS_DRAFT)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
             $sql .= ' SET fk_input_reason = '.$demand_reason_id;
             $sql .= ' WHERE rowid='.$this->id;
-            if ( $this->db->query($sql) )
+
+            dol_syslog(__METHOD__, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if (!$resql)
             {
-                $this->demand_reason_id = $demand_reason_id;
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->demand_reason_id = $demand_reason_id;
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                dol_syslog('Commande::demand_reason Erreur '.$sql.' - '.$this->db->error(), LOG_ERR);
-                $this->error=$this->db->lasterror();
-                return -1;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
         else
         {
-            dol_syslog('Commande::demand_reason, etat facture incompatible', LOG_ERR);
-            $this->error='Etat commande incompatible '.$this->statut;
+        	$error_str='order status do not meet requirement '.$this->statut;
+        	dol_syslog(__METHOD__.$error_str, LOG_ERR);
+        	$this->error=$error_str;
+        	$this->errors[]= $this->error;
             return -2;
         }
     }
@@ -2381,27 +2519,57 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user           User that make change
      *	@param      string	$ref_client     Customer ref
+     *  @param     	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
      *	@return     int             		<0 if KO, >0 if OK
      */
-    function set_ref_client($user, $ref_client)
+    function set_ref_client($user, $ref_client, $notrigger=0)
     {
         if ($user->rights->commande->creer)
         {
-            dol_syslog(get_class($this).'::set_ref_client this->id='.$this->id.', ref_client='.$ref_client);
+        	$error=0;
+
+        	$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET';
             $sql.= ' ref_client = '.(empty($ref_client) ? 'NULL' : '\''.$this->db->escape($ref_client).'\'');
             $sql.= ' WHERE rowid = '.$this->id;
 
-            if ($this->db->query($sql) )
+            dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
+            $resql=$this->db->query($sql);
+            if (!$resql)
             {
-                $this->ref_client = $ref_client;
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->ref_client = $ref_client;
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                $this->error=$this->db->lasterror();
-                return -2;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
         else
@@ -2413,12 +2581,12 @@ class Commande extends CommonOrder
 	/**
 	 * Classify the order as invoiced
 	 *
-	 * @param      User    $user       Object user making the change
-	 * @return     int                 <0 if KO, >0 if OK
+	 * @param	User    $user       Object user making the change
+	 * @param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 * @return	int                 <0 if KO, >0 if OK
 	 */
-	function classifyBilled(User $user)
+	function classifyBilled(User $user, $notrigger=0)
 	{
-		global $user;
         $error = 0;
 
 		$this->db->begin();
@@ -2429,16 +2597,24 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-            // Call trigger
-            $result=$this->call_trigger('ORDER_CLASSIFY_BILLED',$user);
-            if ($result < 0) $error++;
-            // End call triggers
 
 			if (! $error)
 			{
+				$this->oldcopy= clone $this;
 				$this->facturee=1; // deprecated
 				$this->billed=1;
+			}
 
+			if (! $notrigger && empty($error))
+			{
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_CLASSIFY_BILLED',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+			}
+
+			if (! $error)
+			{
 				$this->db->commit();
 				return 1;
 			}
@@ -2485,25 +2661,32 @@ class Commande extends CommonOrder
 	{
 	    global $conf, $user, $langs;
 	    $error = 0;
-	
+
 	    $this->db->begin();
-	
+
 	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 0';
 	    $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
-	
+
 	    dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
 	    if ($this->db->query($sql))
 	    {
+	    	if (! $error)
+	    	{
+	    		$this->oldcopy= clone $this;
+	    		$this->facturee=1; // deprecated
+	    		$this->billed=1;
+	    	}
+
 	        // Call trigger
 	        $result=$this->call_trigger('ORDER_CLASSIFY_UNBILLED',$user);
 	        if ($result < 0) $error++;
 	        // End call triggers
-	
+
 	        if (! $error)
 	        {
 	            $this->facturee=0; // deprecated
 	            $this->billed=0;
-	
+
 	            $this->db->commit();
 	            return 1;
 	        }
@@ -2525,8 +2708,8 @@ class Commande extends CommonOrder
 	        return -1;
 	    }
 	}
-	
-	
+
+
     /**
      *  Update a line in database
      *
@@ -2589,7 +2772,7 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx);
 
             $total_ht  = $tabprice[0];
@@ -2602,14 +2785,14 @@ class Commande extends CommonOrder
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
-			
+
             // Anciens indicateurs: $price, $subprice, $remise (a ne plus utiliser)
             $price = $pu;
-			if ($price_base_type == 'TTC') 
+			if ($price_base_type == 'TTC')
 			{
 				$subprice = $tabprice[5];
-			} 
-			else 
+			}
+			else
 			{
 				$subprice = $pu;
 			}
@@ -2691,7 +2874,7 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
-			
+
             // TODO deprecated
             $this->line->price=$price;
             $this->line->remise=$remise;
@@ -3310,7 +3493,7 @@ class Commande extends CommonOrder
             	$prodid = mt_rand(1, $num_prods);
             	$line->fk_product=$prodids[$prodid];
             }
-            
+
             $this->lines[$xnbp]=$line;
 
             $this->total_ht       += $line->total_ht;
@@ -3442,7 +3625,7 @@ class Commande extends CommonOrder
 
         return max($this->date_commande, $this->date_livraison) < ($now - $conf->commande->client->warning_delay);
     }
-    
+
     /**
      * Show the customer delayed info
      *
@@ -3451,11 +3634,11 @@ class Commande extends CommonOrder
     public function showDelay()
     {
         global $conf, $langs;
-    
+
         if (empty($this->date_livraison)) $text=$langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
         else $text=$text=$langs->trans("DeliveryDate").' '.dol_print_date($this->date_livraison, 'day');
         $text.=' '.($conf->commande->client->warning_delay>0?'+':'-').' '.round(abs($conf->commande->client->warning_delay)/3600/24,1).' '.$langs->trans("days").' < '.$langs->trans("Today");
-            
+
         return $text;
     }
 }
@@ -3884,13 +4067,13 @@ class OrderLine extends CommonOrderLine
 		$sql.= " , fk_parent_line=".(! empty($this->fk_parent_line)?$this->fk_parent_line:"null");
 		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
 		$sql.= " , fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		
+
 		// Multicurrency
 		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
         $sql.= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
         $sql.= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
         $sql.= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
-		
+
 		$sql.= " WHERE rowid = ".$this->rowid;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);

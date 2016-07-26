@@ -12,6 +12,7 @@ RequestsOpened=offene Preisanfragen
 SupplierProposalArea=Bereich Lieferantenangebote
 SupplierProposalShort=Lieferanten Angebot
 SupplierProposals=Lieferanten Angebote
+SupplierProposalsShort=Supplier proposals
 NewAskPrice=neue Preisanfrage
 ShowSupplierProposal=Presianfrage anzeigen
 AddSupplierProposal=Preisanfrage erstellen

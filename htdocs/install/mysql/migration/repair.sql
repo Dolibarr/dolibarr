@@ -202,6 +202,8 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 
 UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
 
+UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 
 -- Requests to clean old tables or external modules tables
 
@@ -263,7 +265,7 @@ delete from llx_menu where menu_handler = 'smartphone';
 
 -- Detect bad consistency between duraction_effective of a task and sum of time of tasks
 -- select pt.rowid, pt.duration_effective, SUM(ptt.task_duration) as y from llx_projet_task as pt, llx_projet_task_time as ptt where ptt.fk_task = pt.rowid group by pt.rowid, pt.duration_effective having pt.duration_effective <> y;
-update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid)
+update llx_projet_task as pt set pt.duration_effective = (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid) where pt.duration_effective <> (select SUM(ptt.task_duration) as y from llx_projet_task_time as ptt where ptt.fk_task = pt.rowid);
  
 
 -- Remove duplicate of shipment mode (keep the one with tracking defined)

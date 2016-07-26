@@ -85,7 +85,8 @@ WithNoSlashAtTheEnd=Without the slash "/" at the end
 DirectoryRecommendation=It is recommanded to use a directory outside of your directory of your web pages.
 LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
-AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back, if you want to create another one. 
+AdminLoginAlreadyExists=Dolibarr administrator account '<b>%s</b>' already exists. Go back, if you want to create another one.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Warning, for security reasons, once the install or upgrade is complete, to avoid using install tools again, you should add a file called <b>install.lock</b> into Dolibarr document directory, in order to avoid malicious use of it.
 FunctionNotAvailableInThisPHP=Not available on this PHP
 ChoosedMigrateScript=Choose migration script
@@ -132,6 +133,10 @@ ActivateModule=Activate module %s
 ShowEditTechnicalParameters=Click here to show/edit advanced parameters (expert mode)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Your database version is %s. It has a critical bug making data loss if you make structure change on your database, like it is required by the migration process. For his reason, migration will not be allowed until you upgrade your database to a higher fixed version (list of known bugged version: %s) 
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade

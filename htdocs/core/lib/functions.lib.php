@@ -619,54 +619,52 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
-	if (! empty($level))
+	// Test log level
+	$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
+	if (!in_array($level, $logLevels, true))
 	{
-		// Test log level
-		$logLevels = array(	LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
-		if (!in_array($level, $logLevels))
-		{
-			throw new Exception('Incorrect log level');
-		}
-		if ($level > $conf->global->SYSLOG_LEVEL) return;
-
-		// If adding log inside HTML page is required
-		if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
-		{
-			$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
-		}
-
-		//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
-		// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
-		if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
-		{
-			print "\n\n<!-- Log start\n";
-			print $message."\n";
-			print "Log end -->\n";
-		}
-
-		$data = array(
-			'message' => $message,
-			'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
-			'level' => $level,
-			'user' => ((is_object($user) && $user->id) ? $user->login : false),
-			'ip' => false
-		);
-
-		if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
-		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-		else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
-		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
-		else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
-		// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
-		else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
-		// Loop on each log handler and send output
-		foreach ($conf->loghandlers as $loghandlerinstance)
-		{
-			if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) continue;
-			$loghandlerinstance->export($data,$suffixinfilename);
-		}
-		unset($data);
+		throw new Exception('Incorrect log level');
 	}
+	if ($level > $conf->global->SYSLOG_LEVEL) return;
+
+	// If adding log inside HTML page is required
+	if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
+	{
+		$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
+	}
+
+	//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
+	// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
+	if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
+	{
+		print "\n\n<!-- Log start\n";
+		print $message."\n";
+		print "Log end -->\n";
+	}
+
+	$data = array(
+		'message' => $message,
+		'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
+		'level' => $level,
+		'user' => ((is_object($user) && $user->id) ? $user->login : false),
+		'ip' => false
+	);
+
+	if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+	// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
+	else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
+	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
+	else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
+	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
+	else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
+	// Loop on each log handler and send output
+	foreach ($conf->loghandlers as $loghandlerinstance)
+	{
+		if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) continue;
+		$loghandlerinstance->export($data,$suffixinfilename);
+	}
+	unset($data);
+	
 
 	if (! empty($ident))
 	{
@@ -1129,6 +1127,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if ($formatwithoutreduce != $format) { $format = $formatwithoutreduce; $reduceformat=1; }  // so format 'dayreduceformat' is processed like day
     
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
+	// TODO Add format daysmallyear and dayhoursmallyear 
 	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
 	else if ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
 	else if ($format == 'hourduration')	$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
@@ -4267,7 +4266,7 @@ function picto_required()
  *	Clean a string from all HTML tags and entities
  *
  *	@param	string	$StringHtml			String to clean
- *	@param	integer	$removelinefeed		Replace also all lines feeds by a space, otherwise only last one are removed
+ *	@param	integer	$removelinefeed		1=Replace also all lines feeds by a space, 0=Only last one are removed
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *	@return string	    				String cleaned
  *
@@ -5257,7 +5256,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 						{
 							$substitutionarray=array();
-							complete_substitutions_array($substitutionarray,$langs,$object);
+							complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 							$label=make_substitutions($reg[1], $substitutionarray);
 						}
 						else $label=$langs->trans($values[2]);
@@ -5277,7 +5276,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 					{
 						$substitutionarray=array();
-						complete_substitutions_array($substitutionarray,$langs,$object);
+						complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 						$label=make_substitutions($reg[1], $substitutionarray);
 					}
 					else $label=$langs->trans($values[2]);

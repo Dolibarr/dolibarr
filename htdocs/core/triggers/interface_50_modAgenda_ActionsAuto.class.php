@@ -43,13 +43,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 * Function called when a Dolibarrr business event is done.
 	 * All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers or htdocs/module/code/triggers (and declared)
 	 *
-	 * Following properties must be filled:
+	 * Following properties may be set before calling trigger. The may be completed by this trigger to be used for writing the event into database:
 	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
 	 *      $object->actionmsg (note, long text)
 	 *      $object->actionmsg2 (label, short text)
 	 *      $object->sendtoid (id of contact)
 	 *      $object->socid
-	 *      Optionnal:
+	 *      $object->fk_project
 	 *      $object->fk_element
 	 *      $object->elementtype
 	 *
@@ -779,6 +779,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->code        = 'AC_'.$action;
 		$actioncomm->label       = $object->actionmsg2;
 		$actioncomm->note        = $object->actionmsg;          // TODO Replace with $actioncomm->email_msgid ? $object->email_content : $object->actionmsg
+		$actioncomm->fk_project  = isset($object->fk_project)?$object->fk_project:0;
 		$actioncomm->datep       = $now;
 		$actioncomm->datef       = $now;
 		$actioncomm->durationp   = 0;
@@ -790,7 +791,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->contactid   = $contactforaction->id;
 		$actioncomm->authorid    = $user->id;   // User saving action
 		$actioncomm->userownerid = $user->id;	// Owner of action
-        // Fields when action is en email (coentent should be into note)
+        // Fields when action is en email (content should be added into note)
 		$actioncomm->email_msgid = $object->email_msgid;
 		$actioncomm->email_from  = $object->email_from;
 		$actioncomm->email_sender= $object->email_sender;

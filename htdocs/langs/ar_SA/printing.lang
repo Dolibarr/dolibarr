@@ -51,3 +51,5 @@ IPP_Supported=نوع من وسائل الإعلام
 DirectPrintingJobsDesc=هذا عمل القوائم صفحة الطباعة تم العثور عليها ل الطابعات المتوفرة.
 GoogleAuthNotConfigured=الإعداد جوجل أوث لم تفعل. تمكين وحدة أوث ووضع جوجل ID / السرية.
 GoogleAuthConfigured=أوراق جوجل أوث وجدت في الإعداد وحدة أوث.
+PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cloud Print.
+PrintTestDescprintgcp=List of Printers for Google Cloud Print.

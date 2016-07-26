@@ -27,7 +27,7 @@ ErrorSQLCreateCP=Ein SQL Fehler trat auf bei der Erstellung von:
 ErrorIDFicheCP=Fehler aufgetreten: der Urlaubsantrag existiert nicht.
 ReturnCP=Zurück zur vorherigen Seite
 ErrorUserViewCP=Sie sind nicht berechtigt diesen Urlaubs-Antrag zu lesen.
-InfosWorkflowCP=Informations-Workflow
+InfosWorkflowCP=Workflow-Informationen
 RequestByCP=Beantragt von
 TitreRequestCP=Urlaubsantrag
 NbUseDaysCP=Anzahl von konsumierten Tagen des Urlaubs
@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=%s zuletzt bearbeitete Urlaubsanträge
 HolidaysMonthlyUpdate=Monatliches Update
 ManualUpdate=Manuelles Update
 HolidaysCancelation=Urlaubsantrag stornieren
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
 LastUpdateCP=Letzte automatische Aktualisierung der Urlaubstage

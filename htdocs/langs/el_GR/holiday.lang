@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Latest %s modified leave requests
 HolidaysMonthlyUpdate=Μηνιαία ενημέρωση
 ManualUpdate=Χειροκίνητη ενημέρωση
 HolidaysCancelation=Αφήστε το αίτημα ακύρωσης
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

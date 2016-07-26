@@ -3,7 +3,6 @@ ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas para el archivo de exportac
 ACCOUNTING_EXPORT_DATE=Formato de fecha para el archivo de exportación
 ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportación con cuenta global
-ACCOUNTING_EXPORT_AMOUNT=Exportar la cantidad
 AccountAccountingSuggest=Sugerencia de cuenta contable
 Ventilation=Desglose
 CustomersVentilation=Desglose de clientes
@@ -61,4 +60,3 @@ ErrorAccountancyCodeIsAlreadyUse=Error, no es posible eliminar ésta cuenta cont
 MvtNotCorrectlyBalanced=Movimiento balanceado incorrectamente. Crédito = %s. Débito = %s
 FicheVentilation=Ficha de desglose
 GeneralLedgerIsWritten=Las operaciones son escritas en el libro mayor
-Modelcsv_CEGID=Exportar a CEGID Expert

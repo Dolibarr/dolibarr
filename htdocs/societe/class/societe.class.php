@@ -310,7 +310,15 @@ class Societe extends CommonObject
      * @var int
      */
     var $commercial_id;
+    /**
+     * Id of parent thirdparty (if one)
+     * @var int
+     */
     var $parent;
+    /**
+     * Default language code of thirdparty (en_US, ...)
+     * @var string
+     */
     var $default_lang;
 
     var $ref;
@@ -1025,7 +1033,7 @@ class Societe extends CommonObject
         $sql .= ', s.fk_forme_juridique as forme_juridique_code';
         $sql .= ', s.webservices_url, s.webservices_key';
         $sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
-        $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.tva_assuj';
+        $sql .= ', s.fk_departement, s.fk_pays as country_id, s.fk_stcomm, s.remise_client, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
         $sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo';
         $sql .= ', s.fk_shipping_method';
         $sql .= ', s.outstanding_limit, s.import_key, s.canvas, s.fk_incoterms, s.location_incoterms';
@@ -1157,7 +1165,8 @@ class Societe extends CommonObject
                 $this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
                 $this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
                 $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
-
+				$this->fk_account			= $obj->fk_account;
+				
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
 
@@ -1810,7 +1819,7 @@ class Societe extends CommonObject
      */
     function getNomUrl($withpicto=0, $option='', $maxlen=0, $notooltip=0)
     {
-        global $conf,$langs;
+        global $conf,$langs, $hookmanager;
 
         $name=$this->name?$this->name:$this->nom;
 
@@ -1898,17 +1907,29 @@ class Societe extends CommonObject
 
         // Add type of canvas
         $link.=(!empty($this->canvas)?'&canvas='.$this->canvas:'').'"';
+        $linkclose='';
         if (empty($notooltip))
         {
             if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
             {
                 $label=$langs->trans("ShowCompany");
-                $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
             }
-            $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
-            $link.=' class="classfortooltip"';
+            $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose.=' class="classfortooltip"';
+        
+         	if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('societedao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
         }
-        $link.='>';
+        $link.=$linkclose.'>';
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object(($notooltip?'':$label), 'company', ($notooltip?'':'class="classfortooltip"')).$linkend);

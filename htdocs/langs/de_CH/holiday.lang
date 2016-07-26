@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - holiday
 CancelCP=widerrufen
 ErrorSQLCreateCP=Ein SQL Fehler trat auf bei der Eerstellung von:
+InfosWorkflowCP=Informations-Workflow
 DeleteCP=Löschen
 ActionCancelCP=Abbrechen
 DateCancelCP=Datum der Absage

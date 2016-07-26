@@ -14,10 +14,12 @@ DeleteIntervention=Obriši intervenciju
 ValidateIntervention=Odbri intervenciju
 ModifyIntervention=Izmeni intervenciju
 DeleteInterventionLine=Obriši liniju intervencije
+CloneIntervention=Clone intervention
 ConfirmDeleteIntervention=Da li ste sigurni da želite da obrišete ovu intervenciju ?
 ConfirmValidateIntervention=Da li ste sigurni da želite da dobrite intervenciju sa nazivom <b>%s</b> ?
 ConfirmModifyIntervention=Da li ste sigurni da želite da izmenite ovu intervenciju ?
 ConfirmDeleteInterventionLine=Da li ste sigurni da želite da obrišete ovu liniju intervencije =
+ConfirmCloneIntervention=Are you sure you want to clone this intervention ?
 NameAndSignatureOfInternalContact=Ime i potpis osobe koja interveniše :
 NameAndSignatureOfExternalContact=Ime i potpis klijenta :
 DocumentModelStandard=Standardni model dokumenta za intervencije
