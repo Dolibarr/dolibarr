@@ -91,7 +91,7 @@ if (g.getDivId() != null)
 	var graphFormat = "day";
 
 	g.setDateInputFormat('<?php echo $dateformatinput; ?>');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', does not work with 'yyyy-mm-dd')
-	g.setDateTaskTableDisplayFormat('<?php echo $datehourformat; ?>');	// Format of date used into line
+	g.setDateTaskTableDisplayFormat('<?php echo $dateformat; ?>');	// Format of date used into line
 	g.setDateTaskDisplayFormat('<?php echo $datehourformat; ?>');		// Format of date used into popup, not into line
 	g.setDayMajorDateDisplayFormat('dd mon');
 	g.setShowRes(1); 		// Show/Hide Responsible (0/1)
