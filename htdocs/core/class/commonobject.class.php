@@ -2451,19 +2451,19 @@ abstract class CommonObject
         {
             if ($justsource)
             {
-            	$sql.= "fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."'";
+            	$sql.= "fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."'";
             	if ($withtargettype) $sql.= " AND targettype = '".$targettype."'";
             }
             else if ($justtarget)
             {
-            	$sql.= "fk_target = '".$targetid."' AND targettype = '".$targettype."'";
+            	$sql.= "fk_target = ".$targetid." AND targettype = '".$targettype."'";
             	if ($withsourcetype) $sql.= " AND sourcetype = '".$sourcetype."'";
             }
         }
         else
 		{
-            $sql.= "(fk_source = '".$sourceid."' AND sourcetype = '".$sourcetype."')";
-            $sql.= " ".$clause." (fk_target = '".$targetid."' AND targettype = '".$targettype."')";
+            $sql.= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
+            $sql.= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
         }
         $sql .= ' ORDER BY sourcetype';
         //print $sql;
@@ -4128,9 +4128,16 @@ abstract class CommonObject
             $langs->load('admin');
             require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
             $extrafields = new ExtraFields($this->db);
-            $extrafields->fetch_name_optionals_label($this->table_element);
+            $target_extrafields=$extrafields->fetch_name_optionals_label($this->table_element);
+            
+            //Eliminate copied source object extra_fields that do not exist in target object
+            $new_array_options=array();
+            foreach ($this->array_options as $key => $value) {
+                if (in_array(substr($key,8), array_keys($target_extrafields)))
+                    $new_array_options[$key] = $value;
+            }
 
-            foreach($this->array_options as $key => $value)
+            foreach($new_array_options as $key => $value)
             {
                	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                	$attributeType  = $extrafields->attribute_type[$attributeKey];
@@ -4193,7 +4200,7 @@ abstract class CommonObject
             $this->db->query($sql_del);
 
             $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."_extrafields (fk_object";
-            foreach($this->array_options as $key => $value)
+            foreach($new_array_options as $key => $value)
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field of attribut
@@ -4201,7 +4208,7 @@ abstract class CommonObject
                 	$sql.=",".$attributeKey;
             }
             $sql .= ") VALUES (".$this->id;
-            foreach($this->array_options as $key => $value)
+            foreach($new_array_options as $key => $value)
             {
             	$attributeKey = substr($key,8);   // Remove 'options_' prefix
                 // Add field o fattribut

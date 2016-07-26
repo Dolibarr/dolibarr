@@ -169,6 +169,11 @@ ErrorSavingChanges=Došlo je do greške prilikom čuvanja promena.
 ErrorWarehouseRequiredIntoShipmentLine=Magacin je neophodan na liniji do isporuke
 ErrorFileMustHaveFormat=Mora imati format %s
 ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
+ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
+ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
+ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
+ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Lozinka je podešena za ovog člana, ali korisnik nije kreiran. To znači da je lozinka sačuvana, ali se član ne može ulogovati na Dolibarr. Informaciju može koristiti neka eksterna komponenta, ali ako nemate potrebe da definišete korisnika/lozinku za članove, možete deaktivirati opciju "Upravljanje lozinkama za svakog člana" u podešavanjima modula Članovi. Ukoliko morate da kreirate login, ali Vam nije potrebna lozinka, ostavite ovo polje prazno da se ovo upozorenje ne bi prikazivalo. Napomena: email može biti korišćen kao login ako je član povezan sa korisnikom.

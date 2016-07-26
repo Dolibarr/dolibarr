@@ -523,7 +523,7 @@ if (empty($reshook))
 	else if ($action == 'setmode' && $user->rights->commande->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 	}
 	
 	// Multicurrency Code
@@ -539,13 +539,13 @@ if (empty($reshook))
 	else if ($action == 'setavailability' && $user->rights->commande->creer) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+		    setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	else if ($action == 'setdemandreason' && $user->rights->commande->creer) {
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	else if ($action == 'setconditions' && $user->rights->commande->creer) {

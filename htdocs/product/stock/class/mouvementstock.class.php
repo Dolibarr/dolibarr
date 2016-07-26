@@ -149,8 +149,12 @@ class MouvementStock extends CommonObject
                         {
                             if ($eatby)
                             {
-                        		if ($this->db->jdate($obj->eatby) != $eatby)  // If found and eatby/sellby defined into table and provided and differs, return error
+                                $eatbywithouthour=$eatby;
+                                $tmparray=dol_getdate($eatby, true);
+                                $eatbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+                        		if ($this->db->jdate($obj->eatby) != $eatby && $this->db->jdate($obj->eatby) != $eatbywithouthour)    // We test date without hours and with hours for backward compatibility 
                                 {
+                                    // If found and eatby/sellby defined into table and provided and differs, return error
                                     $this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby));
                                     dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby)), LOG_ERR);
                                     $this->db->rollback();
@@ -183,8 +187,12 @@ class MouvementStock extends CommonObject
                         {
                             if ($sellby)
                             {
-                                if ($this->db->jdate($obj->sellby) != $sellby) // If found and eatby/sellby defined into table and provided and differs, return error
+                                $sellbywithouthour=$sellby;
+                                $tmparray=dol_getdate($eatby, true);
+                                $eatbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+                                if ($this->db->jdate($obj->sellby) != $sellby && $this->db->jdate($obj->sellby) != $sellbywithouthour)    // We test date without hours and with hours for backward compatibility
                         		{
+                        		    // If found and eatby/sellby defined into table and provided and differs, return error
             						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby));
             						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby)), LOG_ERR);
             						$this->db->rollback();
@@ -222,6 +230,9 @@ class MouvementStock extends CommonObject
             	    $productlot = new Productlot($this->db);
             	    $productlot->fk_product = $fk_product;
             	    $productlot->batch = $batch;
+            	    // If we are here = first time we manage this batch, so we used dates provided by users to create lot
+            	    $productlot->eatby = $eatby;
+            	    $productlot->sellby = $sellby;
             	    $result = $productlot->create($user);
             	    if ($result <= 0)
             	    {
@@ -239,21 +250,46 @@ class MouvementStock extends CommonObject
             	return -1;
 			}
 		}
-
-		// TODO Check qty is ok for stock move.
-		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
-		{
-
-		}
-		else
-		{
-
-		}
-
+		
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		$movestock=0;
 		if ($product->type != Product::TYPE_SERVICE || ! empty($conf->global->STOCK_SUPPORTS_SERVICES)) $movestock=1;
 
+		// Check if stock is enough when qty is < 0
+		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
+		if ($qty < 0 && empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER))
+		{
+    		if (! empty($conf->productbatch->enabled) && $product->hasbatch() && ! $skip_batch)
+    		{
+    		    $foundforbatch=0;
+    		    $qtyisnotenough=0;
+    		    foreach($product->stock_warehouse[$entrepot_id]->detail_batch as $batchcursor => $prodbatch)
+    		    {
+    		        if ($batch != $batchcursor) continue;
+    		        $foundforbatch=1;
+    		        if ($prodbatch->qty < abs($qty)) $qtyisnotenough=1;
+        		    break;
+    		    }
+    		    if (! $foundforbatch || $qtyisnotenough)
+    		    {
+        		    $this->error = $langs->trans('qtyToTranferLotIsNotEnough');
+        		    $this->errors[] = $langs->trans('qtyToTranferLotIsNotEnough');
+        		    $this->db->rollback();
+        		    return -8;
+    		    }		    
+    		}
+    		else
+    		{
+    		    if (empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))
+    		    {
+    		        $this->error = $langs->trans('qtyToTranferIsNotEnough');
+    		        $this->errors[] = $langs->trans('qtyToTranferIsNotEnough');
+    		        $this->db->rollback();
+    		        return -8;
+    		    }
+    		}
+		}		
+		
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
 			if(!empty($this->origin)) {			// This is set by caller for tracking reason

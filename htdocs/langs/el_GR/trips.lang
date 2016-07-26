@@ -59,7 +59,7 @@ DATE_CANCEL=Ημερομηνία ακύρωσης
 DATE_PAIEMENT=Ημερομηνία πληρωμής
 
 BROUILLONNER=Reopen
-ValidateAndSubmit=Validate and submit for approval
+ValidateAndSubmit=Επικύρωση και υποβολή για έγκριση
 ValidatedWaitingApproval=Επικύρωση (αναμονή για έγκριση)
 
 NOT_AUTHOR=You are not the author of this expense report. Operation cancelled.

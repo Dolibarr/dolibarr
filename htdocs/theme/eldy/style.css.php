@@ -561,6 +561,18 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100 {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax300 {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowauto {
     max-width: 0;
     overflow: auto;
@@ -591,6 +603,12 @@ div.myavailability {
 .minwidth300 { min-width: 300px; }
 .minwidth400 { min-width: 400px; }
 .minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -769,8 +787,8 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
-/* Force values for small screen */
-@media only screen and (max-width: 900px)
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 960px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
@@ -4035,6 +4053,9 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
+}
+.dropdown dd ul li input[type="checkbox"] {
+    margin-right: 3px;
 }
 .dropdown dd ul li a {
     padding:5px;

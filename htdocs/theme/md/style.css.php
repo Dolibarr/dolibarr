@@ -560,6 +560,18 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100 {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax300 {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowauto {
     max-width: 0;
     overflow: auto;
@@ -589,6 +601,12 @@ div.myavailability {
 .minwidth300 { min-width: 300px; }
 .minwidth400 { min-width: 400px; }
 .minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -734,7 +752,7 @@ td.showDragHandle {
 	margin-left: 0;
 }
 div.login_block {
-	border-right: none ! important; 
+	/* border-right: none ! important; */
 	top: inherit !important;
 }
 .side-nav {
@@ -759,6 +777,7 @@ div.login_block {
 #id-left {
 	z-index: 201;
 	background: #FFF;
+	border-right: 1px solid rgba(0,0,0,0.3);
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
 <?php } else { ?>
@@ -1899,6 +1918,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background-image: none !important;
 }
 
+
+.tabunactive {	/* We add some border on tabunactive to avoid change of position of title when switching tabs (border of tabunactive = border of tabactive) */
+    border-right: 1px solid rgb(<?php echo $colorbackbody; ?>);
+    border-left: 1px solid rgb(<?php echo $colorbackbody; ?>);
+}
+
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
@@ -2140,7 +2165,7 @@ div.tabBar table.border tr {
 
 table.border td, div.border div div.tagtd {
 	padding: 2px 2px 2px 2px;
-	border: 1px solid #f4f4f4;
+	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
 
@@ -2652,7 +2677,7 @@ div.tabBar .noborder {
 <?php } ?>
 }
 span.boxstatstext {
-	opacity: 0.9;
+	/* opacity: 0.9;  Disabled. This make text on top of left menu in smartphone size */
     line-height: 18px;
 }
 span.boxstatsindicator {
@@ -3918,6 +3943,9 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
+}
+.dropdown dd ul li input[type="checkbox"] {
+    margin-right: 3px;
 }
 .dropdown dd ul li a {
     padding:5px;

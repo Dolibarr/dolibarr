@@ -180,9 +180,9 @@ if (! empty($action) && $action == 'fetch' && ! empty($id))
 	$searchkey = (GETPOST($idprod) ? GETPOST($idprod) : (GETPOST($htmlname) ? GETPOST($htmlname) : ''));
 
 	$form = new Form($db);
-	if (empty($mode) || $mode == 1) {
+	if (empty($mode) || $mode == 1) {  // mode=1: customer
 		$arrayresult = $form->select_produits_list("", $htmlname, $type, "", $price_level, $searchkey, $status, $finished, $outjson, $socid);
-	} elseif ($mode == 2) {
+	} elseif ($mode == 2) {            // mode=2: supplier
 		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson);
 	}
 

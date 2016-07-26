@@ -71,7 +71,7 @@ if ($socid)
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
-	$title=$langs->trans("Agenda");
+	$title=$langs->trans("Projects");
 	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	llxHeader('',$title);
 

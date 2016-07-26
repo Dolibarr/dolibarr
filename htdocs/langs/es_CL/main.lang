@@ -21,7 +21,6 @@ FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 Update=Actualizar
 NumberByMonth=Cantidad Mensual
-DateEnd=Fecha de término
 Amount=Cantidad
 List=Lista
 CommercialProposalsShort=Cotizaciones

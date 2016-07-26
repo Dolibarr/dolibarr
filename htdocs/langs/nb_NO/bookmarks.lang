@@ -14,5 +14,5 @@ BehaviourOnClick=Oppførsel når en URL blir klikket på
 CreateBookmark=Opprett bokmerke
 SetHereATitleForLink=Angi tittel for bokmerket
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Bruk en ekstern http URL eller en relativ Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Velg om lenken skal åpnes i et nytt vindu eller ikke
 BookmarksManagement=Behandling av bokmerker

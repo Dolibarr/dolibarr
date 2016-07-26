@@ -132,6 +132,10 @@ ActivateModule=Aktiveeri moodul %s
 ShowEditTechnicalParameters=Klõpsa siia lisaparameetrite näitamiseks/muutmiseks (spetsialisti režiim)
 WarningUpgrade=Warning:\nDid your run a database backup first ?\nThis is highly recommanded: for example, due to some bugs into databases systems (for example mysql version 5.5.40/41/42/43), some data or tables may be lost during this process, so it is highly recommanded to have a complete dump of your database before starting migration.\n\nClick OK to start migration process...
 ErrorDatabaseVersionForbiddenForMigration=Sinu andmebaasi versioon on %s. Selles versioonis on tõsine puuk, mis põhjustab andmebaasi struktuuri muutmisel andmekadu, nagu seda teeb migratsiooni protsess. Seega ei ole migratsioon lubatud seni, kuni uuendad oma andmebaasi parandustega versioonile (teadaolevate vigaste versioonide nimekiri: %s)
+KeepDefaultValuesWamp=You use the Dolibarr setup wizard from DoliWamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubuntu, Debian, Fedora...), so values proposed here are already optimized. Only the password of the database owner to create must be completed. Change other parameters only if you know what you do.
+KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
+KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 
 #########
 # upgrade

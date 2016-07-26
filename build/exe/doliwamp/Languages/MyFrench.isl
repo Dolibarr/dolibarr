@@ -32,6 +32,7 @@ FailedToDeleteLock=Echec de la suppression du fichier %1/www/dolibarr/install.lo
 PortAlreadyInUse=Le port %1 semble déjà utilisé. Il est recommandé d'annuler pour revenir en arrière et spécifier une autre valeur pour le port %2. Annuler le choix et choisir une autre valeur ?
 
 FirefoxDetected=Firefox a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
+ChromeDetected=Chrome a été détecté sur votre ordinateur. Voulez-vous en faire votre navigateur par défaut pour Dolibarr ?
 ChooseDefaultBrowser=Merci de choisir votre navigateur par défaut. Si vous n'êtes pas sûr, cliquez simplement sur Ouvrir :
 
 LaunchNow=Lancer Dolibarr maintenant

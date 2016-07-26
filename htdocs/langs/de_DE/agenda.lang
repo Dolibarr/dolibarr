@@ -65,7 +65,7 @@ AgendaUrlOptions2=<b>login=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b
 AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> zugewiesene Ereignissen.
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> begrenzt die Ausgabe auf die dem Projekte <b>PROJECT_ID</b> zugewiesene Ereignissen.
-AgendaShowBirthdayEvents=Gebirtstage von Kontakten anzeigen
+AgendaShowBirthdayEvents=Geburtstage von Kontakten anzeigen
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Besetzt
 ExportDataset_event1=Liste Ereignisse des Kalender

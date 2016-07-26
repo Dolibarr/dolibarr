@@ -250,8 +250,9 @@ class FormMail extends Form
         $hookmanager->initHooks(array('formmail'));
 
         $parameters=array(
-        		'addfileaction' => $addfileaction,
-        		'removefileaction'=> $removefileaction
+        	'addfileaction' => $addfileaction,
+        	'removefileaction'=> $removefileaction,
+            'trackid'=> $this->trackid
         );
         $reshook=$hookmanager->executeHooks('getFormMail', $parameters, $this);
 
@@ -927,18 +928,30 @@ class FormMail extends Form
 	/**
 	 * Set substit array from object
 	 * 
-	 * @param	Object	$object		Object to use
+	 * @param	Object	   $object		  Object to use
+	 * @param   Translate  $outputlangs   Object lang 
 	 * @return	void
 	 */
-	function setSubstitFromObject($object)
+	function setSubstitFromObject($object, $outputlangs=null)
 	{
 		global $user;
 		$this->substit['__REF__'] = $object->ref;
-		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__REFCLIENT__'] = $object->ref_client;
-		$this->substit['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
+		$this->substit['__REFSUPPLIER__'] = $object->ref_supplier;
+
+		$this->substit['__DATE_YMD__'] = dol_print_date($object->date, 'day', 0, $outputlangs);
+		$this->substit['__DATE_DUE_YMD__'] = dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs);
+		$this->substit['__AMOUNT__'] = price($object->total_ttc);
+		$this->substit['__AMOUNT_WO_TAX__'] = price($object->total_ht);
+		
+		$this->substit['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
+		$this->substit['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+		
+		$this->substit['__PROJECT_ID__'] = (is_object($object->projet)?$object->projet->id:'');
 		$this->substit['__PROJECT_REF__'] = (is_object($object->projet)?$object->projet->ref:'');
 		$this->substit['__PROJECT_NAME__'] = (is_object($object->projet)?$object->projet->title:'');
+		
+		$this->substit['__SIGNATURE__'] = $user->signature;
 		$this->substit['__PERSONALIZED__'] = '';
 		$this->substit['__CONTACTCIVNAME__'] = '';	// Will be replace just before sending
 	}

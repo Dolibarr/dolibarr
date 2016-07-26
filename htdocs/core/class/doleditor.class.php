@@ -99,7 +99,7 @@ class DolEditor
         	$this->editor->Value	= $content;
         	$this->editor->Height   = $height;
         	if (! empty($width)) $this->editor->Width = $width;
-        	$this->editor->ToolbarSet = $shorttoolbarname;
+        	$this->editor->ToolbarSet = $shorttoolbarname;         // Profile of this toolbar set is deinfed into theme/mytheme/ckeditor/config.js
         	$this->editor->Config['AutoDetectLanguage'] = 'true';
         	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
         	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;

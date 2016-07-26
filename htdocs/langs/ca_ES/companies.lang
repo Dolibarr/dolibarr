@@ -389,5 +389,5 @@ MergeThirdparties=Fusionar tercers
 ConfirmMergeThirdparties=Estàs segur que vols fusionar aquest tercer amb l'actual? Tots els objectes relacionats (factures, comandes, ...) serán mogudes al tercer actual i el duplicat serà esborrat.
 ThirdpartiesMergeSuccess=Els tercers han sigut fusionats
 SaleRepresentativeLogin=Login of sales representative
-SaleRepresentativeFirstname=Firstname of sales representative
-SaleRepresentativeLastname=Lastname of sales representative
+SaleRepresentativeFirstname=Nom de l'agent comercial
+SaleRepresentativeLastname=Cognoms de l'agent comercial

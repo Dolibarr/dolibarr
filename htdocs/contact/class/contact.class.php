@@ -957,39 +957,53 @@ class Contact extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result='';
-        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
-        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
-        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
-        if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
-        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
-        $phonelist=array();
-        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
-        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
-        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
-        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
-        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
+	        $label = '<u>' . $langs->trans("ShowContact") . '</u>';
+	        $label.= '<br><b>' . $langs->trans("Name") . ':</b> '.$this->getFullName($langs);
+	        //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
+	        if (! empty($this->poste)) $label.= '<br><b>' . $langs->trans("Poste") . ':</b> '.$this->poste;
+	        $label.= '<br><b>' . $langs->trans("EMail") . ':</b> '.$this->email;
+	        $phonelist=array();
+	        if ($this->phone_pro) $phonelist[]=$this->phone_pro;
+	        if ($this->phone_mobile) $phonelist[]=$this->phone_mobile;
+	        if ($this->phone_perso) $phonelist[]=$this->phone_perso;
+	        $label.= '<br><b>' . $langs->trans("Phone") . ':</b> '.join(', ',$phonelist);
+	        $label.= '<br><b>' . $langs->trans("Address") . ':</b> '.dol_format_address($this, 1, ' ', $langs);
+	
+	        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
+	        $linkclose="";
+	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
+	        {
+	            $label=$langs->trans("ShowContact");
+	            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
+	        }
+	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+	       	$linkclose.= ' class="classfortooltip">';
 
-        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
-    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) 
-        {
-            $label=$langs->trans("ShowContact");
-            $link.=' alt="'.dol_escape_htmltag($label, 1).'"'; 
-        }
-        $link.= ' title="'.dol_escape_htmltag($label, 1).'"';
-        $link.= ' class="classfortooltip">';
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('contactdao'));
+		$parameters=array('id'=>$this->id);
+		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
+		$link.=$linkclose;
+		
 		$linkend='</a>';
-
+	
 		if ($option == 'xxx')
 		{
 			$link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 		}
-
-        if ($withpicto) $result.=($link.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
+	
+	        if ($withpicto) $result.=($link.img_object($label, 'contact', 'class="classfortooltip"').$linkend.' ');
+			$result.=$link.($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$linkend;
 		return $result;
 	}
 
