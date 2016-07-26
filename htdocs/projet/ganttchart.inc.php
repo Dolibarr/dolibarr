@@ -78,11 +78,11 @@ function reloadGraph() {
 }
 
 
-//var g = new JSGantt.GanttChart('g', document.getElementById('GanttChartDIV'), 'day');
-var g = new JSGantt.GanttChart(document.getElementById('GanttChartDIV'), 'day');
+var g = new JSGantt.GanttChart('g', document.getElementById('GanttChartDIV'), 'day');
+/* For JSGanttImproved var g = new JSGantt.GanttChart(document.getElementById('GanttChartDIV'), 'day'); */
 
-if (g.getDivId() != null)
-//if (g)
+/* For JSGanttImproved if (g.getDivId() != null) */
+if (g)
 {
 	var booShowRessources = 1;
 	var booShowDurations = 1;
@@ -91,9 +91,9 @@ if (g.getDivId() != null)
 	var graphFormat = "day";
 
 	g.setDateInputFormat('mm/dd/yyyy');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', does not work with 'yyyy-mm-dd')
-	//g.setDateDisplayFormat('<?php echo $dateformat; ?>');
-	g.setDateTaskDisplayFormat('<?php echo $datehourformat; ?>');
-	g.setDayMajorDateDisplayFormat('dd mon');
+	g.setDateDisplayFormat('<?php echo $dateformat; ?>');
+	/* For JSGanttImproved g.setDateTaskDisplayFormat('<?php echo $datehourformat; ?>'); */
+	/* For JSGanttImproved g.setDayMajorDateDisplayFormat('dd mon'); */
 	g.setShowRes(1); 		// Show/Hide Responsible (0/1)
 	g.setShowDur(1); 		// Show/Hide Duration (0/1)
 	g.setShowComp(1); 		// Show/Hide % Complete(0/1)
@@ -132,7 +132,7 @@ else
  * Add a gant chart line
  *
  * @param 	string	$tarr					tarr
- * @param	array	$task					Task object
+ * @param	Task	$task					Task object
  * @param 	Project	$project_dependencies	Project object
  * @param 	int		$level					Level
  * @param 	int		$project_id				Id of project
@@ -148,7 +148,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
     // Resources
     $resources = $task["task_resources"];
     // Define depend (ex: "", "4,13", ...)
-    $depend = '';
+    $depend = "\"";
     $count = 0;
     foreach ($project_dependencies as $value) {
         // Not yet used project_dependencies = array(array(0=>idtask,1=>idtasktofinishfisrt))
@@ -157,7 +157,7 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
             $count ++;
         }
     }
-   // $depend .= "\"";
+    $depend .= "\"";
     // Define parent
     if ($project_id && $level < 0)
     $parent = 'p'.$project_id;
@@ -170,9 +170,9 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
 
     // Name
     $name=$task['task_name'];
-    /*for($i=0; $i < $level; $i++) {
-        $name=' - '.$name;
-    }*/
+    for($i=0; $i < $level; $i++) {
+        $name=' &nbsp; &nbsp; '.$name;
+    }
     // Add line to gantt
     /*
 	g.AddTaskItem(new JSGantt.TaskItem(1, 'Define Chart API','',          '',          'ggroupblack','', 0, 'Brian', 0,  1,0,1,'','','Some Notes text',g));
@@ -199,12 +199,12 @@ function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_
 	<dt>pGantt</dt><dd>(required) javascript JSGantt.GanttChart object from which to take settings.  Defaults to &quot;g&quot; for backwards compatibility</dd>
     */
 
-    //$note="";
+    $note="";
 
     $s = "\n// Add taks id=".$task["task_id"]." level = ".$level."\n";
-   // $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
+    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', '".$task['task_color']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
     // For JSGanttImproved
-    $s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js(trim($name))."','".$start_date."', '".$end_date."', '".$task['task_css']."', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]).", '".$parent."', 1, '".($depend?$depend:$parent."SS")."', '".($percent >= 0 ? $percent.'%' : '0%')."','".$task['note']."'));";
+    //$s.= "g.AddTaskItem(new JSGantt.TaskItem(".$task['task_id'].",'".dol_escape_js($name)."','".$start_date."', '".$end_date."', 'gtaskblue', '".$link."', ".$task['task_milestone'].", '".$resources."', ".($percent >= 0 ? $percent : 0).", ".($task["task_is_group"]>0?1:0).", '".$parent."', 1, '".($depend?$depend:"")."', '".$note."'));";
     echo $s;
 
 
