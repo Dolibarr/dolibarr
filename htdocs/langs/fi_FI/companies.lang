@@ -74,6 +74,7 @@ DefaultLang=Oletuskieli
 VATIsUsed=Arvonlisävero käytössä
 VATIsNotUsed=Arvonlisävero ei ole käytössä
 CopyAddressFromSoc=Täytä kolmanen osapuolen osoite
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE käytössä
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organisaatio
 FiscalYearInformation=Tiedot tilikauden
 FiscalMonthStart=Lähtölista kuukauden kuluessa tilikauden
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Luettelo toimittajat
 ListProspectsShort=Luettelo näkymät
 ListCustomersShort=Luettelo asiakkaiden

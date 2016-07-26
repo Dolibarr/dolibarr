@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Настройките на информ�
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Фунцкията е неактива, когато конфигурацията на показването е оптимизирана за незрящ човек или текстови браузери.
 WarningPaymentDateLowerThanInvoiceDate=Датата на плащане (%s) е по-ранна от датата на фактуриране (%s) за фактура %s.
 WarningTooManyDataPleaseUseMoreFilters=Прекалено много информация (повече от %s линии). Моля използвайте повече филтри или задайте за константата %s по-висок лимит.
-WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.

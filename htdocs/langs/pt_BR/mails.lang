@@ -58,7 +58,6 @@ TagUnsubscribe=Atalho para se desenscrever
 TagSignature=Assinatura do remetente
 NoEmailSentBadSenderOrRecipientEmail=Nenhum e-mail enviado. Bad remetente ou destinatário de e-mail. Verifique perfil de usuário.
 AddNewNotification=Ativar uma nova notificação email para alvo
-ListOfActiveNotifications=Listar todos os alvos ativos para notificação de email
 ListOfNotificationsDone=Listar todas as notificações de e-mail enviadas
 MailSendSetupIs=Configuração do envio de e-mails foi configurado a '%s'. Este modo não pode ser usado para envios de massa de e-mails.
 MailSendSetupIs2=Voçê precisa primeiramente acessar com uma conta de Administrador o menu %sInicio - Configurações - EMails%s para mudar o parametro <strong>'%s'</strong> para usar o modo '%s'. Neste modo voçê pode entrar a configuração do servidor SMTP fornecido pelo seu Provedor de Acesso a Internet e usar a funcionalidade de envios de massa de EMails.

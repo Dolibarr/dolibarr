@@ -312,6 +312,7 @@ LatestRelatedBill=Nejnovější související faktura
 WarningBillExist=Varování, jedna nebo více faktur již existují
 MergingPDFTool=Nástroj pro spojení PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

@@ -86,6 +86,7 @@ DirectoryRecommendation=Je odporúčané používať adresár mimo adresára zo 
 LoginAlreadyExists=Už existuje
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr účtu správcu <b>&quot;%s</b> 'už existuje. Vráť sa, ak chcete vytvoriť ďalšie.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Pozor, z bezpečnostných dôvodov, akonáhle inštaláciu alebo upgrade je kompletný, aby sa zabránilo používanie inštaláciu nástroja znova, mali by ste pridať súbor s názvom <b>install.lock</b> do adresára dokumentov Dolibarr, aby sa zabránilo škodlivému využitie.
 FunctionNotAvailableInThisPHP=Nie je k dispozícii na tejto PHP
 ChoosedMigrateScript=Vyberte si skript migrácie

@@ -74,6 +74,7 @@ DefaultLang=Sprog som standard
 VATIsUsed=Moms anvendes
 VATIsNotUsed=Moms, der ikke anvendes
 CopyAddressFromSoc=Fill address with thirdparty address
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE bruges
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organisationen
 FiscalYearInformation=Oplysninger om regnskabssår
 FiscalMonthStart=Første måned i regnskabsåret
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Liste over leverandører
 ListProspectsShort=Liste over emner
 ListCustomersShort=Liste over kunder

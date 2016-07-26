@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Neuplynula
 ServiceStatusLate=Probíhá, uplynula
 ServiceStatusLateShort=Vypršela
 ServiceStatusClosed=Zavřeno
+ShowContractOfService=Show contract of service
 Contracts=Smlouvy
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Smlouvy a řádky smluv

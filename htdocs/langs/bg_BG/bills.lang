@@ -312,6 +312,7 @@ LatestRelatedBill=Последна свързана фактура
 WarningBillExist=Внимание, една или повече актури вече съществуват
 MergingPDFTool=Инструмент за sliwane на PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

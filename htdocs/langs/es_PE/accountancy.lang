@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - accountancy
+ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columna de archivo a exportar
+ACCOUNTING_EXPORT_DATE=Formato de fecha de archivo a exportar
+ACCOUNTING_EXPORT_PIECE=Exportar el número de pieza
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Exportar con cuenta global
+ACCOUNTING_EXPORT_LABEL=Etiqueta de exportación
+ACCOUNTING_EXPORT_AMOUNT=Monto de exportación
+ACCOUNTING_EXPORT_DEVISE=Moneda de exportación
+Selectformat=Seleccione el formato del fichero
+ACCOUNTING_EXPORT_PREFIX_SPEC=Especifique el prefijo del nombre del fichero
+ConfigAccountingExpert=Configuración del módulo experto en contabilidad
+Journaux=Revistas
+JournalFinancial=Revistas financieras
+BackToChartofaccounts=Retornar gráfico de cuentas
+Selectchartofaccounts=Seleccionar un gráfico de cuentas
+Addanaccount=Agregar una cuenta contable
+AccountAccountingSuggest=Cuenta contable sugerida
+Ventilation=Desglose
+CustomersVentilation=Desglose de clientes
+SuppliersVentilation=Desglose de proveedores
+Reports=Reportes
+OptionsDeactivatedForThisExportModel=Para este modelo de exportación, las opciones están desactivadas

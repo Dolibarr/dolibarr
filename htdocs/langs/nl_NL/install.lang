@@ -86,6 +86,7 @@ DirectoryRecommendation=Aanbevolen wordt een map te gebruiken buiten uw webpagin
 LoginAlreadyExists=Bestaat al
 DolibarrAdminLogin=Login van de Dolibarr beheerder
 AdminLoginAlreadyExists=Het beheerdersaccount <b>'%s'</b> bestaat al.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Waarschuwing, om veiligheidsredenen, dient u de <b>install</b> map na de installatie of upgrade te verwijderen of maak een bestand genaamd <b>install.lock</b> aan in de Dolibarr root map.
 FunctionNotAvailableInThisPHP=Niet beschikbaar in deze PHP installatie
 ChoosedMigrateScript=Kies het migratiescript

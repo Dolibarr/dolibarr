@@ -84,6 +84,7 @@ SeeAbove=上記参照
 HomeArea=ホームエリア
 LastConnexion=最後の接続
 PreviousConnexion=以前の接続
+PreviousValue=Previous value
 ConnectedOnMultiCompany=環境に接続
 ConnectedSince=ので、接続
 AuthenticationMode=での認証モード

@@ -74,6 +74,7 @@ DefaultLang=預設語系
 VATIsUsed=使用營業稅(VAT)
 VATIsNotUsed=不使用營業稅(VAT)
 CopyAddressFromSoc=填寫地址於客戶/供應商地址欄位
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= 稀土用於
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=組織
 FiscalYearInformation=信息財政年度
 FiscalMonthStart=本財年開始一個月
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=供應商名單
 ListProspectsShort=潛在名單
 ListCustomersShort=客戶名單
