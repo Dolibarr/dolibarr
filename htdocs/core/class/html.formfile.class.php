@@ -460,11 +460,20 @@ class FormFile
                     $modellist=ModeleDon::liste_modeles($this->db);
                 }
             }
+            elseif ($modulepart == 'agenda')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/action/modules_action.php';
+                    $modellist=ModeleAction::liste_modeles($this->db);
+                }
+            }
             else if ($modulepart == 'unpaid')
             {
                 $modellist='';
             }
-            else if ($modulepart != 'agenda')
+            else //if ($modulepart != 'agenda')
             {
             	// For normalized standard modules
             	$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
