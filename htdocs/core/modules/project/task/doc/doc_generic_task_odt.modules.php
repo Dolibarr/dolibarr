@@ -434,6 +434,7 @@ class doc_generic_task_odt extends ModelePDFTask
 			}
 			$project= new Project($this->db);
 			$project->fetch($object->fk_project);
+			$project->fetch_thirdparty();
 
 			$dir = $conf->projet->dir_output. "/" . $project->ref. "/";
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -468,7 +469,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				dol_mkdir($conf->projet->dir_temp);
 
-				$socobject=$object->thirdparty;
+				$socobject=$project->thirdparty;
 
 				// Make substitution
 				$substitutionarray=array(

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxLastRssInfos=RSS informācija
-BoxLastProducts=Latest %s products/services
-BoxProductsAlertStock=Stock alerts for products
-BoxLastProductsInContract=Latest %s contracted products/services
+BoxLastProducts=Pēdējie %s produkti/pakalpojumi
+BoxProductsAlertStock=Produktu krājumu brīdinājums
+BoxLastProductsInContract=Pēdējie %s darījumi produktiem/servisiem
 BoxLastSupplierBills=Latest supplier invoices
 BoxLastCustomerBills=Latest customer invoices
 BoxOldestUnpaidCustomerBills=Oldest unpaid customer invoices

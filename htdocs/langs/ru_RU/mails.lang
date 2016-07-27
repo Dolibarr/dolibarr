@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Вы можете использов
 TagCheckMail=Отслеживать открытие писем
 TagUnsubscribe=Ссылка для отказа от подписки
 TagSignature=Подпись отправителя
-TagMailtoEmail=EMail получателя
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Уведомления

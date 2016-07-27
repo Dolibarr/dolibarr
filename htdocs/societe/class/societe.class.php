@@ -2608,7 +2608,7 @@ class Societe extends CommonObject
      *  @param	int			$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *  @param  Societe		$soc            Objet societe
      *  @return int             			<=0 if KO, >0 if OK
-     *  TODO not in business class
+     *  TODO better to have this in a lib than into a business class
      */
     function id_prof_check($idprof,$soc)
     {
@@ -2720,27 +2720,39 @@ class Societe extends CommonObject
     }
 
     /**
-     *   Renvoi url de verification d'un identifiant professionnal
+     *   Return an url to check online a professional id or empty string
      *
-     *   @param		int		$idprof         1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
-     *   @param 	Societe	$soc            Objet societe
-     *   @return	string          		url ou chaine vide si aucune url connue
-     *   TODO not in business class
+     *   @param		int		$idprof         1,2,3,4 (Example: 1=siren,2=siret,3=naf,4=rcs/rm)
+     *   @param 	Societe	$thirdparty     Object thirdparty
+     *   @return	string          		Url or empty string if no URL known
+     *   TODO better in a lib than into business class
      */
-    function id_prof_url($idprof,$soc)
+    function id_prof_url($idprof,$thirdparty)
     {
-        global $conf,$langs;
-
-        if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
+        global $conf,$langs,$hookmanager;
 
         $url='';
+        $action = '';
+        
+        $hookmanager->initHooks(array('idprofurl'));
+        $parameters=array('idprof'=>$idprof, 'company'=>$thirdparty);
+        $reshook=$hookmanager->executeHooks('getIdProfUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if (empty($reshook))
+        {
+            if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
 
-        if ($idprof == 1 && $soc->country_code == 'FR') $url='http://www.societe.com/cgi-bin/recherche?rncs='.$soc->idprof1;
-        if ($idprof == 1 && ($soc->country_code == 'GB' || $soc->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
-        if ($idprof == 1 && $soc->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$soc->idprof1;
-        if ($idprof == 1 && $soc->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$soc->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
-
-        if ($url) return '<a target="_blank" href="'.$url.'">['.$langs->trans("Check").']</a>';
+            if ($idprof == 1 && $thirdparty->country_code == 'FR') $url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
+            if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+            if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
+            if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+        
+            if ($url) return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
+        }
+        else
+        {
+            return $hookmanager->resPrint;
+        }
+        
         return '';
     }
 

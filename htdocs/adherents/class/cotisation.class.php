@@ -190,11 +190,12 @@ class Cotisation extends CommonObject
 	 */
 	function delete($user)
 	{
+		$accountline=new AccountLine($this->db);
+
 		// It subscription is linked to a bank transaction, we get it
-		if ($this->fk_bank)
+		if ($this->fk_bank > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-			$accountline=new AccountLine($this->db);
 			$result=$accountline->fetch($this->fk_bank);
 		}
 

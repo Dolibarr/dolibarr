@@ -72,7 +72,6 @@ LoadModule auth_basic_module modules/mod_auth_basic.so
 #LoadModule auth_digest_module modules/mod_auth_digest.so
 #LoadModule authn_anon_module modules/mod_authn_anon.so
 #LoadModule authn_dbm_module modules/mod_authn_dbm.so
-#LoadModule authn_default_module modules/mod_authn_default.so
 LoadModule authn_file_module modules/mod_authn_file.so
 LoadModule authz_core_module modules/mod_authz_core.so
 #LoadModule authz_dbm_module modules/mod_authz_dbm.so
@@ -412,7 +411,7 @@ LogLevel warn
 # keep browsers from trying to display binary files as though they are
 # text.
 #
-DefaultType text/plain
+#DefaultType text/plain
 
 <IfModule mime_module>
     #

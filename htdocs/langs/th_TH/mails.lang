@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=<b>คุณสามารถใช
 TagCheckMail=ติดตามการเปิดอีเมล
 TagUnsubscribe=ยกเลิกการเชื่อมโยง
 TagSignature=ลายเซ็นผู้ส่ง
-TagMailtoEmail=ผู้รับอีเมล
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=ส่งอีเมลไม่มี ผู้ส่งที่ไม่ดีหรืออีเมลของผู้รับ ตรวจสอบรายละเอียดของผู้ใช้
 # Module Notifications
 Notifications=การแจ้งเตือน

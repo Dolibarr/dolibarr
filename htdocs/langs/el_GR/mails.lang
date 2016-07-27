@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Μπορείτε να χρησιμο
 TagCheckMail=Παρακολούθηση άνοιγμα της αλληλογραφίας
 TagUnsubscribe=link διαγραφής
 TagSignature=Υπογραφή αποστολής χρήστη
-TagMailtoEmail=Email του παραλήπτη
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=No email sent. Bad sender or recipient email. Verify user profile.
 # Module Notifications
 Notifications=Notifications

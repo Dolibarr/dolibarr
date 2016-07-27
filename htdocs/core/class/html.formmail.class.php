@@ -250,8 +250,9 @@ class FormMail extends Form
         $hookmanager->initHooks(array('formmail'));
 
         $parameters=array(
-        		'addfileaction' => $addfileaction,
-        		'removefileaction'=> $removefileaction
+        	'addfileaction' => $addfileaction,
+        	'removefileaction'=> $removefileaction,
+            'trackid'=> $this->trackid
         );
         $reshook=$hookmanager->executeHooks('getFormMail', $parameters, $this);
 

@@ -82,6 +82,13 @@ Codejournal=Journal
 NumPiece=Del nummer
 AccountingCategory=Regnskapskategori
 
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+
 DelBookKeeping=Slett postene i hovedboken
 
 DescSellsJournal=Salgsjournal
@@ -140,6 +147,7 @@ Modelcsv_bob50=Eksport til Sage BOB 50
 Modelcsv_ciel=Eksport til Sage Ciel Compta eller Compta Evolution
 Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
 Modelcsv_ebp=Eksporter mot EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initier regnskap
@@ -158,3 +166,4 @@ Formula=Formel
 ## Error
 ErrorNoAccountingCategoryForThisCountry=Ingen regnskapskategori er tilgjengelig for dette landet
 ExportNotSupported=Eksportformatet som er satt  opp støttes ikke på denne siden
+BookeppingLineAlreayExists=Lines already existing into bookeeping

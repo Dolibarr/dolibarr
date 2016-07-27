@@ -76,6 +76,8 @@ BoxTitleLastLeaveRequests=Ultime %s richieste di assenza modificate
 HolidaysMonthlyUpdate=Aggiornamento mensile
 ManualUpdate=Aggiornamento manuale
 HolidaysCancelation=Leave request cancelation
+EmployeeLastname=Employee lastname
+EmployeeFirstname=Employee firstname
 
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation

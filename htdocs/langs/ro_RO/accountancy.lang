@@ -1,13 +1,13 @@
 # Dolibarr language file - en_US - Accounting Expert
-ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
-ACCOUNTING_EXPORT_DATE=Date format for export file
+ACCOUNTING_EXPORT_SEPARATORCSV= Separator coloane pentru fisier export
+ACCOUNTING_EXPORT_DATE=Format date pentru fisiere export
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
-ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export label
-ACCOUNTING_EXPORT_AMOUNT=Export amount
-ACCOUNTING_EXPORT_DEVISE=Export currency
+ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export cu cont global
+ACCOUNTING_EXPORT_LABEL=Export Eticheta
+ACCOUNTING_EXPORT_AMOUNT=Export valoare
+ACCOUNTING_EXPORT_DEVISE=Export moneda
 Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+ACCOUNTING_EXPORT_PREFIX_SPEC=Specificati prefixul pentru numele fisierului
 
 ConfigAccountingExpert=Configurare modul expert contabil
 Journaux=Jurnale
@@ -17,32 +17,32 @@ BackToChartofaccounts=Înapi la plan de conturi
 Selectchartofaccounts=Selectează un plan de conturi
 Addanaccount=Add un cont contabil
 AccountAccounting=Cont contabil
-AccountAccountingShort=Account
+AccountAccountingShort=Cont
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=Ventilare
 
-MenuAccountancy=Accountancy
+MenuAccountancy=Contabilitate
 CustomersVentilation=Ventilare clienţi
 SuppliersVentilation=Ventilare furnizori
 Reports=Rapoarte
 NewAccount=Cont contabil nou
 Create=Crează
-CreateMvts=Create movement
+CreateMvts=Creaza transfer
 UpdateMvts=Modificare mişcare
 WriteBookKeeping=Înregistrare contabilă in Cartea Mare
 Bookkeeping=Cartea Mare
-AccountBalance=Account balance
+AccountBalance=Sold cont
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=Liniile facturii de ventilat
 InvoiceLinesDone=Liniile facturii ventilate
-IntoAccount=Ventilate in the accounting account
+IntoAccount=INregistreaza in conturi contabile
 
-Ventilate=Ventilează
+Ventilate=Inregistreaza
 
 Processing=Procesează
 EndProcessing=Sfârşitul procesării
-AnyLineVentilate=Nicio linie de ventilat
+AnyLineVentilate=Nicio linie de inregistrat
 SelectedLines=Linii selectate
 Lineofinvoice=Linia facturii
 VentilatedinAccount=Ventilare cu succes in conturi contabile
@@ -65,7 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=Jurnal Asigurări Sociale
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cont transfer
 ACCOUNTING_ACCOUNT_SUSPENSE=Cont  contabil de aşteptare
-DONATION_ACCOUNTINGACCOUNT=Account to register donations
+DONATION_ACCOUNTINGACCOUNT=Cont pentru registrul de donatii
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cont Contabilitate Predefinit pentru produsele cumpărate(dacă nu este definit în fişa produsului)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cont Contabilitate Predefinit pentru produsele vândute (dacă nu este definit în fişa produsului)
@@ -79,8 +79,15 @@ Code_tiers=Terţ
 Labelcompte=Etichetă cont
 Sens=Sens
 Codejournal=Journal
-NumPiece=Piece number
-AccountingCategory=Accounting category
+NumPiece=Număr nota contabila
+AccountingCategory=Categorie Contabilitate
+
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
 
 DelBookKeeping=Şterge înregistrări din Cartea Mare
 
@@ -120,12 +127,12 @@ DescVentilDoneSupplier=Consultati aici lista liniilor de facturi furnizor și co
 ValidateHistory=Validează automat
 
 ErrorAccountancyCodeIsAlreadyUse=Eroare, nu puteți șterge acest cont contabil, deoarece este folosit
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+MvtNotCorrectlyBalanced=Miscare incorect efectuata   . Credit = %s. Debit = %s
 FicheVentilation=Fişă Ventilare
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
 ## Admin
-ApplyMassCategories=Apply mass categories
+ApplyMassCategories=Aplica categorii bulk
 
 ## Export
 Exports=Exporturi
@@ -134,27 +141,29 @@ Modelcsv=Model export
 OptionsDeactivatedForThisExportModel=Pentru acest model de export, optiunile sunt dezactivate
 Selectmodelcsv=Selectează un model de export
 Modelcsv_normal=Classic export
-Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
-Modelcsv_COALA=Export towards Sage Coala
-Modelcsv_bob50=Export towards Sage BOB 50
-Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
-Modelcsv_quadratus=Export towards Quadratus QuadraCompta
-Modelcsv_ebp=Export towards EBP
+Modelcsv_CEGID=Export către CEGID Expert Contabil
+Modelcsv_COALA=Export către  Sage Coala
+Modelcsv_bob50=Export către  Sage BOB 50
+Modelcsv_ciel=Export către  Sage Ciel Compta sau Compta Evolution
+Modelcsv_quadratus=Export către Quadratus QuadraCompta
+Modelcsv_ebp=Export către EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
-InitAccountancy=Init accountancy
-InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accountancy account defined for sales and purchases. Check before that setup of module accountancy is complete.
-Options=Options
-OptionModeProductSell=Mode sales
-OptionModeProductBuy=Mode purchases
-OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
-OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+InitAccountancy=Init contabilitate
+InitAccountancyDesc=Această pagină poate fi utilizată pentru a inițializa un cont pe produsele si servicile care nu au conturi definite pentru vanzari sau cumparari,. Verificați înainte dacă modulul contabilitate este complet configurat.
+Options=Opţiuni
+OptionModeProductSell=Mod vanzari
+OptionModeProductBuy=Mod cumparari
+OptionModeProductSellDesc=Afiseaza toate produsele care nu au conturi definite pentru vanzare
+OptionModeProductBuyDesc=Afiseaza toate produsele care nu au conturi definite pentru cumparare
 
 ## Dictionary
-Range=Range of accounting account
-Calculated=Calculated
+Range=Rang cont contabil
+Calculated=Calculat 
 Formula=Formula
 
 ## Error
-ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
-ExportNotSupported=The export format setuped is not supported into this page
+ErrorNoAccountingCategoryForThisCountry=Nicio categorie contabila nu este disponibila pentru aceasta tara
+ExportNotSupported=Formatul exportat nu este suportat in aceasta pagina
+BookeppingLineAlreayExists=Lines already existing into bookeeping

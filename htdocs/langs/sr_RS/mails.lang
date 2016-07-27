@@ -102,7 +102,8 @@ YouCanUseCommaSeparatorForSeveralRecipients=Možete koristiti <b>zarez</b> da bi
 TagCheckMail=Beleži otvaranje mailova
 TagUnsubscribe=Unsubscribe link
 TagSignature=Potpis pošiljaoca
-TagMailtoEmail=Mail primaoca
+EMailRecipient=Recipient EMail
+TagMailtoEmail=Recipient EMail (including html "mailto:" link)
 NoEmailSentBadSenderOrRecipientEmail=Mail nije poslat. Pogrešan mail primaoca ili pošiljaoca. Proverite profil korisnika.
 # Module Notifications
 Notifications=Obaveštenja

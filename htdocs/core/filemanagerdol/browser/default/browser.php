@@ -133,26 +133,26 @@ oConnector.CheckError = function( responseXml )
 
 		switch ( iErrorNumber )
 		{
-			case 0 :
-				break ;
-			case 1 :	// Custom error. Message placed in the "text" attribute.
+			case 0:
+				break;
+			case 1:	// Custom error. Message placed in the "text" attribute.
 				alert( oErrorNode.attributes.getNamedItem('text').value );
-				break ;
-			case 101 :
+				break;
+			case 101:
 				alert( 'Folder already exists' );
-				break ;
-			case 102 :
+				break;
+			case 102:
 				alert( 'Invalid folder name' );
-				break ;
-			case 103 :
+				break;
+			case 103:
 				alert( 'You have no permissions to create the folder' );
-				break ;
-			case 110 :
+				break;
+			case 110:
 				alert( 'Unknown error creating folder' );
-				break ;
-			default :
+				break;
+			default:
 				alert( 'Error on your request. Error number: ' + iErrorNumber );
-				break ;
+				break;
 		}
 	}
 	return iErrorNumber ;

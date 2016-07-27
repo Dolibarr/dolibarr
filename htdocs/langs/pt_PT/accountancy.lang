@@ -82,6 +82,13 @@ Codejournal=Diário
 NumPiece=Piece number
 AccountingCategory=Accounting category
 
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+
 DelBookKeeping=Apagar os registos em Contabilidade geral
 
 DescSellsJournal=Diário de vendas
@@ -140,6 +147,7 @@ Modelcsv_bob50=Export towards Sage BOB 50
 Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
 Modelcsv_quadratus=Export towards Quadratus QuadraCompta
 Modelcsv_ebp=Export towards EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -158,3 +166,4 @@ Formula=Formula
 ## Error
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
 ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping

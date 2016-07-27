@@ -99,13 +99,13 @@ Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; F
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.2.6, php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45 or 5.1.36
-; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45 or 5.1.36
-; Value ???: apache 2.4.19, php 5.5.12, mysql 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
+; Value OK: apache 2.2.6, php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45
+; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45
+; Value ???: apache 2.4.19, php 5.5.12, mysql 5.0.45 instead of 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
 Source: "C:\Program Files\Wamp\apps\phpmyadmin4.1.14\*.*"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
 Source: "C:\Program Files\Wamp\bin\apache\apache2.4.9\*.*"; DestDir: "{app}\bin\apache\apache2.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\php\php5.5.12\*.*"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
-Source: "C:\Program Files\Wamp\bin\mysql\mysql5.6.17\*.*"; DestDir: "{app}\bin\mysql\mysql5.6.17"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
+Source: "C:\Program Files\Wamp\bin\mysql\mysql5.0.45\*.*"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion recursesubdirs; Excludes: "my.ini,data\*,wampserver.conf,*.log,*_log,MySQLInstanceConfig.exe"
 ; Mysql data files (does not overwrite if exists)
 Source: "build\exe\doliwamp\mysql\*.*"; DestDir: "{app}\bin\mysql\data\mysql"; Flags: onlyifdoesntexist ignoreversion recursesubdirs; Excludes: ".gitignore,.project,CVS\*,Thumbs.db"
 ; Dolibarr
@@ -119,7 +119,7 @@ Source: "build\exe\doliwamp\phpmyadmin.conf.install"; DestDir: "{app}\alias"; Fl
 Source: "build\exe\doliwamp\dolibarr.conf.install"; DestDir: "{app}\alias"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\config.inc.php.install"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\httpd.conf.install"; DestDir: "{app}\bin\apache\apache2.4.9\conf"; Flags: ignoreversion;
-Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.6.17"; Flags: ignoreversion;
+Source: "build\exe\doliwamp\my.ini.install"; DestDir: "{app}\bin\mysql\mysql5.0.45"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\php.ini.install"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\index.php.install"; DestDir: "{app}\www"; Flags: ignoreversion;
 Source: "build\exe\doliwamp\install.forced.php.install"; DestDir: "{app}\www\dolibarr\htdocs\install"; Flags: ignoreversion;
@@ -144,6 +144,12 @@ Name: "{userdesktop}\Dolibarr ERP-CRM"; Filename: "{app}\rundoliwamp.bat"; Worki
 Name: "{userdesktop}\Dolibarr Help center"; Filename: "{app}\rundolihelp.bat"; WorkingDir: "{app}"; Tasks: desktopicon; IconFilename: {app}\www\dolibarr\doc\images\dolihelp.ico
 ;Start of servers fromstartup menu disabled as services are auto
 ;Name: "{userstartup}\DoliWamp server"; Filename: "{app}\startdoliwamp.bat"; WorkingDir: "{app}"; Flags: runminimized; IconFilename: {app}\www\dolibarr\doc\images\dolibarr.ico
+
+
+[Registry]
+; Add "run as admin" flag. Same than command line: reg add "HKCU\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" /v "<Path to your exe>" /t REG_SZ /d RUNASADMIN
+Root: "HKLM"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers\"; ValueType: String; ValueName: "{app}\startdoliwamp.bat"; ValueData: "RUNASADMIN"; Flags: uninsdeletekeyifempty uninsdeletevalue;
+Root: "HKLM"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers\"; ValueType: String; ValueName: "{app}\stopdoliwamp.bat"; ValueData: "RUNASADMIN"; Flags: uninsdeletekeyifempty uninsdeletevalue;
 
 
 [Code]
@@ -198,7 +204,7 @@ begin
   //version des applis, a modifier pour chaque version de WampServer 2
   apacheVersion := '2.4.9';
   phpVersion := '5.5.12' ;
-  mysqlVersion := '5.6.17';
+  mysqlVersion := '5.0.45';
   phpmyadminVersion := '4.1.14';
 
   smtpServer := 'localhost';
@@ -262,6 +268,7 @@ begin
   if firstinstall
   then
   begin
+    // False means it's not a password edit
     Page.Add(CustomMessage('SMTPServer'), False);
     Page.Add(CustomMessage('ApachePort'), False);
     Page.Add(CustomMessage('MySqlPort'), False);
@@ -269,6 +276,7 @@ begin
   end
   else
   begin
+    // False means it's not a password edit
     Page.Add(CustomMessage('SMTPServer'), False);
     Page.Add(CustomMessage('ApachePort'), False);
     Page.Add(CustomMessage('MySqlPort'), False);
@@ -308,8 +316,7 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 var myResult: Integer;
 var res: Boolean;
 var paramok: Boolean;
-var datadirold: String;
-var datadirnew: String;
+var datadir: String;
 var exedirold: String;
 var exedirnew: String;
 var themessage: String;
@@ -328,14 +335,13 @@ begin
     winPath := ExpandConstant('{win}');
     pathWithSlashes := path;
     StringChange (pathWithSlashes, '\','/');
-    datadirold := pathWithSlashes+'/bin/mysql/mysql5.6.17/data';
-    datadirnew := pathWithSlashes+'/bin/mysql/data';
-    exedirold := pathWithSlashes+'/bin/mysql/mysql5.6.17';
-    exedirnew := pathWithSlashes+'/bin/mysql/mysql5.6.17';
+    datadir := pathWithSlashes+'/bin/mysql/data';
+    exedirold := pathWithSlashes+'/bin/mysql/mysql5.0.45';
+    exedirnew := pathWithSlashes+'/bin/mysql/mysql5.0.45';
 
 
     //----------------------------------------------
-    // Test if VC11Redist has been installed
+    // Test if msvcr110 DLL has been installed
     //----------------------------------------------
 	
     if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
@@ -675,7 +681,7 @@ begin
 		      //installDir et version de php
 		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
 		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
-		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', myport, True);
+		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
 		    end
@@ -995,7 +1001,7 @@ Filename: "{app}\rundoliwamp.bat"; Description: {cm:LaunchNow}; Flags: shellexec
 
 [UninstallDelete]
 Type: files; Name: "{app}\*.*"
-Type: files; Name: "{app}\bin\mysql\mysql5.6.17\*.*"
+Type: files; Name: "{app}\bin\mysql\mysql5.0.45\*.*"
 Type: filesandordirs; Name: "{app}\alias"
 Type: filesandordirs; Name: "{app}\apps"
 Type: filesandordirs; Name: "{app}\bin\apache"

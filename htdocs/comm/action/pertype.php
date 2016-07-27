@@ -86,12 +86,12 @@ $status=GETPOST("status");
 $type=GETPOST("type");
 $maxprint=(isset($_GET["maxprint"])?GETPOST("maxprint"):$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW);
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('actioncode','array')) 
+if (GETPOST('actioncode','array'))
 {
     $actioncode=GETPOST('actioncode','array',3);
     if (! count($actioncode)) $actioncode='0';
 }
-else 
+else
 {
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
@@ -186,7 +186,7 @@ $week = $prev['week'];
 
 $day = (int) $day;
 $next = dol_get_next_day($day, $month, $year);
-$next_year  = year + 1;
+$next_year  = $year + 1;
 $next_month = $month;
 $next_day   = $day;
 
