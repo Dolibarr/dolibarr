@@ -16,6 +16,7 @@ LDAPFieldFirstSubscriptionAmount=First subscription amount
 LDAPFieldLastSubscriptionDate=Last subscription date
 LDAPFieldLastSubscriptionAmount=Last subscription amount
 LDAPFieldSkype=Skype id
+LDAPFieldSkypeExample=Example : skypeName
 UserSynchronized=User synchronized
 GroupSynchronized=Group synchronized
 MemberSynchronized=Member synchronized

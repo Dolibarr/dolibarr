@@ -1167,7 +1167,7 @@ LDAPServerUseTLS=Use TLS
 LDAPServerUseTLSExample=Your LDAP server use TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com)
+LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com or cn=Administrator,cn=Users,dc=example,dc=com for active directory)
 LDAPPassword=Administrator password
 LDAPUserDn=Users' DN
 LDAPUserDnExample=Complete DN (ex: ou=users,dc=example,dc=com)
