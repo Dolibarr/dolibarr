@@ -25,7 +25,7 @@
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
+ * @deprecated Use Invoices instead (defined in api_invoices.class.php)
  */
 class InvoiceApi extends DolibarrApi
 {
@@ -43,7 +43,7 @@ class InvoiceApi extends DolibarrApi
     public $invoice;
 
     /**
-     * Constructor
+     * Constructor <b>Warning: Deprecated</b>
      *
      * @url     GET invoice/
      * 
@@ -56,7 +56,7 @@ class InvoiceApi extends DolibarrApi
     }
 
     /**
-     * Get properties of a invoice object
+     * Get properties of a invoice object <b>Warning: Deprecated</b>
      *
      * Return an array with invoice informations
      * 
@@ -85,7 +85,7 @@ class InvoiceApi extends DolibarrApi
     }
 
     /**
-     * List invoices
+     * List invoices <b>Warning: Deprecated</b>
      * 
      * Get a list of invoices
      * 
@@ -179,7 +179,7 @@ class InvoiceApi extends DolibarrApi
     }
     
     /**
-     * Create invoice object
+     * Create invoice object <b>Warning: Deprecated</b>
      * 
      * @param array $request_data   Request datas
      * @return int  ID of invoice
@@ -207,7 +207,7 @@ class InvoiceApi extends DolibarrApi
     }
 
     /**
-     * Update invoice
+     * Update invoice <b>Warning: Deprecated</b>
      *
      * @param int   $id             Id of invoice to update
      * @param array $request_data   Datas   
@@ -241,7 +241,7 @@ class InvoiceApi extends DolibarrApi
     }
     
     /**
-     * Delete invoice
+     * Delete invoice <b>Warning: Deprecated</b>
      *
      * @param int   $id Invoice ID
      * @return type

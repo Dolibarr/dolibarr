@@ -27,7 +27,7 @@
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  * 
- *
+ * @deprecated Use Categories instead (defined in api_categories.class.php)
  */
 class CategoryApi extends DolibarrApi
 {
@@ -54,7 +54,7 @@ class CategoryApi extends DolibarrApi
     public $category;
 
     /**
-     * Constructor
+     * Constructor <b>Warning: Deprecated</b>
      *
      * @url     GET category/
      * 
@@ -68,7 +68,7 @@ class CategoryApi extends DolibarrApi
     }
 
     /**
-     * Get properties of a category object
+     * Get properties of a category object <b>Warning: Deprecated</b>
      *
      * Return an array with category informations
      *
@@ -97,7 +97,7 @@ class CategoryApi extends DolibarrApi
     }
 
     /**
-     * List categories
+     * List categories <b>Warning: Deprecated</b>
      * 
      * Get a list of categories
      *
@@ -166,7 +166,7 @@ class CategoryApi extends DolibarrApi
 		return $obj_ret;
     }
     /**
-     * List categories of an entity
+     * List categories of an entity <b>Warning: Deprecated</b>
      * 
      * Get a list of categories
      *
@@ -248,7 +248,7 @@ class CategoryApi extends DolibarrApi
     }
     
     /**
-     * Get member categories list
+     * Get member categories list <b>Warning: Deprecated</b>
      * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
@@ -263,7 +263,7 @@ class CategoryApi extends DolibarrApi
     }
     
     /**
-     * Get customer categories list
+     * Get customer categories list <b>Warning: Deprecated</b>
      * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
@@ -278,7 +278,7 @@ class CategoryApi extends DolibarrApi
         return $this->getList('customer', $sortfield, $sortorder, $limit, $page);  
     }
     /**
-     * Get categories for a customer
+     * Get categories for a customer <b>Warning: Deprecated</b>
      * 
      * @param int		$cusid  Customer id filter
      * @param string	$sortfield	Sort field
@@ -295,7 +295,7 @@ class CategoryApi extends DolibarrApi
     }
 
     /**
-     * Add category to customer
+     * Add category to customer <b>Warning: Deprecated</b>
      * 
      * @param int		$cusid	Id of customer
      * @param int		$catid  Id of category
@@ -329,7 +329,7 @@ class CategoryApi extends DolibarrApi
     }
     
     /**
-     * Get supplier categories list
+     * Get supplier categories list <b>Warning: Deprecated</b>
      * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
@@ -345,7 +345,7 @@ class CategoryApi extends DolibarrApi
     }
     
     /**
-     * Get product categories list
+     * Get product categories list <b>Warning: Deprecated</b>
      * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
@@ -361,7 +361,7 @@ class CategoryApi extends DolibarrApi
     }
     
     /**
-     * Get contact categories list
+     * Get contact categories list <b>Warning: Deprecated</b>
      * 
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
@@ -376,7 +376,7 @@ class CategoryApi extends DolibarrApi
     }
     
     /**
-     * Create category object
+     * Create category object <b>Warning: Deprecated</b>
      * 
      * @param array $request_data   Request data
      * @return int  ID of category
@@ -401,7 +401,7 @@ class CategoryApi extends DolibarrApi
     }
 
     /**
-     * Update category
+     * Update category <b>Warning: Deprecated</b>
      * 
      * @param int   $id             Id of category to update
      * @param array $request_data   Datas   
@@ -435,7 +435,7 @@ class CategoryApi extends DolibarrApi
     }
     
     /**
-     * Delete category
+     * Delete category <b>Warning: Deprecated</b>
      *
      * @param int $id   Category ID
      * @return array
