@@ -166,6 +166,7 @@ print $langs->trans("ListOfAvailableAPIs").':<br>';
 foreach($listofapis['v1'] as $key => $val)
 {
     if ($key == 'login') continue;
+    if ($key == 'index') continue;
     
     if ($key)
     {
