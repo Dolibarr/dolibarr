@@ -527,7 +527,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
 				$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
 				
-				$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
+				$newmenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"),1);
 				$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
 				$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
 				$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
