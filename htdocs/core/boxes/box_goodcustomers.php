@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_clients.php
+ *	\file       htdocs/core/boxes/box_goodcustomers.php
  *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\brief      Module to generated widget of best customers (the most invoiced)
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
