@@ -20,18 +20,12 @@
  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 /**
- * API class for commande object
+ * API class for orders
  *
- * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
- * @category Api
- * @package  Api
- * 
- *
  */
-class CommandeApi extends DolibarrApi
+class Orders extends DolibarrApi
 {
 
     /**
@@ -48,9 +42,6 @@ class CommandeApi extends DolibarrApi
 
     /**
      * Constructor
-     *
-     * @url     GET order/
-     * 
      */
     function __construct()
     {
@@ -65,15 +56,11 @@ class CommandeApi extends DolibarrApi
      * Return an array with commande informations
      * 
      * @param       int         $id         ID of order
-     * @param		string		$ref		Ref of object
-     * @param		string		$ref_ext		External reference of object
-     * @param		string		$ref_int		Internal reference of other object
      * @return 	array|mixed data without useless information
 	 *
-     * @url	GET order/{id} 
      * @throws 	RestException
      */
-    function get($id='',$ref='', $ref_ext='', $ref_int='')
+    function get($id)
     {		
 		if(! DolibarrApiAccess::$user->rights->commande->lire) {
 			throw new RestException(401);
@@ -97,17 +84,15 @@ class CommandeApi extends DolibarrApi
      * 
      * Get a list of orders
      * 
-     * @param int		$mode		Use this param to filter list
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
      * @param string	$societe	Societe filter field
      *
-     * @url     GET     /order/list
      * @return  array   Array of order objects
      */
-    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $societe = 0) {
+    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $societe = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -122,10 +107,6 @@ class CommandeApi extends DolibarrApi
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as s";
         
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-        
-		// Example of use $mode
-        //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
-        //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
         $sql.= ' WHERE s.entity IN ('.getEntity('commande', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
@@ -181,28 +162,9 @@ class CommandeApi extends DolibarrApi
     }
 
     /**
-     * List orders for specific thirdparty
-     * 
-     * Get a list of orders
-     * 
-     * @param int	$socid Id of customer
-     *
-     * @url     GET     /customer/{socid}/order/list
-     * @url     GET     /thirdparty/{socid}/order/list
-     * @return  array   Array of order objects
-     */
-    function getListForSoc($socid = 0) {
-      return getList(0,"s.rowid","ASC",0,0,$socid);
-    }
-
-    
-    /**
      * Create order object
      *
-     * @param   array   $request_data   Request datas
-     * 
-     * @url     POST    order/
-     * 
+     * @param   array   $request_data   Request data
      * @return  int     ID of commande
      */
     function post($request_data = NULL)
@@ -229,13 +191,13 @@ class CommandeApi extends DolibarrApi
         
         return $this->commande->id;
     }
+
     /**
      * Get lines of an order
      *
-     *
      * @param int   $id             Id of order
      * 
-     * @url	GET order/{id}/line/list
+     * @url	GET {id}/lines
      * 
      * @return int 
      */
@@ -259,14 +221,14 @@ class CommandeApi extends DolibarrApi
       }
       return $result;
     }
+
     /**
      * Add a line to given order
-     *
      *
      * @param int   $id             Id of commande to update
      * @param array $request_data   Orderline data   
      * 
-     * @url	POST order/{id}/line
+     * @url	POST {id}/lines
      * 
      * @return int 
      */
@@ -318,15 +280,15 @@ class CommandeApi extends DolibarrApi
       }
       return false;
     }
+
     /**
      * Update a line to given order
-     *
      *
      * @param int   $id             Id of commande to update
      * @param int   $lineid         Id of line to update
      * @param array $request_data   Orderline data   
      * 
-     * @url	PUT order/{id}/line/{lineid}
+     * @url	PUT {id}/lines/{lineid}
      * 
      * @return object 
      */
@@ -375,6 +337,7 @@ class CommandeApi extends DolibarrApi
       }
       return false;
     }
+
     /**
      * Delete a line to given order
      *
@@ -382,7 +345,7 @@ class CommandeApi extends DolibarrApi
      * @param int   $id             Id of commande to update
      * @param int   $lineid         Id of line to delete
      * 
-     * @url	DELETE order/{id}/line/{lineid}
+     * @url	DELETE {id}/lines/{lineid}
      * 
      * @return int 
      */
@@ -413,8 +376,6 @@ class CommandeApi extends DolibarrApi
      * @param int   $id             Id of commande to update
      * @param array $request_data   Datas   
      * 
-     * @url	PUT order/{id}
-     * 
      * @return int 
      */
     function put($id, $request_data = NULL) {
@@ -444,8 +405,6 @@ class CommandeApi extends DolibarrApi
      * Delete order
      *
      * @param   int     $id         Order ID
-     * 
-     * @url     DELETE  order/{id}
      * 
      * @return  array
      */
@@ -482,13 +441,17 @@ class CommandeApi extends DolibarrApi
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
      * 
-     * @url GET     order/{id}/validate
-     * @url POST    order/{id}/validate
+     * @url POST    {id}/validate
      *  
      * @return  array
-     * 
+     * FIXME An error 403 is returned if the request has an empty body.
+     * Error message: "Forbidden: Content type `text/plain` is not supported."
+     * Workaround: send this in the body
+     * {
+     *   "idwarehouse": 0
+     * }
      */
-    function validOrder($id, $idwarehouse=0)
+    function validate($id, $idwarehouse=0)
     {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
@@ -524,7 +487,7 @@ class CommandeApi extends DolibarrApi
     function _validate($data)
     {
         $commande = array();
-        foreach (CommandeApi::$FIELDS as $field) {
+        foreach (Orders::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $commande[$field] = $data[$field];

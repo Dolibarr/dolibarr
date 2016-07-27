@@ -95,9 +95,23 @@ print '</tr>';
 print '</table>';
 print '<br><br>';
 
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+// Show message
+$message='';
+$url='<a href="'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword" target="_blank">'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword[&reset=1]</a>';
+$message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message.=img_picto('','object_globe.png').' '.$url;
+print $message;
+print '<br>';
+print '<br>';
+
 // Explorer
 print '<u>'.$langs->trans("ApiExporerIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/api/admin/explorer.php';
+$url=DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
 print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 
 
