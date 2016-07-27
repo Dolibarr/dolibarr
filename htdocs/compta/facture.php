@@ -1884,11 +1884,10 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $now = dol_now();
 
-llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+llxHeader('', $langs->trans('BillsCustomer'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
 // Mode creation
-
 if ($action == 'create')
 {
 	$facturestatic = new Facture($db);
@@ -2372,7 +2371,7 @@ if ($action == 'create')
 	}
 
 	// Date invoice
-	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">' . $langs->trans('DateInvoice') . '</td><td colspan="2">';
 	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	print $form->select_date($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
 	print '</td></tr>';

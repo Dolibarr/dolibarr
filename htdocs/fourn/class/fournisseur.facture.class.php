@@ -126,6 +126,69 @@ class FactureFournisseur extends CommonInvoice
     public $multicurrency_total_ht;
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
+
+    /**
+     * Standard invoice
+     */
+    const TYPE_STANDARD = 0;
+
+    /**
+     * Replacement invoice
+     */
+    const TYPE_REPLACEMENT = 1;
+
+    /**
+     * Credit note invoice
+     */
+    const TYPE_CREDIT_NOTE = 2;
+
+    /**
+     * Deposit invoice
+     */
+    const TYPE_DEPOSIT = 3;
+
+    /**
+     * Proforma invoice (should not be used. a proforma is an order)
+     */
+    const TYPE_PROFORMA = 4;
+
+	/**
+	 * Situation invoice
+	 */
+	const TYPE_SITUATION = 5;
+
+	/**
+	 * Draft
+	 */
+	const STATUS_DRAFT = 0;
+
+	/**
+	 * Validated (need to be paid)
+	 */
+	const STATUS_VALIDATED = 1;
+
+	/**
+	 * Classified paid.
+	 * If paid partially, $this->close_code can be:
+	 * - CLOSECODE_DISCOUNTVAT
+	 * - CLOSECODE_BADDEBT
+	 * If paid completelly, this->close_code will be null
+	 */
+	const STATUS_CLOSED = 2;
+
+	/**
+	 * Classified abandoned and no payment done.
+	 * $this->close_code can be:
+	 * - CLOSECODE_BADDEBT
+	 * - CLOSECODE_ABANDONED
+	 * - CLOSECODE_REPLACED
+	 */
+	const STATUS_ABANDONED = 3;
+
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
+	const CLOSECODE_BADDEBT = 'badcustomer';
+	const CLOSECODE_ABANDONED = 'abandon';
+	const CLOSECODE_REPLACED = 'replaced';
 	
     /**
 	 *	Constructor
@@ -163,6 +226,7 @@ class FactureFournisseur extends CommonInvoice
         $now=dol_now();
 
         // Clean parameters
+		if (empty($this->type)) $this->type = self::TYPE_STANDARD;
         if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
         if (empty($this->date)) $this->date=$now;
 
@@ -190,6 +254,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql.= "ref";
         $sql.= ", ref_supplier";
         $sql.= ", entity";
+		$sql.= ", type";
         $sql.= ", libelle";
         $sql.= ", fk_soc";
         $sql.= ", datec";
@@ -211,6 +276,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql.= "'(PROV)'";
         $sql.= ", '".$this->db->escape($this->ref_supplier)."'";
         $sql.= ", ".$conf->entity;
+		$sql.= ", '".$this->db->escape($this->type)."'";
         $sql.= ", '".$this->db->escape($this->libelle)."'";
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
@@ -1625,14 +1691,14 @@ class FactureFournisseur extends CommonInvoice
         return $result;
     }
 
-	 /**
-      *      Return next reference of supplier invoice not already used (or last reference)
-      *      according to numbering module defined into constant INVOICE_SUPPLIER_ADDON_NUMBER
-      *
-      *      @param	   Societe		$soc		Thirdparty object
-      *      @param    string		$mode		'next' for next value or 'last' for last value
-      *      @return   string					free ref or last ref
-      */
+	/**
+     *      Return next reference of supplier invoice not already used (or last reference)
+     *      according to numbering module defined into constant INVOICE_SUPPLIER_ADDON_NUMBER
+     *
+     *      @param	   Societe		$soc		Thirdparty object
+     *      @param    string		$mode		'next' for next value or 'last' for last value
+     *      @return   string					free ref or last ref
+     */
     public function getNextNumRef($soc,$mode='next')
     {
         global $db, $langs, $conf;
@@ -1678,6 +1744,105 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
+	/**
+	 *	Renvoi liste des factures fournisseurs remplacables
+	 *	Statut validee ou abandonnee pour raison autre + non payee + aucun paiement + pas deja remplacee
+	 *
+	 *	@param		int		$socid		Id societe
+	 *	@return    	array				Tableau des factures ('id'=>id, 'ref'=>ref, 'status'=>status, 'paymentornot'=>0/1)
+	 */
+	function list_replacable_invoices($socid=0)
+	{
+		global $conf;
+
+		$return = array();
+
+		$sql = "SELECT f.rowid as rowid, f.ref as facnumber, f.fk_statut,";
+		$sql.= " ff.rowid as rowidnext";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON f.rowid = ff.fk_facture_source";
+		$sql.= " WHERE (f.fk_statut = ".self::STATUS_VALIDATED." OR (f.fk_statut = ".self::STATUS_ABANDONED." AND f.close_code = '".self::CLOSECODE_ABANDONED."'))";
+		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= " AND f.paye = 0";					// Pas classee payee completement
+		$sql.= " AND pf.fk_paiementfourn IS NULL";		// Aucun paiement deja fait
+		$sql.= " AND ff.fk_statut IS NULL";			// Renvoi vrai si pas facture de remplacement
+		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
+		$sql.= " ORDER BY f.ref";
+
+		dol_syslog(get_class($this)."::list_replacable_invoices", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$return[$obj->rowid]=array(	'id' => $obj->rowid,
+				'ref' => $obj->facnumber,
+				'status' => $obj->fk_statut);
+			}
+			//print_r($return);
+			return $return;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 *	Renvoi liste des factures fournisseurs qualifiables pour correction par avoir
+	 *	Les factures qui respectent les regles suivantes sont retournees:
+	 *	(validee + paiement en cours) ou classee (payee completement ou payee partiellement) + pas deja remplacee + pas deja avoir
+	 *
+	 *	@param		int		$socid		Id societe
+	 *	@return    	array				Tableau des factures ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
+	 */
+	function list_qualified_avoir_invoices($socid=0)
+	{
+		global $conf;
+
+		$return = array();
+
+		$sql = "SELECT f.rowid as rowid, f.ref as facnumber, f.fk_statut, f.type, f.paye, pf.fk_paiementfourn";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON (f.rowid = ff.fk_facture_source AND ff.type=".self::TYPE_REPLACEMENT.")";
+		$sql.= " WHERE f.entity = ".$conf->entity;
+		$sql.= " AND f.fk_statut in (".self::STATUS_VALIDATED.",".self::STATUS_CLOSED.")";
+		//  $sql.= " WHERE f.fk_statut >= 1";
+		//	$sql.= " AND (f.paye = 1";				// Classee payee completement
+		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
+		$sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
+		$sql.= " AND f.type != ".self::TYPE_CREDIT_NOTE;				// Type non 2 si facture non avoir
+		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
+		$sql.= " ORDER BY f.ref";
+
+		dol_syslog(get_class($this)."::list_qualified_avoir_invoices", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$qualified=0;
+				if ($obj->fk_statut == self::STATUS_VALIDATED) $qualified=1;
+				if ($obj->fk_statut == self::STATUS_CLOSED) $qualified=1;
+				if ($qualified)
+				{
+					//$ref=$obj->facnumber;
+					$paymentornot=($obj->fk_paiementfourn?1:0);
+					$return[$obj->rowid]=array('ref'=>$obj->facnumber,'status'=>$obj->fk_statut,'type'=>$obj->type,'paye'=>$obj->paye,'paymentornot'=>$paymentornot);
+				}
+			}
+
+			return $return;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
     /**
      *  Initialise an instance with random values.
