@@ -920,7 +920,7 @@ class BonPrelevement extends CommonObject
 					$dir=$conf->prelevement->dir_output.'/receipts';
 					if (! is_dir($dir)) dol_mkdir($dir);
 					
-					$this->filename = $dir.$ref.'.xml';
+					$this->filename = $dir.'/'.$ref.'.xml';
 
 	                // Create withdraw receipt in database
 	                $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
