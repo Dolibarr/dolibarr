@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Süresi dolmamış
 ServiceStatusLate=Yürülükte, süresi dolmuş
 ServiceStatusLateShort=Süresi dolmuş
 ServiceStatusClosed=Kapalı
+ShowContractOfService=Hizmet sözleşmesini göster
 Contracts=Sözleşmeler
 ContractsSubscriptions=Sözleşmeler/Üyelikler
 ContractsAndLine=Sözleşmeler ve satırları

@@ -20,3 +20,4 @@ VATIntraCheckDesc=El link <b>%s</b> permite consultar al SENIAT el RIF. Se requi
 VATIntraCheckURL=http://contribuyente.seniat.gob.ve/BuscaRif/BuscaRif.jsp
 VATIntraCheckableOnEUSite=Verificar en la web del SENIAT
 VATIntraManualCheck=Puede también realizar una verificación manual en la página del SENIAT <a href="%s" target="_blank">%s</a>
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party

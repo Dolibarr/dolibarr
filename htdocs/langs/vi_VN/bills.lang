@@ -312,6 +312,7 @@ LatestRelatedBill=Hóa đơn liên quan mới nhất
 WarningBillExist=Cảnh báo, một hoặc nhiều hóa đơn đã tồn tại
 MergingPDFTool=Công cụ sáp nhập PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

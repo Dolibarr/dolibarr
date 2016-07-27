@@ -1171,7 +1171,7 @@ LDAPServerUseTLS=Use TLS
 LDAPServerUseTLSExample=Your LDAP server use TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com)
+LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com or cn=Administrator,cn=Users,dc=example,dc=com for active directory)
 LDAPPassword=Administrator password
 LDAPUserDn=Users' DN
 LDAPUserDnExample=Complete DN (ex: ou=users,dc=example,dc=com)
@@ -1604,3 +1604,4 @@ ListOfAvailableAPIs=List of available APIs
 activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is missing, so module "%1$s" may not work correclty. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise
 CommandIsNotInsideAllowedCommands=The command you try to run is not inside list of allowed commands defined into parameter <strong>$dolibarr_main_restrict_os_commands</strong> into <strong>conf.php</strong> file.
 LandingPage=Landing page
+SamePriceAlsoForSharedCompanies=If you use the multicompany module, with the choice "Single price", price will be also the same for all companies if products are shared between environments

@@ -168,36 +168,39 @@ print load_fiche_titre($langs->trans("Upgrade"),'','title_setup');
 
 print $langs->trans("CurrentVersion").' : <b>'.DOL_VERSION.'</b><br>';
 
-$result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
-//var_dump($result['content']);
-$sfurl = simplexml_load_string($result['content']);
-if ($sfurl)
+if (function_exists('curl_init'))
 {
-    $i=0;
-    $version='0.0';
-    while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
+    $result = getURLContent('http://sourceforge.net/projects/dolibarr/rss');
+    //var_dump($result['content']);
+    $sfurl = simplexml_load_string($result['content']);
+    if ($sfurl)
     {
-        $title=$sfurl->channel[0]->item[$i]->title;
-        if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+        $i=0;
+        $version='0.0';
+        while (! empty($sfurl->channel[0]->item[$i]->title) && $i < 10000)
         {
-            $newversion=$reg[1];
-            $newversionarray=explode('.',$newversion);
-            $versionarray=explode('.',$version);
-            //var_dump($newversionarray);var_dump($versionarray);
-            if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+            $title=$sfurl->channel[0]->item[$i]->title;
+            if (preg_match('/([0-9]+\.([0-9\.]+))/', $title, $reg))
+            {
+                $newversion=$reg[1];
+                $newversionarray=explode('.',$newversion);
+                $versionarray=explode('.',$version);
+                //var_dump($newversionarray);var_dump($versionarray);
+                if (versioncompare($newversionarray, $versionarray) > 0) $version=$newversion;
+            }
+            $i++;
         }
-        $i++;
+        
+        // Show version
+    	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
     }
-    
-    // Show version
-	print $langs->trans("LastStableVersion").' : <b>'. (($version != '0.0')?$version:$langs->trans("Unknown")) .'</b><br>';
+    else
+    {
+        print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
+    }
 }
-else
-{
-    print $langs->trans("LastStableVersion").' : <b>' .$langs->trans("UpdateServerOffline").'</b><br>';
-}
-print '<br>';
 
+print '<br>';
 
 // Upgrade
 print $langs->trans("Upgrade").'<br>';

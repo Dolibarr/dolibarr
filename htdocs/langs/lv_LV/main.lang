@@ -84,6 +84,7 @@ SeeAbove=Skatīt iepriekš
 HomeArea=Mājas sadaļa
 LastConnexion=Pēdējā savienojums
 PreviousConnexion=Iepriekšējā pieslēgšanās
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Pieslēgts videi
 ConnectedSince=Pievienots kopš
 AuthenticationMode=Autentifikācija režīms

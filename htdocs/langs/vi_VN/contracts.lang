@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Chưa hết hạn
 ServiceStatusLate=Đang hoạt động, đã hết hạn
 ServiceStatusLateShort=Đã hết hạn
 ServiceStatusClosed=Đã đóng
+ShowContractOfService=Show contract of service
 Contracts=Hợp đồng
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Hợp đồng và chi tiết của hợp đồng

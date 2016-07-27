@@ -21,3 +21,5 @@ ViewSiteInNewTab=Mostra el lloc en una nova pestanya
 ViewPageInNewTab=Mostra la pàgina en una nova pestanya
 SetAsHomePage=Indica com a Pàgina principal
 RealURL=URL real
+ViewWebsiteInProduction=Mostra la pàgina web utilitzant les URLs d'inici
+SetHereVirtualHost=Si en el teu servidor web pots definir un host virtual dedicat amb un directori root en <strong>%s</strong>, defineix aquí el nom del host virtual i així la previsualització es farà utilitzant aquest accés directe enlloc del contenidor d'URLs de Dolibarr.
