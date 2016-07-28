@@ -251,15 +251,17 @@ class pdf_crabe extends ModelePDFFactures
 
 				// Set nblignes with the new facture lines content after hook
 				$nblignes = count($object->lines);
+				$nbpayments = count($object->getListOfPayments());
 				
 				// Create pdf instance
 				$pdf=pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs);	// Must be after pdf_getInstance
-				$heightforinfotot = 50;	// Height reserved to output the info and total part
+                $pdf->SetAutoPageBreak(1,0);
+                
+                $heightforinfotot = 50+(4*$nbpayments);	// Height reserved to output the info and total part and payment part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
 	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
-                $pdf->SetAutoPageBreak(1,0);
-
+                
                 if (class_exists('TCPDF'))
                 {
                     $pdf->setPrintHeader(false);
@@ -746,6 +748,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->SetFont('','', $default_font_size - 4);
 
+		
 		// Loop on each deposits and credit notes included
 		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql.= " re.description, re.fk_facture_source,";
@@ -790,12 +793,15 @@ class pdf_crabe extends ModelePDFFactures
 		}
 
 		// Loop on each payment
-		$sql = "SELECT p.datep as date, p.fk_paiement as type, p.num_paiement as num, pf.amount as amount,";
+		// TODO Call getListOfPaymentsgetListOfPayments instead of hard coded sql
+		$sql = "SELECT p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount,";
 		$sql.= " cp.code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
 		$sql.= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
+		//$sql.= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = 1";
 		$sql.= " ORDER BY p.datep";
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
