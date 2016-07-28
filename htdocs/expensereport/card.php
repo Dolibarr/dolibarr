@@ -682,6 +682,10 @@ if ($action == "confirm_cancel" && GETPOST('confirm')=="yes" && GETPOST('detail_
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+	else
+	{
+	    setEventMessages($langs->transnoentitiesnoconv("OnlyOwnerCanCancel"), '', 'errors');    // Should not happened
+	}
 }
 
 if ($action == "confirm_brouillonner" && GETPOST('confirm')=="yes" && $id > 0 && $user->rights->expensereport->creer)
@@ -1904,12 +1908,6 @@ if ($action != 'create' && $action != 'edit')
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
 			}
-
-			if ($user->rights->expensereport->supprimer)
-			{
-				// Delete
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
-			}
 		}
 	}
 
@@ -1929,12 +1927,6 @@ if ($action != 'create' && $action != 'edit')
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
-
-			if ($user->rights->expensereport->supprimer)
-			{
-				// Delete
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
-			}
 		}
 	}
 
@@ -1976,23 +1968,18 @@ if ($action != 'create' && $action != 'edit')
 			// Cancel
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
 		}
-
-		if($user->rights->expensereport->supprimer)
-		{
-			// Delete
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
-		}
 	}
 
+	
+	// If status is Appoved
+	// --------------------
+	
 	if ($user->rights->expensereport->approve && $object->fk_statut == 5)
 	{
 	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a>';
 	}
 	
-	/* Si l'état est "A payer"
-	 *	ET user à droit de "to_paid"
-	 *	Afficher : "Annuler" / "Payer" / "Supprimer"
-	 */
+	// If bank module is used
 	if ($user->rights->expensereport->to_paid && ! empty($conf->banque->enabled) && $object->fk_statut == 5)
 	{
 		// Pay
@@ -2006,59 +1993,41 @@ if ($action != 'create' && $action != 'edit')
 		}
 	}
 	
+	// If bank module is not used	
 	if (($user->rights->expensereport->to_paid || empty($conf->banque->enabled)) && $object->fk_statut == 5)
 	{
 		if ((round($remaintopay) == 0 || empty($conf->banque->enabled)) && $object->paid == 0)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id='.$object->id.'&action=set_paid">'.$langs->trans("ClassifyPaid")."</a></div>";
 		}
-
-		// Cancel
-		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
-		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
-		}
-
-		// Delete
-		if($user->rights->expensereport->supprimer)
-		{
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
-		}
 	}
-
-	/* Si l'état est "Payée"
-	 *	ET user à droit "approve"
-	 *	ET user à droit "to_paid"
-	 *	Afficher : "Annuler"
-	 */
-	if ($user->rights->expensereport->approve && $user->rights->expensereport->to_paid && $object->fk_statut==6)
+	
+	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->fk_statut == 5)
 	{
-		// Cancel
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
-		if($user->rights->expensereport->supprimer)
-		{
-			// Delete
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
-		}
+    	// Cancel
+   		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
 	}
-
-	/* Si l'état est "Annulée"
-	 * 	ET user à droit "supprimer"
-	 *	Afficher : "Supprimer"
-	 */
-	if ($user->rights->expensereport->supprimer && $object->fk_statut==4)
+	
+    // TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
+	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->fk_statut == 6)
 	{
-
-		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
-		{
-			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('ReOpen').'</a>';
-		}
-
-		// Delete
+	    // Cancel
+	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
+	}
+	
+	
+	/* If draft, validated, cancel, and user can create, he can always delete its card before it is approved */ 
+	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->fk_statut <= 4)
+	{
+	    // Delete
 		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
-
 	}
+	else if($user->rights->expensereport->supprimer && $object->fk_statut != 6)
+	{
+    	// Delete
+	    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
+	}
+
 }
 
 print '</div>';
