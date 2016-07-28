@@ -602,9 +602,8 @@ function dol_strtoupper($utf8_string)
  *  This function works only if syslog module is enabled.
  * 	This must not use any call to other function calling dol_syslog (avoid infinite loop).
  *
- * 	@param  string		$message				Line to log.
+ * 	@param  string		$message				Line to log. ''=Show nothing
  *  @param  int			$level					Log level
- *                                  			0=Show nothing
  *												On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=6, LOG_DEBUG=6 si define_syslog_variables ou PHP 5.3+, 7 si dolibarr
  *												On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
  *  @param	int			$ident					1=Increase ident of 1, -1=Decrease ident of 1
@@ -619,52 +618,54 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
-	// Test log level
-	$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
-	if (!in_array($level, $logLevels, true))
+	if (! empty($message))
 	{
-		throw new Exception('Incorrect log level');
+    	// Test log level
+    	$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
+    	if (!in_array($level, $logLevels, true))
+    	{
+    		throw new Exception('Incorrect log level');
+    	}
+    	if ($level > $conf->global->SYSLOG_LEVEL) return;
+    
+    	// If adding log inside HTML page is required
+    	if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
+    	{
+    		$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
+    	}
+    
+    	//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
+    	// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
+    	if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
+    	{
+    		print "\n\n<!-- Log start\n";
+    		print $message."\n";
+    		print "Log end -->\n";
+    	}
+    
+    	$data = array(
+    		'message' => $message,
+    		'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
+    		'level' => $level,
+    		'user' => ((is_object($user) && $user->id) ? $user->login : false),
+    		'ip' => false
+    	);
+    
+    	if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
+    	// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
+    	else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
+    	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
+    	else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
+    	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
+    	else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
+    	// Loop on each log handler and send output
+    	foreach ($conf->loghandlers as $loghandlerinstance)
+    	{
+    		if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) continue;
+    		$loghandlerinstance->export($data,$suffixinfilename);
+    	}
+    	unset($data);
 	}
-	if ($level > $conf->global->SYSLOG_LEVEL) return;
-
-	// If adding log inside HTML page is required
-	if (! empty($_REQUEST['logtohtml']) && (! empty($conf->global->MAIN_ENABLE_LOG_TO_HTML) || ! empty($conf->global->MAIN_LOGTOHTML)))   // MAIN_LOGTOHTML kept for backward compatibility
-	{
-		$conf->logbuffer[] = dol_print_date(time(),"%Y-%m-%d %H:%M:%S")." ".$message;
-	}
-
-	//TODO: Remove this. MAIN_ENABLE_LOG_INLINE_HTML should be deprecated and use a log handler dedicated to HTML output
-	// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
-	if (! empty($conf->global->MAIN_ENABLE_LOG_INLINE_HTML) && ! empty($_GET["log"]))
-	{
-		print "\n\n<!-- Log start\n";
-		print $message."\n";
-		print "Log end -->\n";
-	}
-
-	$data = array(
-		'message' => $message,
-		'script' => (isset($_SERVER['PHP_SELF'])? basename($_SERVER['PHP_SELF'],'.php') : false),
-		'level' => $level,
-		'user' => ((is_object($user) && $user->id) ? $user->login : false),
-		'ip' => false
-	);
-
-	if (! empty($_SERVER["REMOTE_ADDR"])) $data['ip'] = $_SERVER['REMOTE_ADDR'];
-	// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
-	else if (! empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
-	// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
-	else if (! empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME'])?'':'@'.$_SERVER['USERNAME']);
-	// This is when PHP session is ran outside a web server, like from Linux command line (Not always defined, but usefull if OS defined it).
-	else if (! empty($_SERVER['LOGNAME'])) $data['ip'] = '???@'.$_SERVER['LOGNAME'];
-	// Loop on each log handler and send output
-	foreach ($conf->loghandlers as $loghandlerinstance)
-	{
-		if ($restricttologhandler && $loghandlerinstance->code != $restricttologhandler) continue;
-		$loghandlerinstance->export($data,$suffixinfilename);
-	}
-	unset($data);
-	
 
 	if (! empty($ident))
 	{
