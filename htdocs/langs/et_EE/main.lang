@@ -84,6 +84,7 @@ SeeAbove=Vt eespool
 HomeArea=Kodu ala
 LastConnexion=Viimane sisselogimine
 PreviousConnexion=Eelmine sisselogimine
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Keskkonda sisse logitud
 ConnectedSince=Sisse loginud alates
 AuthenticationMode=Autentimise režiim

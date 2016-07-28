@@ -322,7 +322,7 @@ abstract class CommonDocGenerator
 	 *
 	 * @param   Object			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
-     * @param   array_key		$array_key	        Name of the key for return array
+     * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
 	function get_substitutionarray_object($object,$outputlangs,$array_key='object')

@@ -25,7 +25,7 @@ use Luracast\Restler\RestException;
  * @smart-auto-routing false
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
- * 
+ * @deprecated Use Contacts instead (defined in api_contacts.class.php)
  */
 class ContactApi extends DolibarrApi
 {
@@ -43,7 +43,7 @@ class ContactApi extends DolibarrApi
 	public $contact;
 
 	/**
-	 * Constructor
+	 * Constructor <b>Warning: Deprecated</b>
 	 *
 	 * @url	contact/
 	 * 
@@ -55,7 +55,7 @@ class ContactApi extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a contact object
+	 * Get properties of a contact object <b>Warning: Deprecated</b>
 	 *
 	 * Return an array with contact informations
 	 *
@@ -86,7 +86,7 @@ class ContactApi extends DolibarrApi
 	}
 
 	/**
-	 * List contacts
+	 * List contacts <b>Warning: Deprecated</b>
 	 * 
 	 * Get a list of contacts
 	 * 
@@ -187,7 +187,7 @@ class ContactApi extends DolibarrApi
 	}
 
 	/**
-	 * Create contact object
+	 * Create contact object <b>Warning: Deprecated</b>
 	 *
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
@@ -210,7 +210,7 @@ class ContactApi extends DolibarrApi
 	}
 
 	/**
-	 * Update contact
+	 * Update contact <b>Warning: Deprecated</b>
 	 *
 	 * @param int   $id             Id of contact to update
 	 * @param array $request_data   Datas   
@@ -247,7 +247,7 @@ class ContactApi extends DolibarrApi
 	}
 
 	/**
-	 * Delete contact
+	 * Delete contact <b>Warning: Deprecated</b>
 	 *
 	 * @param   int     $id Contact ID
 	 * @return  integer

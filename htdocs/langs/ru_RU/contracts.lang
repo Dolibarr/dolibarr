@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Не истек
 ServiceStatusLate=Запуск, истек
 ServiceStatusLateShort=Истек
 ServiceStatusClosed=Закрытые
+ShowContractOfService=Show contract of service
 Contracts=Договоры
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Контракты и строка с контрактами

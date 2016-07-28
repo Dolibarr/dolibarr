@@ -2228,6 +2228,7 @@ class Societe extends CommonObject
     function display_rib($mode='label')
     {
         require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
+
         $bac = new CompanyBankAccount($this->db);
         $bac->fetch(0,$this->id);
 
@@ -2239,6 +2240,7 @@ class Societe extends CommonObject
         {
         	if (empty($bac->rum))
         	{
+        		require_once DOL_DOCUMENT_ROOT . '/compta/prelevement/class/bonprelevement.class.php';
         		$prelevement = new BonPrelevement($this->db);
         		$bac->fetch_thirdparty();
         		$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
@@ -2774,8 +2776,9 @@ class Societe extends CommonObject
         {
             if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
 
+            // TODO Move links to validate professional ID into a dictionary table "country" + "link"
             if ($idprof == 1 && $thirdparty->country_code == 'FR') $url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
-            if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+            //if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';     // Link no more valid
             if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
             if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
 
@@ -3511,10 +3514,11 @@ class Societe extends CommonObject
 		 * Thirdparty commercials cannot be the same in both thirdparties so we look for them and remove some
 		 * Because this function is meant to be executed within a transaction, we won't take care of it.
 		 */
-		$sql = 'SELECT rowid';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux';
-		$sql.= ' WHERE fk_soc = ' . (int) $dest_id;
-		$sql.= ' AND fk_user IN (SELECT fk_user FROM '.MAIN_DB_PREFIX.'societe_commerciaux WHERE fk_soc = '.(int) $origin_id.');';
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
+		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';
+		$sql .= ' SELECT fk_user ';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
+		$sql .= ' WHERE fk_soc = '.(int) $origin_id.') ';
 
 		$query = $db->query($sql);
 

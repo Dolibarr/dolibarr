@@ -84,6 +84,7 @@ SeeAbove=ดูข้างต้น
 HomeArea=พื้นที่หน้าแรก
 LastConnexion=การเชื่อมต่อล่าสุด
 PreviousConnexion=การเชื่อมต่อก่อนหน้า
+PreviousValue=Previous value
 ConnectedOnMultiCompany=ที่เชื่อมต่อกับสภาพแวดล้อม
 ConnectedSince=เชื่อมต่อตั้งแต่
 AuthenticationMode=โหมด authentification

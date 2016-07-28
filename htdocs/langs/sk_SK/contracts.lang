@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Neuplynula
 ServiceStatusLate=Beh, uplynula
 ServiceStatusLateShort=Vypršala
 ServiceStatusClosed=Zatvorené
+ShowContractOfService=Show contract of service
 Contracts=Zmluvy
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

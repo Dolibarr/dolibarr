@@ -74,6 +74,7 @@ DefaultLang=默认语言
 VATIsUsed=使用增值税
 VATIsNotUsed=不使用增值税
 CopyAddressFromSoc=填写丙方地址
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= 使用可再生能源
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=组织
 FiscalYearInformation=信息财政年度
 FiscalMonthStart=本财年开始一个月
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=供应商名单
 ListProspectsShort=名单前景
 ListCustomersShort=客户名单

@@ -21,3 +21,5 @@ ViewSiteInNewTab=Ver sitio en una pestaña nueva
 ViewPageInNewTab=Ver página en una pestaña nueva
 SetAsHomePage=Establecer como Página de inicio
 RealURL=URL Real
+ViewWebsiteInProduction=Ver sitio web usando la URL de inicio
+SetHereVirtualHost=Si puede establecer, en su servidor web, un servidor virtual dedicado con un directorio raíz en <strong>%s</strong>, defina aquí el nombre de host virtual para la vista previa que hará uso de este acceso directo en lugar de la envolura Dolibarr.

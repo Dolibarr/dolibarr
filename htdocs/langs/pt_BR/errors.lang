@@ -172,5 +172,4 @@ WarningClickToDialUserSetupNotComplete=Configuração de informações ClickToDi
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Função desabilitada quando a tela e optimizada para uso das pessoas cegas ou navegadores de texto.
 WarningPaymentDateLowerThanInvoiceDate=A data de pagamento (%s) é anterior a data (%s) da fatura %s.
 WarningTooManyDataPleaseUseMoreFilters=Dados em demasia (mais de %s linhas). Por favor, utilize mais filtros ou defina a constante %s para um limite maior.
-WarningSomeLinesWithNullHourlyRate=Algumas vezes foram registrados por usuários mesmo sem o custo/hora definido. O valor 0 foi utilizado, mas isso pode resultar na avaliação errada do tempo gasto.
 WarningYourLoginWasModifiedPleaseLogin=O seu login foi modificado. Por questões de segurança, você terá de autenticar-se com o seu novo login antes da próxima ação.

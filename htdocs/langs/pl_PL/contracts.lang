@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Nie minął
 ServiceStatusLate=Running, minął
 ServiceStatusLateShort=Minął
 ServiceStatusClosed=Zamknięte
+ShowContractOfService=Show contract of service
 Contracts=Kontrakty
 ContractsSubscriptions=Umowy/Subskrypcje
 ContractsAndLine=Kontrakty i pozycje kontraktów

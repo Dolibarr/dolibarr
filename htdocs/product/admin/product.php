@@ -583,6 +583,10 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUI
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
 if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) && (!empty($conf->global->PRODUIT_MULTIPRICES))) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES';
 print $form->selectarray("princingrule",$select_pricing_rules,$current_rule);
+if ( empty($conf->multicompany->enabled))
+{
+    print $langs->trans("SamePriceAlsoForSharedCompanies");
+}
 print '</td><td align="right" rowspan="'.$rowspan.'" class="nohover">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';

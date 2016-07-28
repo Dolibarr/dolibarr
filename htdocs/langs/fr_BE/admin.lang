@@ -23,3 +23,5 @@ RemoveLock=Supprimez le fichier <b>%s</b> s'il existe pour autoriser l'utilisati
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
+CompanyFundationDesc=Edit on this page all known information of the company or foundation you need to manage (For this, click on "Modify" button at bottom of page)
+GoOntoContactCardToAddMore=Go on the tab "Notifications" of a thirdparty contact to add or remove notifications for contacts/addresses

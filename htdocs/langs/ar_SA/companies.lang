@@ -74,6 +74,7 @@ DefaultLang=اللغة افتراضيا
 VATIsUsed=وتستخدم ضريبة القيمة المضافة
 VATIsNotUsed=ضريبة القيمة المضافة لا يستخدم
 CopyAddressFromSoc=ملء العنوان مع عنوان مرشحين عن
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=استخدام الضرائب الثانية
 LocalTax1IsUsedES= يتم استخدام الطاقة المتجددة
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=المنظمة
 FiscalYearInformation=معلومات عن السنة المالية
 FiscalMonthStart=ابتداء من شهر من السنة المالية
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=قائمة الموردين
 ListProspectsShort=قائمة التوقعات
 ListCustomersShort=قائمة العملاء

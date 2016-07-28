@@ -21,3 +21,5 @@ ViewSiteInNewTab=Siteyi yeni sekmede izle
 ViewPageInNewTab=Siteyi yeni sekmede izle
 SetAsHomePage=Giriş Sayfası olarak ayarla
 RealURL=Gerçek URL
+ViewWebsiteInProduction=Web sitesini giriş URL si kullanarak izle
+SetHereVirtualHost=Eğer web sunucunuzda <strong>%s</strong> üzerinde bir kök dizine sahip özel sanal host ayarlayabilirseniz, burada sanal host adını tanımlayın, böylece; önizleme Dolibarr URL sarıcısı yerine direkt olarak buradan yapılabilir.

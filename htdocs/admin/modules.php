@@ -304,7 +304,7 @@ $h++;
 print "<br>\n";
 
 
-dol_fiche_head($head, $mode, $langs->trans("Modules"));
+dol_fiche_head($head, $mode, '');
 
 $var=true;
 
@@ -443,11 +443,11 @@ if ($mode != 'marketplace')
         if ($familykey!=$oldfamily)
         {
             print '<tr class="liste_titre">'."\n";
-            print '<td colspan="6">';
+            print '<td colspan="5">';
             $familytext=empty($familyinfo[$familykey]['label'])?$familykey:$familyinfo[$familykey]['label'];
             print $familytext;
             print "</td>\n";
-    		print '<td align="right">'.$langs->trans("SetupShort").'</td>'."\n";
+    		print '<td colspan="2" align="right">'.$langs->trans("SetupShort").'</td>'."\n";
             print "</tr>\n";
             $atleastoneforfamily=0;
             //print "<tr><td>yy".$oldfamily."-".$familykey."-".$atleastoneforfamily."<br></td><tr>";

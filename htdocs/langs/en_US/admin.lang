@@ -951,7 +951,7 @@ LogEventDesc=You can enable here the logging for Dolibarr security events. Admin
 AreaForAdminOnly=Those features can be used by <b>administrator users</b> only.
 SystemInfoDesc=System information is miscellaneous technical information you get in read only mode and visible for administrators only.
 SystemAreaForAdminOnly=This area is available for administrator users only. None of the Dolibarr permissions can reduce this limit.
-CompanyFundationDesc=Edit on this page all known information of the company or foundation you need to manage (For this, click on "Modify" button at bottom of page)
+CompanyFundationDesc=Edit on this page all known information of the company or foundation you need to manage (For this, click on "Modify" or "Save" button at bottom of page)
 DisplayDesc=You can choose each parameter related to the Dolibarr look and feel here
 AvailableModules=Available modules
 ToActivateModule=To activate modules, go on setup Area (Home->Setup->Modules).
@@ -1171,7 +1171,7 @@ LDAPServerUseTLS=Use TLS
 LDAPServerUseTLSExample=Your LDAP server use TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
-LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com)
+LDAPAdminDnExample=Complete DN (ex: cn=admin,dc=example,dc=com or cn=Administrator,cn=Users,dc=example,dc=com for active directory)
 LDAPPassword=Administrator password
 LDAPUserDn=Users' DN
 LDAPUserDnExample=Complete DN (ex: ou=users,dc=example,dc=com)
@@ -1603,3 +1603,5 @@ UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received i
 ListOfAvailableAPIs=List of available APIs
 activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is missing, so module "%1$s" may not work correclty. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise
 CommandIsNotInsideAllowedCommands=The command you try to run is not inside list of allowed commands defined into parameter <strong>$dolibarr_main_restrict_os_commands</strong> into <strong>conf.php</strong> file.
+LandingPage=Landing page
+SamePriceAlsoForSharedCompanies=If you use the multicompany module, with the choice "Single price", price will be also the same for all companies if products are shared between environments

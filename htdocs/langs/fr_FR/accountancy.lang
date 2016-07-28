@@ -84,10 +84,10 @@ AccountingCategory=Catégorie comptable
 
 NotMatch=Non défini
 
-DeleteMvt=Delete general ledger lines
-DelYear=Year to delete
-DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+DeleteMvt=Supprimer les lignes du grand livre
+DelYear=Année à supprimer
+DelJournal=Journal à supprimer
+ConfirmDeleteMvt=Cette action effacera toutes les lignes du grand livre pour l'année et/ou d'un journal 
 
 DelBookKeeping=Supprimer les écritures du grand livre
 
@@ -147,7 +147,7 @@ Modelcsv_bob50=Export vers Sage BOB 50
 Modelcsv_ciel=Export vers Sage Ciel Compta ou Compta Evolution
 Modelcsv_quadratus=Export vers Quadratus QuadraCompta
 Modelcsv_ebp=Export vers EBP
-Modelcsv_cogilog=Export towards Cogilog
+Modelcsv_cogilog=Export vers Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Initialisation comptabilité
@@ -166,4 +166,4 @@ Formula=Formule
 ## Error
 ErrorNoAccountingCategoryForThisCountry=Pas de catégories comptable disponibles pour ce pays
 ExportNotSupported=Le format de l'export n'est pas supporté par cette page
-BookeppingLineAlreayExists=Lines already existing into bookeeping
+BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre

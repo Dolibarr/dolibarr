@@ -86,6 +86,7 @@ DirectoryRecommendation=On recommanded käyttää hakemiston ulkopuolella teidä
 LoginAlreadyExists=On jo olemassa
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr järjestelmänvalvojan tili <b>' %s'</b> on jo olemassa.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Varoitus, turvallisuussyistä, kun asennus tai päivitys on valmis, poista <b>asennus hakemistoon tai nimetä sen install.lock välttämiseksi sen ilkivaltaisten käyttöä.</b>
 FunctionNotAvailableInThisPHP=Ei saatavana tämän PHP
 ChoosedMigrateScript=Valittu siirtyä script

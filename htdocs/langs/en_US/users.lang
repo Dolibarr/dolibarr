@@ -100,3 +100,5 @@ WeeklyHours=Weekly hours
 ColorUser=Color of the user
 DisabledInMonoUserMode=Disabled in maintenance mode
 UserAccountancyCode=User accountancy code
+UserLogoff=User logout
+UserLogged=User logged
