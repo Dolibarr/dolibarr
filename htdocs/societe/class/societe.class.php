@@ -2004,12 +2004,24 @@ class Societe extends CommonObject
     {
         global $langs;
 
-        $contact_emails = $this->contact_property_array('email');
+        $contact_emails = $this->contact_property_array('email',1);
         if ($this->email && $addthirdparty)
         {
-            if (empty($this->name)) $this->name=$this->nom;
-            // TODO: Tester si email non deja present dans tableau contact
-            $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+            $exist = 0;
+            foreach($contact_emails as $contacts){
+                if($exist ===0){
+                    $contacts = str_replace('&gt;','',$contacts);
+                    $contacts = explode ('&lt;',$contacts);
+                    if($contacts[1]===$this->email){
+                        $exist = 1;
+                    }
+                }
+            }
+            if($exist ===0){
+                if (empty($this->name)) $this->name=$this->nom;
+                $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
+            }
+
         }
         return $contact_emails;
     }
