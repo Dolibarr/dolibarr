@@ -199,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 	    
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 		
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Nature
 		if($object->type!=Product::TYPE_SERVICE)

@@ -270,7 +270,7 @@ llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:Factur
 $sql = "SELECT";
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement as datelimite,";
-$sql.= " f.total_ht, f.total_ttc, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label,";
+$sql.= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
