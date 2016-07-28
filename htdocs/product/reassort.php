@@ -101,9 +101,12 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
 // None
 
 
+
 /*
  * View
  */
+
+$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
 $form=new Form($db);
 $htmlother=new FormOther($db);
@@ -184,9 +187,6 @@ if ($resql)
 		exit;
 	}
 
-	$helpurl='';
-	$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-
 	if (isset($type))
 	{
 		if ($type==1) { $texte = $langs->trans("Services"); }
@@ -197,7 +197,7 @@ if ($resql)
 	$texte.=' ('.$langs->trans("Stocks").')';
 
 
-	llxHeader("",$texte,$helpurl);
+	llxHeader("", $texte, $helpurl);
 
 	if ($sref || $snom || $sall || GETPOST('search'))
 	{
