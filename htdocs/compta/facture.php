@@ -864,7 +864,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Standard invoice or Deposit invoice created from a Predefined template invoice
+		// Standard invoice or Deposit invoice, created from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -904,6 +904,7 @@ if (empty($reshook))
 				$object->fac_rec = GETPOST('fac_rec');
 
 				$id = $object->create($user);
+				var_dump('ggg');
 			}
 		}
 
@@ -1011,8 +1012,8 @@ if (empty($reshook))
 						$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 					}
 
-					$id = $object->create($user);
-
+					$id = $object->create($user);      // This include class to add_object_linked() and add add_contact()
+					
 					if ($id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
@@ -1183,32 +1184,7 @@ if (empty($reshook))
 								$error ++;
 							}
 						}
-
-						// Now we create same links to contact than the ones found on origin object
-						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-						{
-    						$originforcontact = $object->origin;
-    						$originidforcontact = $object->origin_id;
-    						if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-    						{
-    						    $originforcontact=$srcobject->origin;
-    						    $originidforcontact=$srcobject->origin_id;
-    						}
-    						$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-
-    						$resqlcontact = $db->query($sqlcontact);
-    						if ($resqlcontact)
-    						{
-                                while($objcontact = $db->fetch_object($resqlcontact))
-                                {
-                                    //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
-                                    $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
-                                }
-    						}
-    						else dol_print_error($resqlcontact);					
-						}
-						
+												
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been

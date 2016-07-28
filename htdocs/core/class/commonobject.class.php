@@ -541,7 +541,7 @@ abstract class CommonObject
      *  Add a link between element $this->element and a contact
      *
      *  @param	int		$fk_socpeople       Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
-     *  @param 	int		$type_contact 		Type of contact (code or id). Must be if or code found into table llx_c_type_contact. For example: SALESREPFOLL
+     *  @param 	int		$type_contact 		Type of contact (code or id). Must be id or code found into table llx_c_type_contact. For example: SALESREPFOLL
      *  @param  string	$source             external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
      *  @param  int		$notrigger			Disable all triggers
      *  @return int                 		<0 if KO, >0 if OK
@@ -551,7 +551,7 @@ abstract class CommonObject
         global $user,$langs;
 
 
-        dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source");
+        dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source, $notrigger");
 
         // Check parameters
         if ($fk_socpeople <= 0)
@@ -587,10 +587,17 @@ abstract class CommonObject
             if ($resql)
             {
                 $obj = $this->db->fetch_object($resql);
-                $id_type_contact=$obj->rowid;
+                if ($obj) $id_type_contact=$obj->rowid;
             }
         }
 
+        if ($id_type_contact == 0)
+        {
+            $this->error='CODE_NOT_VALID_FOR_THIS_ELEMENT';
+            dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT");
+            return -3;
+        }
+            
         $datecreate = dol_now();
 
         $this->db->begin();
@@ -602,7 +609,6 @@ abstract class CommonObject
         $sql.= "'".$this->db->idate($datecreate)."'";
         $sql.= ", 4, '". $id_type_contact . "' ";
         $sql.= ")";
-        dol_syslog(get_class($this)."::add_contact", LOG_DEBUG);
 
         $resql=$this->db->query($sql);
         if ($resql)

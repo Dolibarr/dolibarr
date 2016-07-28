@@ -866,8 +866,11 @@ div.ficheaddleft {
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
     padding: 0 0 0 0;
+}
+div.nopadding {
+	padding: 0 !important;
 }
 
 table.noborder tr.liste_titre td {

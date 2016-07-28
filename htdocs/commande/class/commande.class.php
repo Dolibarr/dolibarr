@@ -879,30 +879,40 @@ class Commande extends CommonOrder
                         			$error++;
                         		}
 
-                        		// TODO mutualiser
-                        		if ($origin == 'propal' && $origin_id)
+                        		if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
                         		{
-                        			// On recupere les differents contact interne et externe
-                        			$prop = new Propal($this->db);
-									$prop->fetch($origin_id);
-
-                        			// We get ids of sales representatives of proposal
-                        			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-
-                        			if ($this->userid)
-                        			{
-                        				//On passe le commercial suivi propale en commercial suivi commande
-                        				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-                        			}
-
-                        			// We get ids of customer follower of proposal
-                        			$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-
-                        			if ($this->contactid)
-                        			{
-                        				//On passe le contact client suivi propale en contact client suivi commande
-                        				$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
-                        			}
+                        		    $originforcontact = $origin;
+                        		    $originidforcontact = $origin_id;
+                        		    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+                        		    {
+                        		        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+                        		        $exp = new Expedition($db);
+                        		        $exp->fetch($origin_id);
+                        		        $exp->fetchObjectLinked();
+                        		        if (count($exp->linkedObjectsIds['commande']) > 0)
+                        		        {
+                        		            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+                        		            {
+                        		                $originforcontact = 'commande';
+                        		                $originidforcontact = $value->id;
+                        		                break; // We take first one
+                        		            }
+                        		        }
+                        		    }
+                        		    	
+                        		    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+                        		    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+                        		    	
+                        		    $resqlcontact = $this->db->query($sqlcontact);
+                        		    if ($resqlcontact)
+                        		    {
+                        		        while($objcontact = $this->db->fetch_object($resqlcontact))
+                        		        {
+                					        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+                        		            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+                        		        }
+                        		    }
+                        		    else dol_print_error($resqlcontact);
                         		}
                         	}
                         }
@@ -910,22 +920,8 @@ class Commande extends CommonOrder
 
                     if (! $error)
                     {
-                    	//$action='create';
-
-	                    // Actions on extra fields (by external module or standard code)
-	                    // TODO le hook fait double emploi avec le trigger !!
-	                    /*$hookmanager->initHooks(array('orderdao'));
-	                    $parameters=array('socid'=>$this->id);
-	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-	                    if (empty($reshook))
-	                    {
-	                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-	                    	{*/
-	                    		$result=$this->insertExtraFields();
-	                    		if ($result < 0) $error++;
-	                    /*	}
-	                    }
-	                    else if ($reshook < 0) $error++;*/
+                   		$result=$this->insertExtraFields();
+                   		if ($result < 0) $error++;
                     }
 
                     if (! $error && ! $notrigger)

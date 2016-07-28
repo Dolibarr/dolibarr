@@ -408,30 +408,40 @@ class Facture extends CommonInvoice
 						$error++;
 					}
 
-					// TODO mutualiser
-					if ($origin == 'commande')
+					if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 					{
-						// On recupere les differents contact interne et externe
-						$order = new Commande($this->db);
-						$order->id = $origin_id;
-
-						// On recupere le commercial suivi propale
-						$this->userid = $order->getIdcontact('internal', 'SALESREPFOLL');
-
-						if ($this->userid)
-						{
-							//On passe le commercial suivi commande en commercial suivi paiement
-							$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-						}
-
-						// On recupere le contact client facturation commande
-						$this->contactid = $order->getIdcontact('external', 'BILLING');
-
-						if ($this->contactid)
-						{
-							//On passe le contact client facturation commande en contact client facturation
-							$this->add_contact($this->contactid[0], 'BILLING', 'external');
-						}
+    					$originforcontact = $origin;
+    					$originidforcontact = $origin_id;
+    					if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+    					{
+    					    require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+    					    $exp = new Expedition($db);
+    					    $exp->fetch($origin_id);
+    					    $exp->fetchObjectLinked();
+    					    if (count($exp->linkedObjectsIds['commande']) > 0) 
+    					    {
+    					        foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+    					        {
+    					            $originforcontact = 'commande';
+    					            $originidforcontact = $value->id;
+    					            break; // We take first one
+    					        }
+    					    }
+    					}
+    					
+    					$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+    					$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+			
+    					$resqlcontact = $this->db->query($sqlcontact);
+    					if ($resqlcontact)
+    					{
+    					    while($objcontact = $this->db->fetch_object($resqlcontact))
+    					    {
+    					        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+    					        $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+    					    }
+    					}
+    					else dol_print_error($resqlcontact);
 					}
 				}
 			}
@@ -595,21 +605,22 @@ class Facture extends CommonInvoice
 
 					// Actions on extra fields (by external module or standard code)
 					// TODO le hook fait double emploi avec le trigger !!
+					/*
 					$hookmanager->initHooks(array('invoicedao'));
 					$parameters=array('invoiceid'=>$this->id);
 					$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook))
 					{
 						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-						{
-							$result=$this->insertExtraFields();
-							if ($result < 0)
-							{
-								$error++;
-							}
-						}
+						{*/
+					if (! $error)
+					{
+					    $result=$this->insertExtraFields();
+					    if ($result < 0) $error++;
 					}
-					else if ($reshook < 0) $error++;
+						/*}
+					}
+					else if ($reshook < 0) $error++;*/
 
                     // Call trigger
                     $result=$this->call_trigger('BILL_CREATE',$user);

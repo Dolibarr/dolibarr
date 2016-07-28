@@ -830,6 +830,9 @@ div.ficheaddleft {
 div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
     padding: 0 0 0 0;
 }
+div.nopadding {
+	padding: 0 !important;
+}
 
 .containercenter {
 	display : table;
