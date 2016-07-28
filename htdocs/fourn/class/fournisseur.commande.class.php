@@ -1496,6 +1496,7 @@ class CommandeFournisseur extends CommonOrder
             else
             {
                 $this->error=$this->line->error;
+                $this->errors=$this->line->errors;
                 dol_syslog(get_class($this)."::addline error=".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -1;
