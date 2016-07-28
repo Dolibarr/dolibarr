@@ -1229,6 +1229,9 @@ abstract class CommonObject
 
         $this->db->begin();
 
+        // Special case
+        if ($table == 'product' && $field == 'note_private') $field='note';
+        
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
         else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
@@ -2112,7 +2115,10 @@ abstract class CommonObject
     		dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
-
+        // Special cas
+        //var_dump($this->table_element);exit;
+		if ($this->table_element == 'product') $suffix='';
+            
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
     	$sql.= " SET note".$suffix." = ".(!empty($note)?("'".$this->db->escape($note)."'"):"NULL");
     	$sql.= " WHERE rowid =". $this->id;
@@ -2122,7 +2128,11 @@ abstract class CommonObject
     	{
     		if ($suffix == '_public') $this->note_public = $note;
     		else if ($suffix == '_private') $this->note_private = $note;
-    		else $this->note = $note;
+    		else 
+    		{
+    		    $this->note = $note;      // deprecated
+    		    $this->note_private = $note;
+    		}
     		return 1;
     	}
     	else
