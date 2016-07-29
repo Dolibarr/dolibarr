@@ -3071,7 +3071,7 @@ class Commande extends CommonOrder
      */
     function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
     {
-        global $conf, $langs;
+        global $conf, $langs, $user;
 
         $result='';
 
