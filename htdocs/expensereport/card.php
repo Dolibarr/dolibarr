@@ -1786,24 +1786,21 @@ else
 					if (($object->fk_statut==0 || $object->fk_statut==99) && $action != 'editline' && $user->rights->expensereport->creer)
 					{
 						print '<tr class="liste_titre">';
-						print '<td colspan="2"></td>';
-						//print '<td style="text-align:center;">'.$langs->trans('Date').'</td>';
+						print '<td align="center">'.$langs->trans('Date').'</td>';
 						if (! empty($conf->projet->enabled)) print '<td>'.$langs->trans('Project').'</td>';
 						print '<td align="center">'.$langs->trans('Type').'</td>';
 						print '<td>'.$langs->trans('Description').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('VAT').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('PriceUTTC').'</td>';
-						print '<td style="text-align:right;">'.$langs->trans('Qty').'</td>';
+						print '<td align="right">'.$langs->trans('VAT').'</td>';
+						print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
+						print '<td align="right">'.$langs->trans('Qty').'</td>';
 						print '<td colspan="3"></td>';
 						print '</tr>';
 
 						
 						print '<tr '.$bc[true].'>';
 
-						print '<td></td>';
-						
 						// Select date
-						print '<td style="text-align:center;">';
+						print '<td align="center">';
 						$form->select_date($date?$date:-1,'date');
 						print '</td>';
 
@@ -1826,29 +1823,29 @@ else
 						print '</td>';
 
 						// Select VAT
-						print '<td style="text-align:right;">';
+						print '<td align="right">';
 						$defaultvat=-1;
 						if (! empty($conf->global->EXPENSEREPORT_NO_DEFAULT_VAT)) $conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 						print $form->load_tva('vatrate', ($vatrate!=''?$vatrate:$defaultvat), $mysoc, '', 0, 0, '', false);
 						print '</td>';
 
 						// Unit price
-						print '<td style="text-align:right;">';
+						print '<td align="right">';
 						print '<input type="text" size="5" name="value_unit" value="'.$value_unit.'">';
 						print '</td>';
 
 						// Quantity
-						print '<td style="text-align:right;">';
+						print '<td align="right">';
 						print '<input type="text" size="2" name="qty"  value="'.($qty?$qty:1).'">';
 						print '</td>';
 
 						if ($action != 'editline')
 						{
-						    print '<td style="text-align:right;"></td>';
-						    print '<td style="text-align:right;"></td>';
+						    print '<td align="right"></td>';
+						    print '<td align="right"></td>';
 						}
 
-						print '<td style="text-align:center;"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
+						print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="bouton" class="button"></td>';
 						
 						print '</tr>';
 					} // Fin si c'est payé/validé

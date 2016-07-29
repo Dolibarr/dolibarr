@@ -521,7 +521,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-    print '<tr><td valign="top" width="25%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td valign="top" class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
@@ -586,12 +586,12 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     	print '<table class="border" width="100%">';
 
     	// RUM
-    	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
-	    print '<td colspan="4">'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
+	    print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
 
 	    // FRSTRECUR
-	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
+	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
+	    print '<td><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
 
 	    print '</table>';
     }
@@ -600,7 +600,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     
 	dol_fiche_end();
 
-	print '<div align="center">';
+	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';
