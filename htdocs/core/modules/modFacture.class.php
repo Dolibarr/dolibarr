@@ -218,7 +218,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
-		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
+		if(isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 		$r++;
 
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -248,7 +248,7 @@ class modFacture extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON ba.rowid = b.fk_account';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('facture',1).')';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
+		if (isset($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 		$r++;
 	}
 
