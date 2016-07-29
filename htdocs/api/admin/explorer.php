@@ -59,7 +59,7 @@ foreach ($modulesdir as $dir)
     /*
      * Search available module
      */
-    dol_syslog("Scan directory ".$dir." for API modules");
+    //dol_syslog("Scan directory ".$dir." for API modules");
 
     $handle=@opendir(dol_osencode($dir));
     if (is_resource($handle))
@@ -111,7 +111,7 @@ foreach ($modulesdir as $dir)
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found deprecated API classname=".$classname);
+                                    dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
                                     $api->r->addAPIClass($classname, '');
                                 }
                             }
@@ -121,7 +121,7 @@ foreach ($modulesdir as $dir)
                                 require_once $dir_part.$file_searched;
                                 if (class_exists($classname))
                                 {
-                                    dol_syslog("Found API classname=".$classname);
+                                    dol_syslog("Found API classname=".$classname." into ".$dir);
                                     $listofapis[] = $classname;
                                 }
                             }                                
