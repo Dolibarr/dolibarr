@@ -596,7 +596,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         if ($value == 'color' && empty($_POST['color'])) continue;
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
         if ((! isset($_POST[$value]) || $_POST[$value]=='')
-        	&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy')))  // Fields that are not mandatory
+        	&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy'))  // Fields that are not mandatory
+        	&& (! ($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
+        	)
 		)
         {
             $ok=0;
