@@ -166,7 +166,7 @@ class pdf_crabe extends ModelePDFFactures
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
-		
+
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
@@ -338,6 +338,11 @@ class pdf_crabe extends ModelePDFFactures
 				$height_incoterms = 0;
 				if ($conf->incoterm->enabled)
 				{
+					if (is_object($object->thirdparty))
+					{
+						$object->fk_incoterms=$object->thirdparty->fk_incoterms;
+						$object->location_incoterms=$object->thirdparty->location_incoterms;
+					}
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
 					{
@@ -553,7 +558,7 @@ class pdf_crabe extends ModelePDFFactures
 						if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne= $sign * $object->lines[$i]->multicurrency_total_tva;
 						else $tvaligne= $sign * $object->lines[$i]->total_tva;
 					}
-					
+
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 					$localtax1_rate=$object->lines[$i]->localtax1_tx;
@@ -1577,7 +1582,7 @@ class pdf_crabe extends ModelePDFFactures
 			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;
 			$posx=$this->marge_gauche;
 			if (! empty($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) $posx=$this->page_largeur-$this->marge_droite-80;
-			
+
 			$hautcadre=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 38 : 40;
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 82;
 
