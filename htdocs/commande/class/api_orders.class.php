@@ -156,7 +156,7 @@ class Orders extends DolibarrApi
             throw new RestException(503, 'Error when retrieve commande list');
         }
         if( ! count($obj_ret)) {
-            throw new RestException(404, 'No commande found');
+            throw new RestException(404, 'No order found');
         }
 		return $obj_ret;
     }
@@ -178,15 +178,16 @@ class Orders extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->commande->$field = $value;
         }
-        if (isset($request_data["lines"])) {
+        /*if (isset($request_data["lines"])) {
           $lines = array();
           foreach ($request_data["lines"] as $line) {
             array_push($lines, (object) $line);
           }
           $this->commande->lines = $lines;
-        }
-        if(! $this->commande->create(DolibarrApiAccess::$user) ) {
-            throw new RestException(500, "Error while creating order");
+        }*/
+        if ($this->commande->create(DolibarrApiAccess::$user) <= 0) {
+            $errormsg = $this->commande->error;
+            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
         }
         
         return $this->commande->id;
@@ -208,7 +209,7 @@ class Orders extends DolibarrApi
         
       $result = $this->commande->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+         throw new RestException(404, 'Order not found');
       }
 		
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
@@ -239,7 +240,7 @@ class Orders extends DolibarrApi
         
       $result = $this->commande->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+         throw new RestException(404, 'Order not found');
       }
 		
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {

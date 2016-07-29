@@ -2520,58 +2520,6 @@ if ($action == 'create')
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";	
 		}
 	}
-	else
-	{
-		// Show deprecated optional form to add product line here
-		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) {
-			print '<tr><td colspan="3">';
-
-			// Zone de choix des produits predefinis a la creation
-			print '<table class="noborder" width="100%">';
-			print '<tr>';
-			print '<td>' . $langs->trans('ProductsAndServices') . '</td>';
-			print '<td>' . $langs->trans('Qty') . '</td>';
-			print '<td>' . $langs->trans('ReductionShort') . '</td>';
-			print '<td> &nbsp; &nbsp; </td>';
-			if (! empty($conf->service->enabled)) {
-				print '<td>' . $langs->trans('ServiceLimitedDuration') . '</td>';
-			}
-			print '</tr>';
-			for($i = 1; $i <= $NBLINES; $i ++) {
-				print '<tr>';
-				print '<td>';
-				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES))
-					$form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size, $soc->price_level);
-				else
-					$form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size);
-				print '</td>';
-				print '<td><input type="text" size="2" name="qty' . $i . '" value="1"></td>';
-				print '<td class="nowrap"><input type="text" size="1" name="remise_percent' . $i . '" value="' . $soc->remise_percent . '">%</td>';
-				print '<td>&nbsp;</td>';
-				// Si le module service est actif, on propose des dates de debut et fin a la ligne
-				if (! empty($conf->service->enabled)) {
-					print '<td class="nowrap">';
-					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-					print '<td class="nobordernopadding nowrap">';
-					print $langs->trans('From') . ' ';
-					print '</td><td class="nobordernopadding nowrap">';
-					print $form->select_date('', 'date_start' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
-					print '</td></tr>';
-					print '<td class="nobordernopadding nowrap">';
-					print $langs->trans('to') . ' ';
-					print '</td><td class="nobordernopadding nowrap">';
-					print $form->select_date('', 'date_end' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
-					print '</td></tr></table>';
-					print '</td>';
-				}
-				print "</tr>\n";
-			}
-
-			print '</table>';
-			print '</td></tr>';
-		}
-	}
 
 	print "</table>\n";
 

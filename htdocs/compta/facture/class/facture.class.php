@@ -449,7 +449,7 @@ class Facture extends CommonInvoice
 			/*
 			 *  Insert lines of invoices into database
 			 */
-			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array on InvoiceLines (preferred mode)
+			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array of InvoiceLines (preferred mode)
 			{
 				$fk_parent_line = 0;
 
@@ -483,49 +483,56 @@ class Facture extends CommonInvoice
 					}
 				}
 			}
-			else	// If this->lines is not object of invoice lines
+			else	// If this->lines is an array of invoice line arrays
 			{
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines that are array lines");
+
 				foreach ($this->lines as $i => $val)
 				{
-					if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+                	$line = $this->lines[$i];
+                	
+                	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+                	if (! is_object($line)) $line = (object) $line;
+				    
+				    if (($line->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
 					{
 						// Reset fk_parent_line for no child products and special product
-						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
 						}
 
 						$result = $this->addline(
-							$this->lines[$i]->desc,
-							$this->lines[$i]->subprice,
-							$this->lines[$i]->qty,
-							$this->lines[$i]->tva_tx,
-							$this->lines[$i]->localtax1_tx,
-							$this->lines[$i]->localtax2_tx,
-							$this->lines[$i]->fk_product,
-							$this->lines[$i]->remise_percent,
-							$this->lines[$i]->date_start,
-							$this->lines[$i]->date_end,
-							$this->lines[$i]->fk_code_ventilation,
-							$this->lines[$i]->info_bits,
-							$this->lines[$i]->fk_remise_except,
+							$line->desc,
+							$line->subprice,
+							$line->qty,
+							$line->tva_tx,
+							$line->localtax1_tx,
+							$line->localtax2_tx,
+							$line->fk_product,
+							$line->remise_percent,
+							$line->date_start,
+							$line->date_end,
+							$line->fk_code_ventilation,
+							$line->info_bits,
+							$line->fk_remise_except,
 							'HT',
 							0,
-							$this->lines[$i]->product_type,
-							$this->lines[$i]->rang,
-							$this->lines[$i]->special_code,
+							$line->product_type,
+							$line->rang,
+							$line->special_code,
                             $this->element,
-                            $this->lines[$i]->id,
+                            $line->id,
 							$fk_parent_line,
-							$this->lines[$i]->fk_fournprice,
-							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label,
-							$this->lines[$i]->array_options,
-							$this->lines[$i]->situation_percent,
-							$this->lines[$i]->fk_prev_id,
-							$this->lines[$i]->fk_unit
+							$line->fk_fournprice,
+							$line->pa_ht,
+							$line->label,
+							$line->array_options,
+							$line->situation_percent,
+							$line->fk_prev_id,
+							$line->fk_unit
 						);
 						if ($result < 0)
 						{
@@ -536,7 +543,7 @@ class Facture extends CommonInvoice
 						}
 
 						// Defined the new fk_parent_line
-						if ($result > 0 && $this->lines[$i]->product_type == 9) {
+						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
 						}
 					}

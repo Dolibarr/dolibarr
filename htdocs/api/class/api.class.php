@@ -86,8 +86,11 @@ class DolibarrApi
     function _cleanObjectDatas($object) {
 
         // Remove $db object property for object
-		unset($object->db);
-
+        unset($object->db);
+        
+        // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
+        unset($object->linkedObjects);
+        
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
         // it: "Error encoding/decoding JSON: Type is not supported"
@@ -109,13 +112,15 @@ class DolibarrApi
         }
 
         // If object has linked objects, remove $db property
+        /*
         if(isset($object->linkedObjects) && count($object->linkedObjects) > 0)  {
             foreach($object->linkedObjects as $type_object => $linked_object) {
                 foreach($linked_object as $object2clean) {
                     $this->_cleanObjectDatas($object2clean);
                 }
             }
-        }
+        }*/
+        
 		return $object;
     }
 
