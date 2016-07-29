@@ -2324,7 +2324,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 }
 .liste_titre_add td, .liste_titre_add .tagtd
 {
-    border-top-width: 1px;
+    border-top-width: 2px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
