@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE','Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION','4.0.0-rc');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','4.0.0-rc2');
 
 if (! defined('EURO')) define('EURO',chr(128));
 
