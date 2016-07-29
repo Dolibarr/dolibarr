@@ -314,23 +314,24 @@ IMG;
 			// If value is true (not 0 nor false nor null nor empty string)
 			if ($value)
 			{
-			    dol_syslog("Var ".$key." is defined, we remove the IF, ELSE and ENDIF ");
-			    $sav=$this->contentXml;
+			    //dol_syslog("Var ".$key." is defined, we remove the IF, ELSE and ENDIF ");
+			    //$sav=$this->contentXml;
 				// Remove the IF tag
 				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
 				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				$this->contentXml = preg_replace($reg, '', $this->contentXml);
-				if ($sav != $this->contentXml)
+				/*if ($sav != $this->contentXml)
 				{
 				    dol_syslog("We found a IF and it was processed");
-				}
+				    //var_dump($sav);exit;
+				}*/
 			}
 			// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
 			else
 			{
-			    dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
-			    $sav=$this->contentXml;
+			    //dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
+			    //$sav=$this->contentXml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
 				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
@@ -339,11 +340,11 @@ IMG;
 				}
 				// Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
 				$this->contentXml = preg_replace($reg, '', $this->contentXml);
-				if ($sav != $this->contentXml)
+				/*if ($sav != $this->contentXml)
 				{
 				    dol_syslog("We found a IF and it was processed");
 				    //var_dump($sav);exit;
-				}
+				}*/
 			}
 		}
 
