@@ -67,16 +67,18 @@ $tables=array(
     'commande'=>array(0=>'date_commande', 1=>'date_valid', 2=>'date_cloture'),
     'facture'=>array(0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
     'paiement'=>array(0=>'datep'),
-    'bank'=>array(0=>'datev', 1=>'dateo', )
+    'bank'=>array(0=>'datev', 1=>'dateo'),
+    'supplier_proposal'=>array(0=>'datec', 1=>'date_valid', 2=>'date_cloture')
 );
 
 $year=2010;
 $currentyear=$tmp['year'];
 while ($year <= $currentyear) 
 {
+    //$year=2021;
     $delta=($currentyear - $year);
-    $delta=-1;
-    
+    //$delta=-1;
+
     if ($delta)
     {
         foreach($tables as $tablekey => $tableval)
