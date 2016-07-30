@@ -278,6 +278,7 @@ MonthOfDay=Month of the day
 HourShort=H
 MinuteShort=mn
 Rate=Rate
+CurrencyRate=Currency conversion rate
 UseLocalTax=Include tax
 Bytes=Bytes
 KiloBytes=Kilobytes
