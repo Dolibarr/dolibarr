@@ -141,7 +141,7 @@ print '</td></tr>';
 // ICS
 print '<tr class="pair"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
 print '<td align="left">';
-print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="9" ></td>';
+print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" ></td>';
 print '</td></tr>';
 
 //User
