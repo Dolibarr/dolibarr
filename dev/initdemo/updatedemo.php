@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2012 Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2016 Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,100 +62,58 @@ if (empty($confirm))
 $tmp=dol_getdate(dol_now());
 
 
+$tables=array(
+    'propal'=>array(0=>'datep', 1=>'fin_validite', 2=>'date_valid', 3=>'date_cloture'),
+    'commande'=>array(0=>'date_commande', 1=>'date_valid', 2=>'date_cloture'),
+    'facture'=>array(0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
+    'paiement'=>array(0=>'datep'),
+    'bank'=>array(0=>'datev', 1=>'dateo', )
+);
 
 $year=2010;
 $currentyear=$tmp['year'];
-while ($year < ($currentyear - 1))      // We want to keep 2 years of data 
+while ($year <= $currentyear) 
 {
     $delta=($currentyear - $year);
+    $delta=-1;
     
-    print "Correct proposal for year ".$year." and move them to current year ".$currentyear."\n"; 
-    $sql="select rowid from ".MAIN_DB_PREFIX."propal where datep between '".$year."-01-01' and '".$year."-12-31'";
-    $resql = $db->query($sql);
-    if ($resql)
+    if ($delta)
     {
-        $num = $db->num_rows($resql);
-        $i=0;
-        while ($i < $num)
+        foreach($tables as $tablekey => $tableval)
         {
-            $obj=$db->fetch_object($resql);
-            if ($obj)
+            print "\nCorrect ".$tablekey." for year ".$year." and move them to current year ".$currentyear." "; 
+            $sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
+            //$sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." > NOW()";
+            $resql = $db->query($sql);
+            if ($resql)
             {
-                print ".";
-            
-                $sql2="UPDATE ".MAIN_DB_PREFIX."propal set ";
-                $sql2.= "datep        = DATE_ADD(datep,        INTERVAL ".$delta." YEAR),"; 
-                $sql2.= "fin_validite = DATE_ADD(fin_validite, INTERVAL ".$delta." YEAR),";
-                $sql2.= "date_valid   = DATE_ADD(date_valid,   INTERVAL ".$delta." YEAR),";
-                $sql2.= "date_cloture = DATE_ADD(date_cloture, INTERVAL ".$delta." YEAR)";
-                $sql2.=" WHERE rowid = ".$obj->rowid;
-                //print $sql2."\n";
-                
-                $resql2 = $db->query($sql2);
-                if (! $resql2) dol_print_error($db);
-            }            
-            $i++;
-        }
-    }
-    else dol_print_error($db);
-
-    print "Correct order for year ".$year." and move them to current year ".$currentyear."\n";
-    $sql="select rowid from ".MAIN_DB_PREFIX."commande where date_commande between '".$year."-01-01' and '".$year."-12-31'";
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i=0;
-        while ($i < $num)
-        {
-            $obj=$db->fetch_object($resql);
-            if ($obj)
-            {
-                print ".";
-    
-                $sql2="UPDATE ".MAIN_DB_PREFIX."commande set ";
-                $sql2.= "date_commande = DATE_ADD(date_commande,        INTERVAL ".$delta." YEAR),";
-                $sql2.= "date_valid    = DATE_ADD(date_valid,   INTERVAL ".$delta." YEAR),";
-                $sql2.= "date_cloture  = DATE_ADD(date_cloture, INTERVAL ".$delta." YEAR)";
-                $sql2.=" WHERE rowid = ".$obj->rowid;
-                //print $sql2."\n";
-    
-                $resql2 = $db->query($sql2);
-                if (! $resql2) dol_print_error($db);
+                $num = $db->num_rows($resql);
+                $i=0;
+                while ($i < $num)
+                {
+                    $obj=$db->fetch_object($resql);
+                    if ($obj)
+                    {
+                        print ".";
+                        $sql2="UPDATE ".MAIN_DB_PREFIX.$tablekey." set ";
+                        $j=0;
+                        foreach($tableval as $field)
+                        {
+                            if ($j) $sql2.=", ";
+                            $sql2.= $field." = DATE_ADD(".$field.", INTERVAL ".$delta." YEAR)";
+                            $j++;
+                        }
+                        $sql2.=" WHERE rowid = ".$obj->rowid;
+                        //print $sql2."\n";
+                        $resql2 = $db->query($sql2);
+                        if (! $resql2) dol_print_error($db);
+                    }            
+                    $i++;
+                }
             }
-            $i++;
+            else dol_print_error($db);
         }
     }
-    else dol_print_error($db);
-    
-    print "Correct invoice for year ".$year." and move them to current year ".$currentyear."\n";
-    $sql="select rowid from ".MAIN_DB_PREFIX."facture where datef between '".$year."-01-01' and '".$year."-12-31'";
-    $resql = $db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i=0;
-        while ($i < $num)
-        {
-            $obj=$db->fetch_object($resql);
-            if ($obj)
-            {
-                print ".";
-    
-                $sql2="UPDATE ".MAIN_DB_PREFIX."facture set ";
-                $sql2.= "datef        = DATE_ADD(datef,        INTERVAL ".$delta." YEAR),";
-                $sql2.= "date_valid   = DATE_ADD(date_valid,   INTERVAL ".$delta." YEAR),";
-                $sql2.= "date_lim_reglement = DATE_ADD(date_lim_reglement,   INTERVAL ".$delta." YEAR)";
-                $sql2.=" WHERE rowid = ".$obj->rowid;
-                //print $sql2."\n";
-    
-                $resql2 = $db->query($sql2);
-                if (! $resql2) dol_print_error($db);
-            }
-            $i++;
-        }
-    }
-    else dol_print_error($db);
     
     $year++;
 }
