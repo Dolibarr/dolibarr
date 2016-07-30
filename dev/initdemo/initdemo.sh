@@ -169,6 +169,10 @@ then
 	cp -pr $mydir/documents_demo/* "$documentdir/"
 	echo cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
 	cp -pr $mydir/../../htdocs/install/doctemplates/* "$documentdir/doctemplates/"
+	mkdir -p "$documentdir/ecm/Administrative documents"
+	mkdir -p "$documentdir/ecm/Images"
+	echo cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
+	cp -pr $mydir/../../doc/images/* "$documentdir/ecm/Images"
 else
 	echo Detection of documents directory failed so demo files were not copied. 
 fi
