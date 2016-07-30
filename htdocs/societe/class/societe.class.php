@@ -1869,7 +1869,12 @@ class Societe extends CommonObject
             $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
         	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
-
+        else if ($option == 'margin')
+        {
+            $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+        }
+        
         // By default
         if (empty($link))
         {

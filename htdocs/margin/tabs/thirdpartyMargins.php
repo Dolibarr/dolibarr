@@ -176,8 +176,8 @@ if ($socid > 0)
     	print '<tr class="liste_titre">';
     	print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
     	print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("SoldAmount"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre($langs->trans("PurchasedAmount"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
     		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
@@ -221,8 +221,8 @@ if ($socid > 0)
     			print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
     			print "</tr>\n";
     			$i++;
-    			$cumul_achat += $objp->buying_price;
     			$cumul_vente += $objp->selling_price;
+    			$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
     		}
     	}
 
@@ -239,6 +239,8 @@ if ($socid > 0)
     		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
     		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
     	}
+    	
+    	// Total
     	print '<tr class="liste_total">';
     	print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
     	print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";

@@ -68,6 +68,7 @@ $tables=array(
     'facture'=>array(0=>'datef', 1=>'date_valid', 2=>'date_lim_reglement'),
     'paiement'=>array(0=>'datep'),
     'bank'=>array(0=>'datev', 1=>'dateo'),
+    'commande_fournisseur'=>array(0=>'date_commande', 1=>'date_valid', 3=>'date_creation', 4=>'date_approve', 5=>'date_approve2', 6=>'date_livraison'),
     'supplier_proposal'=>array(0=>'datec', 1=>'date_valid', 2=>'date_cloture')
 );
 

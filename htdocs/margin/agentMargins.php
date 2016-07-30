@@ -91,12 +91,10 @@ dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
 print '<table class="border" width="100%">';
 
-if ($user->rights->margins->read->all) {
-	print '<tr><td width="20%">'.$langs->trans('SalesRepresentative').'</td>';
-	print '<td colspan="4">';
-	print $form->select_dolusers($agentid, 'agentid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	print '</td></tr>';
-}
+print '<tr><td width="20%">'.$langs->trans('SalesRepresentative').'</td>';
+print '<td colspan="4">';
+print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print '</td></tr>';
 
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
@@ -152,6 +150,11 @@ else $sql.= " GROUP BY u.rowid, u.login, u.lastname, u.firstname";
 $sql.=$db->order($sortfield,$sortorder);
 // TODO: calculate total to display then restore pagination
 //$sql.= $db->plimit($conf->liste_limit +1, $offset);
+
+
+print '<br>';
+print img_info('').' '.$langs->trans("MarginPerSaleRepresentativeWarning").'<br>';
+
 
 dol_syslog('margin::agentMargins.php', LOG_DEBUG);
 $result = $db->query($sql);
