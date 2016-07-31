@@ -1667,7 +1667,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    // Left column
 	    print '<!-- Begin left menu -->'."\n";
 
-	    print '<div class="vmenu">'."\n\n";
+	    print '<div class="vmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Left menu"').'>'."\n\n";
 
     	// Show left menu with other forms
 	    $menumanager->menu_array = $menu_array_before;
