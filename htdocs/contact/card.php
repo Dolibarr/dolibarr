@@ -548,7 +548,7 @@ else
                 }
                 else {
                     print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-                    print $form->select_company($socid,'socid','',1);
+                    print $form->select_company($socid,'socid','','SelectThirdParty');
                     print '</td></tr>';
                 }
             }

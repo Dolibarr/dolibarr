@@ -5012,7 +5012,9 @@ class Form
      */
     static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
     {
-        global $user;
+        global $conf,$user;
+        
+        if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
         
         $tmpvar="MAIN_SELECTEDFIELDS_".$varpage;
         if (! empty($user->conf->$tmpvar))

@@ -261,7 +261,7 @@ if ($result)
 				$companystatic->id=$objp->socid;
 				$companystatic->name=$objp->name;
 				$companystatic->client=$objp->client;
-		   		print "<td>".$companystatic->getNomUrl(1,'customer')."</td>\n";
+		   		print "<td>".$companystatic->getNomUrl(1,'margin')."</td>\n";
 		  	}
 
 			print "<td align=\"right\">".price($pv, null, null, null, null, $rounding)."</td>\n";
@@ -282,16 +282,16 @@ if ($result)
 	// affichage totaux marges
 	$var=!$var;
 	$totalMargin = $cumul_vente - $cumul_achat;
-	if ($totalMargin < 0)
+	/*if ($totalMargin < 0)
 	{
 		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
 		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
 	}
 	else
-	{
+	{*/
 		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
 		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-	}
+	//}
 
 	print '<tr class="liste_total">';
 	if ($client)

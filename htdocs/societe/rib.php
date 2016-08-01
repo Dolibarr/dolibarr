@@ -292,7 +292,7 @@ if ($socid && $action != 'edit' && $action != "create")
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
-    print '<tr><td class="titlefield" width="25%">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4">'.$account->label.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
@@ -465,7 +465,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-    print '<tr><td valign="top" width="25%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td valign="top" class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
@@ -508,16 +508,16 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 		print '</tr>';
 	}
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40">';
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+    print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
     print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\">";
     print $account->owner_address;
     print "</textarea></td></tr>";
@@ -533,11 +533,11 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     	if (empty($account->rum)) $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
 
     	// RUM
-    	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
+    	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
 	    print '<td colspan="4">'.$account->rum.'</td></tr>';
 
 	    // FRSTRECUR
-	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
+	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
 	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
 
 	    print '</table>';
@@ -567,18 +567,11 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-    print '<tr><td valign="top" width="25%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.GETPOST('label').'"></td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("Bank").'</td>';
     print '<td><input size="30" type="text" name="bank" value="'.GETPOST('bank').'"></td></tr>';
-
-    // IBAN
-    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("IBAN").'</td>';
-    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
-
-    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("BIC").'</td>';
-    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
     // BBAN
     if ($account->useDetailedBBAN() == 1)
@@ -609,16 +602,23 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
         print '</tr>';
     }
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
+    // IBAN
+    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("IBAN").'</td>';
+    print '<td colspan="4"><input size="30" type="text" name="iban" value="'.GETPOST('iban').'"></td></tr>';
+
+    print '<tr><td valign="top" '.($account->needIBAN()?' class="fieldrequired" ':'').'>'.$langs->trans("BIC").'</td>';
+    print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
+
+    print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
     print '<textarea name="domiciliation" rows="4" cols="40">';
     print GETPOST('domiciliation');
     print "</textarea></td></tr>";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwner").'</td>';
+    print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.GETPOST('proprio').'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
+    print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
     print '<textarea name="owner_address" rows="4" cols="40">';
     print GETPOST('owner_address');
     print "</textarea></td></tr>";
@@ -632,12 +632,12 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     	print '<table class="border" width="100%">';
 
     	// RUM
-    	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
-	    print '<td colspan="4">'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
+    	print '<tr><td class="titlefieldcreate">'.$langs->trans("RUM").'</td>';
+	    print '<td>'.$langs->trans("RUMWillBeGenerated").'</td></tr>';
 
 	    // FRSTRECUR
-	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
+	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
+	    print '<td><input size="30" type="text" name="frstrecur" value="'.(isset($_POST['frstrecur'])?GETPOST('frstrecur'):'FRST').'"></td></tr>';
 
 	    print '</table>';
     }
@@ -646,7 +646,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 
 	dol_fiche_end();
 
-	print '<div align="center">';
+	print '<div class="center">';
 	print '<input class="button" value="'.$langs->trans("Add").'" type="submit">';
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input name="cancel" class="button" value="'.$langs->trans("Cancel").'" type="submit">';

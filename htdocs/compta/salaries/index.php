@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2011-2014 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2016 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -221,7 +221,7 @@ if ($result)
     }
     
     print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").'</td>';
-    print '<td  class="liste_total" align="right">'.price($total,0,$outputlangs,1,-1,-1,$conf->currency)."</td>";
+    print '<td class="liste_total" align="right">'.price($total)."</td>";
 	print "<td></td></tr>";
 
     print "</table>";
