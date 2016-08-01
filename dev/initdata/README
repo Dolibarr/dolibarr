@@ -2,4 +2,4 @@ README
 ------
 
 Scripts in this directory can be used to load or purge data of a database instance.
-WARNING: This may erase data.
+WARNING: Some of this script may delete definitely data.

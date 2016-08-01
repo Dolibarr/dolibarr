@@ -1117,6 +1117,7 @@ if ($nboftargetok) {
             print "Move $SOURCE/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
             $ret=`mv "$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
             
+            print "Remove tmp file $SOURCE/build/exe/doliwamp/doliwamp.tmp.iss\n";
             $ret=`rm "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
             
     		next;

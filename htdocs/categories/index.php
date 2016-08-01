@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005       Matthieu Valleton   <mv@seeschloss.org>
  * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2016  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
@@ -118,9 +118,14 @@ if ($catname || $id > 0)
 		$categstatic->ref=$cat->label;
 		$categstatic->label=$cat->label;
 		$categstatic->type=$cat->type;
+		$categstatic->color=$cat->color;
+		print '<span class="noborderoncategories" '.($categstatic->color?' style="background: #'.$categstatic->color.';"':' style="background: #aaa"').'>';
 		print $categstatic->getNomUrl(1,'');
+		print '</span>';
 		print "</td>\n";
-		print "\t\t<td>".$cat->description."</td>\n";
+		print "\t\t<td>";
+		print $cat->description;
+		print "</td>\n";
 		print "\t</tr>\n";
 	}
 	print "</table>";
