@@ -1105,7 +1105,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		}
 
 		// Get contact
-		if (!empty($conf->global->SUPPLIER_ORDER_SHOW_FIRST_SALES_REP))
+		if (!empty($conf->global->DOC_SHOW_FIRST_SALES_REP))
 		{
     		$arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
     		if (count($arrayidcontact) > 0)
