@@ -247,7 +247,7 @@ if ($socid && $action != 'edit' && $action != "create")
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border centpercent">';
 
-    print '<tr><td class="titlefield" width="25%">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4">'.$account->label.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BankName").'</td>';
@@ -424,7 +424,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-    print '<tr><td valign="top" width="25%" class="fieldrequired">'.$langs->trans("LabelRIB").'</td>';
+    print '<tr><td valign="top" class="titlefield fieldrequired">'.$langs->trans("LabelRIB").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("BankName").'</td>';
@@ -487,12 +487,12 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     	if (empty($account->rum)) $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
 
     	// RUM
-    	print '<tr><td width="35%">'.$langs->trans("RUM").'</td>';
-	    print '<td colspan="4">'.$account->rum.'</td></tr>';
+    	print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
+	    print '<td>'.$account->rum.'</td></tr>';
 
 	    // FRSTRECUR
-	    print '<tr><td width="35%">'.$langs->trans("WithdrawMode").'</td>';
-	    print '<td colspan="4"><input size="30" type="text" name="frstrecur" value="'.(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
+	    print '<tr><td>'.$langs->trans("WithdrawMode").'</td>';
+	    print '<td><input size="30" type="text" name="frstrecur" value="'.(GETPOST('frstrecur')?GETPOST('frstrecur'):$account->frstrecur).'"></td></tr>';
 
 	    print '</table>';
     }
