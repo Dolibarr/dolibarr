@@ -1625,6 +1625,13 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 		}
 	}
 
+	if (strtoupper($countrycode) == "CA")
+	{
+	    if (dol_strlen($phone) == 10) {
+	        $newphone=($separ!=''?'(':'').substr($newphone,0,3).($separ!=''?')':'').$separ.substr($newphone,3,3).($separ!=''?'-':'').substr($newphone,6,4);
+	    }
+	}
+	
 	if (! empty($addlink))	// Link on phone number (+ link to add action if conf->global->AGENDA_ADDACTIONFORPHONE set)
 	{
 		if (! empty($conf->browser->phone) || (! empty($conf->clicktodial->enabled) && ! empty($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS)))	// If phone or option for, we use link of phone
