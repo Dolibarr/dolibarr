@@ -82,7 +82,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("InvoiceCustomer"));
 
 $form = new Form($db);
 
@@ -113,7 +113,7 @@ if ($id > 0 || ! empty($ref))
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Ref
-		print '<tr><td width="30%">'.$langs->trans('Ref').'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 		print '<td colspan="3">';
 		$morehtmlref='';
 		$discount=new DiscountAbsolute($db);
@@ -130,13 +130,10 @@ if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 
 		// Ref customer
-		print '<tr><td width="20%">';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<tr><td>';
 		print $langs->trans('RefCustomer');
 		print '</td>';
-		print '</tr></table>';
-		print '</td>';
-		print '<td colspan="5">';
+		print '<td colspan="3">';
 		print $object->ref_client;
 		print '</td></tr>';
 

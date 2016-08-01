@@ -38,7 +38,7 @@ $result = restrictedArea($user, 'don', $id, '');
  * View
  */
 
-llxHeader();
+llxHeader("",$langs->trans("Donation"));
 
 if ($id)
 {

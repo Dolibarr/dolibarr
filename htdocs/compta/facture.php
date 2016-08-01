@@ -1887,7 +1887,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $now = dol_now();
 
-llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+llxHeader('', $langs->trans('InvoiceCustomer'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
 // Mode creation
@@ -2931,7 +2931,7 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	// Ref
-	print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
+	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
 	print '<td colspan="5">';
 	$morehtmlright = '';
 	$discount = new DiscountAbsolute($db);
@@ -2946,7 +2946,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</td></tr>';
 
 	// Ref customer
-	print '<tr><td width="20%">';
+	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('RefCustomer');
 	print '</td>';

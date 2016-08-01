@@ -106,7 +106,7 @@ if ($action == "delete")
 
 $now=dol_now();
 
-llxHeader('', $langs->trans("Bill"));
+llxHeader('', $langs->trans("InvoiceCustomer"));
 
 $form = new Form($db);
 
@@ -155,7 +155,7 @@ if ($object->id > 0)
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="5">';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	$morehtmlref='';
 	$discount=new DiscountAbsolute($db);
 	$result=$discount->fetch(0,$object->id);
@@ -171,24 +171,24 @@ if ($object->id > 0)
 	print "</td></tr>";
 
 	// Ref customer
-	print '<tr><td width="20%">';
+	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('RefCustomer');
 	print '</td>';
 	print '</tr></table>';
 	print '</td>';
-	print '<td colspan="5">';
+	print '<td colspan="3">';
 	print $object->ref_client;
 	print '</td></tr>';
 
 	// Third party
 	print '<tr><td>'.$langs->trans('Company').'</td>';
-	print '<td colspan="5">'.$object->thirdparty->getNomUrl(1,'compta');
+	print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'compta');
 	print ' &nbsp; (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->socid.'">'.$langs->trans('OtherBills').'</a>)</td>';
 	print '</tr>';
 
 	// Type
-	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
+	print '<tr><td>'.$langs->trans('Type').'</td><td colspan="3">';
 	print $object->getLibType();
 	if ($object->type == Facture::TYPE_REPLACEMENT)
 	{
@@ -229,7 +229,7 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Discounts
-	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 	if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
@@ -443,7 +443,7 @@ if ($object->id > 0)
 	print '<tr><td>'.$langs->trans('Status').'</td>';
 	print '<td align="left" colspan="3">'.($object->getLibStatut(4,$totalpaye)).'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="5">';
+	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="3">';
 	print $object->thirdparty->display_rib();
 	print '</td></tr>';
 
