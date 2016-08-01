@@ -1045,7 +1045,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
-		$ret .= ($object->town?(($object->zip?' ':$sep).$object->town):'');
+		$ret .= ($object->town?(($object->zip?' ':($ret ? $sep : '' )).$object->town):'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=($ret?", ":'').$object->state;
