@@ -161,7 +161,6 @@ So if you included it into your module, change your code like this to be compati
   if (! $res) include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
 
 
-
 ***** ChangeLog for 3.9.3 compared to 3.9.2 *****
 FIX: #4383 $userid not defined
 FIX: #4448 $filebonprev is not used, $this->filename now
@@ -460,7 +459,68 @@ This is list of hooks modified:
 - Remove deprecated Product::hidden property
 
 
- 
+
+***** ChangeLog for 3.8.5 compared to 3.8.4 *****
+FIX: #3815 Call to undefined function local_by_date().
+FIX: #4424 Missing email of user popup in supplier orders area
+FIX: #4442 Missing translation in Banks menu
+FIX: #4448 $filebonprev is not used, $this->filename now
+FIX: #4455
+FIX: #4737 Bank transacion type selector translation is cropped
+FIX: #4742 Able to delete a supplier invoice with a registered payment
+FIX: #4743 UI glitch in project summary page
+FIX: #4747 Missing UI background when registering a supplier invoice payment
+FIX: #4748 Supplier invoice payment confirmation amount is not translated
+FIX: #4749
+FIX: #4756
+FIX: #4766 VAT not shown in supplier invoice popup
+FIX: #4809 - Duplicate functions with different content
+FIX: #4851 Project selector in supplier invoices shows the project label twice
+FIX: #4870
+FIX: #5008 SQL error when editing the reference of a supplier invoice that already exists
+FIX: #5048 Product supplier list display only one produc
+FIX: #5170 tva sign with INVOICE_POSITIVE_CREDIT_NOTE option
+FIX: #5203
+FIX: #5207
+FIX: #5338 use of not initialized var $aphour, $apmin, etc
+FIX: #5380
+FIX: #5383 bad object id on don delete
+FIX: #5474 Country_id of "Don" object is still empty
+FIX: Accountancy - 3.8 - Chart of accounts are limited on only one country
+FIX: Bad include and param for project numbering module call
+FIX: Box disabled because bugged
+FIX: bug on email template
+FIX: Can correct stock of lot using eatby or sell by date
+FIX: Can make a movement on "out of sell" products
+FIX: Can't create thirdparty or validate invoice if profid is mandatory and profid does not exists for other countries
+FIX: can't fetch by siret or siren because of first "if"
+FIX: Check stock of product by warehouse if $entrepot_id defined on shippings
+FIX: correct display of minimum buying price
+FIX: Creation of thumb image for size "small" was not done.
+FIX: Direction of movement lost if an error occurs
+FIX: dont retrieve new buying price on margin display
+FIX: Duplicate records into export
+FIX: Email templates not compatible with Multicompany
+FIX: end of select when no fournprice
+FIX: finished parameters not used
+FIX: hook on group card called but not initialized
+FIX: It doesn't check if there is enough stock to update the lines of orders/invoices
+FIX: large expense note
+FIX: missing column when module was installed before standard integration
+FIX: Missing database escaping on supplier price insert/update
+FIX: Not filtering correctly when come from dashboard
+FIX: PROPAL_MERGE_PDF with PRODUCT_USE_OLD_PATH
+FIX: real min buying price
+FIX: receiving link never works
+FIX: same page added several times on mergepropal option
+FIX: search on date into supplier invoice list dont work because of status -1
+FIX: Search supplier ref on contract
+FIX: SQL error function on getAvailableDiscounts function, on bill create mode if socid is empty
+FIX: systematic rounding causes prices to be updated without reason
+FIX: task ODT company object not correctly retrieved
+FIX: Template email must take care of positino column
+FIX: VAT rate can be negative. Example spain selling to morroco.
+
 ***** ChangeLog for 3.8.4 compared to 3.8.3 *****
 FIX: #3694
 FIX: #3798 #2519 Cron jobs would never be executed
