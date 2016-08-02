@@ -256,6 +256,7 @@ DurationDays=days
 Year=Year
 Month=Month
 Week=Week
+WeekShort=Week
 Day=Day
 Hour=Hour
 Minute=Minute
