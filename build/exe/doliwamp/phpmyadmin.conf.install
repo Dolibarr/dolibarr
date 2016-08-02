@@ -19,17 +19,11 @@ Alias /phpmyadmin "WAMPROOT/apps/phpmyadminWAMPPHPMYADMINVERSION/"
 #
 # instead of
 #
-#	<RequireAny>
-#	Require ip 127.0.0.1
-#	Require host localhost
-#   <RequireAny>
+#	Require local
 #
 
 <Directory "WAMPROOT/apps/phpmyadminWAMPPHPMYADMINVERSION/">
     Options Indexes FollowSymLinks MultiViews
     AllowOverride all
-	<RequireAny>
-	Require ip 127.0.0.1
-	Require host localhost
-    </RequireAny>
+    Require local
 </Directory>

@@ -1,3 +1,5 @@
 # Dolibarr language file - Source file is en_US - companies
+Zip=Postcode
 Gencod=Barcode
 VATIntraCheck=Cheque
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party

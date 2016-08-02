@@ -152,7 +152,7 @@ if($error)
 	$amount = GETPOST('amount','int');
 }
 
-print load_fiche_titre($langs->trans("BankTransfer"), '', 'title_bank.png');
+print load_fiche_titre($langs->trans("MenuBankInternalTransfer"), '', 'title_bank.png');
 
 print $langs->trans("TransferDesc");
 print "<br><br>";

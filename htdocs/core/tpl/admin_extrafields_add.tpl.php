@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,22 +49,22 @@
     		}
     		?>
 
-			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
-			else if (type == 'datetime') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
-    		else if (type == 'double') { size.val('24,8').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
-			else if (type == 'int') { size.val('10').removeAttr('disabled'); unique.removeAttr('disabled'); jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
-			else if (type == 'text') { size.val('2000').removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
-    		else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled','disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
-			else if (type == 'boolean') { size.val('').prop('disabled', true); unique.prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
-			else if (type == 'price') { size.val('').prop('disabled', true); unique.prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
-			else if (type == 'select') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
-			else if (type == 'link') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").show();}
-			else if (type == 'sellist') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
-			else if (type == 'radio') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
-			else if (type == 'checkbox') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
-			else if (type == 'chkbxlst') { size.val('').prop('disabled', true); unique.prop('disabled', true);  jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();jQuery("#helplink").hide();}
+			if (type == 'date') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+			else if (type == 'datetime') { size.val('').prop('disabled', true); unique.removeAttr('disabled'); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+    			else if (type == 'double') { size.val('24,8').removeAttr('disabled'); unique.removeAttr('disabled'); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+			else if (type == 'int') { size.val('10').removeAttr('disabled'); unique.removeAttr('disabled'); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide(); jQuery("#helpchkbxlst").hide();}
+			else if (type == 'text') { size.val('2000').removeAttr('disabled'); unique.prop('disabled', true).removeAttr('checked'); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+    			else if (type == 'varchar') { size.val('255').removeAttr('disabled'); unique.removeAttr('disabled'); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
+			else if (type == 'boolean') { size.val('').prop('disabled', true); unique.prop('disabled', true); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
+			else if (type == 'price') { size.val('').prop('disabled', true); unique.prop('disabled', true); required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide();}
+			else if (type == 'select') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'link') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").show();}
+			else if (type == 'sellist') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").show();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'radio') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'checkbox') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").show();jQuery("#helpselect").show();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
+			else if (type == 'chkbxlst') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.removeAttr('disabled');default_value.removeAttr('disabled');jQuery("#value_choice").show();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").show();jQuery("#helplink").hide();}
 			else if (type == 'separate') { size.val('').prop('disabled', true); unique.prop('disabled', true);  required.val('').prop('disabled', true); default_value.val('').prop('disabled', true); jQuery("#value_choice").hide();jQuery("#helpselect").hide();jQuery("#helpsellist").hide();jQuery("#helpchkbxlst").hide();jQuery("#helplink").hide();}
-			else size.val('').prop('disabled', true);
+			else {size.val('').prop('disabled', true);required.removeAttr('disabled');default_value.removeAttr('disabled');}
     	}
     	init_typeoffields('<?php echo GETPOST('type'); ?>');
     	jQuery("#type").change(function() {

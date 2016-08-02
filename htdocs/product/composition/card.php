@@ -133,6 +133,10 @@ else if($action==='save_composed_product')
  * View
  */
 
+$helpurl='';
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
 $form = new Form($db);
@@ -176,7 +180,7 @@ if ($action == 'search')
 //print $sql;
 
 
-llxHeader("","",$langs->trans("CardProduct".$object->type));
+llxHeader("", $langs->trans("CardProduct".$object->type), $helpurl);
 
 $head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);
@@ -195,7 +199,7 @@ if ($id > 0 || ! empty($ref))
 	    
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 		
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Nature
 		if($object->type!=Product::TYPE_SERVICE)

@@ -82,12 +82,12 @@ Codejournal=Journal
 NumPiece=Teilenummer
 AccountingCategory=Buchhaltungskategorie
 
-NotMatch=Not Set
+NotMatch=undefiniert
 
-DeleteMvt=Delete general ledger lines
-DelYear=Year to delete
-DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+DeleteMvt=Lösche Hauptbuch Datensätze
+DelYear=Jahr zu entfernen
+DelJournal=Journal zu entfernen
+ConfirmDeleteMvt=Dadurch werden alle Datensätze des Hauptbuchs  für das Jahr und/oder von einem bestimmten Journal gelöscht
 
 DelBookKeeping=Löschen Sie die Einträge des Hauptbuchs
 
@@ -147,7 +147,7 @@ Modelcsv_bob50=Export zu Sage BOB 50
 Modelcsv_ciel=Export zu Sage Ciel Compta oder Compta Evolution
 Modelcsv_quadratus=Export zu Quadratus QuadraCompta
 Modelcsv_ebp=Export zu EBP
-Modelcsv_cogilog=Export towards Cogilog
+Modelcsv_cogilog=Export zu Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rechnungswesen initialisieren
@@ -166,4 +166,4 @@ Formula=Formel
 ## Error
 ErrorNoAccountingCategoryForThisCountry=Für dieses Land sind keine Kontenkategorien verfügbar
 ExportNotSupported=Das eingestellte Exportformat wird von deiser Seite nicht unterstützt
-BookeppingLineAlreayExists=Lines already existing into bookeeping
+BookeppingLineAlreayExists=Datensätze existieren bereits in der Buchhaltung

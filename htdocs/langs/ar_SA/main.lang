@@ -84,6 +84,7 @@ SeeAbove=أنظر فوق
 HomeArea=المنطقة الرئيسية
 LastConnexion=آخر إتصال
 PreviousConnexion=الاتصال السابق
+PreviousValue=Previous value
 ConnectedOnMultiCompany=إتصال على البيئة
 ConnectedSince=إتصال منذ
 AuthenticationMode=وضع صحة المستندات

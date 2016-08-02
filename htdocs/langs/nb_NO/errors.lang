@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Oppsett av KlikkForÅRinge informasjon fo
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Egenskapen er deaktivert når visningsoppsettet er optimalisert for blinde personer eller tekstbaserte nettlesere.
 WarningPaymentDateLowerThanInvoiceDate=Betalingsdato (%s) er tidligere enn fakturadato (%s) for faktura %s.
 WarningTooManyDataPleaseUseMoreFilters=For mange data (mer enn %s linjer). Bruk flere filtre eller sett konstanten %s til en høyere grense.
-WarningSomeLinesWithNullHourlyRate=Når brukere ikke legger inn timeprisen riktig, kan 0 bli registrert. Dette kan resultere i feil verdisetting av tidsbruk
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Din innlogging er blitt endret. Av sikkerhetsgrunner må du logge inn på nytt før du kan gjøre noe.

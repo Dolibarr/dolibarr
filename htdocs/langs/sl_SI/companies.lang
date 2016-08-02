@@ -74,6 +74,7 @@ DefaultLang=Privzet jezik
 VATIsUsed=Davčni zavezanec
 VATIsNotUsed=Ni davčni zavezanec
 CopyAddressFromSoc=Izpolni naslov z naslovom partnerja
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Uporabi drugi davek
 LocalTax1IsUsedES= RE je uporabljen
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organizacija
 FiscalYearInformation=Informacije o fiskalnem letu
 FiscalMonthStart=Začetni mesec fiskalnega leta
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Seznam dobaviteljev
 ListProspectsShort=Seznam možnih strank
 ListCustomersShort=Seznam kupcev

@@ -127,13 +127,12 @@ class modDeplacement extends DolibarrModules
 		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
 		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('deplacement',1).')';
-		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' OR d.fk_soc IS NULL)';
+		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' OR d.fk_soc IS NULL)';
 		
 		$childids = $user->getAllChildIds();
 		$childids[]=$user->id;
 		
-		if (!$user->rights->deplacement->readall && !$user->rights->deplacement->lire_tous) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
-		
+		if (empty($user->rights->deplacement->readall) && empty($user->rights->deplacement->lire_tous)) $sql.=' AND d.fk_user IN ('.join(',',$childids).')';
 	}
 
 

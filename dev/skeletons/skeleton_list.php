@@ -91,13 +91,12 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label('mymodule');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
-// Load object if id or ref is provided as parameter
-$object=new Skeleton_Class($db);
-if (($id > 0 || ! empty($ref)) && $action != 'add')
-{
-	$result=$object->fetch($id,$ref);
-	if ($result < 0) dol_print_error($db);
-}
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    't.ref'=>'Ref',
+    't.note_public'=>'NotePublic',
+);
+if (empty($user->socid)) $fieldstosearchall["t.note_private"]="NotePrivate";
 
 // Definition of fields for list
 $arrayfields=array(
@@ -111,10 +110,19 @@ $arrayfields=array(
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
-   foreach($extrafields->attribute_label as $key => $val) 
-   {
-       $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
-   }
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+    }
+}
+
+
+// Load object if id or ref is provided as parameter
+$object=new Skeleton_Class($db);
+if (($id > 0 || ! empty($ref)) && $action != 'add')
+{
+	$result=$object->fetch($id,$ref);
+	if ($result < 0) dol_print_error($db);
 }
 
 
@@ -127,7 +135,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 ********************************************************************/
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -135,50 +143,26 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
+// Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_field1='';
 	$search_field2='';
 	$search_date_creation='';
 	$search_date_update='';
-	$search_array_options=array();
+    $toselect='';
+    $search_array_options=array();
 }
 
 
 if (empty($reshook))
 {
-    // Mass actions. Controls on number of lines checked
-    $maxformassaction=1000;
-    if (! empty($massaction) && count($toselect) < 1)
-    {
-        $error++;
-        setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
-    }
-    if (! $error && count($toselect) > $maxformassaction)
-    {
-        setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
-        $error++;
-    }
-    
-	// Action to delete
-	if ($action == 'confirm_delete')
-	{
-		$result=$object->delete($user);
-		if ($result > 0)
-		{
-			// Delete OK
-			setEventMessages("RecordDeleted", null, 'mesgs');
-			header("Location: ".dol_buildpath('/mymodule/list.php',1));
-			exit;
-		}
-		else
-		{
-			if (! empty($object->errors)) setEventMessages(null,$object->errors,'errors');
-			else setEventMessages($object->error,null,'errors');
-		}
-	}
+    $objectclass='Commande';
+    $permtoread = $user->rights->commande->lire;
+    $permtodelete = $user->rights->commande->supprimer;
+    $uploaddir = $conf->commande->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
-
 
 
 
@@ -188,9 +172,13 @@ if (empty($reshook))
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','MyPageName','');
+$now=dol_now();
 
 $form=new Form($db);
+
+//$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
+$help_url='';
+llxHeader('','MyPageName',$help_url);
 
 // Put here content of your page
 $title = $langs->trans('MyModuleListTitle');
@@ -215,8 +203,8 @@ $sql = "SELECT";
 $sql.= " t.rowid,";
 $sql.= " t.field1,";
 $sql.= " t.field2";
-// Add fields for extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -265,7 +253,10 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     
+    $arrayofselected=is_array($toselect)?$toselect:array();
+    
     $params='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_field1 != '') $params.= '&amp;search_field1='.urlencode($search_field1);
 	if ($search_field2 != '') $params.= '&amp;search_field2='.urlencode($search_field2);
@@ -278,9 +269,14 @@ if ($resql)
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 
 
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
-
-
+    $arrayofmassactions =  array(
+        'presend'=>$langs->trans("SendByMail"),
+        'builddoc'=>$langs->trans("PDFMerge"),
+    );
+    if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+    if ($massaction == 'presend') $arrayofmassactions=array();
+    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+    
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -289,10 +285,12 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	
-    if ($sall)
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+	
+	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $all) . implode(', ',$fieldstosearchall);
+        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
     }
     
     $moreforfilter = '';
@@ -300,20 +298,22 @@ if ($resql)
     $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_myfield" value="'.dol_escpae_htmltag($search_myfield).'">';
     $moreforfilter.= '</div>';
     
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+    if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+    else $moreforfilter = $hookmanager->resPrint;
+    
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-	    print $hookmanager->resPrint;
 	    print '</div>';
 	}
 
     $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 	
-	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
     // Fields title
     print '<tr class="liste_titre">';
@@ -393,7 +393,7 @@ if ($resql)
     }*/
     // Action column
 	print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
+	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
     print $searchpitco;
     print '</td>';
 	print '</tr>'."\n";
@@ -466,7 +466,14 @@ if ($resql)
             }*/
 
             // Action column
-            print '<td></td>';
+	        print '<td class="nowrap" align="center">';
+    	    if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	        {
+    	        $selected=0;
+    			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+    			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	        }
+    	    print '</td>';
             if (! $i) $totalarray['nbfield']++;
 
             print '</tr>';
@@ -474,16 +481,61 @@ if ($resql)
         $i++;
     }
     
-    $db->free($resql);
+	// Show total line
+	if (isset($totalarray['totalhtfield']))
+	{
+	    print '<tr class="liste_total">';
+	    $i=0;
+	    while ($i < $totalarray['nbfield'])
+	    {
+	        $i++;
+	        if ($i == 1)
+	        {
+	            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+	            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+	        }
+	        elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
+	        elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+	        elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+	        else print '<td></td>';
+	    }
+	    print '</tr>';
+	}
+    
+	$db->free($resql);
 
-	$parameters=array('sql' => $sql);
+	$parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	print "</table>\n";
-	print "</form>\n";
+	print '</table>'."\n";
+
+	print '</form>'."\n";
 	
-	$db->free($result);
+	
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+	{
+	    /*
+	     * Show list of available documents
+	     */
+	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	    $urlsource.=str_replace('&amp;','&',$param);
+	
+	    $filedir=$diroutputmassaction;
+	    $genallowed=$user->rights->facture->lire;
+	    $delallowed=$user->rights->facture->lire;
+	
+	    print '<br><a name="show_files"></a>';
+	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
+	    $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
+	
+	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+	}
+	else
+	{
+	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+	}
+	
 }
 else
 {

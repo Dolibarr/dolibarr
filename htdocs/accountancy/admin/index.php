@@ -130,6 +130,7 @@ if ($action == 'update') {
 	}
 }
 
+// TO DO Mutualize code for yes/no constants
 if ($action == 'setlistsorttodo') {
 	$setlistsorttodo = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_TODO", $setlistsorttodo, 'yesno', 0, '', $conf->entity);
@@ -146,6 +147,18 @@ if ($action == 'setlistsorttodo') {
 if ($action == 'setlistsortdone') {
 	$setlistsortdone = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "ACCOUNTING_LIST_SORT_VENTILATION_DONE", $setlistsortdone, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setmanagezero') {
+	$setmanagezero = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
 	if (! $error) {
@@ -286,6 +299,7 @@ foreach ( $list_account as $key ) {
 	print '</td></tr>';
 }
 
+// TO DO Mutualize code for yes/no constants
 $var = ! $var;
 print "<tr " . $bc[$var] . ">";
 print '<td width="80%">' . $langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO") . '</td>';
@@ -309,6 +323,20 @@ if (! empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 	print '</a></td>';
 } else {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setlistsortdone&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+$var = ! $var;
+print "<tr " . $bc[$var] . ">";
+print '<td width="80%">' . $langs->trans("ACCOUNTING_MANAGE_ZERO") . '</td>';
+if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }

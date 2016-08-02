@@ -312,6 +312,7 @@ LatestRelatedBill=Ostatnie pokrewne faktury
 WarningBillExist=Ostrzeżenie, jedna lub więcej faktur istnieje
 MergingPDFTool=Narzędzie do dzielenia PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

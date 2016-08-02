@@ -87,19 +87,37 @@ $result=@include_once $conffile;	// Keep @ because with some error reporting thi
 
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
-	// Note: If calling page was not into htdocs (index.php, ...), then this redirect will fails.
-	// There is no real solution, because the only way to know the apache url relative path is to have into conf file.
-	$TDir = explode('/', $_SERVER['PHP_SELF']);
-	$path = '';
-	$i = count($TDir);
-	while ($i--)
-	{
-		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
-		if (substr($TDir[$i], -4, 4) == '.php') continue;
-		
-		$path .= '../';
-	}
-	
+    if (! empty($_SERVER["CONTEXT_PREFIX"]))    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
+    {
+        $path=$_SERVER["CONTEXT_PREFIX"];       // example '/dolibarr/' when using an apache alias.
+        if (! preg_match('/\/$/', $path)) $path.='/';
+    }
+    else if (preg_match('/index\.php', $_SERVER['PHP_SELF']))
+    {
+        // When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
+        // when using apache alias like '/dolibarr/' that point to htdocs.
+    	// Note: If calling page was an index.php not into htdocs (ie comm/index.php, ...), then this redirect will fails,
+    	// but we don't want to change this because when URL is correct, we must be sure the redirect to install/index.php will be correct.
+        $path='';
+    }
+    else
+    {
+        // If what we look is not index.php, we can try to guess location of root. May not work all the time.
+    	// There is no real solution, because the only way to know the apache url relative path is to have it into conf file.
+    	// If it fails to find correct $path, then only solution is to ask user to enter the correct URL to index.php or install/index.php
+        $TDir = explode('/', $_SERVER['PHP_SELF']);
+    	$path = '';
+    	$i = count($TDir);
+    	while ($i--)
+    	{
+    		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
+            if ($TDir[$i] == 'dolibarr') break;
+            if (substr($TDir[$i], -4, 4) == '.php') continue;
+    		
+    		$path .= '../';
+    	}
+    }
+    
 	header("Location: ".$path."install/index.php");
 	exit;
 }

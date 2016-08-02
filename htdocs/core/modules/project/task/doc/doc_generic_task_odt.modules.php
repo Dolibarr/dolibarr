@@ -109,25 +109,26 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *
 	 * @param   Project			$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
+     * @param   string		    $array_key	        Name of the key for return array
 	 * @return	array								Array of substitution
 	 */
-	function get_substitutionarray_object($object,$outputlangs)
+	function get_substitutionarray_object($object,$outputlangs,$array_key='object')
 	{
 		global $conf;
 
 		$resarray=array(
-		'object_id'=>$object->id,
-		'object_ref'=>$object->ref,
-		'object_title'=>$object->title,
-		'object_description'=>$object->description,
-		'object_date_creation'=>dol_print_date($object->date_c,'day'),
-		'object_date_modification'=>dol_print_date($object->date_m,'day'),
-		'object_date_start'=>dol_print_date($object->date_start,'day'),
-		'object_date_end'=>dol_print_date($object->date_end,'day'),
-		'object_note_private'=>$object->note_private,
-		'object_note_public'=>$object->note_public,
-		'object_public'=>$object->public,
-		'object_statut'=>$object->getLibStatut()
+            $array_key.'_id'=>$object->id,
+            $array_key.'_ref'=>$object->ref,
+            $array_key.'_title'=>$object->title,
+            $array_key.'_description'=>$object->description,
+            $array_key.'_date_creation'=>dol_print_date($object->date_c,'day'),
+            $array_key.'_date_modification'=>dol_print_date($object->date_m,'day'),
+            $array_key.'_date_start'=>dol_print_date($object->date_start,'day'),
+            $array_key.'_date_end'=>dol_print_date($object->date_end,'day'),
+            $array_key.'_note_private'=>$object->note_private,
+            $array_key.'_note_public'=>$object->note_public,
+            $array_key.'_public'=>$object->public,
+            $array_key.'_statut'=>$object->getLibStatut()
 		);
 
 		// Retrieve extrafields

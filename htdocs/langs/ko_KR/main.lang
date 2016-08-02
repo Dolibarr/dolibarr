@@ -84,6 +84,7 @@ SeeAbove=상위 보기
 HomeArea=Home area
 LastConnexion=Last connection
 PreviousConnexion=Previous connection
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Connected on environment
 ConnectedSince=Connected since
 AuthenticationMode=Authentification mode

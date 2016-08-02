@@ -6,10 +6,10 @@ ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export globális számlákkal
 ACCOUNTING_EXPORT_LABEL=Export label
 ACCOUNTING_EXPORT_AMOUNT=Export amount
 ACCOUNTING_EXPORT_DEVISE=Export currency
-Selectformat=Select the format for the file
-ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
+Selectformat=Fájl formátumának kiválasztása
+ACCOUNTING_EXPORT_PREFIX_SPEC=Fájlnév előtagjának kiválasztása
 
-ConfigAccountingExpert=Configuration of the module accounting expert
+ConfigAccountingExpert=A könyvvizsgáló szakértő modul beállítása
 Journaux=Naplók
 JournalFinancial=Pénzügyi mérleg naplók
 BackToChartofaccounts=Return chart of accounts
@@ -160,8 +160,8 @@ OptionModeProductBuyDesc=Show all products with no accounting account defined fo
 
 ## Dictionary
 Range=Range of accounting account
-Calculated=Calculated
-Formula=Formula
+Calculated=Számított
+Formula=Képlet
 
 ## Error
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country

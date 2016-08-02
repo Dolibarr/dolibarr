@@ -368,31 +368,6 @@ if (empty($reshook))
 		                $error++;
 		            }
 		            
-		            // Now we create same links to contact than the ones found on origin object
-		            if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-		            {
-		                $originforcontact = $object->origin;
-		                $originidforcontact = $object->origin_id;
-		                if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-		                {
-		                    $originforcontact=$srcobject->origin;
-		                    $originidforcontact=$srcobject->origin_id;
-		                }
-		                $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-		                $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-	                	
-		                $resqlcontact = $db->query($sqlcontact);
-		                if ($resqlcontact)
-		                {
-		                    while($objcontact = $db->fetch_object($resqlcontact))
-		                    {
-		                        //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
-		                        $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
-		                    }
-		                }
-		                else dol_print_error($resqlcontact);
-		            }
-
 		            // Hooks
 		            $parameters = array('objFrom' => $srcobject);
 		            $reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
@@ -1117,7 +1092,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('','socid','',1,1);
+		print $form->select_company('','socid','','SelectThirdParty',1);
 		print '</td>';
 	}
 	print '</tr>'."\n";
