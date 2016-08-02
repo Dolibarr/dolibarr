@@ -971,7 +971,8 @@ if (empty($reshook))
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-
+			$object->fk_project       = GETPOST('projectid');
+			
 			// Fill array 'array_options' with data from add form
 	       	if (! $error)
 	       	{
