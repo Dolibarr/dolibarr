@@ -86,6 +86,7 @@ DirectoryRecommendation=Priporoča se uporaba mape zunaj vaše mape na vaših in
 LoginAlreadyExists=Že obstaja
 DolibarrAdminLogin=Uporabniško ime Dolibarr administratorja
 AdminLoginAlreadyExists=Račun Dolibarr administratorja '<b>%s</b>' že obstaja.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Pozor, zaradi varnostnih razlogov morate po končani namestitvi ali nadgradnji odstraniti mapo <b>install<b> ali jo preimenovati v <b>install.lock</b>, da bi preprečili njeno zlonamerno uporabo.
 FunctionNotAvailableInThisPHP=Ni na voljo pri tem PHP
 ChoosedMigrateScript=Izberite skript za selitev

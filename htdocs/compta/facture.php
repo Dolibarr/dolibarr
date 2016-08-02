@@ -864,7 +864,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Standard invoice or Deposit invoice created from a Predefined template invoice
+		// Standard invoice or Deposit invoice, created from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -904,6 +904,7 @@ if (empty($reshook))
 				$object->fac_rec = GETPOST('fac_rec');
 
 				$id = $object->create($user);
+				var_dump('ggg');
 			}
 		}
 
@@ -1011,8 +1012,8 @@ if (empty($reshook))
 						$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 					}
 
-					$id = $object->create($user);
-
+					$id = $object->create($user);      // This include class to add_object_linked() and add add_contact()
+					
 					if ($id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
@@ -1183,32 +1184,7 @@ if (empty($reshook))
 								$error ++;
 							}
 						}
-
-						// Now we create same links to contact than the ones found on origin object
-						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-						{
-    						$originforcontact = $object->origin;
-    						$originidforcontact = $object->origin_id;
-    						if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-    						{
-    						    $originforcontact=$srcobject->origin;
-    						    $originidforcontact=$srcobject->origin_id;
-    						}
-    						$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-
-    						$resqlcontact = $db->query($sqlcontact);
-    						if ($resqlcontact)
-    						{
-                                while($objcontact = $db->fetch_object($resqlcontact))
-                                {
-                                    //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
-                                    $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
-                                }
-    						}
-    						else dol_print_error($resqlcontact);					
-						}
-						
+												
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
@@ -1887,7 +1863,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $now = dol_now();
 
-llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+llxHeader('', $langs->trans('InvoiceCustomer'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
 // Mode creation
@@ -2544,58 +2520,6 @@ if ($action == 'create')
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";	
 		}
 	}
-	else
-	{
-		// Show deprecated optional form to add product line here
-		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) {
-			print '<tr><td colspan="3">';
-
-			// Zone de choix des produits predefinis a la creation
-			print '<table class="noborder" width="100%">';
-			print '<tr>';
-			print '<td>' . $langs->trans('ProductsAndServices') . '</td>';
-			print '<td>' . $langs->trans('Qty') . '</td>';
-			print '<td>' . $langs->trans('ReductionShort') . '</td>';
-			print '<td> &nbsp; &nbsp; </td>';
-			if (! empty($conf->service->enabled)) {
-				print '<td>' . $langs->trans('ServiceLimitedDuration') . '</td>';
-			}
-			print '</tr>';
-			for($i = 1; $i <= $NBLINES; $i ++) {
-				print '<tr>';
-				print '<td>';
-				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES))
-					$form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size, $soc->price_level);
-				else
-					$form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size);
-				print '</td>';
-				print '<td><input type="text" size="2" name="qty' . $i . '" value="1"></td>';
-				print '<td class="nowrap"><input type="text" size="1" name="remise_percent' . $i . '" value="' . $soc->remise_percent . '">%</td>';
-				print '<td>&nbsp;</td>';
-				// Si le module service est actif, on propose des dates de debut et fin a la ligne
-				if (! empty($conf->service->enabled)) {
-					print '<td class="nowrap">';
-					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-					print '<td class="nobordernopadding nowrap">';
-					print $langs->trans('From') . ' ';
-					print '</td><td class="nobordernopadding nowrap">';
-					print $form->select_date('', 'date_start' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
-					print '</td></tr>';
-					print '<td class="nobordernopadding nowrap">';
-					print $langs->trans('to') . ' ';
-					print '</td><td class="nobordernopadding nowrap">';
-					print $form->select_date('', 'date_end' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
-					print '</td></tr></table>';
-					print '</td>';
-				}
-				print "</tr>\n";
-			}
-
-			print '</table>';
-			print '</td></tr>';
-		}
-	}
 
 	print "</table>\n";
 
@@ -2931,7 +2855,7 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	// Ref
-	print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
+	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
 	print '<td colspan="5">';
 	$morehtmlright = '';
 	$discount = new DiscountAbsolute($db);
@@ -2946,7 +2870,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</td></tr>';
 
 	// Ref customer
-	print '<tr><td width="20%">';
+	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('RefCustomer');
 	print '</td>';
@@ -3559,7 +3483,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Rate','multicurrency_tx');
+		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';

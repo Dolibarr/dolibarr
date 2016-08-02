@@ -283,7 +283,7 @@ if ($action == 'builddoc')
  * View
  */
 
-llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
+llxHeader('',$langs->trans("Donation"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
 $form=new Form($db);
 $formfile = new FormFile($db);
@@ -424,7 +424,7 @@ if (! empty($id) && $action == 'edit')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';
 	print $object->getNomUrl();
 	print '</td>';
 	print '</tr>';
@@ -554,13 +554,13 @@ if (! empty($id) && $action != 'edit')
     if (! empty($conf->projet->enabled)) $nbrows++;
 
 	// Ref
-	print "<tr>".'<td>'.$langs->trans("Ref").'</td><td colspan="2">';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2">';
 	print $form->showrefnav($object, 'rowid', $linkback, 1, 'rowid', 'ref', '');
 	print '</td>';
 	print '</tr>';
 
 	// Date
-	print '<tr><td width="25%">'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">';
 	print dol_print_date($object->date,"day");
 	print "</td>";
 
@@ -716,7 +716,7 @@ if (! empty($id) && $action != 'edit')
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
-    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paye == 0)
+    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paid == 0)
     {
         print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
     }

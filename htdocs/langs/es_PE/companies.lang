@@ -3,3 +3,4 @@ VATIsUsed=Sujeto a IGV
 VATIsNotUsed=No sujeto a IGV
 VATIntra=RUC
 VATIntraShort=RUC
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party

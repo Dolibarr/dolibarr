@@ -84,6 +84,7 @@ SeeAbove=Xem ở trên
 HomeArea=Khu vực nhà
 LastConnexion=Kết nối cuối
 PreviousConnexion=Kết nối trước
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Kết nối trong môi trường
 ConnectedSince=Kết nối từ
 AuthenticationMode=Chế độ xác thực

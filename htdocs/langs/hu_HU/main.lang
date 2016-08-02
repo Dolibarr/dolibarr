@@ -84,6 +84,7 @@ SeeAbove=Lásd feljebb
 HomeArea=Nyitólap
 LastConnexion=Utolsó kapocslódás
 PreviousConnexion=Előző kapcsolódás
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Entitáson kapcsolódva
 ConnectedSince=Kapcslódás kezdete
 AuthenticationMode=Hitelesitési mód

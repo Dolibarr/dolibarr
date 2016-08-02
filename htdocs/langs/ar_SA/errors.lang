@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=إعداد المعلومات ClickToDial
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=ميزة تعطيل عندما تم تحسين عرض الإعداد لالعمياء شخص أو النص المتصفحات.
 WarningPaymentDateLowerThanInvoiceDate=تاريخ الدفع (٪ ق) هو أقدم من تاريخ الفاتورة (٪ ق) لفاتورة%s.
 WarningTooManyDataPleaseUseMoreFilters=عدد كبير جدا من البيانات (أكثر من خطوط%s). يرجى استخدام المزيد من المرشحات أو تعيين ثابت٪ الصورة إلى حد أعلى.
-WarningSomeLinesWithNullHourlyRate=وسجلت بعض الأوقات من قبل المستخدمين عندما لم يتم تعريف معدل في الساعة. وقد استخدم قيمة 0 ولكن هذا قد يؤدي إلى تقييم خاطئ من الوقت الذي يقضيه.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.

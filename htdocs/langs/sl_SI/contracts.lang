@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Še ni potekla
 ServiceStatusLate=Aktivna, potekla
 ServiceStatusLateShort=Potekla
 ServiceStatusClosed=Zaključena
+ShowContractOfService=Show contract of service
 Contracts=Pogodbe
 ContractsSubscriptions=Pogodbe/naročnine
 ContractsAndLine=Pogodbe in serija pogodb

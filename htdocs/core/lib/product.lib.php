@@ -65,18 +65,6 @@ function product_prepare_head($object)
     		$h++;
     	}
 	}
-	
-	// Show category tab
-	/* No more required. Replaced with new multiselect component
-	if (! empty($conf->categorie->enabled) && $user->rights->categorie->lire)
-	{
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		$type = Categorie::TYPE_PRODUCT;
-		$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$object->id.'&type='.$type;
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;
-	}*/
 
 	// Multilangs
 	if (! empty($conf->global->MAIN_MULTILANGS))
@@ -123,12 +111,18 @@ function product_prepare_head($object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf,$langs,$object,$head,$h,'product');
 
-    /* Merged into the Join files tab
-	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("Photos");
-	$head[$h][2] = 'photos';
-	$h++;
-	*/
+    // Notes
+    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    {
+        $nbNote = 0;
+        if(!empty($object->note_private)) $nbNote++;
+        if(!empty($object->note_public)) $nbNote++;
+        $head[$h][0] = DOL_URL_ROOT.'/product/note.php?id='.$object->id;
+        $head[$h][1] = $langs->trans('Notes');
+        if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+        $head[$h][2] = 'note';
+        $h++;
+    }
 
     // Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

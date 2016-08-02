@@ -14,5 +14,5 @@ BehaviourOnClick=Viselkedés, ha egy URL elérési útra kattintott
 CreateBookmark=Könyvjelző lértehozása
 SetHereATitleForLink=Állítsa be a címet a könyvjelzőhöz
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Használjon egy külső http URL-t vagy relatív URL Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Válassza ki, hogy a hivatkozott oldal új ablakban nyíljon meg vagy az eredetiben
 BookmarksManagement=Könyvjelzők kezelése

@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Δεν έχει λήξει
 ServiceStatusLate=Ενεργή, Έληξε
 ServiceStatusLateShort=Έληξε
 ServiceStatusClosed=Τερματισμένη
+ShowContractOfService=Show contract of service
 Contracts=Συμβόλαια
 ContractsSubscriptions=Συμβάσεις/Συνδρομές
 ContractsAndLine=Συμβόλαια και η γραμμή των συμβολαίων

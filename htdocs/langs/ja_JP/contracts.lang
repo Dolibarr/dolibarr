@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=有効期限が切れていない
 ServiceStatusLate=実行すると、期限切れの
 ServiceStatusLateShort=期限切れの
 ServiceStatusClosed=閉じ
+ShowContractOfService=Show contract of service
 Contracts=契約
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

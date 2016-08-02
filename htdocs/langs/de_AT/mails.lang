@@ -14,5 +14,4 @@ ConfirmSendingEmailing=Möchten Sie diese E-Mail-Kampagne wirklich versenden?<br
 LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 IdRecord=Eintrags ID
 ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt
-ListOfActiveNotifications=Liste aller aktiven E-Mail-Benachrichtigungen
 ListOfNotificationsDone=Liste aller versandten E-Mail-Benachrichtigungen

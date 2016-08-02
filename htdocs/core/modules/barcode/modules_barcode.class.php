@@ -91,7 +91,7 @@ abstract class ModeleNumRefBarCode
      *	@param	int			$type		Type
      *  @return string      			Value
      */
-    function getNextValue($objsoc=0,$type=-1)
+    function getNextValue($objsoc=null,$type=-1)
     {
         global $langs;
         return $langs->trans("Function_getNextValue_InModuleNotWorking");

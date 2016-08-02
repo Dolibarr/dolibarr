@@ -84,6 +84,7 @@ SeeAbove=См. выше
 HomeArea=Начальная область
 LastConnexion=Последнее подключение
 PreviousConnexion=Предыдущий вход
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Подключено к объекту
 ConnectedSince=Подключено с
 AuthenticationMode=Режим аутентификации

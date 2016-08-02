@@ -84,6 +84,7 @@ SeeAbove=Katso edellä
 HomeArea=Etusivu alue
 LastConnexion=Viimeisin yhteys
 PreviousConnexion=Edellinen yhteydessä
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Connected on kokonaisuus
 ConnectedSince=Sidossuhteessa koska
 AuthenticationMode=Todentamisjärjestelmien tilassa

@@ -84,6 +84,7 @@ SeeAbove=Vezi mai sus
 HomeArea=Acasă
 LastConnexion=Ultima conexiune
 PreviousConnexion=Conexiunea precedentă
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Conectat la entitatea
 ConnectedSince=Conectat de
 AuthenticationMode=Mod autentificare

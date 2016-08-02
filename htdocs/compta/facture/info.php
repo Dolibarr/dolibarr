@@ -35,7 +35,7 @@ $langs->load("bills");
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("InvoiceCustomer"));
 
 $fac = new Facture($db);
 $fac->fetch($_GET["facid"]);

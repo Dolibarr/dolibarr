@@ -28,7 +28,6 @@ ErrorVATCheckMS_UNAVAILABLE=Controle niet mogelijk. Controledienst wordt niet ve
 ContactOthers=Ander
 StatusProspect2=Contact lopende
 ImportDataset_company_4=Derde partij/Verkoopsverantwoordelijke (Affecteert verkoopsverantwoordelijke gebruikers naar bedrijven)
-YouMustCreateContactFirst=U dient voor de Klant eerst contactpersonen met een e-mailadres in te stellen, voordat u kennisgevingen per e-mail kunt sturen.
 ProductsIntoElements=Lijst van producten/diensten in %s
 MergeOriginThirdparty=Kopieer derde partij (derde partij die je wil verwijderen)
 MergeThirdparties=Voeg derde partijen samen

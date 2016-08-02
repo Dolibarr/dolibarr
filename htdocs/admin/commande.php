@@ -602,6 +602,8 @@ print "</td></tr>\n";
 print '</form>';
 
 // Shippable Icon in List
+/* Kept as hidden feature for the moment, result seems bugged. 
+Whet is definition of "shippable" according to all different STOCK_CALCULATE_... options ?
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("ShippableOrderIconInList").'</td>';
@@ -617,6 +619,8 @@ if (!empty($conf->global->SHIPPABLE_ORDER_ICON_IN_LIST)) {
 print '</a></td>';
 print '</tr>';
 
+/* Seems to be not so used. So kept hidden for the moment to avoid dangerous options inflation.
+/*
 // Ask for payment bank during order
 if ($conf->banque->enabled)
 {
@@ -676,6 +680,7 @@ else
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER").'</td><td>&nbsp;</td><td align="center">'.$langs->trans('NotAvailable').'</td></tr>';
 }
+*/
 
 print '</table>';
 print '<br>';

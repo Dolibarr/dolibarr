@@ -140,8 +140,8 @@ class FormProjets
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0 && empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		if (!empty($filterkey)) {
-			$sql .= ' AND p.title LIKE "%'.$this->db->escape($filterkey).'%"';
-			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
+			$sql .= " AND p.title LIKE '%".$this->db->escape($filterkey)."%'";
+			$sql .= " OR p.ref LIKE '%".$this->db->escape($filterkey)."%'";
 		}
 		$sql.= " ORDER BY p.ref ASC";
 

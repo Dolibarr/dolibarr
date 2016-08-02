@@ -1,6 +1,9 @@
 # Dolibarr language file - Source file is en_US - banks
 Conciliable=Ausgleichsfähig
+SupplierInvoicePayment=Lieferantenzahlung
 ConfirmValidateCheckReceipt=Scheck wirklich annehmen? Eine Änderung ist anschliessend nicht mehr möglich.
+BankChecksToReceipt=Checks die auf Einlösung warten
+PaymentDateUpdateSucceeded=Zahlungsdatum erfolgreich aktualisiert
 DefaultRIB=Standart Bankkonto-Nummer
 RejectCheck=Überprüfung zurückgewiesen
 ConfirmRejectCheck=Wollen sie diesen Check wirklich als zurückgewiesen Kennzeichnen?

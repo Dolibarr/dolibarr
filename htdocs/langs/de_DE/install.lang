@@ -86,6 +86,7 @@ DirectoryRecommendation=Es empfiehlt sich die Verwendung eines Ordners außerhal
 LoginAlreadyExists=Dieser Benutzername ist bereits vergeben
 DolibarrAdminLogin=Anmeldung für dolibarr-Administrator
 AdminLoginAlreadyExists=Ein Administratorkonto namens '<b>%s</b>' ist bereits vorhanden.
+FailedToCreateAdminLogin=Fehler beim erstellen des Dolibarr Administrator Kontos.
 WarningRemoveInstallDir=Aus Sicherheitsgründen sollten Sie nach abgeschlossenem Installations-/Aktualisierungsvorgang das Installationsverzeichnis (<b>install</b>) löschen oder in "install.lock" umbenennen.
 FunctionNotAvailableInThisPHP=Diese Funktion steht in Ihrer PHP-Version nicht zur Verfügung.
 ChoosedMigrateScript=Migrationsskript auswählen

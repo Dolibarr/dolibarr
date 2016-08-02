@@ -86,6 +86,7 @@ DirectoryRecommendation=وrecommanded به لاستخدام دليل خارج ا
 LoginAlreadyExists=موجود بالفعل
 DolibarrAdminLogin=ادخل Dolibarr مشرف
 AdminLoginAlreadyExists=Dolibarr حساب مشرف <b>'٪ ق'</b> موجود بالفعل.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=تحذير ، لأسباب أمنية ، بعد تثبيت أو تحديث كاملة ، يجب إزالة <b>تثبيت أو إعادة تسمية الدليل على install.lock من أجل تجنب استخدام الخبيثة.</b>
 FunctionNotAvailableInThisPHP=لا تتوفر على هذا PHP
 ChoosedMigrateScript=اختار الهجرة سكريبت

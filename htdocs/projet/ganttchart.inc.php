@@ -90,9 +90,9 @@ if (g.getDivId() != null)
 	var barText = "Resource";
 	var graphFormat = "day";
 
-	g.setDateInputFormat('mm/dd/yyyy');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', does not work with 'yyyy-mm-dd')
-	//g.setDateDisplayFormat('<?php echo $dateformat; ?>');
-	g.setDateTaskDisplayFormat('<?php echo $datehourformat; ?>');
+	g.setDateInputFormat('<?php echo $dateformatinput; ?>');  // Set format of input dates ('mm/dd/yyyy', 'dd/mm/yyyy', does not work with 'yyyy-mm-dd')
+	g.setDateTaskTableDisplayFormat('<?php echo $dateformat; ?>');	// Format of date used into line
+	g.setDateTaskDisplayFormat('<?php echo $datehourformat; ?>');		// Format of date used into popup, not into line
 	g.setDayMajorDateDisplayFormat('dd mon');
 	g.setShowRes(1); 		// Show/Hide Responsible (0/1)
 	g.setShowDur(1); 		// Show/Hide Duration (0/1)
@@ -132,7 +132,7 @@ else
  * Add a gant chart line
  *
  * @param 	string	$tarr					tarr
- * @param	array	$task					Task object
+ * @param	array	$task					Array with properties of one task
  * @param 	Project	$project_dependencies	Project object
  * @param 	int		$level					Level
  * @param 	int		$project_id				Id of project
@@ -140,11 +140,13 @@ else
  */
 function constructGanttLine($tarr,$task,$project_dependencies,$level=0,$project_id=null)
 {
+    global $dateformatinput2;
+    
     $start_date = $task["task_start_date"];
     $end_date = $task["task_end_date"];
     if (!$end_date) $end_date = $start_date;
-    $start_date = dol_print_date($start_date,"%m/%d/%Y");
-    $end_date = dol_print_date($end_date,"%m/%d/%Y");
+    $start_date = dol_print_date($start_date, $dateformatinput2);
+    $end_date = dol_print_date($end_date, $dateformatinput2);
     // Resources
     $resources = $task["task_resources"];
     // Define depend (ex: "", "4,13", ...)

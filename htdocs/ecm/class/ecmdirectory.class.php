@@ -239,14 +239,15 @@ class EcmDirectory // extends CommonObject
 	/**
 	 *	Update cache of nb of documents into database
 	 *
-	 * 	@param	string	$sign		'+' or '-'
+	 * 	@param	string	$value		'+' or '-' or new number
 	 *  @return int		         	<0 if KO, >0 if OK
 	 */
-	function changeNbOfFiles($sign)
+	function changeNbOfFiles($value)
 	{
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."ecm_directories SET";
-		$sql.= " cachenbofdoc = cachenbofdoc ".$sign." 1";
+		if (preg_match('/[0-9]+/', $value)) $sql.= " cachenbofdoc = ".(int) $value;
+		else $sql.= " cachenbofdoc = cachenbofdoc ".$value." 1";
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::changeNbOfFiles", LOG_DEBUG);
@@ -255,6 +256,12 @@ class EcmDirectory // extends CommonObject
 		{
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
+		}
+		else
+		{
+		    if (preg_match('/[0-9]+/', $value)) $this->cachenbofdoc = (int) $value;
+		    else if ($value == '+') $this->cachenbofdoc++;
+		    else if ($value == '-') $this->cachenbofdoc--;
 		}
 
 		return 1;

@@ -84,6 +84,7 @@ SeeAbove=Pogledajte iznad
 HomeArea=Oblast Home
 LastConnexion=Poslednja konekcija
 PreviousConnexion=Prethodna konekcija
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Povezan u okruženje
 ConnectedSince=Konektovani ste od
 AuthenticationMode=Način autentifikacije

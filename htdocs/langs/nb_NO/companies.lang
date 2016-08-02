@@ -74,6 +74,7 @@ DefaultLang=Standardspråk
 VATIsUsed=MVA skal beregnes
 VATIsNotUsed=MVA skal ikke beregnes
 CopyAddressFromSoc=Fyll adresse med tredjeparts adresse
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Bruk avgift 2
 LocalTax1IsUsedES= RE brukes
@@ -368,7 +369,8 @@ AllocateCommercial=Tildelt salgsrepresentant
 Organization=Organisasjon
 FiscalYearInformation=Informasjon om regnskapsåret
 FiscalMonthStart=Første måned i regnskapsåret
-YouMustCreateContactFirst=For å kunne legge til epost-varslinger, må du først legge til epost adresser for tredjeparten
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Liste over leverandører
 ListProspectsShort=Liste over prospekter
 ListCustomersShort=Liste over kunder

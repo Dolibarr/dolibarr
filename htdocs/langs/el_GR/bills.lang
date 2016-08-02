@@ -312,6 +312,7 @@ LatestRelatedBill=Τελευταίο σχετικό τιμολόγιο
 WarningBillExist=Προσοχή, ένα ή περισσότερα τιμολόγια υπάρχουν ήδη
 MergingPDFTool=Συγχώνευση εργαλείο PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Σημείωση πληρωμής
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

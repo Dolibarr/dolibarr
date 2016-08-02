@@ -84,6 +84,7 @@ SeeAbove=Pozri vyššie
 HomeArea=Hlavná oblasť
 LastConnexion=Posledné pripojenie
 PreviousConnexion=Predchádzajúca pripojenie
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Pripojené na životné prostredie
 ConnectedSince=Pripojený od
 AuthenticationMode=Autentizácia režim

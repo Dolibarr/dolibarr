@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Le impostazioni di informazione del Click
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funzione disabilitata quando le impostazioni di visualizzazione sono ottimizzate per persone non vedenti o browser testuali.
 WarningPaymentDateLowerThanInvoiceDate=La scadenza del pagamento (%s) risulta antecedente alla data di fatturazione (%s) per la fattura %s
 WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
-WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.
