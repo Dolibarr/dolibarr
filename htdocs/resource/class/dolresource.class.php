@@ -393,7 +393,7 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= " GROUP BY t.rowid, ty.label";
+    	$sql.= " GROUP BY t.rowid, t.entity, t.ref, t.description, t.fk_code_type_resource, t.tms, ty.label";
     	$sql.= $this->db->order($sortfield,$sortorder);
         $this->num_all = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
