@@ -160,6 +160,7 @@ class CommandeApi extends DolibarrApi
         
         if ($result)
         {
+        	$i=0;
             $num = $db->num_rows($result);
             while ($i < $num)
             {

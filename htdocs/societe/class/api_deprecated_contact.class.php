@@ -114,6 +114,7 @@ class ContactApi extends DolibarrApi
 			$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : '';
 		}
 
+		$search_sale = 0;
 		// If the internal user must only see his customers, force searching by him
 		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid)
 			$search_sale = DolibarrApiAccess::$user->id;
@@ -164,7 +165,8 @@ class ContactApi extends DolibarrApi
 		$result = $db->query($sql);
 		if ($result)
 		{
-			$num = $db->num_rows($result);
+			$i = 0;
+		    $num = $db->num_rows($result);
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
