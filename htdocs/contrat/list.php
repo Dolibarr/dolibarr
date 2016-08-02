@@ -172,7 +172,7 @@ if ($sall) {
     $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
-$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_supplier, s.nom, s.rowid";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)
