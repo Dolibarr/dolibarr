@@ -216,9 +216,9 @@ class Contact extends CommonObject
                 }
 			}
 
-            if (! $error)
+			if (! $error)
             {
-                $result=$this->update_perso($this->id, $user);
+                $result=$this->update_perso($this->id, $user, 1);   // TODO Remove function update_perso, should be same than update
                 if ($result < 0)
                 {
                     $error++;
@@ -226,7 +226,7 @@ class Contact extends CommonObject
                 }
             }
 
-            if (! $error)
+			if (! $error)
             {
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_CREATE',$user);
