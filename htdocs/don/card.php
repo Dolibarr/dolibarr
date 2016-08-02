@@ -712,7 +712,7 @@ if (! empty($id) && $action != 'edit')
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
-    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paye == 0)
+    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paid == 0)
     {
         print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
     }
