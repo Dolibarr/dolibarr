@@ -70,7 +70,7 @@ $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldi
 if ($cancel) $action='';
 
 // Set stock limit
-if ($action == 'setstocklimit')
+if ($action == 'setseuil_stock_alerte')
 {
     $object = new Product($db);
     $result=$object->fetch($id);
