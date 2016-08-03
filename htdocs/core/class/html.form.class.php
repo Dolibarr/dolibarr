@@ -5266,8 +5266,8 @@ class Form
      *  Show block with links to link to other objects.
      *
      *  @param	CommonObject	$object				Object we want to show links to
-     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order')
-     *  @return	string									<0 if KO, >0 if OK
+     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order'). null or array() if no restriction.
+     *  @return	string								<0 if KO, >0 if OK
      */
     function showLinkToObjectBlock($object, $restrictlinksto=array())
     {
@@ -5278,8 +5278,7 @@ class Form
 
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
-
-		if (((! is_array($restrictlinksto)) || in_array('order',$restrictlinksto))
+		if ((empty($restrictlinksto) || in_array('order',$restrictlinksto))
 			&& ! empty($conf->commande->enabled))
 		{
 			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
@@ -5346,7 +5345,7 @@ class Form
 			print '</div>';
 		}
 
-		if ((in_array('fichinter',$restrictlinksto)) && ! empty($conf->ficheinter->enabled))
+		if ((empty($restrictlinksto) || (in_array('fichinter',$restrictlinksto))) && ! empty($conf->ficheinter->enabled))
 		{
 			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedFichinter') . '</a>';
 
@@ -5407,7 +5406,7 @@ class Form
 			print '</div>';
 		}
 
-        if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
+        if ((empty($restrictlinksto) || in_array('supplier_order',$restrictlinksto))
 			&& ! empty($conf->fournisseur->enabled))
 		{
 			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
