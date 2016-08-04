@@ -2834,8 +2834,8 @@ elseif (! empty($object->id))
 		$somethingshown = $form->showLinkedObjectBlock($object);
 		
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('order_supplier'));
+		if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
 
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

@@ -2240,9 +2240,9 @@ else
 					$somethingshown = $form->showLinkedObjectBlock($object);
 	
 					// Show links to link elements
-					$linktoelem = $form->showLinkToObjectBlock($object,array('supplier_order'));
-					if ($linktoelem) print '<br>'.$linktoelem;
-	
+					$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'));
+					if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+						
 	
 					print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	                //print '</td><td valign="top" width="50%">';

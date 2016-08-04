@@ -5267,12 +5267,13 @@ class Form
 
     /**
      *  Show block with links to link to other objects.
-     *
+     * 
      *  @param	CommonObject	$object				Object we want to show links to
-     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order')
-     *  @return	string									<0 if KO, >0 if OK
+     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order'). null or array() if no restriction.
+     *  @param	array			$excludelinksto		Do not show links of this type, for exemple array('order') or array('supplier_order'). null or array() if no exclusion.
+     *  @return	string								<0 if KO, >0 if OK
      */
-    function showLinkToObjectBlock($object, $restrictlinksto=array())
+    function showLinkToObjectBlock($object, $restrictlinksto=array(), $excludelinksto=array())
     {
         global $conf, $langs, $hookmanager;
         global $bc;
@@ -5281,201 +5282,89 @@ class Form
 
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
-
-		if (((! is_array($restrictlinksto)) || in_array('order',$restrictlinksto))
-			&& ! empty($conf->commande->enabled))
+		$possiblelinks=array(
+			'propal'=>array('enabled'=>$conf->propale->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.facnumber as ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'contrat'=>array('enabled'=>$conf->contrat->enabled , 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled , 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'order_supplier'=>array('enabled'=>$conf->fournisseur->commande->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id)
+		);
+		
+		foreach($possiblelinks as $key => $possiblelink)
 		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
-
-			print '
-				<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function() {
-					jQuery("#linktoorder").click(function() {
-						jQuery("#orderlist").toggle();
-						jQuery("#linktoorder").toggle();
-					});
-				});
-				</script>
-				';
-
-			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
-
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= ", " . MAIN_DB_PREFIX . "commande as c";
-			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $object->thirdparty->id . '';
-
-			$resqlorderlist = $this->db->query($sql);
-			if ($resqlorderlist)
+			$num = 0;
+			
+			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
 			{
-				$num = $this->db->num_rows($resqlorderlist);
-				$i = 0;
-
-				print '<br><form action="" method="POST" name="LinkedOrder">';
-				print '<table class="noborder">';
-				print '<tr class="liste_titre">';
-				print '<td class="nowrap"></td>';
-				print '<td align="center">' . $langs->trans("Ref") . '</td>';
-				print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
-				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
-				print '<td align="left">' . $langs->trans("Company") . '</td>';
-				print '</tr>';
-				while ($i < $num)
+				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+				$sql = $possiblelink['sql'];
+				$resqllist = $this->db->query($sql);
+				if ($resqllist)
 				{
-					$objp = $this->db->fetch_object($resqlorderlist);
-
-					$var = ! $var;
-					print '<tr ' . $bc [$var] . '>';
-					print '<td aling="left">';
-					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-					print '</td>';
-					print '<td align="center">' . $objp->ref . '</td>';
-					print '<td>' . $objp->ref_client . '</td>';
-					print '<td>' . price($objp->total_ht) . '</td>';
-					print '<td>' . $objp->name . '</td>';
+					$num = $this->db->num_rows($resqllist);
+					$i = 0;
+	
+					print '<br><form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
+					print '<input type="hidden" name="id" value="'.$object->id.'">';
+					print '<input type="hidden" name="action" value="addlink">';
+					print '<input type="hidden" name="addlink" value="'.$key.'">';
+					print '<table class="noborder">';
+					print '<tr class="liste_titre">';
+					print '<td class="nowrap"></td>';
+					print '<td align="center">' . $langs->trans("Ref") . '</td>';
+					print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
+					print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+					print '<td align="left">' . $langs->trans("Company") . '</td>';
 					print '</tr>';
-
-					$i ++;
+					while ($i < $num)
+					{
+						$objp = $this->db->fetch_object($resqlorderlist);
+	
+						$var = ! $var;
+						print '<tr ' . $bc [$var] . '>';
+						print '<td aling="left">';
+						print '<input type="radio" name="idtolinkto" value=' . $objp->rowid . '>';
+						print '</td>';
+						print '<td align="center">' . $objp->ref . '</td>';
+						print '<td>' . $objp->ref_client . '</td>';
+						print '<td>' . price($objp->total_ht) . '</td>';
+						print '<td>' . $objp->name . '</td>';
+						print '</tr>';
+						$i++;
+					}
+					print '</table>';
+					print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+					
+					print '</form>';
+					$this->db->free($resqllist);
+				} else {
+					dol_print_error($this->db);
 				}
-				print '</table>';
-				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-				
-				print '</form>';
-				$this->db->free($resqlorderlist);
-			} else {
-				dol_print_error($this->db);
-			}
-
-			print '</div>';
-		}
-
-		if ((in_array('fichinter',$restrictlinksto)) && ! empty($conf->ficheinter->enabled))
-		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedFichinter') . '</a>';
-
-			print '
-				<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function() {
-					jQuery("#linktoorder").click(function() {
-						jQuery("#orderlist").toggle();
-						jQuery("#linktoorder").toggle();
-					});
-				});
-				</script>
-				';
-
-			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
-
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, f.rowid, f.ref";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= ", " . MAIN_DB_PREFIX . "fichinter as f";
-			$sql .= ' WHERE f.fk_soc = s.rowid';
-
-			$resqlorderlist = $this->db->query($sql);
-			if ($resqlorderlist)
-			{
-				$num = $this->db->num_rows($resqlorderlist);
-				$i = 0;
-
-				print '<br><form action="" method="POST" name="LinkedFichinter">';
-				print '<table class="noborder">';
-				print '<tr class="liste_titre">';
-				print '<td class="nowrap"></td>';
-				print '<td align="center">' . $langs->trans("Ref") . '</td>';
-				print '<td align="left">' . $langs->trans("Company") . '</td>';
-				print '</tr>';
-				while ($i < $num)
+				print '</div>';
+				if ($num > 0)
 				{
-					$objp = $this->db->fetch_object($resqlorderlist);
-
-					$var = ! $var;
-					print '<tr ' . $bc [$var] . '>';
-					print '<td aling="left">';
-					print '<input type="radio" name="LinkedFichinter" value=' . $objp->rowid . '>';
-					print '<td align="center">' . $objp->ref . '</td>';
-					print '<td>' . $objp->name . '</td>';
-					print '</td>';
-					print '</tr>';
-
-					$i ++;
-				}
-				print '</table>';
-				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-				print '</form>';
-				$this->db->free($resqlorderlist);
-			} else {
-				dol_print_error($this->db);
+					print '
+						<!-- Add js to show linkto box for '.$key.' ('.$num.' records) -->
+						<script type="text/javascript" language="javascript">
+						jQuery(document).ready(function() {
+							jQuery("#linkto'.$key.'").click(function() {
+								jQuery("#'.$key.'list").toggle();
+								jQuery("#linkto'.$key.'").toggle();
+							});
+						});
+						</script>
+						';
+				}	
+			
+				$linktoelem.=($linktoelem?' &nbsp; ':'');
+				if ($num > 0) $linktoelem.='<a href="#linkto'.$key.'" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a>';
+				//else $linktoelem.=$langs->trans($possiblelink['label']);
+				else $linktoelem.='<a href="#linkto'.$key.'" class="disabled" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) . '</a>';
 			}
-
-			print '</div>';
 		}
-
-        if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
-			&& ! empty($conf->fournisseur->enabled))
-		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
-
-			print '
-			<script type="text/javascript" language="javascript">
-			jQuery(document).ready(function() {
-				jQuery("#linktoorder").click(function() {
-					jQuery("#orderlist").toggle();
-					jQuery("#linktoorder").toggle();
-				});
-			});
-			</script>
-			';
-
-			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
-
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur as c";
-			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $object->thirdparty->id;
-
-			$resqlorderlist = $this->db->query($sql);
-			if ($resqlorderlist)
-			{
-				$num = $this->db->num_rows($resqlorderlist);
-				$i = 0;
-
-				print '<br><form action="" method="POST" name="LinkedOrder">';
-				print '<table class="noborder">';
-				print '<tr class="liste_titre">';
-				print '<td class="nowrap"></td>';
-				print '<td align="center">' . $langs->trans("Ref") . '</td>';
-				print '<td align="left">' . $langs->trans("RefSupplier") . '</td>';
-				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
-				print '<td align="left">' . $langs->trans("Company") . '</td>';
-				print '</tr>';
-				while ($i < $num)
-				{
-					$objp = $this->db->fetch_object($resqlorderlist);
-
-					$var = ! $var;
-					print '<tr ' . $bc [$var] . '>';
-					print '<td aling="left">';
-					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-					print '</td>';
-					print '<td align="center">' . $objp->ref . '</td>';
-					print '<td>' . $objp->ref_supplier . '</td>';
-					print '<td>' . price($objp->total_ht) . '</td>';
-					print '<td>' . $objp->name . '</td>';
-					print '</tr>';
-
-					$i ++;
-				}
-				print '</table>';
-				print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-				print '</form>';
-				$this->db->free($resqlorderlist);
-			} else {
-				dol_print_error($this->db);
-			}
-
-			print '</div>';
-		}
-
 
 		return $linktoelem;
     }

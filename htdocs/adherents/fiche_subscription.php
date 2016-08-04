@@ -424,7 +424,7 @@ if ($rowid && $action != 'edit')
     
     // Show links to link elements
     /*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-    if ($linktoelem) print '<br>'.$linktoelem;
+	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
     
     // Link for paypal payment
     if (! empty($conf->paypal->enabled) && $object->statut != 0) {
