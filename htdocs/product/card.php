@@ -1841,14 +1841,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         {
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
         	$html .= '</td></tr>';
         }
         else
        {
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
@@ -1867,14 +1867,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         {
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
         	$html .= '</td></tr>';
         }
         else
 		{
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
@@ -1893,14 +1893,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	{
     		$var=!$var;
     		$html .= '<tr><td style="width: 200px;">';
-    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
     		$html .= '</td></tr>';
     	}
     	else
     	{
     		$html .= '<tr><td style="width: 200px;">';
-    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
@@ -1918,7 +1918,8 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 		dol_fiche_head('');
 
     	$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
-    	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+    	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td>';
+        $html .= '<td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
     	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
     	$html .= '</td></tr>';
 
