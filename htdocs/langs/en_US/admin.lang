@@ -390,6 +390,8 @@ EnableAndSetupModuleCron=If you want to have this recurring invoice beeing gener
 ModuleCompanyCodeAquarium=Return an accountancy code built by:<br>%s followed by third party supplier code for a supplier accountancy code,<br>%s followed by third party customer code for a customer accountancy code.
 ModuleCompanyCodePanicum=Return an empty accountancy code.
 ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The code is composed of the character "C" in the first position followed by the first 5 characters of the third party code.  
+Use3StepsApproval=By default, Purchase Orders need to be created and approved by 2 different users (one step/user to validate and one step/user to approve. Note that if user has both permission to create and approve, one step/user will be enough). You can ask with this option to introduce an third step/user approval, if amount is higher than a dedicated value (so 3 steps will be necessary: 1 validation, 2=first approval and 3=second approval). Set this to 0 if only one approval is required, set it to a very low value (0.1) if second approval is always required.  
+UseDoubleApproval=Use a 3 steps approval when amount (without tax) is higher than...
 
 # Modules
 Module0Name=Users & groups

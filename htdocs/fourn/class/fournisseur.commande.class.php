@@ -71,7 +71,7 @@ class CommandeFournisseur extends CommonOrder
     public $date;
     public $date_valid;
     public $date_approve;
-    public $date_approve2;		// Used when SUPPLIER_ORDER_DOUBLE_APPROVAL is set
+    public $date_approve2;		// Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
     public $date_commande;
 
     /**
@@ -101,7 +101,7 @@ class CommandeFournisseur extends CommonOrder
     public $user_author_id;
     public $user_valid_id;
     public $user_approve_id;
-    public $user_approve_id2;	// Used when SUPPLIER_ORDER_DOUBLE_APPROVAL is set
+    public $user_approve_id2;	// Used when SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set
 
 	//Incoterms
     public $fk_incoterms;
@@ -718,7 +718,7 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	User	$user			Object user
      *	@param	int		$idwarehouse	Id of warhouse for stock change
-     *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_DOUBLE_APPROVAL is set)
+     *  @param	int		$secondlevel	0=Standard approval, 1=Second level approval (used when option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
      *	@return	int						<0 if KO, >0 if OK
      */
     public function approve($user, $idwarehouse=0, $secondlevel=0)
@@ -761,7 +761,7 @@ class CommandeFournisseur extends CommonOrder
 			{
 	            $sql.= " date_approve='".$this->db->idate($now)."',";
     	        $sql.= " fk_user_approve = ".$user->id;
-    	        if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+    	        if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     	        {
     	        	if (empty($this->user_approve_id2)) 
     	        	{
