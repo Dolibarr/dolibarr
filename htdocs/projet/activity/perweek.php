@@ -407,8 +407,11 @@ if (count($tasksarray) > 0)
 	$level=0;
 	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask);
 
+	$colspan=7;
+	if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) $colspan++;
+	
 	print '<tr class="liste_total">
-                <td class="liste_total" colspan="7" align="right">'.$langs->trans("Total").'</td>
+                <td class="liste_total" colspan="'.$colspan.'" align="right">'.$langs->trans("Total").'</td>
                 <td class="liste_total hide0" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
                 <td class="liste_total hide1" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
                 <td class="liste_total hide2" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>

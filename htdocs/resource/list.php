@@ -97,20 +97,18 @@ if($ret == -1) {
 } else {
     print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
 }
-if(!$ret) {
-        print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
-}
-else
+
+$var=true;
+
+print '<table class="noborder" width="100%">'."\n";
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre('',"","","","",'width="60" align="center"',"","");
+print "</tr>\n";
+
+if ($ret)
 {
-        $var=true;
-
-        print '<table class="noborder" width="100%">'."\n";
-        print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'t.ref','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('ResourceType'),$_SERVER['PHP_SELF'],'ty.code','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre('',"","","","",'width="60" align="center"',"","");
-        print "</tr>\n";
-
         foreach ($object->lines as $resource)
         {
                 $var=!$var;
@@ -142,7 +140,10 @@ else
         }
 
         print '</table>';
-
+}
+else
+{
+    print '<tr><td class="opacitymedium">'.$langs->trans('NoResourceInDatabase').'</td></tr>';
 }
 
 llxFooter();

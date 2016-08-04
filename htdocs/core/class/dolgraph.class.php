@@ -65,7 +65,7 @@ class DolGraph
 	var $bgcolorgrid=array(255,255,255);			// array(R,G,B)
 	var $datacolor;				// array(array(R,G,B),...)
 
-	private $_stringtoshow;      // To store string to output graph into HTML page
+	private $stringtoshow;      // To store string to output graph into HTML page
 
 
 	/**
