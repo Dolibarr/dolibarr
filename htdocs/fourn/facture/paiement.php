@@ -319,7 +319,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice=($datefacture==''?(empty($conf->global->MAIN_AUTOFILL_DATE)?-1:''):$datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, fk_mode_reglement, fk_account';
+    $sql.= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -334,7 +334,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         {
             $obj = $db->fetch_object($resql);
             $total = $obj->total;
-
+            
             print load_fiche_titre($langs->trans('DoPayment'));
 
             print '<form id="payment_form" name="addpaiement" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -386,15 +386,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				/*
 	             * Autres factures impayees
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df';
-	            $sql.= ', SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df,';
+	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 	            $sql.= " WHERE f.entity = ".$conf->entity;
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
+	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef';
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {
@@ -544,6 +544,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '</form>';
         }
     }
+    else dol_print_error($db);        
 }
 
 /*

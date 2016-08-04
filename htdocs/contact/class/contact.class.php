@@ -216,9 +216,9 @@ class Contact extends CommonObject
                 }
 			}
 
-            if (! $error)
+			if (! $error)
             {
-                $result=$this->update_perso($this->id, $user);
+                $result=$this->update_perso($this->id, $user, 1);   // TODO Remove function update_perso, should be same than update
                 if ($result < 0)
                 {
                     $error++;
@@ -226,7 +226,7 @@ class Contact extends CommonObject
                 }
             }
 
-            if (! $error)
+			if (! $error)
             {
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_CREATE',$user);
@@ -474,13 +474,16 @@ class Contact extends CommonObject
 	 *
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
+	 *  @param      int		    $notrigger	0=no, 1=yes
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user=null)
+	function update_perso($id, $user=null, $notrigger=0)
 	{
 	    $error=0;
 	    $result=false;
 
+	    $this->db->begin();
+	    
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
@@ -531,6 +534,26 @@ class Contact extends CommonObject
 			}
 		}
 
+		if (! $error && ! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('CONTACT_MODIFY',$user);
+		    if ($result < 0) { $error++; }
+		    // End call triggers
+		}
+		
+		if (! $error)
+		{
+		    $this->db->commit();
+		    return 1;
+		}
+		else
+		{
+		    dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+		    $this->db->rollback();
+		    return -$error;
+		}
+		
 		return $result;
 	}
 

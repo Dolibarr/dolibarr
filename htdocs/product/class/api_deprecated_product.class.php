@@ -147,6 +147,7 @@ class ProductApi extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
+        	$i=0;
             $num = $db->num_rows($result);
             while ($i < $num)
             {
@@ -232,6 +233,7 @@ class ProductApi extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
+        	$i=0;
             $num = $db->num_rows($result);
             while ($i < $num)
             {
