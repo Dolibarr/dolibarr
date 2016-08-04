@@ -50,6 +50,7 @@ if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
 
 $object = new Societe($db);
+if ($socid > 0) $object->fetch($socid);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('thirdpartymargins','globalcard'));
@@ -72,8 +73,10 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 $invoicestatic=new Facture($db);
 $form = new Form($db);
 
+$title=$langs->trans("ThirdParty").' - '.$langs->trans("Margins");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Files");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Margins"),$help_url);
+llxHeader('',$title,$help_url);
 
 if ($socid > 0)
 {
