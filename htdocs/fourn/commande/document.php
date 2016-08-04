@@ -89,7 +89,8 @@ $form =	new	Form($db);
 
 if ($object->id > 0)
 {
-	llxHeader();
+	$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+	llxHeader('',$langs->trans("Order"),$help_url);
 
 	$author = new User($db);
 	$author->fetch($object->user_author_id);
@@ -113,7 +114,7 @@ if ($object->id > 0)
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="35%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="2">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td>';

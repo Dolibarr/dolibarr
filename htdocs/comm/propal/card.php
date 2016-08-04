@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2015 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
@@ -1717,7 +1717,7 @@ if ($action == 'create')
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	if ($user->rights->propal->creer && $action == 'refclient') {
-		print '<form action="propal.php?id=' . $object->id . '" method="post">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="set_ref_client">';
 		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
