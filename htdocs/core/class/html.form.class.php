@@ -5358,12 +5358,12 @@ class Form
 						</script>
 						';
 				}	
+			
+				$linktoelem.=($linktoelem?' &nbsp; ':'');
+				if ($num > 0) $linktoelem.='<a href="#linkto'.$key.'" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a>';
+				//else $linktoelem.=$langs->trans($possiblelink['label']);
+				else $linktoelem.='<a href="#linkto'.$key.'" class="disabled" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) . '</a>';
 			}
-
-			$linktoelem.=($linktoelem?' &nbsp; ':'');
-			if ($num > 0) $linktoelem.='<a href="#linkto'.$key.'" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a>';
-			//else $linktoelem.=$langs->trans($possiblelink['label']);
-			else $linktoelem.='<a href="#linkto'.$key.'" class="disabled" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) . '</a>';
 		}
 
 		return $linktoelem;
