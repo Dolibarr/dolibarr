@@ -179,7 +179,7 @@ FeatureDisabledInDemo=Feature disabled in demo
 Rights=Permissions
 BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=Only elements from <a href="%s">enabled modules</a> are shown.
-ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off in column "Status" to enable a module/feature.
+ModulesDesc=Dolibarr modules define which functionality is enabled in software. Some modules require permissions you must grant to users, after enabling module. Click on button on/off to enable a module/feature.
 ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
 ModulesMarketPlaces=More modules...
 DoliStoreDesc=DoliStore, the official market place for Dolibarr ERP/CRM external modules
