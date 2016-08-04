@@ -2364,6 +2364,10 @@ abstract class CommonObject
     	$origin = (! empty($origin) ? $origin : $this->origin);
     	$origin_id = (! empty($origin_id) ? $origin_id : $this->origin_id);
 
+    	// Special case
+    	if ($origin == 'order') $origin='commande';
+    	if ($origin == 'invoice') $origin='facture';
+    	
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_element (";
@@ -2548,7 +2552,10 @@ abstract class CommonObject
                     // Set classfile
                     $classfile = strtolower($subelement); $classname = ucfirst($subelement);
 
-                    if ($objecttype == 'invoice_supplier') {
+                    if ($objecttype == 'order') {
+                        $classfile = 'commande'; $classname = 'Commande';
+                    }
+                    else if ($objecttype == 'invoice_supplier') {
                         $classfile = 'fournisseur.facture'; $classname = 'FactureFournisseur';
                     }
                     else if ($objecttype == 'order_supplier')   {
@@ -2568,15 +2575,18 @@ abstract class CommonObject
                     if ($conf->$module->enabled && (($element != $this->element) || $alsosametype))
                     {
                         dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
-
-                        foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
+                        //print '/'.$classpath.'/'.$classfile.'.class.php';
+                        if (class_exists($classname))
                         {
-                            $object = new $classname($this->db);
-                            $ret = $object->fetch($objectid);
-                            if ($ret >= 0)
-                            {
-                                $this->linkedObjects[$objecttype][$i] = $object;
-                            }
+	                        foreach($objectids as $i => $objectid)	// $i is rowid into llx_element_element
+	                        {
+	                            $object = new $classname($this->db);
+	                            $ret = $object->fetch($objectid);
+	                            if ($ret >= 0)
+	                            {
+	                                $this->linkedObjects[$objecttype][$i] = $object;
+	                            }
+	                        }
                         }
                     }
                 }

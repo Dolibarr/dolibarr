@@ -134,14 +134,6 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
-	// Link invoice to order
-	if (GETPOST('linkedOrder') && empty($cancel) && $id > 0)
-	{
-	    $object->fetch($id);
-	    $object->fetch_thirdparty();
-	    $result = $object->add_object_linked('commande', GETPOST('linkedOrder'));
-	}
-	
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->facture->creer) {
 	//	if (1 == 0 && empty($_REQUEST["clone_content"]) && empty($_REQUEST["clone_receivers"])) {
@@ -4103,9 +4095,9 @@ else if ($id > 0 || ! empty($ref))
 		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-		if ($linktoelem) print '<br>'.$linktoelem;
-
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
+		if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+		
 		// Link for paypal payment
 		if (! empty($conf->paypal->enabled) && $object->statut != 0) {
 			include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';

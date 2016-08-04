@@ -366,8 +366,8 @@ print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><t
 	// Example 2 : Adding links to objects
 	//$somethingshown=$form->showLinkedObjectBlock($object);
 	//$linktoelem = $form->showLinkToObjectBlock($object);
-	//if ($linktoelem) print '<br>'.$linktoelem;
-
+	//if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+	
 }
 
 

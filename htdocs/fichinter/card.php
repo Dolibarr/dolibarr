@@ -1667,9 +1667,9 @@ else if ($id > 0 || ! empty($ref))
 		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
-
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
+		if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

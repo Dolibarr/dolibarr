@@ -2099,11 +2099,9 @@ if ($action != 'create' && $action != 'edit' && ($id || $ref))
 
     // Show links to link elements
     $linktoelements=array();
-    if($conf->global->EXPENSES_LINK_TO_INTERVENTION) $linktoelements[]='fichinter';
-    $linktoelem='';
-    $linktoelem = $form->showLinkToObjectBlock($object,$linktoelements);
-    if ($linktoelem) print '<br>'.$linktoelem;
-
+    if (! empty($conf->global->EXPENSES_LINK_TO_INTERVENTION)) $linktoelements[]='fichinter';
+    $linktoelem = $form->showLinkToObjectBlock($object, $linktoelements, array('expensereport'));
+	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
 }
 llxFooter();
 

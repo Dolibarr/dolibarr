@@ -2324,9 +2324,9 @@ if ($action == 'create')
 		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object);
-		if ($linktoelem) print '<br>'.$linktoelem;
-
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
+		if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 		// print '</td><td valign="top" width="50%">';
