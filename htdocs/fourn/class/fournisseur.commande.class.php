@@ -1081,6 +1081,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", note_public";
         $sql.= ", entity";
         $sql.= ", fk_soc";
+        $sql.= ", fk_projet";
         $sql.= ", date_creation";
 		$sql.= ", date_livraison";
         $sql.= ", fk_user_author";
@@ -1102,6 +1103,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
+        $sql.= ", ".($this->fk_project > 0 ? $this->fk_project : "null"); 
         $sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$user->id;

@@ -40,7 +40,7 @@ $result = restrictedArea($user, 'expensereport', $id, '');
  * View
  */
 
-llxHeader();
+llxHeader('', $langs->trans("ExpenseReport"));
 
 if ($id)
 {

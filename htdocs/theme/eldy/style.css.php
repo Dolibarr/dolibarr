@@ -2763,6 +2763,9 @@ input.liste_titre {
 form.liste_total div {
     border-top: 1px solid #DDDDDD;
 }
+tr.liste_sub_total, tr.liste_sub_total td {
+	border-bottom: 2px solid #aaa;
+}
 
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
 	background: #FFF;
