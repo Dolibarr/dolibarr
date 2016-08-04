@@ -64,7 +64,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 $newobject->context['createfrompropal'] = 'createfrompropal';
                 $newobject->context['origin'] = $object->element;
                 $newobject->context['origin_id'] = $object->id;
-                
+
                 $ret=$newobject->createFromProposal($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
@@ -83,7 +83,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 $newobject->context['createfromorder'] = 'createfromorder';
                 $newobject->context['origin'] = $object->element;
                 $newobject->context['origin_id'] = $object->id;
-                
+
                 $ret=$newobject->createFromOrder($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
@@ -142,6 +142,59 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         				$ret=$element->classifyBilled($user);
         			}
         		}
+        		return $ret;
+        	}
+        }
+
+        // classify supplier order delivery status
+        if ($action == 'ORDER_SUPPLIER_DISPATCH')
+        {
+        	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+        	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled) && ! empty($conf->global->WORKFLOW_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER))
+        	{
+        		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+
+        		$qtydelivered=array();
+        		$qtywished=array();
+
+        		$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
+        		$filter=array('t.fk_commande'=>$object->id);
+        		if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+        			$filter['t.status']=1;
+        		}
+        		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
+        		if ($ret<0) {
+        			$this->error=$supplierorderdispatch->error; $this->errors=$supplierorderdispatch->errors;
+        			return $ret;
+        		} else {
+					if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) {
+						//Build array with quantity deliverd by product
+						foreach($supplierorderdispatch->lines as $line) {
+							$qtydelivered[$line->fk_product]+=$line->qty;
+						}
+						foreach($object->lines as $line) {
+							$qtywished[$line->fk_product]+=$line->qty;
+						}
+						//Compare array
+						$diff_array=array_diff_assoc($qtydelivered,$qtywished);
+						if (count($diff_array)==0) {
+							//No diff => mean everythings is received
+							$ret=$object->setStatus($user,5);
+							if ($ret<0) {
+								$this->error=$object->error; $this->errors=$object->errors;
+							}
+						} else {
+							//Diff => received partially
+							$ret=$object->setStatus($user,4);
+							if ($ret<0) {
+								$this->error=$object->error; $this->errors=$object->errors;
+							}
+						}
+					}
+        		}
+
+
         		return $ret;
         	}
         }

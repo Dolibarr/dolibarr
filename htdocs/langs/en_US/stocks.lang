@@ -132,3 +132,4 @@ OpenAll=Open for all actions
 OpenInternal=Open for internal actions
 OpenShipping=Open for shippings
 OpenDispatch=Open for dispatch
+UseDispatchStatus=Use dispatch status (aprouve/refuse)

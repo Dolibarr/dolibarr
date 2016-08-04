@@ -79,6 +79,7 @@ $workflowcodes=array(
 	// For the following 2 options, if module invoice is disabled, they does not exists, so "Classify billed" for order must be done manually from order card.
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>40, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>50, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
+	'WORKFLOW_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER'=>array('family'=>'classify', 'position'=>50, 'enabled'=>'! empty($conf->fournisseur->enabled) && ! empty($conf->commande->enabled) && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)', 'picto'=>'order'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
@@ -110,8 +111,8 @@ foreach($workflowcodes as $key => $params)
 		print '  <td align="center">'.$langs->trans("Status").'</td>';
 		print "</tr>\n";
 		$oldfamily = $family;
-   	}   	
-   	
+   	}
+
    	$var = !$var;
    	print "<tr ".$bc[$var].">\n";
    	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
