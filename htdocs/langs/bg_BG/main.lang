@@ -84,6 +84,7 @@ SeeAbove=Виж по-горе
 HomeArea=Начало
 LastConnexion=Последно свързване
 PreviousConnexion=Предишно свързване
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Свързан към обекта
 ConnectedSince=Свързан от
 AuthenticationMode=Режим на удостоверяване

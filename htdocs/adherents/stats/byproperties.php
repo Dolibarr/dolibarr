@@ -54,7 +54,7 @@ $langs->load("companies");
 
 $memberstatic=new Adherent($db);
 
-llxHeader('',$langs->trans("MembersStatisticsByProperties"),'','',0,0,array('http://www.google.com/jsapi'));
+llxHeader('',$langs->trans("MembersStatisticsByProperties"),'','',0,0,array('https://www.google.com/jsapi'));
 
 $title=$langs->trans("MembersStatisticsByProperties");
 

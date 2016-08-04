@@ -56,20 +56,20 @@
 		{
 			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Warehouse").'</td>';
 			print '<td width="20%">';
-			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')), 'id_entrepot', '', 1);
+			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')), 'id_entrepot', '', 1, 0, 0, '', 0, 0, null, 'minwidth100');
 			print '</td>';
 		}
 		if ($object->element == 'stock')
 		{
 			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Product").'</td>';
 	        print '<td width="20%">';
-	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''));
+	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1);
 	        print '</td>';
 		}
 		print '<td width="20%">';
 		print '<select name="mouvement" id="mouvement" class="flat">';
 		print '<option value="0">'.$langs->trans("Add").'</option>';
-		print '<option value="1">'.$langs->trans("Delete").'</option>';
+		print '<option value="1"'.(GETPOST('mouvement')?' selected="selected"':'').'>'.$langs->trans("Delete").'</option>';
 		print '</select></td>';
 		print '<td width="20%" class="fieldrequired">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" id="nbpiece" size="10" value="'.GETPOST("nbpiece").'"></td>';
 		print '</tr>';

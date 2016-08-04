@@ -100,6 +100,8 @@ if (! empty($_POST["button_removefilter_x"]))
  * View
  */
 
+$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+
 $form=new Form($db);
 $htmlother=new FormOther($db);
 
@@ -191,9 +193,6 @@ if ($resql)
 		header("Location: card.php?id=$objp->rowid");
 		exit;
 	}
-
-	$helpurl='';
-	$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
 	if (isset($type))
 	{

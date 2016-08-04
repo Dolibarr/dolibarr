@@ -21,3 +21,5 @@ ViewSiteInNewTab=Visualizza sito in una nuova scheda
 ViewPageInNewTab=Visualizza pagina in una nuova scheda
 SetAsHomePage=Imposta come homepage
 RealURL=Indirizzo URL vero
+ViewWebsiteInProduction=View web site using home URLs
+SetHereVirtualHost=If you can set, on your web server, a dedicated virtual host with a root directory on <strong>%s</strong>, define here the virtual hostname so the preview will be done using this direct access instead of Dolibarr URLs wrapper.

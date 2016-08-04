@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  * Class Skeleton_Class
  *
  * Put here description of your class
+ *
  * @see CommonObject
  */
 class Skeleton_Class extends CommonObject
@@ -116,7 +117,7 @@ class Skeleton_Class extends CommonObject
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
@@ -189,7 +190,7 @@ class Skeleton_Class extends CommonObject
 			}
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -228,7 +229,7 @@ class Skeleton_Class extends CommonObject
 		if (count($sqlwhere) > 0) {
 			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
 		}
-		
+
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
@@ -256,7 +257,7 @@ class Skeleton_Class extends CommonObject
 			return $num;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 
 			return - 1;
 		}
@@ -301,7 +302,7 @@ class Skeleton_Class extends CommonObject
 		if (!$resql) {
 			$error ++;
 			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error && !$notrigger) {
@@ -362,7 +363,7 @@ class Skeleton_Class extends CommonObject
 			if (!$resql) {
 				$error ++;
 				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+				dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -410,7 +411,7 @@ class Skeleton_Class extends CommonObject
 		if ($result < 0) {
 			$error ++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
 		}
 
 		// End
@@ -463,7 +464,7 @@ class Skeleton_Class extends CommonObject
 		$result.= $link . $this->ref . $linkend;
 		return $result;
 	}
-	
+
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
 	 *
@@ -518,8 +519,8 @@ class Skeleton_Class extends CommonObject
 			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
 	}
-	
-	
+
+
 	/**
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen

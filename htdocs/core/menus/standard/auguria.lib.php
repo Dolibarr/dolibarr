@@ -133,8 +133,10 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
  */
 function print_start_menu_array_auguria()
 {
+    global $conf;
+    
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu">';
+	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**

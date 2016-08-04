@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Nicht abgelaufen
 ServiceStatusLate=Läuft (abgelaufen)
 ServiceStatusLateShort=Abgelaufen
 ServiceStatusClosed=Geschlossen
+ShowContractOfService=Zeige Verträge mit Leistungen
 Contracts=Verträge
 ContractsSubscriptions=Verträge/Abonnements
 ContractsAndLine=Verträge und Zeilen von Verträgen

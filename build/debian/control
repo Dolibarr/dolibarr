@@ -13,7 +13,7 @@ Architecture: all
 Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5,
     php5-cli, 
 # Required PHP extensions
-    php5-mysql | php5-mysqli, php5-curl, php5-gd, php5-ldap, php5-geoip,
+    php5-mysql | php5-mysqli, php5-curl, php5-gd, php5-ldap,
 # Required PHP libraries
     php-pear, php-mail-mime, 
 #    php-tcpdf, libfpdi-php,
@@ -31,10 +31,10 @@ Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm |
     ${misc:Depends},
     ${perl:Depends}
 Recommends: apache2 | lighttpd | httpd
-Suggests: www-browser
+Suggests: www-browser, php5-geoip
 Description: Web based software to manage a company or foundation
- Dolibarr ERP & CRM is an easy to use open source/free software for small 
- and medium companies, foundations or freelances. It includes different 
+ Dolibarr ERP & CRM is an easy to use open source/free software package for 
+ companies, foundations or freelances. It includes different 
  features for Enterprise Resource Planning (ERP) and Customer Relationship
  Management (CRM) but also for different other activities.
  .

@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2015      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,8 @@ require_once $dolibarr_main_document_root . '/fourn/class/fournisseur.commande.c
 require_once $dolibarr_main_document_root . '/core/lib/price.lib.php';
 require_once $dolibarr_main_document_root . '/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root . '/core/lib/files.lib.php';
+
+global $langs;
 
 $grant_query='';
 $step = 2;

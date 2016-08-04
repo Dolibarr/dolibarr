@@ -43,7 +43,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans('SupplierInvoice'));
 
 $object = new FactureFournisseur($db);
 $object->fetch($id);

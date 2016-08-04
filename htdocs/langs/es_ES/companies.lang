@@ -74,6 +74,7 @@ DefaultLang=Idioma por defecto
 VATIsUsed=Sujeto a IVA
 VATIsNotUsed=No sujeto a IVA
 CopyAddressFromSoc=Copiar dirección de la empresa
+ThirdpartyNotCustomerNotSupplierSoNoRef=Tercero que no es cliente ni proveedor, sin objetos referenciados
 ##### Local Taxes #####
 LocalTax1IsUsed=Usar segunda tasa
 LocalTax1IsUsedES= Sujeto a RE
@@ -368,7 +369,8 @@ AllocateCommercial=Asignado a comercial
 Organization=Organismo
 FiscalYearInformation=Información del año fiscal
 FiscalMonthStart=Mes de inicio de ejercicio
-YouMustCreateContactFirst=Para poder añadir notificaciones por e-mail, primero debe insertar contactos con e-mails al tercero
+YouMustAssignUserMailFirst=Primero debe indicar un e-mail para este usuario para poder añadirlo en e-mails de notificaciones.
+YouMustCreateContactFirst=Para poder añadir notificaciones por e-mail, primero debe definir contactos con e-mails válidos en el tercero
 ListSuppliersShort=Listado de proveedores
 ListProspectsShort=Listado de clientes potenciales
 ListCustomersShort=Listado de clientes

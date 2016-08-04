@@ -51,8 +51,8 @@ if ($page == -1) { $page = 0; }
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="c.lastname";
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="a.daten";
 
 $now=dol_now();
 
@@ -194,16 +194,20 @@ if ($result > 0)
     print '</td></tr>';
     print '</table>';
 
-    // Help
-    print '<br>'.$langs->trans("NotificationsDesc");
-
     print '</div>';
     
     dol_fiche_end();
 
     print "\n";
 
-    print '<br>';
+    // Help
+    print '<br>'.$langs->trans("NotificationsDesc");
+    print '<br>'.$langs->trans("NotificationsDescUser");
+    print '<br>'.$langs->trans("NotificationsDescContact");
+    print '<br>'.$langs->trans("NotificationsDescGlobal");
+    
+    print '<br><br><br>'."\n";
+    
     
     // Add notification form
     print load_fiche_titre($langs->trans("AddNewNotification"),'','');
@@ -392,7 +396,9 @@ if ($result > 0)
     }
 
     print '</table>';
-    print '<br>';
+    
+    
+    print '<br><br>'."\n";
 
 
     // List of notifications done

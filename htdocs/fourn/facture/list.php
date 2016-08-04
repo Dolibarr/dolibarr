@@ -270,7 +270,7 @@ llxHeader('',$langs->trans("SuppliersInvoices"),'EN:Suppliers_Invoices|FR:Factur
 $sql = "SELECT";
 if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.date_lim_reglement as datelimite,";
-$sql.= " f.total_ht, f.total_ttc, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label,";
+$sql.= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.fk_statut as fk_statut, f.libelle as label,";
 $sql.= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
@@ -513,7 +513,7 @@ if ($resql)
 	if (! empty($arrayfields['f.ref']['checked']))                print_liste_field_titre($arrayfields['f.ref']['label'],$_SERVER['PHP_SELF'],'f.ref,f.rowid','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.ref_supplier']['checked']))       print_liste_field_titre($arrayfields['f.ref_supplier']['label'],$_SERVER["PHP_SELF"],'f.ref_supplier','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.label']['checked']))              print_liste_field_titre($arrayfields['f.label']['label'],$_SERVER['PHP_SELF'],"f.libelle,f.rowid",'',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['f.datef']['checked']))              print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER['PHP_SELF'],'f.datef','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['f.datef']['checked']))              print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER['PHP_SELF'],'f.datef,f.rowid','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['f.date_lim_reglement']['checked'])) print_liste_field_titre($arrayfields['f.date_lim_reglement']['label'],$_SERVER['PHP_SELF'],"f.date_lim_reglement",'',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.ref']['checked']))                print_liste_field_titre($arrayfields['p.ref']['label'],$_SERVER['PHP_SELF'],"p.ref",'',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['s.nom']['checked']))                print_liste_field_titre($arrayfields['s.nom']['label'],$_SERVER['PHP_SELF'],'s.nom','',$param,'',$sortfield,$sortorder);

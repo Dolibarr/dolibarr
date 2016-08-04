@@ -180,7 +180,7 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		$result = $object->delete(0, 0, $idwarehouse);
+		$result = $object->delete($user, 0, $idwarehouse);
 		if ($result > 0) {
 			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
 			exit();
@@ -430,7 +430,7 @@ if (empty($reshook))
     			}
     		}
 		}
-		
+
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
@@ -856,7 +856,7 @@ if (empty($reshook))
 			}
 		}
 
-		// Standard invoice or Deposit invoice created from a Predefined template invoice
+		// Standard invoice or Deposit invoice, created from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec') > 0)
 		{
 			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
@@ -896,6 +896,7 @@ if (empty($reshook))
 				$object->fac_rec = GETPOST('fac_rec');
 
 				$id = $object->create($user);
+				var_dump('ggg');
 			}
 		}
 
@@ -1003,8 +1004,8 @@ if (empty($reshook))
 						$object->linked_objects = array_merge($object->linked_objects, $_POST['other_linked_objects']);
 					}
 
-					$id = $object->create($user);
-
+					$id = $object->create($user);      // This include class to add_object_linked() and add add_contact()
+					
 					if ($id > 0)
 					{
 						dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
@@ -1014,7 +1015,7 @@ if (empty($reshook))
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines or deposit lines");
 						$result = $srcobject->fetch($object->origin_id);
-						
+
 					    // If deposit invoice
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 						{
@@ -1175,45 +1176,23 @@ if (empty($reshook))
 								$error ++;
 							}
 						}
-						
-						// Now we create same links to contact than the ones found on origin object
-						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-						{
-    						$originforcontact = $object->origin;
-    						$originidforcontact = $object->origin_id;
-    						if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-    						{
-    						    $originforcontact=$srcobject->origin;
-    						    $originidforcontact=$srcobject->origin_id;
-    						}
-    						$sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-    						$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-    
-    						$resqlcontact = $db->query($sqlcontact);
-    						if ($resqlcontact)
-    						{
-                                while($objcontact = $db->fetch_object($resqlcontact))
-                                {
-                                    //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";                                
-                                    $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
-                                }
-    						}
-    						else dol_print_error($resqlcontact);					
-						}
-						
+												
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 						// modified by hook
 						if ($reshook < 0)
+						{
+						    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 						    $error++;
+						}
 						
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
 					}
-				} 			
-				else 
+				}
+				else
 				{   // If some invoice's lines coming from page
 					$id = $object->create($user);
 
@@ -1385,7 +1364,7 @@ if (empty($reshook))
 			// Ecrase $txtva par celui du produit
 			// Ecrase $base_price_type par celui du produit
 			// Replaces $fk_unit with the product's
-			if (! empty($idprod)) 
+			if (! empty($idprod))
 			{
 				$prod = new Product($db);
 				$prod->fetch($idprod);
@@ -1396,7 +1375,7 @@ if (empty($reshook))
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
-					
+
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -1443,13 +1422,13 @@ if (empty($reshook))
 					}
 					// On reevalue prix selon taux tva car taux tva transaction peut etre different
 					// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
-					elseif ($tva_tx != $prod->tva_tx) 
+					elseif ($tva_tx != $prod->tva_tx)
 					{
-						if ($price_base_type != 'HT') 
+						if ($price_base_type != 'HT')
 						{
 							$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU');
 						}
-						else 
+						else
 						{
 							$pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
 						}
@@ -1511,7 +1490,7 @@ if (empty($reshook))
 			// Local Taxes
 			$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty, $mysoc, $tva_npr);
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty, $mysoc, $tva_npr);
-			
+
 			$info_bits = 0;
 			if ($tva_npr)
 				$info_bits |= 0x01;
@@ -1615,7 +1594,7 @@ if (empty($reshook))
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');       // If buying_price is '0', we muste keep this value
-		
+
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
 		$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
@@ -1876,7 +1855,7 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $now = dol_now();
 
-llxHeader('', $langs->trans('Bill'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+llxHeader('', $langs->trans('InvoiceCustomer'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
 
 
 // Mode creation
@@ -2074,7 +2053,7 @@ if ($action == 'create')
 	    $invoice_predefined->fetch(GETPOST('fac_rec','int'));
 	    
 	    $dateinvoice = $invoice_predefined->date_when;     // To use next gen date by default later
-	    
+
 		$sql = 'SELECT r.rowid, r.titre, r.total_ttc';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'facture_rec as r';
 		$sql .= ' WHERE r.fk_soc = ' . $invoice_predefined->socid;
@@ -2533,58 +2512,6 @@ if ($action == 'create')
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";	
 		}
 	}
-	else
-	{
-		// Show deprecated optional form to add product line here
-		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) {
-			print '<tr><td colspan="3">';
-
-			// Zone de choix des produits predefinis a la creation
-			print '<table class="noborder" width="100%">';
-			print '<tr>';
-			print '<td>' . $langs->trans('ProductsAndServices') . '</td>';
-			print '<td>' . $langs->trans('Qty') . '</td>';
-			print '<td>' . $langs->trans('ReductionShort') . '</td>';
-			print '<td> &nbsp; &nbsp; </td>';
-			if (! empty($conf->service->enabled)) {
-				print '<td>' . $langs->trans('ServiceLimitedDuration') . '</td>';
-			}
-			print '</tr>';
-			for($i = 1; $i <= $NBLINES; $i ++) {
-				print '<tr>';
-				print '<td>';
-				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES))
-					$form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size, $soc->price_level);
-				else
-					$form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size);
-				print '</td>';
-				print '<td><input type="text" size="2" name="qty' . $i . '" value="1"></td>';
-				print '<td class="nowrap"><input type="text" size="1" name="remise_percent' . $i . '" value="' . $soc->remise_percent . '">%</td>';
-				print '<td>&nbsp;</td>';
-				// Si le module service est actif, on propose des dates de debut et fin a la ligne
-				if (! empty($conf->service->enabled)) {
-					print '<td class="nowrap">';
-					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-					print '<td class="nobordernopadding nowrap">';
-					print $langs->trans('From') . ' ';
-					print '</td><td class="nobordernopadding nowrap">';
-					print $form->select_date('', 'date_start' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
-					print '</td></tr>';
-					print '<td class="nobordernopadding nowrap">';
-					print $langs->trans('to') . ' ';
-					print '</td><td class="nobordernopadding nowrap">';
-					print $form->select_date('', 'date_end' . $i, $usehm, $usehm, 1, "add", 1, 0, 1);
-					print '</td></tr></table>';
-					print '</td>';
-				}
-				print "</tr>\n";
-			}
-
-			print '</table>';
-			print '</td></tr>';
-		}
-	}
 
 	print "</table>\n";
 
@@ -2920,7 +2847,7 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	// Ref
-	print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
+	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
 	print '<td colspan="5">';
 	$morehtmlright = '';
 	$discount = new DiscountAbsolute($db);
@@ -2935,7 +2862,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</td></tr>';
 
 	// Ref customer
-	print '<tr><td width="20%">';
+	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('RefCustomer');
 	print '</td>';
@@ -3079,7 +3006,7 @@ else if ($id > 0 || ! empty($ref))
 			// Remise dispo de type avoir
 			if (! $absolute_discount)
 				print '<br>';
-			// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer		
+			// $form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, $resteapayer
 			$more=' ('.$addcreditnote.')';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, 0, 'remise_id_for_payment', $soc->id, $absolute_creditnote, $filtercreditnote, 0, $more); // We allow credit note even if amount is higher
 		}
@@ -3548,7 +3475,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Rate','multicurrency_tx');
+		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -4030,7 +3957,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
 			}
-			
+
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $user->rights->facture->creer)
 			{
@@ -4185,7 +4112,7 @@ else if ($id > 0 || ! empty($ref))
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'inv'.$object->id);
-		}		
+		}
 		$formmail->withfrom = 1;
 		$liste = array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -4205,7 +4132,7 @@ else if ($id > 0 || ! empty($ref))
 		$formmail->withdeliveryreceipt = 1;
 		$formmail->withcancel = 1;
 		// Tableau des substitutions
-		$formmail->setSubstitFromObject($object);
+		$formmail->setSubstitFromObject($object, $outputlangs);
 		$formmail->substit['__INVREF__'] = $object->ref;
 
 		// Find the good contact adress

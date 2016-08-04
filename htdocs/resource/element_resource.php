@@ -30,6 +30,7 @@ if (! $res) die("Include of main fails");
 
 require 'class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 // Load traductions files requiredby by page
 $langs->load("resource");
@@ -265,7 +266,8 @@ else
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 
-		$fichinter = fetchObjectByElement($element_id, $element);
+        $fichinter = new Fichinter($db);
+        $fichinter->fetch($element_id);
 		if (is_object($fichinter)) 
 		{
 			$head=fichinter_prepare_head($fichinter);
@@ -283,11 +285,11 @@ else
 
 
 			// Customer
-			if ( is_null($fichinter->client) )
+			if ( is_null($fichinter->thirdparty) )
 				$fichinter->fetch_thirdparty();
 		
 			print "<tr><td>".$langs->trans("Company")."</td>";
-			print '<td colspan="3">'.$fichinter->client->getNomUrl(1).'</td></tr>';
+			print '<td colspan="3">'.$fichinter->thirdparty->getNomUrl(1).'</td></tr>';
 			print "</table>";
 
 			dol_fiche_end();

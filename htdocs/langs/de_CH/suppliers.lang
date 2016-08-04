@@ -1,2 +1,10 @@
 # Dolibarr language file - Source file is en_US - suppliers
+BuyingPriceMin=Mindest Einkaufspreis
+BuyingPriceMinShort=Min.Einkaufspreis
+TotalBuyingPriceMinShort=Summe der Einkaufspreise der Unterprodukte
+TotalSellingPriceMinShort=Summe der Verkaufspreise der Unterprodukte
 ConfirmCancelThisOrder=Möchten Sie diese Bestellung wirklich verwerfen <b>%s</b> ?
+SupplierReputation=Lieferantenbewertung
+DoNotOrderThisProductToThisSupplier=Nicht bestellen
+NotTheGoodQualitySupplier=Falsche Menge
+ReputationForThisProduct=Bewertung

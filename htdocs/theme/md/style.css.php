@@ -601,6 +601,12 @@ div.myavailability {
 .minwidth300 { min-width: 300px; }
 .minwidth400 { min-width: 400px; }
 .minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -617,6 +623,22 @@ div.myavailability {
 {
 	.titlefield { width: 30% !important; }
 	.titlefieldcreate { width: 30% !important; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth200imp { min-width: 200px !important; }
+    .minwidth300imp { min-width: 300px !important; }
+    .minwidth400imp { min-width: 300px !important; }
+    .minwidth500imp { min-width: 300px !important; }
+}
+
+@media only screen and (max-width: 960px)
+{
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 100px !important; }
+    .minwidth300imp { min-width: 100px !important; }
+    .minwidth400imp { min-width: 100px !important; }
+    .minwidth500imp { min-width: 100px !important; }
 }
 
 /* Force values for small screen */
@@ -629,6 +651,12 @@ div.myavailability {
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 50px !important; }
+    .minwidth300imp { min-width: 50px !important; }
+    .minwidth400imp { min-width: 50px !important; }
+    .minwidth500imp { min-width: 50px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -746,7 +774,7 @@ td.showDragHandle {
 	margin-left: 0;
 }
 div.login_block {
-	border-right: none ! important; 
+	/* border-right: none ! important; */
 	top: inherit !important;
 }
 .side-nav {
@@ -771,6 +799,7 @@ div.login_block {
 #id-left {
 	z-index: 201;
 	background: #FFF;
+	border-right: 1px solid rgba(0,0,0,0.3);
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
 <?php } else { ?>
@@ -859,8 +888,11 @@ div.ficheaddleft {
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
     padding: 0 0 0 0;
+}
+div.nopadding {
+	padding: 0 !important;
 }
 
 table.noborder tr.liste_titre td {
@@ -1911,6 +1943,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	background-image: none !important;
 }
 
+
+.tabunactive {	/* We add some border on tabunactive to avoid change of position of title when switching tabs (border of tabunactive = border of tabactive) */
+    border-right: 1px solid rgb(<?php echo $colorbackbody; ?>);
+    border-left: 1px solid rgb(<?php echo $colorbackbody; ?>);
+}
+
 .tabactive, a.tab#active {
 	color: #<?php echo $colortextbacktab; ?> !important;
 	background: rgb(<?php echo $colorbacktabcard1; ?>) !important;
@@ -2152,7 +2190,7 @@ div.tabBar table.border tr {
 
 table.border td, div.border div div.tagtd {
 	padding: 2px 2px 2px 2px;
-	border: 1px solid #f4f4f4;
+	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
 
@@ -2207,11 +2245,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
+/*
 #tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
-}
+}*/
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2223,6 +2262,13 @@ table.noborder tr, div.noborder form {
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
 	min-height: 26px;
+}
+
+.liste_titre_add td, .liste_titre_add .tagtd
+{
+    border-top-width: 2px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
@@ -2664,7 +2710,7 @@ div.tabBar .noborder {
 <?php } ?>
 }
 span.boxstatstext {
-	opacity: 0.9;
+	/* opacity: 0.9;  Disabled. This make text on top of left menu in smartphone size */
     line-height: 18px;
 }
 span.boxstatsindicator {

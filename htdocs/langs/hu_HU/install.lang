@@ -86,6 +86,7 @@ DirectoryRecommendation=Ajánlatos a weblap könyvtárán kívüli könyvtárat 
 LoginAlreadyExists=Már létezik
 DolibarrAdminLogin=Dolibarr admin bejelentkezés
 AdminLoginAlreadyExists='<b>%s</b>' Dolibarr adminisztrátor fiók már létezik. Lépjen vissza, ha másikat szeretne létrehozni.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Figyelem, biztonsági okok miatt, amint végez a telepítés/frissítés folyamattal, annak véletlenszerű indításának elkerülésére adja hozzá az <b>install.lock<b> filet a Dollibar dokumentum könyvtárba, hogy elkerülje annak indítását.
 FunctionNotAvailableInThisPHP=Nem elérhetõ ezen a PHP verzión
 ChoosedMigrateScript=Migrációs szkript választása

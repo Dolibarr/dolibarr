@@ -372,7 +372,6 @@ else
 	dol_print_error($db);
 }
 
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';

@@ -74,6 +74,7 @@ DefaultLang=Kalba pagal nutylėjimą
 VATIsUsed=PVM yra naudojamas
 VATIsNotUsed=PVM nenaudojamas
 CopyAddressFromSoc=Užpildykite trečiosios šalies adresą
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Naudokite antrą mokestį
 LocalTax1IsUsedES= RE naudojamas
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organizacija
 FiscalYearInformation=Informacija apie finansinius metus
 FiscalMonthStart=Finansinių metų pirmas mėnuo
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Tiekėjų sąrašas
 ListProspectsShort=Numatomų klientų sąrašas
 ListCustomersShort=Klientų sąrašas

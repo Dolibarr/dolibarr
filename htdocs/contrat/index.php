@@ -273,7 +273,7 @@ if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoContracts").'</td></tr>';
+			print '<tr '.$bc[$var].' class><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
 		print "</table><br>";
 		$db->free($resql);

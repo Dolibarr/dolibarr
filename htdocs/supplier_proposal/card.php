@@ -1085,7 +1085,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && ! empty($conf->banque->enabled)) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
         $form->select_comptes(GETPOST('fk_account')>0 ? GETPOST('fk_account','int') : $fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
@@ -1488,7 +1488,7 @@ if ($action == 'create')
 	}
 
 	// Multicurrency
-	if ( empty($conf->multicurrency->enabled))
+	if (! empty($conf->multicurrency->enabled))
 	{
 		// Multicurrency code
 		print '<tr>';
@@ -1511,7 +1511,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Rate','multicurrency_tx');
+		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -1537,7 +1537,7 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
-	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled)
+	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && ! empty($conf->banque->enabled))
 	{
 	    // Bank Account
 	    print '<tr><td>';

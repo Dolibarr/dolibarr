@@ -144,7 +144,7 @@ if (! $action)
         print '</tr>';
 
         // Type
-        print '<tr><td width="20%">'.$langs->trans("ResourceType").'</td>';
+        print '<tr><td>'.$langs->trans("ResourceType").'</td>';
         print '<td>';
         $ret = $formresource->select_types_resource($object->fk_code_type_resource, 'fk_code_type_resource', '', 2, 1);
         print '</td></tr>';
@@ -157,7 +157,7 @@ if (! $action)
         print '</td>';
         print '<td>';
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor = new DolEditor($field, $$field, 160, '', '', false);
+        $doleditor = new DolEditor('description', $description, '', '200', 'dolibarr_notes', false);
         $doleditor->Create();
         print '</td>';
         print '</tr>';

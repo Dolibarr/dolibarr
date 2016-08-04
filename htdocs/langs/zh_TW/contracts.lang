@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=沒有過期
 ServiceStatusLate=跑步，過期
 ServiceStatusLateShort=過期
 ServiceStatusClosed=關閉
+ShowContractOfService=Show contract of service
 Contracts=合同
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

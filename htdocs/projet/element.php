@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  *
@@ -94,6 +94,8 @@ $socid=$object->socid;
 if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid, 'projet&project');
 
+
+$hookmanager->initHooks(array('projectOverview'));
 
 /*
  *	View
@@ -350,6 +352,15 @@ $listofreferent=array(
 	'test'=>$conf->projet->enabled && $user->rights->projet->lire && $conf->salaries->enabled && empty($conf->global->PROJECT_HIDE_TASKS)),
 );
 
+$parameters=array('listofreferent'=>$listofreferent);
+$resHook = $hookmanager->executeHooks('completeListOfReferent',$parameters,$object,$action);
+
+if(!empty($hookmanager->resArray)) {
+	
+	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
+	
+}
+
 if ($action=="addelement")
 {
 	$tablename = GETPOST("tablename");
@@ -438,6 +449,7 @@ foreach ($listofreferent as $key => $value)
 		$element = new $classname($db);
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
 			$total_ht = 0;
@@ -453,7 +465,7 @@ foreach ($listofreferent as $key => $value)
 				$element->fetch($idofelement);
 				if ($idofelementuser) $elementuser->fetch($idofelementuser);
 
-				if ($tablename != 'expensereport_det') $element->fetch_thirdparty();
+				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 
 				if ($tablename == 'don') $total_ht_by_line=$element->amount;
 				elseif ($tablename == 'projet_task')
@@ -581,7 +593,7 @@ foreach ($listofreferent as $key => $value)
 		$addform='';
 
 		$idtofilterthirdparty=0;
-		if (! in_array($tablename, array('facture_fourn', 'commande_fourn'))) $idtofilterthirdparty=$object->thirdparty->id;
+		if (! in_array($tablename, array('facture_fourn', 'commande_fournisseur'))) $idtofilterthirdparty=$object->thirdparty->id;
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty > 0) 
        	{
@@ -679,7 +691,7 @@ foreach ($listofreferent as $key => $value)
 
 				if ($tablename != 'expensereport_det')
 				{
-					$element->fetch_thirdparty();
+					if(method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 				}
 				else
 				{

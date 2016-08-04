@@ -50,16 +50,17 @@ if (! empty($conf->global->MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES))
 }
 
 // Special cases
-if ($module == 'propal')                { $permission=$user->rights->propale->creer;}
+if ($module == 'propal')                 { $permission=$user->rights->propale->creer;}
 elseif ($module == 'supplier_proposal')  { $permission=$user->rights->supplier_proposal->creer;}
-elseif ($module == 'fichinter')         { $permission=$user->rights->ficheinter->creer;}
-elseif ($module == 'project')           { $permission=$user->rights->projet->creer;}
-elseif ($module == 'project_task')      { $permission=$user->rights->projet->creer;}
-elseif ($module == 'invoice_supplier')  { $permission=$user->rights->fournisseur->facture->creer;}
-elseif ($module == 'order_supplier')    { $permission=$user->rights->fournisseur->commande->creer;}
-elseif ($module == 'societe')    		{ $permission=$user->rights->societe->creer;}
-elseif ($module == 'contact')    		{ $permission=$user->rights->societe->creer;}
-elseif ($module == 'shipping')    		{ $permission=$user->rights->expedition->creer;}
+elseif ($module == 'fichinter')          { $permission=$user->rights->ficheinter->creer;}
+elseif ($module == 'project')            { $permission=$user->rights->projet->creer;}
+elseif ($module == 'project_task')       { $permission=$user->rights->projet->creer;}
+elseif ($module == 'invoice_supplier')   { $permission=$user->rights->fournisseur->facture->creer;}
+elseif ($module == 'order_supplier')     { $permission=$user->rights->fournisseur->commande->creer;}
+elseif ($module == 'societe')     	 	 { $permission=$user->rights->societe->creer;}
+elseif ($module == 'contact')     		 { $permission=$user->rights->societe->creer;}
+elseif ($module == 'shipping')    		 { $permission=$user->rights->expedition->creer;}
+elseif ($module == 'product')    		 { $permission=$user->rights->produit->creer;}
 //else dol_print_error('','Bad value '.$module.' for param module');
 
 if (! empty($conf->global->FCKEDITOR_ENABLE_SOCIETE)) $typeofdata='ckeditor:dolibarr_notes:100%:200::1:12:100';	// Rem: This var is for all notes, not only thirdparties note.
@@ -69,10 +70,12 @@ else $typeofdata='textarea:12:100';
 
 <!-- BEGIN PHP TEMPLATE NOTES -->
 <div class="border table-border centpercent">
+<?php if ($module != 'product') {   // No public note yet on products ?>
 	<div class="table-border-row">
 		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
 		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
+<?php } ?>
 <?php if (empty($user->societe_id)) { ?>
 	<div class="table-border-row">
 		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>

@@ -606,10 +606,13 @@ class DoliDBMysql extends DoliDB
 		$sql="SHOW TABLES FROM ".$database." ".$like.";";
 		//print $sql;
 		$result = $this->query($sql);
-		while($row = $this->fetch_row($result))
-		{
-			$listtables[] = $row[0];
-		}
+        if ($result)
+        {
+    		while($row = $this->fetch_row($result))
+    		{
+    			$listtables[] = $row[0];
+    		}
+        }
 		return $listtables;
 	}
 
@@ -627,10 +630,13 @@ class DoliDBMysql extends DoliDB
 
 		dol_syslog($sql,LOG_DEBUG);
 		$result = $this->query($sql);
-		while($row = $this->fetch_row($result))
-		{
-			$infotables[] = $row;
-		}
+        if ($result)
+        {
+    		while($row = $this->fetch_row($result))
+    		{
+    			$infotables[] = $row;
+    		}
+        }
 		return $infotables;
 	}
 

@@ -32,44 +32,31 @@ if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 
-require_once '../main.inc.php';
+require_once __DIR__.'/../main.inc.php';
 
 // Define css type
 header('Content-type: text/javascript');
 
 global $langs;
 ?>
-var i18n = new Array();
-i18n["sMinute"]= "<?php echo $langs->transnoentities("Minute") ?>";
-i18n["sMinutes"]= "<?php echo $langs->transnoentities("Minutes") ?>";
-i18n["sHour"]= "<?php echo $langs->transnoentities("Hour") ?>";
-i18n["sHours"]= "<?php echo $langs->transnoentities("Hours") ?>";
-i18n["sDay"]= "<?php echo $langs->transnoentities("Day") ?>";
-i18n["sDays"]= "<?php echo $langs->transnoentities("Days") ?>";
-i18n["sWeek"] = "<?php echo $langs->transnoentities("Week") ?>";
-i18n["sMonth"] = "<?php echo $langs->transnoentities("Month") ?>";
-i18n["sQuarter"] = "<?php echo $langs->transnoentities("Quadri") ?>";
-i18n["View"] = "<?php echo $langs->transnoentities("View") ?>";
-i18n["Resource"] = "<?php echo $langs->transnoentities("Resources") ?>";
-i18n["Duration"] = "<?php echo $langs->transnoentities("Duration") ?>";
-i18n["Start_Date"] = "<?php echo $langs->transnoentities("DateStart") ?>";
-i18n["End_Date"] = "<?php echo $langs->transnoentities("DateEnd") ?>";
-i18n["Date_Format"] = "<?php echo $langs->transnoentities("Format") ?>";
-i18n["January"] = "<?php echo $langs->transnoentities("January") ?>";
-i18n["February"] = "<?php echo $langs->transnoentities("February") ?>";
-i18n["March"] = "<?php echo $langs->transnoentities("March") ?>";
-i18n["April"] = "<?php echo $langs->transnoentities("April") ?>";
-i18n["May"] = "<?php echo $langs->transnoentities("May") ?>";
-i18n["June"] = "<?php echo $langs->transnoentities("June") ?>";
-i18n["July"] = "<?php echo $langs->transnoentities("July") ?>";
-i18n["August"] = "<?php echo $langs->transnoentities("August") ?>";
-i18n["September"] = "<?php echo $langs->transnoentities("Septembre") ?>";
-i18n["October"] = "<?php echo $langs->transnoentities("October") ?>";
-i18n["November"] = "<?php echo $langs->transnoentities("November") ?>";
-i18n["December"] = "<?php echo $langs->transnoentities("December") ?>";
-i18n["Quarter"] = "<?php echo $langs->transnoentities("Quarter") ?>";
-i18n["Period"] = "<?php echo $langs->transnoentities("Period") ?>";
 
-
+var vLangs={'<?php print $langs->getDefaultLang(1);?>':
+	{
+	'format':'<?php print $langs->transnoentities('Period');?>','hour':'"<?php print $langs->transnoentities('Hour'); ?>','day':'<?php print $langs->transnoentities('Day'); ?>',
+    'week':'<?php print $langs->transnoentities('Week'); ?>','month':'<?php print $langs->transnoentities('Month'); ?>','quarter':'<?php print $langs->transnoentities('Quadri'); ?>',
+    'hours':'<?php print $langs->transnoentities('Hours'); ?>','days':'<?php print $langs->transnoentities('Days'); ?>','weeks':'<?php print $langs->transnoentities('Weeks');?>',
+    'months':'<?php print $langs->transnoentities('Months'); ?>','quarters':'<?php print $langs->transnoentities('Quadri'); ?>','hr':'Hr','dy':'<?php print $langs->transnoentities('Day'); ?>','wk':'<?php print $langs->transnoentities('Week'); ?>','mth':'<?php print $langs->transnoentities('Month'); ?>','qtr':'<?php print $langs->transnoentities('Quadri'); ?>','hrs':'<?php print $langs->transnoentities('Hours'); ?>',
+    'dys':'<?php print $langs->transnoentities('Days'); ?>','wks':'<?php print $langs->transnoentities('Weeks'); ?>','mths':'<?php print $langs->transnoentities('Months'); ?>','qtrs':'<?php print $langs->transnoentities('Quadri'); ?>','resource':'<?php print dol_escape_js($langs->transnoentities('Resources')); ?>','duration':'<?php print dol_escape_js($langs->transnoentities('Duration')); ?>','comp':'% <?php print dol_escape_js($langs->transnoentities('Total')); ?>',
+    'completion':'<?php print $langs->transnoentities('Total'); ?>','startdate':'<?php print $langs->transnoentities('DateStart'); ?>','enddate':'<?php print $langs->transnoentities('DateEnd'); ?>','moreinfo':'<?php print dol_escape_js($langs->transnoentities('MoreInformation')); ?>',
+    'notes':'<?php print $langs->transnoentities('NotePublic'); ?>',
+    'january':'<?php print $langs->transnoentities('January'); ?>','february':'<?php print $langs->transnoentities('February'); ?>','march':'<?php print $langs->transnoentities('March'); ?>','april':'<?php print $langs->transnoentities('April'); ?>','maylong':'<?php print $langs->transnoentities('May'); ?>','june':'<?php print $langs->transnoentities('June'); ?>','july':'<?php print $langs->transnoentities('July'); ?>',
+    'august':'<?php print $langs->transnoentities('August'); ?>','september':'<?php print $langs->transnoentities('September'); ?>','october':'<?php print $langs->transnoentities('October'); ?>','november':'<?php print $langs->transnoentities('November'); ?>','december':'<?php print $langs->transnoentities('December'); ?>',
+    'jan':'<?php print $langs->transnoentities('JanuaryMin'); ?>','feb':'<?php print $langs->transnoentities('FebruaryMin'); ?>','mar':'<?php print $langs->transnoentities('MarchMin'); ?>','apr':'<?php print $langs->transnoentities('AprilMin'); ?>','may':'<?php print $langs->transnoentities('MayMin'); ?>','jun':'<?php print $langs->transnoentities('JuneMin'); ?>','jul':'<?php print $langs->transnoentities('JulyMin'); ?>',
+    'aug':'<?php print $langs->transnoentities('AugustMin'); ?>','sep':'<?php print $langs->transnoentities('SeptemberMin'); ?>','oct':'<?php print $langs->transnoentities('OctoberMin'); ?>','nov':'<?php print $langs->transnoentities('NovemberMin'); ?>','dec':'<?php print $langs->transnoentities('DecemberMin'); ?>',
+    'sunday':'<?php print $langs->transnoentities('Sunday'); ?>','monday':'<?php print $langs->transnoentities('Monday'); ?>','tuesday':'<?php print $langs->transnoentities('Tuesday'); ?>','wednesday':'<?php print $langs->transnoentities('Wednesday'); ?>','thursday':'<?php print $langs->transnoentities('Thursday'); ?>','friday':'<?php print $langs->transnoentities('Friday'); ?>','saturday':'<?php print $langs->transnoentities('Saturday'); ?>',
+    'sun':'<?php print $langs->transnoentities('SundayMin'); ?>','mon':'<?php print $langs->transnoentities('MondayMin'); ?>','tue':'<?php print $langs->transnoentities('TuesdayMin'); ?>','wed':'<?php print $langs->transnoentities('WednesdayMin'); ?>','thu':'<?php print $langs->transnoentities('ThursdayMin'); ?>','fri':'<?php print $langs->transnoentities('FridayMin'); ?>','sat':'<?php print $langs->transnoentities('SaturdayMin'); ?>'
+    }
+};
+var vLang='<?php print $langs->getDefaultLang(1);?>';
 <?php
 if (is_object($db)) $db->close();

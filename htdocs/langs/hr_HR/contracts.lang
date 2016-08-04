@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Nedovršen
 ServiceStatusLate=Završen
 ServiceStatusLateShort=Završen
 ServiceStatusClosed=Zatvoren
+ShowContractOfService=Show contract of service
 Contracts=Ugovori
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts
