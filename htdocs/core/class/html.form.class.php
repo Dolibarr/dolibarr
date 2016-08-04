@@ -2033,8 +2033,11 @@ class Form
         {
             $opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
 
-            if ($objp->stock > 0) $outval.= '<span class="product_line_stock_ok">'.' - '.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
-            else if ($objp->stock <= 0) $outval.= '<span class="product_line_stock_too_low">'.' - '.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+            if ($objp->stock > 0) {
+            	$outval.= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+            }elseif ($objp->stock <= 0) {
+            	$outval.= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+            }
         }
 
         if ($outdurationvalue && $outdurationunit)
