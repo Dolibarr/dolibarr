@@ -1813,7 +1813,7 @@ else
 						// Select project
 						if (! empty($conf->projet->enabled))
 						{
-    						print '<td align="center">';
+    						print '<td>';
     						$formproject->select_projects(-1, $fk_projet, 'fk_projet', 0, 0, 1, 1);
     						print '</td>';
 						}
