@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=ไม่หมดอายุ
 ServiceStatusLate=ทำงานหมดอายุ
 ServiceStatusLateShort=หมดอายุ
 ServiceStatusClosed=ปิด
+ShowContractOfService=Show contract of service
 Contracts=สัญญา
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=สัญญาและสายของสัญญา

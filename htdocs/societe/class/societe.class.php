@@ -1869,7 +1869,12 @@ class Societe extends CommonObject
             $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
         	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
-
+        else if ($option == 'margin')
+        {
+            $label.= '<u>' . $langs->trans("ShowMargin") . '</u>';
+            $link = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
+        }
+        
         // By default
         if (empty($link))
         {
@@ -1983,11 +1988,10 @@ class Societe extends CommonObject
     {
         global $langs;
 
-        $contact_emails = $this->contact_property_array('email');
+        $contact_emails = $this->contact_property_array('email',1);
         if ($this->email && $addthirdparty)
         {
             if (empty($this->name)) $this->name=$this->nom;
-            // TODO: Tester si email non deja present dans tableau contact
             $contact_emails['thirdparty']=$langs->trans("ThirdParty").': '.dol_trunc($this->name,16)." &lt;".$this->email."&gt;";
         }
         return $contact_emails;
@@ -2741,8 +2745,9 @@ class Societe extends CommonObject
         {
             if (! empty($conf->global->MAIN_DISABLEPROFIDRULES)) return '';
 
+            // TODO Move links to validate professional ID into a dictionary table "country" + "link"
             if ($idprof == 1 && $thirdparty->country_code == 'FR') $url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
-            if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';
+            //if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';     // Link no more valid
             if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
             if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
         

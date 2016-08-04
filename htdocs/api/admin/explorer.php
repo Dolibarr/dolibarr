@@ -28,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 
+$langs->load("admin");
+
 
 /*
  * View
@@ -36,7 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
 {
-    $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
     print $langs->trans("WarningModuleNotActive",'Api').'.<br><br>';
     print $langs->trans("ToActivateModule");
@@ -165,6 +166,7 @@ print $langs->trans("ListOfAvailableAPIs").':<br>';
 foreach($listofapis['v1'] as $key => $val)
 {
     if ($key == 'login') continue;
+    if ($key == 'index') continue;
     
     if ($key)
     {

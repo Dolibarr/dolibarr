@@ -112,7 +112,7 @@ else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->cree
  * View
  */
 
-llxHeader('', $langs->trans("Bill"), "Facture");
+llxHeader('',$langs->trans('SupplierInvoice'));
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -144,7 +144,7 @@ if ($id > 0 || ! empty($ref))
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 		// Reference du facture
-		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 		print "</td></tr>";
 

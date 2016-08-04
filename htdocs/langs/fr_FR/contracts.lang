@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Non expiré
 ServiceStatusLate=En service, expiré
 ServiceStatusLateShort=Expiré
 ServiceStatusClosed=Fermé
+ShowContractOfService=Afficher les contrats de services
 Contracts=Contrats
 ContractsSubscriptions=Contrats/Abonnements
 ContractsAndLine=Contrats et lignes de contrats

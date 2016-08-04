@@ -166,7 +166,11 @@ if ($action=='filemerge')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$object->type));
+$helpurl='';
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+
+llxHeader("", $langs->trans("CardProduct".$object->type), $help_url);
 
 
 if ($object->id)

@@ -72,16 +72,16 @@ NewSoldeCP=Nou saldo
 alreadyCPexist=Ha s'ha efectuat una petició de dies lliures per aquest periode
 FirstDayOfHoliday=Primer dia lliure
 LastDayOfHoliday=Últim dia de vacances
-BoxTitleLastLeaveRequests=Latest %s modified leave requests
+BoxTitleLastLeaveRequests=Últimes %s peticions de dies lliures modificades
 HolidaysMonthlyUpdate=Actualització mensual
 ManualUpdate=Actualització manual
 HolidaysCancelation=Anulació de dies lliures
-EmployeeLastname=Employee lastname
-EmployeeFirstname=Employee firstname
+EmployeeLastname=Cognoms de l'empleat
+EmployeeFirstname=Nom de l'empleat
 
 ## Configuration du Module ##
-LastUpdateCP=Latest automatic update of leaves allocation
-MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation
+LastUpdateCP=Última actualització automàtica de reserva de dies lliures
+MonthOfLastMonthlyUpdate=Mes de l'última actualització automàtica de reserva de dies lliures
 UpdateConfCPOK=Actualització efectuada correctament.
 Module27130Name= Gestió de dies lliures
 Module27130Desc= Gestió de dies lliures

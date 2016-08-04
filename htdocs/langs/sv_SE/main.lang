@@ -84,6 +84,7 @@ SeeAbove=Se ovan
 HomeArea=Hem område
 LastConnexion=Senaste anslutningen
 PreviousConnexion=Tidigare anslutning
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Ansluten enhet
 ConnectedSince=Ansluten sedan
 AuthenticationMode=Autentisering läge

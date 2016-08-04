@@ -81,7 +81,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("Donations"));
+llxHeader("",$langs->trans("Donation"));
 
 
 if ($object->id)
@@ -107,7 +107,7 @@ if ($object->id)
     $linkback = '<a href="'.DOL_URL_ROOT.'/don/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 

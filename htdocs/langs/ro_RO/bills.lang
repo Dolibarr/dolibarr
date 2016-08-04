@@ -312,6 +312,7 @@ LatestRelatedBill=Ultima Factură asociată
 WarningBillExist=Avertisment, una sau mai multe facturi există deja
 MergingPDFTool=Instrument unire (merge) PDF
 AmountPaymentDistributedOnInvoice=Sumă plătită distribuită pe factură
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Comentariu plată
 ListOfPreviousSituationInvoices=Lista facturilor de situaţie anterioare
 ListOfNextSituationInvoices=Lista facturilor de situaţie următoare

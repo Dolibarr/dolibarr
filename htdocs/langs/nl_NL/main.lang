@@ -84,6 +84,7 @@ SeeAbove=Zie hierboven
 HomeArea=Home
 LastConnexion=Laatste verbinding
 PreviousConnexion=Laatste keer ingelogd
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Aangesloten bij Meervoudig bedrijf
 ConnectedSince=Aangesloten sinds
 AuthenticationMode=Authentificatie modus

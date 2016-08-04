@@ -86,6 +86,7 @@ DirectoryRecommendation=Il est recommandé de mettre ce répertoire en dehors du
 LoginAlreadyExists=Existe déjà
 DolibarrAdminLogin=Identifiant de l'utilisateur administrateur de Dolibarr
 AdminLoginAlreadyExists=Compte administrateur Dolibarr '<b>%s</b>' déjà existant. Revenez en arrière si vous voulez en créer un autre.
+FailedToCreateAdminLogin=Echec de la création du compte administrateur Dolibarr
 WarningRemoveInstallDir=Attention, pour des raisons de sécurité, afin de bloquer une nouvelle utilisation des outils d'installation/migration, une fois l'installation terminée, il est conseillé de placer dans le répertoire document de Dolibarr un fichier nommé <b>install.lock</b> en lecture seule.
 FunctionNotAvailableInThisPHP=Non disponible sur ce PHP
 ChoosedMigrateScript=Choix du script de migration

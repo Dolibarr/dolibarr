@@ -61,7 +61,6 @@ SetupEnd=Fin de la configuración
 SystemIsInstalled=Esta instalación se ha completado.
 SystemIsUpgraded=Dolibarr se ha actualizado correctamente.
 YouNeedToPersonalizeSetup=Es necesario configurar Dolibarr para satisfacer sus necesidades (apariencia, características, ...). Para ello, por favor siga el siguiente enlace:
-AdminLoginCreatedSuccessfuly=Inicio de sesión del administrador Dolibarr '<b>%s</b>' ha sido creado exitosamente.
 GoToDolibarr=Ir a Dolibarr
 GoToSetupArea=Ir a Dolibarr (área de configuración)
 MigrationNotFinished=La versión de tu base de datos no está completamente actualizada, se requiere que corra el proceso de actualización de nuevo.

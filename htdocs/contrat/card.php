@@ -1117,7 +1117,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('','socid','',1,1);
+		print $form->select_company('','socid','','SelectThirdParty',1);
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1513,7 +1513,7 @@ else
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
-                        print '<td align="right" '.$bc[$var].'>'.$objp->remise_percent."%</td>\n";
+                        print '<td align="right">'.$objp->remise_percent."%</td>\n";
                     }
                     else
                     {

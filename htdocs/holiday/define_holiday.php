@@ -106,46 +106,6 @@ if ($action == 'update' && isset($_POST['update_cp']))
 
     if (! $error) setEventMessages('UpdateConfCPOK', '', 'mesgs');
 }
-elseif($action == 'add_event')
-{
-    $error = 0;
-
-	$typeleaves=$holiday->getTypes(1,1);
-
-    if(!empty($_POST['list_event']) && $_POST['list_event'] > 0) {
-        $event = $_POST['list_event'];
-    } else { $error++;
-    }
-
-    if(!empty($_POST['userCP']) && $_POST['userCP'] > 0) {
-        $userCP = $_POST['userCP'];
-    } else { $erro++;
-    }
-
-    if ($error)
-    {
-	    setEventMessages('ErrorAddEventToUserCP', '', 'errors');
-    }
-    else
-	{
-        $nb_holiday = $holiday->getCPforUser($userCP);
-        $add_holiday = $holiday->getValueEventCp($event);
-        $new_holiday = $nb_holiday + $add_holiday;
-
-        // add event to existing types of vacation
-        foreach ($typeleaves as $key => $leave)
-        {
-        	$vacationTypeID = $leave['rowid'];
-
-	        // On ajoute la modification dans le LOG
-	        $holiday->addLogCP($user->id,$userCP, $holiday->getNameEventCp($event),$new_holiday, $vacationTypeID);
-
-	        $holiday->updateSoldeCP($userCP,$new_holiday, $vacationTypeID);
-        }
-
-		setEventMessages('AddEventToUserOkCP', '', 'mesgs');
-    }
-}
 
 
 /*
@@ -169,9 +129,6 @@ if ($lastUpdate)
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
 }
 else print $langs->trans('None');
-
-
-
 print "</div><br>\n";
 
 $result = $holiday->updateBalance();	// Create users into table holiday if they don't exists. TODO Remove this whif we use field into table user.
@@ -188,24 +145,6 @@ if (is_numeric($listUsers) && $listUsers < 0)
 
 $var=true;
 $i = 0;
-
-$cp_events = $holiday->fetchEventsCP();
-if ($cp_events == 1)
-{
-	print '<br><form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-	print '<input type="hidden" name="action" value="add_event" />';
-
-	print load_fiche_titre($langs->trans('DefineEventUserCP'),'','');
-
-	print $langs->trans('MotifCP').' : ';
-	print $holiday->selectEventCP();
-	print ' &nbsp; '.$langs->trans('UserCP').' : ';
-	print $form->select_dolusers('', 'userCP', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	print ' <input type="submit" value="'.$langs->trans("addEventToUserCP").'" name="bouton" class="button"/>';
-
-	print '</form><br>';
-}
-
 
 $typeleaves=$holiday->getTypes(1,1);
 

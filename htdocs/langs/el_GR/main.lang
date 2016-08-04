@@ -84,6 +84,7 @@ SeeAbove=Δείτε παραπάνω
 HomeArea=Αρχική
 LastConnexion=Τελευταία Σύνδεση
 PreviousConnexion=Προηγούμενη Σύνδεση
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Σύνδεση στην οντότητα
 ConnectedSince=Σύνδεση από
 AuthenticationMode=Μέθοδος πσιτοποίησης

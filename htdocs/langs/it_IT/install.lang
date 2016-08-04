@@ -86,6 +86,7 @@ DirectoryRecommendation=Si raccomanda l'utilizzo di una directory al di fuori de
 LoginAlreadyExists=Esiste già
 DolibarrAdminLogin=Login dell'amministratore di Dolibarr
 AdminLoginAlreadyExists=L'account amministratore <b> %s </b> esiste già.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Attenzione, per motivi di sicurezza, una volta completata l'installazione o l'aggiornamento, rimuovere la directory <b>install</b> o rinominarla <b>install.lock</b>, al fine di evitarne un uso malevolo.
 FunctionNotAvailableInThisPHP=Non disponibile su questa installazione di PHP
 ChoosedMigrateScript=Scegli script di migrazione

@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Setup of ClickToDial information for your
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Απενεργοποιημένη λειτουργία όταν οι ρυθμίσεις της οθόνης έχουν προσαρμοστεί για χρήση από άτομα με προβλήματα όρασης ή φυλλομετρητές κειμένου.
 WarningPaymentDateLowerThanInvoiceDate=Η ημερομηνία πληρωμής (%s) είναι νωρίτερα από την ημερομηνία του τιμολογίου (%s) για το τιμολόγιο %s.
 WarningTooManyDataPleaseUseMoreFilters=Too many data (more than %s lines). Please use more filters or set the constant %s to a higher limit.
-WarningSomeLinesWithNullHourlyRate=Some times were recorded by users when their hourly rate was not defined. A value of 0 was used but this may result in wrong valuation of time spent.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Your login was modified. For security purpose you will have to login with your new login before next action.

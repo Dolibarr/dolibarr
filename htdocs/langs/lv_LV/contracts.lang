@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Nav beidzies
 ServiceStatusLate=Darbojas, beidzies
 ServiceStatusLateShort=Beidzies
 ServiceStatusClosed=Slēgts
+ShowContractOfService=Show contract of service
 Contracts=Līgumi
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

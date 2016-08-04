@@ -84,6 +84,7 @@ SeeAbove=Glejte zgoraj
 HomeArea=Domače področje
 LastConnexion=Zadnja prijava
 PreviousConnexion=Prejšnja prijava
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Prijava na entiteto
 ConnectedSince=Prijavljen od
 AuthenticationMode=Način preverjanja pristnosti

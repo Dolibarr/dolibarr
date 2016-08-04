@@ -2,3 +2,7 @@
 DelaiedFullListToSelectCompany=Esperar a que presione una tecla antes de cargar el contenido de los terceros en el combo (Esto puede incrementar el rendimiento si tiene un gran número de terceros)
 DelaiedFullListToSelectContact=Esperar a que presione una tecla antes de cargar el contenido de los contactos en el combo (Esto puede incrementar el rendimiento si tiene un gran número de contactos)
 ModuleFamilyCrm=Gestión cliente (CRM)
+Module600Desc=Send EMail notifications (triggered by some business events) to users (setup defined on each user), third-party contacts (setup defined on each thirdparty) or fixed emails
+Permission2402=Crear/eliminar acciones (eventos o tareas) vinculadas a su cuenta
+Permission2403=Modificar acciones (eventos o tareas) vinculadas a su cuenta
+NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:

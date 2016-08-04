@@ -86,6 +86,7 @@ DirectoryRecommendation=それは、あなたのWeb​​ページのディレ�
 LoginAlreadyExists=すでに存在しています
 DolibarrAdminLogin=Dolibarr adminログイン
 AdminLoginAlreadyExists=Dolibarr管理者アカウント<b>&quot;%s</b> ' <b>は</b>既に存在します。あなたが別のパーティションを作成する場合は、戻ってください。
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=警告、セキュリティ上の理由から、一度インストールまたはアップグレードが完了すると、あなた<b>は</b>それ<b>の悪意のある使用を避けるために、インストールディレクトリを</b>削除<b>するか、Dolibarrのドキュメントディレクトリにinstall.lockと呼ばれるファイルを追加</b>する必要があります<b>。</b>
 FunctionNotAvailableInThisPHP=このPHPは利用できません
 ChoosedMigrateScript=移行スクリプトを選択します。

@@ -2,4 +2,5 @@
 Prospect=Cliente
 ContactForProposals=Contacto de cotizaciones
 NoContactForAnyProposal=Este contacto no es contacto de ninguna cotización
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 InActivity=Abierto

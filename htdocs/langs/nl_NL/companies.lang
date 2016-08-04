@@ -74,6 +74,7 @@ DefaultLang=Standaard taal
 VATIsUsed=BTW wordt gebruikt
 VATIsNotUsed=BTW wordt niet gebruikt
 CopyAddressFromSoc=Vul derde partij adres in
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Gebruik tweede belasting
 LocalTax1IsUsedES= RE wordt gebruikt
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organisatie
 FiscalYearInformation=Informatie over het fiscale jaar
 FiscalMonthStart=Startmaand van het fiscale jaar
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Leveranciersoverzicht
 ListProspectsShort=Prospectenoverzicht
 ListCustomersShort=Afnemersoverzicht

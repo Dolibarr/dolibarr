@@ -74,6 +74,7 @@ DefaultLang=Язык по умолчанию
 VATIsUsed=НДС используется
 VATIsNotUsed=НДС не используется
 CopyAddressFromSoc=Заполните адрес адресом контагента
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE используется
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Организация
 FiscalYearInformation=Информация о финансовом годе
 FiscalMonthStart=Первый месяц финансового года
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Список поставщиков
 ListProspectsShort=Список потенц. клиентов
 ListCustomersShort=Список покупателей

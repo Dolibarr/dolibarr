@@ -74,6 +74,7 @@ DefaultLang=Langue par défaut
 VATIsUsed=Assujetti à la TVA
 VATIsNotUsed=Non assujetti à la TVA
 CopyAddressFromSoc=Remplir avec l'adresse du tiers
+ThirdpartyNotCustomerNotSupplierSoNoRef=Ce tiers n'est ni client ni fournisseur. il n'y a pas d'objet référent.
 ##### Local Taxes #####
 LocalTax1IsUsed=Assujetti à la deuxième taxe
 LocalTax1IsUsedES= Assujetti à RE
@@ -368,7 +369,8 @@ AllocateCommercial=Affecter un commercial
 Organization=Organisme
 FiscalYearInformation=Information sur l'année fiscale
 FiscalMonthStart=Mois de début d'exercice
-YouMustCreateContactFirst=Vous devez créer un contact avec une adresse email sur le tiers avant de pouvoir lui définir des notifications par emails.
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Liste fournisseurs
 ListProspectsShort=Liste prospects
 ListCustomersShort=Liste clients

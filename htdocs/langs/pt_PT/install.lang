@@ -86,6 +86,7 @@ DirectoryRecommendation=É recomendado a utilização da diretoria fora da sua d
 LoginAlreadyExists=Já existe
 DolibarrAdminLogin=Sessão Administrador Dolibarr
 AdminLoginAlreadyExists=A conta de administrador <b>' %s'</b> Dolibarr já existe. Volte atrás, se desejar criar uma conta.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Aviso: por motivos de segurança, assim que a instalação ou a atualização estiverem completas, e para evitar novamente a utilização das ferramentas de instalação, deverá adicionar um ficheiro com o nome <b>install.lock</b> na diretoria de documentos Dolibarr, para evitar a sua utilização maliciosa.</b>
 FunctionNotAvailableInThisPHP=Não disponível neste PHP
 ChoosedMigrateScript=Escolhido migrar script

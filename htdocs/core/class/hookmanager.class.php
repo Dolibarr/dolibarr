@@ -142,7 +142,8 @@ class HookManager
 				'formObjectOptions',
 				'formattachOptions',
 				'formBuilddocLineOptions',
-				'getIdProfUrl',
+			    'getFormMail',
+			    'getIdProfUrl',
 				'moveUploadedFile',
 			    'pdf_build_address',
 				'pdf_writelinedesc',
@@ -169,7 +170,8 @@ class HookManager
                 'printObjectLine',
                 'printObjectSubLine',
 				'createDictionaryFieldList',
-				'editDictionaryFieldlist'
+				'editDictionaryFieldlist',
+				'getFormMail'
 				)
 			)) $hooktype='addreplace';
         // Deprecated hook types ('returnvalue')

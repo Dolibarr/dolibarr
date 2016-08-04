@@ -312,6 +312,7 @@ LatestRelatedBill=Ultima fattura correlata
 WarningBillExist=Attenzione, una o più fatture già esistenti
 MergingPDFTool=Strumento di fusione dei PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=Elenco delle fatture di avanzamento lavori precedenti
 ListOfNextSituationInvoices=Elenco delle prossime fatture di avanzamento lavori
