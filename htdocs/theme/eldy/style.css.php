@@ -932,7 +932,7 @@ $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
+if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
 div#id-top {
@@ -940,6 +940,8 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	-webkit-box-shadow: 0 0 13px rgba(0,0,0,0.2);
+    box-shadow: 0 0 13px rgba(0,0,0,0.2);	
 	<?php if ($usegradienttop) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
@@ -1354,7 +1356,7 @@ div.login_block {
 	position: absolute;
 	text-align: right;
 	<?php print $right; ?>: 5px;
-	top: 2px;
+	top: 3px;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
@@ -2833,7 +2835,7 @@ span.boxstatstext {
     line-height: 18px;
 }
 span.boxstatsindicator {
-	font-size: 110%;
+	font-size: 130%;
 	font-weight: normal;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
