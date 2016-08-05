@@ -126,7 +126,7 @@ class CommandeFournisseur extends CommonOrder
     public $multicurrency_total_ht;
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
-	
+
 	/**
      * 	Constructor
      *
@@ -255,7 +255,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
 			$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 			$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-				
+
             $this->extraparams			= (array) json_decode($obj->extraparams, true);
 
             $this->db->free($resql);
@@ -330,7 +330,7 @@ class CommandeFournisseur extends CommonOrder
                     $line->date_start          = $this->db->jdate($objp->date_start);
                     $line->date_end            = $this->db->jdate($objp->date_end);
 	                $line->fk_unit             = $objp->fk_unit;
-					
+
 					// Multicurrency
 					$line->fk_multicurrency 		= $objp->fk_multicurrency;
 					$line->multicurrency_code 		= $objp->multicurrency_code;
@@ -338,7 +338,7 @@ class CommandeFournisseur extends CommonOrder
 					$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 					$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 					$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
-					
+
 	                $this->special_code        = $objp->special_code;
 	                $this->fk_parent_line      = $objp->fk_parent_line;
 
@@ -513,7 +513,7 @@ class CommandeFournisseur extends CommonOrder
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
         if ($billed == 1) $billedtext=$langs->trans("Billed");
-        
+
         // List of language codes for status
         $statutshort[0] = 'StatusOrderDraftShort';
         $statutshort[1] = 'StatusOrderValidatedShort';
@@ -678,7 +678,7 @@ class CommandeFournisseur extends CommonOrder
     {
         $error=0;
         $this->db->begin();
-        
+
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > 0 ';
         if ($this->db->query($sql))
@@ -690,11 +690,11 @@ class CommandeFournisseur extends CommonOrder
         	    if ($result < 0) $error++;
         	    // End call triggers
         	}
-        	
+
         	if (! $error)
         	{
         	    $this->billed=1;
-        	     
+
         	    $this->db->commit();
         	    return 1;
         	}
@@ -707,7 +707,7 @@ class CommandeFournisseur extends CommonOrder
         else
         {
         	dol_print_error($this->db);
-        	
+
         	$this->db->rollback();
 			return -1;
         }
@@ -754,7 +754,7 @@ class CommandeFournisseur extends CommonOrder
             // Do we have to change status now ? (If double approval is required and first approval, we keep status to 1 = validated)
 			$movetoapprovestatus=true;
 			$comment='';
-			
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
 			$sql.= " SET ref='".$this->db->escape($num)."',";
 			if (empty($secondlevel))	// standard or first level approval
@@ -763,7 +763,7 @@ class CommandeFournisseur extends CommonOrder
     	        $sql.= " fk_user_approve = ".$user->id;
     	        if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $this->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     	        {
-    	        	if (empty($this->user_approve_id2)) 
+    	        	if (empty($this->user_approve_id2))
     	        	{
     	        	    $movetoapprovestatus=false;		// second level approval not done
     	        	    $comment=' (first level)';
@@ -830,7 +830,7 @@ class CommandeFournisseur extends CommonOrder
                 if (! $error)
                 {
                 	$this->ref = $this->newref;
-                	
+
                 	if ($movetoapprovestatus) $this->statut = 2;
 					else $this->statut = 1;
            			if (empty($secondlevel))	// standard or first level approval
@@ -1009,7 +1009,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->statut = 3;
                 $this->methode_commande_id = $methode;
                 $this->date_commande = $this->db->idate($date);
-                
+
                 // Call trigger
                 $result=$this->call_trigger('ORDER_SUPPLIER_SUBMIT',$user);
                 if ($result < 0) $error++;
@@ -1021,7 +1021,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->error = $this->db->lasterror();
                 $this->errors[] = $this->db->lasterror();
             }
-            
+
             if (! $error)
             {
                 $this->db->commit();
@@ -1070,7 +1070,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
-		
+
         // We set order into draft status
         $this->brouillon = 1;
 
@@ -1103,7 +1103,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".$this->socid;
-        $sql.= ", ".($this->fk_project > 0 ? $this->fk_project : "null"); 
+        $sql.= ", ".($this->fk_project > 0 ? $this->fk_project : "null");
         $sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", ".($this->date_livraison?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".$user->id;
@@ -1407,7 +1407,7 @@ class CommandeFournisseur extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc,$this->thirdparty);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -1419,7 +1419,7 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
-			
+
             $localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
 
@@ -1952,7 +1952,7 @@ class CommandeFournisseur extends CommonOrder
                     $result=$this->call_trigger('ORDER_SUPPLIER_RECEIVE',$user);
                     if ($result < 0) $error++;
                     // End call triggers
-                    
+
                     if (! $error)
                     {
                         $this->db->commit();
@@ -2211,7 +2211,7 @@ class CommandeFournisseur extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$mysoc, $this->thirdparty);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2223,7 +2223,7 @@ class CommandeFournisseur extends CommonOrder
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
-			
+
             $localtax1_type=$localtaxes_type[0];
 			$localtax2_type=$localtaxes_type[2];
 
@@ -2405,7 +2405,7 @@ class CommandeFournisseur extends CommonOrder
             {
                 $obj = $this->db->fetch_object($result);
                 $this->id = $obj->rowid;
-                if ($obj->fk_user_author)   $this->user_creation_id = $obj->fk_user_author; 
+                if ($obj->fk_user_author)   $this->user_creation_id = $obj->fk_user_author;
                 if ($obj->fk_user_valid)    $this->user_validation_id = $obj->fk_user_valid;
                 if ($obj->fk_user_modif)    $this->user_modification_id =$obj->fk_user_modif;
                 if ($obj->fk_user_approve)  $this->user_approve_id = $obj->fk_user_approve;
@@ -2424,7 +2424,7 @@ class CommandeFournisseur extends CommonOrder
             dol_print_error($this->db);
         }
     }
-    
+
     /**
      *	Charge indicateurs this->nb de tableau de bord
      *
@@ -2660,15 +2660,15 @@ class CommandeFournisseur extends CommonOrder
     public function hasDelay()
     {
         global $conf;
-		
+
         if (empty($this->date_delivery) && ! empty($this->date_livraison)) $this->date_delivery = $this->date_livraison;    // For backward compatibility
-        
+
         $now = dol_now();
         $date_to_test = empty($this->date_delivery) ? $this->date_commande : $this->date_delivery;
-        
+
         return ($this->statut > 0 && $this->statut < 4) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
     }
-    
+
     /**
      * Show the customer delayed info
      *
@@ -2677,15 +2677,72 @@ class CommandeFournisseur extends CommonOrder
     public function showDelay()
     {
         global $conf, $langs;
-    
+
         if (empty($this->date_delivery) && ! empty($this->date_livraison)) $this->date_delivery = $this->date_livraison;    // For backward compatibility
-        
+
         if (empty($this->date_delivery)) $text=$langs->trans("OrderDate").' '.dol_print_date($this->date_commande, 'day');
         else $text=$text=$langs->trans("DeliveryDate").' '.dol_print_date($this->date_delivery, 'day');
         $text.=' '.($conf->commande->fournisseur->warning_delay>0?'+':'-').' '.round(abs($conf->commande->fournisseur->warning_delay)/3600/24,1).' '.$langs->trans("days").' < '.$langs->trans("Today");
-    
+
         return $text;
-    }    
+    }
+
+    /**
+     * Calc status regarding dispatch stock
+     *
+     * @param 		User 	$user User action
+     * @return		int		<0 si ko, >0 si ok
+     */
+    public function calcAndSetStatusDispatch(User $user) {
+    	global $conf;
+
+    	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled))
+    	{
+    		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+
+    		$qtydelivered=array();
+    		$qtywished=array();
+
+    		$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
+    		$filter=array('t.fk_commande'=>$this->id);
+    		if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+    			$filter['t.status']=1;
+    		}
+    		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
+    		if ($ret<0) {
+    			$this->error=$supplierorderdispatch->error; $this->errors=$supplierorderdispatch->errors;
+    			return $ret;
+    		} else {
+    			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) {
+    				//Build array with quantity deliverd by product
+    				foreach($supplierorderdispatch->lines as $line) {
+    					$qtydelivered[$line->fk_product]+=$line->qty;
+    				}
+    				foreach($this->lines as $line) {
+    					$qtywished[$line->fk_product]+=$line->qty;
+    				}
+    				//Compare array
+    				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
+    				if (count($diff_array)==0) {
+    					//No diff => mean everythings is received
+    					$ret=$this->setStatus($user,5);
+    					if ($ret<0) {
+    						$this->error=$object->error; $this->errors=$object->errors;
+    					}
+    				} else {
+    					//Diff => received partially
+    					$ret=$this->setStatus($user,4);
+    					if ($ret<0) {
+    						$this->error=$object->error; $this->errors=$object->errors;
+    					}
+    				}
+    			}
+    		}
+
+
+    		return 1;
+    	}
+    }
 }
 
 
@@ -2883,7 +2940,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->fk_multicurrency = 0;
             $this->multicurrency_tx = 1;
         }
-        
+
         // Check parameters
         if ($this->product_type < 0) return -1;
 
