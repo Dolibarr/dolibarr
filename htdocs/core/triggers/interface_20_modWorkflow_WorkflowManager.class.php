@@ -144,6 +144,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		}
         		return $ret;
         	}
+
+        	if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL))
+        	{
+        		$object->fetchObjectLinked('','propal',$object->id,$object->element);
+        		if (! empty($object->linkedObjects))
+        		{
+        			foreach($object->linkedObjects['propal'] as $element)
+        			{
+        				$ret=$element->classifyBilled($user);
+        			}
+        		}
+        		return $ret;
+        	}
         }
 
         // classify supplier order delivery status

@@ -949,6 +949,65 @@ function copyToClipboard(text,text2)
 }
 
 /*
+ * Function show document preview
+ * @params string file File path
+ * @params string type mime file
+ * @params string title
+ */
+function document_preview(file, type, title){
+
+	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
+
+	if ($.inArray(type, ValidImageTypes) < 0) {
+		var width='85%';
+		var object_width='100%';
+		var height = $( window ).height()*0.90;
+		var object_height='98%';
+
+		show_preview();
+
+	} else {
+		var object_width=0;
+		var object_height=0;
+
+		var img = new Image();
+
+		img.onload = function() {
+			object_width = this.width;
+			object_height = this.height;
+
+			width = $( window ).width()*0.90;
+			if(object_width < width){
+				width = object_width + 30
+			}
+			height = $( window ).height()*0.85;
+			if(object_height < height){
+				height = object_height + 80
+			}
+
+			show_preview();
+
+		};
+		img.src = file;
+
+	}
+	function show_preview(){
+
+		var newElem = '<object data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'"></object>';
+
+		$("#dialogforpopup").html(newElem);
+		$("#dialogforpopup").dialog({
+			closeOnEscape: true,
+			resizable: true,
+			width: width,
+			height: height,
+			modal: true,
+			title: title
+		});
+	}
+}
+
+/*
  * Provide a function to get an URL GET parameter in javascript 
  * 
  * @param 	string	name				Name of parameter

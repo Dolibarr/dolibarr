@@ -169,11 +169,11 @@ else if ($action == 'addcat')
 else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 {
     $freetext = GETPOST('SUPPLIER_ORDER_FREE_TEXT');	// No alpha here, we want exact string
-	$doubleapproval = GETPOST('SUPPLIER_ORDER_DOUBLE_APPROVAL','alpha');
+	$doubleapproval = GETPOST('SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED','alpha');
 	$doubleapproval = price2num($doubleapproval );
 
     $res1 = dolibarr_set_const($db, "SUPPLIER_ORDER_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
-    $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_DOUBLE_APPROVAL",$doubleapproval,'chaine',0,'',$conf->entity);
+    $res2 = dolibarr_set_const($db, "SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED",$doubleapproval,'chaine',0,'',$conf->entity);
 
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
@@ -189,7 +189,7 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
 	$newmodule->rights[$r][4] = 'commande';
 	$newmodule->rights[$r][5] = 'approve2';
 
-    if ($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+    if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
     	$newmodule->insert_permissions(1);
     }
@@ -474,18 +474,18 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 $var=false;
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-{
+//if ($conf->global->MAIN_FEATURES_LEVEL > 0)
+//{
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("UseDoubleApproval").'<br>';
+	print $form->textwithpicto($langs->trans("UseDoubleApproval"), $langs->trans("Use3StepsApproval"), 1, 'help').'<br>';
 	print $langs->trans("IfSetToYesDontForgetPermission");
 	print '</td><td>';
-	print '<input type="text" size="3" name="SUPPLIER_ORDER_DOUBLE_APPROVAL" value="'.$conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL.'">';
+	print '<input type="text" size="3" name="SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED" value="'.$conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED.'">';
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print "</td></tr>\n";
 	$var=!$var;
-}
+//}
 
 print '<tr '.$bc[$var].'><td colspan="2">';
 print $langs->trans("FreeLegalTextOnOrders").' ('.$langs->trans("AddCRIfTooLong").')<br>';

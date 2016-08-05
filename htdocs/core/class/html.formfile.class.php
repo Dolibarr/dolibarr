@@ -619,6 +619,9 @@ class FormFile
 					$out.= ' target="_blank">';
 					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
 					$out.= '</a>'."\n";
+
+                    $out.= $this->showPreview($file,$modulepart,$relativepath);
+
 					$out.= '</td>';
 
 					// Show file size
@@ -738,6 +741,8 @@ class FormFile
     			$out.= '>';
     			$out.= img_mime($relativepath, $file["name"]);
     			$out.= '</a>'."\n";
+
+                $out.= $this->showPreview($file,$modulepart,$relativepath);
 
     			$this->infofiles['nboffiles']++;
     			$this->infofiles['files'][]=$file['fullname'];
@@ -859,6 +864,9 @@ class FormFile
 					//print dol_trunc($file['name'],$maxlength,'middle');
 					print $file['name'];
 					print '</a>';
+
+                    print $this->showPreview($file,$modulepart,$filepath);
+
 					print "</td>\n";
 					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
@@ -1318,6 +1326,31 @@ class FormFile
         print '</form>';
 
         return $nboflinks;
+    }
+
+    /**
+     * Show detail icon with link for preview
+     * @param array     $file   File
+     * @param string    $modulepart     propal, facture, facture_fourn, ...
+     * @param string    $relativepath   Relative path of docs
+     * @return string   $out            Output string with HTML
+     */
+    public function showPreview($file, $modulepart, $relativepath){
+        global $langs, $conf;
+
+        if (empty($conf->use_javascript_ajax)) return '';
+
+        $out='';
+
+        $mime_preview = array('jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css');
+        $num_mime = array_search(dol_mimetype($file['name'], '', 1), $mime_preview);
+
+        if( $num_mime!== false){
+            $out.= ' <a href="javascript:document_preview(\''.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.urlencode($relativepath).'\',\''.dol_mimetype($file['name']).'\', \''.$file['name'].'\')">';
+            $out.=  img_picto($langs->trans('Preview'), 'detail').'</a>';
+
+            return $out;
+        }
     }
 
 }

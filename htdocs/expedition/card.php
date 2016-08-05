@@ -1836,8 +1836,8 @@ else if ($id || $ref)
 
 		// Show links to link elements
 		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
-
+		//if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+		
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
