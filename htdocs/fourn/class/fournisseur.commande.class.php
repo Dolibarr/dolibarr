@@ -2686,6 +2686,63 @@ class CommandeFournisseur extends CommonOrder
 
         return $text;
     }
+
+    /**
+     * Calc status regarding dispatch stock
+     *
+     * @param User $user
+     * @return		int		<0 si ko, >0 si ok
+     */
+    public function calcAndSetStatusDispatch(User $user) {
+    	global $conf;
+
+    	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled))
+    	{
+    		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
+
+    		$qtydelivered=array();
+    		$qtywished=array();
+
+    		$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
+    		$filter=array('t.fk_commande'=>$this->id);
+    		if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+    			$filter['t.status']=1;
+    		}
+    		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
+    		if ($ret<0) {
+    			$this->error=$supplierorderdispatch->error; $this->errors=$supplierorderdispatch->errors;
+    			return $ret;
+    		} else {
+    			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) {
+    				//Build array with quantity deliverd by product
+    				foreach($supplierorderdispatch->lines as $line) {
+    					$qtydelivered[$line->fk_product]+=$line->qty;
+    				}
+    				foreach($this->lines as $line) {
+    					$qtywished[$line->fk_product]+=$line->qty;
+    				}
+    				//Compare array
+    				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
+    				if (count($diff_array)==0) {
+    					//No diff => mean everythings is received
+    					$ret=$this->setStatus($user,5);
+    					if ($ret<0) {
+    						$this->error=$object->error; $this->errors=$object->errors;
+    					}
+    				} else {
+    					//Diff => received partially
+    					$ret=$this->setStatus($user,4);
+    					if ($ret<0) {
+    						$this->error=$object->error; $this->errors=$object->errors;
+    					}
+    				}
+    			}
+    		}
+
+
+    		return 1;
+    	}
+    }
 }
 
 
@@ -3055,63 +3112,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->db->rollback();
             return -1;
         }
-    }
-
-	/**
-	 * Calc status regarding dispatch stock
-	 *
-	 * @param User $user
-	 * @return		int		<0 si ko, >0 si ok
-	 */
-    public function calcAndSetStatusDispatch(User $user) {
-    	global $conf;
-
-    	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled) && ! empty($conf->global->WORKFLOW_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER))
-    	{
-    		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
-
-    		$qtydelivered=array();
-    		$qtywished=array();
-
-    		$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
-    		$filter=array('t.fk_commande'=>$this->id);
-    		if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
-    			$filter['t.status']=1;
-    		}
-    		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
-    		if ($ret<0) {
-    			$this->error=$supplierorderdispatch->error; $this->errors=$supplierorderdispatch->errors;
-    			return $ret;
-    		} else {
-    			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) {
-    				//Build array with quantity deliverd by product
-    				foreach($supplierorderdispatch->lines as $line) {
-    					$qtydelivered[$line->fk_product]+=$line->qty;
-    				}
-    				foreach($this->lines as $line) {
-    					$qtywished[$line->fk_product]+=$line->qty;
-    				}
-    				//Compare array
-    				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
-    				if (count($diff_array)==0) {
-    					//No diff => mean everythings is received
-    					$ret=$this->setStatus($user,5);
-    					if ($ret<0) {
-    						$this->error=$object->error; $this->errors=$object->errors;
-    					}
-    				} else {
-    					//Diff => received partially
-    					$ret=$this->setStatus($user,4);
-    					if ($ret<0) {
-    						$this->error=$object->error; $this->errors=$object->errors;
-    					}
-    				}
-    			}
-    		}
-
-
-    		return 1;
-    	}
     }
 }
 
