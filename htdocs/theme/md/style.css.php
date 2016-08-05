@@ -955,6 +955,13 @@ img.photoref {
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
 }
+img.photorefnoborder {
+    padding: 2px;
+	height: 48px;
+	width: 48px;
+    object-fit: contain;
+    border: 1px solid #CCC;
+}
 .underrefbanner {
 }
 .underbanner {

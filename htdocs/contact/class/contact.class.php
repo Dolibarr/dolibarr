@@ -41,7 +41,8 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $civility_id;  // In fact we store civility_code
+	var $civility_id;      // In fact we store civility_code
+	var $civility_code;
 	var $address;
 	var $zip;
 	var $town;
@@ -612,6 +613,7 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
+				$this->civility_code	= $obj->civility_id;
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
@@ -659,11 +661,7 @@ class Contact extends CommonObject
 				$this->import_key		= $obj->import_key;
 				
 				// Define gender according to civility
-				if(in_array($this->civility_id, array('MR'))) {
-					$this->gender = 'man';
-				} else if(in_array($this->civility_id, array('MME','MLE'))) {
-					$this->gender = 'woman';
-				}
+				$this->setGenderFromCivility();
 
 				// Search Dolibarr user linked to this contact
 				$sql = "SELECT u.rowid ";
@@ -735,6 +733,21 @@ class Contact extends CommonObject
 	}
 
 
+	/**
+	 * Set property ->gender from property ->civility_id
+	 * 
+	 * @return void
+	 */
+	function setGenderFromCivility()
+	{
+	    unset($this->gender);
+    	if (in_array($this->civility_id, array('MR'))) {
+    	    $this->gender = 'man';
+    	} else if(in_array($this->civility_id, array('MME','MLE'))) {
+    	    $this->gender = 'woman';
+    	}
+	}	
+	
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation

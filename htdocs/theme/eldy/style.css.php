@@ -913,7 +913,14 @@ img.photoref {
     padding: 4px;
 	height: 80px;
 	width: 80px;
-    object-fit: contain
+    object-fit: contain;
+}
+img.photorefnoborder {
+    padding: 2px;
+	height: 48px;
+	width: 48px;
+    object-fit: contain;
+    border: 1px solid #CCC;
 }
 .underrefbanner {
 }
