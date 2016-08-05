@@ -2585,12 +2585,10 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$delallowed = $user->rights->commande->supprimer;
 			$somethingshown = $formfile->show_documents('commande', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
-			// Linked object block
-			$somethingshown = $form->showLinkedObjectBlock($object);
 
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
-			if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 			
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';

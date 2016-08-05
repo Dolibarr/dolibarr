@@ -5075,17 +5075,6 @@ class Form
 
         <script type="text/javascript">
           jQuery(document).ready(function () {
-              $(".dropdown dt a").on(\'click\', function () {
-                  console.log($( this ).parent().parent().find(\'dd ul\'));
-                  $( this ).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
-                  // $(".dropdown dd ul").slideToggle(\'fast\');
-              });
-    
-              $(document).bind(\'click\', function (e) {
-                  var $clicked = $(e.target);
-                  if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
-              });
-    
               $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
                   console.log("A new field was added/removed")
                   $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
@@ -5154,10 +5143,11 @@ class Form
     /**
      *  Show linked object block.
      *
-     *  @param	CommonObject	$object		Object we want to show links to
-     *  @return	int							<0 if KO, >0 if OK
+     *  @param	CommonObject	$object		      Object we want to show links to
+     *  @param  string          $morehtmlright    More html to show on right of title
+     *  @return	int							      <0 if KO, >=0 if OK
      */
-    function showLinkedObjectBlock($object)
+    function showLinkedObjectBlock($object, $morehtmlright='')
     {
         global $conf,$langs,$hookmanager;
         global $bc;
@@ -5172,8 +5162,24 @@ class Form
         if (empty($reshook))
         {
         	$num = count($object->linkedObjects);
-            $numoutput=0;
 
+        	print '<br>';
+            print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
+        
+            print '<table class="noborder allwidth">';
+        
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Type").'</td>';
+            print '<td>'.$langs->trans("Ref").'</td>';
+            print '<td align="center"></td>';
+            print '<td align="center">'.$langs->trans("Date").'</td>';
+            print '<td align="right">'.$langs->trans("AmountHTShort").'</td>';
+            print '<td align="right">'.$langs->trans("Status").'</td>';
+            print '<td></td>';
+            print '</tr>';
+            
+            $numoutput=0;
+            
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
         		$tplpath = $element = $subelement = $objecttype;
@@ -5227,39 +5233,26 @@ class Form
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
-        		if (empty($numoutput))
-        		{
-        		    $numoutput++;
-
-        		    print '<br>';
-        		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
-
-        		    print '<table class="noborder allwidth">';
-
-        		    print '<tr class="liste_titre">';
-        			print '<td>'.$langs->trans("Type").'</td>';
-        			print '<td>'.$langs->trans("Ref").'</td>';
-        			print '<td align="center"></td>';
-        			print '<td align="center">'.$langs->trans("Date").'</td>';
-        			print '<td align="right">'.$langs->trans("AmountHTShort").'</td>';
-        			print '<td align="right">'.$langs->trans("Status").'</td>';
-        			print '<td></td>';
-        		    print '</tr>';
-        		}
 
         		// Output template part (modules that overwrite templates must declare this into descriptor)
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
         		{
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
-        			if ($res) break;
+        			if ($res) 
+        			{
+        			    $numoutput++;
+        			    break;
+        			}
         		}
         	}
 
-        	if ($numoutput)
+        	if (! $numoutput)
         	{
-        	    print '</table>';
+        	    print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
         	}
+        	
+        	print '</table>';
 
         	return $num;
         }
@@ -5293,6 +5286,7 @@ class Form
 			'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id)
 		);
 		
+
 		foreach($possiblelinks as $key => $possiblelink)
 		{
 			$num = 0;
@@ -5346,26 +5340,38 @@ class Form
 				print '</div>';
 				if ($num > 0)
 				{
-					print '
-						<!-- Add js to show linkto box for '.$key.' ('.$num.' records) -->
-						<script type="text/javascript" language="javascript">
-						jQuery(document).ready(function() {
-							jQuery("#linkto'.$key.'").click(function() {
-								jQuery("#'.$key.'list").toggle();
-								jQuery("#linkto'.$key.'").toggle();
-							});
-						});
-						</script>
-						';
 				}	
 			
-				$linktoelem.=($linktoelem?' &nbsp; ':'');
-				if ($num > 0) $linktoelem.='<a href="#linkto'.$key.'" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a>';
+				//$linktoelem.=($linktoelem?' &nbsp; ':'');
+				if ($num > 0) $linktoelem.='<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a></li>';
 				//else $linktoelem.=$langs->trans($possiblelink['label']);
-				else $linktoelem.='<a href="#linkto'.$key.'" class="disabled" id="linkto'.$key.'">' . $langs->trans($possiblelink['label']) . '</a>';
+				else $linktoelem.='<li><span class="linktodisabled">' . $langs->trans($possiblelink['label']) . ' (0)</span></li>';
 			}
 		}
 
+		$linktoelem='
+		<dl class="dropdown" id="linktoobjectname">
+		<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>
+		<dd>
+		<div class="multiselectlinkto">
+		<ul class="ulselectedfields">'.$linktoelem.'
+		</ul>
+		</div>
+		</dd>
+		</dl>';
+		
+		print '<!-- Add js to show linkto box -->
+				<script type="text/javascript" language="javascript">
+				jQuery(document).ready(function() {
+					jQuery(".linkto").click(function() {
+						console.log("We choose to show/hide link for rel="+jQuery(this).attr(\'rel\'));
+					    jQuery("#"+jQuery(this).attr(\'rel\')+"list").toggle();
+						jQuery(this).toggle();
+					});
+				});
+				</script>
+		';
+		
 		return $linktoelem;
     }
 

@@ -1677,12 +1677,10 @@ else if ($id > 0 || ! empty($ref))
 		//print "<br>\n";
 		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
-		if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

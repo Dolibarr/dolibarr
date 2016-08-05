@@ -2831,12 +2831,10 @@ elseif (! empty($object->id))
 		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
 		$somethingshown=$formfile->numoffiles;
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
 		
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('order_supplier'));
-		if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

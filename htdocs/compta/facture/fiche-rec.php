@@ -1533,8 +1533,11 @@ else
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 		
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
+		
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+		$somethingshown = $form->showLinkedObjectBlock($object, '');
+		
 		
         print '</div></div>';
 

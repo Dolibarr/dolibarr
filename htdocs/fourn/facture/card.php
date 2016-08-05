@@ -2236,12 +2236,10 @@ else
 	                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
 	                $somethingshown=$formfile->numoffiles;
 	
-					// Linked object block
-					$somethingshown = $form->showLinkedObjectBlock($object);
-	
-					// Show links to link elements
-					$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'));
-					if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+
+        			// Show links to link elements
+        			$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'));
+        			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 						
 	
 					print '</div><div class="fichehalfright"><div class="ficheaddleft">';

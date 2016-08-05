@@ -644,6 +644,7 @@ NewAttribute=New attribute
 AttributeCode=Attribute code
 URLPhoto=URL of photo/logo
 SetLinkToAnotherThirdParty=Link to another third party
+LinkTo=Link to
 LinkToProposal=Link to proposal
 LinkToOrder=Link to order
 LinkToInvoice=Link to invoice

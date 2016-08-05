@@ -3196,20 +3196,6 @@ abstract class CommonObject
     // TODO: All functions here must be redesigned and moved as they are not business functions but output functions
     // --------------------
 
-    /**
-     * Show linked object block.
-     *
-     * @return int <0 if KO, >0 if OK
-     * @deprecated 3.8 Use instead $form->showLinkedObjectBlock($object)
-     * @see Form::showLinkedObjectBlock
-     */
-    function showLinkedObjectBlock()
-    {
-    	global $form;
-    	return $form->showLinkedObjectBlock($this);
-    }
-
-
     /* This is to show add lines */
 
     /**

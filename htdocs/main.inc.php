@@ -1929,7 +1929,46 @@ if (! function_exists("llxFooter"))
             	});
             </script>' . "\n";
         }
-
+        
+        // Wrapper to manage dropdown
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n<!-- JS CODE TO ENABLE dropdown -->\n";
+            print '<script type="text/javascript">
+                jQuery(document).ready(function () {
+                  $(".dropdown dt a").on(\'click\', function () {
+                      //console.log($(this).parent().parent().find(\'dd ul\'));
+                      $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
+                      // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
+                      heigthofcontent = 19 * $(this).parent().parent().find(\'dd div ul li\').length;
+                      if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
+                      posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
+                      //console.log(posbottom);
+                      var scrollBottom = $(window).scrollTop() + $(window).height();
+                      //console.log(scrollBottom);
+                      diffoutsidebottom = (posbottom - scrollBottom);
+                      console.log("diffoutsidebottom (positive = outside) = "+diffoutsidebottom);
+                      if (diffoutsidebottom > 0)
+                      {
+                            pix = "-"+diffoutsidebottom+"px";
+                            console.log(pix);
+                            $(this).parent().parent().find(\'dd\').css("top", pix);
+                      }
+                      // $(".dropdown dd ul").slideToggle(\'fast\');
+                  });
+                  $(".dropdowncloseonclick").on(\'click\', function () {
+                     console.log("Link has class dropdowncloseonclick, so we close/hide the popup ul");
+                     $(this).parent().parent().hide();
+                  });
+            
+                  $(document).bind(\'click\', function (e) {
+                      var $clicked = $(e.target);
+                      if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+                  });
+                });
+                </script>';
+        }
+                
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";

@@ -948,6 +948,7 @@ function copyToClipboard(text,text2)
 	return false;
 }
 
+
 /*
  * Function show document preview
  *
@@ -1127,4 +1128,6 @@ function price2numjs(amount) {
 	console.log("res="+res)
 	return res;
 }
+
+    
 

@@ -2069,15 +2069,15 @@ if ($action != 'create' && $action != 'edit' && ($id || $ref))
         $object->fetch_thirdparty();
         $result = $object->add_object_linked('fichinter', GETPOST('LinkedFichinter'));
     }
-    // Linked object block
-    $somethingshown = $form->showLinkedObjectBlock($object);
-
+    
     // Show links to link elements
     $linktoelements=array();
     if (! empty($conf->global->EXPENSES_LINK_TO_INTERVENTION)) $linktoelements[]='fichinter';
     $linktoelem = $form->showLinkToObjectBlock($object, $linktoelements, array('expensereport'));
-	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
+    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
 }
+
 llxFooter();
 
 $db->close();
