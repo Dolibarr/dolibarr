@@ -3676,7 +3676,7 @@ class Product extends CommonObject
     					if ($size == 1 || $size == 'small') {   // Format vignette
 
     						// Find name of thumb file
-    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small', '.png'));
+    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
     						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
     						
     						// Get filesize of original file
