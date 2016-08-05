@@ -2690,7 +2690,7 @@ class CommandeFournisseur extends CommonOrder
     /**
      * Calc status regarding dispatch stock
      *
-     * @param User $user
+     * @param 		User 	$user User action
      * @return		int		<0 si ko, >0 si ok
      */
     public function calcAndSetStatusDispatch(User $user) {
