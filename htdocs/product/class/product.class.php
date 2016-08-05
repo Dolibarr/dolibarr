@@ -3710,11 +3710,18 @@ class Product extends CommonObject
     						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
     						$return.= "\n";
-    						if (empty($nolink)) $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+    						
+    						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
+    						if (empty($nolink)) 
+    						{
+    						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile);
+    						    if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
+    						    else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+    						}
 
     						// Show image (width height=$maxHeight)
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
-    						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
+    						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
     						
     						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)

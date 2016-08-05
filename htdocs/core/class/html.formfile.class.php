@@ -586,12 +586,14 @@ class FormFile
         {
             $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
 
+            $out.= '<!-- html.formfile::showdocuments -->'."\n";
+            
             // Show title of array if not already shown
             if ((! empty($file_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
             {
                 $headershown=1;
-                $out.= '<div class="titre">'.$titletoshow.'</div>';
-                $out.= '<table class="border" summary="listofdocumentstable" width="100%">';
+                $out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
+                $out.= '<table class="border" summary="listofdocumentstable" width="100%">'."\n";
             }
 
             // Loop on each file found
@@ -603,14 +605,14 @@ class FormFile
 
 					// Define relative path for download link (depends on module)
 					$relativepath=$file["name"];										// Cas general
-					if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
+                    if ($modulesubdir) $relativepath=$modulesubdir."/".$file["name"];	// Cas propal, facture...
 					if ($modulepart == 'export') $relativepath = $file["name"];			// Other case
 
 					$out.= "<tr ".$bc[$var].">";
 
 					$documenturl = DOL_URL_ROOT.'/document.php';
 					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) $documenturl=$conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
-
+					
 					// Show file name with link to download
 					$out.= '<td class="nowrap">';
 					$out.= '<a data-ajax="false" href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
@@ -619,9 +621,8 @@ class FormFile
 					$out.= ' target="_blank">';
 					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
 					$out.= '</a>'."\n";
-
+						
                     $out.= $this->showPreview($file,$modulepart,$relativepath);
-
 					$out.= '</td>';
 
 					// Show file size
@@ -706,21 +707,28 @@ class FormFile
      */
     function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter='')
     {
+        global $conf, $langs;
+
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	$out='';
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
 
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)
+		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
-    	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
-
+		$out.= '<!-- html.formfile::getDocumentsLink -->'."\n";
     	if (! empty($file_list))
     	{
+    	    $out='<dl class="dropdown">
+    			<dt><a href="#">'.img_picto('', 'listlight').'</a></dt>
+    			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
+    	    $tmpout='';
+    	    
     		// Loop on each file found
     		foreach($file_list as $file)
     		{
+    		    $i++;
     			if ($filter && ! preg_match('/'.$filter.'/i', $file["name"])) continue;	// Discard this. It does not match provided filter.
 
     			// Define relative path for download link (depends on module)
@@ -734,22 +742,31 @@ class FormFile
     				$relativepath = $file["name"];
     			}
 
-    			// Show file name with link to download
-    			$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
-    			$mime=dol_mimetype($relativepath,'',0);
-    			if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
-    			$out.= '>';
-    			$out.= img_mime($relativepath, $file["name"]);
-    			$out.= '</a>'."\n";
-
-                $out.= $this->showPreview($file,$modulepart,$relativepath);
-
     			$this->infofiles['nboffiles']++;
     			$this->infofiles['files'][]=$file['fullname'];
     			$ext=pathinfo($file["name"], PATHINFO_EXTENSION);
     			if (empty($this->infofiles[$ext])) $this->infofiles['extensions'][$ext]=1;
     			else $this->infofiles['extensions'][$ext]++;
+    			
+    			$urladvanced = getAdvancedPreviewUrl($modulepart, $relativepath);
+    		    if ($urladvanced) $tmpout.= '<li><a href="'.$urladvanced.'">'.img_picto('','detail').' '.$langs->trans("Preview").' '.$ext.'</a></li>';
+    			$tmpout.= '<li><a data-ajax="false" class="pictopreview" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+    			$mime=dol_mimetype($relativepath,'',0);
+    			if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
+    			$tmpout.= '>';
+    			$tmpout.=img_mime($relativepath, $file["name"]).' ';
+    			$tmpout.= $langs->trans("Download ".$ext);
+    			$tmpout.= '</a></li>'."\n";
+    			
     		}
+    		$out.=$tmpout;
+    		$out.='</ul></div></dd>
+    			</dl>';
+    	}
+    	else
+    	{
+    	    // TODO Add link to regenerate doc ?
+    	    //$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
     	}
 
     	return $out;
@@ -845,6 +862,7 @@ class FormFile
 					$var=!$var;
 					print '<tr '.$bc[$var].'>';
 					print '<td class="tdoverflow">';
+					
 					//print "XX".$file['name'];	//$file['name'] must be utf8
 					print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart;
 					if ($forcedownload) print '&attachment=1';
@@ -864,7 +882,7 @@ class FormFile
 					//print dol_trunc($file['name'],$maxlength,'middle');
 					print $file['name'];
 					print '</a>';
-
+					
                     print $this->showPreview($file,$modulepart,$filepath);
 
 					print "</td>\n";
@@ -882,7 +900,9 @@ class FormFile
 						    //print $file['path'].'/'.$minifile.'<br>';
 						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.'.$fileinfo['extension']); // For old thumbs
 						    //print $file['path'].'/'.$minifile.'<br>';
-						    print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
+						    $urlforhref=getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+						    if (empty($urlforhref)) $urlforhref=DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
+						    print '<a href="'.$urlforhref.'" class="aphoto" target="_blank">';
 							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$minifile).'" title="">';
 							print '</a>';
 						}
@@ -1327,30 +1347,31 @@ class FormFile
 
         return $nboflinks;
     }
-
+    
+    
     /**
      * Show detail icon with link for preview
-     * @param array     $file   File
-     * @param string    $modulepart     propal, facture, facture_fourn, ...
-     * @param string    $relativepath   Relative path of docs
-     * @return string   $out            Output string with HTML
+     * 
+     * @param   array     $file           File
+     * @param   string    $modulepart     propal, facture, facture_fourn, ...
+     * @param   string    $relativepath   Relative path of docs
+     * @param   string    $ruleforpicto   Rule for picto: 0=Preview picto, 1=Use picto of mime type of file)
+     * @return  string    $out            Output string with HTML
      */
-    public function showPreview($file, $modulepart, $relativepath){
+    public function showPreview($file, $modulepart, $relativepath, $ruleforpicto=0)
+    {
         global $langs, $conf;
 
-        if (empty($conf->use_javascript_ajax)) return '';
-
         $out='';
-
-        $mime_preview = array('jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css');
-        $num_mime = array_search(dol_mimetype($file['name'], '', 1), $mime_preview);
-
-        if( $num_mime!== false){
-            $out.= ' <a href="javascript:document_preview(\''.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.urlencode($relativepath).'\',\''.dol_mimetype($file['name']).'\', \''.$file['name'].'\')">';
-            $out.=  img_picto($langs->trans('Preview'), 'detail').'</a>';
-
-            return $out;
+        $urladvancedpreview=getAdvancedPreviewUrl($modulepart, $relativepath);
+        if ($urladvancedpreview)
+        {
+            $out.= '<a data-ajax="false" class="pictopreview" href="'.$urladvancedpreview.'">';
+            if (empty($ruleforpicto)) $out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
+            else $out.= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
+            $out.= '</a>';
         }
+        return $out;
     }
 
 }

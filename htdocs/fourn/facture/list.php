@@ -736,16 +736,24 @@ if ($resql)
     		{
                 print '<td class="nowrap">';
 
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                // Picto + Ref
+                print '<td class="nobordernopadding nowrap">';
                 print $facturestatic->getNomUrl(1);
+                print '</td>';
+                // Warning
+                //print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+                //print '</td>';
+                // Other picto tool
+                print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
                 $filename=dol_sanitizeFileName($obj->ref);
-
                 $filedir=$conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
 				$subdir = get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').dol_sanitizeFileName($obj->ref);
 				print $formfile->getDocumentsLink('facture_fournisseur', $subdir, $filedir);
-
-				print "</td>\n";
-
-                if (! $i) $totalarray['nbfield']++;
+				print '</td></tr></table>';
+				
+                print "</td>\n";
+				if (! $i) $totalarray['nbfield']++;
     		}
     		
 			// Customer ref

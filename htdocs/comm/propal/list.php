@@ -634,10 +634,11 @@ if ($result)
     		$objectstatic->ref=$obj->ref;
     
     		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            // Picto + Ref
     		print '<td class="nobordernopadding nowrap">';
     		print $objectstatic->getNomUrl(1);
     		print '</td>';
-    
+            // Warning
     		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
     		if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
     		if (! empty($obj->note_private))
@@ -647,8 +648,7 @@ if ($result)
     			print '</span>';
     		}
     		print '</td>';
-    
-    		// Ref
+    		// Other picto tool
     		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
     		$filename=dol_sanitizeFileName($obj->ref);
     		$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);

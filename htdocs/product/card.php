@@ -1968,7 +1968,7 @@ if ($action == '' || $action == 'view')
 
     $var=true;
     
-    $somethingshown=$formfile->show_documents($modulepart,$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+    $somethingshown=$formfile->show_documents($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

@@ -5647,3 +5647,26 @@ function getImageFileNameForSize($file, $extName, $extImgTarget='')
 
     return ($dirName?$dirName.'/':'').$subdir.$fileName.$extName.$extImgTarget; // New filename for thumb
 }
+
+
+/**
+ * Return URL we can use for advanced preview links
+ *
+ * @param   string    $modulepart     propal, facture, facture_fourn, ...
+ * @param   string    $relativepath   Relative path of docs
+ * @return  string                    Output string with HTML
+ */
+function getAdvancedPreviewUrl($modulepart, $relativepath)
+{
+    global $conf;
+    
+    if (empty($conf->use_javascript_ajax)) return '';
+
+    $mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css');
+    //$mime_preview[]='vnd.oasis.opendocument.presentation';
+    //$mime_preview[]='archive';
+    $num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
+
+    if ($num_mime !== false) return 'javascript:document_preview(\''.dol_escape_js(DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&amp;attachment=0&amp;file='.$relativepath).'\', \''.dol_mimetype($relativepath).'\', \''.dol_escape_js('ttt').'\')';
+    else return '';
+}

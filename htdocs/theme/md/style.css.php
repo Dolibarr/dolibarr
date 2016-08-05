@@ -912,8 +912,8 @@ table.noborder tr.liste_titre td {
     padding-left: 2px;
     padding-right: 2px;
 }
-.pictowarning {
-    padding-left: 3px;
+.pictowarning, .pictopreview {
+    padding-<?php echo $left; ?>: 3px;
 }
 .colorthumb {
 	padding-left: 1px !important;

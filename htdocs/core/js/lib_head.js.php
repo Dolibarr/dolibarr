@@ -950,14 +950,17 @@ function copyToClipboard(text,text2)
 
 /*
  * Function show document preview
+ *
  * @params string file File path
  * @params string type mime file
  * @params string title
  */
-function document_preview(file, type, title){
-
+function document_preview(file, type, title)
+{
+	console.log("document_preview A click was done");
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png"];
-
+	console.log("document_preview A click was done. file="+file+", type="+type);
+	
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		var width='85%';
 		var object_width='100%';

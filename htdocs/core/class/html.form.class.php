@@ -5074,37 +5074,32 @@ class Form
         </dl>
 
         <script type="text/javascript">
-          $(".dropdown dt a").on(\'click\', function () {
-              $(".dropdown dd ul").slideToggle(\'fast\');
-          });
-
-          $(".dropdown dd ul li a").on(\'click\', function () {
-              $(".dropdown dd ul").hide();
-          });
-
-          function getSelectedValue(id) {
-               return $("#" + id).find("dt a span.value").html();
-          }
-
-          $(document).bind(\'click\', function (e) {
-              var $clicked = $(e.target);
-              if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
-          });
-
-          $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
-              console.log("A new field was added/removed")
-              $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
-              var title = $(this).val() + ",";
-              if ($(this).is(\':checked\')) {
-                  $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
-              }
-              else {
-                  $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
-              }
-              // Now, we submit page
-              $(this).parents(\'form:first\').submit();
-        });
-
+          jQuery(document).ready(function () {
+              $(".dropdown dt a").on(\'click\', function () {
+                  console.log($( this ).parent().parent().find(\'dd ul\'));
+                  $( this ).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
+                  // $(".dropdown dd ul").slideToggle(\'fast\');
+              });
+    
+              $(document).bind(\'click\', function (e) {
+                  var $clicked = $(e.target);
+                  if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+              });
+    
+              $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
+                  console.log("A new field was added/removed")
+                  $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
+                  var title = $(this).val() + ",";
+                  if ($(this).is(\':checked\')) {
+                      $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
+                  }
+                  else {
+                      $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
+                  }
+                  // Now, we submit page
+                  $(this).parents(\'form:first\').submit();
+              });
+           });
         </script>
 
         ';
@@ -5665,13 +5660,23 @@ class Form
         {
             if ($file && file_exists($dir."/".$file))
             {
-                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                if ($addlinktofullsize) 
+                {
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
+                    else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                }
                 $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 if ($addlinktofullsize) $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                if ($addlinktofullsize) 
+                {
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
+                    else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                }
                 $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
                 if ($addlinktofullsize) $ret.='</a>';
             }
