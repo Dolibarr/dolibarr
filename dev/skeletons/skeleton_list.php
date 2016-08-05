@@ -157,10 +157,11 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPO
 
 if (empty($reshook))
 {
-    $objectclass='Commande';
-    $permtoread = $user->rights->commande->lire;
-    $permtodelete = $user->rights->commande->supprimer;
-    $uploaddir = $conf->commande->dir_output;
+    $objectclass='Skeleton';
+    $objectlabel='Skeleton';
+    $permtoread = $user->rights->skeleton->read;
+    $permtodelete = $user->rights->skeleton->delete;
+    $uploaddir = $conf->skeleton->dir_output;
     include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 

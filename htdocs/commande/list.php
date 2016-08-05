@@ -196,6 +196,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 if (empty($reshook))
 {
     $objectclass='Commande';
+    $objectlabel='Orders';
     $permtoread = $user->rights->commande->lire;
     $permtodelete = $user->rights->commande->supprimer;
     $uploaddir = $conf->commande->dir_output;
@@ -411,6 +412,7 @@ if ($resql)
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	
+	// List of mass actions available
 	$arrayofmassactions =  array(
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
@@ -1118,8 +1120,8 @@ if ($resql)
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
 		
-		print '</tr>';
-
+		print "</tr>\n";
+        
 		$total+=$obj->total_ht;
 		$subtotal+=$obj->total_ht;
 		$i++;
@@ -1167,8 +1169,8 @@ if ($resql)
 	    $urlsource.=str_replace('&amp;','&',$param);
 	
 	    $filedir=$diroutputmassaction;
-	    $genallowed=$user->rights->facture->lire;
-	    $delallowed=$user->rights->facture->lire;
+	    $genallowed=$user->rights->commande->lire;
+	    $delallowed=$user->rights->commande->lire;
 	
 	    print '<br><a name="show_files"></a>';
 	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
@@ -1187,6 +1189,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

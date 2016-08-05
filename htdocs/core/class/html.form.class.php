@@ -5057,7 +5057,7 @@ class Form
 
         $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' -->
 
-            <dl class="dropdown">
+        <dl class="dropdown">
             <dt>
             <a href="#">
               '.img_picto('','list').'

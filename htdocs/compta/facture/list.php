@@ -219,6 +219,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
 if (empty($reshook))
 {
 	$objectclass='Facture';
+	$objectlabel='Invoices';
     $permtoread = $user->rights->facture->lire;
 	$permtodelete = $user->rights->facture->supprimer;
 	$uploaddir = $conf->facture->dir_output;
