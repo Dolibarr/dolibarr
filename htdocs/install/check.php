@@ -122,8 +122,8 @@ else
 }
 
 
-// Check if GD supported
-/*if (! function_exists("imagecreate"))
+// Check if GD supported (we need GD for image conversion)
+if (! function_exists("imagecreate"))
 {
 	$langs->load("errors");
 	print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
@@ -132,7 +132,7 @@ else
 else
 {
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportGD")."<br>\n";
-}*/
+}
 
 
 // Check if Curl supported
