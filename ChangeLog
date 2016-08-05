@@ -946,7 +946,7 @@ NEW: add hook in send mail
 NEW: Add hooks on list of members to allow an external module to add more fields into list view.
 NEW: Add hooks to allow an external module to complete list of events into calendar views.
 NEW: Add opportunity amount on project card.
-NEW: Add option THEME_ELDY_DISABLE_IMAGE to disable images into menu eldy.
+NEW: Add option THEME_TOPMENU_DISABLE_IMAGE to disable images into menu eldy.
 NEW: add PDF icon on linked element into project
 NEW: add "productpricecard" hook and uniformize code
 NEW: Add ref and label of project into export
