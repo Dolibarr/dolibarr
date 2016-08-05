@@ -131,7 +131,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 	$pos=0;
 	foreach($_POST as $key => $value)
 	{
-		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))	// without batch module enabled	
+		if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg))	// without batch module enabled
 		{
 			$pos++;
 
@@ -155,7 +155,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 				if (! $error)
 				{
-					$result = $commande->DispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
+					$result = $commande->dispatchProduct($user, GETPOST($prod,'int'), GETPOST($qty), GETPOST($ent,'int'), GETPOST($pu), GETPOST('comment'), '', '', '', GETPOST($fk_commandefourndet, 'int'), $notrigger);
 					if ($result < 0)
 					{
 						setEventMessages($commande->error, $commande->errors, 'errors');
@@ -181,7 +181,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$dDLC = dol_mktime(12, 0, 0, $_POST['dlc_'.$reg[1].'_'.$reg[2].'month'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'day'], $_POST['dlc_'.$reg[1].'_'.$reg[2].'year']);
 
             $fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
-			
+
 			if (GETPOST($qty) > 0)	// We ask to move a qty
 			{
 				if (! (GETPOST($ent,'int') > 0))
@@ -213,10 +213,20 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 		}
 	}
 
+	if (! $error) {
+		$result = $commande->calcAndSetStatusDispatch($user);
+		if ($result < 0)
+		{
+			setEventMessages($commande->error, $commande->errors, 'errors');
+			$error++;
+		}
+	}
+
 	if (! $notrigger && ! $error)
 	{
 		global $conf, $langs, $user;
         // Call trigger
+
         $result = $commande->call_trigger('ORDER_SUPPLIER_DISPATCH', $user);
         // End call triggers
 
@@ -363,7 +373,7 @@ if ($id > 0 || ! empty($ref))
 			{
 				$num = $db->num_rows($resql);
 				$i = 0;
-				
+
 				if ($num)
 				{
 					while ($i < $num)

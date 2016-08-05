@@ -10,4 +10,3 @@ descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to bil
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated 
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal to billed when customer invoice is validated 
-descWORKFLOW_SUPPLIER_ORDER_CLASSIFY_RECEIPT_ORDER=Classify supplier order status to Partially or Totally delivered on manual stock dispatch
