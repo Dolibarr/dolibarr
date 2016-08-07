@@ -63,7 +63,7 @@ create table llx_facturedet
   situation_percent real,   -- % progression of lines invoicing
   fk_prev_id        integer, -- id of the line in the previous situation,
   fk_unit           integer DEFAULT NULL, -- id of the unit code¡
-
+  fk_user           integer DEFAULT NULL, -- id of the user associated to line
   fk_multicurrency		integer,
   multicurrency_code			varchar(255),
   multicurrency_subprice		double(24,8) DEFAULT 0,
