@@ -81,7 +81,7 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="t.rowid"; // Set here default search field
+if (! $sortfield) $sortfield="t.batch"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
 // Protection if external user
@@ -109,8 +109,8 @@ $fieldstosearchall = array(
 // Definition of fields for list
 $arrayfields=array(
 	//'t.entity'=>array('label'=>$langs->trans("Fieldentity"), 'checked'=>1),
-	't.fk_product'=>array('label'=>$langs->trans("Product"), 'checked'=>1),
 	't.batch'=>array('label'=>$langs->trans("Batch"), 'checked'=>1),
+    't.fk_product'=>array('label'=>$langs->trans("Product"), 'checked'=>1),
 	't.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>1),
 	't.sellby'=>array('label'=>$langs->trans("SellByDate"), 'checked'=>1),
 	//'t.import_key'=>array('label'=>$langs->trans("ImportKey"), 'checked'=>1),
@@ -356,8 +356,8 @@ if ($resql)
     // Fields title
     print '<tr class="liste_titre">';
     if (! empty($arrayfields['t.entity']['checked']))     print_liste_field_titre($arrayfields['t.entity']['label'],$_SERVER['PHP_SELF'],'t.entity','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['t.fk_product']['checked'])) print_liste_field_titre($arrayfields['t.fk_product']['label'],$_SERVER['PHP_SELF'],'t.fk_product','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['t.batch']['checked']))      print_liste_field_titre($arrayfields['t.batch']['label'],$_SERVER['PHP_SELF'],'t.batch','',$param,'',$sortfield,$sortorder);
+    if (! empty($arrayfields['t.fk_product']['checked'])) print_liste_field_titre($arrayfields['t.fk_product']['label'],$_SERVER['PHP_SELF'],'t.fk_product','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['t.eatby']['checked']))      print_liste_field_titre($arrayfields['t.eatby']['label'],$_SERVER['PHP_SELF'],'t.eatby','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['t.sellby']['checked']))      print_liste_field_titre($arrayfields['t.sellby']['label'],$_SERVER['PHP_SELF'],'t.sellby','',$param,'',$sortfield,$sortorder);
     if (! empty($arrayfields['t.fk_user_creat']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_creat']['label'],$_SERVER['PHP_SELF'],'t.fk_user_creat','',$param,'',$sortfield,$sortorder);
@@ -388,8 +388,8 @@ if ($resql)
     // Fields title search
 	print '<tr class="liste_titre">';
     if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="8"></td>';
-    if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
     if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="8"></td>';
+    if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
     if (! empty($arrayfields['t.eatby']['checked'])) print '<td class="liste_titre"></td>';
     if (! empty($arrayfields['t.sellby']['checked'])) print '<td class="liste_titre"></td>';
     if (! empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
@@ -466,6 +466,11 @@ if ($resql)
                 print '<td>'.$obj->entity.'</td>';
     		    if (! $i) $totalarray['nbfield']++;
             }
+            if (! empty($arrayfields['t.batch']['checked'])) 
+            {
+                print '<td>'.$obj->batch.'</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+            }
             if (! empty($arrayfields['t.fk_product']['checked'])) 
             {
                 $productstatic->id=$obj->fk_product;
@@ -473,11 +478,6 @@ if ($resql)
                 $productstatic->ref=$obj->product_ref;
                 $productstatic->label=$obj->product_label;
                 print '<td>'.$productstatic->getNomUrl(1).'</td>';
-    		    if (! $i) $totalarray['nbfield']++;
-            }
-            if (! empty($arrayfields['t.batch']['checked'])) 
-            {
-                print '<td>'.$obj->batch.'</td>';
     		    if (! $i) $totalarray['nbfield']++;
             }
             if (! empty($arrayfields['t.eatby']['checked'])) 
