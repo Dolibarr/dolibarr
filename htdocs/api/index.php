@@ -92,7 +92,10 @@ foreach ($modulesdir as $dir)
 				}
                 elseif ($module == 'agenda') {
                     $moduledirforclass = 'comm/action';
-				}
+                }
+                elseif ($module == 'banque') {
+                    $part = 'compta/bank';
+                }
                 elseif ($module == 'categorie') {
                     $moduledirforclass = 'categories';
 				}
