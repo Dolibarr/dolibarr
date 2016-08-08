@@ -22,7 +22,7 @@
 
 /**
  * \file htdocs/accountancy/admin/export.php
- * \ingroup Accounting Expert
+ * \ingroup 	Advanced accountancy
  * \brief Setup page to configure accounting expert module
  */
 require '../../main.inc.php';

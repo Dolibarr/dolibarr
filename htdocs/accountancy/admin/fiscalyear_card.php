@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,10 +143,8 @@ llxHeader();
 
 $form = new Form($db);
 
-/*
- * Action create
- */
-if ($action == 'create') {
+if ($action == 'create') 
+{
 	print load_fiche_titre($langs->trans("NewFiscalYear"));
 	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -172,7 +170,7 @@ if ($action == 'create') {
 	
 	// Statut
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans("Statut") . '</td>';
+	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
 	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
 	print '</td></tr>';

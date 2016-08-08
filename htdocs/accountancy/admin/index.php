@@ -150,6 +150,18 @@ if ($action == 'setlistsortdone') {
 	}
 }
 
+if ($action == 'setmanagezero') {
+	$setmanagezero = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_MANAGE_ZERO", $setmanagezero, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 /*
  * View
  */

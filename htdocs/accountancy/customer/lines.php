@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2015 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>   
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/customer/lines.php
- * \ingroup Accounting Expert
- * \brief Page of detail of the lines of ventilation of invoices customers
+ * \file 		htdocs/accountancy/customer/lines.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Page of detail of the lines of ventilation of invoices customers
  */
 require '../../main.inc.php';
 
@@ -31,6 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("bills");
@@ -70,7 +71,7 @@ if (! empty($conf->global->ACCOUNTING_LIMIT_LIST_VENTILATION)) {
 $offset = $limit * $page;
 
 if (! $sortfield)
-	$sortfield = "f.datef, f.facnumber, l.rowid";
+	$sortfield = "f.datef, f.facnumber, fd.rowid";
 
 if (! $sortorder) {
 	if ($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE > 0) {
@@ -240,6 +241,7 @@ if ($result) {
 		$param .= "&search_country=" . $search_country;
 	if ($search_tvaintra)
 		$param .= "&search_tvaintra=" . $search_tvaintra;
+
 	
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords);
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneCustomer") . '</b></td>';
@@ -266,14 +268,14 @@ if ($result) {
 	
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_country" value="' . $search_country . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_tavintra" value="' . $search_tavintra . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_country" value="' . $search_country . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_tavintra" value="' . $search_tavintra . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 	print "</td></tr>\n";
@@ -284,9 +286,9 @@ if ($result) {
 	$var = True;
 	while ( $objp = $db->fetch_object($result) ) {
 		$var = ! $var;
-		$codecompta = $objp->account_number . ' - ' . $objp->label_compte;
+		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
 		
-		print "<tr $bc[$var]>";
+		print '<tr'. $bc[$var].'>';
 		
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
@@ -308,13 +310,13 @@ if ($result) {
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
-		print '<td align="center">' . $codecompta . '<a href="./card.php?id=' . $objp->fdid . '">';
+		print '<td>' . $codecompta . '<a href="./card.php?id=' . $objp->fdid . '">';
 		print img_edit();
 		print '</a></td>';
 		print '<td align="right">' . $objp->country .'</td>';
 		print '<td align="center">' . $objp->tva_intra . '</td>';
 		print '<td align="center"><input type="checkbox" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
-
+		
 		print "</tr>";
 		$i ++;
 	}
