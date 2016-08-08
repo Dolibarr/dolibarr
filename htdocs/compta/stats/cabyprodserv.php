@@ -177,6 +177,8 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 
 // SQL request
 $catotal=0;
+$catotal_ht=0;
+$qtytotal=0;
 
 if ($modecompta == 'CREANCES-DETTES')
 {
@@ -386,6 +388,8 @@ if ($modecompta == 'CREANCES-DETTES')
 		// Total
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
+		print '<td align="right">'.price($qtytotal).'</td>';
+		print '<td>&nbsp;</td>';
 		print '<td align="right">'.price($catotal_ht).'</td>';
 		print '<td align="right">'.price($catotal).'</td>';
 		print '<td>&nbsp;</td>';

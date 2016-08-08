@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2013-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013       Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
@@ -260,7 +260,7 @@ else
 	    $tmpkey=preg_replace('/search_options_/','',$key);
 	    $typ=$extrafields->attribute_type[$tmpkey];
 	    $mode=0;
-	    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+	    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
 	    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
 	    {
 	        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -272,7 +272,7 @@ else
 	$sql.=$hookmanager->resPrint;
     $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
     $sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-    $sql.= ' p.datec, p.tms';
+    $sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy';
 	// Add fields from extrafields
     foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
 	// Add fields from hooks

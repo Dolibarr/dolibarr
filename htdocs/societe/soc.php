@@ -396,7 +396,7 @@ if (empty($reshook))
             // Only for companies
 	        if (!($object->particulier || $private))
         	{
-	        	for ($i = 1; $i < 5; $i++)
+	        	for ($i = 1; $i <= 6; $i++)
 	        	{
 	        	    $slabel="idprof".$i;
 	    			$_POST[$slabel]=trim($_POST[$slabel]);
@@ -411,15 +411,18 @@ if (empty($reshook))
 						}
 					}
 
-					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-
-					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-					{
-						$langs->load("errors");
-						$error++;
-						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-						$action = (($action=='add'||$action=='create')?'create':'edit');
-					}
+            		// Check for mandatory prof id (but only if country is than than ours)
+					if ($mysoc->country_id > 0 && $object->country_id == $mysoc->country_id)
+            		{
+    					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+    					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+    					{
+    						$langs->load("errors");
+    						$error++;
+    						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+    						$action = (($action=='add'||$action=='create')?'create':'edit');
+    					}
+            		}
 	        	}
         	}
         }
@@ -434,7 +437,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
-                if ($result >= 0)
+				if ($result >= 0)
                 {
                     if ($object->particulier)
                     {
@@ -502,6 +505,13 @@ if (empty($reshook))
                 }
                 else
 				{
+					
+					if($result == -3) {
+						$duplicate_code_error = true;
+						$object->code_fournisseur = null;
+						$object->code_client = null;
+					}
+					
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -791,8 +801,14 @@ else
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
-        $object->code_client		= GETPOST('code_client', 'alpha');
-        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        
+        if(empty($duplicate_code_error)) {
+	        $object->code_client		= GETPOST('code_client', 'alpha');
+	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        }		else {
+			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
+		}
+		
         $object->code_fournisseur	= GETPOST('code_fournisseur', 'alpha');
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
@@ -997,7 +1013,7 @@ else
 
         print '<td width="25%">'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
-        $tmpcode=$object->code_client;
+		$tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
         print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
@@ -1864,7 +1880,7 @@ else
         /*
          * View
          */
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 
@@ -1885,7 +1901,7 @@ else
 				    'name' => 'soc_origin',
 			    	'label' => $langs->trans('MergeOriginThirdparty'),
 				    'type' => 'other',
-				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 1, 0, 0, array(), 0, 'minwidth200')
+				    'value' => $form->select_company('', 'soc_origin', 's.rowid != '.$object->id, 'SelectThirdParty', 0, 0, array(), 0, 'minwidth200')
 			    )
 		    );
 

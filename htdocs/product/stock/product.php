@@ -50,7 +50,7 @@ $cancel=GETPOST('cancel');
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
-$stocklimit = GETPOST('stocklimit');
+$stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
@@ -70,7 +70,7 @@ $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldi
 if ($cancel) $action='';
 
 // Set stock limit
-if ($action == 'setstocklimit')
+if ($action == 'setseuil_stock_alerte')
 {
     $object = new Product($db);
     $result=$object->fetch($id);
@@ -185,7 +185,7 @@ if ($action == "correct_stock" && ! $cancel)
 // Transfer stock from a warehouse to another warehouse
 if ($action == "transfert_stock" && ! $cancel)
 {
-	if (! (GETPOST("id_entrepot_source",'int') > 0) || ! (GETPOST("id_entrepot_destination",'int') > 0))
+	if (! (GETPOST("id_entrepot",'int') > 0) || ! (GETPOST("id_entrepot_destination",'int') > 0))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 		$error++;
@@ -197,7 +197,7 @@ if ($action == "transfert_stock" && ! $cancel)
 		$error++;
 		$action='transfert';
 	}
-	if (GETPOST("id_entrepot_source",'int') == GETPOST("id_entrepot_destination",'int'))
+	if (GETPOST("id_entrepot",'int') == GETPOST("id_entrepot_destination",'int'))
 	{
 		setEventMessages($langs->trans("ErrorSrcAndTargetWarehouseMustDiffers"), null, 'errors');
 		$error++;
@@ -255,7 +255,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				}
 				else
 				{
-					$srcwarehouseid=GETPOST('id_entrepot_source','int');
+					$srcwarehouseid=GETPOST('id_entrepot','int');
 					$batch=GETPOST('batch_number');
 					$eatby=$d_eatby;
 					$sellby=$d_sellby;
@@ -292,7 +292,7 @@ if ($action == "transfert_stock" && ! $cancel)
 				// Remove stock
 				$result1=$object->correct_stock(
 					$user,
-					GETPOST("id_entrepot_source"),
+					GETPOST("id_entrepot"),
 					GETPOST("nbpiece"),
 					1,
 					GETPOST("label"),
@@ -391,6 +391,7 @@ if ($id > 0 || $ref)
 {
 	$object = new Product($db);
 	$result = $object->fetch($id,$ref);
+	
 	$object->load_stock();
 
 	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -471,8 +472,8 @@ if ($id > 0 || $ref)
 		}
 
         // Stock alert threshold
-        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
-        print $form->editfieldval("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer);
         print '</td></tr>';
 
         // Desired stock
@@ -677,7 +678,7 @@ if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 	print '</tr>';
 }
 
-$sql = "SELECT e.rowid, e.label, e.lieu, ps.reel, ps.pmp, ps.rowid as product_stock_id";
+$sql = "SELECT e.rowid, e.label, e.lieu, ps.reel, ps.rowid as product_stock_id, p.pmp";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
 $sql.= " ".MAIN_DB_PREFIX."product_stock as ps";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
@@ -703,9 +704,10 @@ if ($resql)
 		$entrepotstatic->id=$obj->rowid;
 		$entrepotstatic->libelle=$obj->label;
 		$entrepotstatic->lieu=$obj->lieu;
+		$stock_real = round($obj->reel, 10);
 		print '<tr '.$bc[$var].'>';
 		print '<td colspan="4">'.$entrepotstatic->getNomUrl(1).'</td>';
-		print '<td align="right">'.$obj->reel.($obj->reel<0?' '.img_warning():'').'</td>';
+		print '<td align="right">'.$stock_real.($stock_real < 0 ?' '.img_warning():'').'</td>';
 		// PMP
 		print '<td align="right">'.(price2num($object->pmp)?price2num($object->pmp,'MU'):'').'</td>';
 		// Value purchase

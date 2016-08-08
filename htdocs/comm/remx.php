@@ -130,7 +130,7 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 	}
 }
 
-if ($action == 'setremise')
+if ($action == 'setremise' && $user->rights->societe->creer)
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -257,38 +257,48 @@ if ($socid > 0)
 	print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
 	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+	if (! empty($user->fk_soc))    // No need to show this for external users
+	{
+    	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
+    	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+	}
 	print '</table>';
-	print '<br>';
 
-	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
-	print '<table class="border" width="100%">';
-	print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
-	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
-	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
-	print '<td>';
-	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
-	print '</td></tr>';
-	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
-	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
-
-	print "</table>";
-
+	if ($user->rights->societe->creer)
+	{
+    	print '<br>';
+    
+    	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
+    	print '<table class="border" width="100%">';
+    	print '<tr><td width="38%">'.$langs->trans("AmountHT").'</td>';
+    	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
+    	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+    	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
+    	print '<td>';
+    	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
+    	print '</td></tr>';
+    	print '<tr><td>'.$langs->trans("NoteReason").'</td>';
+    	print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
+    
+    	print "</table>";
+	}
+	
 	print '</div>';
 	
 	dol_fiche_end();
 	
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
-    if (! empty($backtopage))
-    {
-        print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-    }
-	print '</div>';
-
+	if ($user->rights->societe->creer)
+	{
+    	print '<div class="center">';
+    	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
+        if (! empty($backtopage))
+        {
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        }
+    	print '</div>';
+	}
+	
 	print '</form>';
 
 
@@ -341,22 +351,22 @@ if ($socid > 0)
 			$var = !$var;
 			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-			if ($obj->description == '(CREDIT_NOTE)')
+			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
-			elseif ($obj->description == '(DEPOSIT)')
+			elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
 			else
@@ -414,7 +424,7 @@ if ($socid > 0)
 	print '<br>';
 
 	/*
-	 * Liste ristournes appliquees (=liees a une ligne de facture ou facture)
+	 * List discount consumed (=liees a une ligne de facture ou facture)
 	 */
 
 	// Remises liees a lignes de factures
@@ -500,22 +510,22 @@ if ($socid > 0)
 			$var = !$var;
 			print "<tr ".$bc[$var].">";
 			print '<td>'.dol_print_date($db->jdate($obj->dc),'dayhour').'</td>';
-			if ($obj->description == '(CREDIT_NOTE)')
+			if (preg_match('/\(CREDIT_NOTE\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(CREDIT_NOTE\)/',$langs->trans("CreditNote"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
-			elseif ($obj->description == '(DEPOSIT)')
+			elseif (preg_match('/\(DEPOSIT\)/',$obj->description))
 			{
 				print '<td class="nowrap">';
 				$facturestatic->id=$obj->fk_facture_source;
 				$facturestatic->ref=$obj->ref;
 				$facturestatic->type=$obj->type;
-				print $langs->trans("InvoiceDeposit").' '.$facturestatic->getNomURl(1);
+				print preg_replace('/\(DEPOSIT\)/',$langs->trans("InvoiceDeposit"),$obj->description).' '.$facturestatic->getNomURl(1);
 				print '</td>';
 			}
 			else

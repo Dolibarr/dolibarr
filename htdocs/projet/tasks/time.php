@@ -53,7 +53,7 @@ $projectstatic = new Project($db);
  * Actions
  */
 
-if ($action == 'addtimespent' && $user->rights->projet->creer)
+if ($action == 'addtimespent' && $user->rights->projet->lire)
 {
 	$error=0;
 
@@ -359,7 +359,7 @@ if ($id > 0 || ! empty($ref))
 		/*
 		 * Form to add time spent
 		 */
-		if ($user->rights->projet->creer)
+		if ($user->rights->projet->lire)
 		{
 			print '<br>';
 

@@ -429,15 +429,15 @@ if ($resql)
         // Show shippable Icon (create subloop, so may be slow)
         if ($conf->stock->enabled) 
         {
+            $notshippable=0;
+            $warning = 0;
+            $text_info='';
+            $text_warning='';
+            $nbprod=0;
+                
             $langs->load("stocks");
             if (($objp->fk_statut > 0) && ($objp->fk_statut < 3))
             {
-                $notshippable=0;
-                $warning = 0;
-                $text_info='';
-                $text_warning='';
-                $nbprod=0;
-                
                 $numlines = count($generic_commande->lines); // Loop on each line of order
                 for ($lig=0; $lig < $numlines; $lig++) 
                 {

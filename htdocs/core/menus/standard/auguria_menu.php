@@ -110,7 +110,8 @@ class MenuManager
 
     	// Modules system tools
     	// TODO Find a way to add parent menu only if child menu exists. For the moment, no other method than hard coded methods.
-    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled)		// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
+    	// TODO We should enabled module system tools entry without hardcoded test, but when at least one modules bringing such entries are on
+    	if (! empty($conf->product->enabled) || ! empty($conf->service->enabled) || ! empty($conf->barcode->enabled) || ! empty($conf->cron->enabled)
     		|| ! empty($conf->global->MAIN_MENU_ENABLE_MODULETOOLS))
     	{
     		if (empty($user->societe_id))

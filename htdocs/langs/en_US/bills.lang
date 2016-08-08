@@ -321,8 +321,8 @@ PaymentConditionPT_5050=50%% in advance, 50%% on delivery
 FixAmount=Fix amount
 VarAmount=Variable amount (%% tot.)
 # PaymentType
-PaymentTypeVIR=Bank deposit
-PaymentTypeShortVIR=Bank deposit
+PaymentTypeVIR=Bank transfer
+PaymentTypeShortVIR=Bank transfer
 PaymentTypePRE=Bank's order
 PaymentTypeShortPRE=Bank's order
 PaymentTypeLIQ=Cash

@@ -190,6 +190,6 @@ OppStatusQUAL=Qualification
 OppStatusPROPO=Proposal
 OppStatusNEGO=Negociation
 OppStatusPENDING=Pending
-OppStatusWIN=Won
+OppStatusWON=Won
 OppStatusLOST=Lost
 Budget=Budget
