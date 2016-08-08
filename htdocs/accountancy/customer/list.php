@@ -307,6 +307,7 @@ if ($result) {
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
 		$facture_static->id = $objp->facid;
+		$facture_static->type = $objp->ftype;
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
 		// Ref Product
 		$product_static->ref = $objp->product_ref;
