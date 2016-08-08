@@ -123,7 +123,7 @@ if ($pageid > 0 && $action != 'add')
 
 global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
-$filecss=$pathofwebsite.'/styles.css';
+$filecss=$pathofwebsite.'/styles.css.php';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
 
 // Define $urlwithroot
@@ -276,7 +276,10 @@ if ($action == 'updatecss')
        $db->rollback();
     }*/
     
-    $csscontent = GETPOST('WEBSITE_CSS_INLINE');
+    $csscontent ='<?php'."\n";
+    $csscontent.= "header('Content-type: text/css');\n";
+    $csscontent.= "?>"."\n";
+    $csscontent .= GETPOST('WEBSITE_CSS_INLINE');
     
     dol_mkdir($pathofwebsite);
     file_put_contents($filecss, $csscontent);
@@ -379,15 +382,26 @@ if ($action == 'updatecontent')
     	if (! $error)
     	{
     		$db->commit();
-    	    setEventMessages($langs->trans("Saved"), null, 'mesgs');
     	    
+    	    // Now create the .tpl file
     	    dol_mkdir($pathofwebsite);
     	    dol_delete_file($filetpl);
-    	    file_put_contents($filetpl, $objectpage->content);
+
+    	    $tplcontent = '<html>'."\n";
+    	    $tplcontent.= '<header>'."\n";
+    	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+    	    $tplcontent.= '</header>'."\n";
+    	    $tplcontent.= '<body>'."\n";
+    	    $tplcontent.= $objectpage->content."\n";
+    	    $tplcontent.= '</body>'."\n";
+//var_dump($filetpl);exit;	    
+    	    $result = file_put_contents($filetpl, $tplcontent);
     	    if (! empty($conf->global->MAIN_UMASK))
     	        @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
-    	    
-   	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+    	        
+    	    setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    	        
+    	    header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
    	        exit;
     	}
     	else
@@ -600,7 +614,6 @@ if (count($object->records) > 0)
         $out.='</select>';
         print $out;
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
-        print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         
         if ($website && $pageid > 0)
@@ -608,7 +621,7 @@ if (count($object->records) > 0)
             print ' - '.$langs->trans("RealURL").' ';
             $realurl=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
             print '<input type="text" name="realurl" class="minwidth200imp" disabled="disabled" value="'.$realurl.'"> ';
-            print '<a href="'.$realurl.'" class="button" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+            print '<a href="'.$realurl.'&nocache='.dol_now().'" class="button" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';       // View page in new Tab
             //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
         }
         
@@ -631,14 +644,15 @@ if (count($object->records) > 0)
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcontent&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageContent")).'</a>';
+                print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
             }
         }
         
         if (! in_array($action, array('editcss','editmenu','create')))
         {
             if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+            if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+            if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         }
 
         print '</div>';
@@ -780,8 +794,17 @@ if ($action == 'editcontent')
     /*
      * Editing global variables not related to a specific theme
      */
+    
+    $csscontent = @file_get_contents($filecss);
+    
+    $contentforedit = '';
+    /*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+    $contentforedit.=$csscontent;
+    $contentforedit.='</style>'."\n";*/
+    $contentforedit .= $objectpage->content;
+    
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('PAGE_CONTENT',$objectpage->content,'',500,'Full','',true,true,true,5,60);
+    $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,5,60);
     $doleditor->Create();
 }
 
@@ -795,7 +818,7 @@ if ($action == 'preview')
     {
         $objectpage->fetch($pageid);
 
-        print "\n".'<!-- Page content '.$filetpl.' c-->'."\n";
+        print "\n".'<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
 
         
         $csscontent = @file_get_contents($filecss);
