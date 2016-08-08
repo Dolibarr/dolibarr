@@ -181,12 +181,10 @@ $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
 dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
-	$i = 0;
 	$num = $db->num_rows($resql);
 
-	while ( $i < $num ) {
+	while ( $row = $db->fetch_row($resql)) {
 
-		$row = $db->fetch_row($resql);
 		$var = ! $var;
 		print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
@@ -196,7 +194,6 @@ if ($resql) {
 		print '<td align="right">' . price($row[13]) . '</td>';
 		print '<td align="right"><b>' . price($row[14]) . '</b></td>';
 		print '</tr>';
-		$i ++;
 	}
 	$db->free($resql);
 } else {
@@ -230,11 +227,10 @@ if (! empty($conf->multicompany->enabled)) {
 dol_syslog('/accountancy/supplier/index.php:: sql=' . $sql);
 $resql = $db->query($sql);
 if ($resql) {
-	$i = 0;
 	$num = $db->num_rows($resql);
 
-	while ( $i < $num ) {
-		$row = $db->fetch_row($resql);
+	while ( $row = $db->fetch_row($resql)) {
+
 
 		print '<tr><td>' . $row[0] . '</td>';
 			for($i = 1; $i <= 12; $i ++) {
@@ -242,8 +238,6 @@ if ($resql) {
 		}
 		print '<td align="right"><b>' . price($row[13]) . '</b></td>';
 		print '</tr>';
-
-		$i ++;
 	}
 
 	$db->free($resql);

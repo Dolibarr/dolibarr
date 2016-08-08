@@ -196,11 +196,10 @@ $sql .= " GROUP BY fd.fk_code_ventilation,aa.account_number,aa.label";
 dol_syslog("htdocs/accountancy/customer/index.php sql=" . $sql, LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
-	$i = 0;
 	$num = $db->num_rows($resql);
 
-	while ( $i < $num ) {
-		$row = $db->fetch_row($resql);
+	while ( $row = $db->fetch_row($resql)) {
+
 		$var = ! $var;
 		print '<tr ' . $bc[$var] . '><td>' . length_accountg($row[0]) . '</td>';
 		print '<td align="left">' . $row[1] . '</td>';
@@ -210,7 +209,6 @@ if ($resql) {
 		print '<td align="right">' . price($row[13]) . '</td>';
 		print '<td align="right"><b>' . price($row[14]) . '</b></td>';
 		print '</tr>';
-		$i ++;
 	}
 	$db->free($resql);
 } else {
@@ -246,9 +244,7 @@ if ($resql) {
 	$i = 0;
 	$num = $db->num_rows($resql);
 
-	while ( $i < $num ) {
-		$row = $db->fetch_row($resql);
-
+	while ($row = $db->fetch_row($resql)) {
 		print '<tr><td>' . $row[0] . '</td>';
 		for($i = 1; $i <= 12; $i ++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
