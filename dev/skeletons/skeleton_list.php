@@ -104,7 +104,7 @@ $arrayfields=array(
     't.field1'=>array('label'=>$langs->trans("Field1"), 'checked'=>1),
     't.field2'=>array('label'=>$langs->trans("Field2"), 'checked'=>1),
     //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
-    't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    't.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
     't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     //'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
@@ -188,12 +188,16 @@ if (empty($reshook))
 * Put here all code to build page
 ****************************************************/
 
-llxHeader('','MyPageName','');
+$now=dol_now();
 
 $form=new Form($db);
 
-// Put here content of your page
+//$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
+$help_url='';
 $title = $langs->trans('MyModuleListTitle');
+llxHeader('', $title, $help_url);
+
+// Put here content of your page
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -317,8 +321,9 @@ if ($resql)
 
     // Fields title
     print '<tr class="liste_titre">';
-    if (! empty($arrayfields['t.field1']['checked'])) print_liste_field_titre($arrayfields['t.field1']['label'],$_SERVER['PHP_SELF'],'t.field1','',$param,'',$sortfield,$sortorder);
-    if (! empty($arrayfields['t.field2']['checked'])) print_liste_field_titre($arrayfields['t.field2']['label'],$_SERVER['PHP_SELF'],'t.field2','',$param,'',$sortfield,$sortorder);
+    // LIST_OF_TD_TITLE_FIELDS
+    //if (! empty($arrayfields['t.field1']['checked'])) print_liste_field_titre($arrayfields['t.field1']['label'],$_SERVER['PHP_SELF'],'t.field1','',$params,'',$sortfield,$sortorder);
+    //if (! empty($arrayfields['t.field2']['checked'])) print_liste_field_titre($arrayfields['t.field2']['label'],$_SERVER['PHP_SELF'],'t.field2','',$params,'',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -343,8 +348,9 @@ if ($resql)
 
     // Fields title search
 	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['t.field1']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10"></td>';
-	if (! empty($arrayfields['t.field2']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10"></td>';
+	// LIST_OF_TD_TITLE_SEARCH
+	//if (! empty($arrayfields['t.field1']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_field1" value="'.$search_field1.'" size="10"></td>';
+	//if (! empty($arrayfields['t.field2']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_field2" value="'.$search_field2.'" size="10"></td>';
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -407,8 +413,12 @@ if ($resql)
         $obj = $db->fetch_object($resql);
         if ($obj)
         {
-            // You can use here results
-            print '<tr>';
+            $var = !$var;
+            
+            // Show here line of result
+            print '<tr '.$bc[$var].'>';
+            // LIST_OF_TD_FIELDS_LIST
+            /*
             if (! empty($arrayfields['t.field1']['checked'])) 
             {
                 print '<td>'.$obj->field1.'</td>';
@@ -418,7 +428,7 @@ if ($resql)
             {
                 print '<td>'.$obj->field2.'</td>';
     		    if (! $i) $totalarray['nbfield']++;
-            }
+            }*/
         	// Extra fields
     		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
     		{
