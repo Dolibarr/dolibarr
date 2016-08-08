@@ -62,7 +62,7 @@ $myparam	= GETPOST('myparam','alpha');
 
 
 $search_entity=GETPOST('search_entity','int');
-$search_fk_product=GETPOST('search_fk_product','int');
+$search_product=GETPOST('search_product','alpha');
 $search_batch=GETPOST('search_batch','alpha');
 $search_fk_user_creat=GETPOST('search_fk_user_creat','int');
 $search_fk_user_modif=GETPOST('search_fk_user_modif','int');
@@ -157,7 +157,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
     $search_entity='';
-    $search_fk_product='';
+    $search_product='';
     $search_batch='';
     $search_fk_user_creat='';
     $search_fk_user_modif='';
@@ -242,7 +242,7 @@ $sql.= " WHERE p.rowid = t.fk_product";
 //$sql.= " WHERE u.entity IN (".getEntity('mytable',1).")";
 
 if ($search_entity) $sql.= natural_search("entity",$search_entity);
-if ($search_fk_product) $sql.= natural_search("fk_product",$search_fk_product);
+if ($search_product) $sql.= natural_search("p.ref",$search_product);
 if ($search_batch) $sql.= natural_search("batch",$search_batch);
 if ($search_fk_user_creat) $sql.= natural_search("fk_user_creat",$search_fk_user_creat);
 if ($search_fk_user_modif) $sql.= natural_search("fk_user_modif",$search_fk_user_modif);
@@ -293,7 +293,7 @@ if ($resql)
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_entity != '') $params.= '&amp;search_entity='.urlencode($search_entity);
-    if ($search_fk_product != '') $params.= '&amp;search_fk_product='.urlencode($search_fk_product);
+    if ($search_product != '') $params.= '&amp;search_product='.urlencode($search_product);
     if ($search_batch != '') $params.= '&amp;search_batch='.urlencode($search_batch);
     if ($search_fk_user_creat != '') $params.= '&amp;search_fk_user_creat='.urlencode($search_fk_user_creat);
     if ($search_fk_user_modif != '') $params.= '&amp;search_fk_user_modif='.urlencode($search_fk_user_modif);
@@ -387,9 +387,9 @@ if ($resql)
 
     // Fields title search
 	print '<tr class="liste_titre">';
-    if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="10"></td>';
-    if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_product" value="'.$search_fk_product.'" size="10"></td>';
-    if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="10"></td>';
+    if (! empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="8"></td>';
+    if (! empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
+    if (! empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="8"></td>';
     if (! empty($arrayfields['t.eatby']['checked'])) print '<td class="liste_titre"></td>';
     if (! empty($arrayfields['t.sellby']['checked'])) print '<td class="liste_titre"></td>';
     if (! empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
