@@ -40,6 +40,7 @@ else if ($type=='1') $result=restrictedArea($user,'service');
 else $result=restrictedArea($user,'produit|service');
 
 $langs->load("products");
+$langs->load("stocks");
 
 $product_static = new Product($db);
 
