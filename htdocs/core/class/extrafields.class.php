@@ -675,7 +675,7 @@ class ExtraFields
     			if ($showsize > 48) $showsize=48;
     		}
 		}
-		
+
 		if (in_array($type,array('date','datetime')))
 		{
 			$tmp=explode(',',$size);
@@ -812,7 +812,7 @@ class ExtraFields
 					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
 						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
 					}
-					
+
 					// current object id can be use into filter
 					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
 						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
@@ -830,14 +830,14 @@ class ExtraFields
 						$sqlwhere.= ' WHERE '.$InfoFieldList[4];
 					}
 				}
-				else 
+				else
 				{
 					$sqlwhere.= ' WHERE 1=1';
 				}
 				// Some tables may have field, some other not. For the moment we disable it.
-				if (in_array($InfoFieldList[0],array('tablewithentity'))) 
+				if (in_array($InfoFieldList[0],array('tablewithentity')))
 				{
-					$sqlwhere.= ' AND entity = '.$conf->entity;	
+					$sqlwhere.= ' AND entity = '.$conf->entity;
 				}
 				$sql.=$sqlwhere;
 				//print $sql;
@@ -996,19 +996,19 @@ class ExtraFields
 				$sql = 'SELECT ' . $keyList;
 				$sql .= ' FROM ' . MAIN_DB_PREFIX . $InfoFieldList[0];
 				if (! empty($InfoFieldList[4])) {
-					
+
 					// can use SELECT request
 					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
 						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
 					}
-					
+
 					// current object id can be use into filter
 					if (strpos($InfoFieldList[4], '$ID$')!==false && !empty($objectid)) {
 						$InfoFieldList[4]=str_replace('$ID$',$objectid,$InfoFieldList[4]);
 					} else {
 						$InfoFieldList[4]=str_replace('$ID$','0',$InfoFieldList[4]);
 					}
-					
+
 					// We have to join on extrafield table
 					if (strpos($InfoFieldList[4], 'extra') !== false) {
 						$sql .= ' as main, ' . MAIN_DB_PREFIX . $InfoFieldList[0] . '_extrafields as extra';
@@ -1020,13 +1020,13 @@ class ExtraFields
 					$sqlwhere .= ' WHERE 1=1';
 				}
 				// Some tables may have field, some other not. For the moment we disable it.
-				if (in_array($InfoFieldList[0], array ('tablewithentity'))) 
+				if (in_array($InfoFieldList[0], array ('tablewithentity')))
 				{
 					$sqlwhere .= ' AND entity = ' . $conf->entity;
 				}
 				// $sql.=preg_replace('/^ AND /','',$sqlwhere);
 				// print $sql;
-				
+
 				$sql .= $sqlwhere;
 				dol_syslog(get_class($this) . '::showInputField type=chkbxlst',LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1232,7 +1232,12 @@ class ExtraFields
 			{
 				$sql.= ' as main';
 			}
-			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+			if ($selectkey=='rowid') {
+				$sql.= " WHERE ".$selectkey."=".$this->db->escape($value);
+			} else {
+				$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+			}
+
 			//$sql.= ' AND entity = '.$conf->entity;
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);
@@ -1391,10 +1396,10 @@ class ExtraFields
 			$showsize=round($size);
 			if ($showsize > 48) $showsize=48;
 		}
-		
+
 		//print $type.'-'.$size;
 		$out=$value;
-		
+
 		return $out;
 	}
 
@@ -1411,7 +1416,7 @@ class ExtraFields
 		$type=$this->attribute_type[$key];
 
 		$align='';
-		
+
 		if ($type == 'date')
 		{
 			$align="center";
@@ -1440,10 +1445,10 @@ class ExtraFields
 		{
 			$align="center";
 		}
-	
+
 		return $align;
 	}
-	
+
 	/**
 	 * Return HTML string to print separator extrafield
 	 *
@@ -1523,7 +1528,7 @@ class ExtraFields
 			return 0;
 		}
 	}
-	
+
 	/**
 	 * return array_options array for object by extrafields value (using for data send by forms)
 	 *
