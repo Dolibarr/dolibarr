@@ -36,6 +36,7 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',160);
 
 $langs->load("companies");
 $langs->load("products");
+$langs->load("stocks");
 $langs->load("bills");
 $langs->load("other");
 

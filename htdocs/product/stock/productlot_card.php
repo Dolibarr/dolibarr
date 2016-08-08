@@ -17,7 +17,7 @@
  */
 
 /**
- *   	\file       stock/productlot_card.php
+ *   	\file       product/stock/productlot_card.php
  *		\ingroup    stock
  *		\brief      This file is an example of a php page
  *					Initialy built by build_class_from_table on 2016-05-17 12:22

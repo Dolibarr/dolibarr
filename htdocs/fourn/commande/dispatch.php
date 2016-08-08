@@ -404,8 +404,8 @@ if ($id > 0 || ! empty($ref)) {
 					print '<tr class="liste_titre">';
 					print '<td></td>';
 					print '<td>' . $langs->trans("batch_number") . '</td>';
-					print '<td>' . $langs->trans("l_eatby") . '</td>';
-					print '<td>' . $langs->trans("l_sellby") . '</td>';
+					print '<td>' . $langs->trans("EatByDate") . '</td>';
+					print '<td>' . $langs->trans("SellByDate") . '</td>';
 					print '<td colspan="4">&nbsp;</td>';
 					print "</tr>\n";
 				}
@@ -595,8 +595,8 @@ if ($id > 0 || ! empty($ref)) {
 			print '<td>' . $langs->trans("Description") . '</td>';
 			if (! empty($conf->productbatch->enabled)) {
 				print '<td>' . $langs->trans("batch_number") . '</td>';
-				print '<td>' . $langs->trans("l_eatby") . '</td>';
-				print '<td>' . $langs->trans("l_sellby") . '</td>';
+				print '<td>' . $langs->trans("EatByDate") . '</td>';
+				print '<td>' . $langs->trans("SellByDate") . '</td>';
 			}
 			print '<td align="right">' . $langs->trans("QtyDispatched") . '</td>';
 			print '<td></td>';

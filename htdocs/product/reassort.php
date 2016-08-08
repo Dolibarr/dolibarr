@@ -194,7 +194,7 @@ if ($resql)
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
-	$texte.=' ('.$langs->trans("Stocks").')';
+	$texte.=' ('.$langs->trans("StocksByProducts").')';
 
 
 	llxHeader("", $texte, $helpurl);

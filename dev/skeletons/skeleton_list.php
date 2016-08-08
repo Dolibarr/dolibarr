@@ -103,7 +103,7 @@ $arrayfields=array(
     't.field1'=>array('label'=>$langs->trans("Field1"), 'checked'=>1),
     't.field2'=>array('label'=>$langs->trans("Field2"), 'checked'=>1),
     //'t.entity'=>array('label'=>$langs->trans("Entity"), 'checked'=>1, 'enabled'=>(! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode))),
-    't.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    't.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
     't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     //'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
@@ -179,10 +179,10 @@ $form=new Form($db);
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url='';
-llxHeader('','MyPageName',$help_url);
+$title = $langs->trans('MyModuleListTitle');
+llxHeader('', $title, $help_url);
 
 // Put here content of your page
-$title = $langs->trans('MyModuleListTitle');
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -274,7 +274,7 @@ if ($resql)
         'presend'=>$langs->trans("SendByMail"),
         'builddoc'=>$langs->trans("PDFMerge"),
     );
-    if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+    if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
     if ($massaction == 'presend') $arrayofmassactions=array();
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
     
@@ -516,9 +516,7 @@ if ($resql)
 	
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
 	{
-	    /*
-	     * Show list of available documents
-	     */
+	    // Show list of available documents
 	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	    $urlsource.=str_replace('&amp;','&',$param);
 	
