@@ -16,9 +16,9 @@
  */
 
 /**
- *     	\file       htdocs/public/websites/index.php
+ *     	\file       htdocs/public/websites/styles.css.php
  *		\ingroup    website
- *		\brief      Page to output pages
+ *		\brief      Page to output style page
  *		\author	    Laurent Destailleur
  */
 
@@ -90,19 +90,7 @@ if (empty($pageid))
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
 
-if ($pageid == 'css')   // No more used ?
-{
-    header('Content-type: text/css');
-    // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-    //if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
-    //else 
-    header('Cache-Control: no-cache');
-    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css.php';
-}
-else
-{
-    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/page'.$pageid.'.tpl.php';
-}
+$original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css.php';
 
 // Find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
@@ -130,7 +118,7 @@ clearstatcache();
 $filename = basename($original_file);
 
 // Output file on browser
-dol_syslog("index.php include $original_file $filename content-type=$type");
+dol_syslog("styles.css.php include $original_file $filename content-type=$type");
 $original_file_osencoded=dol_osencode($original_file);	// New file name encoded in OS encoding charset
 
 // This test if file exists should be useless. We keep it to find bug more easily
@@ -144,8 +132,7 @@ if (! file_exists($original_file_osencoded))
 
 
 // Output page content
-print "\n".'<!-- Page content '.$original_file.' : Html with CSS link + Body was saved into tpl -->'."\n";
-include_once $original_file_osencoded;
+require_once $original_file_osencoded;
 
 
 if (is_object($db)) $db->close();
