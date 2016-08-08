@@ -1232,7 +1232,7 @@ class ExtraFields
 			{
 				$sql.= ' as main';
 			}
-			if ($selectkey=='rowid' && is_int($value)) {
+			if ($selectkey=='rowid') {
 				$sql.= " WHERE ".$selectkey."=".$this->db->escape($value);
 			} else {
 				$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
