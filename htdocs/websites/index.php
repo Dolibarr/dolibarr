@@ -125,6 +125,7 @@ global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
 $filecss=$pathofwebsite.'/styles.css.php';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
+$fileindex=$pathofwebsite.'/index.php';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -279,13 +280,16 @@ if ($action == 'updatecss')
     $csscontent ='<?php'."\n";
     $csscontent.= "header('Content-type: text/css');\n";
     $csscontent.= "?>"."\n";
-    $csscontent .= GETPOST('WEBSITE_CSS_INLINE');
+    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
     
     dol_mkdir($pathofwebsite);
-    file_put_contents($filecss, $csscontent);
+    $result = file_put_contents($filecss, $csscontent);
     if (! empty($conf->global->MAIN_UMASK))
         @chmod($filecss, octdec($conf->global->MAIN_UMASK));
-    
+
+    if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+        
     $action='preview';
 }
 
@@ -306,7 +310,23 @@ if ($action == 'setashome')
     if (! $error)
     {
         $db->commit();
-        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+        
+        // Generate the index.php page to be the home page
+        //-------------------------------------------------
+        dol_mkdir($pathofwebsite);
+        dol_delete_file($fileindex);
+
+        $indexcontent = '<?php'."\n";
+        $indexcontent.= '// File generated to wrap the home page'."\n";
+        $indexcontent.= "include_once './".basename($filetpl)."'\n";
+        $indexcontent.= '?>'."\n";
+        $result = file_put_contents($fileindex, $indexcontent);
+        if (! empty($conf->global->MAIN_UMASK))
+            @chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+        
+        if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
+        else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+        
         $action='preview';
     }
     else
@@ -326,6 +346,8 @@ if ($action == 'updatemeta')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
+        $oldobjectpage = clone $objectpage;
+        
         $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
         $objectpage->title = GETPOST('WEBSITE_TITLE');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
@@ -341,7 +363,61 @@ if ($action == 'updatemeta')
         if (! $error)
         {
             $db->commit();
-            setEventMessages($langs->trans("Saved"), null, 'mesgs');
+
+            $fileoldalias=$pathofwebsite.'/'.$oldobjectpage->pageurl.'.php';
+            $filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+            
+            // Generate the alias.php page
+            //-----------------------------
+            dol_mkdir($pathofwebsite);
+            dol_delete_file($fileoldalias);
+            
+            $aliascontent = '<?php'."\n";
+            $aliascontent.= '// File generated to wrap the alias page'."\n";
+            $aliascontent.= "include_once './page".$objectpage->id.".tpl.php'\n";
+            $aliascontent.= '?>'."\n";
+            $result = file_put_contents($filealias, $aliascontent);
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($filealias, octdec($conf->global->MAIN_UMASK));
+            
+            if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
+            else setEventMessages('Failed to write file '.$filealias, null, 'errors');
+
+            
+
+            // Now create the .tpl file (duplicate code with actions updatecontent but we need this to save new header)
+            dol_mkdir($pathofwebsite);
+            dol_delete_file($filetpl);
+            
+            $tplcontent = '<html>'."\n";
+            $tplcontent.= '<header>'."\n";
+            $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
+            $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
+            $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
+            $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
+            $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
+            $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
+            $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
+            $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+            $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+            $tplcontent.= '</header>'."\n";
+            
+            $tplcontent.= '<body>'."\n";
+            $tplcontent.= $objectpage->content."\n";
+            $tplcontent.= '</body>'."\n";
+            //var_dump($filetpl);exit;
+            $result = file_put_contents($filetpl, $tplcontent);
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+                 
+            if ($result)
+            {
+                //setEventMessages($langs->trans("Saved"), null, 'mesgs');
+                //header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+                //exit;
+            }
+            else setEventMessages('Failed to write file '.$filetpl, null, 'errors');
+            
             $action='preview';
         }
         else
@@ -384,25 +460,38 @@ if ($action == 'updatecontent')
     		$db->commit();
     	    
     	    // Now create the .tpl file
+    	    // TODO Keep a one time generate file or include a dynamicaly generated content ? 
     	    dol_mkdir($pathofwebsite);
     	    dol_delete_file($filetpl);
 
     	    $tplcontent = '<html>'."\n";
     	    $tplcontent.= '<header>'."\n";
+    	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
+    	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
+    	    $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
+    	    $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
+    	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
+    	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
+    	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
     	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+    	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
     	    $tplcontent.= '</header>'."\n";
+    	    	
     	    $tplcontent.= '<body>'."\n";
     	    $tplcontent.= $objectpage->content."\n";
     	    $tplcontent.= '</body>'."\n";
-//var_dump($filetpl);exit;	    
+            //var_dump($filetpl);exit;	    
     	    $result = file_put_contents($filetpl, $tplcontent);
     	    if (! empty($conf->global->MAIN_UMASK))
     	        @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
-    	        
-    	    setEventMessages($langs->trans("Saved"), null, 'mesgs');
-    	        
-    	    header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
-   	        exit;
+                 
+    	    if ($result)
+    	    {
+    	        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+   	            exit;
+    	    }
+    	    else setEventMessages('Failed to write file '.$filetpl, null, 'errors');    	        
     	}
     	else
     	{
