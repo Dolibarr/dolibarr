@@ -265,7 +265,7 @@ if ($id > 0 || ! empty($ref))
 			print load_fiche_titre($langs->trans("ProductParentList"),'','').'<br>';
 			print '<table class="centpercent noborder">';
 			print '<tr class="liste_titre">';
-			print '<td>'.$langs->trans('ParentProduct').'</td>';
+			print '<td>'.$langs->trans('ParentProducts').'</td>';
 			print '<td>'.$langs->trans('Label').'</td>';
 			print '<td>'.$langs->trans('Qty').'</td>';
 			print '</td>';
@@ -361,7 +361,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '</td>';
 
-						$totalline=price2num($value['nb'] * $product_fourn->fourn_unitprice, 'MT');
+					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise), 'MT');
 						$total+=$totalline;
 						print '<td align="right">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));

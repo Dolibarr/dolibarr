@@ -564,6 +564,8 @@ Module59000Name=Margins
 Module59000Desc=Module to manage margins
 Module60000Name=Commissions
 Module60000Desc=Module to manage commissions
+Module63000Name=Resources
+Module63000Desc=Manage resources (printers, cars, room, ...) you can then share into events
 Permission11=Read customer invoices
 Permission12=Create/modify customer invoices
 Permission13=Unvalidate customer invoices
@@ -1494,7 +1496,7 @@ FCKeditorForProduct=WYSIWIG creation/edition of products/services description an
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formating when building PDF files.</font>
 FCKeditorForMailing= WYSIWIG creation/edition for mass eMailings (Tools->eMailing)
 FCKeditorForUserSignature=WYSIWIG creation/edition of user signature
-FCKeditorForMail=WYSIWIG creation/edition for all mail (except Outils->eMailing)
+FCKeditorForMail=WYSIWIG creation/edition for all mail (except Tools->eMailing)
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be an OSCommerce database (Key %s not found in table %s).
 OSCommerceTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
@@ -1509,6 +1511,7 @@ MenuDeleted=Menu deleted
 TreeMenu=Tree menus
 Menus=Menus
 TreeMenuPersonalized=Personalized menus
+NotTopTreeMenuPersonalized=Personalized menus not linked to a top menu entry
 NewMenu=New menu
 MenuConf=Menus setup
 Menu=Selection of menu
@@ -1710,3 +1713,4 @@ TitleExampleForMaintenanceRelease=Example of message you can use to announce thi
 ExampleOfNewsMessageForMajorRelease=Dolibarr ERP & CRM %s is available. Version %s is a major release with a lot of new features for both users and developers. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 ExampleOfNewsMessageForMaintenanceRelease=Dolibarr ERP & CRM %s is available. Version %s is a maintenance version, so it contains only fixes of bugs. We recommend everybody using an older version to upgrade to this one. As any maintenance release, no new features, nor data structure change is present into this version. You can download it from the download area of http://www.dolibarr.org portal (subdirectory Stable versions). You can read <a href="https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog">ChangeLog</a> for complete list of changes.
 MultiPriceRuleDesc=When option "Several level of prices per product/service" is on, you can define different prices (one per price level) for each product. To save you time, you can enter here rule to have price for each level autocalculated according to price of first level, so you will have to enter only price for first level on each product. This page is here to save you time and can be usefull only if your prices for each leve are relative to first level. You can ignore this page in most cases.
+activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is missing, so module "%1$s" may not work correclty. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise

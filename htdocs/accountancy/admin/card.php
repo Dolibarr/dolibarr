@@ -19,8 +19,8 @@
 
 /**
  * \file 		htdocs/accountancy/admin/card.php
- * \ingroup		Advanced accountancy
- * \brief 		Card accounting account
+ * \ingroup 	Advanced accountancy
+ * \brief 		Card of accounting account
  */
 require '../../main.inc.php';
 
@@ -58,11 +58,21 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_parent') <= 0) {
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
+		if (GETPOST('account_category') <= 0) {
 			$account_parent = '';
 		} else {
-			$account_parent = GETPOST('account_parent','int');
+			$account_parent = GETPOST('account_category','int');
 		}
 		
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -76,19 +86,17 @@ if ($action == 'add') {
 		
 		$res = $object->create($user);
 		
-		if ($res == 0) {
-		} else {
-			if ($res == - 3) {
-				$error = 1;
-				$action = "create";
-			}
-			if ($res == - 4) {
-				$error = 2;
-				$action = "create";
-			}
+		if ($res == - 3) {
+			$error = 1;
+			$action = "create";
+		}
+		if ($res == - 4) {
+			$error = 2;
+			$action = "create";
 		}
 	}
-	Header("Location: account.php");
+	header("Location: account.php");
+	exit;
 } else if ($action == 'edit') {
 	if (! GETPOST('cancel', 'alpha')) {
 		$result = $object->fetch($id);
@@ -100,13 +108,23 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result2);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_parent') <= 0) {
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
+		if (GETPOST('account_category') <= 0) {
 			$account_parent = '';
 		} else {
-			$account_parent = GETPOST('account_parent','int');
+			$account_parent = GETPOST('account_category','int');
 		}
-		
+
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type');
 		$object->pcg_subtype = GETPOST('pcg_subtype');
@@ -134,7 +152,8 @@ if ($action == 'add') {
 		$result = $object->delete($user);
 		
 		if ($result > 0) {
-			Header("Location: account.php");
+			header("Location: account.php");
+			exit;
 		}
 	}
 	
@@ -164,7 +183,7 @@ if ($action == 'create') {
 	
 	print '<table class="border" width="100%">';
 
-	// Account number	
+	// Account number
 	print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 	print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 
@@ -216,12 +235,8 @@ if ($action == 'create') {
 		$head = accounting_prepare_head($object);
 		
 		// Edit mode
-		if ($action == 'update') {
-			$soc = new Societe($db);
-			if ($object->socid) {
-				$soc->fetch($object->socid);
-			}
-			
+		if ($action == 'update') 
+		{
 			dol_fiche_head($head, 'card', $langs->trans('AccountAccounting'), 0, 'billr');
 			
 			print '<form name="update" action="' . $_SERVER["PHP_SELF"] . '" method="POST">' . "\n";
@@ -288,11 +303,11 @@ if ($action == 'create') {
 			print '<td>' . $object->account_number . '</td>';
 			print '<td align="right" width="25%">' . $linkback . '</td></tr>';
 
-			// Label			
+			// Label
 			print '<tr><td>' . $langs->trans("Label") . '</td>';
 			print '<td colspan="2">' . $object->label . '</td></tr>';
 
-			// Account parent			
+			// Account parent
 			$accp = new AccountingAccount($db);
 			if (! empty($object->account_parent)) {
 				$accp->fetch($object->account_parent, '');
@@ -303,15 +318,15 @@ if ($action == 'create') {
 			// Category
 			print "<tr><td>".$langs->trans("AccountingCategory")."</td><td colspan='2'>".$object->account_category_label."</td>";
 
-			// Chart of accounts type			
+			// Chart of accounts type
 			print '<tr><td>' . $langs->trans("Pcgtype") . '</td>';
 			print '<td colspan="2">' . $object->pcg_type . '</td></tr>';
 
-			// Chart of accounts subtype			
+			// Chart of accounts subtype
 			print '<tr><td>' . $langs->trans("Pcgsubtype") . '</td>';
 			print '<td colspan="2">' . $object->pcg_subtype . '</td></tr>';
 
-			// Active			
+			// Active
 			print '<tr><td>' . $langs->trans("Activated") . '</td>';
 			print '<td colspan="2">';
 			

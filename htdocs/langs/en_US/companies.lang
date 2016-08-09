@@ -432,3 +432,4 @@ MergeThirdparties=Merge third parties
 ConfirmMergeThirdparties=Are you sure you want to merge this third party into the current one ? All linked objects (invoices, orders, ...) will be moved to current third party so you will be able to delete the duplicate one.
 ThirdpartiesMergeSuccess=Thirdparties have been merged
 ErrorThirdpartiesMerge=There was an error when deleting the thirdparties. Please check the log. Changes have been reverted.
+NewCustomerSupplierCodeProposed=New customer or supplier proposed on duplicate code

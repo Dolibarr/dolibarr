@@ -206,23 +206,39 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
     		}
 		}
 		
-		$graphfiles=array(
-		'propal'           =>array('modulepart'=>'productstats_proposals',
-		'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsProposals"):$langs->transnoentitiesnoconv("NumberOfProposals"))),
-		'orders'           =>array('modulepart'=>'productstats_orders',
-		'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders"))),
-		'invoices'         =>array('modulepart'=>'productstats_invoices',
-		'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices"))),
-		'orderssuppliers'=>array('modulepart'=>'productstats_orderssuppliers',
-		'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders"):$langs->transnoentitiesnoconv("NumberOfSupplierOrders"))),
-		'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers',
-		'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
-		'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices"))),
-		);
+		if($conf->propal->enabled) {
+			$graphfiles['propal']=array('modulepart'=>'productstats_proposals',
+			'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsProposals"):$langs->transnoentitiesnoconv("NumberOfProposals")));
+		}
+		
+		if($conf->supplier_proposal->enabled) {
+			$graphfiles['proposalssuppliers']=array('modulepart'=>'productstats_proposalssuppliers',
+			'file' => $object->id.'/proposalssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierProposals"):$langs->transnoentitiesnoconv("NumberOfSupplierProposals")));
+		}
+		
+		if($conf->order->enabled) {
+			$graphfiles['orders']=array('modulepart'=>'productstats_orders',
+			'file' => $object->id.'/orders12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerOrders"):$langs->transnoentitiesnoconv("NumberOfCustomerOrders")));
+		}
+		
+		if($conf->fournisseur->enabled) {
+			$graphfiles['orderssuppliers']=array('modulepart'=>'productstats_orderssuppliers',
+			'file' => $object->id.'/orderssuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierOrders"):$langs->transnoentitiesnoconv("NumberOfSupplierOrders")));
+		}
+
+		if($conf->facture->enabled) {
+			$graphfiles['invoices']=array('modulepart'=>'productstats_invoices',
+			'file' => $object->id.'/invoices12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsCustomerInvoices"):$langs->transnoentitiesnoconv("NumberOfCustomerInvoices")));
+			
+			$graphfiles['invoicessuppliers']=array('modulepart'=>'productstats_invoicessuppliers',
+			'file' => $object->id.'/invoicessuppliers12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.'.png',
+			'label' => ($mode=='byunit'?$langs->transnoentitiesnoconv("NumberOfUnitsSupplierInvoices"):$langs->transnoentitiesnoconv("NumberOfSupplierInvoices")));
+		}
 
 		$px = new DolGraph();
 
@@ -243,11 +259,12 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 					}
 					else
 					{
-    					if ($key == 'propal')            $graph_data = $object->get_nb_propal($socid,$mode,((string) $type != '' ? $type : -1));
-    					if ($key == 'orders')            $graph_data = $object->get_nb_order($socid,$mode,((string) $type != '' ? $type : -1));
-    					if ($key == 'invoices')          $graph_data = $object->get_nb_vente($socid,$mode,((string) $type != '' ? $type : -1));
-    					if ($key == 'invoicessuppliers') $graph_data = $object->get_nb_achat($socid,$mode,((string) $type != '' ? $type : -1));
-    					if ($key == 'orderssuppliers')   $graph_data = $object->get_nb_ordersupplier($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'propal')             $graph_data = $object->get_nb_propal($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'orders')             $graph_data = $object->get_nb_order($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'invoices')           $graph_data = $object->get_nb_vente($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'proposalssuppliers') $graph_data = $object->get_nb_propalsupplier($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'invoicessuppliers')  $graph_data = $object->get_nb_achat($socid,$mode,((string) $type != '' ? $type : -1));
+    					if ($key == 'orderssuppliers')    $graph_data = $object->get_nb_ordersupplier($socid,$mode,((string) $type != '' ? $type : -1));
     				
     					// TODO Save cachefile $graphfiles[$key]['file']
 					}
@@ -289,6 +306,7 @@ if (! empty($id) || ! empty($ref) || GETPOST('id') == 'all')
 			if ($graphfiles == 'propal' && ! $user->rights->propale->lire) continue;
 			if ($graphfiles == 'order' && ! $user->rights->commande->lire) continue;
 			if ($graphfiles == 'invoices' && ! $user->rights->facture->lire) continue;
+			if ($graphfiles == 'proposals_suppliers' && ! $user->rights->supplier_proposal->lire) continue;
 			if ($graphfiles == 'invoices_suppliers' && ! $user->rights->fournisseur->facture->lire) continue;
 			if ($graphfiles == 'orders_suppliers' && ! $user->rights->fournisseur->commande->lire) continue;
 

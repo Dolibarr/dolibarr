@@ -101,7 +101,7 @@ $hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('thirdparty');
+$extralabels = $extrafields->fetch_name_optionals_label('societe');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
@@ -170,7 +170,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
    }
 }
-    
 
 
 /*
@@ -200,6 +199,7 @@ if (empty($reshook))
 // Do we click on purge search criteria ?
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
+    $search_nom='';
     $search_categ='';
     $search_sale='';
 	$search_barcode="";
@@ -359,7 +359,7 @@ $sql.= " ,".MAIN_DB_PREFIX."c_stcomm as st";
 // We'll need this table joined to the select in order to filter by sale
 if ($search_sale || (!$user->rights->societe->client->voir && !$socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 // We'll need this table joined to the select in order to filter by categ
-if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_societe as cs";
+if ($search_categ) $sql.= ", ".MAIN_DB_PREFIX."categorie_".($type=='f'?"fournisseur":"societe")." as cs";
 $sql.= " WHERE s.fk_stcomm = st.id";
 $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
 if (! $user->rights->societe->client->voir && ! $socid)	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
@@ -401,7 +401,7 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int'))) $mode=1;    // Search on a numeric
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
     if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit))) 
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
@@ -592,35 +592,35 @@ if ($resql)
     {
     	print '<td class="liste_titre">';
     	if (! empty($search_nom_only) && empty($search_nom)) $search_nom=$search_nom_only;
-    	print '<input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'">';
+    	print '<input class="flat searchstring" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($search_nom).'">';
     	print '</td>';
     }
 	// Barcode
     if (! empty($arrayfields['s.barcode']['checked']))
     {
 		print '<td class="liste_titre">';
-		print '<input class="flat" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
+		print '<input class="flat searchstring" type="text" name="sbarcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
 		print '</td>';
     }
 	// Customer code
     if (! empty($arrayfields['s.code_client']['checked']))
     {
         print '<td class="liste_titre">';
-    	print '<input class="flat" size="8" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'">';
+    	print '<input class="flat searchstring" size="8" type="text" name="search_customer_code" value="'.dol_escape_htmltag($search_customer_code).'">';
     	print '</td>';
     }
 	// Supplier code
     if (! empty($arrayfields['s.code_fournisseur']['checked']))
     {
         print '<td class="liste_titre">';
-    	print '<input class="flat" size="8" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'">';
+    	print '<input class="flat searchstring" size="8" type="text" name="search_supplier_code" value="'.dol_escape_htmltag($search_supplier_code).'">';
     	print '</td>';
     }
 	// Account Customer code
     if (! empty($arrayfields['s.code_compta']['checked']))
     {
         print '<td class="liste_titre">';
-    	print '<input class="flat" size="8" type="text" name="search_account_customer_code" value="'.dol_escape_htmltag($search_account_customer_code).'">';
+    	print '<input class="flat searchstring" size="8" type="text" name="search_account_customer_code" value="'.dol_escape_htmltag($search_account_customer_code).'">';
     	print '</td>';
     }
 	// Account Supplier code
@@ -634,14 +634,14 @@ if ($resql)
     if (! empty($arrayfields['s.town']['checked']))
     {
         print '<td class="liste_titre">';
-    	print '<input class="flat" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
+    	print '<input class="flat searchstring" size="6" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'">';
     	print '</td>';
     }
 	// Zip
     if (! empty($arrayfields['s.zip']['checked']))
     {
         print '<td class="liste_titre">';
-    	print '<input class="flat" size="4" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
+    	print '<input class="flat searchstring" size="4" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'">';
     	print '</td>';
     }
     // Country
@@ -662,42 +662,42 @@ if ($resql)
 	{
 	    // IdProf1
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="4" type="text" name="search_idprof1" value="'.dol_escape_htmltag($search_idprof1).'">';
+    	print '<input class="flat searchstring" size="4" type="text" name="search_idprof1" value="'.dol_escape_htmltag($search_idprof1).'">';
     	print '</td>';
 	}
     if (! empty($arrayfields['s.siret']['checked']))
     {
         // IdProf2
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="4" type="text" name="search_idprof2" value="'.dol_escape_htmltag($search_idprof2).'">';
+    	print '<input class="flat searchstring" size="4" type="text" name="search_idprof2" value="'.dol_escape_htmltag($search_idprof2).'">';
     	print '</td>';
     }
     if (! empty($arrayfields['s.ape']['checked']))
     {
         // IdProf3
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="4" type="text" name="search_idprof3" value="'.dol_escape_htmltag($search_idprof3).'">';
+    	print '<input class="flat searchstring" size="4" type="text" name="search_idprof3" value="'.dol_escape_htmltag($search_idprof3).'">';
     	print '</td>';
     }
     if (! empty($arrayfields['s.idprof4']['checked']))
     {
         // IdProf4
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="4" type="text" name="search_idprof4" value="'.dol_escape_htmltag($search_idprof4).'">';
+    	print '<input class="flat searchstring" size="4" type="text" name="search_idprof4" value="'.dol_escape_htmltag($search_idprof4).'">';
     	print '</td>';
     }
     if (! empty($arrayfields['s.idprof5']['checked']))
     {
         // IdProf5
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="4" type="text" name="search_idprof5" value="'.dol_escape_htmltag($search_idprof5).'">';
+    	print '<input class="flat searchstring" size="4" type="text" name="search_idprof5" value="'.dol_escape_htmltag($search_idprof5).'">';
     	print '</td>';
     }
     if (! empty($arrayfields['s.idprof6']['checked']))
     {
         // IdProf6
     	print '<td class="liste_titre">';
-    	print '<input class="flat" size="4" type="text" name="search_idprof6" value="'.dol_escape_htmltag($search_idprof6).'">';
+    	print '<input class="flat searchstring" size="4" type="text" name="search_idprof6" value="'.dol_escape_htmltag($search_idprof6).'">';
     	print '</td>';
     }
     
@@ -759,7 +759,18 @@ if ($resql)
 	   {
 			if (! empty($arrayfields["ef.".$key]['checked'])) 
 			{
-				print '<td class="liste_titre">';
+                $align=$extrafields->getAlignFlag($key);
+                $typeofextrafield=$extrafields->attribute_type[$key];
+                print '<td class="liste_titre'.($align?' '.$align:'').'">';
+    		    if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')))
+				{
+				    $crit=$val;
+    				$tmpkey=preg_replace('/search_options_/','',$key);
+    				$searchclass='';
+    				if (in_array($typeofextrafield, array('varchar', 'select'))) $searchclass='searchstring';
+    				if (in_array($typeofextrafield, array('int', 'double'))) $searchclass='searchnum';
+    				print '<input class="flat'.($searchclass?' '.$searchclass:'').'" size="4" type="text" name="search_options_'.$tmpkey.'" value="'.dol_escape_htmltag($search_array_options['search_options_'.$tmpkey]).'">';
+				}
 				print '</td>';
 			}
 	   }

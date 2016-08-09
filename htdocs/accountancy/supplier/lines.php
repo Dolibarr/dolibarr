@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>  
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
+ * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- *   
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/accountancy/supplier/lines.php
- * \ingroup Accounting Expert
- * \brief Page of detail of the lines of ventilation of invoices suppliers
+ * \file 		htdocs/accountancy/supplier/lines.php
+ * \ingroup 	Advanced accountancy
+ * \brief 		Page of detail of the lines of ventilation of invoices suppliers
  */
 require '../../main.inc.php';
 
@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/html.formventilation.class.
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -98,13 +99,13 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
-	
+
 	$db->begin();
-	
+
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as l";
 	$sql1 .= " SET l.fk_code_ventilation=" . GETPOST('account_parent');
 	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
-	
+
 	dol_syslog('accountancy/supplier/lines.php::changeaccount sql= ' . $sql1);
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -187,18 +188,18 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
-	
+
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
-	
+
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneSupplier") . '</b></td>';
-	
+
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<table class="noborder" width="100%">';
-	
+
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account(GETPOST('account_parent'), 'account_parent', 1);
 	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '" /></div>';
-	
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
@@ -211,35 +212,35 @@ if ($result) {
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
 	print "</tr>\n";
-	
+
 	print '<tr class="liste_titre"><td><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_ref" value="' . $search_ref . '"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_label" value="' . $search_label . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="15" name="search_account" value="' . $search_account . '"></td>';
 	print '<td class="liste_titre" colspan="2">&nbsp;</td>';
-	print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
+    print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
-	print "</td></tr>\n";
-	
+	print "</tr>\n";
+
 	$facturefournisseur_static = new FactureFournisseur($db);
 	$product_static = new Product($db);
-	
+
 	$var = True;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		$var = ! $var;
-		$codeCompta = $objp->account_number . ' ' . $objp->label;
-		
-		print "<tr $bc[$var]>";
-		
+		$codeCompta = length_accountg($objp->account_number) . ' - ' . $objp->label;
+
+		print '<tr'. $bc[$var].'>';
+
 		// Ref Invoice
 		$facturefournisseur_static->ref = $objp->facnumber;
 		$facturefournisseur_static->id = $objp->facid;
 		print '<td>' . $facturefournisseur_static->getNomUrl(1) . '</td>';
-		
+
 		// Ref Product
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -250,19 +251,19 @@ if ($result) {
 		else
 			print '&nbsp;';
 		print '</td>';
-		
+
 		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
 		print '<td align="center">' . price($objp->tva_tx) . '</td>';
-		print '<td align="center">' . $codeCompta . '</td>';
+		print '<td>' . $codeCompta . '</td>';
 		print '<td align="right">' . $objp->rowid . '</td>';
 		print '<td align="left"><a href="./card.php?id=' . $objp->rowid . '">';
 		print img_edit();
 		print '</a></td>';
-		
+
 		print '<td align="center"><input type="checkbox" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
-		
+
 		print "</tr>";
 		$i ++;
 	}

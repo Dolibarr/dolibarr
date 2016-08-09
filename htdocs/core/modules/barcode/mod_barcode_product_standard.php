@@ -278,7 +278,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		}
 
 		dol_syslog(get_class($this).'::verif_syntax codefortest='.$codefortest." typefortest=".$typefortest);
-		
+
 		$newcodefortest=$codefortest;
 
 		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
@@ -290,7 +290,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
     	        dol_syslog(get_class($this).'::verif_syntax newcodefortest='.$newcodefortest);
     	    }
 		}
-		
+
 		$result=check_value($mask,$newcodefortest);
 
 		return $result;

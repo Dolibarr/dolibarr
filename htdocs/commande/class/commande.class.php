@@ -9,6 +9,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -985,6 +986,7 @@ class Commande extends CommonOrder
         $this->user_author_id     = $user->id;
         $this->user_valid         = '';
 		$this->date				  = dol_now();
+		$this->date_commande	  = dol_now();
         $this->date_creation      = '';
         $this->date_validation    = '';
         $this->ref_client         = '';
@@ -1240,7 +1242,8 @@ class Commande extends CommonOrder
 
 				if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty)
 				{
-					$this->error=$langs->trans('ErrorStockIsNotEnough');
+                    $langs->load("errors");
+				    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return self::STOCK_NOT_ENOUGH_FOR_ORDER;
@@ -1253,7 +1256,7 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -1386,7 +1389,7 @@ class Commande extends CommonOrder
             if (empty($tva_tx)) $tva_npr=0;
             $localtax1_tx=get_localtax($tva_tx,1,$this->client,$mysoc,$tva_npr);
             $localtax2_tx=get_localtax($tva_tx,2,$this->client,$mysoc,$tva_npr);
-            
+
             // multiprix
             if($conf->global->PRODUIT_MULTIPRICES && $this->client->price_level)
             $price = $prod->multiprices[$this->client->price_level];
@@ -2418,7 +2421,57 @@ class Commande extends CommonOrder
 		return $this->classifyBilled();
 	}
 
-
+	/**
+	 * Classify the order as not invoiced
+	 *
+	 * @return     int     <0 if ko, >0 if ok
+	 */
+	function classifyUnBilled()
+	{
+	    global $conf, $user, $langs;
+	    $error = 0;
+	
+	    $this->db->begin();
+	
+	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET facture = 0';
+	    $sql.= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+	
+	    dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
+	    if ($this->db->query($sql))
+	    {
+	        // Call trigger
+	        $result=$this->call_trigger('ORDER_CLASSIFY_UNBILLED',$user);
+	        if ($result < 0) $error++;
+	        // End call triggers
+	
+	        if (! $error)
+	        {
+	            $this->facturee=0; // deprecated
+	            $this->billed=0;
+	
+	            $this->db->commit();
+	            return 1;
+	        }
+	        else
+	        {
+	            foreach($this->errors as $errmsg)
+	            {
+	                dol_syslog(get_class($this)."::classifyUnBilled ".$errmsg, LOG_ERR);
+	                $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            }
+	            $this->db->rollback();
+	            return -1*$error;
+	        }
+	    }
+	    else
+	    {
+	        $this->error=$this->db->error();
+	        $this->db->rollback();
+	        return -1;
+	    }
+	}
+	
+	
     /**
      *  Update a line in database
      *
@@ -2447,7 +2500,7 @@ class Commande extends CommonOrder
      */
 	function updateline($rowid, $desc, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0.0,$txlocaltax2=0.0, $price_base_type='HT', $info_bits=0, $date_start='', $date_end='', $type=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=null, $pa_ht=0, $label='', $special_code=0, $array_options=0, $fk_unit=null)
     {
-        global $conf, $mysoc;
+        global $conf, $mysoc, $langs;
 
         dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2481,7 +2534,7 @@ class Commande extends CommonOrder
 
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty, $mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
-            
+
             $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
@@ -2502,6 +2555,27 @@ class Commande extends CommonOrder
             //Fetch current line from the database and then clone the object and set it in $oldline property
             $line = new OrderLine($this->db);
             $line->fetch($rowid);
+
+            if (!empty($line->fk_product))
+            {
+                $product=new Product($this->db);
+                $result=$product->fetch($line->fk_product);
+                $product_type=$product->type;
+
+                if (! empty($conf->global->STOCK_MUST_BE_ENOUGH_FOR_ORDER) && $product_type == 0 && $product->stock_reel < $qty)
+                {
+                    $langs->load("errors");
+                    $this->error=$langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+                    dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
+                    $this->db->rollback();
+                    unset($_POST['productid']);
+                    unset($_POST['tva_tx']);
+                    unset($_POST['price_ht']);
+                    unset($_POST['qty']);
+                    unset($_POST['buying_price']);
+                    return self::STOCK_NOT_ENOUGH_FOR_ORDER;
+                }
+            }
 
             $staticline = clone $line;
 
@@ -2853,7 +2927,7 @@ class Commande extends CommonOrder
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->commande->client->warning_delay/60/60/24;
 	        $response->label=$langs->trans("OrdersToProcess");
-	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3';
+	        $response->url=DOL_URL_ROOT.'/commande/list.php?viewstatut=-3&mainmenu=commercial&leftmenu=orders';
 	        $response->img=img_object($langs->trans("Orders"),"order");
 
             $generic_commande = new Commande($this->db);
@@ -2918,7 +2992,7 @@ class Commande extends CommonOrder
     function LibStatut($statut,$billed,$mode,$donotshowbilled=0)
     {
         global $langs, $conf;
-        
+
         $billedtext = '';
         if (empty($donotshowbilled)) $billedtext .= ($billed?' - '.$langs->trans("Billed"):'');
 
@@ -2997,7 +3071,7 @@ class Commande extends CommonOrder
      */
     function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
     {
-        global $conf, $langs;
+        global $conf, $langs, $user;
 
         $result='';
 
@@ -3007,17 +3081,29 @@ class Commande extends CommonOrder
         if ($short) return $url;
 
         $picto = 'order';
-        $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->ref_client))
-            $label.= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
-        if (! empty($this->total_ht))
-            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_ttc))
-            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+        $label = '';
+
+		if ($user->rights->commande->lire) {
+			$label = '<u>'.$langs->trans("ShowOrder").'</u>';
+			if (!empty($this->ref)) {
+				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			}
+			if (!empty($this->ref_client)) {
+				$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			}
+			if (!empty($this->total_ht)) {
+				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1,
+						$conf->currency);
+			}
+			if (!empty($this->total_tva)) {
+				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,
+						$conf->currency);
+			}
+			if (!empty($this->total_ttc)) {
+				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1,
+						$conf->currency);
+			}
+		}
 
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';

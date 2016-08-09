@@ -66,6 +66,24 @@ if ($action == 'update') {
 		}
 	}
 	
+	// Save bank account journals
+	$arrayofbankaccount = GETPOST('bank_account', 'array');
+	foreach($arrayofbankaccount as $key => $code)
+	{
+		$bankaccount = new Account($db);
+		$res = $bankaccount->fetch($key);
+		if ($res > 0)
+		{
+			$bankaccount->accountancy_journal = $code;
+			$bankaccount->update($user);
+		}
+		else
+		{
+			$error++;
+			break;
+		}
+	}
+
 	if (! $error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -118,11 +136,11 @@ print '<br>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">' . $langs->trans('JournalFinancial') . '</td>';
+print '<td colspan="3">' . $langs->trans('JournalFinancial') . ' ('.$langs->trans('Opened').')</td>';
 print "</tr>\n";
 
 // Bank account
-$sql = "SELECT rowid, label, accountancy_journal";
+$sql = "SELECT rowid, label, number, accountancy_journal";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank_account";
 $sql .= " WHERE entity = " . $conf->entity;
 $sql .= " AND clos = 0";
@@ -135,26 +153,38 @@ if ($resql) {
 	
 	if ($numr > 0)
 		
+		$bankaccountstatic=new Account($db);
+
 		while ( $i < $numr ) {
 			$objp = $db->fetch_object($resql);
 			
 			$var = ! $var;
 			
+		$bankaccountstatic->id = $objp->rowid;
+		$bankaccountstatic->label = $objp->label;
+		$bankaccountstatic->number = $objp->number;
+		$bankaccountstatic->accountancy_journal = $objp->accountancy_journal;
+			
 			print '<tr ' . $bc[$var] . ' class="value">';
 			
 			// Param
-			print '<td width="50%"><label for="' . $objp->rowid . '">' . $langs->trans("Journal") . ' - ' . $objp->label . '</label></td>';
+		print '<td width="50%"><label for="' . $objp->rowid . '">' . $langs->trans("Journal");
+		print ' - '.$bankaccountstatic->getNomUrl(1);
+		print '</label></td>';
 			
 			// Value
 			print '<td>';
-			print '<input type="text" size="20" id="' . $objp->rowid . '" name="' . $objp->label . '" value="' . $objp->accountancy_journal . '" disabled>';
+		print '<input type="text" size="20" id="' . $objp->rowid . '" name="bank_account['.$objp->rowid.']" value="' . $objp->accountancy_journal . '">';
 			print '</td></tr>';
 			
 			$i ++;
 		}
-} else
+	$db->free($resql);
+}
+else
+{
 	dol_print_error($db);
-$db->free($resql);
+}
 
 print "</table>\n";
 

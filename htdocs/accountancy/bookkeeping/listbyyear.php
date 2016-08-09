@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com> 
+ * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2016 Florian Henry		<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -183,13 +183,13 @@ print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('AccountAccounting') . ': ';
 print $formventilation->select_account($search_numero_compte_start, 'search_numero_compte_start', 1, array (), 1, 1, '');
-print $langs->trans('to') . ' ' . $langs->trans('AccountAccounting') . ': ';
+print $langs->trans('To') . ' ' . $langs->trans('AccountAccounting') . ': ';
 print $formventilation->select_account($search_numero_compte_end, 'search_numero_compte_end', 1, array (), 1, 1, '');
 print '</div>';
 print '<div class="liste_titre">';
 print $langs->trans('From') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 print $formventilation->select_auxaccount($search_code_tiers_start, 'search_code_tiers_start', 1);
-print $langs->trans('to') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
+print $langs->trans('To') . ' ' . $langs->trans('ThirdPartyAccount') . ': ';
 print $formventilation->select_auxaccount($search_code_tiers_end, 'searchcode_tiers_end', 1);
 print '</div>';
 print "<table class=\"noborder\" width=\"100%\">";
@@ -268,8 +268,8 @@ $var = True;
 
 foreach ( $object->lines as $line ) {
 	$var = ! $var;
-	
-	print "<tr $bc[$var]>";
+
+	print '<tr'. $bc[$var].'>';
 	print '<td>' . $line->piece_num . '</td>' . "\n";
 	print '<td>' . $line->doc_type . '</td>' . "\n";
 	print '<td>' . dol_print_date($line->doc_date) . '</td>';

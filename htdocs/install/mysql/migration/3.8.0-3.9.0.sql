@@ -54,7 +54,7 @@ ALTER TABLE llx_askpricesupplier RENAME TO llx_supplier_proposal;
 ALTER TABLE llx_askpricesupplierdet RENAME TO llx_supplier_proposaldet;
 ALTER TABLE llx_askpricesupplier_extrafields RENAME TO llx_supplier_proposal_extrafields;
 ALTER TABLE llx_askpricesupplierdet_extrafields RENAME TO llx_supplier_proposaldet_extrafields;
-ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_asksupplierprice fk_supplier_proposal integer NOT NULL;
+ALTER TABLE llx_supplier_proposaldet CHANGE COLUMN fk_askpricesupplier fk_supplier_proposal integer NOT NULL;
 
 -- Fix bad data
 update llx_opensurvey_sondage set format = 'D' where format = 'D+';
@@ -608,22 +608,38 @@ INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (14
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1483,  148, '5','0','VAT super-reduced rate', 1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (1484,  148, '0','0','VAT Rate 0', 1);
 
+-- VMYSQL4.1 ALTER TABLE llx_c_type_resource CHANGE COLUMN rowid rowid integer NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE llx_import_model MODIFY COLUMN type varchar(50);
+
 -- Module accountancy. Function backported from 4.0
 DROP TABLE llx_accountingtransaction;
 DROP TABLE llx_accountingdebcred;
 
 ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
 
+DROP TABLE llx_c_accounting_category;
 CREATE TABLE llx_c_accounting_category (
   rowid 			integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
   code 				varchar(16) NOT NULL,
   label 			varchar(255) NOT NULL,
   range_account		varchar(255) NOT NULL,
+  sens 				tinyint NOT NULL DEFAULT '0', -- For international accounting  0 : credit - debit / 1 : debit - credit
+  category_type		tinyint NOT NULL DEFAULT '0', -- Field calculated or not
+  formula			varchar(255) NOT NULL,			 -- Example : 1 + 2 (rowid of the category)
   position    		integer DEFAULT 0,
-  fk_country 		integer DEFAULT NULL,			-- This category is dedicated to a country
+  fk_country 		integer DEFAULT NULL,			 -- This category is dedicated to a country
   active 			integer DEFAULT 1
 ) ENGINE=innodb;
 
 ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code);
+
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1,'VTE',"Ventes de marchandises", '707xxx', 0, 0, '', '10', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2,'MAR',"Coût d'achats marchandises vendues", '603xxx | 607xxx | 609xxx', 0, 0, '', '20', 1, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE',"Marge commerciale", '', 0, 1, '1 + 2', '30', 1, 1);
+
+UPDATE llx_accounting_account SET account_parent='0' WHERE account_parent REGEXP '[A-Za-z]';
+UPDATE llx_accounting_account SET datec=NOW(),tms=NOW();
+UPDATE llx_accounting_account SET account_parent='0' WHERE account_parent='';
 
 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer;
