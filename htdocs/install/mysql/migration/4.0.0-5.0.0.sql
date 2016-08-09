@@ -41,3 +41,5 @@ DROP TABLE llx_holiday_types;
 
 ALTER TABLE llx_notify ADD COLUMN type_target varchar(16) NULL;
 
+ALTER TABLE llx_entrepot DROP COLUMN valo_pmp;
+
