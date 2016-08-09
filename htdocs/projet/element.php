@@ -37,6 +37,7 @@ if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (! empty($conf->commande->enabled))    require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->supplier_proposal->enabled)) require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->contrat->enabled))     require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
@@ -232,11 +233,11 @@ $listofreferent=array(
     'testnew'=>$user->rights->facture->creer,
     'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'proposal_supplier'=>array(
-	'name'=>"SuppliersOrders",
-	'title'=>"ListSupplierOrdersAssociatedProject",
-	'class'=>'CommandeFournisseur',
-	'table'=>'commande_fournisseur',
-	'datefieldname'=>'date_commande',
+	'name'=>"SuppliersProposals",
+	'title'=>"ListSupplierProposalsAssociatedProject",
+	'class'=>'SupplierProposal',
+	'table'=>'supplier_proposal',
+	'datefieldname'=>'date',
     'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'supplier_proposal',
     'buttonnew'=>'AddSupplierProposal',
