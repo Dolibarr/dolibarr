@@ -54,7 +54,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Intervention"));
 
 $form = new Form($db);
 
@@ -70,12 +70,12 @@ if ($id > 0 || ! empty($ref))
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
-		print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td>';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 		print '</td></tr>';
 
 		// Company
-		print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans('Company').'</td><td>'.$societe->getNomUrl(1).'</td></tr>';
 
 		print "</table>";
 

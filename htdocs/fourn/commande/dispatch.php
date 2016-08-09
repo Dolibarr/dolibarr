@@ -258,17 +258,15 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
  * View
  */
 
+$now = dol_now();
+
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 $warehouse_static = new Entrepot($db);
 $supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
-$help_url = 'EN:CommandeFournisseur';
-llxHeader('', $langs->trans("OrderCard"), $help_url, '', 0, 0, array(
-		'/fourn/js/lib_dispatch.js'
-));
-
-$now = dol_now();
+$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('', $langs->trans("Order"), $help_url, '', 0, 0, array('/fourn/js/lib_dispatch.js'));
 
 if ($id > 0 || ! empty($ref)) {
 	$soc = new Societe($db);
@@ -288,7 +286,7 @@ if ($id > 0 || ! empty($ref)) {
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td width="20%">' . $langs->trans("Ref") . '</td>';
+	print '<tr><td class="titlefield">' . $langs->trans("Ref") . '</td>';
 	print '<td colspan="2">';
 	print $form->showrefnav($commande, 'ref', '', 1, 'ref', 'ref');
 	print '</td>';

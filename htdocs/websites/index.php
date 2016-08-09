@@ -702,6 +702,7 @@ if (count($object->records) > 0)
         else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
         print $out;
+
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         
