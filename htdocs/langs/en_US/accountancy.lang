@@ -158,6 +158,8 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
+CleanHistory=Reset all accountancy for selected year
 
 ## Dictionary
 Range=Range of accounting account
