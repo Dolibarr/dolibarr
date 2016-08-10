@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2015 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Juanjo Menent	 	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
@@ -529,10 +529,10 @@ else
 
 
             // Name
-            print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-	        print '<td width="30%"><input name="lastname" id="lastname" type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname")?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
-            print '<td width="20%"><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-	        print '<td width="30%"><input name="firstname" id="firstname"type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname")?GETPOST("firstname"):$object->firstname).'"></td></tr>';
+            print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
+	        print '<td><input name="lastname" id="lastname" type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname")?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
+	        print '<td><input name="firstname" id="firstname"type="text" size="30" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname")?GETPOST("firstname"):$object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -554,7 +554,7 @@ else
             }
 
             // Civility
-            print '<tr><td width="15%"><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
+            print '<tr><td><label for="civility_id">'.$langs->trans("UserTitle").'</label></td><td colspan="3">';
             print $formcompany->select_civility(GETPOST("civility_id",'alpha')?GETPOST("civility_id",'alpha'):$object->civility_id);
             print '</td></tr>';
 
@@ -783,10 +783,10 @@ else
            	}
            	
             // Lastname
-            print '<tr><td width="20%" class="fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-            print '<td width="30%"><input name="lastname" id="lastname" type="text" size="20" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'" autofocus="autofocus"></td>';
-            print '<td width="20%"><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-	        print '<td width="30%"><input name="firstname" id="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
+            print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
+            print '<td><input name="lastname" id="lastname" type="text" size="20" maxlength="80" value="'.(isset($_POST["lastname"])?$_POST["lastname"]:$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
+	        print '<td><input name="firstname" id="firstname" type="text" size="20" maxlength="80" value="'.(isset($_POST["firstname"])?$_POST["firstname"]:$object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -890,7 +890,7 @@ else
             print $form->selectarray('priv',$selectarray,$object->priv,0);
             print '</td></tr>';
 
-             // Note Public
+            // Note Public
             print '<tr><td class="tdtop"><label for="note_public">'.$langs->trans("NotePublic").'</label></td><td colspan="3">';
             $doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
             print $doleditor->Create(1);
@@ -902,7 +902,7 @@ else
             print $doleditor->Create(1);
             print '</td></tr>';
 
-            // Statut
+            // Status
             print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td colspan="3">';
             print $object->getLibStatut(4);
@@ -1058,7 +1058,7 @@ else
         // Company
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
         {
-            print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+            print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
             if ($object->socid > 0)
             {
                 $objsoc->fetch($object->socid);
@@ -1074,7 +1074,7 @@ else
         print '</tr>';
 
         // Civility
-        print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
+        print '<tr><td class="titlefield">'.$langs->trans("UserTitle").'</td><td>';
         print $object->getCivilityLabel();
         print '</td></tr>';
 
@@ -1122,7 +1122,7 @@ else
         
 		// Categories
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire)) {
-			print '<tr><td>' . $langs->trans( "Categories" ) . '</td>';
+			print '<tr><td class="titlefield">' . $langs->trans("Categories") . '</td>';
 			print '<td colspan="3">';
 			print $form->showCategories( $object->id, 'contact', 1 );
 			print '</td></tr>';
@@ -1141,7 +1141,7 @@ else
 
         if (! empty($conf->propal->enabled))
         {
-            print '<tr><td>'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
+            print '<tr><td class="titlefield">'.$langs->trans("ContactForProposals").'</td><td colspan="3">';
             print $object->ref_propal?$object->ref_propal:$langs->trans("NoContactForAnyProposal");
             print '</td></tr>';
         }
