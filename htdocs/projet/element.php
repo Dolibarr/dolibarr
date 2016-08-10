@@ -284,7 +284,7 @@ $listofreferent=array(
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
 	'disableamount'=>1,
-    'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
     'lang'=>'interventions',
     'buttonnew'=>'AddIntervention',
     'testnew'=>$user->rights->ficheinter->creer,
