@@ -182,7 +182,7 @@ class modCategorie extends DolibarrModules
 			'u.label' => "Label",
 			'u.description' => "Description",
 			'p.rowid' => 'ContactId',
-			'p.civility' => 'Civility',
+			'p.civility' => 'UserTitle',
 			'p.lastname' => 'LastName',
 			'p.firstname' => 'Firstname',
 			'p.address' => 'Address',
