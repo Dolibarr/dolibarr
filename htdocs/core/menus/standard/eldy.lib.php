@@ -980,13 +980,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 				$newmenu->add("/compta/resultat/index.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("Reportings"),1,$user->rights->accounting->comptarapport->lire, '', $mainmenu, 'ca');
 
-				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/accountancy/report/result.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("ReportInOut").'-'.$langs->trans("MenuAccountancy"),2,$user->rights->accounting->comptarapport->lire);
-				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/resultat/index.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("ReportInOut"),2,$user->rights->accounting->comptarapport->lire);
-				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/resultat/clientfourn.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
-				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/index.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("ReportTurnover"),2,$user->rights->accounting->comptarapport->lire);
-				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
-				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=report&amp;mainmenu=accountancy",$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
-				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=report&amp;mainmenu=accountancy", $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/accountancy/report/result.php?leftmenu=report",$langs->trans("ReportInOut"),2,$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/resultat/index.php?leftmenu=report",$langs->trans("ByExpenseIncome"),2,$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/resultat/clientfourn.php?leftmenu=report",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/index.php?leftmenu=report",$langs->trans("ReportTurnover"),2,$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=report",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=report",$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
+				if (empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=report", $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
 
 				// Admin
 				$langs->load("admin");
