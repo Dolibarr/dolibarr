@@ -60,16 +60,16 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) acces
  * Actions
  */
 
-if ($user->rights->banque->consolidate && $action == 'dvnext')
+if ($user->rights->banque->consolidate)
 {
     $al = new AccountLine($db);
-    $al->datev_next($_GET["rowid"]);
-}
+	$al->fetch($_GET['rowid']);
 
-if ($user->rights->banque->consolidate && $action == 'dvprev')
-{
-    $al = new AccountLine($db);
-    $al->datev_previous($_GET["rowid"]);
+	if ($action == 'dvnext') {
+		$al->increaseValueDate();
+	} elseif ($action == 'dvprev') {
+		$al->decreaseValueDate();
+	}
 }
 
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)

@@ -52,18 +52,17 @@ $fieldname = isset($ref)?'ref':'rowid';
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque',$fieldid,'bank_account','','',$fieldname);
 
-if ($user->rights->banque->consolidate && $action == 'dvnext' && ! empty($dvid))
+if ($user->rights->banque->consolidate && ! empty($dvid))
 {
 	$al = new AccountLine($db);
-	$al->datev_next($dvid);
-}
+	$al->fetch($dvid);
 
-if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
-{
-	$al = new AccountLine($db);
-	$al->datev_previous($dvid);
+	if ($action == 'dvnext') {
+		$al->increaseValueDate();
+	} elseif ($action == 'dvprev') {
+		$al->decreaseValueDate();
+	}
 }
-
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');

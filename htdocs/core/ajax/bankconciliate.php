@@ -38,36 +38,21 @@ $action=GETPOST('action');
  * View
  */
 
-// Ajout directives pour resoudre bug IE
-//header('Cache-Control: Public, must-revalidate');
-//header('Pragma: public');
-
-//top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
-
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvnext')
+if (($user->rights->banque->modifier || $user->rights->banque->consolidate))
 {
 	// Increase date
 	$al = new AccountLine($db);
-    $al->datev_next($_GET["rowid"]);
-    $al->fetch($_GET["rowid"]);
+	$al->fetch($_GET["rowid"]);
+
+	if ($action == 'dvnext') {
+		$al->increaseValueDate();
+	} elseif ($action == 'dvprev') {
+		$al->decreaseValueDate();
+	}
 
     print '<span>'.dol_print_date($db->jdate($al->datev),"day").'</span>';
 
     exit;
 }
-
-if (($user->rights->banque->modifier || $user->rights->banque->consolidate) && $action == 'dvprev')
-{
-	// Decrease date
-	$al =new AccountLine($db);
-    $al->datev_previous($_GET["rowid"]);
-    $al->fetch($_GET["rowid"]);
-
-    print '<span>'.dol_print_date($db->jdate($al->datev),"day").'</span>';
-
-    exit;
-}
-

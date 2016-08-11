@@ -1421,6 +1421,7 @@ class Account extends CommonObject
 
 		return $fieldlists;
 	}
+	}
 
 
     /**
@@ -1829,15 +1830,36 @@ class AccountLine extends CommonObject
         return 0;
     }
 
+	/**
+	 * Increases the value date of the current transaction
+	 *
+	 * @return int >0 if OK, 0 if KO
+	 */
+	public function increaseValueDate()
+	{
+		return $this->datev_change($this->id,1);
+    }
+
+	/**
+	 * Decreases the value date of the current transaction
+	 *
+	 * @return int >0 if OK, 0 if KO
+	 */
+	public function decreaseValueDate()
+	{
+		return $this->datev_change($this->id,-1);
+    }
+
     /**
      * 	Increase value date of a rowid
      *
      *	@param	int		$id		Id of line to change
      *	@return	int				>0 if OK, 0 if KO
+     * @deprecated Use AccountLine::increaseValueDate
      */
     function datev_next($id)
     {
-        return $this->datev_change($id,1);
+	    return $this->datev_change($id,1);
     }
 
     /**
@@ -1845,10 +1867,11 @@ class AccountLine extends CommonObject
      *
      *	@param	int		$id		Id of line to change
      *	@return	int				>0 if OK, 0 if KO
+     * @deprecated Use AccountLine::decreaseValueDate
      */
     function datev_previous($id)
     {
-        return $this->datev_change($id,-1);
+	    return $this->datev_change($id,1);
     }
 
 
