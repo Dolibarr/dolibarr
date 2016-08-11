@@ -1814,6 +1814,8 @@ class AccountLine extends CommonObject
             {
                 if ($this->db->affected_rows($result))
                 {
+                	$this->datev = $newdate;
+
                     return 1;
                 }
             }
