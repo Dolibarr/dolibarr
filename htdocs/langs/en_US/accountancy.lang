@@ -56,7 +56,8 @@ ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services descripti
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
-ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disable by default. Be careful with the function of length of the accounts.
+ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disable by default. Be careful with the function "length of the accounts".
+BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions. Enable by default with this module.
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal
