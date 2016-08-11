@@ -25,6 +25,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("compta");
 $langs->load("salaries");
@@ -40,6 +41,8 @@ $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
 $search_label = GETPOST('search_label','alpha');
 $search_amount = GETPOST('search_amount','alpha');
+$search_account = GETPOST('search_account','int');
+
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -68,11 +71,12 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
 	$search_amount="";
+	$search_account='';
     $typeid="";
 }
 
@@ -85,12 +89,16 @@ llxHeader();
 $form = new Form($db);
 $salstatic = new PaymentSalary($db);
 $userstatic = new User($db);
+$accountstatic = new Account($db);
 
 $sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.login, u.email, u.admin, u.salary as current_salary, u.fk_soc as fk_soc,";
-$sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment,";
+$sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.datev as datev, s.fk_typepayment as type, s.num_payment, s.fk_bank,";
+$sql.= " ba.rowid as bid, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id,";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE u.rowid = s.fk_user";
 $sql.= " AND s.entity = ".$conf->entity;
@@ -100,6 +108,7 @@ if ($search_ref)	$sql.=" AND s.rowid=".$search_ref;
 if ($search_user)   $sql.=natural_search(array('u.login', 'u.lastname', 'u.firstname', 'u.email', 'u.note'), $search_user);
 if ($search_label) 	$sql.=natural_search(array('s.label'), $search_label);
 if ($search_amount) $sql.=natural_search("s.amount", $search_amount, 1);
+if ($search_account > 0) $sql .=" AND b.fk_account=".$search_account;
 if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
@@ -150,6 +159,7 @@ if ($result)
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+    if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
     print "</tr>\n";
@@ -173,6 +183,13 @@ if ($result)
 	print '<td class="liste_titre" align="left">';
 	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
 	print '</td>';
+	// Account
+	if (! empty($conf->banque->enabled))
+    {
+	    print '<td>';
+	    $form->select_comptes($search_account,'search_account',0,'',1);
+	    print '</td>';
+    }
 	// Amount
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
 
@@ -210,7 +227,21 @@ if ($result)
         print '<td align="center">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
         // Type
         print '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
-		// Amount
+		// Account
+    	if (! empty($conf->banque->enabled))
+	    {
+	        print '<td>';
+	        if ($obj->fk_bank > 0)
+	        {
+	        	//$accountstatic->fetch($obj->fk_bank);
+	            $accountstatic->id=$obj->bid;
+	            $accountstatic->label=$obj->blabel;
+	            print $accountstatic->getNomUrl(1);
+	        }
+	        else print '&nbsp;';
+	        print '</td>';
+	    }
+        // Amount
         print "<td align=\"right\">".price($obj->amount)."</td>";
         print "<td></td>";
         print "</tr>\n";
@@ -220,7 +251,9 @@ if ($result)
         $i++;
     }
     
-    print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").'</td>';
+    $colspan=6;
+    if (! empty($conf->banque->enabled)) $colspan++;
+    print '<tr class="liste_total"><td colspan="'.$colspan.'" class="liste_total">'.$langs->trans("Total").'</td>';
     print '<td class="liste_total" align="right">'.price($total)."</td>";
 	print "<td></td></tr>";
 
