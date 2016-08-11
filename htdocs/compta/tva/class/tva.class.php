@@ -583,6 +583,9 @@ class Tva extends CommonObject
                     if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);
+
+						$accline = new AccountLine($this->db);
+						$accline->fetch($bank_line_id);
                     }
 					else
 					{
@@ -591,7 +594,7 @@ class Tva extends CommonObject
 					}
 
                     // Update links
-                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/compta/tva/card.php?id=', "(VATPayment)", "payment_vat");
+                    $result=$accline->addUrl($this->id, DOL_URL_ROOT.'/compta/tva/card.php?id=', "(VATPayment)", "payment_vat");
                     if ($result < 0)
                     {
                     	$this->error=$acc->error;

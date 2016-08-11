@@ -432,12 +432,14 @@ class PaymentLoan extends CommonObject
                     dol_print_error($this->db);
                 }
 
+                $accline = new AccountLine($this->db);
+
                 // Add link 'payment_loan' in bank_url between payment and bank transaction
                 $url='';
                 if ($mode == 'payment_loan') $url=DOL_URL_ROOT.'/loan/payment/card.php?id=';
                 if ($url)
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(payment)', $mode);
+                    $result=$accline->addUrl($this->id, $url, '(payment)', $mode);
                     if ($result <= 0)
                     {
                         $error++;
@@ -449,7 +451,7 @@ class PaymentLoan extends CommonObject
                 //$linkaddedforthirdparty=array();
                 if ($mode == 'payment_loan')
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
+                    $result=$accline->addUrl($this->id, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
                     if ($result <= 0) dol_print_error($this->db);
                 }
             }

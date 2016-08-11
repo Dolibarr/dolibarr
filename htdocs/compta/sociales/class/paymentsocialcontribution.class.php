@@ -512,12 +512,15 @@ class PaymentSocialContribution extends CommonObject
                     dol_print_error($this->db);
                 }
 
+                $accline = new AccountLine($this->db);
+	            $accline->fetch($bank_line_id);
+
                 // Add link 'payment', 'payment_supplier', 'payment_sc' in bank_url between payment and bank transaction
                 $url='';
                 if ($mode == 'payment_sc') $url=DOL_URL_ROOT.'/compta/payment_sc/card.php?id=';
                 if ($url)
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                    $result=$accline->addUrl($this->id, $url, '(paiement)', $mode);
                     if ($result <= 0)
                     {
                         $error++;
@@ -533,7 +536,7 @@ class PaymentSocialContribution extends CommonObject
                     {
                         $socialcontrib = new ChargeSociales($this->db);
                         $socialcontrib->fetch($key);
-                        $result=$acc->add_url_line($bank_line_id, $socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
+                        $result=$accline->addUrl($socialcontrib->id, DOL_URL_ROOT.'/compta/charges.php?id=', $socialcontrib->type_libelle.(($socialcontrib->lib && $socialcontrib->lib!=$socialcontrib->type_libelle)?' ('.$socialcontrib->lib.')':''),'sc');
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }

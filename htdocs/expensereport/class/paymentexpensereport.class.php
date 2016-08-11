@@ -504,12 +504,15 @@ class PaymentExpenseReport extends CommonObject
                     dol_print_error($this->db);
                 }
 
+                $accline = new AccountLine($this->db);
+	            $accline->fetch($bank_line_id);
+
                 // Add link 'payment', 'payment_supplier', 'payment_expensereport' in bank_url between payment and bank transaction
                 $url='';
                 if ($mode == 'payment_expensereport') $url=DOL_URL_ROOT.'/expensereport/payment/card.php?rowid=';
                 if ($url)
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                    $result=$accline->addUrl($this->id, $url, '(paiement)', $mode);
                     if ($result <= 0)
                     {
                         $error++;
@@ -526,8 +529,7 @@ class PaymentExpenseReport extends CommonObject
                         {
                             $euser = new User($this->db);
                             $euser->fetch($key);
-                            $result=$acc->add_url_line(
-                                $bank_line_id,
+                            $result=$accline->addUrl(
                                 $euser->id,
                                 DOL_URL_ROOT.'/user/card.php?id=',
                                 $euser->getFullName($langs),

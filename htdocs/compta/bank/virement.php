@@ -105,9 +105,17 @@ if ($action == 'add')
 			if (! $error) $bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
 			if (! ($bank_line_id_to > 0)) $error++;
 
-		    if (! $error) $result=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+		    if (! $error) {
+		    	$accline_from = new AccountLine($db);
+			    $accline_from->fetch($bank_line_id_from);
+		    	$result=$accline_from->addUrl($bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+		    }
 			if (! ($result > 0)) $error++;
-		    if (! $error) $result=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+		    if (! $error) {
+			    $accline_to = new AccountLine($db);
+			    $accline_to->fetch($bank_line_id_to);
+		    	$result=$accline_to->addUrl($bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+		    }
 			if (! ($result > 0)) $error++;
 
 			if (! $error)

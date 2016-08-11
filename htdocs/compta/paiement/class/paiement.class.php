@@ -495,6 +495,9 @@ class Paiement extends CommonObject
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
             if ($bank_line_id > 0)
             {
+	            $accline = new AccountLine($this->db);
+	            $accline->fetch($bank_line_id);
+
                 $result=$this->update_fk_bank($bank_line_id);
                 if ($result <= 0)
                 {
@@ -510,7 +513,7 @@ class Paiement extends CommonObject
                     if ($mode == 'payment_supplier') $url=DOL_URL_ROOT.'/fourn/paiement/card.php?id=';
                     if ($url)
                     {
-                        $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+	                    $result=$accline->addUrl($this->id, $url, '(paiement)', $mode);
                         if ($result <= 0)
                         {
                             $error++;
@@ -532,8 +535,7 @@ class Paiement extends CommonObject
                             $fac->fetch_thirdparty();
                             if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
-                                $result=$acc->add_url_line(
-                                    $bank_line_id,
+	                            $result=$accline->addUrl(
                                     $fac->thirdparty->id,
                                     DOL_URL_ROOT.'/comm/card.php?socid=',
                                     $fac->thirdparty->name,
@@ -550,8 +552,7 @@ class Paiement extends CommonObject
                             $fac->fetch_thirdparty();
                             if (! in_array($fac->thirdparty->id,$linkaddedforthirdparty)) // Not yet done for this thirdparty
                             {
-                                $result=$acc->add_url_line(
-                                    $bank_line_id,
+	                            $result=$accline->addUrl(
                                     $fac->thirdparty->id,
                                     DOL_URL_ROOT.'/fourn/card.php?socid=',
                                     $fac->thirdparty->name,
@@ -567,8 +568,7 @@ class Paiement extends CommonObject
 				// Add link 'WithdrawalPayment' in bank_url
 				if (! $error && $label == '(WithdrawalPayment)')
 				{
-					$result=$acc->add_url_line(
-						$bank_line_id,
+					$result=$accline->addUrl(
 						$this->id_prelevement,
 						DOL_URL_ROOT.'/compta/prelevement/card.php?id=',
 						$this->num_paiement,

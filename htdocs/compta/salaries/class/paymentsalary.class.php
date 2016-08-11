@@ -394,6 +394,8 @@ class PaymentSalary extends CommonObject
 					// So we know the payment which has generate the banking ecriture
 					if ($bank_line_id > 0)
 					{
+						$accline = new AccountLine($this->db);
+						$accline->fetch($bank_line_id);
 						$this->update_fk_bank($bank_line_id);
 					}
 					else
@@ -407,7 +409,7 @@ class PaymentSalary extends CommonObject
 						// Add link 'payment_salary' in bank_url between payment and bank transaction
 						$url=DOL_URL_ROOT.'/compta/salaries/card.php?id=';
 
-						$result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
+						$result=$accline->addUrl($this->id, $url, "(SalaryPayment)", "payment_salary");
 						if ($result <= 0)
 						{
 							$this->error=$acc->error;
@@ -419,8 +421,7 @@ class PaymentSalary extends CommonObject
 					$fuser->fetch($this->fk_user);
 
 					// Add link 'user' in bank_url between operation and bank transaction
-					$result=$acc->add_url_line(
-						$bank_line_id,
+					$result=$accline->addUrl(
 						$this->fk_user,
 						DOL_URL_ROOT.'/user/card.php?id=',
 						$fuser->getFullName($langs),

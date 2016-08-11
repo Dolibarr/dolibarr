@@ -306,7 +306,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 $insertid=$acct->addline($dateop, $operation, $label, $cotisation, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
                 if ($insertid > 0)
                 {
-                    $inserturlid=$acct->add_url_line($insertid, $object->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $object->getFullname($langs), 'member');
+                	$accountline = new AccountLine($db);
+	                $accountline->fetch($insertid);
+
+                    $inserturlid=$accountline->addUrl($object->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $object->getFullName($langs), 'member');
                     if ($inserturlid > 0)
                     {
                         // Met a jour la table cotisation

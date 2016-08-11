@@ -516,7 +516,8 @@ class PaymentDonation extends CommonObject
                 if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/don/payment/card.php?rowid=';
                 if ($url)
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                	$accline = new AccountLine($this->db);
+                    $result=$accline->addUrl($this->id, $url, '(paiement)', $mode);
                     if ($result <= 0)
                     {
                         $error++;
