@@ -47,7 +47,7 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 -- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  entity          integer,
+  entity          integer DEFAULT 1,
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date
@@ -198,7 +198,7 @@ ALTER TABLE llx_extrafields ADD COLUMN ishidden integer DEFAULT 0;
 
 
 ALTER TABLE llx_paiementfourn ADD COLUMN ref varchar(30) AFTER rowid;
-ALTER TABLE llx_paiementfourn ADD COLUMN entity integer AFTER ref;
+ALTER TABLE llx_paiementfourn ADD COLUMN entity integer DEFAULT 1 AFTER ref;
 
 
 CREATE TABLE llx_multicurrency 
@@ -499,7 +499,7 @@ CREATE TABLE llx_oauth_token (
     token text,
     fk_user integer,
     fk_adherent integer,
-    entity integer
+    entity integer DEFAULT 1
 )ENGINE=InnoDB;
 
 CREATE TABLE llx_oauth_state (
@@ -508,7 +508,7 @@ CREATE TABLE llx_oauth_state (
     state varchar(128),
     fk_user integer,
     fk_adherent integer,
-    entity integer
+    entity integer DEFAuLT 1
 )ENGINE=InnoDB;
 
 -- At end (higher risk of error)
