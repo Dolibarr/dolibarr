@@ -119,12 +119,14 @@ function dolGetModulesDirs($subdir='')
  *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
  *	@return		string							Default paper format code
  */
-function dol_getDefaultFormat($outputlangs='')
+function dol_getDefaultFormat(Translate $outputlangs = null)
 {
     global $langs;
 
     $selected='EUA4';
-    if (empty($outputlangs) || ! is_object($outputlangs)) $outputlangs=$langs;
+    if (!$outputlangs) {
+    	$outputlangs=$langs;
+    }
 
     if ($outputlangs->defaultlang == 'ca_CA') $selected='CAP4';        // Canada
     if ($outputlangs->defaultlang == 'en_US') $selected='USLetter';    // US
@@ -1617,7 +1619,7 @@ function dol_buildlogin($lastname,$firstname)
 /**
  *  Return array to use for SoapClient constructor
  *
- *  @return     param
+ *  @return     array
  */
 function getSoapParams()
 {
