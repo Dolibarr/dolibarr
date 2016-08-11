@@ -1266,6 +1266,8 @@ if ($action == 'create')
 	if ($origin != 'project' && $originid) {
 		print '<input type="hidden" name="origin" value="' . $origin . '">';
 		print '<input type="hidden" name="originid" value="' . $originid . '">';
+	} elseif ($origin == 'project' && !empty($projectid)) {
+		print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 	}
 
 	dol_fiche_head();
