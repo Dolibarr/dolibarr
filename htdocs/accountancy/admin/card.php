@@ -70,7 +70,7 @@ if ($action == 'add') {
 		}
 
 		if (GETPOST('account_parent') <= 0) {
-			$account_parent = '';
+			$account_parent = 0;
 		} else {
 			$account_parent = GETPOST('account_parent','int');
 		}
