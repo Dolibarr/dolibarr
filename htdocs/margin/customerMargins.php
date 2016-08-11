@@ -54,6 +54,7 @@ if (!empty($_POST['startdatemonth']))
 if (!empty($_POST['enddatemonth']))
   $enddate  = dol_mktime(23, 59, 59, $_POST['enddatemonth'],  $_POST['enddateday'],  $_POST['enddateyear']);
 
+
 /*
  * View
  */
@@ -85,9 +86,10 @@ if ($socid > 0) {
 
 	if ($soc->client)
 	{
-		print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+		print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 		print '<td colspan="4">';
-		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1 OR client=3',1,0,1);
+		print $form->select_company($socid, 'socid', 'client=1 OR client=3', 1, 0, 0);
+		//$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$socid,$socid,'socid','client=1 OR client=3',1,0,1);
 		print '</td></tr>';
 
 		$client = true;
@@ -96,9 +98,10 @@ if ($socid > 0) {
 	}
 }
 else {
-	print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td colspan="4">';
-	$form->form_thirdparty($_SERVER['PHP_SELF'],null,'socid','client=1 OR client=3',1,0,1);
+	print $form->select_company(null, 'socid', 'client=1 OR client=3', 1, 0, 0);
+	//$form->form_thirdparty($_SERVER['PHP_SELF'],null,'socid','client=1 OR client=3',1,0,1);
 	print '</td></tr>';
 }
 
@@ -121,11 +124,11 @@ if (! $sortfield)
 
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
-print '<td width="20%">';
+print '<td>';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
 print '</td>';
-print '<td width="20%">'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
-print '<td width="20%">';
+print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
+print '<td>';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
@@ -139,20 +142,20 @@ print '<br>';
 print '<table class="border" width="100%">';
 
 // Total Margin
-print '<tr><td width="20%">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
+print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
 print '<span id="totalMargin"></span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
 if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-	print '<tr><td width="20%">'.$langs->trans("MarginRate").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="4">';
 	print '<span id="marginRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
 
 // Mark Rate
 if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-	print '<tr><td width="20%">'.$langs->trans("MarkRate").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="4">';
 	print '<span id="markRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
@@ -324,10 +327,10 @@ $db->close();
 
 <script type="text/javascript">
 $(document).ready(function() {
-
+	/*
 	$("#socid").change(function() {
     	$("div.fiche form").submit();
-	});
+	});*/
 
 	$("#totalMargin").html("<?php echo price($totalMargin, null, null, null, null, $rounding); ?>");
 	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%"); ?>");

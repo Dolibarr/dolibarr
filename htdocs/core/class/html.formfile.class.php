@@ -721,7 +721,7 @@ class FormFile
     	if (! empty($file_list))
     	{
     	    $out='<dl class="dropdown">
-    			<dt><a href="#">'.img_picto('', 'listlight').'</a></dt>
+    			<dt><a href="#" onClick="return false;">'.img_picto('', 'listlight').'</a></dt>
     			<dd><div class="multichoicedoc"><ul class="ulselectedfields" style="display: none;">';
     	    $tmpout='';
     	    

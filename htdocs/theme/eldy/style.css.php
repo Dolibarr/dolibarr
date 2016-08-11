@@ -2934,7 +2934,10 @@ tr.box_pair:not(:last-child) td, tr.box_impair:not(:last-child) td {
 	top: 5px;
 	position: relative;
 }
-
+.boxfilter {
+	margin-bottom: 2px;
+	margin-right: 1px;
+}
 .prod_entry_mode_free, .prod_entry_mode_predef {
     height: 26px !important;
     vertical-align: middle;

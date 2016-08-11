@@ -2811,6 +2811,10 @@ tr.box_pair td, tr.box_impair td {
 	top: 5px;
 	position: relative;
 }
+.boxfilter {
+	margin-bottom: 2px;
+	margin-right: 1px;
+}
 
 .prod_entry_mode_free, .prod_entry_mode_predef {
     height: 26px !important;
