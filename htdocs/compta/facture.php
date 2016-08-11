@@ -405,7 +405,7 @@ if (empty($reshook))
     			}
     		}
 		}
-		
+
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
 			$qualified_for_stock_change = $object->hasProductsOrServices(2);
@@ -2402,7 +2402,7 @@ if ($action == 'create')
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1);
 		//We check if Origin document has already an invoice attached to it
-		$objectsrc->fetchObjectLinked($originid,'','','facture');
+		$objectsrc->fetchObjectLinked($originid,$origin,'','facture');
 		$cntinvoice=count($objectsrc->linkedObjects['facture']);
 		if ($cntinvoice>=1)
 		{
