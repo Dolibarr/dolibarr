@@ -1448,7 +1448,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= "'".price2num($total_localtax2)."',";
             $sql.= "'".price2num($total_ttc)."',";
 	        $sql.= ($fk_unit ? "'".$this->db->escape($fk_unit)."'":"null");
-			$sql.= ", ".$this->fk_multicurrency;
+			$sql.= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
 			$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 			$sql.= ", ".price2num($pu_ht * $this->multicurrency_tx);
 			$sql.= ", ".$multicurrency_total_ht;
