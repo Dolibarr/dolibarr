@@ -229,7 +229,10 @@ if ($resql)
     print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"c.libelle","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+    if (! empty($conf->banque->enabled))
+    {
+    	print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+    }
     print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre($langs->trans("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
 
@@ -260,9 +263,12 @@ if ($resql)
     print '<td align="left">';
     print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
     print '</td>';
-    print '<td>';
-    $form->select_comptes($search_account,'search_account',0,'',1);
-    print '</td>';
+    if (! empty($conf->banque->enabled))
+    {
+	    print '<td>';
+	    $form->select_comptes($search_account,'search_account',0,'',1);
+	    print '</td>';
+    }
     print '<td align="right">';
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
 	print '</td>';
@@ -309,16 +315,21 @@ if ($resql)
         
         // Payment number
         print '<td>'.$objp->num_paiement.'</td>';
-        
-        print '<td>';
-        if ($objp->bid)
-        {
-            $accountstatic->id=$objp->bid;
-            $accountstatic->label=$objp->label;
-            print $accountstatic->getNomUrl(1);
-        }
-        else print '&nbsp;';
-        print '</td>';
+
+        // Account
+	    if (! empty($conf->banque->enabled))
+	    {
+	        print '<td>';
+	        if ($objp->bid)
+	        {
+	            $accountstatic->id=$objp->bid;
+	            $accountstatic->label=$objp->label;
+	            print $accountstatic->getNomUrl(1);
+	        }
+	        else print '&nbsp;';
+	        print '</td>';
+	    }
+	    // Amount
         print '<td align="right">'.price($objp->amount).'</td>';
 
         if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
