@@ -45,7 +45,7 @@ $action = GETPOST('action', 'alpha');
 
 // Parameters ACCOUNTING_EXPORT_*
 $main_option = array (
-		'ACCOUNTING_EXPORT_PREFIX_SPEC' 
+		'ACCOUNTING_EXPORT_PREFIX_SPEC'
 );
 
 $model_option = array (
@@ -65,10 +65,10 @@ $model_option = array (
  */
 if ($action == 'update') {
 	$error = 0;
-	
+
 	$format = GETPOST('format', 'alpha');
 	$modelcsv = GETPOST('modelcsv', 'int');
-	
+
 	if (! empty($format)) {
 		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', $format, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
@@ -76,31 +76,34 @@ if ($action == 'update') {
 	} else {
 		$error ++;
 	}
-	
+
 	if (! empty($modelcsv)) {
 		if (! dolibarr_set_const($db, 'ACCOUNTING_EXPORT_MODELCSV', $modelcsv, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
+		if ($modelcsv==AccountancyExport::$EXPORT_TYPE_QUADRATUS || $modelcsv==AccountancyExport::$EXPORT_TYPE_CIEL) {
+			dolibarr_set_const($db, 'ACCOUNTING_EXPORT_FORMAT', 'txt', 'chaine', 0, '', $conf->entity);
+		}
 	} else {
 		$error ++;
 	}
-	
+
 	foreach ( $main_option as $constname ) {
 		$constvalue = GETPOST($constname, 'alpha');
-		
+
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	}
-	
+
 	foreach ( $model_option as $constname ) {
 		$constvalue = GETPOST($constname, 'alpha');
-		
+
 		if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
 			$error ++;
 		}
 	}
-	
+
 	if (! $error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -149,10 +152,10 @@ if (! $conf->use_javascript_ajax) {
 	print '<td>';
 	$listformat = array (
 			'csv' => $langs->trans("csv"),
-			'txt' => $langs->trans("txt") 
+			'txt' => $langs->trans("txt")
 	);
 	print $form->selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
-	
+
 	print '</td>';
 }
 print "</td></tr>";
@@ -161,13 +164,13 @@ $num = count($main_option);
 if ($num) {
 	foreach ( $main_option as $key ) {
 		$var = ! $var;
-		
+
 		print '<tr ' . $bc[$var] . ' class="value">';
-		
+
 		// Param
 		$label = $langs->trans($key);
 		print '<td width="50%">' . $label . '</td>';
-		
+
 		// Value
 		print '<td>';
 		print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';
@@ -200,7 +203,7 @@ if (! $conf->use_javascript_ajax) {
 	print '<td>';
 	$listmodelcsv = AccountancyExport::getType();
 	print $form->selectarray("modelcsv", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
-	
+
 	print '</td>';
 }
 print "</td></tr>";
@@ -220,22 +223,22 @@ if ($num2) {
 	print "</tr>\n";
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV > 1)
 		print '<tr><td colspan="2" bgcolor="red"><b>' . $langs->trans('OptionsDeactivatedForThisExportModel') . '</b></td></tr>';
-	
+
 	foreach ( $model_option as $key ) {
 		$var = ! $var;
-		
+
 		print '<tr ' . $bc[$var] . ' class="value">';
-		
+
 		// Param
 		$label = $langs->trans($key);
 		print '<td width="50%">' . $label . '</td>';
-		
+
 		// Value
 		print '<td>';
 		print '<input type="text" size="20" name="' . $key . '" value="' . $conf->global->$key . '">';
 		print '</td></tr>';
 	}
-	
+
 	print "</table>\n";
 }
 
