@@ -548,7 +548,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	    print '<td colspan="'.($colspan-1).'">';
 	    if ($edit)
 	    {
-	        print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
+	        print Form::selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
 	    }
 	    else
 	    {

@@ -240,11 +240,11 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print $form->selectyesno("cotisation",1,1);
+	print Form::selectyesno("cotisation",1,1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-	print $form->selectyesno("vote",0,1);
+	print Form::selectyesno("vote",0,1);
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
@@ -638,11 +638,11 @@ if ($rowid > 0)
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.dol_escape_htmltag($object->libelle).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $form->selectyesno("cotisation",$object->cotisation,1);
+		print Form::selectyesno("cotisation",$object->cotisation,1);
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-		print $form->selectyesno("vote",$object->vote,1);
+		print Form::selectyesno("vote",$object->vote,1);
 		print '</td></tr>';
 
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';

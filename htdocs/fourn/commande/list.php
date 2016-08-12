@@ -671,7 +671,7 @@ if ($resql)
 	if (! empty($arrayfields['cf.billed']['checked']))
 	{
 		print '<td align="center">';
-		print $form->selectyesno('billed', $billed, 1, 0, 1);
+		print Form::selectyesno('billed', $billed, 1, 0, 1);
 		print '</td>';
 	}
 	// Action column

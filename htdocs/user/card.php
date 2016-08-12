@@ -753,7 +753,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Employee
     print '<tr>';
     print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print $form->selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
+    print Form::selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
     print '</td></tr>';
 
     // Position/Job
@@ -844,7 +844,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     {
         print '<tr><td>'.$langs->trans("Administrator").'</td>';
         print '<td>';
-        print $form->selectyesno('admin',GETPOST('admin'),1);
+        print Form::selectyesno('admin',GETPOST('admin'),1);
 
         if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
         {
@@ -1825,7 +1825,7 @@ else
             // Employee
             print '<tr>';
             print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-            print $form->selectyesno("employee",$object->employee,1);
+            print Form::selectyesno("employee",$object->employee,1);
             print '</td></tr>';
 
             // Position/Job
@@ -1921,7 +1921,7 @@ else
                 	)
                 )
                 {
-                    print $form->selectyesno('admin',$object->admin,1);
+                    print Form::selectyesno('admin',$object->admin,1);
 
                     if (! empty($conf->multicompany->enabled) && ! $user->entity && empty($conf->multicompany->transverse_mode))
                     {

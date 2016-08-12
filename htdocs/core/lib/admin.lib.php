@@ -1191,7 +1191,7 @@ function form_constantes($tableau,$strictw3c=0)
                 }
                 else if ($obj->type == 'yesno')
                 {
-                    print $form->selectyesno('constvalue'.(empty($strictw3c)?'':'[]'),$obj->value,1);
+                    print Form::selectyesno('constvalue'.(empty($strictw3c)?'':'[]'),$obj->value,1);
                     print '<input type="hidden" name="consttype'.(empty($strictw3c)?'':'[]').'" value="yesno">';
                 }
                 else

@@ -761,7 +761,7 @@ if ($resql)
 	if (! empty($arrayfields['c.facture']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-	    print $form->selectyesno('billed', $billed, 1, 0, 1);
+	    print Form::selectyesno('billed', $billed, 1, 0, 1);
 	    print '</td>';
 	}
 	// Action column

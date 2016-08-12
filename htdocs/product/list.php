@@ -532,7 +532,7 @@ else
     		// Stock
 			if (! empty($arrayfields['stock_virtual']['checked'])) print '<td class="liste_titre">&nbsp;</td>';
 			// To batch
-			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.$form->selectyesno($search_tobatch, '', '', '', 1).'</td>';
+			if (! empty($arrayfields['p.tobatch']['checked'])) print '<td class="liste_titre center">'.Form::selectyesno($search_tobatch, '', '', '', 1).'</td>';
 			// Accountancy code sell
     		if (! empty($arrayfields['p.accountancy_code_sell']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_sell" size="6" value="'.dol_escape_htmltag($search_accountancy_code_sell).'"></td>';
     	    // Accountancy code sell

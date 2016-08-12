@@ -914,7 +914,7 @@ else
 
 		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-		print $form->selectyesno("public",$object->public,1);
+		print Form::selectyesno("public",$object->public,1);
 		print "</td></tr>\n";
 
 		// Categories
@@ -1168,7 +1168,7 @@ else
 
 		// Public profil
 		print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-		print $form->selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
+		print Form::selectyesno("public",(isset($_POST["public"])?$_POST["public"]:$object->public),1);
 		print "</td></tr>\n";
 
 		// Categories

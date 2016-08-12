@@ -132,7 +132,7 @@ if (! empty($conf->stock->enabled))
 	print '<tr '.$bc[$var].'><td>'.$langs->trans("CashDeskDoNotDecreaseStock").'</td>';	// Force warehouse (this is not a default value)
 	print '<td colspan="2">';
 	if (empty($conf->productbatch->enabled)) {
-	   print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
+	   print Form::selectyesno('CASHDESK_NO_DECREASE_STOCK',$conf->global->CASHDESK_NO_DECREASE_STOCK,1);
 	}
 	else
 	{
@@ -166,7 +166,7 @@ if (! empty($conf->service->enabled))
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("CashdeskShowServices");
     print '<td colspan="2">';
-    print $form->selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
+    print Form::selectyesno("CASHDESK_SERVICES",$conf->global->CASHDESK_SERVICES,1);
     print "</td></tr>\n";
 }
 
@@ -177,7 +177,7 @@ if (! empty($conf->receiptprinter->enabled))
     print '<tr '.$bc[$var].'><td>';
     print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
     print '<td colspan="2">';
-    print $form->selectyesno("CASHDESK_DOLIBAR_RECEIPT_PRINTER",$conf->global->CASHDESK_DOLIBAR_RECEIPT_PRINTER,1);
+    print Form::selectyesno("CASHDESK_DOLIBAR_RECEIPT_PRINTER",$conf->global->CASHDESK_DOLIBAR_RECEIPT_PRINTER,1);
     print "</td></tr>\n";
 }
 

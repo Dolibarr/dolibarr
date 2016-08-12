@@ -193,7 +193,7 @@ if ($id)
 		//Select yes/no
 		print '<tr><td class="valid">'.$langs->trans("WithdrawalRefusedConfirm").' '.$soc->name.' ?</td>';
 		print '<td colspan="2" class="valid">';
-		print $form->selectyesno("confirm",1,0);
+		print Form::selectyesno("confirm",1,0);
 		print '</td></tr>';
 
 		//Date
