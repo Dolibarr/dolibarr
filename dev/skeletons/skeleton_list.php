@@ -391,7 +391,7 @@ if ($resql)
     {
         // Status
         print '<td class="liste_titre" align="center">';
-        print $form->selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
+        print Form::selectarray('search_statut', array('-1'=>'','0'=>$langs->trans('Disabled'),'1'=>$langs->trans('Enabled')),$search_statut);
         print '</td>';
     }*/
     // Action column

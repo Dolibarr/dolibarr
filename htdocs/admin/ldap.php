@@ -116,7 +116,7 @@ $arraylist=array();
 $arraylist['0']=$langs->trans("No");
 $arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr");
 $arraylist['dolibarr2ldap']=$langs->trans("DolibarrToLDAP");
-print $form->selectarray('activesynchro',$arraylist,$conf->global->LDAP_SYNCHRO_ACTIVE);
+print Form::selectarray('activesynchro',$arraylist,$conf->global->LDAP_SYNCHRO_ACTIVE);
 print '</td><td>'.$langs->trans("LDAPDnSynchroActiveExample");
 if ($conf->global->LDAP_SYNCHRO_ACTIVE && ! $conf->global->LDAP_USER_DN)
 {
@@ -132,7 +132,7 @@ if (! empty($conf->societe->enabled))
 	$arraylist=array();
 	$arraylist['0']=$langs->trans("No");
 	$arraylist['1']=$langs->trans("DolibarrToLDAP");
-	print $form->selectarray('activecontact',$arraylist,$conf->global->LDAP_CONTACT_ACTIVE);
+	print Form::selectarray('activecontact',$arraylist,$conf->global->LDAP_CONTACT_ACTIVE);
 	print '</td><td>'.$langs->trans("LDAPDnContactActiveExample").'</td></tr>';
 }
 
@@ -145,7 +145,7 @@ if (! empty($conf->adherent->enabled))
 	$arraylist['0']=$langs->trans("No");
 	$arraylist['1']=$langs->trans("DolibarrToLDAP");
 	$arraylist['ldap2dolibarr']=$langs->trans("LDAPToDolibarr").' ('.$langs->trans("SupportedForLDAPImportScriptOnly").')';
-	print $form->selectarray('activemembers',$arraylist,$conf->global->LDAP_MEMBER_ACTIVE);
+	print Form::selectarray('activemembers',$arraylist,$conf->global->LDAP_MEMBER_ACTIVE);
 	print '</td><td>'.$langs->trans("LDAPDnMemberActiveExample").'</td></tr>';
 }
 
@@ -162,7 +162,7 @@ $arraylist=array();
 $arraylist['activedirectory']='Active Directory';
 $arraylist['openldap']='OpenLdap';
 $arraylist['egroupware']='Egroupware';
-print $form->selectarray('type',$arraylist,$conf->global->LDAP_SERVER_TYPE);
+print Form::selectarray('type',$arraylist,$conf->global->LDAP_SERVER_TYPE);
 print '</td><td>&nbsp;</td></tr>';
 
 // Version
@@ -171,7 +171,7 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("Version").'</td><td>';
 $arraylist=array();
 $arraylist['3']='Version 3';
 $arraylist['2']='Version 2';
-print $form->selectarray('LDAP_SERVER_PROTOCOLVERSION',$arraylist,$conf->global->LDAP_SERVER_PROTOCOLVERSION);
+print Form::selectarray('LDAP_SERVER_PROTOCOLVERSION',$arraylist,$conf->global->LDAP_SERVER_PROTOCOLVERSION);
 print '</td><td>'.$langs->trans("LDAPServerProtocolVersion").'</td></tr>';
 
 // Serveur primaire
@@ -213,7 +213,7 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerUseTLS").'</td><td>';
 $arraylist=array();
 $arraylist['0']=$langs->trans("No");
 $arraylist['1']=$langs->trans("Yes");
-print $form->selectarray('usetls',$arraylist,$conf->global->LDAP_SERVER_USE_TLS);
+print Form::selectarray('usetls',$arraylist,$conf->global->LDAP_SERVER_USE_TLS);
 print '</td><td>'.$langs->trans("LDAPServerUseTLSExample").'</td></tr>';
 
 print '<tr class="liste_titre">';

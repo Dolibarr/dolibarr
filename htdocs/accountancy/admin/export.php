@@ -151,7 +151,7 @@ if (! $conf->use_javascript_ajax) {
 			'csv' => $langs->trans("csv"),
 			'txt' => $langs->trans("txt") 
 	);
-	print $form->selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
+	print Form::selectarray("format", $listformat, $conf->global->ACCOUNTING_EXPORT_FORMAT, 0);
 	
 	print '</td>';
 }
@@ -199,7 +199,7 @@ if (! $conf->use_javascript_ajax) {
 } else {
 	print '<td>';
 	$listmodelcsv = AccountancyExport::getType();
-	print $form->selectarray("modelcsv", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
+	print Form::selectarray("modelcsv", $listmodelcsv, $conf->global->ACCOUNTING_EXPORT_MODELCSV, 0);
 	
 	print '</td>';
 }

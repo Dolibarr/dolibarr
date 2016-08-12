@@ -704,7 +704,7 @@ if (count($object->records) > 0)
         print $out;
 
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
-        //print $form->selectarray('page', $array);
+        //print Form::selectarray('page', $array);
         
         if ($website && $pageid > 0)
         {

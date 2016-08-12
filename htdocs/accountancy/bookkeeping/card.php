@@ -254,7 +254,7 @@ if ($action == 'create') {
 
 	print '<tr>';
 	print '<td>' . $langs->trans("Codejournal") . '</td>';
-	print '<td>' . $html->selectarray('code_journal', $code_journal_array) . '</td>';
+	print '<td>' . Form::selectarray('code_journal', $code_journal_array) . '</td>';
 	print '</tr>';
 
 	print '<tr>';

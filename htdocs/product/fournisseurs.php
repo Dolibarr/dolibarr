@@ -475,7 +475,7 @@ if ($id > 0 || $ref)
 						$price_expression_list[$entry->id] = $entry->title;
 					}
 					$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_supplier_price_expression ? $object->fk_supplier_price_expression : '0');
-					print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
+					print Form::selectarray('eid', $price_expression_list, $price_expression_preselection);
 					print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
 					print '</td></tr>';
 					// This code hides the numeric price input if is not selected, loads the editor page if editor button is pressed
@@ -520,7 +520,7 @@ if ($id > 0 || $ref)
 
 				// Reputation
 				print '<tr><td>'.$langs->trans("SupplierReputation").'</td><td>';
-				echo $form->selectarray('supplier_reputation', $reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
+				echo Form::selectarray('supplier_reputation', $reputations, $supplier_reputation?$supplier_reputation:$object->supplier_reputation);
 				print '</td></tr>';
 
 				// Option to define a transport cost on supplier price

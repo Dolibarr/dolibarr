@@ -688,7 +688,7 @@ if ($action == 'create')
             print "<tr><td>".$langs->trans("DeliveryMethod")."</td>";
             print '<td colspan="3">';
             $expe->fetch_delivery_methods();
-            print $form->selectarray("shipping_method_id",$expe->meths,GETPOST('shipping_method_id','int'),1,0,0,"",1);
+            print Form::selectarray("shipping_method_id",$expe->meths,GETPOST('shipping_method_id','int'),1,0,0,"",1);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print "</td></tr>\n";
 
@@ -724,7 +724,7 @@ if ($action == 'create')
 			{
     			print "<tr><td>".$langs->trans("Model")."</td>";
                 print '<td colspan="3">';
-    			print $form->selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
+    			print Form::selectarray('model', $liste, $conf->global->EXPEDITION_ADDON_PDF);
                 print "</td></tr>\n";
 			}
 			
@@ -1474,7 +1474,7 @@ else if ($id || $ref)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="setshipping_method_id">';
 			$object->fetch_delivery_methods();
-			print $form->selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
+			print Form::selectarray("shipping_method_id",$object->meths,$object->shipping_method_id,1,0,0,"",1);
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';

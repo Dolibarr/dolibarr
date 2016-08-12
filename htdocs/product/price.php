@@ -1052,7 +1052,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 				$price_expression_list[$entry->id] = $entry->title;
 			}
 			$price_expression_preselection = GETPOST('eid') ? GETPOST('eid') : ($object->fk_price_expression ? $object->fk_price_expression : '0');
-			print $form->selectarray('eid', $price_expression_list, $price_expression_preselection);
+			print Form::selectarray('eid', $price_expression_list, $price_expression_preselection);
 			print '&nbsp; <div id="expression_editor" class="button">'.$langs->trans("PriceExpressionEditor").'</div>';
 			print '</td></tr>';
 

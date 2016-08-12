@@ -312,7 +312,7 @@ if ($action == 'create')
 	// Status
     print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
     print '<td colspan="3">';
-    print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+    print Form::selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
     print '</td></tr>';
 
     // Country
@@ -815,7 +815,7 @@ else
 		// Status
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
         print '<td colspan="3">';
-        print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
+        print Form::selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
         print '</td></tr>';
 
 		// Country

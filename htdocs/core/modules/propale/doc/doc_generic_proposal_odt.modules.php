@@ -176,19 +176,19 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$texte.= '<tr>';
 				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalCreate").'</td>';
 				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value2',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT);
+				$texte.= Form::selectarray('value2',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_DEFAULT);
 				$texte.= "</td></tr>";
 
 				$texte.= '<tr>';
 				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalToBill").'</td>';
 				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value3',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL);
+				$texte.= Form::selectarray('value3',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_TOBILL);
 				$texte.= "</td></tr>";
 				$texte.= '<tr>';
 
 				$texte.= '<td width="60%;">'.$langs->trans("DefaultModelPropalClosed").'</td>';
 				$texte.= '<td colspan="">';
-				$texte.= $form->selectarray('value4',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED);
+				$texte.= Form::selectarray('value4',$liste,$conf->global->PROPALE_ADDON_PDF_ODT_CLOSED);
 				$texte.= "</td></tr>";
 				$texte.= '</table>';
 			}

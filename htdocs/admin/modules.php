@@ -321,7 +321,7 @@ if ($mode != 'marketplace')
     $moreforfilter.= $langs->trans('Keyword') . ': <input type="text" name="search_keyword" value="'.dol_escape_htmltag($search_keyword).'">';
     $moreforfilter.= '</div>';
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Origin') . ': '.$form->selectarray('search_nature', $arrayofnatures, $search_nature, 1);
+    $moreforfilter.= $langs->trans('Origin') . ': '.Form::selectarray('search_nature', $arrayofnatures, $search_nature, 1);
     $moreforfilter.= '</div>';
     if (! empty($conf->global->MAIN_FEATURES_LEVEL))
     {
@@ -330,11 +330,11 @@ if ($mode != 'marketplace')
         if ($conf->global->MAIN_FEATURES_LEVEL > 0) $array_version['experimental']=$langs->trans("Experimental");
         if ($conf->global->MAIN_FEATURES_LEVEL > 1) $array_version['development']=$langs->trans("Development");
         $moreforfilter.='<div class="divsearchfield">';
-        $moreforfilter.= $langs->trans('Version') . ': '.$form->selectarray('search_version', $array_version, $search_version, 1);
+        $moreforfilter.= $langs->trans('Version') . ': '.Form::selectarray('search_version', $array_version, $search_version, 1);
         $moreforfilter.= '</div>';
     }
     $moreforfilter.='<div class="divsearchfield">';
-    $moreforfilter.= $langs->trans('Status') . ': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
+    $moreforfilter.= $langs->trans('Status') . ': '.Form::selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1);
     $moreforfilter.= '</div>';
     $moreforfilter.=' ';
     $moreforfilter.='<div class="divsearchfield">';

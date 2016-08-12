@@ -178,7 +178,7 @@ $price_expression_list = array(0 => $langs->trans("New")); //Put the new as firs
 foreach ($price_expression->list_price_expression() as $entry) {
 	$price_expression_list[$entry->id] = $entry->title;
 }
-print $form->selectarray('expression_selection', $price_expression_list, $eid);
+print Form::selectarray('expression_selection', $price_expression_list, $eid);
 print '</td></tr>';
 
 // Title input

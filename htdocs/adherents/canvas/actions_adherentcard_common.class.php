@@ -313,7 +313,7 @@ abstract class ActionsAdherentCardCommon
 
             // Physical or Moral
             $selectarray=array('0'=>$langs->trans("Physical"),'1'=>$langs->trans("Moral"));
-            $this->tpl['select_morphy'] = $form->selectarray('morphy',$selectarray,$this->object->morphy,0);
+            $this->tpl['select_morphy'] = Form::selectarray('morphy',$selectarray,$this->object->morphy,0);
         }
 
         if ($action == 'view' || $action == 'edit' || $action == 'delete')

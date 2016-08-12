@@ -2176,7 +2176,7 @@ if ($action == 'create')
 		{
 			print '<td class="nowrap" style="padding-left: 5px">';
 			$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
-			print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
+			print Form::selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
 			print '</td>';
 			print '<td class="nowrap" style="padding-left: 5px">' . $langs->trans('Value') . ':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="' . GETPOST('valuedeposit', 'int') . '"/>';
 		}
@@ -2409,7 +2409,7 @@ if ($action == 'create')
 	print '<td colspan="2">';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 	$liste = ModelePDFFactures::liste_modeles($db);
-	print $form->selectarray('model', $liste, $conf->global->FACTURE_ADDON_PDF);
+	print Form::selectarray('model', $liste, $conf->global->FACTURE_ADDON_PDF);
 	print "</td></tr>";
 
 	// Multicurrency

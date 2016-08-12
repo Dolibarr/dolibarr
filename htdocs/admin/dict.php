@@ -1614,21 +1614,21 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 		elseif ($fieldlist[$field] == 'type_template')
 		{
 			print '<td>';
-			print $form->selectarray('type_template', $elementList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+			print Form::selectarray('type_template', $elementList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
 		// Le type de l'element (pour les type de contact)
 		elseif ($fieldlist[$field] == 'element')
 		{
 			print '<td>';
-			print $form->selectarray('element', $elementList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+			print Form::selectarray('element', $elementList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
 		// La source de l'element (pour les type de contact)
 		elseif ($fieldlist[$field] == 'source')
 		{
 			print '<td>';
-			print $form->selectarray('source', $sourceList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+			print Form::selectarray('source', $sourceList,(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'type' && $tabname == MAIN_DB_PREFIX."c_actioncomm")
@@ -1684,14 +1684,14 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 					'point' => $langs->trans('SizeUnitpoint'),
 					'inch' => $langs->trans('SizeUnitinch')
 			);
-			print $form->selectarray('unit', $units, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 0, 0, 0);
+			print Form::selectarray('unit', $units, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 0, 0, 0);
 			print '</td>';
 		}
 		// Le type de taxe locale
 		elseif ($fieldlist[$field] == 'localtax1_type' || $fieldlist[$field] == 'localtax2_type')
 		{
 			print '<td align="center">';
-			print $form->selectarray($fieldlist[$field], $localtax_typeList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
+			print Form::selectarray($fieldlist[$field], $localtax_typeList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''));
 			print '</td>';
 		}
 		elseif ($fieldlist[$field] == 'accountancy_code' || $fieldlist[$field] == 'accountancy_code_sell' || $fieldlist[$field] == 'accountancy_code_buy')

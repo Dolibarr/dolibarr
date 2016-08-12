@@ -154,7 +154,7 @@ if ($result)
 	print '</td>';
 
 	print '<td class="liste_titre" align="right">';
-	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
+	print Form::selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 
     print '<td class="liste_titre" align="right">';

@@ -816,7 +816,7 @@ else
 		$listetype=$adht->liste_array();
 		if (count($listetype))
 		{
-			print $form->selectarray("typeid", $listetype, GETPOST('typeid','int')?GETPOST('typeid','int'):$typeid, count($listetype)>1?1:0);
+			print Form::selectarray("typeid", $listetype, GETPOST('typeid','int')?GETPOST('typeid','int'):$typeid, count($listetype)>1?1:0);
 		} else {
 			print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';
 		}
@@ -826,7 +826,7 @@ else
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
 		print '<tr><td class="fieldrequired">'.$langs->trans("Nature")."</td><td>\n";
-		print $form->selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
+		print Form::selectarray("morphy", $morphys, GETPOST('morphy','alpha')?GETPOST('morphy','alpha'):$object->morphy, 1);
 		print "</td>\n";
 
 		// Company
@@ -1063,7 +1063,7 @@ else
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Morale");
 		print '<tr><td><span class="fieldrequired">'.$langs->trans("Nature").'</span></td><td>';
-		print $form->selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
+		print Form::selectarray("morphy", $morphys, isset($_POST["morphy"])?$_POST["morphy"]:$object->morphy);
 		print "</td>";
 
 		// Photo
@@ -1084,7 +1084,7 @@ else
 		print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
 		if ($user->rights->adherent->creer)
 		{
-			print $form->selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
+			print Form::selectarray("typeid", $adht->liste_array(), (isset($_POST["typeid"])?$_POST["typeid"]:$object->typeid));
 		}
 		else
 		{

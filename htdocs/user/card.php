@@ -696,7 +696,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
        	print '<input type="hidden" name="action" value="adduserldap">';
         if (is_array($liste) && count($liste))
         {
-        	print $form->selectarray('users', $liste, '', 1);
+        	print Form::selectarray('users', $liste, '', 1);
         }
        	print '</td><td align="center">';
        	print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Get')).'"'.(count($liste)?'':' disabled').'>';
@@ -766,7 +766,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<tr><td>'.$langs->trans("Gender").'</td>';
     print '<td>';
     $arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-    print $form->selectarray('gender', $arraygender, GETPOST('gender'), 1);
+    print Form::selectarray('gender', $arraygender, GETPOST('gender'), 1);
     print '</td></tr>';
 
     // Login
@@ -1846,7 +1846,7 @@ else
     		print '<tr><td>'.$langs->trans("Gender").'</td>';
     		print '<td>';
     		$arraygender=array('man'=>$langs->trans("Genderman"),'woman'=>$langs->trans("Genderwoman"));
-    		print $form->selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
+    		print Form::selectarray('gender', $arraygender, GETPOST('gender')?GETPOST('gender'):$object->gender, 1);
     		print '</td></tr>';
 
             // Login

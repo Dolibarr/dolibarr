@@ -523,7 +523,7 @@ if ($object->fetch($id) >= 0) {
 		print '</td></tr>' . "\n";
 
 		print '<tr><td>' . $langs->trans('AdvTgtTypeOfIncude') . '</td><td>';
-		print $form->selectarray('type_of_target', $advTarget->select_target_type, $array_query['type_of_target']);
+		print Form::selectarray('type_of_target', $advTarget->select_target_type, $array_query['type_of_target']);
 		print '</td><td>' . "\n";
 		print $form->textwithpicto('', $langs->trans("AdvTgtTypeOfIncudeHelp"), 1, 'help');
 		print '</td></tr>' . "\n";
@@ -732,7 +732,7 @@ if ($object->fetch($id) >= 0) {
 						print '</td><td>' . "\n";
 						print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 					} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-						print $form->selectarray('options_' . $key, array (
+						print Form::selectarray('options_' . $key, array (
 								'' => '',
 								'1' => $langs->trans('Yes'),
 								'0' => $langs->trans('No')
@@ -833,7 +833,7 @@ if ($object->fetch($id) >= 0) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
 		print '</td><td>' . "\n";
-		print $form->selectarray('contact_no_email', array (
+		print Form::selectarray('contact_no_email', array (
 				'' => '',
 				'1' => $langs->trans('Yes'),
 				'0' => $langs->trans('No')
@@ -916,7 +916,7 @@ if ($object->fetch($id) >= 0) {
 					print '</td><td>' . "\n";
 					print $form->textwithpicto('', $langs->trans("AdvTgtSearchDtHelp"), 1, 'help');
 				} elseif (($extrafields->attribute_type[$key] == 'boolean')) {
-					print $form->selectarray('options_' . $key . '_cnct', array (
+					print Form::selectarray('options_' . $key . '_cnct', array (
 							'' => '',
 							'1' => $langs->trans('Yes'),
 							'0' => $langs->trans('No')

@@ -187,25 +187,25 @@ print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Tex
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter A'). ': ';
 $cate_arbo = array('field1'=>'value1a into the select list A','field2'=>'value2a');
-$moreforfilter.=$form->selectarray('search_aaa', $cate_arbo, '', 1);		// List without js combo
+$moreforfilter.=Form::selectarray('search_aaa', $cate_arbo, '', 1);		// List without js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter B'). ': ';
 $cate_arbo = array('field1'=>'value1b into the select list B','field2'=>'value2b');
-$moreforfilter.=$form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=Form::selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter C'). ': ';
 $cate_arbo = array('field1'=>'value1c into the select list C','field2'=>'value2c');
-$moreforfilter.=$form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=Form::selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
 $moreforfilter.='</div>';
 
 $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.=$langs->trans('This is a select list for a filter D'). ': ';
 $cate_arbo = array('field1'=>'value1d into the select list D','field2'=>'value2d');
-$moreforfilter.=$form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
+$moreforfilter.=Form::selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
 $moreforfilter.='</div>';
 
 if (! empty($moreforfilter))

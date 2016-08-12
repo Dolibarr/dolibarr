@@ -231,11 +231,11 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     print "</tr>\n";
 
     print '<tr class="impair"><td align="left">';
-    print $form->selectarray('user',$internalusers);//  select_dolusers(0,'user',0);
+    print Form::selectarray('user',$internalusers);//  select_dolusers(0,'user',0);
     print '</td>';
 
     print '<td>';
-    print $form->selectarray('action',$actions);//  select_dolusers(0,'user',0);
+    print Form::selectarray('action',$actions);//  select_dolusers(0,'user',0);
     print '</td>';
 
     print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';

@@ -707,7 +707,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     
         // Status
         print '<td class="liste_titre maxwidthonsmartphone">';
-        print $form->selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
+        print Form::selectarray('search_status', array('-1'=>'','0'=>$contactstatic->LibStatut(0,1),'1'=>$contactstatic->LibStatut(1,1)),$search_status);
         print '</td>';
     
         // Add to agenda

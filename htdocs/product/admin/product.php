@@ -583,7 +583,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRIC
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
 if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) && (!empty($conf->global->PRODUIT_MULTIPRICES))) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY&PRODUIT_MULTIPRICES';
-print $form->selectarray("princingrule",$select_pricing_rules,$current_rule);
+print Form::selectarray("princingrule",$select_pricing_rules,$current_rule);
 if ( empty($conf->multicompany->enabled))
 {
     print $langs->trans("SamePriceAlsoForSharedCompanies");
@@ -632,7 +632,7 @@ else
 	    '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	    '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+	print Form::selectarray("activate_usesearchtoselectproduct",$arrval,$conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
 	print '</td>';
 }
 print '</tr>';

@@ -739,7 +739,7 @@ else
     '2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
     '3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
+	print Form::selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, $conf->global->COMPANY_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -763,7 +763,7 @@ else
 	'2'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",2).')',
 	'3'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch",3).')',
 	);
-	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
+	print Form::selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, $conf->global->CONTACT_USE_SEARCH_TO_SELECT);
 	print '</td><td align="right">';
 	print '<input type="submit" class="button" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";

@@ -399,7 +399,7 @@ print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
 print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
 $tmplist=array('show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_list'=>$langs->trans("ViewList"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
+print Form::selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
 print '</td></tr>'."\n";
 
 print '</table>';

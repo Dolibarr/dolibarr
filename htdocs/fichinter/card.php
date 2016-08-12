@@ -995,7 +995,7 @@ if ($action == 'create')
         print '<td>'.$langs->trans("DefaultModel").'</td>';
         print '<td colspan="2">';
         $liste=ModelePDFFicheinter::liste_modeles($db);
-        print $form->selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
+        print Form::selectarray('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
         print "</td></tr>";
 
         // Public note

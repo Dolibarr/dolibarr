@@ -499,7 +499,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
     $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-    print $form->selectarray('public',$array,GETPOST('public')?GETPOST('public'):(isset($conf->global->PROJECT_DEFAULT_PUBLIC)?$conf->global->PROJECT_DEFAULT_PUBLIC:$object->public));
+    print Form::selectarray('public',$array,GETPOST('public')?GETPOST('public'):(isset($conf->global->PROJECT_DEFAULT_PUBLIC)?$conf->global->PROJECT_DEFAULT_PUBLIC:$object->public));
     print '</td></tr>';
 
     // Date start
@@ -688,7 +688,7 @@ else
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
         $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-        print $form->selectarray('public',$array,$object->public);
+        print Form::selectarray('public',$array,$object->public);
         print '</td></tr>';
 
         // Status

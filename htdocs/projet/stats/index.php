@@ -295,7 +295,7 @@ print '<tr><td>'.$langs->trans("Year").'</td><td>';
 if (! in_array($year,$arrayyears)) $arrayyears[$year]=$year;
 if (! in_array($nowyear,$arrayyears)) $arrayyears[$nowyear]=$nowyear;
 arsort($arrayyears);
-print $form->selectarray('year',$arrayyears,$year,0);
+print Form::selectarray('year',$arrayyears,$year,0);
 print '</td></tr>';
 print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';

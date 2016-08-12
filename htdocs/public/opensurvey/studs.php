@@ -480,12 +480,12 @@ while ($compteur < $num)
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 				{
 					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
-					print $form->selectarray("choix".$i, $arraychoice, $car);
+					print Form::selectarray("choix".$i, $arraychoice, $car);
 				}
 				if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 				{
 					$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
-					print $form->selectarray("choix".$i, $arraychoice, $car);
+					print Form::selectarray("choix".$i, $arraychoice, $car);
 				}
 				print '</td>'."\n";
 			}
@@ -583,12 +583,12 @@ if ($ligneamodifier < 0 && (! isset($_SESSION['nom'])))
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'yesno')
 		{
 			$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("No"),'1'=>$langs->trans("Yes"));
-			print $form->selectarray("choix".$i, $arraychoice, GETPOST('choix'.$i));
+			print Form::selectarray("choix".$i, $arraychoice, GETPOST('choix'.$i));
 		}
 		if (! empty($listofanswers[$i]['format']) && $listofanswers[$i]['format'] == 'foragainst')
 		{
 			$arraychoice=array('2'=>'&nbsp;','0'=>$langs->trans("Against"),'1'=>$langs->trans("For"));
-			print $form->selectarray("choix".$i, $arraychoice, GETPOST('choix'.$i));
+			print Form::selectarray("choix".$i, $arraychoice, GETPOST('choix'.$i));
 		}
 		print '</td>'."\n";
 	}

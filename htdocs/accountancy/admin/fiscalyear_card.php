@@ -173,7 +173,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">' . $langs->trans("Status") . '</td>';
 	print '<td class="valeur">';
-	print $form->selectarray('statut', $statut2label, GETPOST('statut'));
+	print Form::selectarray('statut', $statut2label, GETPOST('statut'));
 	print '</td></tr>';
 	
 	print '</table>';
@@ -225,7 +225,7 @@ if ($action == 'create')
 			
 			// Statut
 			print '<tr><td>' . $langs->trans("Statut") . '</td><td>';
-			print $form->selectarray('statut', $statut2label, $object->statut);
+			print Form::selectarray('statut', $statut2label, $object->statut);
 			print '</td></tr>';
 			
 			print '</table>';

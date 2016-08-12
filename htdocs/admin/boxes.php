@@ -367,7 +367,7 @@ foreach($boxtoadd as $box)
 
     // Pour chaque position possible, on affiche un lien d'activation si boite non deja active pour cette position
     print '<td class="center">';
-    print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
+    print Form::selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
     print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
     print '</td>';
 

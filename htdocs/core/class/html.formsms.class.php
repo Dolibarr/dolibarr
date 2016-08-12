@@ -262,7 +262,7 @@ function limitChars(textarea, limit, infodiv)
                     }
                     print " ".$langs->trans("or")." ";
                     //var_dump($_REQUEST);exit;
-                    print $form->selectarray("receiver", $liste, GETPOST("receiver"), 1);
+                    print Form::selectarray("receiver", $liste, GETPOST("receiver"), 1);
                 }
                 print ' '.$langs->trans("SmsInfoNumero");
             }

@@ -2892,7 +2892,7 @@ elseif (! empty($object->id))
 			$liv['nev']	= $langs->trans("NeverReceived");
 			$liv['can']	= $langs->trans("Canceled");
 
-			print $form->selectarray("type",$liv);
+			print Form::selectarray("type",$liv);
 
 			print '</td></tr>';
 			print '<tr><td>'.$langs->trans("Comment").'</td><td><input size="40" type="text" name="comment"></td></tr>';

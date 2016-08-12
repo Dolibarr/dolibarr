@@ -1168,7 +1168,7 @@ function form_constantes($tableau,$strictw3c=0)
                 {
                     $arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
                 }
-                print $form->selectarray('constvalue'.(empty($strictw3c)?'':'[]'),$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
+                print Form::selectarray('constvalue'.(empty($strictw3c)?'':'[]'),$arrayoflabels,($obj->value?$obj->value:'CARD'),1,0,0);
                 print '<input type="hidden" name="consttype" value="yesno">';
                 print '</td>';
             }

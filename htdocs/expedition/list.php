@@ -378,7 +378,7 @@ if ($resql)
     if (! empty($arrayfields['typent.code']['checked']))
     {
         print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-    	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+    	print Form::selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
     	print '</td>';
     }
 	// Date delivery planned
@@ -441,7 +441,7 @@ if ($resql)
 	if (! empty($arrayfields['e.fk_statut']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-	    print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
+	    print Form::selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
 	    print '</td>';
 	}
 	// Action column

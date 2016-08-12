@@ -990,7 +990,7 @@ if ($id > 0)
 			if ($object->recurrule && preg_match('/FREQ=([A-Z]+)/i',$object->recurrule,$reg)) $selectedrecurrulefreq=$reg[1];
 			if ($object->recurrule && preg_match('/FREQ=MONTHLY.*BYMONTHDAY=(\d+)/i',$object->recurrule,$reg)) $selectedrecurrulebymonthday=$reg[1];
 			if ($object->recurrule && preg_match('/FREQ=WEEKLY.*BYDAY(\d+)/i',$object->recurrule,$reg)) $selectedrecurrulebyday=$reg[1];
-			print $form->selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq);
+			print Form::selectarray('recurrulefreq', $arrayrecurrulefreq, $selectedrecurrulefreq);
 			// If recurrulefreq is MONTHLY
 			print '<div class="repeateventBYMONTHDAY">';
 			print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';

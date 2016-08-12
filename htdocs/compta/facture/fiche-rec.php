@@ -904,7 +904,7 @@ if ($action == 'create')
 		
 		// Frequency
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency'))."</td><td>";
-		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
+		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='5' />&nbsp;".Form::selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
 		
 		// First date of execution for cron
@@ -921,7 +921,7 @@ if ($action == 'create')
 		// Auto validate the invoice
 		print "<tr><td>".$langs->trans("StatusOfGeneratedInvoices")."</td><td>";
         $select = array('0'=>$langs->trans('BillStatusDraft'),'1'=>$langs->trans('BillStatusValidated'));
-        print $form->selectarray('auto_validate', $select, GETPOST('auto_validate'));
+        print Form::selectarray('auto_validate', $select, GETPOST('auto_validate'));
 		print "</td></tr>";
 
 		print "</table>";
@@ -1339,7 +1339,7 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
+            print "<input type='text' name='frequency' value='".$object->frequency."' size='5' />&nbsp;".Form::selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), ($object->unit_frequency?$object->unit_frequency:'m'));
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';

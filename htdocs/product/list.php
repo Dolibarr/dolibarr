@@ -564,13 +564,13 @@ else
     		if (! empty($arrayfields['p.tosell']['checked']))
     		{
 	    		print '<td class="liste_titre" align="center">';
-	            print $form->selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
+	            print Form::selectarray('tosell', array('0'=>$langs->trans('ProductStatusNotOnSellShort'),'1'=>$langs->trans('ProductStatusOnSellShort')),$tosell,1);
 	            print '</td >';
     		}
 			if (! empty($arrayfields['p.tobuy']['checked']))
     		{
 	            print '<td class="liste_titre" align="center">';
-	            print $form->selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
+	            print Form::selectarray('tobuy', array('0'=>$langs->trans('ProductStatusNotOnBuyShort'),'1'=>$langs->trans('ProductStatusOnBuyShort')),$tobuy,1);
 	            print '</td>';
     		}
             print '<td class="liste_titre" align="right">';

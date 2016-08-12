@@ -358,7 +358,7 @@ foreach($typeleaves as $key => $val)
     //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
     $arraytypeleaves[$val['rowid']]=$labeltoshow;
 }
-print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
+print Form::selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
 print '</td>';
 
 // DUREE

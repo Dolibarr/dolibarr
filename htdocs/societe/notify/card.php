@@ -243,14 +243,14 @@ if ($result > 0)
             $actions[$managedeventfornotification['rowid']]=$label;
         }
         print '<tr '.$bc[$var].'><td>';
-        print $form->selectarray("contactid",$listofemails);
+        print Form::selectarray("contactid",$listofemails);
         print '</td>';
         print '<td>';
-        print $form->selectarray("actionid",$actions,'',1);
+        print Form::selectarray("actionid",$actions,'',1);
         print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));
-        print $form->selectarray("typeid",$type);
+        print Form::selectarray("typeid",$type);
         print '</td>';
         print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';

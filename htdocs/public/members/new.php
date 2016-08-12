@@ -426,7 +426,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     $isempty=1;
     if (count($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
     print '<tr><td width="15%">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td width="35%">';
-    print $form->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
+    print Form::selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
 else
@@ -441,7 +441,7 @@ $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
     print '<tr class="morphy"><td>'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
-    print $form->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
+    print Form::selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
 else
@@ -528,7 +528,7 @@ if (! empty($conf->global->MEMBER_NEWFORM_DOLIBARRTURNOVER))
 {
     $arraybudget=array('50'=>'<= 100 000','100'=>'<= 200 000','200'=>'<= 500 000','300'=>'<= 1 500 000','600'=>'<= 3 000 000','1000'=>'<= 5 000 000','2000'=>'5 000 000+');
     print '<tr id="trbudget" class="trcompany"><td>'.$langs->trans("TurnoverOrBudget").' <FONT COLOR="red">*</FONT></td><td>';
-    print $form->selectarray('budget', $arraybudget, GETPOST('budget'), 1);
+    print Form::selectarray('budget', $arraybudget, GETPOST('budget'), 1);
     print ' € or $';
 
     print '<script type="text/javascript">

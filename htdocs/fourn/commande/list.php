@@ -470,7 +470,7 @@ if ($resql)
         $moreforfilter.='<div class="divsearchfield">';
         $moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
         $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-        $moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
+        $moreforfilter.=Form::selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
         $moreforfilter.='</div>';
     }
     $parameters=array();
@@ -579,7 +579,7 @@ if ($resql)
 	if (! empty($arrayfields['typent.code']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-	    print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+	    print Form::selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
 	    print '</td>';
 	}
 	// Date order

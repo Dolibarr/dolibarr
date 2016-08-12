@@ -485,7 +485,7 @@ if ($resql)
 	{
     	print '<td class="liste_titre">';
     	$array=array(''=>'',0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-        print $form->selectarray('search_public',$array,$search_public);
+        print Form::selectarray('search_public',$array,$search_public);
         print '</td>';
 	}
 	if (! empty($arrayfields['p.opp_amount']['checked']))
@@ -554,7 +554,7 @@ if ($resql)
     if (! empty($arrayfields['p.fk_statut']['checked']))
     {
     	print '<td class="liste_titre nowrap" align="right">';
-    	print $form->selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
+    	print Form::selectarray('search_status', array('-1'=>'', '0'=>$langs->trans('Draft'),'1'=>$langs->trans('Opened'),'2'=>$langs->trans('Closed')),$search_status);
         print '</td>';
     }
     // Action column

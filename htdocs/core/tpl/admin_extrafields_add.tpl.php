@@ -86,7 +86,7 @@
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname'); ?>"> (<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</td></tr>
 <!-- Type -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Type"); ?></td><td class="valeur">
-<?php print $form->selectarray('type',$type2label,GETPOST('type')); ?>
+<?php print Form::selectarray('type',$type2label,GETPOST('type')); ?>
 </td></tr>
 <!-- Size -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("Size"); ?></td><td class="valeur"><input id="size" type="text" name="size" size="5" value="<?php echo (GETPOST('size')?GETPOST('size'):''); ?>"></td></tr>

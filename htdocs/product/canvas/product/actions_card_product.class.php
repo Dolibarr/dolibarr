@@ -126,11 +126,11 @@ class ActionsCardProduct
 		{
 			// Status
 			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-			$this->tpl['status'] = $form->selectarray('statut',$statutarray,$this->status);
+			$this->tpl['status'] = Form::selectarray('statut',$statutarray,$this->status);
 
 			//To Buy
 			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
-			$this->tpl['tobuy'] = $form->selectarray('tobuy',$statutarray,$this->status_buy);
+			$this->tpl['tobuy'] = Form::selectarray('tobuy',$statutarray,$this->status_buy);
 
             $this->tpl['description'] = $this->description;
             $this->tpl['note'] = $this->note;
@@ -179,14 +179,14 @@ class ActionsCardProduct
 		{
     		// Status
     		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-    		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$_POST["statut"]);
+    		$this->tpl['status'] = Form::selectarray('statut',$statutarray,$_POST["statut"]);
 
     		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-    		$this->tpl['status_buy'] = $form->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
+    		$this->tpl['status_buy'] = Form::selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
 
 		    // Finished
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$this->tpl['finished'] = $form->selectarray('finished',$statutarray,$this->object->finished);
+			$this->tpl['finished'] = Form::selectarray('finished',$statutarray,$this->object->finished);
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;

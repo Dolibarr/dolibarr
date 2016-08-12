@@ -205,13 +205,13 @@ if ($id)
 		//Reason
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
-		print $form->selectarray("motif", $rej->motifs);
+		print Form::selectarray("motif", $rej->motifs);
 		print '</td></tr>';
 
 		//Facturer
 		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
-		print $form->selectarray("facturer", $rej->facturer);
+		print Form::selectarray("facturer", $rej->facturer);
 		print '</td></tr>';
 		print '</table><br>';
 

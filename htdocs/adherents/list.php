@@ -452,7 +452,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre">';
 		$listetype=$membertypestatic->liste_array();
-		print $form->selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
+		print Form::selectarray("type", $listetype, $type, 1, 0, 0, '', 0, 32);
 		print '</td>';
 	}
 	
@@ -564,7 +564,7 @@ if ($resql)
 	        '1'=>$langs->trans("Validated"),
 	        '0'=>$langs->trans("Resiliated")
 	    );
-	    print $form->selectarray('statut', $liststatus, $statut, -2);
+	    print Form::selectarray('statut', $liststatus, $statut, -2);
 	    print '</td>';
 	}
 	// Action column

@@ -129,13 +129,13 @@ class ActionsCardCompany extends ActionsCardCommon
 			}
 
 			// Type
-			$this->tpl['select_companytype']	= $form->selectarray("typent_id",$formcompany->typent_array(0), $this->object->typent_id);
+			$this->tpl['select_companytype']	= Form::selectarray("typent_id",$formcompany->typent_array(0), $this->object->typent_id);
 
 			// Juridical Status
 			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code,$this->object->country_code);
 
 			// Workforce
-			$this->tpl['select_workforce'] = $form->selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
+			$this->tpl['select_workforce'] = Form::selectarray("effectif_id",$formcompany->effectif_array(0), $this->object->effectif_id);
 
 			// VAT intra
 			$s='<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';

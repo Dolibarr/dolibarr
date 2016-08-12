@@ -309,7 +309,7 @@ abstract class ActionsContactCardCommon
 
             // Public or private
             $selectarray=array('0'=>$langs->trans("ContactPublic"),'1'=>$langs->trans("ContactPrivate"));
-            $this->tpl['select_visibility'] = $form->selectarray('priv',$selectarray,$this->object->priv,0);
+            $this->tpl['select_visibility'] = Form::selectarray('priv',$selectarray,$this->object->priv,0);
         }
 
         if ($action == 'view' || $action == 'edit' || $action == 'delete')
