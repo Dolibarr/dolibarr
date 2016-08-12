@@ -851,7 +851,7 @@ class Form
      * 	@param	int			$showempty		Add an empty field
      * 	@return	void
      */
-    function select_type_fees($selected='',$htmlname='type',$showempty=0)
+    public function select_type_fees($selected='',$htmlname='type',$showempty=0)
     {
         global $user, $langs;
 
@@ -859,25 +859,11 @@ class Form
 
         $this->load_cache_types_fees();
 
-        print '<select class="flat" name="'.$htmlname.'">';
-        if ($showempty)
-        {
-            print '<option value="-1"';
-            if ($selected == -1) print ' selected';
-            print '>&nbsp;</option>';
-        }
+	    print Form::selectarray($htmlname, $this->cache_types_fees, $selected, $showempty);
 
-        foreach($this->cache_types_fees as $key => $value)
-        {
-            print '<option value="'.$key.'"';
-            if ($key == $selected) print ' selected';
-            print '>';
-            print $value;
-            print '</option>';
+        if ($user->admin) {
+        	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         }
-
-        print '</select>';
-        if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     }
 
 
@@ -2844,32 +2830,16 @@ class Form
      *  @param  string	$htmlname       Nom de la zone select
      * 	@return	string					Code of HTML select to chose tax or not
      */
-    function selectPriceBaseType($selected='',$htmlname='price_base_type')
+    public static function selectPriceBaseType($selected='',$htmlname='price_base_type')
     {
         global $langs;
 
-        $return='';
-
-        $return.= '<select class="flat" name="'.$htmlname.'">';
         $options = array(
 			'HT'=>$langs->trans("HT"),
 			'TTC'=>$langs->trans("TTC")
         );
-        foreach($options as $id => $value)
-        {
-            if ($selected == $id)
-            {
-                $return.= '<option value="'.$id.'" selected>'.$value;
-            }
-            else
-            {
-                $return.= '<option value="'.$id.'">'.$value;
-            }
-            $return.= '</option>';
-        }
-        $return.= '</select>';
 
-        return $return;
+	    return Form::selectarray($htmlname, $options, $selected);
     }
 
     /**
@@ -5403,33 +5373,18 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
         $sql.= " ORDER BY rowid";
+
         $result = $this->db->query($sql);
+
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
-            if ($useempty)
-            {
-                print '<option value="-1">&nbsp;</option>';
-            }
+        	$options = array();
 
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                if ($selected == $obj->rowid)
-                {
-                    print '<option value="'.$obj->rowid.'" selected>';
-                }
-                else
-                {
-                    print '<option value="'.$obj->rowid.'">';
-                }
-                print $obj->label;
-                print '</option>';
-                $i++;
-            }
-            print "</select>";
+	        while ($obj = $this->db->fetch_object($result)) {
+	        	$options[$obj->rowid] = $obj->label;
+	        }
+
+	        print Form::selectarray($htmlname, $options, $selected, $useempty);
         }
         else {
             dol_print_error($this->db);
