@@ -503,7 +503,7 @@ if ($id > 0 || $ref)
 				print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price')?price(GETPOST('price')):(isset($object->fourn_price)?price($object->fourn_price):'')).'">';
 				print '&nbsp;';
-				print $form->selectPriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):'HT'), "price_base_type");  // We keep 'HT' here, price_base_type is not yet supported for supplier prices
+				print Form::selectPriceBaseType((GETPOST('price_base_type')?GETPOST('price_base_type'):'HT'), "price_base_type");  // We keep 'HT' here, price_base_type is not yet supported for supplier prices
 				print '</td></tr>';
 
 				// Discount qty min

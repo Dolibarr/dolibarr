@@ -116,7 +116,7 @@ class ActionsCardProduct
 			// Price
 			$this->tpl['price'] = $this->price;
 			$this->tpl['price_min'] = $this->price_min;
-			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
+			$this->tpl['price_base_type'] = Form::selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
 			$this->tpl['tva_tx'] = $form->load_tva("tva_tx",-1,$mysoc,'');

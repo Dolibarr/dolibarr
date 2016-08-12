@@ -245,7 +245,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
+		print Form::selectPriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 
@@ -324,7 +324,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->selectPriceBaseType($prodcustprice->price_base_type, "price_base_type");
+		print Form::selectPriceBaseType($prodcustprice->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 

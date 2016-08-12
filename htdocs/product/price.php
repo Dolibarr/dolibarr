@@ -1038,7 +1038,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td colspan="2">';
-		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
+		print Form::selectPriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 
@@ -1213,7 +1213,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 			} else {
 				print '<input name="price[' . $i . ']" size="10" value="' . price($object->multiprices [$i]) . '">';
 			}
-			print '&nbsp;'.$form->selectPriceBaseType($object->multiprices_base_type [$i], "multiprices_base_type[" . $i."]");
+			print '&nbsp;'.Form::selectPriceBaseType($object->multiprices_base_type [$i], "multiprices_base_type[" . $i."]");
 			print '</td>';
 
 			// Min price
@@ -1455,7 +1455,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
+		print Form::selectPriceBaseType($object->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 
@@ -1541,7 +1541,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print $langs->trans('PriceBase');
 		print '</td>';
 		print '<td>';
-		print $form->selectPriceBaseType($prodcustprice->price_base_type, "price_base_type");
+		print Form::selectPriceBaseType($prodcustprice->price_base_type, "price_base_type");
 		print '</td>';
 		print '</tr>';
 
