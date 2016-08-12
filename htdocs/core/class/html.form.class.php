@@ -12,7 +12,7 @@
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2010-2014  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Herve Prot              <herve.prot@symeos.com>
- * Copyright (C) 2012-2014  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
@@ -4023,52 +4023,32 @@ class Form
     }
 
     /**
-     *    Retourne la liste des devises, dans la langue de l'utilisateur
-     *
-     *    @param	string	$selected    preselected currency code
-     *    @param    string	$htmlname    name of HTML select list
-     *    @return	void
-     */
-    function select_currency($selected='',$htmlname='currency_id')
-    {
-        print $this->selectcurrency($selected,$htmlname);
-    }
-
-    /**
      *  Retourne la liste des devises, dans la langue de l'utilisateur
      *
      *  @param	string	$selected    preselected currency code
      *  @param  string	$htmlname    name of HTML select list
      * 	@return	string
      */
-    function selectCurrency($selected='',$htmlname='currency_id')
+    public static function selectCurrency($selected = '', $htmlname = 'currency_id')
     {
-        global $conf,$langs,$user;
+	    global $langs, $user;
 
-        $langs->loadCacheCurrencies('');
+	    $langs->loadCacheCurrencies('');
 
-        $out='';
+	    $out = '';
 
-        if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilite
+	    $options = array();
 
-        $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-        foreach ($langs->cache_currencies as $code_iso => $currency)
-        {
-        	if ($selected && $selected == $code_iso)
-        	{
-        		$out.= '<option value="'.$code_iso.'" selected>';
-        	}
-        	else
-        	{
-        		$out.= '<option value="'.$code_iso.'">';
-        	}
-        	$out.= $currency['label'];
-        	$out.= ' ('.$langs->getCurrencySymbol($code_iso).')';
-        	$out.= '</option>';
-        }
-        $out.= '</select>';
-        if ($user->admin) $out.= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-        return $out;
+	    foreach ($langs->cache_currencies as $code_iso => $currency) {
+		    $options[$code_iso] = $currency['label'].' ('.$langs->getCurrencySymbol($code_iso).')';
+	    }
+
+	    $out .= Form::selectarray($htmlname, $options, $selected);
+
+	    if ($user->admin) {
+		    $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+	    }
+	    return $out;
     }
 
 	/**

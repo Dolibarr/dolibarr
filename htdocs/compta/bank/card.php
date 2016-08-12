@@ -304,7 +304,7 @@ if ($action == 'create')
 	print '<td colspan="3">';
 	$selectedcode=$account->currency_code;
 	if (! $selectedcode) $selectedcode=$conf->currency;
-	print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
+	print Form::selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 	//print $langs->trans("Currency".$conf->currency);
 	//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 	print '</td></tr>';
@@ -807,7 +807,7 @@ else
 		print '<td colspan="3">';
 		$selectedcode=$account->currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
-		print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
+		print Form::selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
 		//print $langs->trans("Currency".$conf->currency);
 		//print '<input type="hidden" name="account_currency_code" value="'.$conf->currency.'">';
 		print '</td></tr>';

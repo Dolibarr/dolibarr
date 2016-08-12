@@ -341,7 +341,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	$var=!$var;
 	print '<tr '.$bc[$var].'><td><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
-	print $form->selectCurrency($conf->currency,"currency");
+	print Form::selectCurrency($conf->currency,"currency");
 	print '</td></tr>'."\n";
 
 	$var=!$var;
