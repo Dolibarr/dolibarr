@@ -5365,34 +5365,24 @@ class Form
      *  @param	int      	$useempty		1=Add empty line
      *	@return	string						See option
      */
-    function selectyesno($htmlname,$value='',$option=0,$disabled=false,$useempty='')
+	public static function selectyesno($htmlname, $value = '', $option = 0, $disabled = false, $useempty = 0)
     {
         global $langs;
 
-        $yes="yes"; $no="no";
-        if ($option)
-        {
-            $yes="1";
-            $no="0";
-        }
+	    $yes = "yes";
+	    $no = "no";
 
-        $disabled = ($disabled ? ' disabled' : '');
+	    if ($option) {
+		    $yes = "1";
+		    $no = "0";
+	    }
 
-        $resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
-        if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected':'').'></option>'."\n";
-        if (("$value" == 'yes') || ($value == 1))
-        {
-            $resultyesno .= '<option value="'.$yes.'" selected>'.$langs->trans("Yes").'</option>'."\n";
-            $resultyesno .= '<option value="'.$no.'">'.$langs->trans("No").'</option>'."\n";
-        }
-        else
-       {
-       		$selected=(($useempty && $value != '0' && $value != 'no')?'':' selected');
-            $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("Yes").'</option>'."\n";
-            $resultyesno .= '<option value="'.$no.'"'.$selected.'>'.$langs->trans("No").'</option>'."\n";
-        }
-        $resultyesno .= '</select>'."\n";
-        return $resultyesno;
+        $options = array(
+        	$yes => $langs->trans('Yes'),
+	        $no => $langs->trans('No')
+        );
+
+        return Form::selectarray($htmlname, $options, $value, $useempty, 0, 0, '', 0, 0, $disabled);
     }
 
 
