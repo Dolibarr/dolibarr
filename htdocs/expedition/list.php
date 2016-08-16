@@ -79,7 +79,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
     'e.ref'=>"Ref",
-    's.nom'=>"ThirdParty",
+    's.nom'=>'Customer',
     'e.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
@@ -88,7 +88,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
     'e.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'e.ref_customer'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("Customer"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
