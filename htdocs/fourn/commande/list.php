@@ -132,7 +132,7 @@ $arrayfields=array(
     'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplier"), 'checked'=>1, 'enabled'=>$conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER),
     'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'enabled'=>$conf->global->PROJECT_SHOW_REF_INTO_LISTS),
     'u.login'=>array('label'=>$langs->trans("AuthorRequest"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("Supplier"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
