@@ -591,50 +591,53 @@ abstract class CommonObject
             }
         }
 
-        $datecreate = dol_now();
+        if(! empty($id_type_contact)) {
+	        $datecreate = dol_now();
 
-        $this->db->begin();
+	        $this->db->begin();
 
-        // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
-        $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
-        $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
-        $sql.= "'".$this->db->idate($datecreate)."'";
-        $sql.= ", 4, '". $id_type_contact . "' ";
-        $sql.= ")";
-        dol_syslog(get_class($this)."::add_contact", LOG_DEBUG);
+	        // Insertion dans la base
+	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
+	        $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
+	        $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
+	        $sql.= "'".$this->db->idate($datecreate)."'";
+	        $sql.= ", 4, ". $id_type_contact . " ";
+	        $sql.= ")";
+	        dol_syslog(get_class($this)."::add_contact", LOG_DEBUG);
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if (! $notrigger)
-            {
-            	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
-	            if ($result < 0)
+	        $resql=$this->db->query($sql);
+	        if ($resql)
+	        {
+	            if (! $notrigger)
 	            {
+	            	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
+		            if ($result < 0)
+		            {
+		                $this->db->rollback();
+		                return -1;
+		            }
+	            }
+
+	            $this->db->commit();
+	            return 1;
+	        }
+	        else
+	        {
+	            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+	            {
+	                $this->error=$this->db->errno();
+	            	$this->db->rollback();
+	                return -2;
+	            }
+	            else
+	            {
+	                $this->error=$this->db->error();
 	                $this->db->rollback();
 	                return -1;
 	            }
-            }
-
-            $this->db->commit();
-            return 1;
+	        }
         }
-        else
-        {
-            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
-                $this->error=$this->db->errno();
-            	$this->db->rollback();
-                return -2;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                $this->db->rollback();
-                return -1;
-            }
-        }
+        return 1;
     }
 
     /**
@@ -4489,7 +4492,7 @@ abstract class CommonObject
 
 			if (! $db->query($sql))
 			{
-			    if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B. 
+			    if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
 				//$this->errors = $db->lasterror();
 			    return false;
 			}
