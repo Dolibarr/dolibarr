@@ -1311,8 +1311,6 @@ SyslogFilename=A fájl nevét és elérési útvonalát
 YouCanUseDOL_DATA_ROOT=Használhatja DOL_DATA_ROOT / dolibarr.log egy log fájlt Dolibarr &quot;Dokumentumok&quot; mappa. Beállíthatjuk, más utat kell tárolni ezt a fájlt.
 ErrorUnknownSyslogConstant=Constant %s nem ismert Syslog állandó
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Adomány modul beállítása
 DonationsReceiptModel=Sablon az adomány átvételét

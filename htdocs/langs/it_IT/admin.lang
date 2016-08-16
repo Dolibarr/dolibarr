@@ -1311,8 +1311,6 @@ SyslogFilename=Nome file e percorso
 YouCanUseDOL_DATA_ROOT=È possibile utilizzare DOL_DATA_ROOT/dolibarr.log come file di log per la directory "documenti". È anche possibile impostare un percorso diverso per tale file.
 ErrorUnknownSyslogConstant=La costante %s è sconosciuta a syslog.
 OnlyWindowsLOG_USER=Solo utenti Windows supportano LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Impostazioni modulo donazioni
 DonationsReceiptModel=Modello di ricevuta per donazioni

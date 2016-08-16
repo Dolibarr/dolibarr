@@ -1311,8 +1311,6 @@ SyslogFilename=Faili nimi ja rada
 YouCanUseDOL_DATA_ROOT=Võid kasutada DOL_DATA_ROOT/dolibarr.log Dolibarri "documents" kausta faili salvestamiseks, aga logifaili salvestamiseks võib ka mõnda muud rada kasutada.
 ErrorUnknownSyslogConstant=Konstant %s ei ole tuntud Syslogi konstant
 OnlyWindowsLOG_USER=Windows toetab vaid LOG_USER direktiivi
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Annetuste mooduli seadistamine
 DonationsReceiptModel=Annetuse kviitungi mall

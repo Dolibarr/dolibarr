@@ -1311,8 +1311,6 @@ SyslogFilename=Failo pavadinimas ir kelias
 YouCanUseDOL_DATA_ROOT=Galite naudoti DOL_DATA_ROOT/dolibarr.log prisijungimo failui Dolibarr "dokuments" kataloge. Galite nustatyti kitokį kelią šio failo saugojimui.
 ErrorUnknownSyslogConstant=Konstanta %s yra nežinoma Syslog konstanta
 OnlyWindowsLOG_USER=Windows palaiko tik LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Aukų modulio nuostatos
 DonationsReceiptModel=Aukų įplaukų šablonas
