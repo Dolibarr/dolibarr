@@ -129,7 +129,7 @@ $fieldstosearchall = array(
     'f.ref'=>'Ref',
     'f.ref_supplier'=>'RefSupplier',
     //'fd.description'=>'Description',
-    's.nom'=>"ThirdParty",
+    's.nom'=>'Supplier',
     'f.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
@@ -142,7 +142,7 @@ $arrayfields=array(
     'f.datef'=>array('label'=>$langs->trans("DateInvoice"), 'checked'=>1),
     'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
 	'p.ref'=>array('label'=>$langs->trans("Project"), 'checked'=>0),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("Supplier"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
