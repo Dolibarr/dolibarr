@@ -122,7 +122,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
     'c.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'c.ref_client'=>array('label'=>$langs->trans("RefCustomerOrder"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("Customer"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
