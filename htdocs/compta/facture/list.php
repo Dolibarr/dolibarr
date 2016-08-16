@@ -133,7 +133,7 @@ $fieldstosearchall = array(
     'f.facnumber'=>'Ref',
     'f.ref_client'=>'RefCustomer',
     'fd.description'=>'Description',
-    's.nom'=>"ThirdParty",
+    's.nom'=>'Customer',
     'f.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["f.note_private"]="NotePrivate";
