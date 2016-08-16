@@ -144,7 +144,7 @@ $arrayfields=array(
     'f.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
     'f.date'=>array('label'=>$langs->trans("DateInvoice"), 'checked'=>1),
     'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
-    's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
+    's.nom'=>array('label'=>$langs->trans("Customer"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
     's.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>1),
     'state.nom'=>array('label'=>$langs->trans("StateShort"), 'checked'=>0),
