@@ -135,7 +135,7 @@ if (! $action)
         // Ref / label
         $field = 'ref';
         print '<tr>';
-        print '<td class="fieldrequired">';
+        print '<td class="titlefieldcreate fieldrequired">';
         print $langs->trans('ResourceFormLabel_'.$field);
         print '</td>';
         print '<td>';
@@ -166,11 +166,11 @@ if (! $action)
 
         dol_fiche_end('');
 
-        echo '<div align="center">',
-        '<input type="submit" class="button" name="add" value="'.$langs->trans('Save').'" />',
-        ' &nbsp; ',
-        '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'" />',
-        '</div>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Save") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '">';
+		print '</div>';
 
         print '</form>';
 }

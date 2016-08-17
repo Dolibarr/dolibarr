@@ -260,7 +260,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
     print "<tr>";
     // Label
-    print '<td class="fieldrequired">';
+    print '<td class="titlefield fieldrequired">';
     print $langs->trans("Label");
     print '</td>';
     print '<td align="left"><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
@@ -305,8 +305,10 @@ if ($action == 'create')
 	dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print '<div>';
+	print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
     print '</form>';
 }
@@ -496,7 +498,7 @@ if ($id > 0)
 		
 		if ($action == 'edit')
 		{
-			print '<div align="center">';
+			print '<div class="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
