@@ -339,7 +339,7 @@ class Dolresource extends CommonObject
         if ($this->db->query($sql))
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-            $sql.= " WHERE element_type='resource' AND resource_id ='".$this->db->escape($rowid)."'";
+            $sql.= " WHERE element_type='resource' AND resource_id = ".$this->db->escape($rowid);
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             if ($this->db->query($sql))
             {
@@ -393,7 +393,7 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= " GROUP BY t.rowid, t.entity, t.ref, t.description, t.fk_code_type_resource, t.tms, ty.label";
+    	//$sql.= " GROUP BY t.rowid, t.entity, t.ref, t.description, t.fk_code_type_resource, t.tms, ty.label";
     	$sql.= $this->db->order($sortfield,$sortorder);
         $this->num_all = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -473,7 +473,7 @@ class Dolresource extends CommonObject
    				}
    			}
    		}
-   		$sql.= " GROUP BY t.rowid, ty.label";
+   		//$sql.= " GROUP BY t.rowid, ty.label";
     	$sql.= $this->db->order($sortfield,$sortorder);
    		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
@@ -559,7 +559,7 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= " GROUP BY t.resource_id";
+    	//$sql.= " GROUP BY t.resource_id";
     	$sql.= $this->db->order($sortfield,$sortorder);
     	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
@@ -770,7 +770,7 @@ class Dolresource extends CommonObject
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-	    $sql.= " WHERE element_id='".$element_id."' AND element_type='".$element."'";
+	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
 	    if($resource_type)
 	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
 	    $sql .= ' ORDER BY resource_type';

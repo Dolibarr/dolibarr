@@ -592,9 +592,10 @@ abstract class CommonObject
         }
 
         if(! empty($id_type_contact)) {
-	        $datecreate = dol_now();
 
-	        $this->db->begin();
+        	$datecreate = dol_now();
+
+        	$this->db->begin();
 
 	        // Insertion dans la base
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
