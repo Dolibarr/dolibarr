@@ -21,7 +21,10 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
-ALTER TABLE llx_facturedet ADD COLUMN fk_user integer DEFAULT NULL after fk_unit;
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_author integer after fk_unit;
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_modif integer after fk_unit;
+ALTER TABLE llx_facturedet ADD COLUMN fk_user_associate integer DEFAULT NULL after fk_unit;
+
 
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
