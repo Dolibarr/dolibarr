@@ -140,7 +140,7 @@ if (empty($reshook))
 			}
 		}
 	}
-	
+
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setValid($user);
@@ -733,14 +733,14 @@ if (empty($reshook))
 	/*
 	 * Send mail
 	 */
-	
+
 	// Actions to send emails
 	$actiontypecode='AC_OTH_AUTO';
 	$trigger_name='FICHINTER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromintervention';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-	
+
 
 	if ($action == 'update_extras')
 	{
@@ -955,7 +955,7 @@ if ($action == 'create')
             else
             	$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
             	*/
-            $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
+            $numprojet=$formproject->select_projects($soc->id,$projectid,'projectid');
             if ($numprojet==0)
             {
                 print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1027,6 +1027,8 @@ if ($action == 'create')
 	    {
 	        print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		} elseif ($origin == 'project' && !empty($projectid)) {
+			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 		}
 
 		dol_fiche_end();
@@ -1044,6 +1046,13 @@ if ($action == 'create')
 		dol_fiche_head('');
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+		if (is_object($objectsrc))
+		{
+			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		} elseif ($origin == 'project' && !empty($projectid)) {
+			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
+		}
 		print '<table class="border" width="100%">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 		print $form->select_company('','socid','','SelectThirdParty',1);
@@ -1137,7 +1146,7 @@ else if ($id > 0 || ! empty($ref))
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneIntervention'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-	
+
 	if (!$formconfirm)
 	{
 		$parameters=array('lineid'=>$lineid);
@@ -1168,7 +1177,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
-	
+
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
 		// Date Start
@@ -1177,14 +1186,14 @@ else if ($id > 0 || ! empty($ref))
 		print $object->dateo ? dol_print_date($object->dateo, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
-		
+
 		// Date End
 		print '<tr><td>'.$langs->trans("Datee").'</td>';
 		print '<td colspan="3">';
 		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
-		
+
 		// Date Terminate/close
 		print '<tr><td>'.$langs->trans("Datet").'</td>';
 		print '<td colspan="3">';
@@ -1428,7 +1437,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="center" class="nowrap">';
 					$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 					print '</td>';
-                        
+
                     // Duration
                     print '<td align="right">';
                     if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
@@ -1629,7 +1638,7 @@ else if ($id > 0 || ! empty($ref))
 				if ($user->rights->ficheinter->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=ficheinter">' . $langs->trans("ToClone") . '</a></div>';
 				}
-				
+
 				// Delete
 				if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 				{
@@ -1742,7 +1751,7 @@ else if ($id > 0 || ! empty($ref))
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'int'.$object->id);
-		}		
+		}
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;

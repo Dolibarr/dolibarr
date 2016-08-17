@@ -109,13 +109,13 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
 	if ($cancel) $action='';
-	
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
-	
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
-	
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
-	
+
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes')
 	{
@@ -130,8 +130,8 @@ if (empty($reshook))
 				if ($result > 0) {
 					header("Location: " . $_SERVER['PHP_SELF'] . '?id=' . $result);
 					exit();
-				} 
-				else 
+				}
+				else
 				{
 					setEventMessages($object->error, $object->errors, 'errors');
 					$action = '';
@@ -581,7 +581,7 @@ if (empty($reshook))
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
-					
+
 					//On garde le prix indiqué dans l'input pour la demande de prix fournisseur
 					//$pu_ht = $prod->price;
 					$pu_ht = price2num($price_ht, 'MU');
@@ -776,7 +776,7 @@ if (empty($reshook))
 
 		// Add buying price
 		$fournprice = (GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = (GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value 
+		$buyingprice = (GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -947,7 +947,7 @@ if (empty($reshook))
 	else if ($action == 'setmode' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 	}
-	
+
 	// Multicurrency Code
 	else if ($action == 'setmulticurrencycode' && $user->rights->supplier_proposal->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
@@ -955,7 +955,7 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	else if ($action == 'setmulticurrencyrate' && $user->rights->supplier_proposal->creer) {
-		$result = $object->setMulticurrencyRate(GETPOST('multicurrency_tx', 'int'));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
 
 	else if ($action == 'update_extras') {
@@ -1142,14 +1142,14 @@ if ($action == 'create')
 		print '</td>';
 		print '</tr>';
 	}
-	
+
 	// Multicurrency
 	if (! empty($conf->multicurrency->enabled))
 	{
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
-		$currency_code = (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)); 
+		$currency_code = (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency));
 	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
 		print '</td></tr>';
 	}
@@ -1506,7 +1506,7 @@ if ($action == 'create')
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
 		}
 		print '</td></tr>';
-	
+
 		// Multicurrency rate
 		print '<tr>';
 		print '<td>';
@@ -1560,7 +1560,7 @@ if ($action == 'create')
 	// Other attributes
 	$cols = 2;
 	if (empty($conf->margin->enabled)) $cols++;
-	
+
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	// Amount HT
@@ -1609,16 +1609,16 @@ if ($action == 'create')
 		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 		print '<td class="nowrap" colspan="'.$colspan.'">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
-		
+
 		// Multicurrency Amount VAT
 		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 		print '<td class="nowrap" colspan="'.$colspan.'">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
-		
+
 		// Multicurrency Amount TTC
 		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 		print '<td class="nowrap" colspan="'.$colspan.'">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';	
+		print '</tr>';
 	}
 
 	// Statut
@@ -1770,7 +1770,7 @@ if ($action == 'create')
 				    print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=close' . (empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close') . '"';
 				    print '>' . $langs->trans('Close') . '</a></div>';
 				}
-				
+
 				// Clone
 				if ($user->rights->supplier_proposal->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
@@ -1884,7 +1884,7 @@ if ($action == 'create')
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'spr'.$object->id);
 		}
-		
+
 		$formmail->withfrom = 1;
 		$liste = array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)

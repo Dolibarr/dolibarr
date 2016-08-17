@@ -168,6 +168,18 @@ if ($action == 'setmanagezero') {
 	}
 }
 
+if ($action == 'setdisabledirectinput') {
+	$setdisabledirectinput = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+	if (! $error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 /*
  * View
  */
@@ -337,6 +349,20 @@ if (! empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 	print '</a></td>';
 } else {
 	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setmanagezero&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+$var = ! $var;
+print "<tr " . $bc[$var] . ">";
+print '<td width="80%">' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';
+if (! empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td align="center" colspan="2"><a href="' . $_SERVER['PHP_SELF'] . '?action=setdisabledirectinput&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
 }
