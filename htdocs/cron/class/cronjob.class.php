@@ -411,9 +411,6 @@ class Cronjob extends CommonObject
 
     	$sqlwhere = array();
 
-    	if (!empty($module_name)) {
-    		$sqlwhere[]='(t.module_name='.$module_name.')';
-    	}
     	if (count($sqlwhere)>0) {
     		$sql.= " WHERE ".implode(' AND ',$sqlwhere);
     	}
