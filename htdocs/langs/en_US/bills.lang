@@ -380,6 +380,7 @@ ExtraInfos=Extra infos
 RegulatedOn=Regulated on
 ChequeNumber=Check N°
 ChequeOrTransferNumber=Check/Transfer N°
+ChequeBordereau=Check schedule
 ChequeMaker=Check/Transfer transmitter
 ChequeBank=Bank of Check
 CheckBank=Check
