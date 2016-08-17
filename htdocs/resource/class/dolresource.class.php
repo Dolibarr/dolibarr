@@ -339,7 +339,7 @@ class Dolresource extends CommonObject
         if ($this->db->query($sql))
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-            $sql.= " WHERE element_type='resource' AND resource_id ='".$this->db->escape($rowid)."'";
+            $sql.= " WHERE element_type='resource' AND resource_id =".$this->db->escape($rowid);
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             if ($this->db->query($sql))
             {
@@ -393,7 +393,6 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= " GROUP BY t.rowid, t.entity, t.ref, t.description, t.fk_code_type_resource, t.tms, ty.label";
     	$sql.= $this->db->order($sortfield,$sortorder);
         $this->num_all = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -473,7 +472,6 @@ class Dolresource extends CommonObject
    				}
    			}
    		}
-   		$sql.= " GROUP BY t.rowid, ty.label";
     	$sql.= $this->db->order($sortfield,$sortorder);
    		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
    		dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
@@ -559,7 +557,6 @@ class Dolresource extends CommonObject
     			}
     		}
     	}
-    	$sql.= " GROUP BY t.resource_id";
     	$sql.= $this->db->order($sortfield,$sortorder);
     	if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
     	dol_syslog(get_class($this)."::fetch_all", LOG_DEBUG);
@@ -570,10 +567,9 @@ class Dolresource extends CommonObject
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$i = 0;
-    			while ($i < $num)
+    			$this->lines=array();
+    			while ($obj = $this->db->fetch_object($resql))
     			{
-    				$obj = $this->db->fetch_object($resql);
     				$line = new Dolresource($this->db);
     				$line->id				=	$obj->rowid;
     				$line->resource_id		=	$obj->resource_id;
@@ -584,7 +580,7 @@ class Dolresource extends CommonObject
     				$line->mandatory		=	$obj->mandatory;
     				$line->fk_user_create	=	$obj->fk_user_create;
 
-    				$this->lines[$i] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
+    				$this->lines[] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 
     				$i++;
     			}
@@ -759,7 +755,7 @@ class Dolresource extends CommonObject
 
     /**
      * Return an array with resources linked to the element
-     * 
+     *
      * @param string    $element        Element
      * @param int       $element_id     Id
      * @param string    $resource_type  Type
