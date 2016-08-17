@@ -1891,6 +1891,7 @@ div.tabBar {
 }
 div.popuptabset {
 	padding: 6px;
+	background: #fff;
 	border: 1px solid #888;
 }
 div.popuptab {
