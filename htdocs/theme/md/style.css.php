@@ -2712,11 +2712,7 @@ div.tabBar .noborder {
     min-height: 38px;
 }
 .boxstats:hover {
-<?php if ($colorbacklinepairhover) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } else { ?>
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
-<?php } ?>
+	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
 	/* opacity: 0.9;  Disabled. This make text on top of left menu in smartphone size */
