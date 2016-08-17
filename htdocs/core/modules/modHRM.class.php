@@ -44,13 +44,13 @@ class modHRM extends DolibarrModules
 		
 		$this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace ( '/^mod/i', '', get_class ( $this ) );
-		$this->description = "Gestion des ressources humaines";
+		$this->name = preg_replace( '/^mod/i', '', get_class($this));
+		$this->description = "Management of employees carrier and feelings";
 		
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		
-		$this->const_name = 'MAIN_MODULE_' . strtoupper ( $this->name );
+		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
 		$this->special = 0;
 		// $this->picto = '';
 		
