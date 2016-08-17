@@ -4295,8 +4295,8 @@ class FactureLigne extends CommonInvoiceLine
 		$sql.= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
 		$sql.= ' situation_percent, fk_prev_id,';
-		$sql.= ' fk_unit, fk_user';
-		$sql.= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql.= ' fk_unit, fk_user_author, fk_user_modif, ';
+		$sql.= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql.= ')';
 		$sql.= " VALUES (".$this->fk_facture.",";
 		$sql.= " ".($this->fk_parent_line>0?"'".$this->fk_parent_line."'":"null").",";
@@ -4329,6 +4329,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ", " . $this->situation_percent;
 		$sql .= ", " . $this->fk_prev_id;
 		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", ".$user->id;
 		$sql .= ", ".$user->id;
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
@@ -4514,6 +4515,7 @@ class FactureLigne extends CommonInvoiceLine
 		if (! empty($this->rang)) $sql.= ", rang=".$this->rang;
 		$sql .= ", situation_percent=" . $this->situation_percent;
 		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", fk_user_modif =".$user->id;
 
 		// Multicurrency
 		$sql.= " , multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
