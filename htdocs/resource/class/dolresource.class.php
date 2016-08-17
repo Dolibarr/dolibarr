@@ -409,10 +409,9 @@ class Dolresource extends CommonObject
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$i = 0;
-    			while ($i < $num)
+    			$this->lines=array();
+    			while ($obj = $this->db->fetch_object($resql))
     			{
-    				$obj = $this->db->fetch_object($resql);
     				$line = new Dolresource($this->db);
     				$line->id						=	$obj->rowid;
     				$line->ref						=	$obj->ref;
@@ -420,8 +419,7 @@ class Dolresource extends CommonObject
     				$line->fk_code_type_resource	=	$obj->fk_code_type_resource;
     				$line->type_label				=	$obj->type_label;
 
-    				$this->lines[$i] = $line;
-    				$i++;
+    				$this->lines[] = $line;
     			}
     			$this->db->free($resql);
     		}
@@ -482,10 +480,8 @@ class Dolresource extends CommonObject
    			$num = $this->db->num_rows($resql);
    			if ($num)
    			{
-   				$i = 0;
-   				while ($i < $num)
+   				while ($obj = $this->db->fetch_object($resql))
    				{
-   					$obj = $this->db->fetch_object($resql);
    					$line = new Dolresource($this->db);
    					$line->id				=	$obj->rowid;
    					$line->resource_id		=	$obj->resource_id;
@@ -500,9 +496,8 @@ class Dolresource extends CommonObject
 						$line->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 					if($obj->element_id && $obj->element_type)
 						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
-        			$this->lines[$i] = $line;
+        			$this->lines[] = $line;
 
-   					$i++;
    				}
    				$this->db->free($resql);
    			}
@@ -581,8 +576,6 @@ class Dolresource extends CommonObject
     				$line->fk_user_create	=	$obj->fk_user_create;
 
     				$this->lines[] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
-
-    				$i++;
     			}
     			$this->db->free($resql);
     		}
@@ -766,7 +759,7 @@ class Dolresource extends CommonObject
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-	    $sql.= " WHERE element_id='".$element_id."' AND element_type='".$element."'";
+	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$element."'";
 	    if($resource_type)
 	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
 	    $sql .= ' ORDER BY resource_type';
