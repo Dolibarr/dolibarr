@@ -253,7 +253,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 $out.= ' ';
                 if (! empty($head['sublink'])) $out.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
                 if (! empty($head['subpicto'])) $out.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
-                if (! empty($head['sublink'])) '</a>';
+                if (! empty($head['sublink'])) $out.= '</a>';
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $out.= '</td><td class="nocellnopadd boxclose nowrap">';
