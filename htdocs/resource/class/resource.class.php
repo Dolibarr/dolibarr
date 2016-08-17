@@ -339,7 +339,7 @@ class Resource extends CommonObject
         if ($this->db->query($sql))
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
-            $sql.= " WHERE element_type='resource' AND resource_id ='".$this->db->escape($rowid)."'";
+            $sql.= " WHERE element_type='resource' AND resource_id =".$this->db->escape($rowid);
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             if ($this->db->query($sql))
             {
@@ -409,10 +409,10 @@ class Resource extends CommonObject
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$i = 0;
-    			while ($i < $num)
+    			$this->lines=array();
+    			while ($obj = $this->db->fetch_object($resql))
     			{
-    				$obj = $this->db->fetch_object($resql);
+
     				$line = new Resource($this->db);
     				$line->id						=	$obj->rowid;
     				$line->ref						=	$obj->ref;
@@ -420,8 +420,7 @@ class Resource extends CommonObject
     				$line->fk_code_type_resource	=	$obj->fk_code_type_resource;
     				$line->type_label				=	$obj->type_label;
 
-    				$this->lines[$i] = $line;
-    				$i++;
+    				$this->lines[] = $line;
     			}
     			$this->db->free($resql);
     		}
@@ -482,10 +481,9 @@ class Resource extends CommonObject
    			$num = $this->db->num_rows($resql);
    			if ($num)
    			{
-   				$i = 0;
-   				while ($i < $num)
+   				$this->lines=array();
+   				while ($obj = $this->db->fetch_object($resql))
    				{
-   					$obj = $this->db->fetch_object($resql);
    					$line = new Resource($this->db);
    					$line->id				=	$obj->rowid;
    					$line->resource_id		=	$obj->resource_id;
@@ -500,9 +498,8 @@ class Resource extends CommonObject
 						$line->objresource = fetchObjectByElement($obj->resource_id,$obj->resource_type);
 					if($obj->element_id && $obj->element_type)
 						$line->objelement = fetchObjectByElement($obj->element_id,$obj->element_type);
-        			$this->lines[$i] = $line;
+        			$this->lines[] = $line;
 
-   					$i++;
    				}
    				$this->db->free($resql);
    			}
@@ -567,10 +564,9 @@ class Resource extends CommonObject
     		$num = $this->db->num_rows($resql);
     		if ($num)
     		{
-    			$i = 0;
-    			while ($i < $num)
+    			$this->lines=array();
+    			while ($obj = $this->db->fetch_object($resql))
     			{
-    				$obj = $this->db->fetch_object($resql);
     				$line = new Resource($this->db);
     				$line->id				=	$obj->rowid;
     				$line->resource_id		=	$obj->resource_id;
@@ -581,9 +577,7 @@ class Resource extends CommonObject
     				$line->mandatory		=	$obj->mandatory;
     				$line->fk_user_create	=	$obj->fk_user_create;
 
-    				$this->lines[$i] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
-
-    				$i++;
+    				$this->lines[] = fetchObjectByElement($obj->resource_id,$obj->resource_type);
     			}
     			$this->db->free($resql);
     		}
@@ -754,10 +748,13 @@ class Resource extends CommonObject
     }
 
 
-    /*
+    /**
      * Return an array with resources linked to the element
      *
-     *
+     * @param string    $element        Element
+     * @param int       $element_id     Id
+     * @param string    $resource_type  Type
+     * @return array                    Aray of resources
      */
     function getElementResources($element,$element_id,$resource_type='')
     {
@@ -765,7 +762,7 @@ class Resource extends CommonObject
 	    // Links beetween objects are stored in this table
 	    $sql = 'SELECT rowid, resource_id, resource_type, busy, mandatory';
 	    $sql.= ' FROM '.MAIN_DB_PREFIX.'element_resources';
-	    $sql.= " WHERE element_id='".$element_id."' AND element_type='".$element."'";
+	    $sql.= " WHERE element_id=".$element_id." AND element_type='".$this->db->escape($element)."'";
 	    if($resource_type)
 	    	$sql.=" AND resource_type LIKE '%".$resource_type."%'";
 	    $sql .= ' ORDER BY resource_type';
