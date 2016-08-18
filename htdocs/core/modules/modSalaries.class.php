@@ -73,7 +73,7 @@ class modSalaries extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->conflictwith = array();
-		$this->langfiles = array("salaries");
+		$this->langfiles = array("salaries","bills");
 
 		// Constants
 		$this->const = array();

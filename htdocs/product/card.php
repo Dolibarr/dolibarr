@@ -811,12 +811,19 @@ if (empty($reshook))
  * View
  */
 
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-
-if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.GETPOST('type'));
-else $title = $langs->trans('ProductServiceCard');
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Card');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
 llxHeader('', $title, $helpurl);
 
@@ -1145,7 +1152,11 @@ else
 
         dol_fiche_end();
 
-        print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+		print '</div>';
 
         print '</form>';
     }

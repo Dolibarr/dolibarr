@@ -1099,7 +1099,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function DDLDropField($table,$field_name)
 	{
-		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		$sql= "ALTER TABLE ".$table." DROP COLUMN ".$field_name;
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{

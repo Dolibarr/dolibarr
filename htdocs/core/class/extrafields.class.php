@@ -58,11 +58,12 @@ class ExtraFields
 	var $attribute_perms;
 	// Array to store permission to check
 	var $attribute_list;
-
+	// Array to store if extra field is hidden
+	var $attribute_hidden;		// warning, do not rely on this. If your module need a hidden data, it must use its own table.
+	
 	var $error;
 	var $errno;
 
-	var $attribute_hidden;
 
 	public static $type2label=array(
 	'varchar'=>'String',
@@ -120,7 +121,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
 	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0, $perms='', $list=0, $ishidden=0)
@@ -248,7 +249,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Into list view by default
-	 *  @param	int				$ishidden		Is hidden extrafield
+	 *  @param	int				$ishidden		Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0)
@@ -396,7 +397,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='',$ishidden=0)
@@ -491,7 +492,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
 	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0)
@@ -1177,7 +1178,7 @@ class ExtraFields
 		$params=$this->attribute_param[$key];
 		$perms=$this->attribute_perms[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=$this->attribute_hidden[$key];
+		$hidden=$this->attribute_hidden[$key];	// warning, do not rely on this. If your module need a hidden data, it must use its own table.
 
 		$showsize=0;
 		if ($type == 'date')

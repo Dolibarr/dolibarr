@@ -507,7 +507,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("CreateAccount") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print '</form>';
 }

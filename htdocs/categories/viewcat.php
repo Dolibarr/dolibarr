@@ -169,7 +169,8 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader("","",$langs->trans("Categories"));
+$helpurl='';
+llxHeader("",$langs->trans("Categories"),$helpurl);
 
 if ($type == Categorie::TYPE_PRODUCT)       $title=$langs->trans("ProductsCategoryShort");
 elseif ($type == Categorie::TYPE_SUPPLIER)  $title=$langs->trans("SuppliersCategoryShort");
