@@ -947,8 +947,8 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
-	-webkit-box-shadow: 0 0 13px rgba(0,0,0,0.2);
-    box-shadow: 0 0 13px rgba(0,0,0,0.2);	
+	/*-webkit-box-shadow: 0 0 6px rgba(0,0,0,0.4);
+    box-shadow: 0 0 6px rgba(0,0,0,0.4); */
 	<?php if ($usegradienttop) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
