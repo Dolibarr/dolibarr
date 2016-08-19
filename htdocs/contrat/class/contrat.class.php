@@ -2127,6 +2127,7 @@ class Contrat extends CommonObject
 		$this->ref_supplier = 'SPECIMENSUPP';
 		$this->socid = 1;
 		$this->statut= 0;
+		$this->date_creation = (dol_now() - 3600 * 24 * 7);
 		$this->date_contrat = dol_now();
 		$this->commercial_signature_id = 1;
 		$this->commercial_suivi_id = 1;
