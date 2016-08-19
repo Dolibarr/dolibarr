@@ -128,6 +128,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
 
 include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
 
+if (GETPOST('cancel')) $action='';
+
 // Create predefined invoice
 if ($action == 'add')
 {
