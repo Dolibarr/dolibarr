@@ -610,19 +610,19 @@ if ($resql)
        		print "<td>";
     		print $memberstatic->getNomUrl(1);
     		print "</td>\n";
+    	}		
+		// Firstname
+    	if (! empty($arrayfields['d.firstname']['checked'])) 
+    	{
+        	print "<td>";
+    		print $obj->firstname;
+    		print "</td>\n";
     	}
 		// Lastname
     	if (! empty($arrayfields['d.lastname']['checked'])) 
     	{
         	print "<td>";
     		print $obj->lastname;
-    		print "</td>\n";
-    	}
-		// Firstname
-    	if (! empty($arrayfields['d.firstname']['checked'])) 
-    	{
-        	print "<td>";
-    		print $obj->firstname;
     		print "</td>\n";
     	}
 		// Company
