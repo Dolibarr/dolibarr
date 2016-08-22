@@ -429,6 +429,7 @@ CantRemoveConciliatedPayment=Can't remove conciliated payment
 PayedByThisPayment=Paid by this payment
 ClosePaidInvoicesAutomatically=Classify "Paid" all standard, situation or replacement invoices entirely paid.
 ClosePaidCreditNotesAutomatically=Classify "Paid" all credit notes entirely paid back.
+ClosePaidContributionsAutomatically=Classify "Paid" all social or fiscal contributions entirely paid.
 AllCompletelyPayedInvoiceWillBeClosed=All invoice with no remain to pay will be automatically closed to status "Paid".
 ToMakePayment=Pay
 ToMakePaymentBack=Pay back

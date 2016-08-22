@@ -130,7 +130,7 @@ class PaiementFourn extends Paiement
 	 *	@param		int		$closepaidinvoices   	1=Also close payed invoices to paid, 0=Do nothing more
 	 *	@return     int         					id of created payment, < 0 if error
 	 */
-	function create($user,$closepaidinvoices=0)
+	function create($user, $closepaidinvoices=0)
 	{
 		global $langs,$conf;
 
@@ -140,6 +140,8 @@ class PaiementFourn extends Paiement
 		// Clean parameters
 		$totalamount = 0;
 		$totalamount_converted = 0;
+		
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		
 		if ($way == 'dolibarr')
 		{
@@ -188,7 +190,6 @@ class PaiementFourn extends Paiement
 			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
 
-			dol_syslog("PaiementFourn::create", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -220,7 +221,7 @@ class PaiementFourn extends Paiement
 	                            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
 	                            if ($remaintopay == 0)
 	                            {
-	    					        $result=$invoice->set_paid($user,'','');
+	    					        $result=$invoice->set_paid($user, '', '');
 	                            }
 	                            else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 							}

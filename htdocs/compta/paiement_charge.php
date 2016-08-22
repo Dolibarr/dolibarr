@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid=GETPOST("id");
-$action=GETPOST('action');
+$chid=GETPOST("id", 'int');
+$action=GETPOST('action', 'alpha');
 $amounts = array();
 
 // Security check
@@ -45,7 +45,7 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if ($action == 'add_payment')
+if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes'))
 {
 	$error=0;
 
@@ -109,7 +109,7 @@ if ($action == 'add_payment')
 
     		if (! $error)
     		{
-    		    $paymentid = $paiement->create($user);
+    		    $paymentid = $paiement->create($user, (GETPOST('closepaidcontrib')=='on'?1:0));
                 if ($paymentid < 0)
                 {
                     $errmsg=$paiement->error;
@@ -155,7 +155,7 @@ $form=new Form($db);
 
 
 // Formulaire de creation d'un paiement de charge
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 
 	$charge = new ChargeSociales($db);
@@ -317,8 +317,9 @@ if ($_GET["action"] == 'create')
 
 	print "</table>";
 
-	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	// Bouton Save payment
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
