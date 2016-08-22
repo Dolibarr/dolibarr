@@ -268,7 +268,7 @@ class ImportCsv extends ModeleImports
 	 * @param	string	$importid						Import key
 	 * @return	int										<0 if KO, >0 if OK
 	 */
-	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid)
+	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updatekeys)
 	{
 		global $langs,$conf,$user;
         global $thirdparty_static;    	// Specific to thirdparty import
@@ -551,47 +551,79 @@ class ImportCsv extends ModeleImports
 				// If no error for this $alias/$tablename, we have a complete $listfields and $listvalues that are defined
 				if (! $errorforthistable)
 				{
-				    //print "$alias/$tablename/$listfields/$listvalues<br>";
+					//print "$alias/$tablename/$listfields/$listvalues<br>";
 					if (!empty($listfields))
 					{
-					    //var_dump($objimport->array_import_convertvalue); exit;
-					    
-						// Build SQL UPDATE request
-						$sqlstart = 'UPDATE '.$tablename;
-
-						// Build SQL INSERT request
-						$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
-						$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
-						if (! empty($tablewithentity_cache[$tablename])) {
-							$sqlstart.= ', entity';
-							$sqlend.= ', '.$conf->entity;
-						} 
-						if (! empty($objimport->array_import_tables_creator[0][$alias])) {
-							$sqlstart.= ', '.$objimport->array_import_tables_creator[0][$alias];
-							$sqlend.=', '.$user->id;
-						}
-						$sql = $sqlstart.$sqlend.')';
-						dol_syslog("import_csv.modules", LOG_DEBUG);
-
-						//print '> '.join(',',$arrayrecord);
-						//print 'sql='.$sql;
-						//print '<br>'."\n";
-
-						// Run insert request
-						if ($sql)
-						{
-							$resql=$this->db->query($sql);
-							$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
-							if ($resql)
-							{
-								//print '.';
+						$updatedone = false;
+						if(!empty($updatekeys)) {
+							// Build SQL UPDATE request
+							$sqlstart = 'UPDATE '.$tablename;
+							
+							$data = array_combine($listfields, $listvalues);
+							$set = array();
+							foreach ($data as $key => $val) {
+								$set[] = $key.' = '.$val;
 							}
-							else
+							$sqlstart.= ' SET '.implode(', ', $set);
+							
+							$where = array();
+							foreach ($updatekeys as $key) {
+								$key=preg_replace('/^.*\./i','',$key);
+								$where[] = $key.' = '.$data[$key];
+							}
+							$sqlend = ' WHERE '.implode(' AND ', $where);
+							
+							$sql = $sqlstart.$sqlend;
+							
+							// Run update request
+							$resql=$this->db->query($sql);
+							if($resql) {
+								echo $sql;
+								echo '<pre>';
+								//print_r($this->db);
+								//print_r($this->db->db);
+								echo '</pre>';
+								echo '<b>'.var_dump($this->db->db->affected_rows).'</b>';
+								if($this->db->db->affected_rows > 0) {
+									$this->nbupdate++;
+									$updatedone = true;
+								}
+							}
+						}
+
+						// Update not done, we do insert
+						if(!$updatedone) {
+							// Build SQL INSERT request
+							$sqlstart = 'INSERT INTO '.$tablename.'('.implode(', ', $listfields).', import_key';
+							$sqlend = ') VALUES('.implode(', ', $listvalues).", '".$importid."'";
+							if (! empty($tablewithentity_cache[$tablename])) {
+								$sqlstart.= ', entity';
+								$sqlend.= ', '.$conf->entity;
+							} 
+							if (! empty($objimport->array_import_tables_creator[0][$alias])) {
+								$sqlstart.= ', '.$objimport->array_import_tables_creator[0][$alias];
+								$sqlend.=', '.$user->id;
+							}
+							$sql = $sqlstart.$sqlend.')';
+							echo $sql;
+							dol_syslog("import_csv.modules", LOG_DEBUG);
+	
+							// Run insert request
+							if ($sql)
 							{
-								//print 'E';
-								$this->errors[$error]['lib']=$this->db->lasterror();
-								$this->errors[$error]['type']='SQL';
-								$error++;
+								$resql=$this->db->query($sql);
+								$last_insert_id_array[$tablename] = $this->db->last_insert_id($tablename); // store the last inserted auto_increment id for each table, so that dependent tables can be inserted with the appropriate id. This must be done just after the INSERT request, else we risk losing the id (because another sql query will be issued somewhere in Dolibarr).
+								if ($resql)
+								{
+									$this->nbinsert++;
+								}
+								else
+								{
+									//print 'E';
+									$this->errors[$error]['lib']=$this->db->lasterror();
+									$this->errors[$error]['type']='SQL';
+									$error++;
+								}
 							}
 						}
 					}
