@@ -168,7 +168,7 @@ print $form->showrefnav($paiement,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date
-print '<tr><td width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->datep,'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->datep,'day').'</td></tr>';
 
 // Mode
 print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
