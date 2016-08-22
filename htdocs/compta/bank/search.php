@@ -28,18 +28,21 @@
  */
 
 require('../../main.inc.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
 $langs->load("companies");
 $langs->load("margins");
+$langs->load("trips");
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -110,6 +113,8 @@ $companystatic=new Societe($db);
 $bankaccountstatic=new Account($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
+$paymentexpensereport = new PaymentExpenseReport($db);
+$formfile = new FormFile($db);
 
 llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 
@@ -233,7 +238,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Value'),$_SERVER['PHP_SELF'],'b.datev','',$param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Invoice"),$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Documents2"),$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Numero"),$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
@@ -314,12 +319,13 @@ if ($resql)
 	        foreach ( $links as $key => $val ) {
 	        	//var_dump($links);
 	        	if ($links[$key]['type'] == 'payment') {
-	        		$paymentstatic->id = $objp->rowid;
-	        		print ' '.$paymentstatic->getInvoiceUrl(1);
+              print ' '.$paymentstatic->getInvoiceUrl(1,$objp->rowid);
 	        	} elseif ($links[$key]['type'] == 'payment_supplier') {
-	        		$paymentsupplierstatic->id = $objp->rowid;
-	        		print ' '.$paymentsupplierstatic->getInvoiceUrl(1);
-	        	}
+              print ' '.$paymentsupplierstatic->getInvoiceUrl(1,$objp->rowid);
+	        	} elseif ($links[$key]['type'] == 'payment_expensereport') {                            
+              $paymentexpensereport->id = $objp->rowid;
+              print ' '.$paymentexpensereport->getInvoiceUrl(1,$objp->rowid);
+            }
 	        }
 	        print "</td>\n";
 

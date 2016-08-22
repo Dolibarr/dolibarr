@@ -612,4 +612,75 @@ class PaymentExpenseReport extends CommonObject
 
 		return $result;
 	}
+  
+  
+  /**
+	 *	Return clicable name (with picto eventually)
+	 *
+	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@return		string					Chaine avec URL
+	 */
+	function getInvoiceUrl($withpicto=0,$fk_bank)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    global $langs,$conf;
+
+    $formfile = new FormFile($this->db);
+		$result='';
+
+		
+		$sql = 'SELECT e.ref as text, e.rowid as facid ';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as pe, '.MAIN_DB_PREFIX.'expensereport as e, '.MAIN_DB_PREFIX.'bank as b';
+		$sql.= ' WHERE b.rowid = '.$fk_bank.' AND pe.fk_expensereport = e.rowid AND pe.fk_bank = b.rowid AND e.paid = 1';
+
+		dol_syslog(get_class($this).'::getInvoiceUrl', LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$text=$obj->text;
+		
+			$label = $langs->trans("ExpenseReport").': '.$text;
+
+			$link = '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?id='.$obj->facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+			$linkend='</a>';
+
+
+			switch ($withpicto) {
+				case 0 :
+					$result .= $link . $text . $linkend;
+					break;
+				case 1 :
+					$filename=dol_sanitizeFileName($obj->text);
+          $filedir=$conf->expensereport->dir_output . '/' . dol_sanitizeFileName($obj->text);
+          
+          $result .= '<table class="nobordernopadding"><tr class="nocellnopadd">';
+          $result .= '<td class="nobordernopadding nowrap">';
+          $result .= ($link . img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"') . $linkend).' '.$link . $text . $linkend;
+          $result .= '</td>';
+          $result .= '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+          $result .= ' '.$formfile->getDocumentsLink('expensereport', $filename, $filedir);
+          $result .= '</td>';
+          $result .= '</tr>';
+          $result .= '</table>'; 
+					break;
+				case 2 :
+					$result .= ($link . img_object($langs->trans("ExpenseReport"), 'invoice', 'class="classfortooltip"') . $linkend);
+					break;
+				case 3 :
+					$result .=  ' '.$text;
+			}
+
+			return $result;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dol_syslog(get_class($this).'::getInvoiceUrl Error '.$this->error);
+			return '';
+		}
+
+
+	}
+  
 }

@@ -26,11 +26,13 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
 
 
 $langs->load("banks");
 $langs->load("compta");
+$langs->load("trips");
 
 
 $action = GETPOST('action', 'alpha');
@@ -61,6 +63,7 @@ if ($action == 'export') {
 
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
+$paymentexpensereport = new PaymentExpenseReport($db);
 
 
 
@@ -133,12 +136,12 @@ if ($fp)
 			$invoice = '';
 	        foreach ( $links as $key => $val ) {
 	        	if ($links[$key]['type'] == 'payment') {
-	        		$paymentstatic->id = $objp->rowid;
-	        		$invoice .= ' '.$paymentstatic->getInvoiceUrl(3);
+	        		$invoice .= ' '.$paymentstatic->getInvoiceUrl(3,$objp->rowid);
 	        	} elseif ($links[$key]['type'] == 'payment_supplier') {
-	        		$paymentsupplierstatic->id = $objp->rowid;
-	        		$invoice .= ' '.$paymentsupplierstatic->getInvoiceUrl(3);
-	        	}
+	        		$invoice .= ' '.$paymentsupplierstatic->getInvoiceUrl(3,$objp->rowid);
+	        	} elseif ($links[$key]['type'] == 'payment_expensereport') {     
+              $invoice .= ' '.$paymentexpensereport->getInvoiceUrl(3,$objp->rowid);
+            }
 	        }
 			$c_invoice = html_entity_decode($invoice);
 
@@ -216,9 +219,9 @@ if ($fp)
 					'',
 					'',
 					$langs->trans("Total"),
-					price($total_debit * - 1),
-					price($total_credit),
-					'' );
+					price($total_deb * - 1),
+					price($total_cred),
+					price($total_cred - ($total_deb * - 1)) );
 
 		fputcsv($fp, $total_array, $separator);
 

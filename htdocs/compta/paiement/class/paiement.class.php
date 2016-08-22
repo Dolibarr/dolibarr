@@ -877,15 +877,19 @@ $this->num_paiement, '', $user, $emetteur_nom, $emetteur_banque);
 	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
 	 * @return string Chaine avec URL
 	 */
-	function getInvoiceUrl($withpicto = 0) {
-		global $langs;
+	function getInvoiceUrl($withpicto = 0,$fk_bank) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    global $langs,$conf;
 
+    $formfile = new FormFile($this->db);
 		$result = '';
 
 		// SELECT f.facnumber as text, f.rowid as facid FROM llx_paiement_facture as pf, llx_paiement as p, llx_bank as b, llx_facture as f where pf.fk_paiement = p.rowid and p.fk_bank = b.rowid and pf.fk_facture=f.rowid and f.paye = 1
 		$sql = 'SELECT f.facnumber as text, f.rowid as facid ';
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'paiement_facture as pf, ' . MAIN_DB_PREFIX . 'paiement as p, ' . MAIN_DB_PREFIX . 'bank as b, ' . MAIN_DB_PREFIX . 'facture as f';
-		$sql .= ' WHERE b.rowid = ' . $this->id . ' AND pf.fk_paiement = p.rowid AND p.fk_bank = b.rowid AND pf.fk_facture=f.rowid AND f.paye = 1';
+		$sql .= ' WHERE b.rowid = '.$fk_bank.' AND pf.fk_paiement = p.rowid AND p.fk_bank = b.rowid AND pf.fk_facture=f.rowid AND f.paye = 1';
+
+    
 
 		dol_syslog(get_class($this) . '::getInvoiceUrl', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -908,9 +912,19 @@ $this->num_paiement, '', $user, $emetteur_nom, $emetteur_banque);
 					$result .= $link . $text . $linkend;
 					break;
 				case 1 :
-					$result .= ($link . img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"') . $linkend);
-					$result .= ' ';
-					$result .= $link . $text . $linkend;
+        
+          $filename=dol_sanitizeFileName($obj->text);
+          $filedir=$conf->facture->dir_output . '/' . dol_sanitizeFileName($obj->text);
+          
+          $result .= '<table class="nobordernopadding"><tr class="nocellnopadd">';
+          $result .= '<td class="nobordernopadding nowrap">';
+          $result .= ($link . img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"') . $linkend).' '.$link . $text . $linkend;
+          $result .= '</td>';
+          $result .= '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+          $result .= ' '.$formfile->getDocumentsLink('facture', $filename, $filedir);
+          $result .= '</td>';
+          $result .= '</tr>';
+          $result .= '</table>';  
 					break;
 				case 2 :
 					$result .= ($link . img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"') . $linkend);

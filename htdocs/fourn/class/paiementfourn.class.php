@@ -557,16 +557,18 @@ class PaiementFourn extends Paiement
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@return		string					Chaine avec URL
 	 */
-	function getInvoiceUrl($withpicto=0)
+	function getInvoiceUrl($withpicto=0,$fk_bank)
 	{
-		global $langs;
-
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+    global $langs,$conf;
+    
+    $formfile = new FormFile($this->db);
 		$result='';
 
-		//SELECT f.ref as text, f.rowid as facid FROM llx_paiementfourn_facturefourn as pf, llx_paiementfourn as p, llx_bank as b, llx_facture_fourn as f where pf.fk_paiementfourn = p.rowid and p.fk_bank = b.rowid and pf.fk_facturefourn=f.rowid and f.paye = 1
-		$sql = 'SELECT f.ref as text, f.rowid as facid ';
+		
+		$sql = 'SELECT f.ref as text, f.rowid as facid, f.ref_supplier as ref_supplier, f.date_lim_reglement as datelimite, f.fk_statut as fk_statut';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'paiementfourn as p, '.MAIN_DB_PREFIX.'bank as b, '.MAIN_DB_PREFIX.'facture_fourn as f';
-		$sql.= ' WHERE b.rowid = '.$this->id.' AND pf.fk_paiementfourn = p.rowid AND p.fk_bank = b.rowid AND pf.fk_facturefourn=f.rowid AND f.paye = 1';
+		$sql.= ' WHERE b.rowid = '.$fk_bank.' AND pf.fk_paiementfourn = p.rowid AND p.fk_bank = b.rowid AND pf.fk_facturefourn=f.rowid AND f.paye = 1';    
 
 		dol_syslog(get_class($this).'::getInvoiceUrl', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -584,15 +586,33 @@ class PaiementFourn extends Paiement
 			$link = '<a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$obj->facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 			$linkend='</a>';
 
-
 			switch ($withpicto) {
 				case 0 :
 					$result .= $link . $text . $linkend;
 					break;
 				case 1 :
-					$result.=($link.img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"').$linkend);
-					$result .= ' ';
-					$result .= $link . $text . $linkend;
+        
+          $datelimit=$this->db->jdate($obj->datelimite);
+          $facturestatic->id=$obj->facid;
+          $facturestatic->ref=$obj->text;
+          $facturestatic->ref_supplier=$obj->ref_supplier;
+          $facturestatic->date_echeance = $this->db->jdate($obj->datelimite);
+          $facturestatic->statut = $obj->fk_statut;
+
+          $filename= dol_sanitizeFileName($obj->text);
+          $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').$filename;
+          $subdir  = get_exdir($obj->facid,2,0,0,$facturestatic,'invoice_supplier').$filename;
+          
+          //echo $filedir."<br>";
+          
+          $result .= '<table class="nobordernopadding"><tr class="nocellnopadd">';
+          $result .= '<td class="nobordernopadding nowrap">';
+					$result .= ($link.img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"').$linkend).' '.$link . $text . $linkend;
+          $result .= '</td>';
+          $result .= '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+          $result .= $formfile->getDocumentsLink('facture_fournisseur',$subdir, $filedir);
+          $result .= '</td></tr></table>';
+          
 					break;
 				case 2 :
 					$result .= ($link . img_object($langs->trans("ShowInvoice"), 'invoice', 'class="classfortooltip"') . $linkend);

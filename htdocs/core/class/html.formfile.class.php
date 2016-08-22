@@ -698,8 +698,10 @@ class FormFile
 
     	$out='';
     	$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
-
-		$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)
+      
+      $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$');
+		  //$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/'), '(\.meta|\.png)$');
+      //$file_list=dol_dir_list($filedir, 'files', 0, preg_quote(basename($modulesubdir),'/').'[^\-]+', '\.meta$|\.png$');	// Get list of files starting with name fo ref (but not followed by "-" to discard uploaded files)
 
     	// For ajax treatment
     	$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
@@ -736,7 +738,7 @@ class FormFile
     			if (empty($this->infofiles[$ext])) $this->infofiles['extensions'][$ext]=1;
     			else $this->infofiles['extensions'][$ext]++;
     		}
-    	}
+    	} 
 
     	return $out;
     }
