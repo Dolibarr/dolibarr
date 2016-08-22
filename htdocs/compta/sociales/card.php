@@ -18,7 +18,7 @@
  */
 
 /**
- *      \file       htdocs/compta/sociales/charges.php
+ *      \file       htdocs/compta/sociales/card.php
  *		\ingroup    tax
  *		\brief      Social contribution card page
  */
@@ -382,7 +382,7 @@ if ($id > 0)
 
 		if ($action == 'edit')
 		{
-			print "<form name=\"charge\" action=\"charges.php?id=$object->id&amp;action=update\" method=\"post\">";
+			print "<form name=\"charge\" action=\"".$_SERVER["PHP_SELF"]."?id=$object->id&amp;action=update\" method=\"post\">";
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 
@@ -585,13 +585,13 @@ if ($id > 0)
 			// Reopen
 			if ($object->paye && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/charges.php",1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a>";
+				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php",1). "?id=$object->id&amp;action=reopen\">".$langs->trans("ReOpen")."</a>";
 			}
 			
 			// Edit
 			if ($object->paye == 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=edit\">".$langs->trans("Modify")."</a>";
 			}
 
 			// Emit payment
@@ -603,19 +603,19 @@ if ($id > 0)
 			// Classify 'paid'
 			if ($object->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=paid\">".$langs->trans("ClassifyPaid")."</a>";
 			}
 
 			// Clone
 			if ($user->rights->tax->charges->creer)
 			{
-				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/charges.php",1). "?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a>";
+				print "<a class=\"butAction\" href=\"".dol_buildpath("/compta/sociales/card.php",1). "?id=$object->id&amp;action=clone\">".$langs->trans("ToClone")."</a>";
 			}
 
 			// Delete
 			if ($user->rights->tax->charges->supprimer)
 			{
-				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/card.php?id=$object->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 			}
 
 			print "</div>";
