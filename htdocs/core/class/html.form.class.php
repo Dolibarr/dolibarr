@@ -5580,15 +5580,15 @@ class Form
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
      *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
-     *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field)
+     *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
      *    @param	string	$morehtmlref  	More html to show after ref
      *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
      *	  @param	string	$morehtmlleft	More html code to show before ref
      *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place)
      *	  @param	string	$morehtmlright	More html code to show after ref
-     * 	  @return	string    				Portion HTML avec ref + boutons nav
+     * 	  @return	string    				Portion HTML with ref + navigation buttons
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
     {
@@ -5613,7 +5613,7 @@ class Form
         
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
-        // For thirdparty and contact, the ref is the id, so we show something else
+        // For thirdparty, contact, user, member, the ref is the id, so we show something else
         if ($object->element == 'societe')
         {
         	$ret.=dol_htmlentities($object->name);
@@ -5622,7 +5622,7 @@ class Form
         {
         	$ret.=dol_htmlentities($object->getFullName($langs));
         }
-        else $ret.=dol_htmlentities($object->$fieldref);
+        else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
