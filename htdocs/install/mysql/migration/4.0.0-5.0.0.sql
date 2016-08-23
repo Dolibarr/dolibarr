@@ -27,6 +27,8 @@ ALTER TABLE llx_user DROP COLUMN phenix_pass;
 
 ALTER TABLE llx_societe ADD COLUMN fk_account integer;
 
+ALTER TABLE llx_commandedet ADD COLUMN fk_commandefourndet	integer NOT NULL after import_key;   -- link to detail line of commande fourn (resplenish)
+
 ALTER TABLE llx_website ADD COLUMN virtualhost varchar(255) after fk_default_home;
 
 ALTER TABLE llx_chargesociales ADD COLUMN fk_account integer after fk_type;
