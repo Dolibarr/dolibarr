@@ -738,14 +738,15 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
+		
+    	$objectstatic->id=$obj->rowid;
+    	$objectstatic->ref=$obj->ref;
+    		
 		print '<tr '.$bc[$var].'>';
 		
 		if (! empty($arrayfields['p.ref']['checked']))
 		{
     		print '<td class="nowrap">';
-    
-    		$objectstatic->id=$obj->rowid;
-    		$objectstatic->ref=$obj->ref;
     
     		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
@@ -753,15 +754,21 @@ if ($resql)
     		print $objectstatic->getNomUrl(1);
     		print '</td>';
             // Warning
-    		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-    		if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            $warnornote='';
+    		if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) $warnornote.=img_warning($langs->trans("Late"));
     		if (! empty($obj->note_private))
     		{
-    			print ' <span class="note">';
-    			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-    			print '</span>';
+    			$warnornote.=($warnornote?' ':'');
+    			$warnornote.= '<span class="note">';
+    			$warnornote.= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+    			$warnornote.= '</span>';
     		}
-    		print '</td>';
+    		if ($warnornote)
+    		{
+    			print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+    			print $warnornote;
+    			print '</td>';
+    		}
     		// Other picto tool
     		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
     		$filename=dol_sanitizeFileName($obj->ref);

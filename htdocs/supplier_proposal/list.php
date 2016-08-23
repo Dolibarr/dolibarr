@@ -195,8 +195,8 @@ $companystatic=new Societe($db);
 
 $now=dol_now();
 
-$sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
-$sql.= ' p.rowid as supplier_proposalid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_valid, p.date_livraison as dp,';
+$sql = 'SELECT s.rowid as socid, s.nom as name, s.town, s.client, s.code_client,';
+$sql.= ' p.rowid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_valid, p.date_livraison as dp,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'supplier_proposal as p';
@@ -402,78 +402,85 @@ if ($result)
 
 	while ($i < min($num,$limit))
 	{
-		$objp = $db->fetch_object($result);
+		$obj = $db->fetch_object($result);
 		$now = dol_now();
 		$var=!$var;
+
+		$objectstatic->id=$obj->rowid;
+		$objectstatic->ref=$obj->ref;
+
 		print '<tr '.$bc[$var].'>';
 		print '<td class="nowrap">';
 
-		$objectstatic->id=$objp->supplier_proposalid;
-		$objectstatic->ref=$objp->ref;
-
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+		// Picto + Ref
 		print '<td class="nobordernopadding nowrap">';
 		print $objectstatic->getNomUrl(1);
 		print '</td>';
-
-		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-		if ($objp->fk_statut == 1 && $db->jdate($objp->dfv) < ($now - $conf->supplier_proposal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-		if (! empty($objp->note_private))
+		// Warning
+		$warnornote='';
+		if ($obj->fk_statut == 1 && $db->jdate($obj->date_valid) < ($now - $conf->supplier_proposal->warning_delay)) $warnornote.=img_warning($langs->trans("Late"));
+		if (! empty($obj->note_private))
 		{
-			print ' <span class="note">';
-			print '<a href="'.DOL_URL_ROOT.'/supplier_proposal/note.php?id='.$objp->supplier_proposalid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-			print '</span>';
+			$warnornote.=($warnornote?' ':'');
+			$warnornote.= '<span class="note">';
+			$warnornote.= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			$warnornote.= '</span>';
 		}
-		print '</td>';
-
-		// Ref
+		if ($warnornote)
+		{
+			print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+			print $warnornote;
+			print '</td>';
+		}
+		// Other picto tool
 		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
-		$filename=dol_sanitizeFileName($objp->ref);
-		$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($objp->ref);
-		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->supplier_proposalid;
+		$filename=dol_sanitizeFileName($obj->ref);
+		$filedir=$conf->supplier_proposal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+		$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 		print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		print '</td></tr></table>';
 
 		print "</td>\n";
 
-		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$objp->rowid;
+		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid;
 
 		// Company
-		$companystatic->id=$objp->rowid;
-		$companystatic->name=$objp->name;
-		$companystatic->client=$objp->client;
-		$companystatic->code_client=$objp->code_client;
+		$companystatic->id=$obj->socid;
+		$companystatic->name=$obj->name;
+		$companystatic->client=$obj->client;
+		$companystatic->code_client=$obj->code_client;
 		print '<td>';
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';
 
 		// Date
 		print '<td align="center">';
-		print dol_print_date($db->jdate($objp->date_valid), 'day');
+		print dol_print_date($db->jdate($obj->date_valid), 'day');
 		print "</td>\n";
 		
 		// Date delivery
 		print '<td align="center">';
-		print dol_print_date($db->jdate($objp->dp), 'day');
+		print dol_print_date($db->jdate($obj->dp), 'day');
 		print "</td>\n";
 
-		print '<td align="right">'.price($objp->total_ht)."</td>\n";
+		print '<td align="right">'.price($obj->total_ht)."</td>\n";
 
-		$userstatic->id=$objp->fk_user_author;
-		$userstatic->login=$objp->login;
+		$userstatic->id=$obj->fk_user_author;
+		$userstatic->login=$obj->login;
 		print '<td align="center">';
 		if ($userstatic->id) print $userstatic->getLoginUrl(1);
 		else print '&nbsp;';
 		print "</td>\n";
 
-		print '<td align="right">'.$objectstatic->LibStatut($objp->fk_statut,5)."</td>\n";
+		print '<td align="right">'.$objectstatic->LibStatut($obj->fk_statut,5)."</td>\n";
 
 		print '<td>&nbsp;</td>';
 
 		print "</tr>\n";
 
-		$total += $objp->total_ht;
-		$subtotal += $objp->total_ht;
+		$total += $obj->total_ht;
+		$subtotal += $obj->total_ht;
 
 		$i++;
 	}

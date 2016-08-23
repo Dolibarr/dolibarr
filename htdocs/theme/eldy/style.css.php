@@ -1911,12 +1911,11 @@ div.tabsAction > a {
 
 a.tabTitle {
     color:rgba(0,0,0,.5) !important;
-    margin-right:10px;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal !important;
-    padding: 4px 6px 2px 6px;
-    margin: 0px 6px;
+    padding: 4px 6px 2px 0px;
+    margin-right: 10px;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -2829,7 +2828,7 @@ div.tabBar .noborder {
     margin-bottom: 8px !important;*/
     border: 1px solid #CCC;
     text-align: center;
-    border-radius: 4px;
+    border-radius: 2px;
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
@@ -3364,9 +3363,6 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 100px; height: 22px; }
 
-.topmenuimage {
-	background-size: 28px auto;
-}
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
@@ -4094,9 +4090,12 @@ dl.dropdown {
 .dropdown dd ul li input[type="checkbox"] {
     margin-right: 3px;
 }
-.dropdown dd ul li a {
+.dropdown dd ul li a, .dropdown dd ul li span {
     padding:5px;
     display:block;
+}
+.dropdown dd ul li span {
+	color: #888;
 }
 .dropdown dd ul li a:hover {
     background-color:#fff;
@@ -4378,6 +4377,10 @@ img.demothumb {
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
+.topmenuimage {
+	background-size: 22px auto;
+	top: 2px;
+}
 .imgopensurveywizard
 {
 	padding: 0 4px 0 4px;
@@ -4415,7 +4418,7 @@ img.demothumb {
   		font-size: 10px;
     }
     .topmenuimage {
-    	background-size: 26px auto;
+    	background-size: 22px auto;
     	margin-top: 0px;
 	}
 

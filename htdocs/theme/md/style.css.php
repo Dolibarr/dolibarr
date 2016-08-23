@@ -3990,9 +3990,12 @@ dl.dropdown {
 .dropdown dd ul li input[type="checkbox"] {
     margin-right: 3px;
 }
-.dropdown dd ul li a {
+.dropdown dd ul li a, .dropdown dd ul li span {
     padding:5px;
     display:block;
+}
+.dropdown dd ul li span {
+	color: #888;
 }
 .dropdown dd ul li a:hover {
     background-color:#fff;
