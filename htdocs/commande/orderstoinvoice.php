@@ -665,7 +665,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			print '<td class="nobordernopadding nowrap">';
-			print $generic_commande->getNomUrl(1,$objp->fk_statut);
+			print $generic_commande->getNomUrl(1,0);
 			print '</td>';
 
 			print '<td width="20" class="nobordernopadding nowrap">';

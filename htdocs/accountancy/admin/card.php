@@ -58,7 +58,17 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
 		if (GETPOST('account_category') <= 0) {
 			$account_parent = '';
 		} else {
@@ -98,7 +108,17 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result2);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
 		if (GETPOST('account_category') <= 0) {
 			$account_parent = '';
 		} else {

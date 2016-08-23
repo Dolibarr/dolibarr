@@ -42,7 +42,7 @@ class modFournisseur extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $user;
 
 		$this->db = $db;
 		$this->numero = 40;
@@ -261,7 +261,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
 
-	    if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+	    if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 	    {
 			$r++;
 		    $this->rights[$r][0] = 1190;
@@ -366,6 +366,7 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields line
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
+		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -375,6 +376,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
 		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice',1).')';
+		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -428,6 +430,7 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields object
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
+		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -436,6 +439,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn as p ON pf.fk_paiementfourn = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
         $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice',1).')';
+		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 
 		// Order
 		$r++;
@@ -445,7 +449,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_permission[$r]=array(array("fournisseur","commande","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','s.tva_intra'=>'VATIntra','f.rowid'=>"OrderId",'f.ref'=>"Ref",'f.ref_supplier'=>"RefSupplier",'f.date_creation'=>"DateCreation",'f.date_commande'=>"OrderDate",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.fk_statut'=>'Status','f.date_approve'=>'DateApprove','f.date_approve2'=>'DateApprove2','f.note_public'=>"NotePublic",'f.note_private'=>"NotePrivate",'ua1.login'=>'ApprovedBy','ua2.login'=>'ApprovedBy2','fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.remise_percent'=>"Discount",'fd.total_ht'=>"LineTotalHT",'fd.total_ttc'=>"LineTotalTTC",'fd.total_tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.fk_product'=>'ProductId',
 											  'p.ref'=>'ProductRef','p.label'=>'ProductLabel','project.rowid'=>'ProjectId','project.ref'=>'ProjectRef','project.title'=>'ProjectLabel');
-		if (empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 		{
 			unset($this->export_fields_array['f.date_approve2']);
 			unset($this->export_fields_array['ua2.login']);
@@ -532,6 +536,7 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields line
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
+		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'commande_fournisseur as f';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -543,6 +548,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
 		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_order',1).')';
+		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 	}
 
 

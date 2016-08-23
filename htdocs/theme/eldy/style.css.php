@@ -561,6 +561,18 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100 {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax300 {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowauto {
     max-width: 0;
     overflow: auto;
@@ -591,6 +603,12 @@ div.myavailability {
 .minwidth300 { min-width: 300px; }
 .minwidth400 { min-width: 400px; }
 .minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -607,6 +625,22 @@ div.myavailability {
 {
 	.titlefield { width: 30% !important; }
 	.titlefieldcreate { width: 30% !important; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth200imp { min-width: 200px !important; }
+    .minwidth300imp { min-width: 300px !important; }
+    .minwidth400imp { min-width: 300px !important; }
+    .minwidth500imp { min-width: 300px !important; }
+}
+
+@media only screen and (max-width: 960px)
+{
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 100px !important; }
+    .minwidth300imp { min-width: 100px !important; }
+    .minwidth400imp { min-width: 100px !important; }
+    .minwidth500imp { min-width: 100px !important; }
 }
 
 /* Force values for small screen */
@@ -619,6 +653,12 @@ div.myavailability {
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 50px !important; }
+    .minwidth300imp { min-width: 50px !important; }
+    .minwidth400imp { min-width: 50px !important; }
+    .minwidth500imp { min-width: 50px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -769,8 +809,8 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
-/* Force values for small screen */
-@media only screen and (max-width: 900px)
+/* Force values on one colum for small screen */
+@media only screen and (max-width: 960px)
 {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST("optioncss") == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
@@ -812,6 +852,9 @@ div.ficheaddleft {
 div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
     padding: 0 0 0 0;
 }
+div.nopadding {
+	padding: 0 !important;
+}
 
 .containercenter {
 	display : table;
@@ -826,8 +869,8 @@ div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
     padding-left: 2px;
     padding-right: 2px;
 }
-.pictowarning {
-    padding-left: 3px;
+.pictowarning, .pictopreview {
+    padding-<?php echo $left; ?>: 3px;
 }
 .colorthumb {
 	padding-left: 1px !important;
@@ -870,7 +913,14 @@ img.photoref {
     padding: 4px;
 	height: 80px;
 	width: 80px;
-    object-fit: contain
+    object-fit: contain;
+}
+img.photorefnoborder {
+    padding: 2px;
+	height: 48px;
+	width: 48px;
+    object-fit: contain;
+    border: 1px solid #CCC;
 }
 .underrefbanner {
 }
@@ -889,7 +939,7 @@ $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
+if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
 div#id-top {
@@ -897,6 +947,8 @@ div#id-top {
 	display:none;
 <?php } else { ?>
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
+	/*-webkit-box-shadow: 0 0 6px rgba(0,0,0,0.4);
+    box-shadow: 0 0 6px rgba(0,0,0,0.4); */
 	<?php if ($usegradienttop) { ?>
 	background-image: linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
 	background-image: -o-linear-gradient(top, rgba(255,255,255,.1) 0%, rgba(0,0,0,.4) 100%);
@@ -1311,7 +1363,7 @@ div.login_block {
 	position: absolute;
 	text-align: right;
 	<?php print $right; ?>: 5px;
-	top: 2px;
+	top: 3px;
 	font-weight: bold;
 	max-width: <?php echo $maxwidthloginblock; ?>px;
 	<?php if (GETPOST("optioncss") == 'print') { ?>
@@ -1839,6 +1891,7 @@ div.tabBar {
 }
 div.popuptabset {
 	padding: 6px;
+	background: #fff;
 	border: 1px solid #888;
 }
 div.popuptab {
@@ -2303,7 +2356,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 }
 .liste_titre_add td, .liste_titre_add .tagtd
 {
-    border-top-width: 1px;
+    border-top-width: 2px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
@@ -2672,9 +2725,9 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     border-bottom: 1px solid #FDFFFF;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, th.liste_titre, form.liste_titre div, div.liste_titre
+tr.liste_titre th, tr.liste_titre td, th.liste_titre, form.liste_titre div, div.liste_titre
 {
-	border-bottom: 1px solid #FDFFFF;
+	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'FDFFFF'); ?>;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
@@ -2719,6 +2772,9 @@ input.liste_titre {
 }
 form.liste_total div {
     border-top: 1px solid #DDDDDD;
+}
+tr.liste_sub_total, tr.liste_sub_total td {
+	border-bottom: 2px solid #aaa;
 }
 
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
@@ -2776,18 +2832,14 @@ div.tabBar .noborder {
     border-radius: 4px;
 }
 .boxstats:hover {
-<?php if ($colorbacklinepairhover) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } else { ?>
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
-<?php } ?>
+	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
 	opacity: 0.8;
     line-height: 18px;
 }
 span.boxstatsindicator {
-	font-size: 110%;
+	font-size: 130%;
 	font-weight: normal;
 }
 span.dashboardlineindicator, span.dashboardlineindicatorlate {
@@ -2879,7 +2931,10 @@ tr.box_pair:not(:last-child) td, tr.box_impair:not(:last-child) td {
 	top: 5px;
 	position: relative;
 }
-
+.boxfilter {
+	margin-bottom: 2px;
+	margin-right: 1px;
+}
 .prod_entry_mode_free, .prod_entry_mode_predef {
     height: 26px !important;
     vertical-align: middle;
@@ -4035,6 +4090,9 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
+}
+.dropdown dd ul li input[type="checkbox"] {
+    margin-right: 3px;
 }
 .dropdown dd ul li a {
     padding:5px;

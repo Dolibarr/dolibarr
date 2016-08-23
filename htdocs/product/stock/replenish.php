@@ -114,7 +114,7 @@ if ($action == 'order' && isset($_POST['valid']))
                 $supplierpriceid = GETPOST('fourn'.$i, 'int');
                 //get all the parameters needed to create a line
                 $qty = GETPOST('tobuy'.$i, 'int');
-                $desc = GETPOST('desc'.$i, 'alpha');
+                //$desc = GETPOST('desc'.$i, 'alpha');
                 $sql = 'SELECT fk_product, fk_soc, ref_fourn';
                 $sql .= ', tva_tx, unitprice FROM ';
                 $sql .= MAIN_DB_PREFIX . 'product_fournisseur_price';
@@ -128,8 +128,20 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $obj = $db->fetch_object($resql);
 	                    $line = new CommandeFournisseurLigne($db);
 	                    $line->qty = $qty;
-	                    $line->desc = $desc;
 	                    $line->fk_product = $obj->fk_product;
+	                    
+	                    $product = new Product($db);
+	                    $product->fetch($obj->fk_product);
+	                    if (! empty($conf->global->MAIN_MULTILANGS)) 
+	                    {
+	                        $product->getMultiLangs();     
+	                    }
+	                    $line->desc = $product->description;
+                        if (! empty($conf->global->MAIN_MULTILANGS))
+                        {
+                            // TODO Get desc in language of thirdparty
+                        }
+	                    
 	                    $line->tva_tx = $obj->tva_tx;
 	                    $line->subprice = $obj->unitprice;
 	                    $line->total_ht = $obj->unitprice * $qty;
@@ -241,7 +253,7 @@ $form = new Form($db);
 
 $title = $langs->trans('Status');
 
-$sql = 'SELECT p.rowid, p.ref, p.label,p.description, p.price,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
 $sql.= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
 $sql.= ' p.tms as datem, p.duration, p.tobuy,';
 $sql.= ' p.desiredstock, p.seuil_stock_alerte as alertstock,';
@@ -280,7 +292,7 @@ if ($snom) {
 }
 $sql.= ' AND p.tobuy = 1';
 if (!empty($canvas)) $sql .= ' AND p.canvas = "' . $db->escape($canvas) . '"';
-$sql.= ' GROUP BY p.rowid, p.ref, p.label, p.price';
+$sql.= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price';
 $sql.= ', p.price_ttc, p.price_base_type,p.fk_product_type, p.tms';
 $sql.= ', p.duration, p.tobuy';
 $sql.= ', p.desiredstock, p.seuil_stock_alerte';
@@ -459,20 +471,20 @@ print_liste_field_titre($langs->trans('Supplier'), $_SERVER["PHP_SELF"], '', $pa
 print "</tr>\n";
 
 // Lignes des champs de filtre
-print '<tr class="liste_titre">'.
-'<td class="liste_titre">&nbsp;</td>'.
-'<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>'.
-'<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
+print '<tr class="liste_titre">';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
 if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">&nbsp;</td>'.
-	'<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>'.
-	'<td class="liste_titre" align="right">&nbsp;</td>'.
-	'<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
-    print '</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre" align="right">&nbsp;</td>';
+print '<td class="liste_titre" align="right">' . $langs->trans('AlertOnly') . '&nbsp;<input type="checkbox" id="salert" name="salert" ' . (!empty($alertchecked)?$alertchecked:'') . '></td>';
+print '<td class="liste_titre" align="right">&nbsp;</td>';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre" align="right">';
+$searchpitco=$form->showFilterAndCheckAddButtons(0);
+print $searchpitco;
+print '</td>';
 print '</tr>';
 
 $prod = new Product($db);
@@ -558,7 +570,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
-		print '<td>' . $objp->label . '<input type="hidden" name="desc' . $i . '" value="' . $objp->description . '" ></td>';
+		print '<td>'.$objp->label ;
+		print '<input type="hidden" name="desc' . $i . '" value="' . dol_escape_htmltag($objp->description) . '">';  // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
+		print '</td>';
 
 		if (!empty($conf->service->enabled) && $type == 1)
 		{

@@ -79,7 +79,9 @@ function societe_prepare_head(Societe $object)
     if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
         $head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
         $head[$h][2] = 'contact';
         $h++;
     }
@@ -88,6 +90,26 @@ function societe_prepare_head(Societe $object)
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
     	$head[$h][1] = $langs->trans("Projects");
+    	$nbNote = 0;
+    	$sql = "SELECT COUNT(n.rowid) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."projet as n";
+    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$resql=$db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($resql);
+    			$nbNote=$obj->nb;
+    			$i++;
+    		}
+    	}
+    	else {
+    		dol_print_error($db);
+    	}
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
     	$head[$h][2] = 'project';
     	$h++;
     }
@@ -631,6 +653,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $colspan=9;
     print '<tr class="liste_titre">';
+    print_liste_field_titre('');
     print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
@@ -646,8 +669,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	print "</tr>\n";
 
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut ";
-    $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut, p.photo,";
+    $sql .= " p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     if ($search_status!='' && $search_status != '-1') $sql .= " AND p.statut = ".$db->escape($search_status);
@@ -664,6 +687,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
     {
         print '<tr class="liste_titre">';
+        
+        // Photo
+        print '<td class="liste_titre">';
+        print '</td>';
         
         // Name - Position
         print '<td class="liste_titre">';
@@ -710,6 +737,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
+            $contactstatic->civility_code = $obj->civility_id;
             $contactstatic->poste = $obj->poste;
             $contactstatic->address = $obj->address;
             $contactstatic->zip = $obj->zip;
@@ -720,15 +748,27 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->email = $obj->email;
             $contactstatic->web = $obj->web;
             $contactstatic->skype = $obj->skype;
+            $contactstatic->photo = $obj->photo;
 
             $country_code = getCountry($obj->country_id, 2);
             $contactstatic->country_code = $country_code;
+
+            $contactstatic->setGenderFromCivility();
             
             print "<tr ".$bc[$var].">";
 
-            print '<td>';
-            print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
-			print '</td><td>';
+            // Photo
+            print '<td width="50px">';
+            print $form->showphoto('contact',$contactstatic,0,0,0,'photorefnoborder','small',1,0,1);
+			print '</td>';
+            
+			// Name
+			print '<td>';
+            print $contactstatic->getNomUrl(0,'',0,'&backtopage='.urlencode($backtopage));
+			print '</td>';
+			
+			// Job position
+			print '<td>';
             if ($obj->poste) print $obj->poste;
             print '</td>';
 

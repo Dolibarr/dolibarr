@@ -123,8 +123,9 @@ if ($pageid > 0 && $action != 'add')
 
 global $dolibarr_main_data_root;
 $pathofwebsite=$dolibarr_main_data_root.'/websites/'.$website;
-$filecss=$pathofwebsite.'/styles.css';
+$filecss=$pathofwebsite.'/styles.css.php';
 $filetpl=$pathofwebsite.'/page'.$pageid.'.tpl.php';
+$fileindex=$pathofwebsite.'/index.php';
 
 // Define $urlwithroot
 $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -276,13 +277,19 @@ if ($action == 'updatecss')
        $db->rollback();
     }*/
     
-    $csscontent = GETPOST('WEBSITE_CSS_INLINE');
+    $csscontent ='<?php'."\n";
+    $csscontent.= "header('Content-type: text/css');\n";
+    $csscontent.= "?>"."\n";
+    $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
     
     dol_mkdir($pathofwebsite);
-    file_put_contents($filecss, $csscontent);
+    $result = file_put_contents($filecss, $csscontent);
     if (! empty($conf->global->MAIN_UMASK))
         @chmod($filecss, octdec($conf->global->MAIN_UMASK));
-    
+
+    if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+        
     $action='preview';
 }
 
@@ -303,7 +310,23 @@ if ($action == 'setashome')
     if (! $error)
     {
         $db->commit();
-        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+        
+        // Generate the index.php page to be the home page
+        //-------------------------------------------------
+        dol_mkdir($pathofwebsite);
+        dol_delete_file($fileindex);
+
+        $indexcontent = '<?php'."\n";
+        $indexcontent.= '// File generated to wrap the home page'."\n";
+        $indexcontent.= "include_once './".basename($filetpl)."'\n";
+        $indexcontent.= '?>'."\n";
+        $result = file_put_contents($fileindex, $indexcontent);
+        if (! empty($conf->global->MAIN_UMASK))
+            @chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+        
+        if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
+        else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
+        
         $action='preview';
     }
     else
@@ -323,6 +346,8 @@ if ($action == 'updatemeta')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
+        $oldobjectpage = clone $objectpage;
+        
         $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
         $objectpage->title = GETPOST('WEBSITE_TITLE');
         $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
@@ -338,7 +363,61 @@ if ($action == 'updatemeta')
         if (! $error)
         {
             $db->commit();
-            setEventMessages($langs->trans("Saved"), null, 'mesgs');
+
+            $fileoldalias=$pathofwebsite.'/'.$oldobjectpage->pageurl.'.php';
+            $filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+            
+            // Generate the alias.php page
+            //-----------------------------
+            dol_mkdir($pathofwebsite);
+            dol_delete_file($fileoldalias);
+            
+            $aliascontent = '<?php'."\n";
+            $aliascontent.= '// File generated to wrap the alias page'."\n";
+            $aliascontent.= "include_once './page".$objectpage->id.".tpl.php'\n";
+            $aliascontent.= '?>'."\n";
+            $result = file_put_contents($filealias, $aliascontent);
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($filealias, octdec($conf->global->MAIN_UMASK));
+            
+            if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
+            else setEventMessages('Failed to write file '.$filealias, null, 'errors');
+
+            
+
+            // Now create the .tpl file (duplicate code with actions updatecontent but we need this to save new header)
+            dol_mkdir($pathofwebsite);
+            dol_delete_file($filetpl);
+            
+            $tplcontent = '<html>'."\n";
+            $tplcontent.= '<header>'."\n";
+            $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
+            $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
+            $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
+            $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
+            $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
+            $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
+            $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
+            $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+            $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+            $tplcontent.= '</header>'."\n";
+            
+            $tplcontent.= '<body>'."\n";
+            $tplcontent.= $objectpage->content."\n";
+            $tplcontent.= '</body>'."\n";
+            //var_dump($filetpl);exit;
+            $result = file_put_contents($filetpl, $tplcontent);
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
+                 
+            if ($result)
+            {
+                //setEventMessages($langs->trans("Saved"), null, 'mesgs');
+                //header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+                //exit;
+            }
+            else setEventMessages('Failed to write file '.$filetpl, null, 'errors');
+            
             $action='preview';
         }
         else
@@ -379,16 +458,40 @@ if ($action == 'updatecontent')
     	if (! $error)
     	{
     		$db->commit();
-    	    setEventMessages($langs->trans("Saved"), null, 'mesgs');
     	    
+    	    // Now create the .tpl file
+    	    // TODO Keep a one time generate file or include a dynamicaly generated content ? 
     	    dol_mkdir($pathofwebsite);
     	    dol_delete_file($filetpl);
-    	    file_put_contents($filetpl, $objectpage->content);
+
+    	    $tplcontent = '<html>'."\n";
+    	    $tplcontent.= '<header>'."\n";
+    	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
+    	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
+    	    $tplcontent.= '<meta name="viewport" content="width=device-width, initial-scale=0.8">'."\n";
+    	    $tplcontent.= '<meta name="keywords" content="'.join(', ', explode(',',$objectpage->keywords)).'" />'."\n";
+    	    $tplcontent.= '<meta name="title" content="'.dol_escape_htmltag($objectpage->title).'" />'."\n";
+    	    $tplcontent.= '<meta name="description" content="'.dol_escape_htmltag($objectpage->description).'" />'."\n";
+    	    $tplcontent.= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.'" />'."\n";
+    	    $tplcontent.= '<link rel="stylesheet" href="styles.css.php?website='.$website.'" type="text/css" />'."\n";
+    	    $tplcontent.= '<title>'.dol_escape_htmltag($objectpage->title).'</title>'."\n";
+    	    $tplcontent.= '</header>'."\n";
+    	    	
+    	    $tplcontent.= '<body>'."\n";
+    	    $tplcontent.= $objectpage->content."\n";
+    	    $tplcontent.= '</body>'."\n";
+            //var_dump($filetpl);exit;	    
+    	    $result = file_put_contents($filetpl, $tplcontent);
     	    if (! empty($conf->global->MAIN_UMASK))
     	        @chmod($filetpl, octdec($conf->global->MAIN_UMASK));
-    	    
-   	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
-   	        exit;
+                 
+    	    if ($result)
+    	    {
+    	        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    	        header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+   	            exit;
+    	    }
+    	    else setEventMessages('Failed to write file '.$filetpl, null, 'errors');    	        
     	}
     	else
     	{
@@ -454,6 +557,8 @@ print '<div class="centpercent websitebar">';
 
 if (count($object->records) > 0)
 {
+    // ***** Part for web sites
+    
     print '<div class="websiteselection">';
     print $langs->trans("Website").': ';
     print '</div>';
@@ -478,15 +583,56 @@ if (count($object->records) > 0)
     }
     $out.='</select>';
     print $out;
-    print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Refresh").'">';
+    print '<input type="submit" class="button" name="refreshsite" value="'.$langs->trans("Load").'">';
 
     if ($website)
     {
-        print ' - '.$langs->trans("RealURL").' ';
         $realurl=$urlwithroot.'/public/websites/index.php?website='.$website;
+        $dataroot=DOL_DATA_ROOT.'/websites/'.$website;
+        if (! empty($object->virtualhost)) $realurl=$object->virtualhost; 
+        // TODO If virtual url defined, we use it
+        
+        /*print ' - '.$langs->trans("RealURL").' ';
         print '<input type="text" name="realurl" value="'.$realurl.'"> ';
-        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
+        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';*/
+
+        print ' &nbsp; ';
+
+        print $langs->trans("ViewWebsiteInProduction").': ';
+        print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" value="'.$realurl.'">';
+        //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
+        $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
+        print $form->textwithpicto('', $htmltext);
+        print '<a class="button" id="previewsite" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
+        
+        // Example : Adding jquery code
+        if (! empty($conf->use_javascript_ajax))
+        {
+            print '<script type="text/javascript" language="javascript">
+            jQuery(document).ready(function() {
+            	jQuery("#previewsite").click(function() {
+                    newurl=jQuery("#previewsiteurl").val();
+                    console.log("Open url "+newurl);
+                    /* Save url */
+                    jQuery.ajax({
+                        method: "POST",
+                        url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
+                        data: {
+                            field: \'editval_virtualhost\',
+                            element: \'websites\',
+                            table_element: \'website\',
+                            fk_element: '.$object->id.',
+                            value: newurl,
+                        },
+                        context: document.body
+                    });
+                    $(this).attr("href",newurl);
+                });
+            });
+            </script>';
+        }
     }
+    
     print '</div>';
 
     // Button for websites
@@ -513,7 +659,8 @@ if (count($object->records) > 0)
     print '</div>';
 
 
-    // Part for pages
+    // ***** Part for pages
+    
     if ($website)
     {
         print '</div>';
@@ -555,16 +702,17 @@ if (count($object->records) > 0)
         else $out.='<option value="-1">&nbsp;</option>';
         $out.='</select>';
         print $out;
-        print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Refresh").'"'.($atleastonepage?'':' disabled="disabled"').'>';
-        print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+
+        print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         
         if ($website && $pageid > 0)
         {
             print ' - '.$langs->trans("RealURL").' ';
             $realurl=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
-            print '<input type="text" name="realurl" value="'.$realurl.'"> ';
-            print '<a href="'.$realurl.'" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';
+            print '<input type="text" name="realurl" class="minwidth200imp" disabled="disabled" value="'.$realurl.'"> ';
+            print '<a href="'.$realurl.'&nocache='.dol_now().'" class="button" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';       // View page in new Tab
+            //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
         }
         
         print '</div>';
@@ -586,14 +734,15 @@ if (count($object->records) > 0)
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageContent")).'" name="editcontent">';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editmeta&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageMeta")).'</a>';
                 //print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcontent&website='.urlencode($website).'&pageid='.urlencode($pageid).'" class="button">'.dol_escape_htmltag($langs->trans("EditPageContent")).'</a>';
+                print '<input type="submit" class="buttonDelete" name="delete" value="'.$langs->trans("Delete").'"'.($atleastonepage?'':' disabled="disabled"').'>';
             }
         }
         
         if (! in_array($action, array('editcss','editmenu','create')))
         {
             if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
-        if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
-        if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+            if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
+            if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         }
 
         print '</div>';
@@ -735,8 +884,17 @@ if ($action == 'editcontent')
     /*
      * Editing global variables not related to a specific theme
      */
+    
+    $csscontent = @file_get_contents($filecss);
+    
+    $contentforedit = '';
+    /*$contentforedit.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". Not yet supported by browsers
+    $contentforedit.=$csscontent;
+    $contentforedit.='</style>'."\n";*/
+    $contentforedit .= $objectpage->content;
+    
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor('PAGE_CONTENT',$objectpage->content,'',500,'Full','',true,true,true,5,60);
+    $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,5,60);
     $doleditor->Create();
 }
 
@@ -750,7 +908,7 @@ if ($action == 'preview')
     {
         $objectpage->fetch($pageid);
 
-        print "\n".'<!-- Page content '.$filetpl.' c-->'."\n";
+        print "\n".'<!-- Page content '.$filetpl.' : Div with (CSS + Page content from database) -->'."\n";
 
         
         $csscontent = @file_get_contents($filecss);

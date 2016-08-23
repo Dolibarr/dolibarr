@@ -37,6 +37,16 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	var $prefix='CF';
 
 
+	/**
+	 * Constructor
+	 */
+	function __construct()
+	{
+	    global $conf;
+	    
+	    if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO';   // We use correct standard code "PO = Purchase Order"
+	}
+	
     /**
      * 	Return description of numbering module
      *

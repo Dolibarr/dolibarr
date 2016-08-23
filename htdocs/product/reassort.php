@@ -101,16 +101,19 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || ! empty($conf->global
 // None
 
 
+
 /*
  * View
  */
+
+$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 
 $form=new Form($db);
 $htmlother=new FormOther($db);
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,p.entity,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql.= ' SUM(s.reel) as stock_physique';
@@ -164,7 +167,7 @@ if ($search_categ)
 {
 	$sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
 }
-$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
+$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql.= " p.fk_product_type, p.tms, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock";
 if ($toolowstock) $sql.= " HAVING SUM(".$db->ifsql('s.reel IS NULL', '0', 's.reel').") < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
@@ -184,9 +187,6 @@ if ($resql)
 		exit;
 	}
 
-	$helpurl='';
-	$helpurl='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-
 	if (isset($type))
 	{
 		if ($type==1) { $texte = $langs->trans("Services"); }
@@ -197,7 +197,7 @@ if ($resql)
 	$texte.=' ('.$langs->trans("Stocks").')';
 
 
-	llxHeader("",$texte,$helpurl);
+	llxHeader("", $texte, $helpurl);
 
 	if ($sref || $snom || $sall || GETPOST('search'))
 	{
@@ -278,7 +278,7 @@ if ($resql)
 			
 		}
 	} 
-	if ($virtualdiffersfromphysical) print_liste_field_titre($langs->trans("VirtualStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
+	if ($virtualdiffersfromphysical) print_liste_field_titre($langs->trans("VirtualStock"),$_SERVER["PHP_SELF"], "",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);

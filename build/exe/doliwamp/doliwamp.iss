@@ -42,6 +42,7 @@ SolidCompression=yes
 WizardImageFile=build\exe\doliwamp\doliwamp.bmp
 WizardSmallImageFile=build\exe\doliwamp\doliwampsmall.bmp
 SetupIconFile=doc\images\dolibarr.ico
+;To say the installer must be ran as admin
 PrivilegesRequired=admin
 DisableProgramGroupPage=yes
 ChangesEnvironment=no
@@ -148,8 +149,12 @@ Name: "{userdesktop}\Dolibarr Help center"; Filename: "{app}\rundolihelp.bat"; W
 
 [Registry]
 ; Add "run as admin" flag. Same than command line: reg add "HKCU\Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" /v "<Path to your exe>" /t REG_SZ /d RUNASADMIN
-Root: "HKLM"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers\"; ValueType: String; ValueName: "{app}\startdoliwamp.bat"; ValueData: "RUNASADMIN"; Flags: uninsdeletekeyifempty uninsdeletevalue;
-Root: "HKLM"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers\"; ValueType: String; ValueName: "{app}\stopdoliwamp.bat"; ValueData: "RUNASADMIN"; Flags: uninsdeletekeyifempty uninsdeletevalue;
+Root: "HKLM"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\startdoliwamp.bat"; ValueData: "RUNASADMIN";
+Root: "HKLM"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\stopdoliwamp.bat"; ValueData: "RUNASADMIN";
+Root: "HKLM32"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\startdoliwamp.bat"; ValueData: "RUNASADMIN";
+Root: "HKLM32"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\stopdoliwamp.bat"; ValueData: "RUNASADMIN";
+Root: "HKLM64"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\startdoliwamp.bat"; ValueData: "RUNASADMIN"; Check: IsWin64
+Root: "HKLM64"; Subkey: "SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers"; ValueType: string; ValueName: "{app}\stopdoliwamp.bat"; ValueData: "RUNASADMIN"; Check: IsWin64
 
 
 [Code]
@@ -239,9 +244,9 @@ begin
         if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\MSCRM','SMTPServer', value) then
         begin
           if value <> '' then smtpServer:=value;
-        end
-      end
-    end
+        end;
+      end;
+    end;
   end;
 
   if RegQueryStringValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\NLTechno\DoliWamp','apachePort', value) then
@@ -419,7 +424,7 @@ begin
     begin
       themessage := FmtMessage(CustomMessage('FailedToDeleteLock'),[pathWithSlashes]);
  		  MsgBox(themessage,mbInformation,MB_OK);
-    end
+    end;
 
 
 		// Check if parameters already defined in conf.php file
@@ -540,13 +545,29 @@ begin
 	    begin
 	      //navigateur
 	      browser := 'iexplore.exe';
-	      if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
+	      
+	      if browser = 'iexplore.exe' then
 	      begin
-	        if MsgBox(CustomMessage('FirefoxDetected'),mbConfirmation,MB_YESNO) = IDYES then
+	        if FileExists (pfPath+'/Google/Chrome/Application/chrome.exe')  then
 	        begin
-	          browser := pfPath+'/Mozilla Firefox/firefox.exe';
+	          if MsgBox(CustomMessage('ChromeDetected'),mbConfirmation,MB_YESNO) = IDYES then
+	          begin
+	            browser := pfPath+'/Google/Chrome/Application/chrome.exe';
+	          end;
 	        end;
 	      end;
+
+	      if browser = 'iexplore.exe' then
+	      begin
+		    if FileExists (pfPath+'/Mozilla Firefox/firefox.exe')  then
+		    begin
+		      if MsgBox(CustomMessage('FirefoxDetected'),mbConfirmation,MB_YESNO) = IDYES then
+		      begin
+		        browser := pfPath+'/Mozilla Firefox/firefox.exe';
+		      end;
+		    end;
+		  end;
+	      
 	      if browser = 'iexplore.exe' then
 	      begin
             if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
@@ -576,7 +597,7 @@ begin
 	      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
 	      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 	      SaveStringToFile(destFileA,srcContents, False);
-	    end
+	    end;
 
 
       if MsgBox(CustomMessage('DoliWampWillStartApacheMysql'),mbConfirmation,MB_YESNO) = IDYES then
@@ -599,7 +620,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPPHPMYADMINVERSION', phpmyadminVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		    DeleteFile(srcFile);
 		
 		
@@ -611,15 +632,29 @@ begin
 		    destFile := pathWithSlashes+'/alias/dolibarr.conf';
 		    srcFile := pathWithSlashes+'/alias/dolibarr.conf.install';
 		
-		    if not FileExists (destFile) and FileExists(srcFile) then
+		    if FileExists(srcFile) then
 		    begin
-		      LoadStringFromFile (srcFile, srcContents);
+		      if not FileExists (destFile) then
+		      begin
+  		        LoadStringFromFile (srcFile, srcContents);
 		
-		      StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
-		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+		        StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
-		      SaveStringToFile(destFile, srcContents, False);
-		    end
+		        SaveStringToFile(destFile, srcContents, False);
+		      end
+		      else
+		      begin
+		        // We must replace to use format 2.4 of apache
+	            DeleteFile(destFile);
+  		        LoadStringFromFile (srcFile, srcContents);
+		
+		        StringChangeEx (srcContents, 'WAMPROOT', pathWithSlashes, True);
+		        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+		
+		        SaveStringToFile(destFile, srcContents, False);
+		      end;
+		    end;
 		    DeleteFile(srcFile);
 		
 		
@@ -632,14 +667,25 @@ begin
 		    destFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php';
 		    srcFile := pathWithSlashes+'/apps/phpmyadmin'+phpmyadminVersion+'/config.inc.php.install';
 		
-		    if not FileExists (destFile) and FileExists (srcFile) then
+		    if FileExists(srcFile) then
 		    begin
-	        // sinon on prends le fichier par defaut
-	        LoadStringFromFile (srcFile, srcContents);
-	        StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
-	        StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
-	        SaveStringToFile(destFile,srcContents, False);
-		    end
+	  	      if not FileExists (destFile) then
+		      begin
+	            LoadStringFromFile (srcFile, srcContents);
+	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+	            SaveStringToFile(destFile,srcContents, False);
+		      end
+		      else
+		      begin
+		        // We must replace to use format 2.4 of apache
+	            DeleteFile(destFile);
+	            LoadStringFromFile (srcFile, srcContents);
+	            StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
+	            StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
+	            SaveStringToFile(destFile,srcContents, False);
+		      end;
+		    end;
 		
 		
 		
@@ -662,7 +708,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		
@@ -684,7 +730,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPMYSQLVERSION', mysqlVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		
@@ -716,7 +762,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPAPACHEPORT', myporta, True);
 		      StringChangeEx (srcContents, 'WAMPAPACHEPSSL', myportas, True);
 		      SaveStringToFile(destFile, srcContents, False);
-		    end
+		    end;
 		
 		
 		
@@ -739,7 +785,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		
@@ -760,7 +806,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		
@@ -781,7 +827,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		
@@ -802,7 +848,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPMYSQLNEWPASSWORD', mypass, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		    //----------------------------------------------
@@ -823,7 +869,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		    //----------------------------------------------
@@ -844,7 +890,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPMYSQLPORT', myport, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		    
 		
 		    //----------------------------------------------
@@ -863,7 +909,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPAPACHEVERSION', apacheVersion, True);
 		
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 
 		
 		    //----------------------------------------------
@@ -880,7 +926,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
               StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		    //----------------------------------------------
 		    // Create file php.ini in apache (if not exists)
@@ -896,7 +942,7 @@ begin
 		      StringChangeEx (srcContents, 'WAMPSMTP', mysmtp, True);
               StringChangeEx (srcContents, 'WAMPPHPVERSION', phpVersion, True);
 		      SaveStringToFile(destFile,srcContents, False);
-		    end
+		    end;
 		
 		
 		
@@ -938,7 +984,7 @@ begin
 
       	res := False;
 		  	
-		  end
+		  end;
       
     end
     else
@@ -948,9 +994,9 @@ begin
 		  	
 		  	res := False;
 
-    end
+    end;
     
-  end
+  end;
 
 
   Result := res;

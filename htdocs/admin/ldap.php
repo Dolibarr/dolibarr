@@ -237,7 +237,7 @@ else
 {
 	print '<input size="25" type="text" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';
 }
-print '</td><td>secret</td></tr>';
+print '</td><td>'.$langs->trans('Password').' (ex: secret)</td></tr>';
 
 print '</table>';
 

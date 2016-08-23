@@ -100,7 +100,7 @@ if (GETPOST('submitdateselect'))
 	$action = '';
 }
 
-if ($action == 'addtime' && GETPOST('assigntask'))
+if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask'))
 {
     $action = 'assigntask';
     
@@ -176,7 +176,7 @@ if ($action == 'addtime' && GETPOST('assigntask'))
 	$action='';
 }
 
-if ($action == 'addtime' && $user->rights->projet->creer)
+if ($action == 'addtime' && $user->rights->projet->lire)
 {
     $timetoadd=$_POST['task'];
 	if (empty($timetoadd))
@@ -185,9 +185,10 @@ if ($action == 'addtime' && $user->rights->projet->creer)
     }
 	else
 	{
-		foreach($timetoadd as $taskid => $value)
+		foreach($timetoadd as $taskid => $value)     // Loop on each task
 	    {
-			foreach($value as $key => $val)
+	        $updateoftaskdone=0;
+			foreach($value as $key => $val)          // Loop on each day
 			{
 				$amountoadd=$timetoadd[$taskid][$key];
 		    	if (! empty($amountoadd))
@@ -201,7 +202,7 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 		        	if ($newduration > 0)
 		        	{
 		       	        $object->fetch($taskid);
-					    $object->progress = GETPOST($taskid . 'progress', 'int');
+		       	        $object->progress = GETPOST($taskid . 'progress', 'int');
 				        $object->timespent_duration = $newduration;
 				        $object->timespent_fk_user = $usertoprocess->id;
 			        	$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
@@ -213,8 +214,27 @@ if ($action == 'addtime' && $user->rights->projet->creer)
 							$error++;
 							break;
 						}
+						
+						$updateoftaskdone++;
 		        	}
 		        }
+			}
+			
+			if (! $updateoftaskdone)  // Check to update progress if no update were done on task.
+			{
+			    $object->fetch($taskid);
+                //var_dump($object->progress);var_dump(GETPOST($taskid . 'progress', 'int')); exit;			    
+			    if ($object->progress != GETPOST($taskid . 'progress', 'int'))
+			    {
+			        $object->progress = GETPOST($taskid . 'progress', 'int');
+			        $result=$object->update($user);
+			        if ($result < 0)
+			        {
+			            setEventMessages($object->error, $object->errors, 'errors');
+			            $error++;
+			            break;
+			        }
+			    }
 			}
 	    }
 
@@ -242,6 +262,7 @@ $formproject=new FormProjets($db);
 $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
+$thirdpartystatic = new Societe($db);
 
 $title=$langs->trans("TimeSpent");
 if ($mine) $title=$langs->trans("MyTimeSpent");
@@ -271,7 +292,7 @@ $param=($mode?'&amp;mode='.$mode:'');
 
 // Show navigation bar
 $nav ="<a href=\"?year=".$prev_year."&amp;month=".$prev_month."&amp;day=".$prev_day.$param."\">".img_previous($langs->trans("Previous"))."</a>\n";
-$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("Week")." ".$week." </span>\n";
+$nav.=" <span id=\"month_name\">".dol_print_date(dol_mktime(0,0,0,$first_month,$first_day,$first_year),"%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav.="<a href=\"?year=".$next_year."&amp;month=".$next_month."&amp;day=".$next_day.$param."\">".img_next($langs->trans("Next"))."</a>\n";
 $nav.=" &nbsp; (<a href=\"?year=".$nowyear."&amp;month=".$nowmonth."&amp;day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
 $nav.='<br>'.$form->select_date(-1,'',0,0,2,"addtime",1,0,1).' ';
@@ -351,6 +372,10 @@ print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
+if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY))
+{
+    print '<td>'.$langs->trans("ThirdParty").'</td>';
+}
 print '<td>'.$langs->trans("Project").'</td>';
 print '<td>'.$langs->trans("RefTask").'</td>';
 print '<td>'.$langs->trans("LabelTask").'</td>';
@@ -382,8 +407,11 @@ if (count($tasksarray) > 0)
 	$level=0;
 	projectLinesPerWeek($j, $firstdaytoshow, $usertoprocess, 0, $tasksarray, $level, $projectsrole, $tasksrole, $mine, $restrictviewformytask);
 
+	$colspan=7;
+	if (! empty($conf->global->PROJECT_LINES_PERWEEK_SHOW_THIRDPARTY)) $colspan++;
+	
 	print '<tr class="liste_total">
-                <td class="liste_total" colspan="7" align="right">'.$langs->trans("Total").'</td>
+                <td class="liste_total" colspan="'.$colspan.'" align="right">'.$langs->trans("Total").'</td>
                 <td class="liste_total hide0" width="7%" align="center"><div id="totalDay[0]">&nbsp;</div></td>
                 <td class="liste_total hide1" width="7%" align="center"><div id="totalDay[1]">&nbsp;</div></td>
                 <td class="liste_total hide2" width="7%" align="center"><div id="totalDay[2]">&nbsp;</div></td>

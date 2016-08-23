@@ -243,7 +243,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
     $this->db->begin();
 
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".GETPOST('menuId', 'int');
     $db->query($sql);
 
     if ($result == 0)
@@ -312,7 +312,7 @@ if ($action == 'create')
     $parent_rowid = $_GET['menuId'];
     if ($_GET['menuId'])
     {
-        $sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
+        $sql = "SELECT m.rowid, m.mainmenu, m.leftmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".GETPOST('menuId', 'int');
         $res  = $db->query($sql);
         if ($res)
         {
@@ -370,7 +370,7 @@ if ($action == 'create')
     }
     else
     {
-        print '<td><input type="text" size="40" id="menuId" name="menuId" value="'.($_POST["menuId"]?$_POST["menuId"]:'').'"></td>';
+        print '<td><input type="text" size="48" id="menuId" name="menuId" value="'.($_POST["menuId"]?$_POST["menuId"]:'').'"></td>';
     }
     print '<td>'.$langs->trans('DetailMenuIdParent');
     print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
@@ -458,7 +458,7 @@ elseif ($action == 'edit')
     $valtouse=$menu->fk_menu;
     if ($menu->fk_mainmenu) $valtouse='fk_mainmenu='.$menu->fk_mainmenu;
     if ($menu->fk_leftmenu) $valtouse.='&fk_leftmenu='.$menu->fk_leftmenu;
-    print '<td><input type="text" name="menuIdParent" value="'.$valtouse.'" size="40"></td>';
+    print '<td><input type="text" name="menuIdParent" value="'.$valtouse.'" size="48"></td>';
     print '<td>'.$langs->trans('DetailMenuIdParent');
     print ', '.$langs->trans("Example").': fk_mainmenu=abc&fk_leftmenu=def';
     print '</td></tr>';
@@ -470,7 +470,7 @@ elseif ($action == 'edit')
     print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td><td><input type="text" size="30" name="titre" value="'.$menu->titre.'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
     // Url
-    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" size="60" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td><td><input type="text" class="quatrevingtpercent" name="url" value="'.$menu->url.'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
     // Langs
     print '<tr><td>'.$langs->trans('LangFile').'</td><td><input type="text" size="30" name="langs" value="'.$menu->langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';

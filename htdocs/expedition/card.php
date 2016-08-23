@@ -1676,7 +1676,7 @@ else if ($id || $ref)
 							$detail.= $langs->trans("DetailWarehouseFormat",$entrepot->libelle,$detail_entrepot->qty_shipped).'<br/>';
 						}
 					}
-					print $form->textwithtooltip($langs->trans("DetailWarehouseNumber"),$detail);
+					print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"),$detail);
 				}
 				print '</td>';
 			}
@@ -1694,7 +1694,7 @@ else if ($id || $ref)
 						{
 							$detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
 						}
-						print $form->textwithtooltip($langs->trans("DetailBatchNumber"),$detail);
+						print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
 					}
 					else 
 					{
@@ -1831,13 +1831,12 @@ else if ($id || $ref)
 
 		$somethingshown=$formfile->show_documents('expedition',$objectref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
-
+		
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
+		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+		$somethingshown = $form->showLinkedObjectBlock($object, '');
 
+		
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 		// List of actions on element
@@ -1924,6 +1923,8 @@ else if ($id || $ref)
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
 		$formmail->substit['__SHIPPINGREF__']=$object->ref;
+		$formmail->substit['__SHIPPINGTRACKNUM__']=$object->tracking_number;
+		$formmail->substit['__SHIPPINGTRACKNUMURL__']=$object->tracking_url;
 
 		//Find the good contact adress
 		if ($typeobject == 'commande' && $object->$typeobject->id && ! empty($conf->commande->enabled))	{

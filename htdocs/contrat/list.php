@@ -67,19 +67,17 @@ $result = restrictedArea($user, 'contrat', $id);
 $staticcontrat=new Contrat($db);
 $staticcontratligne=new ContratLigne($db);
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
-{
-	$search_name="";
-	$search_contract="";
-	$search_ref_supplier="";
-    $search_user='';
-    $search_sale='';
-    $search_product_category='';
-	$sall="";
-	$search_status="";
-}
-
 if ($search_status == '') $search_status=1;
+
+$contextpage='contractlist';
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array($contextpage));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('contract');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -91,6 +89,35 @@ $fieldstosearchall = array(
     'c.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
+
+
+/*
+ * Action
+ */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+if (empty($reshook))
+{
+
+}
+
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+{
+	$search_name="";
+	$search_contract="";
+	$search_ref_supplier="";
+    $search_user='';
+    $search_sale='';
+    $search_product_category='';
+	$sall="";
+	$search_status="";
+	$search_array_options=array();
+}
 
 
 /*
@@ -145,7 +172,7 @@ if ($sall) {
     $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
-$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_supplier, s.nom, s.rowid";
+$sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
 $totalnboflines=0;
 $result=$db->query($sql);
 if ($result)

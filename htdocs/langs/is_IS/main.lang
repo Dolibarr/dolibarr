@@ -84,6 +84,7 @@ SeeAbove=Sjá ofar
 HomeArea=Home area
 LastConnexion=Síðasta tenging
 PreviousConnexion=Fyrri tengingu
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Tengdur á einingu
 ConnectedSince=Tengdur síðan
 AuthenticationMode=Authentification ham

@@ -1014,13 +1014,12 @@ class Product extends CommonObject
 	/**
 	 *	Update or add a translation for a product
 	 *
-	 *	@param  User	$user       Object user making update
-	 *
-	 *	@return		int		<0 if KO, >0 if OK
+	 *	@param     User	   $user                   Object user making update
+	 *	@return	   int		<0 if KO, >0 if OK
 	 */
 	function setMultiLangs($user)
 	{
-		global $langs;
+		global $conf, $langs;
 		
 		$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 0, 2);
 		$current_lang = $langs->getDefaultLang();
@@ -1039,17 +1038,21 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // if there is already a description line for this language
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".$this->db->escape($this->label)."',";
-					$sql2.= " description='".$this->db->escape($this->description)."',";
-					$sql2.= " note='".$this->db->escape($this->note)."'";
+					$sql2.= " SET ";
+					$sql2.= " label='".$this->db->escape($this->label)."',";
+					$sql2.= " description='".$this->db->escape($this->description)."'";
+					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", note='".$this->db->escape($this->note)."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
-					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label);
-					$sql2.= "','".$this->db->escape($this->description);
-					$sql2.= "','".$this->db->escape($this->note)."')";
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
+					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.=", note";
+					$sql2.= ")";
+					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->label)."',";
+					$sql2.= " '".$this->db->escape($this->description)."'";
+					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", '".$this->db->escape($this->note)."'";
+					$sql2.= ")";
 				}
 				dol_syslog(get_class($this).'::setMultiLangs key = current_lang = '.$key);
 				if (! $this->db->query($sql2))
@@ -1070,26 +1073,31 @@ class Product extends CommonObject
 				if ($this->db->num_rows($result)) // if there is already a description line for this language
 				{
 					$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_lang";
-					$sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
-					$sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."',";
-					$sql2.= " note='".$this->db->escape($this->multilangs["$key"]["note"])."'";
+					$sql2.= " SET ";
+					$sql2.= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
+					$sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
+					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", note='".$this->db->escape($this->multilangs["$key"]["note"])."'";
 					$sql2.= " WHERE fk_product=".$this->id." AND lang='".$key."'";
 				}
 				else
 				{
-					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description, note)";
-					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["label"]);
-					$sql2.= "','".$this->db->escape($this->multilangs["$key"]["description"]);
-					$sql2.= "','".$this->db->escape($this->multilangs["$key"]["note"])."')";
+					$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_lang (fk_product, lang, label, description";
+					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.=", note";
+					$sql2.= ")";
+					$sql2.= " VALUES(".$this->id.",'".$key."','". $this->db->escape($this->multilangs["$key"]["label"])."',";
+					$sql2.= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
+					if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) $sql2.= ", '".$this->db->escape($this->note)."'";
+					$sql2.= ")";
 				}
 
-				// on ne sauvegarde pas des champs vides
-				if ( $this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"] || $this->multilangs["$key"]["note"] )
-				dol_syslog(get_class($this).'::setMultiLangs key = '.$key);
-				if (! $this->db->query($sql2))
+				// We do not save if main fields are empty
+				if ($this->multilangs["$key"]["label"] || $this->multilangs["$key"]["description"])
 				{
-					$this->error=$this->db->lasterror();
-					return -1;
+    				if (! $this->db->query($sql2))
+    				{
+    					$this->error=$this->db->lasterror();
+    					return -1;
+    				}
 				}
 			}
 			else
@@ -1211,7 +1219,7 @@ class Product extends CommonObject
 
 		$current_lang = $langs->getDefaultLang();
 
-		$sql = "SELECT lang, label, description, note";
+		$sql = "SELECT lang, label, description, note as other";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 		$sql.= " WHERE fk_product=".$this->id;
 
@@ -1225,12 +1233,11 @@ class Product extends CommonObject
 				{
 					$this->label		= $obj->label;
 					$this->description	= $obj->description;
-					$this->note			= $obj->note;
-
+					$this->other	    = $obj->other;
 				}
 				$this->multilangs["$obj->lang"]["label"]		= $obj->label;
 				$this->multilangs["$obj->lang"]["description"]	= $obj->description;
-				$this->multilangs["$obj->lang"]["note"]			= $obj->note;
+				$this->multilangs["$obj->lang"]["other"]		= $obj->other;
 			}
 			return 1;
 		}
@@ -1640,7 +1647,7 @@ class Product extends CommonObject
 			return -1;
 		}
 
-		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note, customcode, fk_country, price, price_ttc,";
+		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
 		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas,";
 		$sql.= " weight, weight_units, length, length_units, surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
@@ -1669,8 +1676,9 @@ class Product extends CommonObject
 				$this->label					= $obj->label;
 				$this->description				= $obj->description;
 				$this->url						= $obj->url;
-				$this->note						= $obj->note;
-
+				$this->note_private				= $obj->note_private;
+				$this->note						= $obj->note_private;  // deprecated
+				
 				$this->type						= $obj->fk_product_type;
 				$this->status					= $obj->tosell;
 				$this->status_buy				= $obj->tobuy;
@@ -1738,7 +1746,6 @@ class Product extends CommonObject
 				$extrafields=new ExtraFields($this->db);
 				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
 				$this->fetch_optionals($this->id,$extralabels);
-
 
 				// multilangs
 				if (! empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
@@ -3132,7 +3139,7 @@ class Product extends CommonObject
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlength=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 		$result='';
@@ -3157,6 +3164,17 @@ class Product extends CommonObject
 
         $linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($label, 1)).'" class="classfortooltip">';
 
+	if (! is_object($hookmanager))
+	{
+		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+		$hookmanager=new HookManager($this->db);
+	}
+	$hookmanager->initHooks(array('productdao'));
+	$parameters=array('id'=>$this->id);
+	$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+
+
         if ($option == 'supplier') {
             $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
             $linkend='</a>';
@@ -3174,8 +3192,8 @@ class Product extends CommonObject
         }
 
 		if ($withpicto) {
-			if ($this->type == Product::TYPE_PRODUCT) $result.=($link.img_object($langs->trans("ShowProduct").' '.$this->label, 'product', 'class="classfortooltip"').$linkend.' ');
-			if ($this->type == Product::TYPE_SERVICE) $result.=($link.img_object($langs->trans("ShowService").' '.$this->label, 'service', 'class="classfortooltip"').$linkend.' ');
+			if ($this->type == Product::TYPE_PRODUCT) $result.=($link.img_object('', 'product', '').$linkend.' ');
+			if ($this->type == Product::TYPE_SERVICE) $result.=($link.img_object('', 'service', '').$linkend.' ');
 		}
 		$result.=$link.$newref.$linkend;
 		return $result;
@@ -3676,7 +3694,7 @@ class Product extends CommonObject
     					if ($size == 1 || $size == 'small') {   // Format vignette
 
     						// Find name of thumb file
-    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small', '.png'));
+    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
     						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
     						
     						// Get filesize of original file
@@ -3692,11 +3710,18 @@ class Product extends CommonObject
     						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
 
     						$return.= "\n";
-    						if (empty($nolink)) $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+    						
+    						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
+    						if (empty($nolink)) 
+    						{
+    						    $urladvanced=getAdvancedPreviewUrl('product', $relativefile);
+    						    if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
+    						    else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+    						}
 
     						// Show image (width height=$maxHeight)
     						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
-    						$alt=$langs->transnoentitiesnoconv('File').': '.$pdir.$photo;
+    						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
     						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
     						
     						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)

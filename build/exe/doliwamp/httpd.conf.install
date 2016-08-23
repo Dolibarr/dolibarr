@@ -255,6 +255,9 @@ KeepAliveTimeout 30
     # Controls who can get stuff from this server.
     #
 #   onlineoffline tag - don't remove
+	
+	Require all granted
+    
     <RequireAny>
 		Require ip 127.0.0.1
 		Require host localhost

@@ -41,6 +41,7 @@ delete from llx_livraisondet where fk_livraison in (select rowid from llx_livrai
 delete from llx_livraison where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
+delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
@@ -202,6 +203,8 @@ UPDATE llx_actioncomm set fk_user_action = fk_user_author where fk_user_author >
 
 UPDATE llx_projet_task_time set task_datehour = task_date where task_datehour IS NULL and task_date IS NOT NULL;
 
+UPDATE llx_projet set fk_opp_status = NULL where fk_opp_status = -1;
+UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 
 -- Requests to clean old tables or external modules tables
 

@@ -86,6 +86,7 @@ DirectoryRecommendation=Este recommanded de a utiliza un director afara de direc
 LoginAlreadyExists=Există deja
 DolibarrAdminLogin=Dolibarr admin autentificare
 AdminLoginAlreadyExists=<b>&quot;%s&quot;</b> Dolibarr cont de administrator deja există. Du-te înapoi, dacă doriţi să creaţi altul.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Atenţie, pentru motive de securitate, o dată sau de upgrade-ul de instalare este completă, trebuie să scoateţi <b>directorul de instalare sau de a adăuga un fişier numit director install.lock în documentul Dolibarr, în scopul de a evita utilizarea rău intenţionată a acestuia.</b>
 FunctionNotAvailableInThisPHP=Nu este disponibil pe acest PHP
 ChoosedMigrateScript=Alegeţi script-ul de migraţie

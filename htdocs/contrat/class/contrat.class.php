@@ -957,27 +957,87 @@ class Contrat extends CommonObject
 				}
 			}
 
+			if (! $error)
+			{
+			    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			    {
+			        $result=$this->insertExtraFields();
+			        if ($result < 0)
+			        {
+			            $error++;
+			        }
+			    }
+			}
+			
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
-			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
-			if ($result < 0) $error++;
+			if (! $error)
+			{
+    			$result=$this->add_contact($this->commercial_signature_id,'SALESREPSIGN','internal');
+    			if ($result < 0) $error++;
+			}
 
 			// Insert contacts commerciaux ('SALESREPFOLL','contrat')
-			$result=$this->add_contact($this->commercial_suivi_id,'SALESREPFOLL','internal');
-			if ($result < 0) $error++;
-
+			if (! $error)
+			{
+                $result=$this->add_contact($this->commercial_suivi_id,'SALESREPFOLL','internal');
+			    if ($result < 0) $error++;
+			}
 
 			if (! $error)
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
-				}
-			}
+    			// Add object linked
+    			if (is_array($this->linked_objects) && ! empty($this->linked_objects))
+    			{
+    			    foreach($this->linked_objects as $origin => $origin_id)
+    			    {
+    			        $ret = $this->add_object_linked($origin, $origin_id);
+    			        if (! $ret)
+    			        {
+    			            dol_print_error($this->db);
+    			            $error++;
+    			        }			
+    
+            			if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
+            			{
+            			    $originforcontact = $origin;
+            			    $originidforcontact = $origin_id;
+            			    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+            			    {
+            			        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+            			        $exp = new Expedition($db);
+            			        $exp->fetch($origin_id);
+            			        $exp->fetchObjectLinked();
+            			        if (count($exp->linkedObjectsIds['commande']) > 0)
+            			        {
+            			            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+            			            {
+            			                $originforcontact = 'commande';
+            			                $originidforcontact = $value->id;
+            			                break; // We take first one
+            			            }
+            			        }
+            			    }
+            			    	
+            			    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+            			    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+            			    	
+            			    $resqlcontact = $this->db->query($sqlcontact);
+            			    if ($resqlcontact)
+            			    {
+            			        while($objcontact = $this->db->fetch_object($resqlcontact))
+            			        {
+            			            if ($objcontact->source == 'internal' && in_array($objcontact->code, array('SALESREPSIGN', 'SALESREPFOLL'))) continue;    // ignore this, already forced previously
 
+            			            //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+            			            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+            			        }
+            			    }
+            			    else dol_print_error($resqlcontact);
+            			}			
+    			    }
+    			}
+			}
+			
 			if (! $error)
 			{
                 // Call trigger
@@ -987,19 +1047,12 @@ class Contrat extends CommonObject
 
 				if (! $error)
 				{
-		            // Add linked object
-		            if (! $error && $this->origin && $this->origin_id)
-		            {
-		                $ret = $this->add_object_linked();
-		                if (! $ret)	dol_print_error($this->db);
-		            }
 					$this->db->commit();
 					return $this->id;
 				}
 				else
 				{
 					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
-
 					$this->db->rollback();
 					return -3;
 				}
@@ -1008,7 +1061,6 @@ class Contrat extends CommonObject
 			{
 				$this->error="Failed to add contact";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
-
 				$this->db->rollback();
 				return -2;
 			}
@@ -2422,7 +2474,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " p.ref as product_ref,";
 		$sql.= " p.label as product_label,";
 		$sql.= " p.description as product_desc,";
-		$sql.= " p.type as product_type,";
+		$sql.= " p.fk_product_type as product_type,";
 		$sql.= " t.description,";
 		$sql.= " t.date_commande,";
 		$sql.= " t.date_ouverture_prevue as date_ouverture_prevue,";

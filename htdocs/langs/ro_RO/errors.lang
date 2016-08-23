@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Setările informațiilor ClickToDial pent
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcţionalitate dezactivată atunci când configurarea de afișare este optimizată pentru nevăzători sau de browsere text .
 WarningPaymentDateLowerThanInvoiceDate=Data plăţii(%s) este mai veche decât data facturii (%s) pentru factura %s
 WarningTooManyDataPleaseUseMoreFilters= Prea multe date (mai mult de %s linii). Folosiți mai multe filtre sau setați constanta %s la o limită superioară. 
-WarningSomeLinesWithNullHourlyRate=Au fost înregistrate de către utilizatori de câteva ori, atunci când rata lor orară nu a fost definită. Valoarea 0 a fost folosită, dar acest lucru poate avea ca rezultat evaluarea greșită a timpului petrecut.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Utilizatorul-ul a fost modificat. Din motive de securitate, va trebui să vă conectați cu noul dvs. utilizator înainte de următoarea acțiune.

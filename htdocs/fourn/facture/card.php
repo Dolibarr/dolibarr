@@ -374,7 +374,7 @@ if (empty($reshook))
 	        $object->ref           = $_POST['ref'];
 			$object->ref_supplier  = $_POST['ref_supplier'];
 	        $object->socid         = $_POST['socid'];
-	        $object->libelle       = $_POST['libelle'];
+	        $object->libelle       = $_POST['label'];
 	        $object->date          = $datefacture;
 	        $object->date_echeance = $datedue;
 	        $object->note_public   = GETPOST('note_public');
@@ -476,7 +476,8 @@ if (empty($reshook))
 	                        	$lines[$i]->rang,
 	                        	0,
 	                        	$lines[$i]->array_options,
-	                        	$lines[$i]->fk_unit
+	                        	$lines[$i]->fk_unit,
+								$lines[$i]->id
 	                        );
 
 	                        if ($result < 0)
@@ -1321,7 +1322,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     // Label
-    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="libelle" value="'.(isset($_POST['libelle'])?$_POST['libelle']:'').'" type="text"></td></tr>';
+    print '<tr><td>'.$langs->trans('Label').'</td><td><input size="30" name="label" value="'.dol_escape_htmltag(GETPOST('label')).'" type="text"></td></tr>';
 
     // Date invoice
     print '<tr><td class="fieldrequired">'.$langs->trans('DateInvoice').'</td><td>';
@@ -1656,7 +1657,7 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
         // Ref
-        print '<tr><td class="nowrap" width="20%">'.$langs->trans("Ref").'</td><td colspan="4">';
+        print '<tr><td class="titlefield nowrap">'.$langs->trans("Ref").'</td><td colspan="4">';
         print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
         print '</td>';
         print "</tr>\n";
@@ -1711,8 +1712,8 @@ else
         print '</td></tr>';
 
         // Label
-        print '<tr><td>'.$form->editfieldkey("Label",'libelle',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
-        print '<td colspan="3">'.$form->editfieldval("Label",'libelle',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
+        print '<tr><td>'.$form->editfieldkey("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
+        print '<td colspan="3">'.$form->editfieldval("Label",'label',$object->label,$object,($user->rights->fournisseur->facture->creer)).'</td>';
 
         /*
          * List of payments
@@ -1901,7 +1902,7 @@ else
 			print '<tr>';
 			print '<td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print fieldLabel('Rate','multicurrency_tx');
+			print fieldLabel('CurrencyRate','multicurrency_tx');
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2159,7 +2160,7 @@ else
 	            // Make payments
 	            if ($action != 'edit' && $object->statut == FactureFournisseur::STATUS_VALIDATED && $object->paye == 0  && $user->societe_id == 0)
 	            {
-	                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create &amp;accountid='.$object->fk_account.'">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
+	                print '<a class="butAction" href="paiement.php?facid='.$object->id.'&amp;action=create'.($object->fk_account>0?'&amp;accountid='.$object->fk_account:'').'">'.$langs->trans('DoPayment').'</a>';	// must use facid because id is for payment id not invoice
 	            }
 	
 	            // Classify paid
@@ -2235,13 +2236,11 @@ else
 	                print $formfile->showdocuments('facture_fournisseur',$subdir,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
 	                $somethingshown=$formfile->numoffiles;
 	
-					// Linked object block
-					$somethingshown = $form->showLinkedObjectBlock($object);
-	
-					// Show links to link elements
-					$linktoelem = $form->showLinkToObjectBlock($object,array('supplier_order'));
-					if ($linktoelem) print '<br>'.$linktoelem;
-	
+
+        			// Show links to link elements
+        			$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice_supplier'));
+        			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+						
 	
 					print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 	                //print '</td><td valign="top" width="50%">';

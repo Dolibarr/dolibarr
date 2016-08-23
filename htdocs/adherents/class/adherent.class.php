@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -353,7 +354,7 @@ class Adherent extends CommonObject
 
                 if (count($this->errors))
                 {
-                    dol_syslog(get_class($this)."::create ".join(',',$this->errors), LOG_ERR);
+                    dol_syslog(get_class($this)."::create ".implode(',',$this->errors), LOG_ERR);
                     $this->db->rollback();
                     return -3;
                 }

@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Not expired
 ServiceStatusLate=Running, expired
 ServiceStatusLateShort=Expired
 ServiceStatusClosed=Closed
+ShowContractOfService=Show contract of service
 Contracts=חוזים
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

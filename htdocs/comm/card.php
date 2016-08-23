@@ -46,6 +46,8 @@ if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherent
 if (! empty($conf->ficheinter->enabled)) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
 $langs->load("companies");
+$langs->load('banks');
+
 if (! empty($conf->contrat->enabled))  $langs->load("contracts");
 if (! empty($conf->commande->enabled)) $langs->load("orders");
 if (! empty($conf->expedition->enabled)) $langs->load("sendings");
@@ -124,7 +126,15 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-    // customer preferred shipping method
+	// Bank account
+	if ($action == 'setbankaccount' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result=$object->setBankAccount(GETPOST('fk_account','int'));
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+	
+	// customer preferred shipping method
     if ($action == 'setshippingmethod' && $user->rights->societe->creer)
     {
         $object->fetch($id);
@@ -337,6 +347,26 @@ if ($id > 0)
 	print "</td>";
 	print '</tr>';
 
+	// Compte bancaire par défaut
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans('BankAccount');
+	print '<td>';
+	if (($action != 'editbankaccount') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;socid='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($action == 'editbankaccount')
+	{
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_account,'fk_account',1);
+	}
+	else
+	{
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->fk_account,'none');
+	}
+	print "</td>";
+	print '</tr>';
+
+
 	// Relative discounts (Discounts-Drawbacks-Rebates)
 	print '<tr><td class="nowrap">';
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -347,7 +377,7 @@ if ($id > 0)
 		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 	}
 	print '</td></tr></table>';
-	print '</td><td colspan="3">'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':$langs->trans("DiscountNone")).'</td>';
+	print '</td><td colspan="3">'.($object->remise_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_percent.'%</a>':'').'</td>';
 	print '</tr>';
 
 	// Absolute discounts (Discounts-Drawbacks-Rebates)
@@ -366,7 +396,7 @@ if ($id > 0)
 	$amount_discount=$object->getAvailableDiscounts();
 	if ($amount_discount < 0) dol_print_error($db,$object->error);
 	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount,1,$langs,1,-1,-1,$conf->currency).'</a>';
-	else print $langs->trans("DiscountNone");
+	//else print $langs->trans("DiscountNone");
 	print '</td>';
 	print '</tr>';
 
@@ -378,7 +408,7 @@ if ($id > 0)
 		print '</td><td colspan="3">';
 		$limit_field_type = (! empty($conf->global->MAIN_USE_JQUERY_JEDITABLE)) ? 'numeric' : 'amount';
 		print $form->editfieldval("OutstandingBill",'outstanding_limit',$object->outstanding_limit,$object,$user->rights->societe->creer,$limit_field_type,($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
-		if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
+		//if (empty($object->outstanding_limit)) print $langs->trans("NoLimit");
 		
 		print '</td>';
 		print '</tr>';

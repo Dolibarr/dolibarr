@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ include_once 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
+global $langs;
 
 $setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
 $langs->setDefaultLang($setuplang);
@@ -41,7 +42,10 @@ $langs->load("install");
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
+if (@file_exists($forcedfile)) {
+	$useforcedwizard = true;
+	include_once $forcedfile;
+}
 
 dolibarr_install_syslog("--- step4: entering step4.php page");
 
@@ -75,7 +79,7 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 if ($db->ok)
 {
     print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
-    print '<input name="login" type="text" value="'.(! empty($_GET["login"])?$_GET["login"]:(isset($force_install_dolibarrlogin)?$force_install_dolibarrlogin:'')).'"></td></tr>';
+	print '<input name="login" type="text" value="' . (!empty($_GET["login"]) ? $_GET["login"] : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
     print '<tr><td>'.$langs->trans("Password").' :</td><td>';
     print '<input type="password" name="pass"></td></tr>';
     print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';

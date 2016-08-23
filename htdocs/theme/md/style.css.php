@@ -560,6 +560,18 @@ div.myavailability {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.tdoverflowmax100 {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.tdoverflowmax300 {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 .tdoverflowauto {
     max-width: 0;
     overflow: auto;
@@ -589,6 +601,12 @@ div.myavailability {
 .minwidth300 { min-width: 300px; }
 .minwidth400 { min-width: 400px; }
 .minwidth500 { min-width: 500px; }
+.minwidth50imp  { min-width: 50px !important; }
+.minwidth100imp { min-width: 100px !important; }
+.minwidth200imp { min-width: 200px !important; }
+.minwidth300imp { min-width: 300px !important; }
+.minwidth400imp { min-width: 400px !important; }
+.minwidth500imp { min-width: 500px !important; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth150 { max-width: 150px; }
 .maxwidth200 { max-width: 200px; }
@@ -605,6 +623,22 @@ div.myavailability {
 {
 	.titlefield { width: 30% !important; }
 	.titlefieldcreate { width: 30% !important; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 100px !important; }
+    .minwidth200imp { min-width: 200px !important; }
+    .minwidth300imp { min-width: 300px !important; }
+    .minwidth400imp { min-width: 300px !important; }
+    .minwidth500imp { min-width: 300px !important; }
+}
+
+@media only screen and (max-width: 960px)
+{
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 100px !important; }
+    .minwidth300imp { min-width: 100px !important; }
+    .minwidth400imp { min-width: 100px !important; }
+    .minwidth500imp { min-width: 100px !important; }
 }
 
 /* Force values for small screen */
@@ -617,6 +651,12 @@ div.myavailability {
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
+	.minwidth50imp  { min-width: 50px !important; }
+    .minwidth100imp { min-width: 50px !important; }
+    .minwidth200imp { min-width: 50px !important; }
+    .minwidth300imp { min-width: 50px !important; }
+    .minwidth400imp { min-width: 50px !important; }
+    .minwidth500imp { min-width: 50px !important; }
     .titlefield { width: auto; }
     .titlefieldcreate { width: auto; }
 }
@@ -734,7 +774,7 @@ td.showDragHandle {
 	margin-left: 0;
 }
 div.login_block {
-	border-right: none ! important; 
+	/* border-right: none ! important; */
 	top: inherit !important;
 }
 .side-nav {
@@ -759,6 +799,7 @@ div.login_block {
 #id-left {
 	z-index: 201;
 	background: #FFF;
+	border-right: 1px solid rgba(0,0,0,0.3);
 <?php if ((GETPOST('testmenuhider') || ! empty($conf->global->MAIN_TESTMENUHIDER)) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
 	top: 50px ! important;
 <?php } else { ?>
@@ -847,8 +888,11 @@ div.ficheaddleft {
 }
 
 /* For table into table into card */
-div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td {
+div.ficheaddleft tr.liste_titre:first-child td table.nobordernopadding td, div.nopadding {
     padding: 0 0 0 0;
+}
+div.nopadding {
+	padding: 0 !important;
 }
 
 table.noborder tr.liste_titre td {
@@ -868,8 +912,8 @@ table.noborder tr.liste_titre td {
     padding-left: 2px;
     padding-right: 2px;
 }
-.pictowarning {
-    padding-left: 3px;
+.pictowarning, .pictopreview {
+    padding-<?php echo $left; ?>: 3px;
 }
 .colorthumb {
 	padding-left: 1px !important;
@@ -911,6 +955,13 @@ img.photoref {
     -webkit-box-shadow: 3px 3px 4px #DDD;
     box-shadow: 3px 3px 4px #DDD;
 }
+img.photorefnoborder {
+    padding: 2px;
+	height: 48px;
+	width: 48px;
+    object-fit: contain;
+    border: 1px solid #CCC;
+}
 .underrefbanner {
 }
 .underbanner {
@@ -928,7 +979,7 @@ $heightmenu=48;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, ârt with login  */
 $disableimages = 0;
 $maxwidthloginblock = 110;
-if (! empty($conf->global->THEME_MD_DISABLE_IMAGE)) { $heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
+if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $heightmenu = 30; $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
 div#tmenu_tooltip {
@@ -1852,6 +1903,7 @@ div.tabsAction > a {
 
 div.popuptabset {
 	padding: 6px;
+	background: #fff;
 	border: 1px solid #888;
 }
 div.popuptab {
@@ -1897,6 +1949,12 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     */
 
 	background-image: none !important;
+}
+
+
+.tabunactive {	/* We add some border on tabunactive to avoid change of position of title when switching tabs (border of tabunactive = border of tabactive) */
+    border-right: 1px solid rgb(<?php echo $colorbackbody; ?>);
+    border-left: 1px solid rgb(<?php echo $colorbackbody; ?>);
 }
 
 .tabactive, a.tab#active {
@@ -2140,7 +2198,7 @@ div.tabBar table.border tr {
 
 table.border td, div.border div div.tagtd {
 	padding: 2px 2px 2px 2px;
-	border: 1px solid #f4f4f4;
+	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
 
@@ -2195,11 +2253,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
+/*
 #tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
-}
+}*/
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2211,6 +2270,13 @@ table.noborder tr, div.noborder form {
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
 	min-height: 26px;
+}
+
+.liste_titre_add td, .liste_titre_add .tagtd
+{
+    border-top-width: 2px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
@@ -2539,9 +2605,9 @@ div.liste_titre, tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.list
     border-bottom: 1px solid #FDFFFF;
     text-align: <?php echo $left; ?>;
 }
-tr.liste_titre th, th.liste_titre, form.liste_titre div, div.liste_titre
+tr.liste_titre th, tr.liste_titre td, th.liste_titre, form.liste_titre div, div.liste_titre
 {
-	border-bottom: 1px solid #FDFFFF;
+	border-bottom: 1px solid #<?php echo ($colorbacktitle1 == '255,255,255'?'BBBBBB':'FDFFFF'); ?>;
 }
 tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste_titre div, div.liste_titre
 {
@@ -2587,7 +2653,9 @@ input.liste_titre {
     padding: 4px;
     height: 20px;
 }
-
+tr.liste_sub_total, tr.liste_sub_total td {
+	border-bottom: 2px solid #aaa;
+}
 
 .tableforservicepart1 .impair, .tableforservicepart1 .pair, .tableforservicepart2 .impair, .tableforservicepart2 .pair {
 	background: #FFF;
@@ -2645,14 +2713,10 @@ div.tabBar .noborder {
     min-height: 38px;
 }
 .boxstats:hover {
-<?php if ($colorbacklinepairhover) { ?>
-	background: rgb(<?php echo $colorbacklinepairhover; ?>) !important;
-<?php } else { ?>
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
-<?php } ?>
+	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	opacity: 0.9;
+	/* opacity: 0.9;  Disabled. This make text on top of left menu in smartphone size */
     line-height: 18px;
 }
 span.boxstatsindicator {
@@ -2743,6 +2807,10 @@ tr.box_pair td, tr.box_impair td {
 {
 	top: 5px;
 	position: relative;
+}
+.boxfilter {
+	margin-bottom: 2px;
+	margin-right: 1px;
 }
 
 .prod_entry_mode_free, .prod_entry_mode_predef {
@@ -3918,6 +3986,9 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
+}
+.dropdown dd ul li input[type="checkbox"] {
+    margin-right: 3px;
 }
 .dropdown dd ul li a {
     padding:5px;

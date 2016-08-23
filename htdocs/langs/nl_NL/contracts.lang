@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Niet verlopen
 ServiceStatusLate=Actief, verlopen
 ServiceStatusLateShort=verlopen
 ServiceStatusClosed=Gesloten
+ShowContractOfService=Show contract of service
 Contracts=Contracten
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracten en lijn van de contracten

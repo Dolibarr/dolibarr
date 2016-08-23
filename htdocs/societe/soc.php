@@ -106,7 +106,7 @@ if (empty($reshook))
         {
             header("Location: ".$backtopage);
             exit;
-        }    
+        }
     }
 
 	if ($action == 'confirm_merge' && $confirm == 'yes')
@@ -200,8 +200,8 @@ if (empty($reshook))
 				{
 					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
-				} 
-				else 
+				}
+				else
 				{
 				    $langs->load("errors");
 					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
@@ -262,8 +262,8 @@ if (empty($reshook))
             $error++;
             $action='create';
         }
-        
-        
+
+
         if ($action == 'update')
         {
         	$ret=$object->fetch($socid);
@@ -340,13 +340,13 @@ if (empty($reshook))
 			$object->fk_incoterms 		   = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms    = GETPOST('location_incoterms', 'alpha');
 		}
-		
+
 		// Multicurrency
 		if (!empty($conf->multicurrency->enabled))
 		{
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 		}
-		
+
         // Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0)
@@ -446,7 +446,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
-                if ($result >= 0)
+				if ($result >= 0)
                 {
                     if ($object->particulier)
                     {
@@ -509,6 +509,13 @@ if (empty($reshook))
                 }
                 else
 				{
+					
+					if($result == -3) {
+						$duplicate_code_error = true;
+						$object->code_fournisseur = null;
+						$object->code_client = null;
+					}
+					
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -802,8 +809,14 @@ else
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
-        $object->code_client		= GETPOST('code_client', 'alpha');
-        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        
+        if(empty($duplicate_code_error)) {
+	        $object->code_client		= GETPOST('code_client', 'alpha');
+	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        }		else {
+			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
+		}
+		
         $object->code_fournisseur	= GETPOST('code_fournisseur', 'alpha');
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
@@ -1004,7 +1017,7 @@ else
 
         print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
-        $tmpcode=$object->code_client;
+		$tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
         print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
@@ -1494,7 +1507,7 @@ else
             	print $object->ref;
             	print '</td></tr>';
 			}
-			
+
             // Name
             print '<tr><td class="titlefield">'.fieldLabel('ThirdPartyName','name',1).'</td>';
 	        print '<td colspan="3"><input type="text" size="60" maxlength="128" name="name" id="name" value="'.dol_escape_htmltag($object->name).'" autofocus="autofocus"></td></tr>';
@@ -1922,13 +1935,13 @@ else
         dol_htmloutput_errors($error,$errors);
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
-        
+
         dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
-        
-        
+
+
         print '<div class="fichecenter">';
         print '<div class="fichehalfleft">';
-        
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
@@ -1936,12 +1949,12 @@ else
     	print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
     	print $object->getLibCustProspStatut();
     	print '</td></tr>';
-	    
+
     	// Prospect/Customer
     	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
     	print yn($object->fournisseur);
     	print '</td></tr>';
-    	
+
     	// Prefix
         if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
         {
@@ -2019,7 +2032,7 @@ else
         print yn($object->tva_assuj);
         print '</td>';
 		print '</tr>';
-		
+
         // VAT Code
         print '<tr>';
 		print '<td class="nowrap">'.$langs->trans('VATIntra').'</td><td>';
@@ -2163,15 +2176,15 @@ else
         print '<tr><td>'.$langs->trans("Staff").'</td><td>'.$object->effectif.'</td></tr>';
 
         print '</table>';
-        
+
         print '</div>';
         print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
+
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
-        
+
         // Legal
-        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -2244,7 +2257,7 @@ else
 	        print !empty($object->multicurrency_code) ? currency_name($object->multicurrency_code,1) : '';
 			print '</td></tr>';
 		}
-		
+
         // Other attributes
         $parameters=array('socid'=>$socid, 'colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -2325,10 +2338,10 @@ else
 
         print '</table>';
 		print '</div>';
-		
+
         print '</div></div>';
         print '<div style="clear:both"></div>';
-        
+
         dol_fiche_end();
 
 
@@ -2345,13 +2358,13 @@ else
 			$TContact = $object->contact_array_objects();
 			foreach ($TContact as &$contact)
 			{
-				if (!empty($contact->email)) 
+				if (!empty($contact->email))
 				{
 					$at_least_one_email_contact = true;
 					break;
 				}
 			}
-			
+
 	        if (! empty($object->email) || $at_least_one_email_contact)
 	        {
 	        	$langs->load("mails");
@@ -2408,7 +2421,7 @@ else
 			print load_fiche_titre($langs->trans($titreform));
 
 			dol_fiche_head();
-			
+
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
@@ -2524,8 +2537,11 @@ else
 	        print '<div class="fichecenter"><br></div>';
 
 	        // Subsidiaries list
-	        $result=show_subsidiaries($conf,$langs,$db,$object);
-
+	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
+	        {	        
+	           $result=show_subsidiaries($conf,$langs,$db,$object);
+	        }
+	        
 	        // Contacts list
 	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 	        {

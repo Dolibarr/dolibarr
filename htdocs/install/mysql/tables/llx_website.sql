@@ -25,6 +25,7 @@ CREATE TABLE llx_website
 	description   varchar(255),
 	status		  integer,
 	fk_default_home integer, 
+	virtualhost   varchar(255), 
     date_creation     datetime,
     date_modification datetime,
 	tms           timestamp

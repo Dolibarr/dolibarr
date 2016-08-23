@@ -58,7 +58,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, 
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Contract"),"");
 
 $form = new Form($db);
 
@@ -78,7 +78,7 @@ if ($id > 0 || ! empty($ref))
     $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
     // Reference
-	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '').'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="5">'.$form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '').'</td></tr>';
 
     // Societe
     print '<tr><td>'.$langs->trans("Customer").'</td>';

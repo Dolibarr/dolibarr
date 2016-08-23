@@ -312,6 +312,7 @@ LatestRelatedBill=أحدث فاتورة ذات الصلة
 WarningBillExist=تحذير، واحد أو أكثر من فاتورة موجودة بالفعل
 MergingPDFTool=دمج أداة PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

@@ -206,7 +206,7 @@ if ($action == 'add')
 		$result = $object->create($user, $oldinvoice->id);
 		if ($result > 0)
 		{
-			$result=$oldinvoice->delete(0, 1);
+			$result=$oldinvoice->delete($user, 1);
 			if ($result < 0)
 			{
 			    $error++;
@@ -242,7 +242,7 @@ if ($action == 'add')
 // Delete
 if ($action == 'delete' && $user->rights->facture->supprimer)
 {
-	$object->delete();
+	$object->delete($user);
 	header("Location: " . $_SERVER['PHP_SELF'] );
 	exit;
 }
@@ -1533,8 +1533,11 @@ else
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 		
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
+		
+		// Show links to link elements
+		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+		$somethingshown = $form->showLinkedObjectBlock($object, '');
+		
 		
         print '</div></div>';
 

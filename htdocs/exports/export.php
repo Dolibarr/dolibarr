@@ -638,7 +638,14 @@ if ($step == 2 && $datatoexport)
 
 if ($step == 3 && $datatoexport)
 {
-	llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
+    if (count($array_selected) < 1)      // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+
+    llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
 	/*
 	 * Affichage onglets
@@ -792,6 +799,13 @@ if ($step == 3 && $datatoexport)
 
 if ($step == 4 && $datatoexport)
 {
+    if (count($array_selected) < 1)     // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+    
     asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
@@ -1017,6 +1031,13 @@ if ($step == 4 && $datatoexport)
 
 if ($step == 5 && $datatoexport)
 {
+    if (count($array_selected) < 1)      // This occurs when going back to page after sessecion expired
+    {
+        // Switch to step 2
+        header("Location: ".DOL_URL_ROOT.'/exports/export.php?step=2&datatoexport='.$datatoexport);
+        exit;
+    }
+    
 	asort($array_selected);
 
     llxHeader('',$langs->trans("NewExport"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');

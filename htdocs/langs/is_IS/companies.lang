@@ -74,6 +74,7 @@ DefaultLang=Tungumál sjálfgefið
 VATIsUsed=VSK er notaður
 VATIsNotUsed=VSK er ekki notaður
 CopyAddressFromSoc=Fill address with thirdparty address
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= OR er notað
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organization
 FiscalYearInformation=Upplýsingar um fjárhagsársins
 FiscalMonthStart=Byrjun mánuði fjárhagsársins
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Listi yfir birgja
 ListProspectsShort=Listi yfir horfur
 ListCustomersShort=Listi yfir viðskiptavini

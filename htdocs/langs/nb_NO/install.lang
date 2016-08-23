@@ -86,6 +86,7 @@ DirectoryRecommendation=Det er anbefalt å bruke en annen katalog enn den for we
 LoginAlreadyExists=Finnes allerede
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr administratorkonto '<b>%s</b>' finnes allerede.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Advarsel, av sikkerhetshensyn, når installasjonen eller oppgraderingen er fullført, bør du fjerne <b>mappen "install" eller endre navnet til install.lock for å unngå skadelig bruk.</b>
 FunctionNotAvailableInThisPHP=Ikke tilgjengelig på denne PHP
 ChoosedMigrateScript=Velg migrasjonscript

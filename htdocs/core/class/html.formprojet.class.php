@@ -140,8 +140,8 @@ class FormProjets
 		if ($socid == 0) $sql.= " AND (p.fk_soc=0 OR p.fk_soc IS NULL)";
 		if ($socid > 0 && empty($conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  $sql.= " AND (p.fk_soc=".$socid." OR p.fk_soc IS NULL)";
 		if (!empty($filterkey)) {
-			$sql .= ' AND p.title LIKE "%'.$this->db->escape($filterkey).'%"';
-			$sql .= ' OR p.ref LIKE "%'.$this->db->escape($filterkey).'%"';
+			$sql .= " AND p.title LIKE '%".$this->db->escape($filterkey)."%'";
+			$sql .= " OR p.ref LIKE '%".$this->db->escape($filterkey)."%'";
 		}
 		$sql.= " ORDER BY p.ref ASC";
 
@@ -149,7 +149,7 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$minmax='';
+			$minmax='maxwidth500';
 
 			// Use select2 selector
 			$nodatarole='';
@@ -314,7 +314,7 @@ class FormProjets
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$minmax='';
+			$minmax='maxwidth500';
 
 			// Use select2 selector
 			$nodatarole='';
@@ -324,7 +324,7 @@ class FormProjets
 	           	$comboenhancement = ajax_combobox($htmlname, '', 0, $forcefocus);
             	$out.=$comboenhancement;
             	$nodatarole=($comboenhancement?' data-role="none"':'');
-            	$minmax='minwidth200';
+            	$minmax='minwidth200 maxwidth500';
 			}
 
 			if (empty($option_only)) {
@@ -569,7 +569,7 @@ class FormProjets
 				{
 					$obj = $this->db->fetch_object($resql);
 
-					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'"';
+					$sellist .='<option value="'.$obj->rowid.'" defaultpercent="'.$obj->percent.'" elemcode="'.$obj->code.'"';
 					if ($obj->rowid == $preselected) $sellist .= ' selected="selected"';
 					$sellist .= '>';
 					if ($useshortlabel)

@@ -64,7 +64,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 $newobject->context['createfrompropal'] = 'createfrompropal';
                 $newobject->context['origin'] = $object->element;
                 $newobject->context['origin_id'] = $object->id;
-                
+
                 $ret=$newobject->createFromProposal($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
@@ -83,7 +83,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
                 $newobject->context['createfromorder'] = 'createfromorder';
                 $newobject->context['origin'] = $object->element;
                 $newobject->context['origin_id'] = $object->id;
-                
+
                 $ret=$newobject->createFromOrder($object);
                 if ($ret < 0) { $this->error=$newobject->error; $this->errors[]=$newobject->error; }
                 return $ret;
@@ -138,6 +138,19 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		if (! empty($object->linkedObjects))
         		{
         			foreach($object->linkedObjects['commande'] as $element)
+        			{
+        				$ret=$element->classifyBilled($user);
+        			}
+        		}
+        		return $ret;
+        	}
+
+        	if (! empty($conf->propal->enabled) && ! empty($conf->global->WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL))
+        	{
+        		$object->fetchObjectLinked('','propal',$object->id,$object->element);
+        		if (! empty($object->linkedObjects))
+        		{
+        			foreach($object->linkedObjects['propal'] as $element)
         			{
         				$ret=$element->classifyBilled($user);
         			}

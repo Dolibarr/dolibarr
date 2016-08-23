@@ -274,7 +274,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
 
         $localobject=new Facture($this->savdb);
         $result=$localobject->fetch($id);
-        $result=$localobject->delete($id);
+        $result=$localobject->delete($user);
 
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertGreaterThanOrEqual(0, $result);

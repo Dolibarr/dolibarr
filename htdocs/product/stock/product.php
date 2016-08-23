@@ -233,7 +233,7 @@ if ($action == "transfert_stock" && ! $cancel)
 			$pricesrc=0;
 			if (isset($object->pmp)) $pricesrc=$object->pmp;
 			$pricedest=$pricesrc;
-
+			
 			if ($object->hasbatch())
 			{
 				$pdluo = new Productbatch($db);
@@ -324,6 +324,8 @@ if ($action == "transfert_stock" && ! $cancel)
     				if ($result2 < 0) $error++;
 				}
 			}
+
+
 			if (! $error && $result1 >= 0 && $result2 >= 0)
 			{
 				$db->commit();
@@ -687,8 +689,8 @@ if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 {
 	print '<tr class="liste_titre"><td width="10%"></td>';
 	print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
-	print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
-	print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("EatByDate").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("SellByDate").'</td>';
 	print '<td align="right" colspan="5"></td>';
 	print '</tr>';
 }

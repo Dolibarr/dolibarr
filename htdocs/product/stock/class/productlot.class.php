@@ -20,10 +20,9 @@
  */
 
 /**
- * \file    stock/productlot.class.php
+ * \file    product/stock/class/productlot.class.php
  * \ingroup stock
- * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
- *          Put some comments here
+ * \brief   This is CRUD class file to manage table productlot (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -32,10 +31,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class Productlot
- *
- * Put here description of your class
- * @see CommonObject
+ * Class with list of lots and properties
  */
 class Productlot extends CommonObject
 {
@@ -550,7 +546,7 @@ class Productlot extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
+        $label = '<u>' . $langs->trans("LotSerial") . '</u>';
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 

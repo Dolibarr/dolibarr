@@ -237,9 +237,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$idsel='hrm';
 
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/hrm/hrm.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
+		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/hrm/index.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		if (empty($noout)) print_end_menu_entry($showmode);
-		$menu->add('/hrm/hrm.php?mainmenu=hrm&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
+		$menu->add('/hrm/index.php?mainmenu=hrm&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
 	}
 
 
@@ -342,8 +342,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
  */
 function print_start_menu_array()
 {
+    global $conf;
+    
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu">';
+	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**
@@ -527,7 +529,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
 				$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
 				
-				$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
+				$newmenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"),1);
 				$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
 				$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
 				$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
@@ -1062,7 +1064,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
 				$newmenu->add("/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
 
-				$newmenu->add("/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
+				$newmenu->add("/compta/bank/virement.php",$langs->trans("MenuBankInternalTransfer"),1,$user->rights->banque->transfer);
 			}
 
             if (! empty($conf->categorie->enabled)) {
@@ -1119,6 +1121,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				{
 					$langs->load("stocks");
 					$newmenu->add("/product/reassortlot.php?type=0", $langs->trans("StocksByLotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
+					$newmenu->add("/product/stock/productlot_list.php", $langs->trans("LotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
 				}
 				if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
 				{
@@ -1201,13 +1204,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/projet/activity/index.php?leftmenu=mytasks&mode=mine", $langs->trans("MyActivities"), 0, $user->rights->projet->lire);
 					$newmenu->add("/projet/tasks.php?leftmenu=mytasks&action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer);
 					$newmenu->add("/projet/tasks/list.php?leftmenu=mytasks&mode=mine", $langs->trans("List"), 1, $user->rights->projet->lire);
-					$newmenu->add("/projet/activity/perweek.php?leftmenu=mytasks&mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer);
+					$newmenu->add("/projet/activity/perweek.php?leftmenu=mytasks&mode=mine", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->lire);
 
 					// All project i have permission on
 					$newmenu->add("/projet/activity/index.php", $langs->trans("Activities"), 0, $user->rights->projet->lire && $user->rights->projet->lire);
 					$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 					$newmenu->add("/projet/tasks/list.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
-					$newmenu->add("/projet/activity/perweek.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
+					$newmenu->add("/projet/activity/perweek.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->lire);
 				}
 			}
 		}

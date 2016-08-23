@@ -135,7 +135,7 @@ if ($action == 'confirm_split' && GETPOST("confirm") == 'yes')
 	}
 }
 
-if ($action == 'setremise')
+if ($action == 'setremise' && $user->rights->societe->creer)
 {
 	//if ($user->rights->societe->creer)
 	//if ($user->rights->facture->creer)
@@ -266,39 +266,48 @@ if ($socid > 0)
 	print '<tr><td class="titlefield">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
 	print '<td>'.$remise_all.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
-	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+	if (! empty($user->fk_soc))    // No need to show this for external users
+	{
+    	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountMy").'</td>';
+    	print '<td>'.$remise_user.'&nbsp;'.$langs->trans("Currency".$conf->currency).' '.$langs->trans("HT").'</td></tr>';
+	}
 	print '</table>';
-	print '<br>';
 
-	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
-	print '<table class="border" width="100%">';
-	print '<tr><td width="38%" class="fieldrequired">'.$langs->trans("AmountHT").'</td>';
-	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
-	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
-	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
-	print '<td>';
-	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
-	print '</td></tr>';
-	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
-	print '<td><input type="text" size="60" name="desc" value="'.GETPOST('desc').'"></td></tr>';
-
-	print "</table>";
-
+	if ($user->rights->societe->creer)
+	{
+    	print '<br>';
+    
+    	print load_fiche_titre($langs->trans("NewGlobalDiscount"),'','');
+    	print '<table class="border" width="100%">';
+    	print '<tr><td width="38%" class="fieldrequired">'.$langs->trans("AmountHT").'</td>';
+    	print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">';
+    	print '<span class="hideonsmartphone">&nbsp;'.$langs->trans("Currency".$conf->currency).'</span></td></tr>';
+    	print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
+    	print '<td>';
+    	print $form->load_tva('tva_tx',GETPOST('tva_tx'),$mysoc,$object);
+    	print '</td></tr>';
+    	print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
+    	print '<td><input type="text" size="60" name="desc" value="'.GETPOST('desc').'"></td></tr>';
+    
+    	print "</table>";
+	}
 	print '</div>';
 
 	dol_fiche_end();
 
-	print '<div class="center">';
-	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
-    if (! empty($backtopage))
-    {
-        print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	if ($user->rights->societe->creer)
+	{
+        print '<div class="center">';
+    	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
+        if (! empty($backtopage))
+        {
+            print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+    	    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        }
+    	print '</div>';
     }
-	print '</div>';
 
-	print '</form>';
+    print '</form>';
 
 
 	print '<br>';
@@ -423,7 +432,7 @@ if ($socid > 0)
 	print '<br>';
 
 	/*
-	 * Liste ristournes appliquees (=liees a une ligne de facture ou facture)
+	 * List discount consumed (=liees a une ligne de facture ou facture)
 	 */
 
 	// Remises liees a lignes de factures

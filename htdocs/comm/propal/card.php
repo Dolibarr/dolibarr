@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2015 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
@@ -1356,7 +1356,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && ! empty($conf->banque->enabled)) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
@@ -1717,7 +1717,7 @@ if ($action == 'create')
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	if ($user->rights->propal->creer && $action == 'refclient') {
-		print '<form action="propal.php?id=' . $object->id . '" method="post">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="set_ref_client">';
 		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
@@ -1836,9 +1836,9 @@ if ($action == 'create')
 	// Delivery date
 	$langs->load('deliveries');
 	print '<tr><td>';
-	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer);
+	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer, 'datepicker');
 	print '</td><td colspan="5">';
-	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer, 'day');
+	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer, 'datepicker');
 	print '</td>';
 	print '</tr>';
 
@@ -1939,7 +1939,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td width="25%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Rate','multicurrency_tx');
+		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2001,7 +2001,7 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
-	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled)
+	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && ! empty($conf->banque->enabled))
 	{
 	    // Bank Account
 	    print '<tr><td>';
@@ -2320,13 +2320,10 @@ if ($action == 'create')
 
 		$somethingshown = $formfile->show_documents('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
-
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object);
-		if ($linktoelem) print '<br>'.$linktoelem;
-
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 		// print '</td><td valign="top" width="50%">';
@@ -2417,7 +2414,7 @@ if ($action == 'create')
 
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
-		$formmail->substit['__PROPREF__'] = $object->ref;
+		$formmail->substit['__PROPREF__'] = $object->ref; // For backward compatibility
 
 		// Find the good contact adress
 		$custcontact = '';

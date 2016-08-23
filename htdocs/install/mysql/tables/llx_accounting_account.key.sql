@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@
 
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_fk_pcg_version (fk_pcg_version);
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_number (account_number);
-
---ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_account_number FOREIGN KEY (fk_account_number) REFERENCES llx_accounting_account (account_number);
 
 
 -- This keys are created into foreign table after creation of foreign index

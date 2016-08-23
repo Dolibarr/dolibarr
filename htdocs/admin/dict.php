@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2015  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
@@ -596,7 +596,9 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         if ($value == 'color' && empty($_POST['color'])) continue;
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
         if ((! isset($_POST[$value]) || $_POST[$value]=='')
-        	&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy')))  // Fields that are not mandatory
+        	&& (! in_array($listfield[$f], array('decalage','module','accountancy_code','accountancy_code_sell','accountancy_code_buy'))  // Fields that are not mandatory
+        	&& (! ($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
+        	)
 		)
         {
             $ok=0;
@@ -1085,7 +1087,7 @@ if ($id)
         	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
         	$formmail=new FormMail($db);
         	$tmp=$formmail->getAvailableSubstitKey('form');
-        	print join(', ', $tmp);
+        	print implode(', ', $tmp);
         	print '</td></tr>';
         }
 

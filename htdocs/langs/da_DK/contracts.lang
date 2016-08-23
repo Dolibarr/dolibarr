@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Ikke er udløbet
 ServiceStatusLate=Kører, er udløbet
 ServiceStatusLateShort=Udløbet
 ServiceStatusClosed=Lukket
+ShowContractOfService=Show contract of service
 Contracts=Kontrakter
 ContractsSubscriptions=Contracts/Subscriptions
 ContractsAndLine=Contracts and line of contracts

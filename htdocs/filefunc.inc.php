@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE','Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION','4.0.0-rc');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','5.0.0-alpha');
 
 if (! defined('EURO')) define('EURO',chr(128));
 
@@ -87,19 +87,37 @@ $result=@include_once $conffile;	// Keep @ because with some error reporting thi
 
 if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done and we are in a web session
 {
-	// Note: If calling page was not into htdocs (index.php, ...), then this redirect will fails.
-	// There is no real solution, because the only way to know the apache url relative path is to have into conf file.
-	$TDir = explode('/', $_SERVER['PHP_SELF']);
-	$path = '';
-	$i = count($TDir);
-	while ($i--)
-	{
-		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
-		if (substr($TDir[$i], -4, 4) == '.php') continue;
-		
-		$path .= '../';
-	}
-	
+    if (! empty($_SERVER["CONTEXT_PREFIX"]))    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
+    {
+        $path=$_SERVER["CONTEXT_PREFIX"];       // example '/dolibarr/' when using an apache alias.
+        if (! preg_match('/\/$/', $path)) $path.='/';
+    }
+    else if (preg_match('/index\.php', $_SERVER['PHP_SELF']))
+    {
+        // When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
+        // when using apache alias like '/dolibarr/' that point to htdocs.
+    	// Note: If calling page was an index.php not into htdocs (ie comm/index.php, ...), then this redirect will fails,
+    	// but we don't want to change this because when URL is correct, we must be sure the redirect to install/index.php will be correct.
+        $path='';
+    }
+    else
+    {
+        // If what we look is not index.php, we can try to guess location of root. May not work all the time.
+    	// There is no real solution, because the only way to know the apache url relative path is to have it into conf file.
+    	// If it fails to find correct $path, then only solution is to ask user to enter the correct URL to index.php or install/index.php
+        $TDir = explode('/', $_SERVER['PHP_SELF']);
+    	$path = '';
+    	$i = count($TDir);
+    	while ($i--)
+    	{
+    		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
+            if ($TDir[$i] == 'dolibarr') break;
+            if (substr($TDir[$i], -4, 4) == '.php') continue;
+    		
+    		$path .= '../';
+    	}
+    }
+    
 	header("Location: ".$path."install/index.php");
 	exit;
 }
@@ -125,10 +143,13 @@ $dolibarr_main_document_root=trim($dolibarr_main_document_root);
 $dolibarr_main_document_root_alt=(empty($dolibarr_main_document_root_alt)?'':trim($dolibarr_main_document_root_alt));
 
 if (empty($dolibarr_main_db_port)) $dolibarr_main_db_port=0;		// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysqli';	// Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+
+// Mysql driver support has been removed in favor of mysqli
+if ($dolibarr_main_db_type == 'mysql') $dolibarr_main_db_type = 'mysqli';
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_';
-if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysql'?'utf8':'');		// Old installation
-if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysql'?'utf8_general_ci':'');	// Old installation
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set=($dolibarr_main_db_type=='mysqli'?'utf8':'');		// Old installation
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation=($dolibarr_main_db_type=='mysqli'?'utf8_general_ci':'');	// Old installation
 if (empty($dolibarr_main_db_encryption)) $dolibarr_main_db_encryption=0;
 if (empty($dolibarr_main_db_cryptkey)) $dolibarr_main_db_cryptkey='';
 if (empty($dolibarr_main_limit_users)) $dolibarr_main_limit_users=0;
@@ -160,7 +181,6 @@ if (empty($dolibarr_main_url_root))
 	print 'You must add this parameter with your full Dolibarr root Url (Example: http://myvirtualdomain/ or http://mydomain/mydolibarrurl/)'."\n";
 	die;
 }
-if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 if (empty($dolibarr_main_data_root))
 {
 	// Si repertoire documents non defini, on utilise celui par defaut

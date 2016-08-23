@@ -74,6 +74,7 @@ DefaultLang=ಪೂರ್ವನಿಯೋಜಿತವಾದ ಭಾಷೆ
 VATIsUsed=ವ್ಯಾಟ್ ಬಳಸಲಾಗುತ್ತದೆ
 VATIsNotUsed=ವ್ಯಾಟ್ ಬಳಸಲಾಗುವುದಿಲ್ಲ
 CopyAddressFromSoc=ಮೂರನೇ ಪಾರ್ಟಿ ವಿಲಾಸದೊಂದಿಗೆ ವಿಳಾಸವನ್ನು ತುಂಬಿರಿ
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE ಬಳಸಲಾಗುತ್ತದೆ
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=ಸಂಘಟನೆ
 FiscalYearInformation=ಹಣಕಾಸಿನ ವರ್ಷದ ಮಾಹಿತಿ
 FiscalMonthStart=ಆರ್ಥಿಕ ವರ್ಷಾರಂಭದ ತಿಂಗಳು
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=ಪೂರೈಕೆದಾರರ ಪಟ್ಟಿ
 ListProspectsShort=ನಿರೀಕ್ಷಿತರ ಪಟ್ಟಿ
 ListCustomersShort=ಗ್ರಾಹಕರ ಪಟ್ಟಿ

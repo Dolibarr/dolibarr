@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Podešavanja ClickToDial informacija za V
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funkcionalnost je deaktivirana kada su podešavanja prikaza optimizovana za slepe osobe ili za tekstualne browsere.
 WarningPaymentDateLowerThanInvoiceDate=Datum uplate (%s) je pre datuma fakture (%s) za faktru %s.
 WarningTooManyDataPleaseUseMoreFilters=Previše podataka (preko %s linija). Molimo koristite filtere ili podesite konstantu %s na veći limit.
-WarningSomeLinesWithNullHourlyRate=Neka utrošena vremena su sačuvana za korisnike za koje nije definisana satnica. Korišćena je satnica od 0 po defaultu, ali to može prouzrokovati pogrešnu evaluaciju.
+WarningSomeLinesWithNullHourlyRate=Some times were recorded by some users while their hourly rate was not defined. A value of 0 %s per hour was used but this may result in wrong valuation of time spent.
 WarningYourLoginWasModifiedPleaseLogin=Vaša prijava je promenjena. Iz sigurnosnih razloga se morate ponovo ulogovati.

@@ -32,4 +32,4 @@ ShowStock=Mutasd raktár
 DeleteArticle=Kattintson, hogy távolítsa el ezt a cikket
 FilterRefOrLabelOrBC=Keresés (Ref/Cédula)
 UserNeedPermissionToEditStockToUsePos=Számla létrehozásánál készlet csökkentést kér, tehát az értékesítési hely kasszánál a felhasználónak készlet módosítási engedéllyel kell rendelkeznie.
-DolibarrReceiptPrinter=Dolibarr Receipt Printer
+DolibarrReceiptPrinter=Dolibarr Nyugta Nyomtató

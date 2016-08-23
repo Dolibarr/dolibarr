@@ -376,32 +376,7 @@ if (empty($reshook))
 							$error++;
 						}
 
-						// Now we create same links to contact than the ones found on origin object
-						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-						{
-						    $originforcontact = $object->origin;
-						    $originidforcontact = $object->origin_id;
-						    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-						    {
-						        $originforcontact=$srcobject->origin;
-						        $originidforcontact=$srcobject->origin_id;
-						    }
-						    $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-						    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-						    	
-						    $resqlcontact = $db->query($sqlcontact);
-						    if ($resqlcontact)
-						    {
-						        while($objcontact = $db->fetch_object($resqlcontact))
-						        {
-						            //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
-						            $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
-						        }
-						    }
-						    else dol_print_error($resqlcontact);
-						}
-							
-						// Hooks
+    					// Hooks
 						$parameters = array('objFrom' => $srcobject);
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 						// modified by hook
@@ -523,7 +498,7 @@ if (empty($reshook))
 	else if ($action == 'setmode' && $user->rights->commande->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 	}
 	
 	// Multicurrency Code
@@ -539,13 +514,13 @@ if (empty($reshook))
 	else if ($action == 'setavailability' && $user->rights->commande->creer) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+		    setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	else if ($action == 'setdemandreason' && $user->rights->commande->creer) {
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	else if ($action == 'setconditions' && $user->rights->commande->creer) {
@@ -1472,7 +1447,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 1);
+		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 'SelectThirdParty');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
@@ -2208,7 +2183,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<tr>';
 			print '<td width="25%">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print fieldLabel('Rate','multicurrency_tx');
+			print fieldLabel('CurrencyRate','multicurrency_tx');
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2610,13 +2585,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$delallowed = $user->rights->commande->supprimer;
 			$somethingshown = $formfile->show_documents('commande', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
-			// Linked object block
-			$somethingshown = $form->showLinkedObjectBlock($object);
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object);
-			//if ($linktoelem) print '<br>'.$linktoelem;
-
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+			
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

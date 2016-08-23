@@ -77,7 +77,7 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				'sublink'=>'',
 				'subtext'=>$langs->trans("Filter"),
 				'subpicto'=>'filter.png',
-				'subclass'=>'linkobject',
+				'subclass'=>'linkobject boxfilter',
 				'target'=>'none'	// Set '' to get target="_blank"
 		);
 
@@ -132,7 +132,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				if (! $mesg)
 				{
-					$px1->SetData($data1);
+				    $langs->load("bills");
+				    
+				    $px1->SetData($data1);
 					unset($data1);
 					$px1->SetPrecisionY(0);
 					$i=$startyear;$legend=array();
