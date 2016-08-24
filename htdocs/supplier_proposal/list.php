@@ -388,10 +388,10 @@ if ($result)
 	print '<td class="liste_titre" align="right">';
 	$formsupplier_proposal->selectSupplierProposalStatus($viewstatut,1);
 	print '</td>';
-
+	// Check boxes
 	print '<td class="liste_titre" align="right">';
-	print '<input type="image" name="button_search" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" name="button_removefilter" class="liste_titre" src="'.img_picto($langs->trans("RemoveFilter"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print $searchpitco;
 	print '</td>';
 
 	print "</tr>\n";
@@ -475,7 +475,15 @@ if ($result)
 
 		print '<td align="right">'.$objectstatic->LibStatut($obj->fk_statut,5)."</td>\n";
 
-		print '<td>&nbsp;</td>';
+        // Action column
+        print '<td class="nowrap" align="center">';
+        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+        {
+            $selected=0;
+    		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+    		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+        }
+        print '</td>';
 
 		print "</tr>\n";
 
