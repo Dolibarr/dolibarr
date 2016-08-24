@@ -633,6 +633,7 @@ div.myavailability {
 
 @media only screen and (max-width: 960px)
 {
+    .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth100imp { min-width: 50px !important; }
     .minwidth200imp { min-width: 100px !important; }
