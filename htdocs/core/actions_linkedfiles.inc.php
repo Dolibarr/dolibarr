@@ -22,7 +22,7 @@
 // Variable $upload_dir must be defined when entering here
 // Variable $upload_dirold may also exists.
 
-// Send file/link
+// Submit file/link
 if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
     if ($object->id)

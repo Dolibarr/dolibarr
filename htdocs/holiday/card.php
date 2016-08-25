@@ -794,7 +794,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
 
         // User
         print '<tr>';
-        print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
+        print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
         print '<td>';
         if (empty($user->rights->holiday->write_all))
         {

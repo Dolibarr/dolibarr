@@ -1298,9 +1298,9 @@ class Account extends CommonObject
     }
 
     /**
-     * Return 1 is IBAN is need for UE country
+     * Return 1 if IBAN / BIC is mandatory (otherwise option)
      *
-     * @return		int        1 yes / 0 No
+     * @return		int        1 = mandatory / 0 = Not mandatory
      */
     function needIBAN()
     {
@@ -1342,7 +1342,7 @@ class Account extends CommonObject
     			//'CH',	// Switzerland - No. Swizerland in not in EEC
     	);
 
-    	if (in_array($country_code,$country_code_in_EEC)) return 1; // France, Spain, Gabon, ...
+    	if (in_array($country_code,$country_code_in_EEC)) return 1; // France, Spain, ...
     	return 0;
     }
 
@@ -1388,10 +1388,10 @@ class Account extends CommonObject
 			$fieldarray=self::getAccountNumberOrder();
 		}
 
-		if ($this->needIBAN()) {
+		//if ($this->needIBAN()) {    // return always IBAN and BIC (this was old behaviour)
 			$fieldarray[]='IBAN';
 			$fieldarray[]='BIC';
-		}
+		//}
 
 		//Get the order the properties are shown
 		return $fieldarray;

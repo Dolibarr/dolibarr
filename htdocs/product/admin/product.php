@@ -5,9 +5,10 @@
  * Copyright (C) 2007      Auguria SARL         <info@auguria.org>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2016		Charlie Benke		 <charlie@patas-monkey.com>
+ * Copyright (C) 2016      Charlie Benke		<charlie@patas-monkey.com>
+ * Copyright (C) 2016	   Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +115,7 @@ if ($action == 'setModuleOptions')
 	}
 }
 
-if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') > 0)
+if ($action == 'other' && GETPOST('value_PRODUIT_LIMIT_SIZE') >= 0)
 {
 	$res = dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", GETPOST('value_PRODUIT_LIMIT_SIZE'),'chaine',0,'',$conf->entity);
 }

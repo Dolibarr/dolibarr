@@ -68,7 +68,7 @@ class Invoices extends DolibarrApi
 			
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Facture not found');
+            throw new RestException(404, 'Invoice not found');
         }
 		
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
@@ -128,6 +128,7 @@ class Invoices extends DolibarrApi
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
         
+        // TODO remove this, useless for WS
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
@@ -178,7 +179,7 @@ class Invoices extends DolibarrApi
     function post($request_data = NULL)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
-			throw new RestException(401);
+			throw new RestException(401, "Insuffisant rights");
 		}
         // Check mandatory fields
         $result = $this->_validate($request_data);
@@ -189,8 +190,18 @@ class Invoices extends DolibarrApi
         if(! array_keys($request_data,'date')) {
             $this->invoice->date = dol_now();
         }
-        if( ! $this->invoice->create(DolibarrApiAccess::$user)) {
-            throw new RestException(500);
+        /* We keep lines as an array
+         if (isset($request_data["lines"])) {
+            $lines = array();
+            foreach ($request_data["lines"] as $line) {
+                array_push($lines, (object) $line);
+            }
+            $this->invoice->lines = $lines;
+        }*/
+        
+        if ($this->invoice->create(DolibarrApiAccess::$user) <= 0) {
+            $errormsg = $this->invoice->error;
+            throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
         }
         return $this->invoice->id;
     }
@@ -210,7 +221,7 @@ class Invoices extends DolibarrApi
         
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Facture not found');
+            throw new RestException(404, 'Invoice not found');
         }
 		
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
@@ -240,7 +251,7 @@ class Invoices extends DolibarrApi
 		}
         $result = $this->invoice->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Facture not found');
+            throw new RestException(404, 'Invoice not found');
         }
 		
 		if( ! DolibarrApi::_checkAccessToResource('facture',$this->facture->id)) {

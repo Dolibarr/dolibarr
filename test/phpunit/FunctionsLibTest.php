@@ -624,6 +624,42 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
     	$this->assertEquals("21 jump street\nMyTown, MyState, 99999",$address);
     }
 
+    
+    /**
+     * testDolFormatAddress
+     *
+     * @return	void
+     */
+    public function testDolPrintPhone()
+    {
+        global $conf,$user,$langs,$db;
+        $conf=$this->savconf;
+        $user=$this->savuser;
+        $langs=$this->savlangs;
+        $db=$this->savdb;
+    
+        $object=new Societe($db);
+        $object->initAsSpecimen();
+    
+        $object->country_code='FR';
+        $phone=dol_print_phone('1234567890', $object->country_code);
+        $this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+    
+        $object->country_code='FR';
+        $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
+        $this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+        
+        $object->country_code='FR';
+        $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
+        $this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+
+        $object->country_code='CA';
+        $phone=dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
+        $this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+        
+    }
+    
+    
     /**
      * testImgPicto
      *

@@ -1168,7 +1168,7 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
@@ -1677,13 +1677,11 @@ else if ($id > 0 || ! empty($ref))
 		//print "<br>\n";
 		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
-
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

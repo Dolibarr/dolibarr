@@ -546,7 +546,7 @@ class Productlot extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
+        $label = '<u>' . $langs->trans("LotSerial") . '</u>';
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 

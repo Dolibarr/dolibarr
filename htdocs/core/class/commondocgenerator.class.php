@@ -429,7 +429,7 @@ abstract class CommonDocGenerator
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
 			'line_product_label'=>$line->product_label,
-                        'line_product_type'=>$line->product_type,
+			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
 			'line_up'=>price2num($line->subprice),
@@ -443,9 +443,9 @@ abstract class CommonDocGenerator
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
 			'line_date_start'=>$line->date_start,
-			'line_date_start_rfc'=>dol_print_date($line->date_start,'rfc'),
+			'line_date_start_rfc'=>dol_print_date($line->date_start,'dayrfc'),
 			'line_date_end'=>$line->date_end,
-			'line_date_end_rfc'=>dol_print_date($line->date_end,'rfc')
+			'line_date_end_rfc'=>dol_print_date($line->date_end,'dayrfc')
 		);
 
 		// Retrieve extrafields

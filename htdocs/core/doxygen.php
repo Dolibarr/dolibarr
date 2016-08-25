@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,9 +25,12 @@
  *	    This is source documentation for Dolibarr ERP/CRM.<br>
  *      This documentation can be built or updated running the script <b>dolibarr-doxygen-build.pl</b> or from Eclipse with Doxygen plugin.<br>
  *      <br>
- *      Dolibarr official web site: <a href="http://www.dolibarr.org">www.dolibarr.org</a><br>
+ *      Dolibarr official web site: <a href="https://www.dolibarr.org">www.dolibarr.org</a><br>
  *      <br>
  *      Dolibarr french portal: <a href="http://www.dolibarr.fr">www.dolibarr.fr</a><br>
  *      Dolibarr spanish portal: <a href="http://www.dolibarr.es">www.dolibarr.es</a><br>
+ *      Dolibarr italian portal: <a href="http://www.dolibarr.it">www.dolibarr.it</a><br>
+ *      Dolibarr greek portal: <a href="http://www.dolibarr.gr">www.dolibarr.gr</a><br>
+ *      Dolibarr german portal: <a href="http://www.dolibarr.de">www.dolibarr.de</a><br>
  *      <br>
  */

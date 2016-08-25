@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE	<charlie@patas-monkey.com> 
+ * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,7 +187,7 @@ if ($action == 'delete')
  *	View
  */
 
-llxHeader();
+llxHeader("",$langs->trans("SalaryPayment"));
 
 $form = new Form($db);
 
@@ -339,7 +339,7 @@ if ($id)
     $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 	
     print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
 

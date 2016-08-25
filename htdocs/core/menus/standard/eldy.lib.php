@@ -342,8 +342,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
  */
 function print_start_menu_array()
 {
+    global $conf;
+    
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu">';
+	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**
@@ -874,9 +876,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (! empty($conf->tax->enabled))
 				{
 					$newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
-					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
+					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/card.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
 					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"),2,$user->rights->tax->charges->lire);
-					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
+					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/payments.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
 					// VAT
 					if (empty($conf->global->TAX_DISABLE_VAT_MENUS))
 					{
@@ -1062,7 +1064,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
 				$newmenu->add("/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
 
-				$newmenu->add("/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
+				$newmenu->add("/compta/bank/virement.php",$langs->trans("MenuBankInternalTransfer"),1,$user->rights->banque->transfer);
 			}
 
             if (! empty($conf->categorie->enabled)) {
@@ -1119,6 +1121,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				{
 					$langs->load("stocks");
 					$newmenu->add("/product/reassortlot.php?type=0", $langs->trans("StocksByLotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
+					$newmenu->add("/product/stock/productlot_list.php", $langs->trans("LotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
 				}
 				if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
 				{

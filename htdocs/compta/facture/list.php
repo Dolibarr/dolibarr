@@ -219,6 +219,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
 if (empty($reshook))
 {
 	$objectclass='Facture';
+	$objectlabel='Invoices';
     $permtoread = $user->rights->facture->lire;
 	$permtodelete = $user->rights->facture->supprimer;
 	$uploaddir = $conf->facture->dir_output;
@@ -366,7 +367,7 @@ $sql.=$hookmanager->resPrint;
 
 if (! $sall)
 {
-    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, f.total, f.tva, f.total_ttc,';
+    $sql.= ' GROUP BY f.rowid, f.facnumber, ref_client, f.type, f.note_private, f.note_public, f.increment, fk_mode_reglement, f.total, f.tva, f.total_ttc,';
     $sql.= ' f.datef, f.date_lim_reglement,';
     $sql.= ' f.paye, f.fk_statut,';
     $sql.= ' f.datec, f.tms,';

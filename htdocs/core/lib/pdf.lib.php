@@ -39,7 +39,7 @@
  *	@param		Translate	$outputlangs		Output lang to use to autodetect output format if setup not done
  *  @return     array							Array('width'=>w,'height'=>h,'unit'=>u);
  */
-function pdf_getFormat($outputlangs='')
+function pdf_getFormat(Translate $outputlangs = null)
 {
 	global $conf,$db;
 
@@ -77,7 +77,7 @@ function pdf_getFormat($outputlangs='')
  *      @param	string		$format         Array(width,height). Keep empty to use default setup.
  *      @param	string		$metric         Unit of format ('mm')
  *      @param  string		$pagetype       'P' or 'l'
- *      @return TPDF						PDF object
+ *      @return TCPDF						PDF object
  */
 function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 {
@@ -319,14 +319,16 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
     {
         for ($page=$start_page; $page <= $end_page; ++$page) {
         	$pdf->setPage($page);
+        	$tmpm=$pdf->getMargins();
+        	$tMargin = $tmpm['top'];
         	if ($page == $start_page) {
         		// first page
-        		$height = $pdf->h - $start_y - $pdf->bMargin;
+        		$height = $pdf->getPageHeight() - $start_y - $pdf->getBreakMargin();
         	} elseif ($page == $end_page) {
         		// last page
-        		$height = $end_y - $pdf->tMargin;
+        		$height = $end_y - $tMargin;
         	} else {
-        		$height = $pdf->h - $pdf->tMargin - $pdf->bMargin;
+        		$height = $pdf->getPageHeight() - $tMargin - $pdf->getBreakMargin();
         	}
         }
 	}
@@ -566,7 +568,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 /**
  *   	Show header of page for PDF generation
  *
- *   	@param      PDF			$pdf     		Object PDF
+ *   	@param      TCPDF			$pdf     		Object PDF
  *      @param      Translate	$outputlangs	Object lang for output
  * 		@param		int			$page_height	Height of page
  *      @return	void
@@ -587,7 +589,7 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 /**
  *      Add a draft watermark on PDF files
  *
- *      @param	PDF      	$pdf           Object PDF
+ *      @param	TCPDF      	$pdf           Object PDF
  *      @param  Translate	$outputlangs	Object lang
  *      @param  int		    $h		        Height of PDF
  *      @param  int		    $w		        Width of PDF
@@ -627,7 +629,7 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 /**
  *  Show bank informations for PDF generation
  *
- *  @param	PDF			$pdf            		Object PDF
+ *  @param	TCPDF			$pdf            		Object PDF
  *  @param  Translate	$outputlangs     		Object lang
  *  @param  int			$curx            		X
  *  @param  int			$cury            		Y
@@ -803,7 +805,7 @@ function pdf_bank(&$pdf,$outputlangs,$curx,$cury,$account,$onlynumber=0,$default
 /**
  *  Show footer of page for PDF generation
  *
- *	@param	PDF			$pdf     		The PDF factory
+ *	@param	TCPDF			$pdf     		The PDF factory
  *  @param  Translate	$outputlangs	Object lang for output
  * 	@param	string		$paramfreetext	Constant name of free text
  * 	@param	Societe		$fromcompany	Object company
@@ -953,7 +955,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if ($line)	// Free text
 	{
 		//$line="eee<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
-	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))   // by default
+	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 		{
 			$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
     		if (! empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {
@@ -1035,7 +1037,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 /**
  *	Show linked objects for PDF generation
  *
- *	@param	PDF			$pdf				Object PDF
+ *	@param	TCPDF			$pdf				Object PDF
  *	@param	object		$object				Object
  *	@param  Translate	$outputlangs		Object lang
  *	@param  int			$posx				X
@@ -1072,7 +1074,7 @@ function pdf_writeLinkedObjects(&$pdf,$object,$outputlangs,$posx,$posy,$w,$h,$al
 /**
  *	Output line description into PDF
  *
- *  @param  PDF				$pdf               PDF object
+ *  @param  TCPDF				$pdf               PDF object
  *	@param	Object			$object				Object
  *	@param	int				$i					Current line number
  *  @param  Translate		$outputlangs		Object lang for output

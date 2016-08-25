@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2015	   Ferran Marcet	    <fmarcet@2byte.es>
@@ -1480,3 +1480,15 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2502', 18126, '', 0, '', 'Atalaya', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2503', 18126, '', 0, '', 'Padre Abad', 1);
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('2504', 18126, '', 0, '', 'Purús', 1);
+
+-- Provinces Panama (id country=178)
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-1', 17801, '', 0, '', 'Bocas del Toro', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-2', 17801, '', 0, '', 'Coclé', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-3', 17801, '', 0, '', 'Colón', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-4', 17801, '', 0, '', 'Chiriquí', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-5', 17801, '', 0, '', 'Darién', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-6', 17801, '', 0, '', 'Herrera', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-7', 17801, '', 0, '', 'Los Santos', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-8', 17801, '', 0, '', 'Panamá', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-9', 17801, '', 0, '', 'Veraguas', 1);
+INSERT INTO llx_c_departements (code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('PA-13', 17801, '', 0, '', 'Panamá Oeste', 1);

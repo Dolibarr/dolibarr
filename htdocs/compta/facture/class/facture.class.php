@@ -408,30 +408,40 @@ class Facture extends CommonInvoice
 						$error++;
 					}
 
-					// TODO mutualiser
-					if ($origin == 'commande')
+					if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 					{
-						// On recupere les differents contact interne et externe
-						$order = new Commande($this->db);
-						$order->id = $origin_id;
-
-						// On recupere le commercial suivi propale
-						$this->userid = $order->getIdcontact('internal', 'SALESREPFOLL');
-
-						if ($this->userid)
-						{
-							//On passe le commercial suivi commande en commercial suivi paiement
-							$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-						}
-
-						// On recupere le contact client facturation commande
-						$this->contactid = $order->getIdcontact('external', 'BILLING');
-
-						if ($this->contactid)
-						{
-							//On passe le contact client facturation commande en contact client facturation
-							$this->add_contact($this->contactid[0], 'BILLING', 'external');
-						}
+    					$originforcontact = $origin;
+    					$originidforcontact = $origin_id;
+    					if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+    					{
+    					    require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+    					    $exp = new Expedition($db);
+    					    $exp->fetch($origin_id);
+    					    $exp->fetchObjectLinked();
+    					    if (count($exp->linkedObjectsIds['commande']) > 0) 
+    					    {
+    					        foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+    					        {
+    					            $originforcontact = 'commande';
+    					            $originidforcontact = $value->id;
+    					            break; // We take first one
+    					        }
+    					    }
+    					}
+    					
+    					$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+    					$sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+			
+    					$resqlcontact = $this->db->query($sqlcontact);
+    					if ($resqlcontact)
+    					{
+    					    while($objcontact = $this->db->fetch_object($resqlcontact))
+    					    {
+    					        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+    					        $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+    					    }
+    					}
+    					else dol_print_error($resqlcontact);
 					}
 				}
 			}
@@ -439,7 +449,7 @@ class Facture extends CommonInvoice
 			/*
 			 *  Insert lines of invoices into database
 			 */
-			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array on InvoiceLines (preferred mode)
+			if (count($this->lines) && is_object($this->lines[0]))	// If this->lines is array of InvoiceLines (preferred mode)
 			{
 				$fk_parent_line = 0;
 
@@ -448,8 +458,8 @@ class Facture extends CommonInvoice
 				{
 					$newinvoiceline=$this->lines[$i];
 					$newinvoiceline->fk_facture=$this->id;
-                    $newinvoiceline->origin = $this->element;
-                    $newinvoiceline->origin_id = $this->lines[$i]->id;
+                    $newinvoiceline->origin = $this->element;           // TODO This seems not used. Here we but origin 'facture' but after
+                    $newinvoiceline->origin_id = $this->lines[$i]->id;  // we put an id of object !
 					if ($result >= 0 && ($newinvoiceline->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
 					{
 						// Reset fk_parent_line for no child products and special product
@@ -473,49 +483,56 @@ class Facture extends CommonInvoice
 					}
 				}
 			}
-			else	// If this->lines is not object of invoice lines
+			else	// If this->lines is an array of invoice line arrays
 			{
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines that are array lines");
+
 				foreach ($this->lines as $i => $val)
 				{
-					if (($this->lines[$i]->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
+                	$line = $this->lines[$i];
+                	
+                	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+                	if (! is_object($line)) $line = (object) $line;
+				    
+				    if (($line->info_bits & 0x01) == 0)	// We keep only lines with first bit = 0
 					{
 						// Reset fk_parent_line for no child products and special product
-						if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+						if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 							$fk_parent_line = 0;
 						}
 
 						$result = $this->addline(
-							$this->lines[$i]->desc,
-							$this->lines[$i]->subprice,
-							$this->lines[$i]->qty,
-							$this->lines[$i]->tva_tx,
-							$this->lines[$i]->localtax1_tx,
-							$this->lines[$i]->localtax2_tx,
-							$this->lines[$i]->fk_product,
-							$this->lines[$i]->remise_percent,
-							$this->lines[$i]->date_start,
-							$this->lines[$i]->date_end,
-							$this->lines[$i]->fk_code_ventilation,
-							$this->lines[$i]->info_bits,
-							$this->lines[$i]->fk_remise_except,
+							$line->desc,
+							$line->subprice,
+							$line->qty,
+							$line->tva_tx,
+							$line->localtax1_tx,
+							$line->localtax2_tx,
+							$line->fk_product,
+							$line->remise_percent,
+							$line->date_start,
+							$line->date_end,
+							$line->fk_code_ventilation,
+							$line->info_bits,
+							$line->fk_remise_except,
 							'HT',
 							0,
-							$this->lines[$i]->product_type,
-							$this->lines[$i]->rang,
-							$this->lines[$i]->special_code,
+							$line->product_type,
+							$line->rang,
+							$line->special_code,
                             $this->element,
-                            $this->lines[$i]->id,
+                            $line->id,
 							$fk_parent_line,
-							$this->lines[$i]->fk_fournprice,
-							$this->lines[$i]->pa_ht,
-							$this->lines[$i]->label,
-							$this->lines[$i]->array_options,
-							$this->lines[$i]->situation_percent,
-							$this->lines[$i]->fk_prev_id,
-							$this->lines[$i]->fk_unit
+							$line->fk_fournprice,
+							$line->pa_ht,
+							$line->label,
+							$line->array_options,
+							$line->situation_percent,
+							$line->fk_prev_id,
+							$line->fk_unit
 						);
 						if ($result < 0)
 						{
@@ -526,7 +543,7 @@ class Facture extends CommonInvoice
 						}
 
 						// Defined the new fk_parent_line
-						if ($result > 0 && $this->lines[$i]->product_type == 9) {
+						if ($result > 0 && $line->product_type == 9) {
 							$fk_parent_line = $result;
 						}
 					}
@@ -595,21 +612,22 @@ class Facture extends CommonInvoice
 
 					// Actions on extra fields (by external module or standard code)
 					// TODO le hook fait double emploi avec le trigger !!
+					/*
 					$hookmanager->initHooks(array('invoicedao'));
 					$parameters=array('invoiceid'=>$this->id);
 					$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action); // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook))
 					{
 						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-						{
-							$result=$this->insertExtraFields();
-							if ($result < 0)
-							{
-								$error++;
-							}
-						}
+						{*/
+					if (! $error)
+					{
+					    $result=$this->insertExtraFields();
+					    if ($result < 0) $error++;
 					}
-					else if ($reshook < 0) $error++;
+						/*}
+					}
+					else if ($reshook < 0) $error++;*/
 
                     // Call trigger
                     $result=$this->call_trigger('BILL_CREATE',$user);
@@ -1720,7 +1738,7 @@ class Facture extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function set_paid($user,$close_code='',$close_note='')
+	function set_paid($user, $close_code='', $close_note='')
 	{
 		$error=0;
 
@@ -2944,9 +2962,10 @@ class Facture extends CommonInvoice
 			$field2='fk_paiementfourn';
 		}
 
-		$sql = 'SELECT pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, t.code';
+		$sql = 'SELECT pf.amount, pf.multicurrency_amount, p.fk_paiement, p.datep, p.num_paiement as num, t.code';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$table.' as pf, '.MAIN_DB_PREFIX.$table2.' as p, '.MAIN_DB_PREFIX.'c_paiement as t';
 		$sql.= ' WHERE pf.'.$field.' = '.$this->id;
+		//$sql.= ' WHERE pf.'.$field.' = 1';
 		$sql.= ' AND pf.'.$field2.' = p.rowid';
 		$sql.= ' AND p.fk_paiement = t.id';
 		if ($filtertype) $sql.=" AND t.code='PRE'";
@@ -2960,7 +2979,7 @@ class Facture extends CommonInvoice
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep);
+				$retarray[]=array('amount'=>$obj->amount,'type'=>$obj->code, 'date'=>$obj->datep, 'num'=>$obj->num);
 				$i++;
 			}
 			$this->db->free($resql);

@@ -766,7 +766,7 @@ if (! GETPOST('nojs'))   // If javascript was not disabled on URL
 }
 else $conf->use_javascript_ajax=0;
 // Set MAIN_OPTIMIZEFORTEXTBROWSER
-if (GETPOST('textbrowser') || ! empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))   // If text browser was enabled on URL
+if (GETPOST('textbrowser') || (! empty($conf->browser->name) && $conf->browser->name == 'lynxlinks') || ! empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))   // If we must enable text browser
 {
     $conf->global->MAIN_OPTIMIZEFORTEXTBROWSER=1;
 }
@@ -1437,21 +1437,24 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	    if (! empty($conf->global->MAIN_FEATURES_LEVEL)) $appli.="<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
 	    $logouttext='';
-	    $logouthtmltext=$appli.'<br>';
-	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
+	    if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	    {
-	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
-
-	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
-	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
-	        $logouttext .='</a>';
+    	    $logouthtmltext=$appli.'<br>';
+    	    if ($_SESSION["dol_authmode"] != 'forceuser' && $_SESSION["dol_authmode"] != 'http')
+    	    {
+    	    	$logouthtmltext.=$langs->trans("Logout").'<br>';
+    
+    	    	$logouttext .='<a href="'.DOL_URL_ROOT.'/user/logout.php">';
+    	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
+    	        $logouttext .='</a>';
+    	    }
+    	    else
+    	    {
+    	    	$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode",$_SESSION["dol_authmode"]);
+    	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
+    	    }
 	    }
-	    else
-	    {
-	    	$logouthtmltext.=$langs->trans("NoLogoutProcessWithAuthMode",$_SESSION["dol_authmode"]);
-	        $logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
-	    }
-
+	    
 	    print '<div class="login_block">'."\n";
 
 	    // Add login user link
@@ -1664,7 +1667,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 	    // Left column
 	    print '<!-- Begin left menu -->'."\n";
 
-	    print '<div class="vmenu">'."\n\n";
+	    print '<div class="vmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Left menu"').'>'."\n\n";
 
     	// Show left menu with other forms
 	    $menumanager->menu_array = $menu_array_before;
@@ -1922,11 +1925,50 @@ if (! function_exists("llxFooter"))
     		print "\n<!-- JS CODE TO ENABLE tipTip on all object with class classfortooltip -->\n";
     		print '<script type="text/javascript">
             	jQuery(document).ready(function () {
-            		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(400,'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
+            		jQuery(".classfortooltip").tipTip({maxWidth: "'.dol_size(($conf->browser->layout == 'phone' ? 400 : 700),'width').'px", edgeOffset: 10, delay: 50, fadeIn: 50, fadeOut: 50});
             	});
             </script>' . "\n";
         }
-
+        
+        // Wrapper to manage dropdown
+        if ($conf->use_javascript_ajax)
+        {
+            print "\n<!-- JS CODE TO ENABLE dropdown -->\n";
+            print '<script type="text/javascript">
+                jQuery(document).ready(function () {
+                  $(".dropdown dt a").on(\'click\', function () {
+                      //console.log($(this).parent().parent().find(\'dd ul\'));
+                      $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
+                      // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
+                      heigthofcontent = 19 * $(this).parent().parent().find(\'dd div ul li\').length;
+                      if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
+                      posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
+                      //console.log(posbottom);
+                      var scrollBottom = $(window).scrollTop() + $(window).height();
+                      //console.log(scrollBottom);
+                      diffoutsidebottom = (posbottom - scrollBottom);
+                      console.log("diffoutsidebottom (positive = outside) = "+diffoutsidebottom);
+                      if (diffoutsidebottom > 0)
+                      {
+                            pix = "-"+diffoutsidebottom+"px";
+                            console.log(pix);
+                            $(this).parent().parent().find(\'dd\').css("top", pix);
+                      }
+                      // $(".dropdown dd ul").slideToggle(\'fast\');
+                  });
+                  $(".dropdowncloseonclick").on(\'click\', function () {
+                     console.log("Link has class dropdowncloseonclick, so we close/hide the popup ul");
+                     $(this).parent().parent().hide();
+                  });
+            
+                  $(document).bind(\'click\', function (e) {
+                      var $clicked = $(e.target);
+                      if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+                  });
+                });
+                </script>';
+        }
+                
 		// A div for the address popup
 		print "\n<!-- A div to allow dialog popup -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";

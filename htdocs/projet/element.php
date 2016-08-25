@@ -888,7 +888,7 @@ foreach ($listofreferent as $key => $value)
 
 				if (canApplySubtotalOn($tablename))
 				{
-					$breakline='<tr class="liste_total">';
+					$breakline='<tr class="liste_total liste_sub_total">';
 					$breakline.='<td colspan="2">';
 					$breakline.='</td>';
 					$breakline.='<td>';

@@ -163,7 +163,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -196,6 +196,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 if (empty($reshook))
 {
     $objectclass='Commande';
+    $objectlabel='Orders';
     $permtoread = $user->rights->commande->lire;
     $permtodelete = $user->rights->commande->supprimer;
     $uploaddir = $conf->commande->dir_output;
@@ -337,6 +338,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
+// Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -410,6 +412,7 @@ if ($resql)
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	
+	// List of mass actions available
 	$arrayofmassactions =  array(
 	    'presend'=>$langs->trans("SendByMail"),
 	    'builddoc'=>$langs->trans("PDFMerge"),
@@ -419,7 +422,7 @@ if ($resql)
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lignes des champs de filtre
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -561,10 +564,11 @@ if ($resql)
 		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
 		$moreforfilter.='</div>';
 	}
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
+	
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -577,6 +581,7 @@ if ($resql)
 	
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
+	// Fields title
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['c.ref']['checked']))            print_liste_field_titre($arrayfields['c.ref']['label'],$_SERVER["PHP_SELF"],'c.ref','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.ref_client']['checked']))     print_liste_field_titre($arrayfields['c.ref_client']['label'],$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
@@ -612,7 +617,7 @@ if ($resql)
 	if (! empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'],$_SERVER["PHP_SELF"],"c.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'],$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-	print '</tr>';
+	print '</tr>'."\n";
 
 	print '<tr class="liste_titre">';
 	// Ref
@@ -1115,8 +1120,8 @@ if ($resql)
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
 		
-		print '</tr>';
-
+		print "</tr>\n";
+        
 		$total+=$obj->total_ht;
 		$subtotal+=$obj->total_ht;
 		$i++;
@@ -1149,7 +1154,7 @@ if ($resql)
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 				
-	print '</table>';
+	print '</table>'."\n";
 
 	print '</form>'."\n";
 
@@ -1164,8 +1169,8 @@ if ($resql)
 	    $urlsource.=str_replace('&amp;','&',$param);
 	
 	    $filedir=$diroutputmassaction;
-	    $genallowed=$user->rights->facture->lire;
-	    $delallowed=$user->rights->facture->lire;
+	    $genallowed=$user->rights->commande->lire;
+	    $delallowed=$user->rights->commande->lire;
 	
 	    print '<br><a name="show_files"></a>';
 	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
@@ -1184,6 +1189,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -84,15 +84,15 @@ if (empty($reshook))
 
 	// Visible
 	$alwayscheckedmodules=array('barcode','bookmark','categorie','externalrss','fckeditor','geoipmaxmind','gravatar','memcached','syslog','user','webservices');  // Technical module we always want
-	$alwaysuncheckedmodules=array('dynamicprices','loan','multicurrency','paybox','paypal','google','printing','resource','scanner','workflow');  // Module we never want
+	$alwaysuncheckedmodules=array('dynamicprices','loan','multicurrency','paybox','paypal','google','printing','scanner','workflow');  // Module we never want
 	// Not visible
-	$alwayshiddencheckedmodules=array('accounting','barcode','bookmark','clicktodial','comptabilite','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
+	$alwayshiddencheckedmodules=array('accounting','api','barcode','bookmark','clicktodial','comptabilite','cron','document','domain','externalrss','externalsite','fckeditor','geoipmaxmind','gravatar','label','ldap',
 									'mailmanspip','notification','oauth','syslog','user','webservices',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('ftp','webservicesclient','api','websites',
+	$alwayshiddenuncheckedmodules=array('ftp','webservicesclient','websites',
 	                                // Extended modules
-	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
+	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','deplacement','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
 	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
 }
 

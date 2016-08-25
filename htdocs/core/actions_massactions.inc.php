@@ -23,7 +23,7 @@
 
 
 // $massaction must be defined
-// $objectclass must be defined
+// $objectclass and $$objectlabel must be defined
 // $uploaddir (example $conf->projet->dir_output . "/";)
 // $toselect may be defined
 
@@ -413,7 +413,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
     dol_mkdir($diroutputmassaction);
 
     // Save merged file
-    $filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Invoices")));
+    $filename=strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
     if ($filter=='paye:0')
     {
         if ($option=='late') $filename.='_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid"))).'_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Late")));

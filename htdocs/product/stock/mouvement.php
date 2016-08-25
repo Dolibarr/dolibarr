@@ -611,8 +611,8 @@ if ($resql)
 	{
 		$langs->load("productbatch");
 	    print_liste_field_titre($langs->trans("BatchNumberShort"),$_SERVER["PHP_SELF"],'m.batch','',$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("l_eatby"),$_SERVER["PHP_SELF"],'m.eatby','',$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("l_sellby"),$_SERVER["PHP_SELF"],'m.sellby','',$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("EatByDate"),$_SERVER["PHP_SELF"],'m.eatby','',$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("SellByDate"),$_SERVER["PHP_SELF"],'m.sellby','',$param,'align="center"',$sortfield,$sortorder);
 	}
     if (! $id > 0) print_liste_field_titre($langs->trans("Warehouse"),$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);	// We are on a specific warehouse card, no filter on other should be possible
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);

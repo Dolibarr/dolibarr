@@ -971,7 +971,8 @@ if (empty($reshook))
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-
+			$object->fk_project       = GETPOST('projectid');
+			
 			// Fill array 'array_options' with data from add form
 	       	if (! $error)
 	       	{
@@ -1306,8 +1307,8 @@ if (empty($reshook))
 /*
  * View
  */
-
-llxHeader('',$langs->trans("OrderCard"),"CommandeFournisseur");
+$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('',$langs->trans("Order"),$help_url);
 
 $form =	new	Form($db);
 $formfile = new FormFile($db);
@@ -1756,7 +1757,7 @@ elseif (! empty($object->id))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 	print '<td colspan="2">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td>';
@@ -1865,7 +1866,7 @@ elseif (! empty($object->id))
 		print '<tr>';
 		print '<td width="25%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Rate','multicurrency_tx');
+		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2659,7 +2660,7 @@ elseif (! empty($object->id))
 				{
 					if ($user->rights->fournisseur->commande->approuver)
 					{
-						if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL && ! empty($object->user_approve_id))
+						if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && ! empty($object->user_approve_id))
 						{
 							print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
 						}
@@ -2674,8 +2675,8 @@ elseif (! empty($object->id))
 					}
 				}
 
-				// Second approval (if option SUPPLIER_ORDER_DOUBLE_APPROVAL is set)
-				if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL)
+				// Second approval (if option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
+				if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
 				{
 					if ($object->statut == 1)
 					{
@@ -2732,7 +2733,7 @@ elseif (! empty($object->id))
 				            $buttonshown++;
 				        }
 				    }
-				    if (! $buttonshown && $user->rights->fournisseur->commande->approve2 && ! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+				    if (! $buttonshown && $user->rights->fournisseur->commande->approve2 && ! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 				    {
 				        if (empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY)
 				            || (! empty($conf->global->SUPPLIER_ORDER_REOPEN_BY_APPROVER2_ONLY) && $user->id == $object->user_approve_id2))
@@ -2830,12 +2831,10 @@ elseif (! empty($object->id))
 		print $formfile->showdocuments('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,0,0,'','','',$object->thirdparty->default_lang);
 		$somethingshown=$formfile->numoffiles;
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
 		
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('order_supplier'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';

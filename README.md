@@ -2,7 +2,7 @@
 
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg) ![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)
 
-Dolibarr ERP & CRM is a modern software to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).
+Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).
 
 It's an Open Source software (wrote in PHP language) designed for small, medium or large companies, foundations and freelances.
 
@@ -10,7 +10,7 @@ You can freely use, study, modify or distribute it according to its Free Softwar
 
 You can use it as a standalone application or as a web application to be able to access it from the Internet or a LAN.
 
-![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x400.png)
+![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_640x400.png)
 
 ## LICENSE
 
@@ -24,7 +24,7 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 ### Download
 
-Releases can be downloaded from [official website](http://www.dolibarr.org/).
+Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
 ### Simple setup
 
@@ -133,7 +133,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Extending
 
-Dolibarr can be extended with a lot of other external modules from third party developers available at the [DoliStore](http://www.dolistore.com).
+Dolibarr can be extended with a lot of other external modules from third party developers available at the [DoliStore](https://www.dolistore.com).
 
 ## FUTURE
 
@@ -165,7 +165,7 @@ Follow Dolibarr project on:
 
 - [Facebook](https://www.facebook.com/dolibarr)
 - [Google+](https://plus.google.com/+DolibarrOrg)
-- [Twitter](http://www.twitter.com/dolibarr)
+- [Twitter](https://www.twitter.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

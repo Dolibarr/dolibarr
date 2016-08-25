@@ -469,7 +469,7 @@ else
 					$newline=0;
 				}
 				elseif ($links[$key]['type']=='sc') {
-					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('ShowBill'),'bill').' ';
 					print $langs->trans("SocialContribution");
 					print '</a>';

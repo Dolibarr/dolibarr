@@ -74,10 +74,10 @@ class Form
      *
      * @param   string	$text			Text of label or key to translate
      * @param   string	$htmlname		Name of select field ('edit' prefix will be added)
-     * @param   string	$preselected            Value to show/edit (not used in this function)
+     * @param   string	$preselected    Value to show/edit (not used in this function)
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL*
      * @param   int     $fieldrequired  1 if we want to show field as mandatory using the fieldrequired CSS.
      * @return	string					HTML edit field
@@ -129,7 +129,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	object	$object			Object
      * @param	boolean	$perm			Permission to allow button to edit parameter
-     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'day' or 'datepicker', 'dayhour' or 'datepickerhour', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
+     * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datepickerhour', 'ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols', 'select:xxx'...)
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value (for example, you can provide here a formated price instead of value). Use '' to use same than $value
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -254,7 +254,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	string	$htmlname		DIV ID (field name)
      * @param	int		$condition		Condition to edit
-     * @param	string	$inputType		Type of input ('string', 'numeric', 'datepicker', 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:xxx')
+     * @param	string	$inputType		Type of input ('string', 'numeric', 'datepicker' ('day' do not work, don't know why), 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:xxx')
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -269,7 +269,7 @@ class Form
         // Check parameters
         if ($inputType == 'textarea') $value = dol_nl2br($value);
         else if (preg_match('/^numeric/',$inputType)) $value = price($value);
-        else if ($inputType == 'datepicker') $value = dol_print_date($value, 'day');
+        else if ($inputType == 'day' || $inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
         if ($condition)
         {
@@ -302,7 +302,7 @@ class Form
                 if (! empty($tmp[2])) $savemethod=$tmp[2];
 				$out.= '<input id="width_'.$htmlname.'" value="'.$inputOption.'" type="hidden"/>'."\n";
             }
-            else if ((preg_match('/^datepicker/',$inputType)) || (preg_match('/^datehourpicker/',$inputType)))
+            else if ((preg_match('/^day$/',$inputType)) || (preg_match('/^datepicker/',$inputType)) || (preg_match('/^datehourpicker/',$inputType)))
             {
                 $tmp=explode(':',$inputType);
                 $inputType=$tmp[0];
@@ -2033,7 +2033,12 @@ class Form
         if (! empty($conf->stock->enabled) && isset($objp->stock) && $objp->fk_product_type == 0)
         {
             $opt.= ' - '.$langs->trans("Stock").':'.$objp->stock;
-            $outval.=' - '.$langs->transnoentities("Stock").':'.$objp->stock;
+
+            if ($objp->stock > 0) {
+            	$outval.= ' - <span class="product_line_stock_ok">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+            }elseif ($objp->stock <= 0) {
+            	$outval.= ' - <span class="product_line_stock_too_low">'.$langs->transnoentities("Stock").':'.$objp->stock.'</span>';
+            }
         }
 
         if ($outdurationvalue && $outdurationunit)
@@ -4264,7 +4269,7 @@ class Form
 
         // Now we get list
         $num = $this->load_cache_vatrates($code_country);   // If no vat defined, return -1 with message into this->error
- 
+
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -5013,7 +5018,9 @@ class Form
      */
     static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
     {
-        global $user;
+        global $conf,$user;
+
+        if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
         $tmpvar="MAIN_SELECTEDFIELDS_".$varpage;
         if (! empty($user->conf->$tmpvar))
@@ -5051,7 +5058,7 @@ class Form
 
         $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' -->
 
-            <dl class="dropdown">
+        <dl class="dropdown">
             <dt>
             <a href="#">
               '.img_picto('','list').'
@@ -5068,37 +5075,21 @@ class Form
         </dl>
 
         <script type="text/javascript">
-          $(".dropdown dt a").on(\'click\', function () {
-              $(".dropdown dd ul").slideToggle(\'fast\');
-          });
-
-          $(".dropdown dd ul li a").on(\'click\', function () {
-              $(".dropdown dd ul").hide();
-          });
-
-          function getSelectedValue(id) {
-               return $("#" + id).find("dt a span.value").html();
-          }
-
-          $(document).bind(\'click\', function (e) {
-              var $clicked = $(e.target);
-              if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
-          });
-
-          $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
-              console.log("A new field was added/removed")
-              $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
-              var title = $(this).val() + ",";
-              if ($(this).is(\':checked\')) {
-                  $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
-              }
-              else {
-                  $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
-              }
-              // Now, we submit page
-              $(this).parents(\'form:first\').submit();
-        });
-
+          jQuery(document).ready(function () {
+              $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
+                  console.log("A new field was added/removed")
+                  $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
+                  var title = $(this).val() + ",";
+                  if ($(this).is(\':checked\')) {
+                      $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
+                  }
+                  else {
+                      $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
+                  }
+                  // Now, we submit page
+                  $(this).parents(\'form:first\').submit();
+              });
+           });
         </script>
 
         ';
@@ -5153,10 +5144,11 @@ class Form
     /**
      *  Show linked object block.
      *
-     *  @param	CommonObject	$object		Object we want to show links to
-     *  @return	int							<0 if KO, >0 if OK
+     *  @param	CommonObject	$object		      Object we want to show links to
+     *  @param  string          $morehtmlright    More html to show on right of title
+     *  @return	int							      <0 if KO, >=0 if OK
      */
-    function showLinkedObjectBlock($object)
+    function showLinkedObjectBlock($object, $morehtmlright='')
     {
         global $conf,$langs,$hookmanager;
         global $bc;
@@ -5171,6 +5163,22 @@ class Form
         if (empty($reshook))
         {
         	$num = count($object->linkedObjects);
+
+        	print '<br>';
+            print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
+
+            print '<table class="noborder allwidth">';
+
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Type").'</td>';
+            print '<td>'.$langs->trans("Ref").'</td>';
+            print '<td align="center"></td>';
+            print '<td align="center">'.$langs->trans("Date").'</td>';
+            print '<td align="right">'.$langs->trans("AmountHTShort").'</td>';
+            print '<td align="right">'.$langs->trans("Status").'</td>';
+            print '<td></td>';
+            print '</tr>';
+
             $numoutput=0;
 
         	foreach($object->linkedObjects as $objecttype => $objects)
@@ -5226,39 +5234,26 @@ class Form
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
-        		if (empty($numoutput))
-        		{
-        		    $numoutput++;
-
-        		    print '<br>';
-        		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
-
-        		    print '<table class="noborder allwidth">';
-
-        		    print '<tr class="liste_titre">';
-        			print '<td>'.$langs->trans("Type").'</td>';
-        			print '<td>'.$langs->trans("Ref").'</td>';
-        			print '<td align="center"></td>';
-        			print '<td align="center">'.$langs->trans("Date").'</td>';
-        			print '<td align="right">'.$langs->trans("AmountHTShort").'</td>';
-        			print '<td align="right">'.$langs->trans("Status").'</td>';
-        			print '<td></td>';
-        		    print '</tr>';
-        		}
 
         		// Output template part (modules that overwrite templates must declare this into descriptor)
         		$dirtpls=array_merge($conf->modules_parts['tpl'],array('/'.$tplpath.'/tpl'));
         		foreach($dirtpls as $reldir)
         		{
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
-        			if ($res) break;
+        			if ($res)
+        			{
+        			    $numoutput++;
+        			    break;
+        			}
         		}
         	}
 
-        	if ($numoutput)
+        	if (! $numoutput)
         	{
-        	    print '</table>';
+        	    print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
         	}
+
+        	print '</table>';
 
         	return $num;
         }
@@ -5268,10 +5263,11 @@ class Form
      *  Show block with links to link to other objects.
      *
      *  @param	CommonObject	$object				Object we want to show links to
-     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order')
-     *  @return	string									<0 if KO, >0 if OK
+     *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order'). null or array() if no restriction.
+     *  @param	array			$excludelinksto		Do not show links of this type, for exemple array('order') or array('supplier_order'). null or array() if no exclusion.
+     *  @return	string								<0 if KO, >0 if OK
      */
-    function showLinkToObjectBlock($object, $restrictlinksto=array())
+    function showLinkToObjectBlock($object, $restrictlinksto=array(), $excludelinksto=array())
     {
         global $conf, $langs, $hookmanager;
         global $bc;
@@ -5280,201 +5276,102 @@ class Form
 
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
+		$possiblelinks=array(
+			'propal'=>array('enabled'=>$conf->propale->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.facnumber as ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'contrat'=>array('enabled'=>$conf->contrat->enabled , 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled , 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'order_supplier'=>array('enabled'=>$conf->fournisseur->commande->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id)
+		);
 
-		if (((! is_array($restrictlinksto)) || in_array('order',$restrictlinksto))
-			&& ! empty($conf->commande->enabled))
+
+		foreach($possiblelinks as $key => $possiblelink)
 		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
+			$num = 0;
 
-			print '
+			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
+			{
+				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
+				$sql = $possiblelink['sql'];
+				$resqllist = $this->db->query($sql);
+				if ($resqllist)
+				{
+					$num = $this->db->num_rows($resqllist);
+					$i = 0;
+
+					print '<br><form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
+					print '<input type="hidden" name="id" value="'.$object->id.'">';
+					print '<input type="hidden" name="action" value="addlink">';
+					print '<input type="hidden" name="addlink" value="'.$key.'">';
+					print '<table class="noborder">';
+					print '<tr class="liste_titre">';
+					print '<td class="nowrap"></td>';
+					print '<td align="center">' . $langs->trans("Ref") . '</td>';
+					print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
+					print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
+					print '<td align="left">' . $langs->trans("Company") . '</td>';
+					print '</tr>';
+					while ($i < $num)
+					{
+						$objp = $this->db->fetch_object($resqlorderlist);
+
+						$var = ! $var;
+						print '<tr ' . $bc [$var] . '>';
+						print '<td aling="left">';
+						print '<input type="radio" name="idtolinkto" value=' . $objp->rowid . '>';
+						print '</td>';
+						print '<td align="center">' . $objp->ref . '</td>';
+						print '<td>' . $objp->ref_client . '</td>';
+						print '<td>' . price($objp->total_ht) . '</td>';
+						print '<td>' . $objp->name . '</td>';
+						print '</tr>';
+						$i++;
+					}
+					print '</table>';
+					print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+
+					print '</form>';
+					$this->db->free($resqllist);
+				} else {
+					dol_print_error($this->db);
+				}
+				print '</div>';
+				if ($num > 0)
+				{
+				}
+
+				//$linktoelem.=($linktoelem?' &nbsp; ':'');
+				if ($num > 0) $linktoelem.='<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a></li>';
+				//else $linktoelem.=$langs->trans($possiblelink['label']);
+				else $linktoelem.='<li><span class="linktodisabled">' . $langs->trans($possiblelink['label']) . ' (0)</span></li>';
+			}
+		}
+
+		$linktoelem='
+		<dl class="dropdown" id="linktoobjectname">
+		<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>
+		<dd>
+		<div class="multiselectlinkto">
+		<ul class="ulselectedfields">'.$linktoelem.'
+		</ul>
+		</div>
+		</dd>
+		</dl>';
+
+		print '<!-- Add js to show linkto box -->
 				<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
-					jQuery("#linktoorder").click(function() {
-						jQuery("#orderlist").toggle();
-						jQuery("#linktoorder").toggle();
+					jQuery(".linkto").click(function() {
+						console.log("We choose to show/hide link for rel="+jQuery(this).attr(\'rel\'));
+					    jQuery("#"+jQuery(this).attr(\'rel\')+"list").toggle();
+						jQuery(this).toggle();
 					});
 				});
 				</script>
-				';
-
-			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
-
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_client, c.total_ht";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= ", " . MAIN_DB_PREFIX . "commande as c";
-			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $object->thirdparty->id . '';
-
-			$resqlorderlist = $this->db->query($sql);
-			if ($resqlorderlist)
-			{
-				$num = $this->db->num_rows($resqlorderlist);
-				$i = 0;
-
-				print '<br><form action="" method="POST" name="LinkedOrder">';
-				print '<table class="noborder">';
-				print '<tr class="liste_titre">';
-				print '<td class="nowrap"></td>';
-				print '<td align="center">' . $langs->trans("Ref") . '</td>';
-				print '<td align="left">' . $langs->trans("RefCustomer") . '</td>';
-				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
-				print '<td align="left">' . $langs->trans("Company") . '</td>';
-				print '</tr>';
-				while ($i < $num)
-				{
-					$objp = $this->db->fetch_object($resqlorderlist);
-
-					$var = ! $var;
-					print '<tr ' . $bc [$var] . '>';
-					print '<td aling="left">';
-					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-					print '</td>';
-					print '<td align="center">' . $objp->ref . '</td>';
-					print '<td>' . $objp->ref_client . '</td>';
-					print '<td>' . price($objp->total_ht) . '</td>';
-					print '<td>' . $objp->name . '</td>';
-					print '</tr>';
-
-					$i ++;
-				}
-				print '</table>';
-				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-
-				print '</form>';
-				$this->db->free($resqlorderlist);
-			} else {
-				dol_print_error($this->db);
-			}
-
-			print '</div>';
-		}
-
-		if ((in_array('fichinter',$restrictlinksto)) && ! empty($conf->ficheinter->enabled))
-		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#" id="linktoorder">' . $langs->trans('LinkedFichinter') . '</a>';
-
-			print '
-				<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function() {
-					jQuery("#linktoorder").click(function() {
-						jQuery("#orderlist").toggle();
-						jQuery("#linktoorder").toggle();
-					});
-				});
-				</script>
-				';
-
-			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
-
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, f.rowid, f.ref";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= ", " . MAIN_DB_PREFIX . "fichinter as f";
-			$sql .= ' WHERE f.fk_soc = s.rowid';
-
-			$resqlorderlist = $this->db->query($sql);
-			if ($resqlorderlist)
-			{
-				$num = $this->db->num_rows($resqlorderlist);
-				$i = 0;
-
-				print '<br><form action="" method="POST" name="LinkedFichinter">';
-				print '<table class="noborder">';
-				print '<tr class="liste_titre">';
-				print '<td class="nowrap"></td>';
-				print '<td align="center">' . $langs->trans("Ref") . '</td>';
-				print '<td align="left">' . $langs->trans("Company") . '</td>';
-				print '</tr>';
-				while ($i < $num)
-				{
-					$objp = $this->db->fetch_object($resqlorderlist);
-
-					$var = ! $var;
-					print '<tr ' . $bc [$var] . '>';
-					print '<td aling="left">';
-					print '<input type="radio" name="LinkedFichinter" value=' . $objp->rowid . '>';
-					print '<td align="center">' . $objp->ref . '</td>';
-					print '<td>' . $objp->name . '</td>';
-					print '</td>';
-					print '</tr>';
-
-					$i ++;
-				}
-				print '</table>';
-				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-				print '</form>';
-				$this->db->free($resqlorderlist);
-			} else {
-				dol_print_error($this->db);
-			}
-
-			print '</div>';
-		}
-
-        if (((! is_array($restrictlinksto)) || in_array('supplier_order',$restrictlinksto))
-			&& ! empty($conf->fournisseur->enabled))
-		{
-			$linktoelem.=($linktoelem?' &nbsp; ':'').'<a href="#linktoorder" id="linktoorder">' . $langs->trans('LinkedOrder') . '</a>';
-
-			print '
-			<script type="text/javascript" language="javascript">
-			jQuery(document).ready(function() {
-				jQuery("#linktoorder").click(function() {
-					jQuery("#orderlist").toggle();
-					jQuery("#linktoorder").toggle();
-				});
-			});
-			</script>
-			';
-
-			print '<div id="orderlist"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
-
-			$sql = "SELECT s.rowid as socid, s.nom as name, s.client, c.rowid, c.ref, c.ref_supplier, c.total_ht";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
-			$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur as c";
-			$sql .= ' WHERE c.fk_soc = s.rowid AND c.fk_soc = ' . $object->thirdparty->id;
-
-			$resqlorderlist = $this->db->query($sql);
-			if ($resqlorderlist)
-			{
-				$num = $this->db->num_rows($resqlorderlist);
-				$i = 0;
-
-				print '<br><form action="" method="POST" name="LinkedOrder">';
-				print '<table class="noborder">';
-				print '<tr class="liste_titre">';
-				print '<td class="nowrap"></td>';
-				print '<td align="center">' . $langs->trans("Ref") . '</td>';
-				print '<td align="left">' . $langs->trans("RefSupplier") . '</td>';
-				print '<td align="left">' . $langs->trans("AmountHTShort") . '</td>';
-				print '<td align="left">' . $langs->trans("Company") . '</td>';
-				print '</tr>';
-				while ($i < $num)
-				{
-					$objp = $this->db->fetch_object($resqlorderlist);
-
-					$var = ! $var;
-					print '<tr ' . $bc [$var] . '>';
-					print '<td aling="left">';
-					print '<input type="radio" name="linkedOrder" value=' . $objp->rowid . '>';
-					print '</td>';
-					print '<td align="center">' . $objp->ref . '</td>';
-					print '<td>' . $objp->ref_supplier . '</td>';
-					print '<td>' . price($objp->total_ht) . '</td>';
-					print '<td>' . $objp->name . '</td>';
-					print '</tr>';
-
-					$i ++;
-				}
-				print '</table>';
-				print '<br><div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '"> &nbsp; <input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-				print '</form>';
-				$this->db->free($resqlorderlist);
-			} else {
-				dol_print_error($this->db);
-			}
-
-			print '</div>';
-		}
-
+		';
 
 		return $linktoelem;
     }
@@ -5770,13 +5667,23 @@ class Form
         {
             if ($file && file_exists($dir."/".$file))
             {
-                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                if ($addlinktofullsize)
+                {
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
+                    else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                }
                 $ret.='<img alt="Photo" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($file).'&cache='.$cache.'">';
                 if ($addlinktofullsize) $ret.='</a>';
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                if ($addlinktofullsize) $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                if ($addlinktofullsize)
+                {
+                    $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
+                    if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
+                    else $ret.='<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($originalfile).'&cache='.$cache.'">';
+                }
                 $ret.='<img alt="Photo alt" id="photologo'.(preg_replace('/[^a-z]/i','_',$file)).'" class="'.$cssclass.'" '.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$entity.'&file='.urlencode($altfile).'&cache='.$cache.'">';
                 if ($addlinktofullsize) $ret.='</a>';
             }

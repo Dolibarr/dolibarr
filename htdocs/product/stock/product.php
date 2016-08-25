@@ -689,8 +689,8 @@ if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 {
 	print '<tr class="liste_titre"><td width="10%"></td>';
 	print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
-	print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
-	print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("EatByDate").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("SellByDate").'</td>';
 	print '<td align="right" colspan="5"></td>';
 	print '</tr>';
 }

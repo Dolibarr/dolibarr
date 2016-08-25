@@ -2537,8 +2537,11 @@ else
 	        print '<div class="fichecenter"><br></div>';
 
 	        // Subsidiaries list
-	        $result=show_subsidiaries($conf,$langs,$db,$object);
-
+	        if (empty($conf->global->SOCIETE_DISABLE_SUBSIDIARIES))
+	        {	        
+	           $result=show_subsidiaries($conf,$langs,$db,$object);
+	        }
+	        
 	        // Contacts list
 	        if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
 	        {

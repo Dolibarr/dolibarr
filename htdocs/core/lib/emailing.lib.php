@@ -43,7 +43,9 @@ function emailing_prepare_head(Mailing $object)
 	{
     	$head[$h][0] = DOL_URL_ROOT."/comm/mailing/cibles.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("MailRecipients");
+		if ($object->nbemail > 0) $head[$h][1].= ' <span class="badge">'.$object->nbemail.'</span>';
     	$head[$h][2] = 'targets';
+    	
     	$h++;
 
     	if (! empty($conf->global->EMAILING_USE_ADVANCED_SELECTOR))

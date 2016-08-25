@@ -40,6 +40,7 @@ else if ($type=='1') $result=restrictedArea($user,'service');
 else $result=restrictedArea($user,'produit|service');
 
 $langs->load("products");
+$langs->load("stocks");
 
 $product_static = new Product($db);
 
@@ -49,6 +50,7 @@ $product_static = new Product($db);
  */
 
 $transAreaType = $langs->trans("ProductsAndServicesArea");
+
 $helpurl='';
 if (! isset($_GET["type"]))
 {
@@ -66,7 +68,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader("",$langs->trans("ProductsAndServices"),$helpurl);
+llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
 $linkback="";
 print load_fiche_titre($transAreaType,$linkback,'title_products.png');

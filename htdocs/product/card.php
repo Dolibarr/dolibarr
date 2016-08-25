@@ -94,6 +94,7 @@ if ($id > 0 || ! empty($ref))
         else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
     }
 }
+
 $modulepart='product';
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
@@ -285,7 +286,8 @@ if (empty($reshook))
 
             $object->description        	 = dol_htmlcleanlastbr(GETPOST('desc'));
             $object->url					 = GETPOST('url');
-            $object->note               	 = dol_htmlcleanlastbr(GETPOST('note'));
+            $object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private'));
+            $object->note               	 = $object->note_private;   // deprecated
             $object->customcode              = GETPOST('customcode');
             $object->country_id              = GETPOST('country_id');
             $object->duration_value     	 = $duration_value;
@@ -371,7 +373,11 @@ if (empty($reshook))
                 $object->label                  = GETPOST('label');
                 $object->description            = dol_htmlcleanlastbr(GETPOST('desc'));
             	$object->url					= GETPOST('url');
-                $object->note                   = dol_htmlcleanlastbr(GETPOST('note'));
+    			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+    			{
+                	$object->note_private           = dol_htmlcleanlastbr(GETPOST('note_private'));
+                    $object->note                   = $object->note_private;
+    			}
                 $object->customcode             = GETPOST('customcode');
                 $object->country_id             = GETPOST('country_id');
                 $object->status                 = GETPOST('statut');
@@ -1063,14 +1069,17 @@ else
         }
 
         // Note (private, no output on invoices, propales...)
-        print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
-
-        // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
-        $doleditor = new DolEditor('note', GETPOST('note'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, '80%');
-	    $doleditor->Create();
-
-        print "</td></tr>";
-
+        //if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))       available in create mode
+        //{
+            print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
+    
+            // We use dolibarr_details as type of DolEditor here, because we must not accept images as description is included into PDF and not accepted by TCPDF.
+            $doleditor = new DolEditor('note_private', GETPOST('note_private'), '', 140, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 8, '80%');
+    	    $doleditor->Create();
+    
+            print "</td></tr>";
+        //}
+        
 		if($conf->categorie->enabled) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -1382,14 +1391,17 @@ else
 				print "</td></tr>";
 			}
 
-            // Note
-            print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
-
-            $doleditor = new DolEditor('note', $object->note, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
-            $doleditor->Create();
-
-            print "</td></tr>";
-
+            // Note private
+			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+			{
+                print '<tr><td class="tdtop">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="3">';
+        
+                $doleditor = new DolEditor('note_private', $object->note_private, '', 140, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, 4, 80);
+                $doleditor->Create();
+    
+                print "</td></tr>";
+			}
+			
             print '</table>';
 
             print '<br>';
@@ -1695,11 +1707,14 @@ else
 				print "</td></tr>";
 			}
 
-            // Note
-            print '<!-- show Note --> '."\n";
-            print '<tr><td class="tdtop">'.$langs->trans("Note").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note)?$object->note:dol_nl2br($object->note,1,true)).'</td></tr>'."\n";
-            print '<!-- End show Note --> '."\n";
-
+            // Note private
+			if (! empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+			{
+    			print '<!-- show Note --> '."\n";
+                print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td colspan="'.(2+(($showphoto||$showbarcode)?1:0)).'">'.(dol_textishtml($object->note_private)?$object->note_private:dol_nl2br($object->note_private,1,true)).'</td></tr>'."\n";
+                print '<!-- End show Note --> '."\n";
+			}
+			
             print "</table>\n";
     		print '</div>';
     		
@@ -1841,14 +1856,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         {
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
         	$html .= '</td></tr>';
         }
         else
        {
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
@@ -1867,14 +1882,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         {
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
         	$html .= '</td></tr>';
         }
         else
 		{
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
@@ -1893,14 +1908,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	{
     		$var=!$var;
     		$html .= '<tr><td style="width: 200px;">';
-    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
     		$html .= '</td></tr>';
     	}
     	else
     	{
     		$html .= '<tr><td style="width: 200px;">';
-    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
@@ -1918,7 +1933,8 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 		dol_fiche_head('');
 
     	$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
-    	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+    	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td>';
+        $html .= '<td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
     	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
     	$html .= '</td></tr>';
 
@@ -1953,7 +1969,7 @@ if ($action == '' || $action == 'view')
 
     $var=true;
     
-    $somethingshown=$formfile->show_documents($modulepart,$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+    $somethingshown=$formfile->show_documents($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

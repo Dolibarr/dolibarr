@@ -17,8 +17,8 @@
 
 /**
  *     	\file       htdocs/public/websites/index.php
- *		\ingroup    core
- *		\brief      A redirect page to an error
+ *		\ingroup    website
+ *		\brief      Page to output pages
  *		\author	    Laurent Destailleur
  */
 
@@ -90,14 +90,14 @@ if (empty($pageid))
 // Security: Delete string ../ into $original_file
 global $dolibarr_main_data_root;
 
-if ($pageid == 'css')
+if ($pageid == 'css')   // No more used ?
 {
     header('Content-type: text/css');
     // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
     //if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
     //else 
     header('Cache-Control: no-cache');
-    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css';
+    $original_file=$dolibarr_main_data_root.'/websites/'.$website.'/styles.css.php';
 }
 else
 {
@@ -142,7 +142,11 @@ if (! file_exists($original_file_osencoded))
     exit;
 }
 
+
+// Output page content
+print "\n".'<!-- Page content '.$original_file.' : Html with CSS link + Body was saved into tpl -->'."\n";
 include_once $original_file_osencoded;
+
 
 if (is_object($db)) $db->close();
 

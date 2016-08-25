@@ -2023,22 +2023,22 @@ class User extends CommonObject
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
-        	$link.=$linkclose.'>';
+        $link.=$linkclose.'>';
 		$linkend='</a>';
 
-        	//if ($withpictoimg == -1) $result.='<div class="nowrap">';
+        //if ($withpictoimg == -1) $result.='<div class="nowrap">';
 		$result.=$link;
-	        if ($withpictoimg)
-	        {
-	        	$paddafterimage='';
-			if (abs($withpictoimg) == 1) $paddafterimage='style="padding-right: 3px;"';
-        		if ($withpictoimg > 0) $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
-        		else $picto='<div class="inline-block valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 'mini', 0, 1).'</div>';
+	    if ($withpictoimg)
+	    {
+	      	$paddafterimage='';
+			if (abs($withpictoimg) == 1) $paddafterimage='style="margin-right: 3px;"';
+        		if ($withpictoimg > 0) $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip?'':'class="classfortooltip"')).'</div>';
+        		else $picto='<div class="inline-block nopadding valignmiddle'.($morecss?' userimg'.$morecss:'').'"'.($paddafterimage?' '.$paddafterimage:'').'>'.Form::showphoto('userphoto', $this, 0, 0, 0, 'loginphoto', 'mini', 0, 1).'</div>';
             		$result.=$picto;
 		}
 		if (abs($withpictoimg) != 2)
 		{
-			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
+			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='<div class="inline-block nopadding valignmiddle'.((! isset($this->statut) || $this->statut)?'':' strikefordisabled').($morecss?' usertext'.$morecss:'').'">';
 			if ($mode == 'login') $result.=dol_trunc($this->login, $maxlen);
 			else $result.=$this->getFullName($langs,'',($mode == 'firstname' ? 2 : -1),$maxlen);
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result.='</div>';

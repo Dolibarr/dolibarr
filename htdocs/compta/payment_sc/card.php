@@ -65,7 +65,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	if ($result > 0)
 	{
         $db->commit();
-        header("Location: ".DOL_URL_ROOT."/compta/charges/index.php?mode=sconly");
+        header("Location: ".DOL_URL_ROOT."/compta/sociales/payments.php?mode=sconly");
         exit;
 	}
 	else
