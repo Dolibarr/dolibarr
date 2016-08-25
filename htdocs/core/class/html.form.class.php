@@ -449,7 +449,7 @@ class Form
      *	@param	string	$text				Text to show
      *	@param  string	$htmltext	     	Content of tooltip
      *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
-     * 	@param	string	$type				Type of picto (info, help, warning, superadmin...)
+     * 	@param	string	$type				Type of picto (info, help, warning, superadmin...) OR image filepath (mypicto@mymodule)
      *  @param  string	$extracss           Add a CSS style to td tags
      *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
      *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
@@ -487,6 +487,7 @@ class Form
         elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
         elseif ($type == 'admin') $img = img_picto($alt, 'star');
         elseif ($type == 'warning') $img = img_warning($alt);
+		else $img = img_picto($alt, $type);
 
         return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
     }
