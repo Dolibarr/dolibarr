@@ -484,7 +484,7 @@ class Form
 
     /**
      * Generate select HTML to choose massaction
-     * 
+     *
      * @param	string	$selected		Selected value
      * @param	int		$arrayofaction	array('code'=>'label', ...)
      * @return	string					Select list
@@ -492,9 +492,9 @@ class Form
     function selectMassAction($selected, $arrayofaction)
     {
     	global $conf,$langs,$hookmanager;
-    	
+
     	if (count($arrayofaction) == 0) return;
-    	
+
     	$disabled=0;
     	$ret='<div class="centpercent center"><select class="flat hideobject massaction massactionselect" name="massaction"'.($disabled?' disabled="disabled"':'').'>';
     	$ret.='<option value="0"'.($disabled?' disabled="disabled"':'').'>-- '.$langs->trans("SelectAction").' --</option>';
@@ -506,7 +506,7 @@ class Form
     	// Warning: if you set submit button to disabled, post using Enter will no more work
     	$ret.='<input type="submit" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
     	$ret.='</div>';
-    	
+
     	$ret.='<!-- JS CODE TO ENABLE mass action select -->
 		<script type="text/javascript">
     	jQuery(document).ready(function () {
@@ -546,10 +546,10 @@ class Form
     	});
 		</script>
     	';
-    	
+
     	return $ret;
     }
-    
+
     /**
      *  Return combo list of activated countries, into language of user
      *
@@ -1019,9 +1019,9 @@ class Form
             $textifempty='';
             // Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
             //if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) 
+            if (! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
             {
-                if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty); 
+                if ($showempty && ! is_numeric($showempty)) $textifempty=$langs->trans($showempty);
                 else $textifempty.=$langs->trans("All");
             }
             if ($showempty) $out.= '<option value="-1">'.$textifempty.'</option>'."\n";
@@ -1107,7 +1107,8 @@ class Form
         $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
         $sql.= " re.description, re.fk_facture_source";
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-        $sql.= " WHERE fk_soc = ".(int) $socid;
+        $sql.= " WHERE re.fk_soc = ".(int) $socid;
+        $sql.= " AND re.entity = " . $conf->entity;
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
 
@@ -1340,7 +1341,7 @@ class Form
      *  @param	string	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
      *  @param	string	$enableonlytext	If option $enableonly is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
      *  @param	string	$morecss		More css
-     *  @param  int     $noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on). 
+     *  @param  int     $noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
      * 	@return	string					HTML select string
      *  @see select_dolgroups
      */
@@ -1967,9 +1968,9 @@ class Form
 		}
 
 		// Price by customer
-		if (empty($hidepriceinlabel) && !empty($conf->global->PRODUIT_CUSTOMER_PRICES)) 
+		if (empty($hidepriceinlabel) && !empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		{
-			if (!empty($objp->idprodcustprice)) 
+			if (!empty($objp->idprodcustprice))
 			{
 				$found = 1;
 
@@ -2161,11 +2162,11 @@ class Form
                 if ($filterkey && $filterkey != '') $label=preg_replace('/('.preg_quote($filterkey).')/i','<strong>$1</strong>',$label,1);
 
                 $opt.=$objp->ref;
-                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
                 	$opt.=' ('.$objp->ref_fourn.')';
                 $opt.=' - ';
                 $outval.=$objRef;
-                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) 
+                if (! empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn))
                 	$outval.=' ('.$objRefFourn.')';
                 $outval.=' - ';
                 $opt.=dol_trunc($label, 72).' - ';
@@ -2747,7 +2748,7 @@ class Form
         {
             // If not good status
             if ($active >= 0 && $arraytypes['active'] != $active) continue;
-            
+
             // On passe si on a demande de filtrer sur des modes de paiments particuliers
             if (count($filterarray) && ! in_array($arraytypes['type'],$filterarray)) continue;
 
@@ -3110,7 +3111,7 @@ class Form
         $langs->load("categories");
 
 		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-        
+
         $cat = new Categorie($this->db);
         $cate_arbo = $cat->get_full_arbo($type,$excludeafterid);
 
@@ -4024,7 +4025,7 @@ class Form
             $defaulttx=preg_replace('/\s*\(.*\)/','',$defaulttx);
         }
         //var_dump($defaulttx.'-'.$defaultnpr.'-'.$defaultcode);
-        
+
         // Check parameters
         if (is_object($societe_vendeuse) && ! $societe_vendeuse->country_code)
         {
@@ -4122,7 +4123,7 @@ class Form
         		$return.= '"';
         		if ($defaultcode)
         		{
-                    if ($defaultcode == $rate['code']) $return.= ' selected';    	
+                    if ($defaultcode == $rate['code']) $return.= ' selected';
         		}
         		elseif ($rate['txtva'] == $defaulttx && $rate['nprtva'] == $defaultnpr)
            		{
@@ -4131,7 +4132,7 @@ class Form
         		$return.= '>'.vatrate($rate['libtva']);
         		//$return.=($rate['code']?' '.$rate['code']:'');
         		$return.= $rate['nprtva'] ? ' *': '';
-        		
+
         		$return.= '</option>';
         	}
 
@@ -4435,7 +4436,7 @@ class Form
         {
             $tmparray=dol_getdate($adddateof);
             $retstring.=' - <button class="dpInvisibleButtons datenowlink" id="dateofinvoice" type="button" name="_dateofinvoice" value="now" onclick="jQuery(\'#re\').val(\''.dol_print_date($adddateof,'day').'\');jQuery(\'#reday\').val(\''.$tmparray['mday'].'\');jQuery(\'#remonth\').val(\''.$tmparray['mon'].'\');jQuery(\'#reyear\').val(\''.$tmparray['year'].'\');">'.$langs->trans("DateInvoice").'</a>';
-        }    
+        }
 
         if (! empty($nooutput)) return $retstring;
 
@@ -4638,19 +4639,19 @@ class Form
     static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
     {
         global $langs;
-        global $delayedhtmlcontent;      
-        
+        global $delayedhtmlcontent;
+
     	$tmpplugin='select2';
-        
+
     	$out='<input type="text" class="'.$htmlname.($morecss?' '.$morecss:'').'" '.($moreparam?$moreparam.' ':'').'name="'.$htmlname.'">';
-    	
+
     	// TODO Use an internal dolibarr component instead of select2
     	$outdelayed='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
 	    	<script type="text/javascript">
 	    	$(document).ready(function () {
-    	      
+
     	        '.($callurlonselect ? 'var saveRemoteData = [];':'').'
-    	    
+
                 $(".'.$htmlname.'").select2({
 			    	ajax: {
 				    	dir: "ltr",
@@ -4685,7 +4686,7 @@ class Form
 			    		},*/
 			    		cache: true
 			    	},
-			        dropdownCssClass: "css-'.$htmlname.'", 
+			        dropdownCssClass: "css-'.$htmlname.'",
 				    placeholder: "'.dol_escape_js($placeholder).'",
 			    	escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 			    	minimumInputLength: '.$minimumInputLength.',
@@ -4693,9 +4694,9 @@ class Form
                         return escapeMarkup(result.text);
                     }
 			    });
-			    
+
                 '.($callurlonselect ? '
-                $(".'.$htmlname.'").change(function() { 
+                $(".'.$htmlname.'").change(function() {
 			    	var selected = $(".'.$htmlname.'").select2("val");
 			        $(".'.$htmlname.'").select2("val","");  /* reset visible combo value */
     			    $.each( saveRemoteData, function( key, value ) {
@@ -4706,7 +4707,7 @@ class Form
     			            }
                     });
     			});' : '' ) . '
-    			
+
     	   });
 	       </script>';
 
@@ -4742,7 +4743,7 @@ class Form
     	global $conf, $langs;
 
     	$out = '';
-    	
+
     	// Add code for jquery to use multiselect
     	if (! empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
     	{
@@ -4829,7 +4830,7 @@ class Form
     static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
     {
         global $user;
-        
+
         $tmpvar="MAIN_SELECTEDFIELDS_".$varpage;
         if (! empty($user->conf->$tmpvar))
         {
@@ -4843,33 +4844,33 @@ class Form
             }
         }
         //var_dump($array);
-            
+
         $lis='';
         $listcheckedstring='';
-        
+
         foreach($array as $key => $val)
         {
            /* var_dump($val);
             var_dump(array_key_exists('enabled', $val));
             var_dump(!$val['enabled']);*/
-           if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled']) 
+           if (array_key_exists('enabled', $val) && isset($val['enabled']) && ! $val['enabled'])
            {
                unset($array[$key]);     // We don't want this field
-               continue; 
+               continue;
            }
-           if ($val['label']) 
+           if ($val['label'])
 	       {
 	           $lis.='<li><input type="checkbox" value="'.$key.'"'.(empty($val['checked'])?'':' checked="checked"').'/>'.dol_escape_htmltag($val['label']).'</li>';
 	           $listcheckedstring.=(empty($val['checked'])?'':$key.',');
 	       }
         }
-        
-        $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' --> 
-            
-            <dl class="dropdown"> 
+
+        $out ='<!-- Component multiSelectArrayWithCheckbox '.$htmlname.' -->
+
+            <dl class="dropdown">
             <dt>
             <a href="#">
-              '.img_picto('','list').'    
+              '.img_picto('','list').'
               <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </a>
             </dt>
@@ -4881,38 +4882,38 @@ class Form
                 </div>
             </dd>
         </dl>
-            
+
         <script type="text/javascript">
           $(".dropdown dt a").on(\'click\', function () {
               $(".dropdown dd ul").slideToggle(\'fast\');
           });
-    
+
           $(".dropdown dd ul li a").on(\'click\', function () {
               $(".dropdown dd ul").hide();
           });
-    
+
           function getSelectedValue(id) {
                return $("#" + id).find("dt a span.value").html();
           }
-    
+
           $(document).bind(\'click\', function (e) {
               var $clicked = $(e.target);
               if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
           });
-    
+
           $(\'.multiselectcheckbox'.$htmlname.' input[type="checkbox"]\').on(\'click\', function () {
               console.log("A new field was added/removed")
               $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\')
               var title = $(this).val() + ",";
               if ($(this).is(\':checked\')) {
                   $(\'.'.$htmlname.'\').val(title + $(\'.'.$htmlname.'\').val());
-              } 
+              }
               else {
                   $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
               }
-          });        
-        </script>            
-            
+          });
+        </script>
+
         ';
         return $out;
     }
@@ -5113,7 +5114,7 @@ class Form
 				}
 				print '</table>';
 				print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-				
+
 				print '</form>';
 				$this->db->free($resqlorderlist);
 			} else {
@@ -5319,9 +5320,9 @@ class Form
 
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<div style="vertical-align: middle">';
-        
+
 		$ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
-        
+
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
         // For thirdparty and contact, the ref is the id, so we show something else
@@ -5359,7 +5360,7 @@ class Form
         }
 		if ($morehtmlright) $ret.='<div class="statusref">'.$morehtmlright.'</div>';
         $ret.='</div>';
-		
+
         return $ret;
     }
 
@@ -5418,7 +5419,7 @@ class Form
         if ($modulepart=='societe')
         {
             $dir=$conf->societe->multidir_output[$entity];
-            if (! empty($object->logo)) 
+            if (! empty($object->logo))
             {
                 if ((string) $imagesize == 'mini') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_mini');             // getImageFileNameForSize include the thumbs
                 else if ((string) $imagesize == 'small') $file=get_exdir(0, 0, 0, 0, $object, 'thirdparty').'/logos/'.getImageFileNameForSize($object->logo, '_small');
@@ -5453,7 +5454,7 @@ class Form
         else if ($modulepart=='memberphoto')
         {
             $dir=$conf->adherent->dir_output;
-            if (! empty($object->photo)) 
+            if (! empty($object->photo))
             {
                 if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_mini');
                 else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, 'member').'photos/'.getImageFileNameForSize($object->photo, '_small');
@@ -5462,11 +5463,11 @@ class Form
             }
             if (! empty($conf->global->MAIN_OLD_IMAGE_LINKS)) $altfile=$object->id.".jpg";	// For backward compatibility
             $email=$object->email;
-        } 
-        else 
+        }
+        else
         {
         	$dir=$conf->$modulepart->dir_output;
-        	if (! empty($object->photo)) 
+        	if (! empty($object->photo))
         	{
                 if ((string) $imagesize == 'mini') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_mini');
                 else if ((string) $imagesize == 'small') $file=get_exdir($id, 2, 0, 0, $object, $modulepart).'photos/'.getImageFileNameForSize($object->photo, '_small');
