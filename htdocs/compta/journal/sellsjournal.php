@@ -263,7 +263,7 @@ foreach ($tabfac as $key => $val)
 			if (isset($line['nomtcheck']) || $mt)
 			{
 				print "<tr ".$bc[$var]." >";
-				print "<td>".dol_print_date($val["date"])."</td>";
+				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
