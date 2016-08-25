@@ -526,11 +526,6 @@ class Form
 	  				jQuery(".massaction").hide();
 	  			}
     		}
-<<<<<<< 3.9_backported
-=======
-
-    	jQuery(document).ready(function () {
->>>>>>> ee02ff4 Fix: add entity field in llx_societe_remise_except, useful when third-sharing is used with multicompany
     		initCheckForSelect();
     		jQuery(".checkforselect").click(function() {
     			initCheckForSelect();
@@ -4916,18 +4911,9 @@ class Form
               else {
                   $(\'.'.$htmlname.'\').val( $(\'.'.$htmlname.'\').val().replace(title, \'\') )
               }
-<<<<<<< 3.9_backported
           });
         </script>
 
-=======
-              // Now, we submit page
-              $(this).parents(\'form:first\').submit();
-        });
-
-        </script>
-
->>>>>>> ee02ff4 Fix: add entity field in llx_societe_remise_except, useful when third-sharing is used with multicompany
         ';
         return $out;
     }
