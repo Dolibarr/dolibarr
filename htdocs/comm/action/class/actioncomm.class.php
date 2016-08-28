@@ -513,7 +513,7 @@ class ActionComm extends CommonObject
         $sql.= " a.fk_contact, a.percent as percentage,";
         $sql.= " a.fk_element, a.elementtype,";
         $sql.= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
-        $sql.= " c.id as type_id, c.code as type_code, c.libelle,";
+        $sql.= " c.id as type_id, c.code as type_code, c.libelle, c.color as type_color,";
         $sql.= " s.nom as socname,";
         $sql.= " u.firstname, u.lastname as lastname";
         $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a ";
@@ -541,6 +541,7 @@ class ActionComm extends CommonObject
                 // Properties of parent table llx_c_actioncomm (will be deprecated in future)
                 $this->type_id   = $obj->type_id;
                 $this->type_code = $obj->type_code;
+                $this->type_color = $obj->type_color;
                 $transcode=$langs->trans("Action".$obj->type_code);
                 $type_libelle=($transcode!="Action".$obj->type_code?$transcode:$obj->libelle);
                 $this->type      = $type_libelle;
@@ -1109,7 +1110,11 @@ class ActionComm extends CommonObject
 		if (! empty($this->location))
 			$tooltip .= '<br><b>' . $langs->trans('Location') . ':</b> ' . $this->location;
 		
-		$linkclose = ' class="'.$classname.' classfortooltip" title="'.dol_escape_htmltag($tooltip, 1).'">';
+		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE) && $this->type_color) 
+			$linkclose = ' style="background-color:#'.$this->type_color.'" class="'.$classname.' classfortooltip" title="'.dol_escape_htmltag($tooltip, 1).'">';
+		else
+			$linkclose = ' class="'.$classname.' classfortooltip" title="'.dol_escape_htmltag($tooltip, 1).'">';
+
 		if (! is_object($hookmanager))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
