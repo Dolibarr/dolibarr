@@ -37,6 +37,7 @@ if (! empty($conf->propal->enabled))      require_once DOL_DOCUMENT_ROOT.'/comm/
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->facture->enabled))     require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (! empty($conf->commande->enabled))    require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+if (! empty($conf->supplier_proposal->enabled)) require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->contrat->enabled))     require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
@@ -166,7 +167,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     $code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
     if ($code) print $langs->trans("OppStatus".$code);
     print '</td></tr>';
-    
+
     // Opportunity Amount
     print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
     if (strcmp($object->opp_amount,'')) print price($object->opp_amount,'',$langs,0,0,0,$conf->currency);
@@ -194,7 +195,7 @@ $listofreferent=array(
 	'class'=>'Propal',
 	'table'=>'propal',
     'datefieldname'=>'datep',
-    'urlnew'=>DOL_URL_ROOT.'/comm/propal/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/comm/propal/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
     'lang'=>'propal',
     'buttonnew'=>'AddProp',
     'testnew'=>$user->rights->propal->creer,
@@ -234,11 +235,11 @@ $listofreferent=array(
     'testnew'=>$user->rights->facture->creer,
     'test'=>$conf->facture->enabled && $user->rights->facture->lire),
 'proposal_supplier'=>array(
-	'name'=>"SuppliersOrders",
-	'title'=>"ListSupplierOrdersAssociatedProject",
-	'class'=>'CommandeFournisseur',
-	'table'=>'commande_fournisseur',
-	'datefieldname'=>'date_commande',
+	'name'=>"SuppliersProposals",
+	'title'=>"ListSupplierProposalsAssociatedProject",
+	'class'=>'SupplierProposal',
+	'table'=>'supplier_proposal',
+	'datefieldname'=>'date',
     'urlnew'=>DOL_URL_ROOT.'/supplier_proposal/card.php?action=create&projectid='.$id.'&socid='.$socid,
     'lang'=>'supplier_proposal',
     'buttonnew'=>'AddSupplierProposal',
@@ -285,7 +286,7 @@ $listofreferent=array(
 	'table'=>'fichinter',
 	'datefieldname'=>'date_valid',
 	'disableamount'=>1,
-    'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&projectid='.$id.'&socid='.$socid,
+    'urlnew'=>DOL_URL_ROOT.'/fichinter/card.php?action=create&origin=project&originid='.$id.'&socid='.$socid,
     'lang'=>'interventions',
     'buttonnew'=>'AddIntervention',
     'testnew'=>$user->rights->ficheinter->creer,
@@ -366,19 +367,19 @@ if ($action=="addelement")
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 	$result=$object->update_element($tablename, $elementselectid);
-	if ($result<0) 
+	if ($result<0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
-elseif ($action == "unlink") 
+elseif ($action == "unlink")
 {
 
 	$tablename = GETPOST("tablename");
 	$elementselectid = GETPOST("elementselect");
 
 	$result = $object->remove_element($tablename, $elementselectid);
-	if ($result < 0) 
+	if ($result < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -409,7 +410,7 @@ if (! $showdatefilter)
 	print '</tr></table>';
 	print '</form>';
 	print '</div>';
-	
+
 	$showdatefilter++;
 }
 
@@ -580,14 +581,14 @@ foreach ($listofreferent as $key => $value)
 	$urlnew=$value['urlnew'];
 	$buttonnew=$value['buttonnew'];
     $testnew=$value['testnew'];
-	
+
 	if ($qualified)
 	{
 		// If we want the project task array to have details of users
 		//if ($key == 'project_task') $key = 'project_task_time';
-	    
+
 	    if ($langtoload) $langs->load($langtoload);
-	     
+
 		$element = new $classname($db);
 
 		$addform='';
@@ -595,7 +596,7 @@ foreach ($listofreferent as $key => $value)
 		$idtofilterthirdparty=0;
 		if (! in_array($tablename, array('facture_fourn', 'commande_fournisseur'))) $idtofilterthirdparty=$object->thirdparty->id;
 
-       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty > 0) 
+       	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty > 0)
        	{
 			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
 			if (! $selectList || ($selectList<0))
@@ -626,7 +627,7 @@ foreach ($listofreferent as $key => $value)
 			else $addform.='<a class="buttonxxx buttonRefused" disabled="disabled" href="#">'.($buttonnew?$langs->trans($buttonnew):$langs->trans("Create")).'</a>';
             $addform.='<div>';
 		}
-		
+
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print '<table class="noborder" width="100%">';

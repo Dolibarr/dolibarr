@@ -68,7 +68,7 @@ class modUser extends DolibarrModules
 		// Dependancies
 		$this->depends = array();
 		$this->requiredby = array();
-		$this->langfiles = array("main","users","companies");
+		$this->langfiles = array("main","users","companies","members");
 
 		// Constants
 		$this->const = array();

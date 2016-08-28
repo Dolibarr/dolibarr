@@ -149,7 +149,6 @@ class MouvementStock extends CommonObject
                         {
                             if ($eatby)
                             {
-                                $eatbywithouthour=$eatby;
                                 $tmparray=dol_getdate($eatby, true);
                                 $eatbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
                         		if ($this->db->jdate($obj->eatby) != $eatby && $this->db->jdate($obj->eatby) != $eatbywithouthour)    // We test date without hours and with hours for backward compatibility 
@@ -187,9 +186,8 @@ class MouvementStock extends CommonObject
                         {
                             if ($sellby)
                             {
-                                $sellbywithouthour=$sellby;
-                                $tmparray=dol_getdate($eatby, true);
-                                $eatbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+                                $tmparray=dol_getdate($sellby, true);
+                                $sellbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
                                 if ($this->db->jdate($obj->sellby) != $sellby && $this->db->jdate($obj->sellby) != $sellbywithouthour)    // We test date without hours and with hours for backward compatibility
                         		{
                         		    // If found and eatby/sellby defined into table and provided and differs, return error

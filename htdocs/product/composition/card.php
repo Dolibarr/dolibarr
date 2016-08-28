@@ -133,10 +133,6 @@ else if($action==='save_composed_product')
  * View
  */
 
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
 $form = new Form($db);
@@ -177,10 +173,22 @@ if ($action == 'search')
 
 	$resql = $db->query($sql);
 }
-//print $sql;
 
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
-llxHeader("", $langs->trans("CardProduct".$object->type), $helpurl);
+llxHeader('', $title, $helpurl);
 
 $head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);

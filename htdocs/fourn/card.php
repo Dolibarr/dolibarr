@@ -120,8 +120,8 @@ if ($id > 0 && empty($object->id))
 
 if ($object->id > 0)
 {
-	$title=$langs->trans("ThirdParty")." - ".$langs->trans('SupplierCard');
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('SupplierCard');
+	$title=$langs->trans("ThirdParty")." - ".$langs->trans('Supplier');
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('Supplier');
 	$help_url='';
 	llxHeader('',$title, $help_url);
 

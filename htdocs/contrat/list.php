@@ -30,6 +30,7 @@
 require ("../main.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load("contracts");
 $langs->load("products");
@@ -45,6 +46,9 @@ $socid=GETPOST('socid');
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
 $search_product_category=GETPOST('search_product_category','int');
+$day=GETPOST("day","int");
+$year=GETPOST("year","int");
+$month=GETPOST("month","int");
 
 $optioncss = GETPOST('optioncss','alpha');
 
@@ -117,6 +121,9 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$sall="";
 	$search_status="";
 	$search_array_options=array();
+	$day='';
+	$month='';
+	$year='';
 }
 
 
@@ -154,23 +161,27 @@ $sql.= ' AND c.entity IN ('.getEntity('contract', 1).')';
 if ($search_product_category > 0) $sql.=" AND cp.fk_categorie = ".$search_product_category;
 if ($socid) $sql.= " AND s.rowid = ".$db->escape($socid);
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
-if ($search_name) {
-    $sql .= natural_search('s.nom', $search_name);
+if ($month > 0)
+{
+    if ($year > 0 && empty($day))
+    $sql.= " AND c.date_contrat BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+    else if ($year > 0 && ! empty($day))
+    $sql.= " AND c.date_contrat BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+    else
+    $sql.= " AND date_format(c.date_contrat, '%m') = '".$month."'";
 }
-if ($search_contract) {
-    $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
+else if ($year > 0)
+{
+	$sql.= " AND c.date_contrat BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
 }
-if (!empty($search_ref_supplier)) {
-	$sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
-}
+if ($search_name) $sql .= natural_search('s.nom', $search_name);
+if ($search_contract) $sql .= natural_search(array('c.rowid', 'c.ref'), $search_contract);
+if (!empty($search_ref_supplier)) $sql .= natural_search(array('c.ref_supplier'), $search_ref_supplier);
 if ($search_sale > 0)
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 }
-if ($sall) {
-    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-}
+if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='contrat' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 $sql.= " GROUP BY c.rowid, c.ref, c.datec, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
 $totalnboflines=0;
@@ -292,8 +303,17 @@ if ($resql)
     print '<td class="liste_titre">';
     print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
     print '</td>';
-    print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" colspan="5" align="right"></td>';
+    print '<td></td>';
+    // Date contract
+    print '<td class="liste_titre center">';
+  	//print $langs->trans('Month').': ';
+   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+   	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+   	//print '&nbsp;'.$langs->trans('Year').': ';
+   	$syear = $year;
+   	$formother->select_year($syear,'year',1, 20, 5);
+    print '</td>';
+    print '<td class="liste_titre" colspan="4" align="right"></td>';
     print '<td>';
     $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;
@@ -358,7 +378,7 @@ if ($resql)
         print '</td>';
 
 
-        print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat)).'</td>';
+        print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day').'</td>';
         //print '<td align="center">'.$staticcontrat->LibStatut($obj->statut,3).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
         print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';

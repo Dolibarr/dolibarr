@@ -90,7 +90,7 @@ if (empty($reshook))
 									'mailmanspip','notification','oauth','syslog','user','webservices',
 	                                // Extended modules
 	                                'memcached','numberwords','zipautofillfr');
-	$alwayshiddenuncheckedmodules=array('ftp','webservicesclient','websites',
+	$alwayshiddenuncheckedmodules=array('ftp','hrm','webservicesclient','websites',
 	                                // Extended modules
 	                                'awstats','bittorrent','bootstrap','cabinetmed','cmcic','concatpdf','customfield','deplacement','dolicloud','filemanager','lightbox','mantis','monitoring','moretemplates','multicompany','nltechno','numberingpack','openstreetmap',
 	                                'ovh','phenix','phpsysinfo','pibarcode','postnuke','selectbank','skincoloreditor','submiteverywhere','survey','thomsonphonebook','topten','tvacerfa','voyage','webcalendar','webmail');
@@ -375,8 +375,11 @@ foreach ($demoprofiles as $profilearray)
     		$listofdisabledmodules=explode(',',$profilearray['disablemodules']);
     		$j=0;
     		$nbcolsmod=empty($conf->dol_optimize_smallscreen)?4:3;
-    		foreach($modules as $val) // Loop on qualified (enabled) modules
+    		//var_dump($modules);
+    		foreach($orders as $index => $key) // Loop on qualified (enabled) modules
     		{
+    			//print $index.' '.$key;
+    			$val = $modules[$index];
     		    $modulekeyname=strtolower($val->name);
 
     		    $modulequalified=1;
@@ -454,7 +457,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 	}
 	else
 	{
-		print '<!-- google js addvert tag disabled with jmobile -->'."\n";
+		print '<!-- google js advert tag disabled with jmobile -->'."\n";
 	}
 }
 

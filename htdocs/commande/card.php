@@ -262,14 +262,14 @@ if (empty($reshook))
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-			
+
 			// Fill array 'array_options' with data from add form
 			if (! $error)
 			{
     			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
     			if ($ret < 0) $error++;
 			}
-			
+
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (! empty($origin) && ! empty($originid))
 			{
@@ -376,13 +376,38 @@ if (empty($reshook))
 							$error++;
 						}
 
-    					// Hooks
+						// Now we create same links to contact than the ones found on origin object
+						if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
+						{
+						    $originforcontact = $object->origin;
+						    $originidforcontact = $object->origin_id;
+						    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+						    {
+						        $originforcontact=$srcobject->origin;
+						        $originidforcontact=$srcobject->origin_id;
+						    }
+						    $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+						    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+
+						    $resqlcontact = $db->query($sqlcontact);
+						    if ($resqlcontact)
+						    {
+						        while($objcontact = $db->fetch_object($resqlcontact))
+						        {
+						            //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
+						            $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
+						        }
+						    }
+						    else dol_print_error($resqlcontact);
+						}
+
+						// Hooks
 						$parameters = array('objFrom' => $srcobject);
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 						// modified by hook
 						if ($reshook < 0)
 						    $error++;
-						
+
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -450,12 +475,12 @@ if (empty($reshook))
 	else if ($action == 'classifyunbilled' && $user->rights->commande->creer)
 	{
 	    $ret=$object->classifyUnBilled();
-	
+
 	    if ($ret < 0) {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
-	
+
 	// Positionne ref commande client
 	else if ($action == 'set_ref_client' && $user->rights->commande->creer) {
 		$object->set_ref_client($user, GETPOST('ref_client'));
@@ -500,7 +525,7 @@ if (empty($reshook))
 		if ($result < 0)
 			setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	// Multicurrency Code
 	else if ($action == 'setmulticurrencycode' && $user->rights->commande->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
@@ -508,9 +533,9 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	else if ($action == 'setmulticurrencyrate' && $user->rights->commande->creer) {
-		$result = $object->setMulticurrencyRate(GETPOST('multicurrency_tx', 'int'));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
-	
+
 	else if ($action == 'setavailability' && $user->rights->commande->creer) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0)
@@ -1309,7 +1334,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$remise_absolue = 0;
 
 	$currency_code = $conf->currency;
-	
+
 	if (! empty($origin) && ! empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1380,7 +1405,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			if (!empty($conf->multicurrency->enabled))
 			{
 				if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
-				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx; 
+				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
 			}
 
 			$note_private = $object->getDefaultCreateValueFor('note_private', (! empty($objectsrc->note_private) ? $objectsrc->note_private : null));
@@ -1403,7 +1428,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
 		$projectid          = 0;
-		
+
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 
 		$note_private = $object->getDefaultCreateValueFor('note_private');
@@ -1671,12 +1696,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 
 		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
-		
+
 		if (!empty($conf->multicurrency->enabled))
 		{
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";	
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
 		}
 	}
 	else
@@ -1722,7 +1747,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
-	
+
 	print '</form>';
 
 	// Show origin lines
@@ -1993,7 +2018,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		    print '</td>';
 		    print '</tr>';
 		}
-		
+
 		// Relative and absolute discounts
 		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final
@@ -2178,7 +2203,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
 			}
 			print '</td></tr>';
-		
+
 			// Multicurrency rate
 			print '<tr>';
 			print '<td width="25%">';
@@ -2244,8 +2269,8 @@ if ($action == 'create' && $user->rights->commande->creer)
         	print ' / ';
     		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
     		print '</td></tr>';
-		}		
-		
+		}
+
     	// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Project
@@ -2360,16 +2385,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
-			
+
 			// Multicurrency Amount VAT
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
-			
+
 			// Multicurrency Amount TTC
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-			print '</tr>';	
+			print '</tr>';
 		}
 
 		// Statut

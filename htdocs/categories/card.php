@@ -215,7 +215,8 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader("","",$langs->trans("Categories"));
+$helpurl='';
+llxHeader("",$langs->trans("Categories"),$helpurl);
 
 if ($user->rights->categorie->creer)
 {
@@ -244,7 +245,7 @@ if ($user->rights->categorie->creer)
 
 		// Ref
 		print '<tr>';
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description

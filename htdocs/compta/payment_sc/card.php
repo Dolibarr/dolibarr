@@ -162,25 +162,25 @@ if ($action == 'valide')
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($paiement,'id','',1,'rowid','id');
 print '</td></tr>';
 
 // Date
-print '<tr><td valign="top" width="120">'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->datep,'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->datep,'day').'</td></tr>';
 
 // Mode
-print '<tr><td valign="top">'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
 
 // Numero
-print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->num_paiement.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->num_paiement.'</td></tr>';
 
 // Montant
-print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))
@@ -278,7 +278,7 @@ else
 	dol_print_error($db);
 }
 
-print '</div>';
+dol_fiche_end();
 
 
 /*

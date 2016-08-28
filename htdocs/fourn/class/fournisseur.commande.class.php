@@ -1458,7 +1458,6 @@ class CommandeFournisseur extends CommonOrder
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
-
             // Multicurrency
             $this->line->fk_multicurrency			= $this->fk_multicurrency;
             $this->line->multicurrency_code			= $this->multicurrency_code;
@@ -3032,7 +3031,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= "'".price2num($this->total_localtax2)."',";
         $sql.= "'".price2num($this->total_ttc)."',";
         $sql.= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'":"null");
-        $sql.= ", ".$this->fk_multicurrency;
+        $sql.= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
         $sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
         $sql.= ", ".price2num($this->pu_ht * $this->multicurrency_tx);
         $sql.= ", ".$this->multicurrency_total_ht;
