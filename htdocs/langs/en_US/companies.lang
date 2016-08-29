@@ -261,6 +261,7 @@ AddContactAddress=Create contact/address
 EditContact=Edit contact
 EditContactAddress=Edit contact/address
 Contact=Contact
+ContactId=Contact id
 ContactsAddresses=Contacts/Addresses
 NoContactDefinedForThirdParty=No contact defined for this third party
 NoContactDefined=No contact defined

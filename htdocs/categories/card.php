@@ -58,6 +58,7 @@ if ($origin)
 	if ($type == Categorie::TYPE_CUSTOMER)    $idCompanyOrigin  = $origin;
 	if ($type == Categorie::TYPE_MEMBER)      $idMemberOrigin   = $origin;
 	if ($type == Categorie::TYPE_CONTACT)     $idContactOrigin  = $origin;
+	if ($type == Categorie::TYPE_PROJECT)     $idProjectOrigin  = $origin;
 }
 
 if ($catorigin && $type == Categorie::TYPE_PRODUCT) $idCatOrigin = $catorigin;
@@ -114,6 +115,11 @@ if ($action == 'add' && $user->rights->categorie->creer)
 		else if ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
+			exit;
+		}
+		else if ($idProjectOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
 		}
 		else
@@ -201,6 +207,11 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
+		else if ($idProjectOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		}
 
 		header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$type);
 		exit;
@@ -215,7 +226,8 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-llxHeader("","",$langs->trans("Categories"));
+$helpurl='';
+llxHeader("",$langs->trans("Categories"),$helpurl);
 
 if ($user->rights->categorie->creer)
 {
@@ -244,7 +256,7 @@ if ($user->rights->categorie->creer)
 
 		// Ref
 		print '<tr>';
-		print '<td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="flat" name="label" size="25" value="'.$label.'">';
 		print'</td></tr>';
 
 		// Description
@@ -258,7 +270,7 @@ if ($user->rights->categorie->creer)
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
 		print $formother->selectColor($color,'color');
 		print '</td></tr>';
-		
+
 		// Parent category
 		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
 		print $form->select_all_categories($type, $catorigin);

@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -44,6 +45,8 @@ $mode=GETPOST("mode",'alpha');
 $year=GETPOST("year",'int');
 $filtre=GETPOST("filtre",'alpha');
 if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
+
+$search_account = GETPOST('search_account','int');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -65,6 +68,7 @@ $tva_static = new Tva($db);
 $socialcontrib=new ChargeSociales($db);
 $payment_sc_static=new PaymentSocialContribution($db);
 $sal_static = new PaymentSalary($db);
+$accountstatic = new Account($db);
 
 llxHeader('',$langs->trans("SpecialExpensesArea"));
 
@@ -122,17 +126,21 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pc.rowid","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pc.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"pct.code","",$param,'',$sortfield,$sortorder);
+    if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$sql = "SELECT c.id, c.libelle as lib,";
 	$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
-	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment,";
-	$sql.= " pct.code as payment_code";
+	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
+	$sql.= " pct.code as payment_code,";
+	$sql.= " ba.rowid as bid, ba.label as blabel";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 	$sql.= " WHERE cs.fk_type = c.id";
 	$sql.= " AND cs.entity = ".$conf->entity;
 	if ($year > 0)
@@ -189,6 +197,20 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
     	    print '<td>';
     	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
     	    print $obj->num_payment.'</td>';
+			// Account
+	    	if (! empty($conf->banque->enabled))
+		    {
+		        print '<td>';
+		        if ($obj->fk_bank > 0)
+		        {
+		        	//$accountstatic->fetch($obj->fk_bank);
+		            $accountstatic->id=$obj->bid;
+		            $accountstatic->label=$obj->blabel;
+		            print $accountstatic->getNomUrl(1);
+		        }
+		        else print '&nbsp;';
+		        print '</td>';
+		    }
 			// Paid
 			print '<td align="right">';
 			if ($obj->totalpaye) print price($obj->totalpaye);
@@ -205,6 +227,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
+        if (! empty($conf->banque->enabled)) print '<td></td>';
 	    print '<td align="right" class="liste_total">'.price($totalpaye)."</td>";
 		print "</tr>";
 	}
