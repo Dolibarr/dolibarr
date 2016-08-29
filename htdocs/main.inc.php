@@ -986,13 +986,14 @@ function top_httphead()
  *
  * @param 	string 	$head			Optionnal head lines
  * @param 	string 	$title			HTML title
- * @param 	int    	$disablejs		More content into html header
- * @param 	int    	$disablehead	More content into html header
+ * @param 	int    	$disablejs		Disable js output
+ * @param 	int    	$disablehead	Disable head output
  * @param 	array  	$arrayofjs		Array of complementary js files
  * @param 	array  	$arrayofcss		Array of complementary css files
+ * @param 	int    	$disablejmobile	Disable jmobile
  * @return	void
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0)
 {
     global $user, $conf, $langs, $db;
 
@@ -1065,7 +1066,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css'.($ext?'?'.$ext:'').'">'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
+            if (! $disablejmobile && (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile)))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css'.($ext?'?'.$ext:'').'">'."\n";
             }
@@ -1237,7 +1238,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/select2_locale.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
+            if (! $disablejmobile && (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0)))
             {
             	// We must force not using ajax because cache of jquery does not load js of other pages.
             	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
@@ -1841,20 +1842,24 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
-	$ret.='<div class="menu_titre menu_titre_search"';
-	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
-	$ret.='>';
-	$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
-	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
-	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
-	else $ret.=$img.' '.$title;
-	$ret.='</a>';
-	$ret.='</label>';
-	$ret.='</div>';
+	if (empty($conf->global->MAIN_HTML5_PLACEHOLDER))
+	{
+        $ret.='<div class="menu_titre menu_titre_search"';
+    	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
+    	$ret.='>';
+    	$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
+    	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
+       	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
+       	else if ($img || $title) $ret.=$img.' '.$title;
+    	$ret.='</a>';
+    	$ret.='</label>';
+    	$ret.='</div>';
+	}
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
     $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';
     $ret.='<input type="text" class="flat"';
+    if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
     $ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.strip_tags($title).'"';		// Will work only if MAIN_HTML5_PLACEHOLDER is set to 1
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
