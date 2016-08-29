@@ -458,7 +458,7 @@ class Categorie extends CommonObject
 
 		$this->db->begin();
 
-		/* FIX #1317 : Check for child cat and move up 1 level*/
+		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (! $error)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
@@ -524,7 +524,7 @@ class Categorie extends CommonObject
 		if (! $error)
 		{
 			$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_project";
-			$sql .= " WHERE fk_category = ".$this->id;
+			$sql .= " WHERE fk_categorie = ".$this->id;
 			if (!$this->db->query($sql))
 			{
 				$this->error=$this->db->lasterror();
