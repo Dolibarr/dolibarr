@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011-2016 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015-2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2011-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,8 +145,7 @@ if ($result)
 	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.salary","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Employee"),$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PaymentMode"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
@@ -159,12 +158,10 @@ if ($result)
 	print '<td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
 	print '</td>';
-	// People
+	// Employee
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" size="6" name="search_user" value="'.$search_user.'">';
 	print '</td>';
-	// Current salary
-	print '<td class="liste_titre">&nbsp;</td>';
 	// Label
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
 	// Date
@@ -200,10 +197,8 @@ if ($result)
 		$salstatic->ref=$obj->rowid;
         // Ref
 		print "<td>".$salstatic->getNomUrl(1)."</td>\n";
-		// User name
+		// Employee
 		print "<td>".$userstatic->getNomUrl(1)."</td>\n";
-		// Current salary
-		print "<td>".($obj->salary?price($obj->salary):'')."</td>\n";
 		// Label payment
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
 		// Date payment
@@ -220,7 +215,7 @@ if ($result)
         $i++;
     }
     
-    print '<tr class="liste_total"><td colspan="6" class="liste_total">'.$langs->trans("Total").'</td>';
+    print '<tr class="liste_total"><td colspan="5" class="liste_total">'.$langs->trans("Total").'</td>';
     print '<td class="liste_total" align="right">'.price($total)."</td>";
 	print "<td></td></tr>";
 
