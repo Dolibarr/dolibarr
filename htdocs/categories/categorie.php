@@ -88,6 +88,13 @@ if ($id || $ref)
 		$dbtablename = 'socpeople&societe';
 		$fieldid = ! empty($ref)?'ref':'rowid';
 	}
+	elseif ($type == Categorie::TYPE_PROJECT) {
+		$elementtype = 'project';
+		$objecttype = 'project';
+		$objectid = isset($id)?$id:(isset($ref)?$ref:'');
+		$dbtablename = '&project';
+		$fieldid = ! empty($ref)?'ref':'rowid';
+	}
 }
 
 // Security check
@@ -145,6 +152,13 @@ if (empty($reshook))
 			$result = $object->fetch($objectid);
 			$elementtype = 'contact';
 		}
+		if ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$object = new Project($db);
+			$result = $object->fetch($objectid);
+			$elementtype = 'project';
+		}
 		$cat = new Categorie($db);
 		$result=$cat->fetch($removecat);
 
@@ -191,6 +205,13 @@ if (empty($reshook))
 			$object = new Contact($db);
 			$result = $object->fetch($objectid);
 			$elementtype = 'contact';
+		}
+		if ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+			$object = new Project($db);
+			$result = $object->fetch($objectid);
+			$elementtype = 'project';
 		}
 		$cat = new Categorie($db);
 		$result=$cat->fetch($parent);
@@ -607,6 +628,75 @@ else if ($id || $ref)
 
 		formCategory($db,$object,4,$socid, $user->rights->societe->creer);
 	}
+
+	if ($type == Categorie::TYPE_PROJECT)
+	{
+		$langs->load("products");
+
+		/*
+		 *  Category card for product
+		 */
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+		// Product
+		$product = new Product($db);
+		$result = $product->fetch($id, $ref);
+
+		llxHeader("","",$langs->trans("Project"));
+
+
+		$head=project_prepare_head($product);
+		$titre=$langs->trans("Project");
+		$picto=($object->public?'projectpub':'project');
+		dol_fiche_head($head, 'category', $titre,0,$picto);
+
+
+		print '<table class="border" width="100%">';
+
+        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+
+        // Ref
+        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+        // Define a complementary filter for search of next/prev ref.
+        if (! $user->rights->projet->all->lire)
+        {
+            $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+            $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+        }
+        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
+        print '</td></tr>';
+
+        // Label
+        print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->title.'</td></tr>';
+
+        // Third party
+        print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
+        if ($object->thirdparty->id > 0) print $object->thirdparty->getNomUrl(1, 'project');
+        else print'&nbsp;';
+        print '</td></tr>';
+
+        // Visibility
+        print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+        if ($object->public) print $langs->trans('SharedProject');
+        else print $langs->trans('PrivateProject');
+        print '</td></tr>';
+
+        // Statut
+        print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+
+        // Date start
+        print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
+        print dol_print_date($object->date_start,'day');
+        print '</td></tr>';
+
+        // Date end
+        print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
+        print dol_print_date($object->date_end,'day');
+        print '</td></tr>';
+
+		formCategory($db,$product,0,$socid,($user->rights->projet->creer));
+	}
 }
 
 
@@ -630,6 +720,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 	if ($typeid == Categorie::TYPE_CUSTOMER)    $title = $langs->trans("CustomersProspectsCategoriesShort");
 	if ($typeid == Categorie::TYPE_MEMBER)      $title = $langs->trans("MembersCategoriesShort");
 	if ($typeid == Categorie::TYPE_CONTACT)     $title = $langs->trans("ContactCategoriesShort");
+	if ($typeid == Categorie::TYPE_PROJECT)     $title = $langs->trans("ProjectsCategoriesShort");
 
 	$linktocreate='';
 	if ($showclassifyform && $user->rights->categorie->creer)
@@ -674,6 +765,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 		if ($typeid == Categorie::TYPE_CUSTOMER)    $title=$langs->trans("CompanyIsInCustomersCategories");
 		if ($typeid == Categorie::TYPE_MEMBER)      $title=$langs->trans("MemberIsInCategories");
 		if ($typeid == Categorie::TYPE_CONTACT)     $title=$langs->trans("ContactIsInCategories");
+		if ($typeid == Categorie::TYPE_PROJECT)     $title=$langs->trans("ProjectIsInCategories");
 		print "\n";
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$title.':</td></tr>';
@@ -699,6 +791,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
 				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
 				if ($typeid == Categorie::TYPE_CONTACT)     $permission=$user->rights->societe->creer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
 				if ($permission)
 				{
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removecat=".$cat->id."'>";
@@ -727,6 +820,7 @@ function formCategory($db,$object,$typeid,$socid=0,$showclassifyform=1)
 		if ($typeid == Categorie::TYPE_CUSTOMER)    $title=$langs->trans("CompanyHasNoCategory");
 		if ($typeid == Categorie::TYPE_MEMBER)      $title=$langs->trans("MemberHasNoCategory");
 		if ($typeid == Categorie::TYPE_CONTACT)     $title=$langs->trans("ContactHasNoCategory");
+		if ($typeid == Categorie::TYPE_PROJECT)     $title=$langs->trans("ProjectHasNoCategory");
 		print $title;
 		print "<br/>";
 	}
