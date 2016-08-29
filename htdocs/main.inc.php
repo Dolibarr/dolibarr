@@ -1940,7 +1940,7 @@ if (! function_exists("llxFooter"))
                       //console.log($(this).parent().parent().find(\'dd ul\'));
                       $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
                       // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
-                      heigthofcontent = 19 * $(this).parent().parent().find(\'dd div ul li\').length;
+                      heigthofcontent = 21 * $(this).parent().parent().find(\'dd div ul li\').length;
                       if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
                       posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
                       //console.log(posbottom);
