@@ -215,6 +215,7 @@ if ($search_ref)
 	if (is_numeric($search_ref)) $sql.= " AND (d.rowid = ".$db->escape($search_ref).")";
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
+if ($search_firstname) $sql.= natural_search("d.firstname", $search_firstname);
 if ($search_lastname) $sql.= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
 if ($search_login) $sql.= natural_search("d.login", $search_login);
 if ($search_email) $sql.= natural_search("d.email", $search_email);
@@ -421,7 +422,7 @@ if ($resql)
 	if (! empty($arrayfields['d.firstname']['checked'])) 
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_ref" value="'.$search_firstname.'" size="6"></td>';
+		print '<input class="flat" type="text" name="search_firstname" value="'.$search_firstname.'" size="6"></td>';
 	}
 	
 	if (! empty($arrayfields['d.lastname']['checked'])) 
