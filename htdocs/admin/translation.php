@@ -136,7 +136,7 @@ print '<br>';
 print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
 $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
 print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a>)<br>';
-print $langs->trans("TranslationOverwriteDesc",$langs->transnoentitiesnoconv("Language"),$langs->transnoentitiesnoconv("Key"),$langs->transnoentitiesnoconv("TranslatedStringToShow"))."<br>\n";
+print $langs->trans("TranslationOverwriteDesc",$langs->transnoentitiesnoconv("Language"),$langs->transnoentitiesnoconv("Key"),$langs->transnoentitiesnoconv("NewTranslationStringToShow"))."<br>\n";
 
 print '<br>';
 
