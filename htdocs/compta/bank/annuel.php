@@ -53,8 +53,9 @@ else
 	$year_end=$year_start+2;
 }
 
-
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("IOMonthlyReporting");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 

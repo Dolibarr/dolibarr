@@ -249,7 +249,9 @@ if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation(
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-llxHeader();
+$title = $langs->trans("FinancialAccount") . " - " . $langs->trans("Card");
+$helpurl = "";
+llxHeader("",$title,$helpurl);
 
 
 // Creation
