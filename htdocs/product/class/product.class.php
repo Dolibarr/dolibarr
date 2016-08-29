@@ -3175,7 +3175,7 @@ class Product extends CommonObject
 	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
 
-        if ($option == 'supplier') {
+        if ($option == 'supplier' || $option == 'category') {
             $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
             $linkend='</a>';
         } else if ($option == 'stock') {
@@ -3184,8 +3184,6 @@ class Product extends CommonObject
         } else if ($option == 'composition') {
             $link = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
             $linkend='</a>';
-        } else if ($option == 'category') {
-            $link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&amp;type=0'.$linkclose;
         } else {
             $link = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
             $linkend='</a>';

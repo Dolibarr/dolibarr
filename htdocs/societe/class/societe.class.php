@@ -1855,7 +1855,7 @@ class Societe extends CommonObject
 
         $label.= '<div width="100%">';
 
-        if ($option == 'customer' || $option == 'compta')
+        if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
         {
            $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
            $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
@@ -1879,16 +1879,6 @@ class Societe extends CommonObject
         {
             $label.= '<u>' . $langs->trans("ShowProject") . '</u>';
             $link = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
-        }
-        else if ($option == 'category')
-        {
-            $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
-        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
-        }
-        else if ($option == 'category_supplier')
-        {
-            $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
-        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
         else if ($option == 'margin')
         {

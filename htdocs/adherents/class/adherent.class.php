@@ -1580,7 +1580,7 @@ class Adherent extends CommonObject
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         $link=''; $linkend='';
-        if ($option == 'card')
+        if ($option == 'card' || $option == 'category')
         {
             $link = '<a href="'.DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id.$linkclose;
             $linkend='</a>';
@@ -1588,12 +1588,6 @@ class Adherent extends CommonObject
         if ($option == 'subscription')
         {
             $link = '<a href="'.DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$this->id.$linkclose;
-            $linkend='</a>';
-        }
-        if ($option == 'category')
-        {
-			$type = Categorie::TYPE_MEMBER;
-			$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type='.$type.$linkclose;
             $linkend='</a>';
         }
 

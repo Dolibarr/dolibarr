@@ -113,17 +113,6 @@ function societe_prepare_head(Societe $object)
     	$head[$h][2] = 'project';
     	$h++;
     }
-    //show categorie tab
-    /*if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-    {
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-        $type = Categorie::TYPE_CUSTOMER;
-        if ($object->fournisseur) $type = Categorie::TYPE_SUPPLIER;
-        $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$object->id."&type=".$type;
-        $head[$h][1] = $langs->trans('Categories');
-        $head[$h][2] = 'category';
-        $h++;
-    }*/
 
     // Tab to link resources
 	if (! empty($conf->resource->enabled) && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
