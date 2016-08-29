@@ -403,28 +403,33 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-        	// Migrate to add entity value into llx_societe_remise
-        	migrate_remise_entity($db,$langs,$conf);
-
-        	// Migrate to add entity value into llx_societe_remise_except
-        	migrate_remise_except_entity($db,$langs,$conf);
-
             migrate_directories($db,$langs,$conf,'/fckeditor','/medias');
-
-        	// Reload modules (this must be always and only into last targeted version)
-        	$listofmodule=array(
-        	    'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-        	    'MAIN_MODULE_CRON'=>'newboxdefonly',
-        	    'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-        	    'MAIN_MODULE_PRINTING'=>'newboxdefonly',
-        	);
-        	migrate_reload_modules($db,$langs,$conf,$listofmodule);
-
-        	// Reload menus (this must be always and only into last targeted version)
-        	migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
-
+        // Scripts for last version
+        $afterversionarray=explode('.','4.0.9');
+        $beforeversionarray=explode('.','5.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Migrate to add entity value into llx_societe_remise
+            migrate_remise_entity($db,$langs,$conf);
+        
+            // Migrate to add entity value into llx_societe_remise_except
+            migrate_remise_except_entity($db,$langs,$conf);
+        
+            // Reload modules (this must be always and only into last targeted version)
+            $listofmodule=array(
+                'MAIN_MODULE_BARCODE'=>'newboxdefonly',
+                'MAIN_MODULE_CRON'=>'newboxdefonly',
+                'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+                'MAIN_MODULE_PRINTING'=>'newboxdefonly',
+            );
+            migrate_reload_modules($db,$langs,$conf,$listofmodule);
+        
+            // Reload menus (this must be always and only into last targeted version)
+            migrate_reload_menu($db,$langs,$conf,$versionto);
+        }
+        
         // Can force activation of some module during migration with third paramater = MAIN_MODULE_XXX,MAIN_MODULE_YYY,...
         if ($enablemodules)
         {
@@ -3688,7 +3693,7 @@ function migrate_remise_entity($db,$langs,$conf)
 
 	$sqlSelect = "SELECT sr.rowid, s.entity";
 	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise as sr, ".MAIN_DB_PREFIX."societe as s";
-	$sqlSelect.= " WHERE sr.fk_soc = s.rowid";
+	$sqlSelect.= " WHERE sr.fk_soc = s.rowid and sr.entity != s.entity";
 
 	//print $sqlSelect;
 
