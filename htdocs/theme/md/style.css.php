@@ -3993,8 +3993,8 @@ dl.dropdown {
     margin-right: 3px;
 }
 .dropdown dd ul li a, .dropdown dd ul li span {
-    padding:5px;
-    display:block;
+    padding: 3px;
+    display: block;
 }
 .dropdown dd ul li span {
 	color: #888;
