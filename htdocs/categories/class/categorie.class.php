@@ -125,7 +125,7 @@ class Categorie extends CommonObject
 		'contact'  => 'socpeople',
 		'user'     => 'user',
         'account' => 'bank_account',
-        'project' => 'project',
+        'project' => 'projet',
 	);
 
 	public $element='category';

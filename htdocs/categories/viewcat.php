@@ -657,6 +657,61 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
     }
 }
 
+// List of Project
+if ($object->type == Categorie::TYPE_PROJECT)
+{
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+	$projects = $object->getObjectsInCateg("project");
+	if ($projects < 0)
+	{
+		dol_print_error($db, $object->error, $object->errors);
+	}
+	else
+	{
+		print "<br>";
+		print "<table class='noborder' width='100%'>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Project")."</td></tr>\n";
+
+		if (count($projects) > 0)
+		{
+			$var=true;
+			foreach ($projects as $key => $project)
+			{
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td class="nowrap" valign="top">';
+				print $project->getNomUrl(1,0);
+				print "</td>\n";
+				print '<td valign="top">'.$project->ref."</td>\n";
+				print '<td valign="top">'.$project->title."</td>\n";
+				// Link to delete from category
+				print '<td align="right">';
+				$typeid=$object->type;
+				$permission=0;
+				if ($typeid == Categorie::TYPE_PRODUCT)     $permission=($user->rights->produit->creer || $user->rights->service->creer);
+				if ($typeid == Categorie::TYPE_SUPPLIER)    $permission=$user->rights->societe->creer;
+				if ($typeid == Categorie::TYPE_CUSTOMER)    $permission=$user->rights->societe->creer;
+				if ($typeid == Categorie::TYPE_MEMBER)      $permission=$user->rights->adherent->creer;
+				if ($typeid == Categorie::TYPE_ACCOUNT)      $permission=$user->rights->banque->configurer;
+				if ($typeid == Categorie::TYPE_PROJECT)     $permission=$user->rights->projet->creer;
+				if ($permission)
+				{
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$project->id."'>";
+					print img_delete($langs->trans("DeleteFromCat")).' ';
+					print $langs->trans("DeleteFromCat")."</a>";
+				}
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoProject").'</td></tr>';
+		}
+		print "</table>\n";
+	}
+}
+
 llxFooter();
 
 $db->close();
