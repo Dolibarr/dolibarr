@@ -1640,7 +1640,7 @@ else
 					$i++;
 				}
 			}
-			else print '<tr '.$bc[false].'><td colspan="9">'.$langs->trans("NoneF").'</td></tr>';
+			else print '<tr '.$bc[false].'><td colspan="9" class="opacitymedium">'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";
 			$db->free($resql);
