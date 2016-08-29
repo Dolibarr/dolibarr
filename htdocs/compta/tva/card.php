@@ -365,8 +365,8 @@ if ($id)
 
 	
 	/*
-	* Boutons d'actions
-	*/
+	 * Action buttons
+	 */
 	print "<div class=\"tabsAction\">\n";
 	if ($object->rappro == 0)
 	{
@@ -381,7 +381,7 @@ if ($id)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

@@ -5056,8 +5056,8 @@ class Form
             <dt>
             <a href="#">
               '.img_picto('','list').'    
-              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </a>
+            <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </dt>
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
