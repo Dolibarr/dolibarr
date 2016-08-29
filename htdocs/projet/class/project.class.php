@@ -1792,7 +1792,6 @@ class Project extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
-	 * @param string $type Category type (customer or supplier)
 	 */
 	public function setCategories($categories)
 	{
