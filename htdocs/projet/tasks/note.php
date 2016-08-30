@@ -117,7 +117,7 @@ if ($object->id > 0)
 		print '<table class="border" width="100%">';
 
 		// Ref
-		print '<tr><td width="30%">';
+		print '<tr><td class="titlefield">';
 		print $langs->trans("Ref");
 		print '</td><td>';
 		// Define a complementary filter for search of next/prev ref.
@@ -172,7 +172,7 @@ if ($object->id > 0)
 	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 	if (empty($withproject) || empty($projectstatic->id))
 	{
 	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);

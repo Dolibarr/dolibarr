@@ -1002,7 +1002,7 @@ else
     	if ($action == 'ask_deleteline') {
     		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
     	}
-    
+
     	print $formconfirm;
     	
 		$author = new User($db);
@@ -1160,7 +1160,7 @@ else
 		print '<table class="border" width="100%">';
 
 		// if "frequency" is empty or = 0, the reccurence is disabled
-		print '<tr><td width="20%">';
+		print '<tr><td class="titlefield">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');
 		print '</td>';
@@ -1263,7 +1263,7 @@ else
     		print '<table class="border" width="100%">';
     		
     		// Nb of generation already done
-    		print '<tr><td width="20%">'.$langs->trans("NbOfGenerationDone").'</td>';
+    		print '<tr><td class="titlefield">'.$langs->trans("NbOfGenerationDone").'</td>';
     		print '<td>';
     		print $object->nb_gen_done?$object->nb_gen_done:'0';
     		print '</td>';
@@ -1643,7 +1643,7 @@ else
 					$i++;
 				}
 			}
-			else print '<tr '.$bc[false].'><td colspan="9">'.$langs->trans("NoneF").'</td></tr>';
+			else print '<tr '.$bc[false].'><td colspan="9" class="opacitymedium">'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";
 			$db->free($resql);

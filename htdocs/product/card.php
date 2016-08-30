@@ -1528,6 +1528,7 @@ else
                     print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
                     print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$object->barcode.'">';
                     print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+                    print '</form>';
                 }
                 else
                 {

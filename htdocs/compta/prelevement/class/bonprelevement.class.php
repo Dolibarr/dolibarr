@@ -27,6 +27,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
@@ -1015,15 +1016,21 @@ class BonPrelevement extends CommonObject
                     $this->date_echeance = $datetimeprev;
                     $this->reference_remise = $ref;
 
-                    $this->raison_sociale              = $conf->global->PRELEVEMENT_RAISON_SOCIALE;
+                    $id=$conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+                    $account = new Account($this->db);
+                    if ($account->fetch($id)>0)
+                    {
+                        $this->emetteur_code_banque 	   = $account->code_banque;
+                        $this->emetteur_code_guichet       = $account->code_guichet;
+                        $this->emetteur_numero_compte      = $account->number;
+                        $this->emetteur_number_key		   = $account->cle_rib;
+                        $this->emetteur_iban               = $account->iban;
+                        $this->emetteur_bic                = $account->bic;
 
-                    $this->emetteur_code_banque 		  = $conf->global->PRELEVEMENT_CODE_BANQUE;
-                    $this->emetteur_code_guichet       = $conf->global->PRELEVEMENT_CODE_GUICHET;
-                    $this->emetteur_numero_compte      = $conf->global->PRELEVEMENT_NUMERO_COMPTE;
-                    $this->emetteur_number_key		  = $conf->global->PRELEVEMENT_NUMBER_KEY;
-                    $this->emetteur_iban               = $conf->global->PRELEVEMENT_IBAN;
-                    $this->emetteur_bic                = $conf->global->PRELEVEMENT_BIC;
-                    $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+                        $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+    
+                        $this->raison_sociale              = $account->proprio;
+                    }
 
                     $this->factures = $factures_prev_id;
 
@@ -1680,6 +1687,23 @@ class BonPrelevement extends CommonObject
 		$dateTime_ETAD = dol_print_date($ladate, '%Y-%m-%d');
 		$dateTime_YMDHMS = dol_print_date($ladate, '%Y-%m-%dT%H:%M:%S');
 
+		// Get data of bank account
+		$id=$configuration->global->PRELEVEMENT_ID_BANKACCOUNT;
+		$account = new Account($this->db);
+		if ($account->fetch($id)>0)
+		{
+		    $this->emetteur_code_banque 	   = $account->code_banque;
+		    $this->emetteur_code_guichet       = $account->code_guichet;
+		    $this->emetteur_numero_compte      = $account->number;
+		    $this->emetteur_number_key		   = $account->cle_rib;
+		    $this->emetteur_iban               = $account->iban;
+		    $this->emetteur_bic                = $account->bic;
+		
+		    $this->emetteur_ics                = $conf->global->PRELEVEMENT_ICS;		// Ex: PRELEVEMENT_ICS = "FR78ZZZ123456";
+		
+		    $this->raison_sociale              = $account->proprio;
+		}
+		
 		// Récupération info demandeur
 		$sql = "SELECT rowid, ref";
 		$sql.= " FROM";
@@ -1714,7 +1738,7 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
 			$XML_SEPA_INFO .= '			<ReqdColltnDt>'.$dateTime_ETAD.'</ReqdColltnDt>'.$CrLf;
 			$XML_SEPA_INFO .= '			<Cdtr>'.$CrLf;
-			$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($configuration->global->PRELEVEMENT_RAISON_SOCIALE)).'</Nm>'.$CrLf;
+			$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;
 			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.strtoupper(dol_string_unaccent($configuration->global->MAIN_INFO_SOCIETE_ADDRESS)).'</AdrLine>'.$CrLf;
@@ -1723,16 +1747,16 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '			</Cdtr>'.$CrLf;
 			$XML_SEPA_INFO .= '			<CdtrAcct>'.$CrLf;
 			$XML_SEPA_INFO .= '				<Id>'.$CrLf;
-			$XML_SEPA_INFO .= '					<IBAN>'.preg_replace('/\s/', '', $configuration->global->PRELEVEMENT_IBAN).'</IBAN>'.$CrLf;
+			$XML_SEPA_INFO .= '					<IBAN>'.preg_replace('/\s/', '', $this->emetteur_iban).'</IBAN>'.$CrLf;
 			$XML_SEPA_INFO .= '				</Id>'.$CrLf;
 			$XML_SEPA_INFO .= '			</CdtrAcct>'.$CrLf;
 			$XML_SEPA_INFO .= '			<CdtrAgt>'.$CrLf;
 			$XML_SEPA_INFO .= '				<FinInstnId>'.$CrLf;
-			$XML_SEPA_INFO .= '					<BIC>'.$configuration->global->PRELEVEMENT_BIC.'</BIC>'.$CrLf;
+			$XML_SEPA_INFO .= '					<BIC>'.$this->emetteur_bic.'</BIC>'.$CrLf;
 			$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
 			$XML_SEPA_INFO .= '			</CdtrAgt>'.$CrLf;
 /*			$XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
-			$XML_SEPA_INFO .= '				<Nm>'.$configuration->global->PRELEVEMENT_RAISON_SOCIALE.'</Nm>'.$CrLf;
+			$XML_SEPA_INFO .= '				<Nm>'.$this->raison_sociale.'</Nm>'.$CrLf;
 			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
 			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
 			$XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
@@ -1744,7 +1768,7 @@ class BonPrelevement extends CommonObject
 			$XML_SEPA_INFO .= '				<Id>'.$CrLf;
 			$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
 			$XML_SEPA_INFO .= '						<Othr>'.$CrLf;
-			$XML_SEPA_INFO .= '							<Id>'.$configuration->global->PRELEVEMENT_ICS.'</Id>'.$CrLf;
+			$XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
 			$XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
 			$XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
 			$XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
