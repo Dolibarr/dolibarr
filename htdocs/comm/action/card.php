@@ -1397,7 +1397,9 @@ if ($id > 0)
 		if ($action != 'edit')
 		{
 			if ($user->rights->agenda->allactions->create ||
-			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+			   (($object->authorid == $user->id || $object->userownerid == $user->id
+			   || in_array($user->id, array_keys($object->userassigned))) 
+			   && $user->rights->agenda->myactions->create))
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 			}
@@ -1407,7 +1409,9 @@ if ($id > 0)
 			}
 
 			if ($user->rights->agenda->allactions->create ||
-			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+			   (($object->authorid == $user->id || $object->userownerid == $user->id
+			   || in_array($user->id, array_keys($object->userassigned))) 
+			   && $user->rights->agenda->myactions->create))
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
 			}
@@ -1417,7 +1421,9 @@ if ($id > 0)
 			}
 
 			if ($user->rights->agenda->allactions->delete ||
-			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete))
+			   (($object->authorid == $user->id || $object->userownerid == $user->id
+			   || in_array($user->id, array_keys($object->userassigned))) 
+			   && $user->rights->agenda->myactions->delete))
 			{
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
 			}
