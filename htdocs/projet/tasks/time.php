@@ -347,7 +347,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print dol_print_date($projectstatic->date_end,'day');
 			print '</td></tr>';
 
-        	if (! $id && ! $ref)   // Not a dedicated task
+        	if ((! $id && ! $ref) || ! empty($projectidforalltimes))   // Not a dedicated task
         	{
     			// Budget
             	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
@@ -371,7 +371,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			/*
 			 * Actions
 			 */
-			if (empty($id) && empty($ref))
+
+			if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))
 			{
     			print '<div class="tabsAction">';
     			
@@ -563,7 +564,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	    // Definition of fields for list
 	    $arrayfields=array();
 	    $arrayfields['t.task_date']=array('label'=>$langs->trans("Date"), 'checked'=>1);
-		if (! $id && ! $ref)   // Not a dedicated task
+		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
 	    {
     	    $arrayfields['t.task_ref']=array('label'=>$langs->trans("Task"), 'checked'=>1);
 	    }
@@ -591,8 +592,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
 		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 		if (empty($projectidforalltimes)) $sql .= " AND t.fk_task =".$object->id;
+		else $sql.= " AND pt.fk_projet IN (".$projectidforalltimes.")";
 		if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
-		
+		if ($search_note) $sql .= natural_search('t.note', $search_note);
 		$sql .= $db->order($sortfield, $sortorder);
         
 		$var=true;
@@ -640,7 +642,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		    $tmpkey=preg_replace('/search_options_/','',$key);
 		    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 		}*/
-		if ($projectstatic->id) $params.='&amp;projectid='.$projectstatic->id;
+		if ($id) $params.='&amp;id='.$id;
+		if ($projectid) $params.='&amp;projectid='.$projectid;
 		if ($withproject) $params.='&amp;withproject='.$withproject;
 		
 		
@@ -658,7 +661,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	    print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-		print '<input type="hidden" name="action" value="list">';
+		if ($action == 'editline') print '<input type="hidden" name="action" value="updateline">';
+		else print '<input type="hidden" name="action" value="list">';
 	    print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	    print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 		
@@ -687,7 +691,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		
 		print '<tr class="liste_titre">';
 		if (! empty($arrayfields['t.task_date']['checked'])) print_liste_field_titre($arrayfields['t.task_date']['label'],$_SERVER['PHP_SELF'],'t.task_date,t.task_datehour,t.rowid','',$params,'',$sortfield,$sortorder);
-        if (! $id && ! $ref)   // Not a dedicated task
+		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
             if (! empty($arrayfields['t.task_ref']['checked'])) print_liste_field_titre($arrayfields['t.task_ref']['label'],$_SERVER['PHP_SELF'],'pt.ref','',$params,'',$sortfield,$sortorder);            
         }
@@ -719,7 +723,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<tr class="liste_titre">';
 		// LIST_OF_TD_TITLE_SEARCH
 		if (! empty($arrayfields['t.task_date']['checked'])) print '<td class="liste_titre"></td>';
-        if (! $id && ! $ref)   // Not a dedicated task
+		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
         {
             if (! empty($arrayfields['t.task_ref']['checked'])) print '<td class="liste_titre"></td>';
         }
@@ -764,8 +768,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 		$tasktmp = new Task($db);
 		
+		$i = 0;
 		$total = 0;
 		$totalvalue = 0;
+		$totalarray=array();
 		foreach ($tasks as $task_time)
 		{
 			$var=!$var;
@@ -787,12 +793,13 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				print dol_print_date(($date2?$date2:$date1),($task_time->task_date_withhour?'dayhour':'day'));
     			}
     			print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
 			}
 
 			// Task
             if (! empty($arrayfields['t.task_ref']['checked']))
             {
-    			if (! $id && ! $ref)   // Not a dedicated task
+        		if ((empty($id) && empty($ref)) || ! empty($projectidforalltimes))   // Not a dedicated task
     			{
         			print '<td class="nowrap">';
         			$tasktmp->id = $task_time->fk_task;
@@ -800,6 +807,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
         			$tasktmp->label = $task_time->label;
         			print $tasktmp->getNomUrl(1, 'withproject', 'time');	
         			print '</td>';
+        			if (! $i) $totalarray['nbfield']++;
     			}
             }
             
@@ -829,6 +837,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				print $userstatic->getNomUrl(1);
     			}
     			print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
             }
 
 			// Note
@@ -844,6 +853,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				print dol_nl2br($task_time->note);
     			}
     			print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
             }
             
 			// Time spent
@@ -860,15 +870,22 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     				print convertSecondToTime($task_time->task_duration,'allhourmin');
     			}
     			print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
+    			if (! $i) $totalarray['totaldurationfield']=$totalarray['nbfield'];
+    			$totalarray['totalduration'] += $task_time->task_duration;
             }
             
 			// Value spent
             if (! empty($arrayfields['value']['checked'])) 
             {
 				print '<td align="right">';
-				print price(price2num($task_time->thm * $task_time->task_duration / 3600), 1, $langs, 1, -1, -1, $conf->currency);
+				$value = price2num($task_time->thm * $task_time->task_duration / 3600);
+				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
-			}
+				if (! $i) $totalarray['nbfield']++;
+    			if (! $i) $totalarray['totalvaluefield']=$totalarray['nbfield'];
+    			$totalarray['totalvalue'] += $value;
+            }
 
 			// Fields from hook
 			$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
@@ -896,20 +913,34 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print img_delete();
 				print '</a>';
 			}
-			print '</td>';
-
+        	print '</td>';
+        	if (! $i) $totalarray['nbfield']++;
+        	
 			print "</tr>\n";
-			$total += $task_time->task_duration;
-			$totalvalue += price2num($task_time->thm * $task_time->task_duration / 3600);
+			
+			$i++;
 		}
 		
-		print '<tr class="liste_total"><td colspan="3" class="liste_total">'.$langs->trans("Total").'</td>';
-		print '<td align="right" class="nowrap liste_total">'.convertSecondToTime($total,'allhourmin').'</td>';
-		if ($conf->salaries->enabled)
+		// Show total line
+		if (isset($totalarray['totaldurationfield']) || isset($totalarray['totalvaluefield']))
 		{
-			print '<td align="right">'.price($totalvalue, 1, $langs, 1, -1, -1, $conf->currency).'</td>';
+		    print '<tr class="liste_total">';
+		    $i=0;
+		    while ($i < $totalarray['nbfield'])
+		    {
+		        $i++;
+		        if ($i == 1)
+		        {
+		            if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+		            else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+		        }
+		        elseif ($totalarray['totaldurationfield'] == $i) print '<td align="right">'.convertSecondToTime($totalarray['totalduration'],'allhourmin').'</td>';
+		        elseif ($totalarray['totalvaluefield'] == $i) print '<td align="right">'.price($totalarray['totalvalue']).'</td>';
+		        else print '<td></td>';
+		    }
+		    print '</tr>';
 		}
-		print '<td>&nbsp;</td>';
+
 		print '</tr>';
 
 		print "</table>";
