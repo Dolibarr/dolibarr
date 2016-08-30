@@ -4294,6 +4294,17 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
+	
+    div.tabBar {
+        padding-left: 0px;
+        padding-right: 0px;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+    	border-radius: 0px;
+        border-right: none;
+        border-left: none;
+    }
+	
 }
 
 

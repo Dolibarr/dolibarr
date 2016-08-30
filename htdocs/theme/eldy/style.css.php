@@ -1869,10 +1869,10 @@ div.tabsElem {
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
-    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
+    padding-top: 16px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 14px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:4px;
     -webkit-border-radius: 4px;
@@ -4402,6 +4402,16 @@ img.demothumb {
         margin-right: 6px;
         margin-left: 4px;
         width: 80px;
+    }
+
+    div.tabBar {
+        padding-left: 0px;
+        padding-right: 0px;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+    	border-radius: 0px;
+        border-right: none;
+        border-left: none;
     }
 }
 
