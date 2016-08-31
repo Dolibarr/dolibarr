@@ -48,6 +48,10 @@ foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($va
 
 $object = new Establishment($db);
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+
+
 /*
  * Actions
  */
@@ -128,7 +132,8 @@ else if ($action == 'update')
 			$error ++;
 		}
 
-		if (empty($error)) {
+		if (empty($error)) 
+		{
 			$object->name 			= GETPOST('name', 'alpha');
 			$object->address 		= GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
