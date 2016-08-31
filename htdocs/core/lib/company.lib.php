@@ -309,6 +309,8 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
 {
     global $db,$langs;
 
+    $result='';
+    
     // Check parameters
     if (empty($searchkey) && empty($searchlabel))
     {
@@ -323,7 +325,6 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
     elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
     else $sql.= " WHERE label='".$db->escape($searchlabel)."'";
 
-    dol_syslog("Company.lib::getCountry", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
     if ($resql)
     {
@@ -337,17 +338,18 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
                 if ($entconv) $label=($obj->code && ($outputlangs->trans("Country".$obj->code)!="Country".$obj->code))?$outputlangs->trans("Country".$obj->code):$label;
                 else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
-            if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
-            else if ($withcode == 2) return $obj->code;
-            else if ($withcode == 3) return $obj->rowid;
-            else if ($withcode === 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
-            else return $label;
+            if ($withcode == 1) $result=$label?"$obj->code - $label":"$obj->code";
+            else if ($withcode == 2) $result=$obj->code;
+            else if ($withcode == 3) $result=$obj->rowid;
+            else if ($withcode === 'all') $result=array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
+            else $result=$label;
         }
         else
         {
-            return 'NotDefined';
+            $result='NotDefined';
         }
         $dbtouse->free($resql);
+        return $result;
     }
     else dol_print_error($dbtouse,'');
     return 'Error';
