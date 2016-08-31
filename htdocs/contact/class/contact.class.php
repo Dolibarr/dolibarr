@@ -554,8 +554,6 @@ class Contact extends CommonObject
 		    $this->db->rollback();
 		    return -$error;
 		}
-		
-		return $result;
 	}
 
 
