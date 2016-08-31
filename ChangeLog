@@ -24,7 +24,7 @@ Dolibarr better:
 - Function delete of class Facture (invoice) need the object $user as first parameter. Also you must
 check you make a fetch on object before calling the delete.
 - The old driver of "mysql" has been removed. Dolibarr use the new one (mysqli) by default.
-
+- Remove not used function calculate_byte(). Use dol_print_size() instead.
 
 
 ***** ChangeLog for 4.0.0 compared to 3.9.* *****
