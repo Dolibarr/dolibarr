@@ -242,11 +242,11 @@ if ($result > 0)
  			$label=($langs->trans("Notify_".$managedeventfornotification['code'])!="Notify_".$managedeventfornotification['code']?$langs->trans("Notify_".$managedeventfornotification['code']):$managedeventfornotification['label']);
             $actions[$managedeventfornotification['rowid']]=$label;
         }
-        print '<tr '.$bc[$var].'><td>';
-        print $form->selectarray("contactid",$listofemails);
+        print '<tr '.$bc[$var].'><td class="maxwidthonsmartphone">';
+        print $form->selectarray("contactid", $listofemails, '', 0, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
-        print '<td>';
-        print $form->selectarray("actionid",$actions,'',1);
+        print '<td class="maxwidthonsmartphone">';
+        print $form->selectarray("actionid", $actions, '', 1, 0, 0, '', 0, 0, 0, '', 'maxwidthonsmartphone');
         print '</td>';
         print '<td>';
         $type=array('email'=>$langs->trans("EMail"));
