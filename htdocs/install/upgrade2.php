@@ -3692,7 +3692,7 @@ function migrate_remise_entity($db,$langs,$conf)
 	$db->begin();
 
 	$sqlSelect = "SELECT sr.rowid, s.entity";
-	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise as sr, ".MAIN_DB_PREFIX."societe as s";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr, ".MAIN_DB_PREFIX."societe as s";
 	$sqlSelect.= " WHERE sr.fk_soc = s.rowid and sr.entity != s.entity";
 
 	//print $sqlSelect;
