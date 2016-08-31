@@ -258,6 +258,10 @@ class Account extends CommonObject
 				$string .= $this->code_guichet.' ';
 			} elseif ($val == 'BankAccountNumberKey') {
 				$string .= $this->cle_rib.' ';
+			}elseif ($val == 'BIC') {
+				$string .= $this->bic.' ';
+			}elseif ($val == 'IBAN') {
+				$string .= $this->iban.' ';
 			}
 		}
 
@@ -1151,9 +1155,9 @@ class Account extends CommonObject
         if ($user->societe_id) {
             return 0;
         }
-    
+
         $nb=0;
-        
+
         $sql = "SELECT COUNT(ba.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE ba.rappro > 0 and ba.clos = 0";
@@ -1169,7 +1173,7 @@ class Account extends CommonObject
 
         return $nb;
     }
-        
+
     /**
      *    	Return clicable name (with picto eventually)
      *
@@ -1204,7 +1208,7 @@ class Account extends CommonObject
             $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/releve.php?account='.$this->id.$linkclose;
             $linkend='</a>';
         }
-        
+
         if ($withpicto) $result.=($link.img_object($label, 'account', 'class="classfortooltip"').$linkend.' ');
         $result.=$link.$this->label.$linkend;
         return $result;
@@ -1294,6 +1298,55 @@ class Account extends CommonObject
     }
 
     /**
+     * Return 1 if IBAN / BIC is mandatory (otherwise option)
+     *
+     * @return		int        1 = mandatory / 0 = Not mandatory
+     */
+    function needIBAN()
+    {
+    	$country_code=$this->getCountryCode();
+
+    	$country_code_in_EEC=array(
+    			'AT',	// Austria
+    			'BE',	// Belgium
+    			'BG',	// Bulgaria
+    			'CY',	// Cyprus
+    			'CZ',	// Czech republic
+    			'DE',	// Germany
+    			'DK',	// Danemark
+    			'EE',	// Estonia
+    			'ES',	// Spain
+    			'FI',	// Finland
+    			'FR',	// France
+    			'GB',	// United Kingdom
+    			'GR',	// Greece
+    			'HR',   // Croatia
+    			'NL',	// Holland
+    			'HU',	// Hungary
+    			'IE',	// Ireland
+    			'IM',	// Isle of Man - Included in UK
+    			'IT',	// Italy
+    			'LT',	// Lithuania
+    			'LU',	// Luxembourg
+    			'LV',	// Latvia
+    			'MC',	// Monaco - Included in France
+    			'MT',	// Malta
+    			//'NO',	// Norway
+    			'PL',	// Poland
+    			'PT',	// Portugal
+    			'RO',	// Romania
+    			'SE',	// Sweden
+    			'SK',	// Slovakia
+    			'SI',	// Slovenia
+    			'UK',	// United Kingdom
+    			//'CH',	// Switzerland - No. Swizerland in not in EEC
+    	);
+
+    	if (in_array($country_code,$country_code_in_EEC)) return 1; // France, Spain, ...
+    	return 0;
+    }
+
+    /**
      *	Load miscellaneous information for tab "Info"
      *
      *	@param  int		$id		Id of object to load
@@ -1323,18 +1376,26 @@ class Account extends CommonObject
 		$detailedBBAN = $this->useDetailedBBAN();
 
 		if ($detailedBBAN == 0) {
-			return array(
-				'BankAccountNumber'
+			$fieldarray= array(
+					'BankAccountNumber'
 			);
 		} elseif ($detailedBBAN == 2) {
-			return array(
-				'BankCode',
-				'BankAccountNumber'
+			$fieldarray= array(
+					'BankCode',
+					'BankAccountNumber'
 			);
+		} else {
+			$fieldarray=self::getAccountNumberOrder();
 		}
 
+		//if ($this->needIBAN()) {    // return always IBAN and BIC (this was old behaviour)
+			$fieldarray[]='IBAN';
+			$fieldarray[]='BIC';
+		//}
+
 		//Get the order the properties are shown
-		return self::getAccountNumberOrder();
+		return $fieldarray;
+
 	}
 
 	/**
@@ -1352,10 +1413,10 @@ class Account extends CommonObject
 		global $conf;
 
 		$fieldlists = array(
-			'BankCode',
-			'DeskCode',
-			'BankAccountNumber',
-			'BankAccountNumberKey'
+				'BankCode',
+				'DeskCode',
+				'BankAccountNumber',
+				'BankAccountNumberKey'
 		);
 
 		if (!empty($conf->global->BANK_SHOW_ORDER_OPTION)) {

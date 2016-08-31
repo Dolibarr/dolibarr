@@ -44,7 +44,9 @@ $result=restrictedArea($user,'adherent',$id);
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$title=$langs->trans("Member") . " - " . $langs->trans("Info");
+$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+llxHeader("",$title,$helpurl);
 
 $object = new Adherent($db);
 $object->fetch($id);

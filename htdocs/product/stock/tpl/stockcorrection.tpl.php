@@ -56,14 +56,14 @@
 		{
 			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Warehouse").'</td>';
 			print '<td width="20%">';
-			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')), 'id_entrepot', '', 1);
+			print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')), 'id_entrepot', '', 1, 0, 0, '', 0, 0, null, 'minwidth100');
 			print '</td>';
 		}
 		if ($object->element == 'stock')
 		{
 			print '<td width="20%" class="fieldrequired" colspan="2">'.$langs->trans("Product").'</td>';
 	        print '<td width="20%">';
-	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''));
+	        print $form->select_produits(GETPOST('product_id'), 'product_id', (empty($conf->global->STOCK_SUPPORTS_SERVICES)?'0':''), 20, 0, -1);
 	        print '</td>';
 		}
 		print '<td width="20%">';
@@ -91,12 +91,12 @@
 			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 			print '</td>';
 			print '</tr><tr>';
-			print '<td colspan="2">'.$langs->trans("l_eatby").'</td><td>';
+			print '<td colspan="2">'.$langs->trans("EatByDate").'</td><td>';
 			$eatbyselected=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 			$form->select_date($eatbyselected,'eatby','','',1,"");
 			print '</td>';
 			print '<td></td>';
-			print '<td>'.$langs->trans("l_sellby").'</td><td>';
+			print '<td>'.$langs->trans("SellByDate").'</td><td>';
 			$sellbyselected=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 			$form->select_date($sellbyselected,'sellby','','',1,"");
 			print '</td>';

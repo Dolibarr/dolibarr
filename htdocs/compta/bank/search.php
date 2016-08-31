@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry    	 <florian.henry@open-cooncept.pro>
@@ -42,11 +42,12 @@ $langs->load("margins");
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'banque');
 
+$search_ref=GETPOST('search_ref','int');
 $description=GETPOST("description",'alpha');
 $debit=GETPOST("debit",'alpha');
 $credit=GETPOST("credit",'alpha');
 $type=GETPOST("type",'alpha');
-$account=GETPOST("account",'alpha');
+$account=GETPOST("account",'int');
 $bid=GETPOST("bid","int");
 $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), GETPOST('search_start_dtday', 'int'), GETPOST('search_start_dtyear', 'int'));
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
@@ -64,28 +65,12 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
 
-$param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if (!empty($description)) $param.='&description='.$description;
-if (!empty($type)) $param.='&type='.$type;
-if (!empty($debit)) $param.='&debit='.$debit;
-if (!empty($credit)) $param.='&credit='.$credit;
-if (!empty($account)) $param.='&account='.$account;
-if (!empty($bid))  $param.='&bid='.$bid;
-if (dol_strlen($search_dt_start) > 0)
-    $param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
-if (dol_strlen($search_dt_end) > 0)
-    $param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
-if (GETPOST("req_nb")) $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
-if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
-
 
 /*
  * Actions
  */       
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$description="";
 	$type="";
@@ -93,6 +78,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 	$credit="";
 	$account="";
 	$bid="";
+	$search_ref="";
 	$search_req_nb='';
 	$search_thirdparty='';
 	$thirdparty='';
@@ -127,29 +113,15 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND 
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
-if ($search_req_nb)
-{
-    $sql.= " AND b.num_chq LIKE '%".$db->escape($search_req_nb)."%'";
-}
-if ($search_thirdparty)
-{
-    $sql.=" AND s.nom LIKE '%".$db->escape($search_thirdparty)."%'";
-}
-if ($bid)
-{
-	$sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$bid;
-}
-if (! empty($type))
-{
-	$sql.= " AND b.fk_type = '".$db->escape($type)."' ";
-}
+if ($search_ref) $sql.=natural_search("b.rowid", $search_ref);
+if ($account > 0) $sql.=" AND b.fk_account = ".$account;
+if ($search_req_nb) $sql.= " AND b.num_chq LIKE '%".$db->escape($search_req_nb)."%'";
+if ($search_thirdparty) $sql.=" AND s.nom LIKE '%".$db->escape($search_thirdparty)."%'";
+if ($bid) $sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$bid;
+if (! empty($type)) $sql.= " AND b.fk_type = '".$db->escape($type)."' ";
 // Search period criteria
-if (dol_strlen($search_dt_start)>0) {
-	$sql .= " AND b.dateo >= '" . $db->idate($search_dt_start) . "'";
-}
-if (dol_strlen($search_dt_end)>0) {
-	$sql .= " AND b.dateo <= '" . $db->idate($search_dt_end) . "'";
-}
+if (dol_strlen($search_dt_start)>0) $sql .= " AND b.dateo >= '" . $db->idate($search_dt_start) . "'";
+if (dol_strlen($search_dt_end)>0) $sql .= " AND b.dateo <= '" . $db->idate($search_dt_end) . "'";
 // Search criteria amount
 $debit = price2num(str_replace('-','',$debit));
 $credit = price2num(str_replace('-','',$credit));
@@ -174,6 +146,23 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$param='';
+	if (!empty($search_ref)) $param.='&search_ref='.$search_ref;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if (!empty($description)) $param.='&description='.$description;
+	if (!empty($type)) $param.='&type='.$type;
+	if (!empty($debit)) $param.='&debit='.$debit;
+	if (!empty($credit)) $param.='&credit='.$credit;
+	if (!empty($account)) $param.='&account='.$account;
+	if (!empty($bid))  $param.='&bid='.$bid;
+	if (dol_strlen($search_dt_start) > 0)
+	    $param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
+    if (dol_strlen($search_dt_end) > 0)
+        $param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
+    if (GETPOST("req_nb")) $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
+    if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
+	
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -199,10 +188,11 @@ if ($resql)
 	
 	$moreforfilter = '';
 	$moreforfilter.='<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ' . $langs->trans('DateStart') . ' ';
-	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ';
+	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('DateStart') . ' ';
+	$moreforfilter .= $form->select_date($search_dt_start, 'search_start_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	$moreforfilter .= ' - ';
-	$moreforfilter .= $langs->trans('DateEnd') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1);
+	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('DateEnd') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	$moreforfilter .= '</div>';
 
 	if ($moreforfilter) 
@@ -221,14 +211,16 @@ if ($resql)
     print_liste_field_titre($langs->trans("Numero"),$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],'bu.label','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Debit"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Credit"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Account"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Debit"),$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Credit"),$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Account"),$_SERVER['PHP_SELF'],'ba.ref','',$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" name="search_ref" size="4" value="'.dol_escape_htmltag($search_ref).'">';
+	print '</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="center">';
@@ -246,7 +238,9 @@ if ($resql)
 	print '<td class="liste_titre" align="right">';
 	print '<input type="text" class="flat" name="credit" size="4" value="'.dol_escape_htmltag($credit).'">';
 	print '</td>';
-	print '<td></td>';
+	print '<td align="right">';
+	$form->select_comptes($account,'account',0,'',1);
+	print '</td>';
     print '<td class="liste_titre" align="right">';
     $searchpitco=$form->showFilterAndCheckAddButtons(0);
     print $searchpitco;

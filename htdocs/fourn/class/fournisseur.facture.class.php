@@ -922,10 +922,12 @@ class FactureFournisseur extends CommonInvoice
     /**
      *	Tag invoice as a payed invoice
      *
-     *	@param      User	$user       Object user
-     *	@return     int         		<0 si ko, >0 si ok
+     *	@param  User	$user       Object user
+	 *	@param  string	$close_code	Code renseigne si on classe a payee completement alors que paiement incomplet. Not implementd yet.
+	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet. Not implementd yet.
+     *	@return int         		<0 si ko, >0 si ok
      */
-    function set_paid($user)
+    function set_paid($user, $close_code='', $close_note='')
     {
         global $conf,$langs;
         $error=0;

@@ -169,11 +169,11 @@ ErrorSavingChanges=Beim Speichern der Änderungen trat ein Fehler auf
 ErrorWarehouseRequiredIntoShipmentLine=Lager in der Zeile ist für die Lieferung notwendig
 ErrorFileMustHaveFormat=Die Datei muss das Format %s haben.
 ErrorSupplierCountryIsNotDefined=Land für den Lieferanten ist nicht definiert. Korrigieren Sie dies zuerst.
-ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
-ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
-ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
-ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
-ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorsThirdpartyMerge=Fehler beim Zusammenführen der beiden Einträge. Die Anforderung wurde abgebrochen.
+ErrorStockIsNotEnoughToAddProductOnOrder=Lagerbestand für Produkt / Leistung %s ist zu klein um es zur neuen Bestellung hinzu zu fügen.
+ErrorStockIsNotEnoughToAddProductOnInvoice=Lagerbestand für Produkt / Leistung %s ist zu klein um es zur neuen Rechnung hinzu zu fügen.
+ErrorStockIsNotEnoughToAddProductOnShipment=Lagerbestand für Produkt / Leistung %s ist zu klein um es zur neuen Lieferung hinzu zu fügen.
+ErrorStockIsNotEnoughToAddProductOnProposal=Lagerbestand für Produkt / Leistung %s ist zu klein um es zum neuen Angebot hinzu zu fügen.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Es wurde ein Passwort für dieses Mitglied vergeben, aber kein Benutzer erstellt. Das Passwort wird gespeichert, aber kann nicht für die Anmeldung an Dolibarr verwendet werden. Es kann von einem externen Modul/einer Schnittstelle verwendet werden, aber wenn Sie kein Login oder Passwort für dieses Mitglied definiert müssen, können Sie die Option "Login für jedes Mitglied verwalten" in den Mitgliedseinstellungen deaktivieren. Wenn Sie ein Login aber kein Passwort benötige, lassen Sie dieses Feld leer, um diese Meldung zu deaktivieren. Anmerkung: Die E-Mail-Adresse kann auch zur Anmeldung verwendet werden, wenn das Mitglied mit einem Benutzer verbunden wird.
@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=Die ClickToDial-Informationen für Ihren 
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funktion deaktiviert, wenn die Bildschirm-Ausgabe für Blinde oder Text-Browser optimiert ist.
 WarningPaymentDateLowerThanInvoiceDate=Zahlungsdatum (%s) liegt vor dem Rechnungsdatum (%s) für Rechnung %s.
 WarningTooManyDataPleaseUseMoreFilters=Zu viele Ergebnisse (mehr als %s Zeilen). Bitte benutzen Sie mehr Filter oder erhöhen sie die Konstante %s auf einen höheren Wert.
-WarningSomeLinesWithNullHourlyRate=Einige Zeiten wurden durch Benutzer erfasst bei denen der Stundenansatz nicht definiert war. Ein Stundenansatz von 0 wird verwendet, was aber Fehlerhafte Zeitauswertungen zur Folge haben kann.
+WarningSomeLinesWithNullHourlyRate=Einige erfasste Zeiten wurden von Benutzern erfasst bei denen der Stundensatz undefiniert war. Ein Stundenansatz von 0 %s pro Stunde wurde verwendet, was eine fehlerhafte Zeitauswertungen zur Folge haben kann.
 WarningYourLoginWasModifiedPleaseLogin=Ihr Login wurde verändert. Aus Sicherheitsgründen müssen Sie sich vor der nächsten Aktion mit Ihrem neuen Login anmelden.

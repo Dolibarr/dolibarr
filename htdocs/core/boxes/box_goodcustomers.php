@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/core/boxes/box_clients.php
+ *	\file       htdocs/core/boxes/box_goodcustomers.php
  *	\ingroup    societes
- *	\brief      Module de generation de l'affichage de la box clients
+ *	\brief      Module to generated widget of best customers (the most invoiced)
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
@@ -59,6 +59,7 @@ class box_goodcustomers extends ModeleBoxes
 
 		// disable box for such cases
 		if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $this->enabled=0;	// disabled by this option
+		if (empty($conf->global->MAIN_BOX_ENABLE_BEST_CUSTOMERS)) $this->enabled=0; // not enabled by default. Very slow on large database 
 	}
 
 	/**

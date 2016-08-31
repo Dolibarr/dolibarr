@@ -86,6 +86,7 @@ DirectoryRecommendation=Web sayfalarınızın dizininin dışında bir dizin kul
 LoginAlreadyExists=Zaten var
 DolibarrAdminLogin=Dolibarr yönetici girişi
 AdminLoginAlreadyExists=Dolibarr yönetici hesabı '<b>%s</b>' zaten var. Yeni bir tane oluşturmak istiyorsanız geri gidin.
+FailedToCreateAdminLogin=Dolibarr yönetici hesabı oluşturulmasında hata.
 WarningRemoveInstallDir=Uyarı, güvenlik nedeniyle, kurulum veya yükseltme tamamlandığında, araçların yeniden kurulumunu önlemek için  <b>install.lock</b> adlı bir dosyayı kötü amaçlı kullanımları önlemek için Dolibarr belge dizinine eklemelisiniz.
 FunctionNotAvailableInThisPHP=Bu PHP de geçerli değil
 ChoosedMigrateScript=Komut dizisi taşıma seç

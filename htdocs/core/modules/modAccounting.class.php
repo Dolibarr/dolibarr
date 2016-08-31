@@ -207,6 +207,11 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				"csv"
 		);
+		$this->const[24] = array(
+				"BANK_DISABLE_DIRECT_INPUT",
+				"yesno",
+				"1"
+		);
 
 		// Tabs
 		$this->tabs = array();

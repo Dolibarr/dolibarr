@@ -74,6 +74,7 @@ DefaultLang=Langue par défaut
 VATIsUsed=Assujetti à la TVA
 VATIsNotUsed=Non assujetti à la TVA
 CopyAddressFromSoc=Remplir avec l'adresse du tiers
+ThirdpartyNotCustomerNotSupplierSoNoRef=Ce tiers n'est ni client ni fournisseur. il n'y a pas d'objet référent.
 ##### Local Taxes #####
 LocalTax1IsUsed=Assujetti à la deuxième taxe
 LocalTax1IsUsedES= Assujetti à RE

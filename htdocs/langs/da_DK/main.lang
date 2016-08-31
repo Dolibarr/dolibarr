@@ -84,6 +84,7 @@ SeeAbove=Se ovenfor
 HomeArea=Hjem område
 LastConnexion=Seneste forbindelse
 PreviousConnexion=Forrige forbindelse
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Connected på enhed
 ConnectedSince=Connected siden
 AuthenticationMode=Autentificerings mode

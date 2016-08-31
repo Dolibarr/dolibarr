@@ -86,6 +86,7 @@ DirectoryRecommendation=Preporučeno je da koristite folder van Vašeg foldera z
 LoginAlreadyExists= Već postoji
 DolibarrAdminLogin=Dolibarr admin login
 AdminLoginAlreadyExists=Dolibarr administratorski nalog '<b>%s</b>' postoji. Idite nazad ako želite da kreirate drugi.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Upozorenje, iz bezbednosnih razloga, kada završite instalaciju ili nadogradnju, kako bi ste izbegli ponovno korišćenje instalacionih alata, dodajte fajl <b>install.lock</b> u Dolibarr document direktorijum, radi sprečavanja zloupotrebe.
 FunctionNotAvailableInThisPHP=Nije dostupno na ovoj verziji PHP-a
 ChoosedMigrateScript=Izaberite skriptu za migraciju

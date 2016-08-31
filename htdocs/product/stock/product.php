@@ -409,8 +409,21 @@ if ($id > 0 || $ref)
 	
 	$object->load_stock();
 
-	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("",$langs->trans("CardProduct".$object->type),$help_url);
+	$title = $langs->trans('ProductServiceCard');
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->label,16);
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+	{
+		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+	{
+		$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
+
+	llxHeader('', $title, $helpurl);
 
 	if ($result > 0)
 	{
@@ -689,8 +702,8 @@ if ((! empty($conf->productbatch->enabled)) && $object->hasbatch())
 {
 	print '<tr class="liste_titre"><td width="10%"></td>';
 	print '<td align="right" width="10%">'.$langs->trans("batch_number").'</td>';
-	print '<td align="center" width="10%">'.$langs->trans("l_eatby").'</td>';
-	print '<td align="center" width="10%">'.$langs->trans("l_sellby").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("EatByDate").'</td>';
+	print '<td align="center" width="10%">'.$langs->trans("SellByDate").'</td>';
 	print '<td align="right" colspan="5"></td>';
 	print '</tr>';
 }

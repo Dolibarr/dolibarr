@@ -21,5 +21,5 @@ CREATE TABLE llx_oauth_state (
     state varchar(128),
     fk_user integer,
     fk_adherent integer,
-    entity integer
+    entity integer DEFAULT 1
 )ENGINE=InnoDB;

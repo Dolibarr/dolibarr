@@ -89,7 +89,8 @@ if ($_POST["action"] == 'add')
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-    $account->account_number  = GETPOST('account_number');
+	$account_number 		 = GETPOST('account_number','alpha');
+	if ($account_number <= 0) { $account->account_number = ''; } else { $account->account_number = $account_number; }
 	$account->accountancy_journal  = trim($_POST["accountancy_journal"]);
 
     $account->solde           = $_POST["solde"];
@@ -171,7 +172,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-    $account->account_number  = GETPOST('account_number');
+	$account_number 		 = GETPOST('account_number', 'int');
+	if ($account_number <= 0) { $account->account_number = ''; } else { $account->account_number = $account_number; }
 	$account->accountancy_journal = trim($_POST["accountancy_journal"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
@@ -247,7 +249,9 @@ if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation(
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-llxHeader();
+$title = $langs->trans("FinancialAccount") . " - " . $langs->trans("Card");
+$helpurl = "";
+llxHeader("",$title,$helpurl);
 
 
 // Creation
@@ -505,7 +509,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("CreateAccount") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print '</form>';
 }

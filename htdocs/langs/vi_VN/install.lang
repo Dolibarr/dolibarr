@@ -86,6 +86,7 @@ DirectoryRecommendation=Nó được recommanded sử dụng một thư mục b�
 LoginAlreadyExists=Đã tồn tại
 DolibarrAdminLogin=Dolibarr quản trị đăng nhập
 AdminLoginAlreadyExists=Dolibarr tài khoản quản trị '<b>%s</b>' đã tồn tại. Quay trở lại, nếu bạn muốn tạo một số khác.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Cảnh báo, vì lý do bảo mật, một khi cài đặt hoặc nâng cấp hoàn thành, để tránh sử dụng các công cụ cài đặt một lần nữa, bạn nên thêm một tập tin gọi là <b>install.lock</b> vào thư mục tài liệu Dolibarr, để tránh việc sử dụng độc hại của nó.
 FunctionNotAvailableInThisPHP=Không có sẵn trên PHP này
 ChoosedMigrateScript=Chọn kịch bản di cư

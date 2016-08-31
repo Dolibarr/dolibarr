@@ -37,7 +37,7 @@ if (! file_exists($conffile))
 {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
-require_once $conffile; if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+require_once $conffile;
 require_once $dolibarr_main_document_root . '/compta/facture/class/facture.class.php';
 require_once $dolibarr_main_document_root . '/comm/propal/class/propal.class.php';
 require_once $dolibarr_main_document_root . '/contrat/class/contrat.class.php';
@@ -72,7 +72,6 @@ $langs->load('install');
 $langs->load("bills");
 $langs->load("suppliers");
 
-if ($dolibarr_main_db_type == 'mysql')  $choix=1;
 if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
 if ($dolibarr_main_db_type == 'mssql')  $choix=3;
@@ -398,27 +397,38 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         	// Reload menus (this must be always and only into last targeted version)
         	migrate_reload_menu($db,$langs,$conf,$versionto);
         }
-        
+
         // Scripts for last version
         $afterversionarray=explode('.','3.9.9');
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
             migrate_directories($db,$langs,$conf,'/fckeditor','/medias');
-            
-        	// Reload modules (this must be always and only into last targeted version)
-        	$listofmodule=array(
-        	    'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-        	    'MAIN_MODULE_CRON'=>'newboxdefonly',
-        	    'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-        	    'MAIN_MODULE_PRINTING'=>'newboxdefonly',
-        	);
-        	migrate_reload_modules($db,$langs,$conf,$listofmodule);
-        
-        	// Reload menus (this must be always and only into last targeted version)
-        	migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
+        // Scripts for last version
+        $afterversionarray=explode('.','4.0.9');
+        $beforeversionarray=explode('.','5.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Migrate to add entity value into llx_societe_remise
+            migrate_remise_entity($db,$langs,$conf);
+        
+            // Migrate to add entity value into llx_societe_remise_except
+            migrate_remise_except_entity($db,$langs,$conf);
+        
+            // Reload modules (this must be always and only into last targeted version)
+            $listofmodule=array(
+                'MAIN_MODULE_BARCODE'=>'newboxdefonly',
+                'MAIN_MODULE_CRON'=>'newboxdefonly',
+                'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+                'MAIN_MODULE_PRINTING'=>'newboxdefonly',
+            );
+            migrate_reload_modules($db,$langs,$conf,$listofmodule);
+        
+            // Reload menus (this must be always and only into last targeted version)
+            migrate_reload_menu($db,$langs,$conf,$versionto);
+        }
         
         // Can force activation of some module during migration with third paramater = MAIN_MODULE_XXX,MAIN_MODULE_YYY,...
         if ($enablemodules)
@@ -432,8 +442,8 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             }
             migrate_reload_modules($db,$langs,$conf,$listofmodules,1);
         }
-        
-        
+
+
         print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
 
         // On commit dans tous les cas.
@@ -1330,10 +1340,10 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 function migrate_price_facture($db,$langs,$conf)
 {
     $err=0;
-    
+
     $tmpmysoc=new Societe($db);
     $tmpmysoc->setMysoc($conf);
-    
+
     $db->begin();
 
     print '<tr><td colspan="4">';
@@ -1450,7 +1460,7 @@ function migrate_price_propal($db,$langs,$conf)
 {
    	$tmpmysoc=new Societe($db);
 	$tmpmysoc->setMysoc($conf);
-    
+
     $db->begin();
 
     print '<tr><td colspan="4">';
@@ -1649,7 +1659,7 @@ function migrate_price_commande($db,$langs,$conf)
 
     $tmpmysoc=new Societe($db);
     $tmpmysoc->setMysoc($conf);
-    
+
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1763,10 +1773,10 @@ function migrate_price_commande($db,$langs,$conf)
 function migrate_price_commande_fournisseur($db,$langs,$conf)
 {
     $db->begin();
-    
+
     $tmpmysoc=new Societe($db);
     $tmpmysoc->setMysoc($conf);
-    
+
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -3661,6 +3671,196 @@ function migrate_event_assignement($db,$langs,$conf)
 }
 
 /**
+ * Migrate to add entity value into llx_societe_remise
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_remise_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationRemiseEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_remise_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT sr.rowid, s.entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr, ".MAIN_DB_PREFIX."societe as s";
+	$sqlSelect.= " WHERE sr.fk_soc = s.rowid and sr.entity != s.entity";
+
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
+				$sqlUpdate.= " entity = " . $obj->entity;
+				$sqlUpdate.= " WHERE rowid = " . $obj->rowid;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate to add entity value into llx_societe_remise_except
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_remise_except_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationRemiseExceptEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_remise_except_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT sr.rowid, sr.fk_soc, sr.fk_facture_source, sr.fk_facture, sr.fk_facture_line";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				if (!empty($obj->fk_facture_source) || !empty($obj->fk_facture))
+				{
+					$fk_facture = (!empty($obj->fk_facture_source) ? $obj->fk_facture_source : $obj->fk_facture);
+
+					$sqlSelect2 = "SELECT f.entity";
+					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f";
+					$sqlSelect2.= " WHERE f.rowid = " . $fk_facture;
+				}
+				else if (!empty($obj->fk_facture_line))
+				{
+					$sqlSelect2 = "SELECT f.entity";
+					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
+					$sqlSelect2.= " WHERE fd.rowid = " . $obj->fk_facture_line;
+					$sqlSelect2.= " AND fd.fk_facture = f.rowid";
+				}
+				else
+				{
+					$sqlSelect2 = "SELECT s.entity";
+					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."societe as s";
+					$sqlSelect2.= " WHERE s.rowid = " . $obj->fk_soc;
+				}
+
+				$resql2 = $db->query($sqlSelect2);
+				if ($resql2)
+				{
+					if ($db->num_rows($resql2) > 0)
+					{
+						$obj2 = $db->fetch_object($resql2);
+
+						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except SET";
+						$sqlUpdate.= " entity = " . $obj2->entity;
+						$sqlUpdate.= " WHERE rowid = " . $obj->rowid;
+
+						$result=$db->query($sqlUpdate);
+						if (! $result)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+					}
+				}
+				else
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
  * Migration directory
  *
  * @param	DoliDB		$db			Database handler
@@ -3827,7 +4027,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
     	if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && ! $force)) continue; // Discard reload if module not enabled
 
     	$mod=null;
-    	
+
 	    if ($moduletoreload == 'MAIN_MODULE_AGENDA')
 	    {
 	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Agenda module");
@@ -4000,7 +4200,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 	    }
 
 		if (! empty($mod) && is_object($mod))
-		{	    
+		{
     		print '<tr><td colspan="4">';
         	print '<b>'.$langs->trans('Upgrade').'</b>: ';
         	print $langs->trans('MigrationReloadModule').' '.$mod->getName();  // We keep getName outside of trans because getName is already encoded/translated
@@ -4032,7 +4232,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 
     $versiontoarray=explode('.',$versionto);
 
-    // Migration required when target version is between 
+    // Migration required when target version is between
     $afterversionarray=explode('.','2.8.9');
     $beforeversionarray=explode('.','2.9.9');
     if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -4040,7 +4240,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
 
-    // Migration required when target version is between 
+    // Migration required when target version is between
     $afterversionarray=explode('.','3.1.9');
     $beforeversionarray=explode('.','3.2.9');
     if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -4055,7 +4255,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
     {
         $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
-    
+
     foreach ($listofmenuhandler as $key => $val)
     {
         print '<tr><td colspan="4">';

@@ -188,10 +188,11 @@ if ($object->fk_user_creat)
 	$userstatic->fetch($object->fk_user_creat);
 }
 
-
+$title = $object->titre." - ".$langs->trans('Card');
+$helpurl = '';
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
-llxHeader('',$object->titre, 0, 0, 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('',$title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
 
 
 // Define format of choices
@@ -219,7 +220,7 @@ print '<table class="border" width="100%">';
 $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).'">'.$langs->trans("BackToList").'</a>';
 
 // Ref
-print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';

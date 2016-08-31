@@ -312,6 +312,7 @@ LatestRelatedBill=Siste tilknyttede faktura
 WarningBillExist=Advarsel: en eller flere fakturaer finnes allerede
 MergingPDFTool=Verktøy for fletting av PDF 
 AmountPaymentDistributedOnInvoice=Beløp fordelt på faktura
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Betalingsnotat
 ListOfPreviousSituationInvoices=Liste over tidligere delfakturaer
 ListOfNextSituationInvoices=Liste over kommende delfakturaer

@@ -86,6 +86,7 @@ DirectoryRecommendation=這是推薦使用的目錄以外的你對你的網頁�
 LoginAlreadyExists=已存在
 DolibarrAdminLogin=Dolibarr管理員登陸
 AdminLoginAlreadyExists=Dolibarr管理員帳戶<b>'%s'</b>已經存在。
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=警告，出於安全原因，一旦安裝或升級完成後，你應該刪除<b>安裝目錄或重命名為install.lock，以避免其惡意使用。</b>
 FunctionNotAvailableInThisPHP=不是可以用這個PHP
 ChoosedMigrateScript=選擇遷移腳本

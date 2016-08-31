@@ -4,8 +4,8 @@ ACCOUNTING_EXPORT_DATE=Format de data pel fitxer d'exportació
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
 ACCOUNTING_EXPORT_LABEL=Exporta l'etiqueta
-ACCOUNTING_EXPORT_AMOUNT=Export amount
-ACCOUNTING_EXPORT_DEVISE=Export currency
+ACCOUNTING_EXPORT_AMOUNT=Exporta l'import
+ACCOUNTING_EXPORT_DEVISE=Exporta la moneda
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
 
@@ -82,12 +82,12 @@ Codejournal=Diari
 NumPiece=Número de peça
 AccountingCategory=Categoria de comptabilitat
 
-NotMatch=Not Set
+NotMatch=No definit
 
-DeleteMvt=Delete general ledger lines
-DelYear=Year to delete
-DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+DeleteMvt=Elimina línies del llibre major
+DelYear=Any a eliminar
+DelJournal=Diari per esborrar
+ConfirmDeleteMvt=Això eliminarà totes les línies del llibre major de l'any i/o des d'un diari específic
 
 DelBookKeeping=Eliminar els registres del llibre major
 
@@ -146,8 +146,8 @@ Modelcsv_COALA=Exporta cap a Sage Coala
 Modelcsv_bob50=Exporta cap a Sage BOB 50
 Modelcsv_ciel=Exporta cap a Sage Ciel Compta o Compta Evolution
 Modelcsv_quadratus=Exporta cap a Quadratus QuadraCompta
-Modelcsv_ebp=Export towards EBP
-Modelcsv_cogilog=Export towards Cogilog
+Modelcsv_ebp=Exporta cap a EBP
+Modelcsv_cogilog=Exporta cap a Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Inicialitza la comptabilitat
@@ -165,5 +165,5 @@ Formula=Fórmula
 
 ## Error
 ErrorNoAccountingCategoryForThisCountry=Sense categoria contable per aquest pais
-ExportNotSupported=The export format setuped is not supported into this page
-BookeppingLineAlreayExists=Lines already existing into bookeeping
+ExportNotSupported=El format d'exportació configurat no està suportat en aquesta pàgina
+BookeppingLineAlreayExists=Les línies ja existeixen en la comptabilitat

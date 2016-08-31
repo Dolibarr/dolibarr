@@ -74,6 +74,7 @@ DefaultLang=Domyślny język
 VATIsUsed=Jest płatnikiem VAT
 VATIsNotUsed=Nie jest płatnikiem VAT
 CopyAddressFromSoc=Wypełnij danymi adresowymi kontrahenta
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Użyj drugiego podatku
 LocalTax1IsUsedES= RE jest używany
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organizacja
 FiscalYearInformation=Informacje dotyczące roku podatkowego
 FiscalMonthStart=Pierwszy miesiąc roku podatkowego
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Lista dostawców
 ListProspectsShort=Lista potencjalnych klientów
 ListCustomersShort=Lista klientów

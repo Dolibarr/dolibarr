@@ -312,6 +312,7 @@ LatestRelatedBill=ใบแจ้งหนี้ที่เกี่ยวข�
 WarningBillExist=คำเตือนหนึ่งหรือใบแจ้งหนี้มากขึ้นอยู่แล้ว
 MergingPDFTool=ผสานเครื่องมือรูปแบบไฟล์ PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

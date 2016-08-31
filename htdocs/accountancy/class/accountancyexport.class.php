@@ -295,6 +295,8 @@ class AccountancyExport
 	public function exportCiel(&$TData) {
 		global $conf;
 
+		$this->end_line ="\r\n";
+
 		$i = 1;
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be yyyymmdd
 		foreach ( $TData as $data ) {
@@ -332,6 +334,8 @@ class AccountancyExport
 	 */
 	public function exportQuadratus(&$TData) {
 		global $conf;
+
+		$this->end_line ="\r\n";
 
 		$date_ecriture = dol_print_date(time(), $conf->global->ACCOUNTING_EXPORT_DATE); // format must be ddmmyy
 		foreach ( $TData as $data ) {

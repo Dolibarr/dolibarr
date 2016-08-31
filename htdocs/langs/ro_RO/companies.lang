@@ -74,6 +74,7 @@ DefaultLang=Limba implicită
 VATIsUsed=Utilizează TVA-ul
 VATIsNotUsed=Nu utilizează TVA-ul
 CopyAddressFromSoc=Completaţi adresa cu adresa terţului
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Utilizează taxa secundă
 LocalTax1IsUsedES= RE este utilizat
@@ -368,7 +369,8 @@ AllocateCommercial=Asociat la reprezentant vânzări
 Organization=Organizaţia
 FiscalYearInformation=Informaţii pe anul fiscal
 FiscalMonthStart=Luna de început a anului fiscal
-YouMustCreateContactFirst= Pentru a putea adăuga notificări email, mai întâi trebuie introduse email-uri contacte pentru partener 
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Lista  furnizori
 ListProspectsShort=Lista  prospecte
 ListCustomersShort=Lista  clienţi

@@ -140,7 +140,7 @@ if (empty($reshook))
 			}
 		}
 	}
-	
+
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setValid($user);
@@ -280,67 +280,81 @@ if (empty($reshook))
 
 						for ($i=0;$i<$num;$i++)
 						{
-							$product_type=($lines[$i]->product_type?$lines[$i]->product_type:0);
+							$product_type=($lines[$i]->product_type?$lines[$i]->product_type:Product::TYPE_PRODUCT);
 
-							if ($product_type == 1 || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
-								// service prédéfini
+							if ($product_type == Product::TYPE_SERVICE || !empty($conf->global->FICHINTER_PRINT_PRODUCTS)) { //only services except if config includes products
+								$duration = 3600; // Default to one hour
+
+								// Predefined products & services
 								if ($lines[$i]->fk_product > 0)
 								{
+									$prod = new Product($db);
+									$prod->id = $lines[$i]->fk_product;
+
 									// Define output language
-									if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE))
-									{
-										$prod = new Product($db);
-										$prod->id=$lines[$i]->fk_product;
+									if (! empty($conf->global->MAIN_MULTILANGS) && ! empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
 										$prod->getMultiLangs();
 										// We show if duration is present on service (so we get it)
 										$prod->fetch($lines[$i]->fk_product);
-										if ($prod->duration_value && $prod->duration_unit == 'h' && $conf->global->FICHINTER_USE_SERVICE_DURATION)
-										{
-											$durationproduct=$prod->duration_value * 3600 * $lines[$i]->qty;
-										}
-										else
-											$durationproduct=3600;
 										$outputlangs = $langs;
 										$newlang='';
 										if (empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
 										if (empty($newlang)) $newlang=$srcobject->client->default_lang;
-										if (! empty($newlang))
-										{
+										if (! empty($newlang)) {
 											$outputlangs = new Translate("",$conf);
 											$outputlangs->setDefaultLang($newlang);
 										}
-
 										$label = (! empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
-									}
-									else
-									{
-										$label = $lines[$i]->product_label;
+									} else {
+										$prod->fetch($lines[$i]->fk_product);
+										$label .= $lines[$i]->product_label;
 									}
 
-									$desc = $label;
-									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
+									if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
+										switch ($prod->duration_unit) {
+											default:
+											case 'h':
+												$mult = 3600;
+												break;
+											case 'd':
+												$mult = 3600 * 24;
+												break;
+											case 'w':
+												$mult = 3600 * 24 * 7;
+												break;
+											case 'm':
+												$mult = (int) 3600 * 24 * (365 / 12); // Average month duration
+												break;
+											case 'y':
+												$mult = 3600 * 24 * 365;
+												break;
+										}
+										$duration = $prod->duration_value * $mult * $lines[$i]->qty;
+									}
+
+									$desc = $lines[$i]->product_ref;
+									$desc .= ' - ';
+									$desc .= $label;
+									$desc .= '<br>';
 								}
-								else {
-									$desc = dol_htmlentitiesbr($lines[$i]->desc);
-									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
-								}
+								// Common part (predefined or free line)
+								$desc .= dol_htmlentitiesbr($lines[$i]->desc);
+								$desc .= '<br>';
+								$desc .= ' (' . $langs->trans('Quantity') . ': ' . $lines[$i]->qty . ')';
+
 								$timearray=dol_getdate(mktime());
 								$date_intervention=dol_mktime(0,0,0,$timearray['mon'],$timearray['mday'],$timearray['year']);
-								if ($product_type == 1)
-								{ //service
-									$duration = $durationproduct;
-								}
-								else
-								{ //product
+
+								if ($product_type == Product::TYPE_PRODUCT) {
 									$duration = 0;
 								}
 
 								$predef = '';
+
 								// Extrafields
 								$extrafieldsline = new ExtraFields($db);
 								$extralabelsline = $extrafieldsline->fetch_name_optionals_label($object->table_element_line);
 								$array_options = $extrafieldsline->getOptionalsFromPost($extralabelsline, $predef);
-
 
 			                    $result = $object->addline(
 									$user,
@@ -733,14 +747,14 @@ if (empty($reshook))
 	/*
 	 * Send mail
 	 */
-	
+
 	// Actions to send emails
 	$actiontypecode='AC_OTH_AUTO';
 	$trigger_name='FICHINTER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromintervention';
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-	
+
 
 	if ($action == 'update_extras')
 	{
@@ -955,7 +969,7 @@ if ($action == 'create')
             else
             	$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
             	*/
-            $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
+            $numprojet=$formproject->select_projects($soc->id,$projectid,'projectid');
             if ($numprojet==0)
             {
                 print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1027,6 +1041,8 @@ if ($action == 'create')
 	    {
 	        print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		} elseif ($origin == 'project' && !empty($projectid)) {
+			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 		}
 
 		dol_fiche_end();
@@ -1044,9 +1060,16 @@ if ($action == 'create')
 		dol_fiche_head('');
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+		if (is_object($objectsrc))
+		{
+			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		} elseif ($origin == 'project' && !empty($projectid)) {
+			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
+		}
 		print '<table class="border" width="100%">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-		print $form->select_company('','socid','',1,1);
+		print $form->select_company('','socid','','SelectThirdParty',1);
 		print '</td></tr>';
 		print '</table>';
 
@@ -1137,7 +1160,7 @@ else if ($id > 0 || ! empty($ref))
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneIntervention'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-	
+
 	if (!$formconfirm)
 	{
 		$parameters=array('lineid'=>$lineid);
@@ -1154,7 +1177,7 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
@@ -1168,7 +1191,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
-	
+
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
 		// Date Start
@@ -1177,14 +1200,14 @@ else if ($id > 0 || ! empty($ref))
 		print $object->dateo ? dol_print_date($object->dateo, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
-		
+
 		// Date End
 		print '<tr><td>'.$langs->trans("Datee").'</td>';
 		print '<td colspan="3">';
 		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
-		
+
 		// Date Terminate/close
 		print '<tr><td>'.$langs->trans("Datet").'</td>';
 		print '<td colspan="3">';
@@ -1428,7 +1451,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="center" class="nowrap">';
 					$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 					print '</td>';
-                        
+
                     // Duration
                     print '<td align="right">';
                     if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
@@ -1629,7 +1652,7 @@ else if ($id > 0 || ! empty($ref))
 				if ($user->rights->ficheinter->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=ficheinter">' . $langs->trans("ToClone") . '</a></div>';
 				}
-				
+
 				// Delete
 				if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 				{
@@ -1663,13 +1686,11 @@ else if ($id > 0 || ! empty($ref))
 		//print "<br>\n";
 		$somethingshown=$formfile->show_documents('ficheinter',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf,1,0,0,28,0,'','','',$soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object);
-		//if ($linktoelem) print '<br>'.$linktoelem;
-
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('fichinter'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -1742,7 +1763,7 @@ else if ($id > 0 || ! empty($ref))
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'int'.$object->id);
-		}		
+		}
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;

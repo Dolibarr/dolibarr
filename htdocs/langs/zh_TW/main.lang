@@ -84,6 +84,7 @@ SeeAbove=見上文
 HomeArea=首頁區
 LastConnexion=最後連線時間
 PreviousConnexion=上次連線時間
+PreviousValue=Previous value
 ConnectedOnMultiCompany=對實體連接
 ConnectedSince=自連接
 AuthenticationMode=認證模式

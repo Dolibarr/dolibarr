@@ -57,13 +57,13 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
     	$showmode=1;
     	$classname = 'class="tmenu menuhider"';
     	$idsel='menu';
-	
+
     	if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
     	if (empty($noout)) print_text_menu_entry('', 1, '#', $id, $idsel, $classname, $atarget);
     	if (empty($noout)) print_end_menu_entry($showmode);
     	$menu->add('#', '', 0, $showmode, $atarget, "xxx", '');
 	}
-	
+
 	// Home
 	$showmode=1;
 	$classname="";
@@ -132,8 +132,8 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	if (! empty($conf->contrat->enabled)) $menuqualified++;
 	if (! empty($conf->ficheinter->enabled)) $menuqualified++;
 	$tmpentry=array(
-	    'enabled'=>$menuqualified, 
-	    'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)), 
+	    'enabled'=>$menuqualified,
+	    'perms'=>(! empty($user->rights->societe->lire) || ! empty($user->rights->societe->contact->lire)),
 	    'module'=>'propal|commande|supplier_order|contrat|ficheinter');
 	$showmode=dol_eldy_showmenu($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -237,9 +237,9 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 		$idsel='hrm';
 
 		if (empty($noout)) print_start_menu_entry($idsel,$classname,$showmode);
-		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/hrm/hrm.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
+		if (empty($noout)) print_text_menu_entry($langs->trans("HRM"), $showmode, DOL_URL_ROOT.'/hrm/index.php?mainmenu=hrm&amp;leftmenu=', $id, $idsel, $classname, $atarget);
 		if (empty($noout)) print_end_menu_entry($showmode);
-		$menu->add('/hrm/hrm.php?mainmenu=hrm&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
+		$menu->add('/hrm/index.php?mainmenu=hrm&amp;leftmenu=', $langs->trans("HRM"), 0, $showmode, $atarget, "hrm", '');
 	}
 
 
@@ -342,8 +342,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
  */
 function print_start_menu_array()
 {
+    global $conf;
+
 	print '<div class="tmenudiv">';
-	print '<ul class="tmenu">';
+	print '<ul class="tmenu"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'':' title="Top menu"').'>';
 }
 
 /**
@@ -486,7 +488,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
         print '</div>'."\n";
         print "<!-- End SearchForm -->\n";
 	}
-	
+
 	/**
 	 * We update newmenu with entries found into database
 	 * --------------------------------------------------
@@ -502,7 +504,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 			// Home - dashboard
 			$newmenu->add("/index.php?mainmenu=home&amp;leftmenu=home", $langs->trans("Dashboard"), 0, 1, '', $mainmenu, 'home');
-		
+
 			// Setup
 			$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup');
 			if (empty($leftmenu) || $leftmenu=="setup")
@@ -526,8 +528,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/admin/modules.php?mainmenu=home", $langs->trans("Modules").$warnpicto,1);
 				$newmenu->add("/admin/menus.php?mainmenu=home", $langs->trans("Menus"),1);
 				$newmenu->add("/admin/ihm.php?mainmenu=home", $langs->trans("GUISetup"),1);
-				
-				$newmenu->add("/admin/translation.php", $langs->trans("Translation"),1);
+
+				$newmenu->add("/admin/translation.php?mainmenu=home", $langs->trans("Translation"),1);
 				$newmenu->add("/admin/boxes.php?mainmenu=home", $langs->trans("Boxes"),1);
 				$newmenu->add("/admin/delais.php?mainmenu=home",$langs->trans("Alerts"),1);
 				$newmenu->add("/admin/security_other.php?mainmenu=home", $langs->trans("Security"),1);
@@ -566,7 +568,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/admin/tools/listsessions.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("Sessions"),1);
 				$newmenu->add('/admin/system/about.php?mainmenu=home&amp;leftmenu=admintools', $langs->trans('About'), 1);
 
-				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 
+				if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
 				{
 					$langs->load("products");
 				    $newmenu->add("/product/admin/product_tools.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("ProductVatMassChange"), 1, $user->admin);
@@ -577,7 +579,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$langs->load("accountancy");
 					$newmenu->add("/accountancy/admin/productaccount.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("InitAccountancy"), 1, $user->admin);
 				}
-			
+
 				$newmenu->add("/support/index.php?mainmenu=home&amp;leftmenu=admintools", $langs->trans("HelpCenter"),1,1,'targethelp');
 			}
 
@@ -745,7 +747,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
                 if (empty($leftmenu) || $leftmenu=="orders_suppliers") $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=6,7", $langs->trans("StatusOrderCanceled"), 2, $user->rights->fournisseur->commande->lire);
                 if (empty($leftmenu) || $leftmenu=="orders_suppliers") $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&statut=9", $langs->trans("StatusOrderRefused"), 2, $user->rights->fournisseur->commande->lire);
                 // Billed is another field. We should add instead a dedicated filter on list. if (empty($leftmenu) || $leftmenu=="orders_suppliers") $newmenu->add("/fourn/commande/list.php?leftmenu=orders_suppliers&billed=1", $langs->trans("StatusOrderBilled"), 2, $user->rights->fournisseur->commande->lire);
- 
+
 
 				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->rights->fournisseur->commande->lire);
 			}
@@ -771,7 +773,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire, '', $mainmenu, 'ficheinter', 2200);
 				$newmenu->add("/fichinter/card.php?action=create&amp;leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer, '', '', '', 201);
 				$newmenu->add("/fichinter/list.php?leftmenu=ficheinter", $langs->trans("List"), 1, $user->rights->ficheinter->lire, '', '', '', 202);
-			
+
 				$newmenu->add("/fichinter/stats/index.php?leftmenu=ficheinter", $langs->trans("Statistics"), 1, $user->rights->fournisseur->commande->lire);
 			}
 
@@ -874,9 +876,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if (! empty($conf->tax->enabled))
 				{
 					$newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
-					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
+					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/card.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
 					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"),2,$user->rights->tax->charges->lire);
-					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
+					if (empty($leftmenu) || preg_match('/^tax_social/i',$leftmenu)) $newmenu->add("/compta/sociales/payments.php?leftmenu=tax_social&amp;mainmenu=accountancy&amp;mode=sconly",$langs->trans("Payments"), 2, $user->rights->tax->charges->lire);
 					// VAT
 					if (empty($conf->global->TAX_DISABLE_VAT_MENUS))
 					{
@@ -908,7 +910,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 						}
 					}
 				}
-				
+
 				// Salaries
 				if (! empty($conf->salaries->enabled))
 				{
@@ -917,7 +919,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				    if (empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/card.php?leftmenu=tax_salary&action=create",$langs->trans("NewPayment"),2,$user->rights->salaries->write);
 				    if (empty($leftmenu) || preg_match('/^tax_salary/i',$leftmenu)) $newmenu->add("/compta/salaries/index.php?leftmenu=tax_salary",$langs->trans("Payments"),2,$user->rights->salaries->read);
 				}
-				
+
 				// Loan
 				if (! empty($conf->loan->enabled))
 				{
@@ -1062,7 +1064,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$newmenu->add("/compta/bank/search.php",$langs->trans("ListTransactions"),1,$user->rights->banque->lire);
 				$newmenu->add("/compta/bank/budget.php",$langs->trans("ListTransactionsByCategory"),1,$user->rights->banque->lire);
 
-				$newmenu->add("/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
+				$newmenu->add("/compta/bank/virement.php",$langs->trans("MenuBankInternalTransfer"),1,$user->rights->banque->transfer);
 			}
 
             if (! empty($conf->categorie->enabled)) {
@@ -1119,6 +1121,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				{
 					$langs->load("stocks");
 					$newmenu->add("/product/reassortlot.php?type=0", $langs->trans("StocksByLotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
+					$newmenu->add("/product/stock/productlot_list.php", $langs->trans("LotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
 				}
 				if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
 				{
@@ -1208,6 +1211,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/projet/tasks.php?action=create", $langs->trans("NewTask"), 1, $user->rights->projet->creer && $user->rights->projet->creer);
 					$newmenu->add("/projet/tasks/list.php", $langs->trans("List"), 1, $user->rights->projet->lire && $user->rights->projet->lire);
 					$newmenu->add("/projet/activity/perweek.php", $langs->trans("NewTimeSpent"), 1, $user->rights->projet->creer && $user->rights->projet->lire);
+				}
+
+				// Categories
+				if (! empty($conf->categorie->enabled))
+				{
+					$langs->load("categories");
+					$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=6", $langs->trans("Categories"), 0, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+					$newmenu->add("/categories/card.php?action=create&amp;type=6", $langs->trans("NewCategory"), 1, $user->rights->categorie->creer);
+					//if (empty($leftmenu) || $leftmenu=="cat") $newmenu->add("/categories/list.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
 			}
 		}
@@ -1335,7 +1347,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		$menuArbo = new Menubase($db,'eldy');
 		$newmenu = $menuArbo->menuLeftCharger($newmenu,$mainmenu,$leftmenu,(empty($user->societe_id)?0:1),'eldy',$tabMenu);
 		//var_dump($newmenu->liste);    //
-		
+
 		// We update newmenu for special dynamic menus
 		if (!empty($user->rights->banque->lire) && $mainmenu == 'bank')	// Entry for each bank account
 		{
@@ -1407,7 +1419,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	$nbentry = count($menu_array);
 	while (findNextEntryForLevel($menu_array, $cursor, $position, $level))
 	{
-	    
+
 	    $cursor++;
 	}*/
 
@@ -1428,7 +1440,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			    $altok++;
 				$blockvmenuopened=true;
 				$lastopened=true;
-				for($j = ($i + 1); $j < $num; $j++) 
+				for($j = ($i + 1); $j < $num; $j++)
 				{
 				    if (empty($menu_array[$j]['level'])) $lastopened=false;
 				}
@@ -1454,7 +1466,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			$url = $shorturl = $menu_array[$i]['url'];
-			
+
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$menu_array[$i]['url']))
 			{
 			    $tmp=explode('?',$menu_array[$i]['url'],2);
@@ -1462,11 +1474,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			    $param = (isset($tmp[1])?$tmp[1]:'');    // params in url of the menu link
 
 			    // Complete param to force leftmenu to '' to closed opend menu when we click on a link with no leftmenu defined.
-			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($menu_array[$i]['mainmenu'])) 
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && ! empty($menu_array[$i]['mainmenu']))
 			    {
 			        $param.=($param?'&':'').'mainmenu='.$menu_array[$i]['mainmenu'].'&leftmenu=';
 			    }
-			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($menu_array[$i]['mainmenu'])) 
+			    if ((! preg_match('/mainmenu/i',$param)) && (! preg_match('/leftmenu/i',$param)) && empty($menu_array[$i]['mainmenu']))
 			    {
 			        $param.=($param?'&':'').'leftmenu=';
 			    }
@@ -1474,12 +1486,12 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			    $url = dol_buildpath($url,1).($param?'?'.$param:'');
 			    $shorturl = $shorturl.($param?'?'.$param:'');
 			}
-				
+
 			$url=preg_replace('/__LOGIN__/',$user->login,$url);
 			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
 			$url=preg_replace('/__USERID__/',$user->id,$url);
 			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
-				
+
 			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
 
 			// Menu niveau 0
@@ -1525,7 +1537,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($blockvmenuopened) { print '</div>'."\n"; $blockvmenuopened=false; }
 			}
 		}
-		
+
 		if ($altok) print '<div class="blockvmenuend"></div>';
 	}
 
@@ -1538,7 +1550,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 	        print '</div>'."\n";
 	        print "<!-- End Bookmarks -->\n";
 	}
-	
+
 	return count($menu_array);
 }
 

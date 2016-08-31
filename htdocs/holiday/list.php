@@ -66,6 +66,21 @@ $year_end        = GETPOST('year_end');
 $search_employe  = GETPOST('search_employe');
 $search_valideur = GETPOST('search_valideur');
 $search_statut   = GETPOST('select_statut');
+$type            = GETPOST('type','int'); 
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'cp.rowid'=>'Ref',
+    'cp.description'=>'Description',
+    'uu.lastname'=>'EmployeeLastname',
+    'uu.firstname'=>'EmployeeFirstname'
+);
+
+
+
+/*
+ * Actions
+ */
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -79,22 +94,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_employe="";
 	$search_valideur="";
 	$search_statut="";
+	$type='';
 }
-
-// List of fields to search into when doing a "search in all"
-$fieldstosearchall = array(
-    'cp.rowid'=>'Ref',
-    'cp.description'=>'Description',
-    'uu.lastname'=>'EmployeeLastname',
-    'uu.firstname'=>'EmployeeFirstname'
-);
-
-
-/*
- * Actions
- */
-
-// None
 
 
 
@@ -192,6 +193,8 @@ if (!empty($sall))
 }
 
 if (empty($user->rights->holiday->read_all)) $filter.=' AND cp.fk_user IN ('.join(',',$childids).')';
+
+if ($type) $filter.=' AND cp.fk_type IN ('.$type.')';
 
 // Récupération de l'ID de l'utilisateur
 $user_id = $user->id;
@@ -302,12 +305,12 @@ print "</tr>\n";
 
 // FILTRES
 print '<tr class="liste_titre">';
-print '<td class="liste_titre" align="left" width="50">';
+print '<td class="liste_titre" align="left">';
 print '<input class="flat" size="4" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 print '</td>';
 
 // DATE CREATE
-print '<td class="liste_titre" colspan="1" align="center">';
+print '<td class="liste_titre" align="center">';
 print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.$month_create.'">';
 $formother->select_year($year_create,'year_create',1, $min_year, 0);
 print '</td>';
@@ -346,20 +349,29 @@ else
 }
 
 // Type
-print '<td class="liste_titre" colspan="1" align="center">';
+print '<td class="liste_titre">';
+$typeleaves=$holidaystatic->getTypes(1,-1);
+$arraytypeleaves=array();
+foreach($typeleaves as $key => $val)
+{
+    $labeltoshow = $val['label'];
+    //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
+    $arraytypeleaves[$val['rowid']]=$labeltoshow;
+}
+print $form->selectarray('type', $arraytypeleaves, (GETPOST('type')?GETPOST('type'):''), 1);
 print '</td>';
 
 // DUREE
 print '<td>&nbsp;</td>';
 
 // DATE DEBUT
-print '<td class="liste_titre" colspan="1" align="center">';
+print '<td class="liste_titre" align="center">';
 print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
 $formother->select_year($year_start,'year_start',1, $min_year, $max_year);
 print '</td>';
 
 // DATE FIN
-print '<td class="liste_titre" colspan="1" align="center">';
+print '<td class="liste_titre" align="center">';
 print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
 $formother->select_year($year_end,'year_end',1, $min_year, $max_year);
 print '</td>';

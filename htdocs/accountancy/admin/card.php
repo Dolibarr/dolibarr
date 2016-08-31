@@ -58,11 +58,21 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_category') <= 0) {
-			$account_parent = '';
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
+		if (GETPOST('account_parent') <= 0) {
+			$account_parent = 0;
 		} else {
-			$account_parent = GETPOST('account_category','int');
+			$account_parent = GETPOST('account_parent','int');
 		}
 		
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -88,7 +98,7 @@ if ($action == 'add') {
 	header("Location: account.php");
 	exit;
 } else if ($action == 'edit') {
-	if (! GETPOST('cancel', 'alpha')) {
+	if (! $cancel) {
 		$result = $object->fetch($id);
 		
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
@@ -98,11 +108,21 @@ if ($action == 'add') {
 		$obj = $db->fetch_object($result2);
 
 		// Clean code
-		$account_number = clean_account(GETPOST('account_number')); // Accounting account without zero on the right
-		if (GETPOST('account_category') <= 0) {
-			$account_parent = '';
+
+		// To manage zero or not at the end of the accounting account
+		if($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
+		{
+			$account_number = GETPOST('account_number');
+		}
+		else
+		{
+			$account_number = clean_account(GETPOST('account_number'));
+		}
+
+		if (GETPOST('account_parent') <= 0) {
+			$account_parent = 0;
 		} else {
-			$account_parent = GETPOST('account_category','int');
+			$account_parent = GETPOST('account_parent','int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -145,7 +165,9 @@ if ($action == 'add') {
 /*
  * View
  */
-llxheader('', $langs->trans('AccountAccounting'));
+$title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
+$helpurl = '';
+llxheader('', $title, $helpurl);
 
 $form = new Form($db);
 $htmlacc = new FormVentilation($db);
@@ -164,7 +186,7 @@ if ($action == 'create') {
 	print '<table class="border" width="100%">';
 
 	// Account number
-	print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 	print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 
 	// Label
@@ -227,7 +249,7 @@ if ($action == 'create') {
 			print '<table class="border" width="100%">';
 			
 			// Account number
-			print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
+			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 			print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 			
 			// Label
@@ -279,7 +301,7 @@ if ($action == 'create') {
 			print '<table class="border" width="100%">';
 			
 			// Account number
-			print '<tr><td width="25%">' . $langs->trans("AccountNumber") . '</td>';
+			print '<tr><td class="titlefield">' . $langs->trans("AccountNumber") . '</td>';
 			print '<td>' . $object->account_number . '</td>';
 			print '<td align="right" width="25%">' . $linkback . '</td></tr>';
 

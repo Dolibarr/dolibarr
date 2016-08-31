@@ -78,8 +78,12 @@ if ($action == 'update')
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKBODY', $conf->entity);
-    else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', implode(',',colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array())),'chaine',0,'',$conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_BACKBODY', implode(',',colorStringToArray(GETPOST('THEME_ELDY_BACKBODY'),array())),'chaine',0,'',$conf->entity);
 	
+	$val=GETPOST('THEME_TOPMENU_DISABLE_IMAGE');
+	if (! $val) dolibarr_del_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', $conf->entity);
+    else dolibarr_set_const($db, 'THEME_TOPMENU_DISABLE_IMAGE', GETPOST('THEME_TOPMENU_DISABLE_IMAGE'),'chaine',0,'',$conf->entity);
+    
     $val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TOPMENU_BACK1', $conf->entity);
     else dolibarr_set_const($db, 'THEME_ELDY_TOPMENU_BACK1', implode(',',colorStringToArray(GETPOST('THEME_ELDY_TOPMENU_BACK1'),array())),'chaine',0,'',$conf->entity);
@@ -168,7 +172,7 @@ if ($action == 'edit')	// Edit
 	print '<td width="20">&nbsp;</td>';
 	print '</tr>';
 
-	// Multilangual GUI
+	// Multilingual GUI
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
     print $form->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
@@ -182,7 +186,7 @@ if ($action == 'edit')	// Edit
     show_theme(null,1);
     print '<br>';
 
-    // Liste des zone de recherche permanantes supportees
+    // List of permanent supported search box
     if (! empty($searchform))
     {
         print '<table summary="search" class="noborder" width="100%">';

@@ -201,8 +201,11 @@ if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
 }
 
 // Refresh directory view
+// This refresh list of dirs, not list of files (for preformance reason). List of files is refresh only if dir was not synchronized.
+// To refresh content of dir with cache, just open the dir in edit mode.
 if ($action == 'refreshmanual')
 {
+
     $ecmdirtmp = new EcmDirectory($db);
 
 	// This part of code is same than into file ecm/ajax/ecmdatabase.php TODO Remove duplicate

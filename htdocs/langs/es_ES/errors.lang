@@ -168,12 +168,12 @@ ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Definición incorrecta de la mat
 ErrorSavingChanges=Ha ocurrido un error al guardar los cambios
 ErrorWarehouseRequiredIntoShipmentLine=El almacén es obligatorio en la línea a enviar
 ErrorFileMustHaveFormat=El archivo debe tener el formato %s
-ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
-ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
-ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enougth for product %s to add it into a new order.
-ErrorStockIsNotEnoughToAddProductOnInvoice=Stock is not enougth for product %s to add it into a new invoice.
-ErrorStockIsNotEnoughToAddProductOnShipment=Stock is not enougth for product %s to add it into a new shipment.
-ErrorStockIsNotEnoughToAddProductOnProposal=Stock is not enougth for product %s to add it into a new proposal.
+ErrorSupplierCountryIsNotDefined=El país de este proveedor no está definido, corríjalo en su ficha
+ErrorsThirdpartyMerge=No se han podido fusionar los dos registros. Petición cancelada. 
+ErrorStockIsNotEnoughToAddProductOnOrder=No hay stock suficiente del producto %s para añadirlo a un nuevo pedido.
+ErrorStockIsNotEnoughToAddProductOnInvoice=No hay stock suficiente del producto %s para añadirlo a una nueva factura.
+ErrorStockIsNotEnoughToAddProductOnShipment=No hay stock suficiente del producto %s para añadirlo a un nuevo envío.
+ErrorStockIsNotEnoughToAddProductOnProposal=No hay stock suficiente del producto %s para añadirlo a un nuevo presupuesto.
 
 # Warnings
 WarningPasswordSetWithNoAccount=Se fijó una contraseña para este miembro. Sin embargo, no se ha creado ninguna cuenta de usuario. Así que esta contraseña no se puede utilizar para acceder a Dolibarr. Puede ser utilizada por un módulo/interfaz externo, pero si no necesitar definir accesos de un miembro, puede desactivar la opción "Administrar un inicio de sesión para cada miembro" en la configuración del módulo miembros. Si necesita administrar un inicio de sesión, pero no necesita ninguna contraseña, puede dejar este campo vacío para evitar esta advertencia. Nota: También puede usarse el correo electrónico como inicio de sesión si el miembro está vinculada a un usuario.
@@ -192,5 +192,5 @@ WarningClickToDialUserSetupNotComplete=La configuración de ClickToDial para su 
 WarningFeatureDisabledWithDisplayOptimizedForBlindNoJs=Funcionalidad desactivada cuando la configuración de visualización es optimizada para personas ciegas o navegadores de texto.
 WarningPaymentDateLowerThanInvoiceDate=La fecha de pago (%s) es anterior a la fecha (%s) de la factura %s.
 WarningTooManyDataPleaseUseMoreFilters=Demasiados datos (más de %s líneas). Utilice más filtros o establezca la constante %s a un límite más alto.
-WarningSomeLinesWithNullHourlyRate=Algunas veces fueron registradas por usuarios sin su precio por hora. Se utilizó un valor de 0, pero esto puede resultar en la valoración equivocada del tiempo pasado.
+WarningSomeLinesWithNullHourlyRate=Algunas veces se realizaron registrod a usuarios, con su precio por hora sin definir. Se utilizó un valor de 0 %s por hora, esto puede dar lugar a la valoración incorrecta del tiempo invertido.
 WarningYourLoginWasModifiedPleaseLogin=Su cuenta de acceso ha sido modificada. Por razones de seguridad, tendrá que iniciar sesión con su nuevo acceso antes de la próxima acción.

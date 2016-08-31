@@ -861,10 +861,13 @@ class DoliDBPgsql extends DoliDB
 		$like = '';
 		if ($table) $like = " AND table_name LIKE '".$table."'";
 		$result = pg_query($this->db, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'".$like." ORDER BY table_name");
-		while($row = $this->fetch_row($result))
-		{
-			$listtables[] = $row[0];
-		}
+        if ($result)
+        {
+    		while($row = $this->fetch_row($result))
+    		{
+    			$listtables[] = $row[0];
+    		}
+        }
 		return $listtables;
 	}
 
@@ -1099,7 +1102,7 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function DDLDropField($table,$field_name)
 	{
-		$sql= "ALTER TABLE ".$table." DROP COLUMN `".$field_name."`";
+		$sql= "ALTER TABLE ".$table." DROP COLUMN ".$field_name;
 		dol_syslog($sql,LOG_DEBUG);
 		if (! $this->query($sql))
 		{

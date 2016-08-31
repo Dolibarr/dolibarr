@@ -587,11 +587,10 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     {
     	if ($prop['field'] != 'rowid' && $prop['field'] != 'id' && ! $prop['istime'])
     	{
-    	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print_liste_field_titre(\$arrayfields['t.".$prop['field']."']['label'],\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$param,'',\$sortfield,\$sortorder);\n";
+    	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print_liste_field_titre(\$arrayfields['t.".$prop['field']."']['label'],\$_SERVER['PHP_SELF'],'t.".$prop['field']."','',\$params,'',\$sortfield,\$sortorder);\n";
     	}
     }
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print_liste_field_titre(\$langs->trans('field1'),\$_SERVER['PHP_SELF'],'t.field1','',\$param,'',\$sortfield,\$sortorder);",'/').'/', $varprop, $targetcontent);
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print_liste_field_titre(\$langs->trans('field2'),\$_SERVER['PHP_SELF'],'t.field2','',\$param,'',\$sortfield,\$sortorder);",'/').'/', '', $targetcontent);
+    $targetcontent=preg_replace('/LIST_OF_TD_TITLE_FIELDS/', $varprop, $targetcontent);
     
     // Substitute fields title search
     $varprop="\n";
@@ -603,8 +602,7 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     	    $varprop.="if (! empty(\$arrayfields['t.".$prop['field']."']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_".$prop['field']."\" value=\"'.\$search_".$prop['field'].".'\" size=\"10\"></td>';\n";
     	}
     }
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field1']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_field1\" value=\"'.\$search_field1.'\" size=\"10\"></td>';",'/').'/', $varprop, $targetcontent);
-    $targetcontent=preg_replace('/'.preg_quote("if (! empty(\$arrayfields['t.field2']['checked'])) print '<td class=\"liste_titre\"><input type=\"text\" class=\"flat\" name=\"search_field2\" value=\"'.\$search_field2.'\" size=\"10\"></td>';",'/').'/', '', $targetcontent);
+    $targetcontent=preg_replace('/LIST_OF_TD_TITLE_SEARCH/', $varprop, $targetcontent);
     
     // Substitute where for <td>.fieldx.</td>
     $varprop="\n";
@@ -654,6 +652,10 @@ foreach ($skeletonfiles as $skeletonfile => $outfile)
     	}
     }
     $targetcontent=preg_replace('/LIST_OF_TD_LABEL_FIELDS_VIEW/', $varprop, $targetcontent);
+    
+    
+    // LIST_OF_TD_FIELDS_LIST
+    
     
     
     // Build file

@@ -21,3 +21,5 @@ ViewSiteInNewTab=Pré-visualiser le site dans un nouvel onglet
 ViewPageInNewTab=Pré-visualiser la page dans un nouvel onglet
 SetAsHomePage=Définir comme page d'accueil
 RealURL=URL réelle
+ViewWebsiteInProduction=Pré-visualiser le site web en utilisant l'URL de la page d'accueil
+SetHereVirtualHost=If you can set, on your web server, a dedicated virtual host with a root directory on <strong>%s</strong>, define here the virtual hostname so the preview will be done using this direct access instead of Dolibarr URLs wrapper.

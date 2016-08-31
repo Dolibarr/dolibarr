@@ -2,3 +2,4 @@
 VATIsUsed=GST is used
 VATIsNotUsed=GST is not used
 VATIntraCheck=Cheque
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party

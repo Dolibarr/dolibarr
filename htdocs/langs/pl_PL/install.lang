@@ -86,6 +86,7 @@ DirectoryRecommendation=Zalecane jest by umieścić ten katalog poza katalogiem 
 LoginAlreadyExists=Już istnieje
 DolibarrAdminLogin=Użytkownik administracyjny Dolibarra
 AdminLoginAlreadyExists=Konto administracyjne Dolibarra '<b>%s</b>' już istnieje. Cofnij się jeśli chcesz utworzyć kolejne.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Ostrzeżenie: ze względów bezpieczeństwa by zapobiec nieuprawnionemu użyciu po instalacji lub aktualizacji powinno się usunąć katalog install lub zmienić jego nazwę na <b>install.lock</b>.
 FunctionNotAvailableInThisPHP=Niedostępne w tej wersji PHP
 ChoosedMigrateScript=Wybierz skrypt migracyjny
@@ -130,7 +131,7 @@ MigrationFinished=Migracja zakończona
 LastStepDesc=<strong>Ostatni krok:</strong> Zdefiniuj tutaj nazwę i hasło, które masz zamiar użyć do połączenia z oprogramowaniem. Zapamiętaj je, ponieważ jest to konto do administrowania wszystkimi innymi ustawieniami.
 ActivateModule=Aktywuj moduł %s
 ShowEditTechnicalParameters=Kliknij tutaj, aby pokazać / edytować zaawansowane parametry (tryb ekspert)
-WarningUpgrade=Ostrzeżenie:\nCzy utworzyłeś kopię zapasową bazy danych?\nJest to wysoce zalecane: przykładowo, z powodu kilku błędów w systemie baz danych (dla przykładu wersje 5.5.40/41/42/43), niektóre dane lub tabele mogą zostac utracone podczas tego procesu, w związku z tym jest wysoce zalecane posiadanie pełnego zrzutu swojej bazy danych przed uruchomieniem migracji.\n\nKliknij OK w celu rozpoczęcia procesu migracji...
+WarningUpgrade=Ostrzeżenie:\nCzy utworzyłeś kopię zapasową bazy danych?\nJest to wysoce zalecane: przykładowo, z powodu kilku błędów w systemie baz danych (dla przykładu wersje 5.5.40/41/42/43), niektóre dane lub tabele mogą zostać utracone podczas tego procesu, w związku z tym jest wysoce zalecane posiadanie pełnej kopii zapasowej swojej bazy danych przed uruchomieniem migracji.\n\nKliknij OK w celu rozpoczęcia procesu migracji...
 ErrorDatabaseVersionForbiddenForMigration=Twoja wersja bazy danych to %s. Ma krytyczną lukę utraty danych jeśli się zmieni struktury na bazie danych, tak jak jest to wymagane podczas procesu migracji. Z tego powodu migracje nie zostaną dopuszczone dopóki nie ulepszysz bazy danych do wyższej wersji  (lista znanych wersji z lukami: %s)
 
 #########
