@@ -52,6 +52,7 @@ $langs->load("salaries");
 $langs->load("loan");
 $langs->load("donations");
 $langs->load("trips");
+$langs->load("members");
 
 $id = (GETPOST('id','int') ? GETPOST('id','int') : GETPOST('account','int'));
 $ref = GETPOST('ref','alpha');
