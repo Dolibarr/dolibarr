@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
@@ -2407,7 +2407,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	function fetch($id, $ref='')
 	{
-		global $langs,$user;
 
 		// Check parameters
 		if (empty($id) && empty($ref)) return -1;
@@ -2423,7 +2422,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " p.ref as product_ref,";
 		$sql.= " p.label as product_label,";
 		$sql.= " p.description as product_desc,";
-		$sql.= " p.type as product_type,";
+		$sql.= " p.fk_product_type as product_type,";
 		$sql.= " t.description,";
 		$sql.= " t.date_commande,";
 		$sql.= " t.date_ouverture_prevue as date_ouverture_prevue,";
