@@ -329,6 +329,8 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 	}
 	
 	// Multicurrency
+	if(empty($multicurrency_tx)) $multicurrency_tx = 1;
+	
 	$result[16] = price2num($result[0] * $multicurrency_tx, 'MT');
 	$result[17] = price2num($result[1] * $multicurrency_tx, 'MT');
 	$result[18] = price2num($result[2] * $multicurrency_tx, 'MT');
