@@ -25,6 +25,7 @@
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 use OAuth\OAuth2\Service\Google;
@@ -430,12 +431,13 @@ class printing_printgcp extends PrintingDriver
         //$html .= '<pre>'.print_r($responsedata,true).'</pre>';
         $html .= '<table width="100%" class="noborder">';
         $html .= '<tr class="liste_titre">';
-        $html .= "<td>Id</td>";
-        $html .= "<td>Owner</td>";
-        $html .= '<td>Printer</td>';
-        $html .= '<td>File</td>';
-        $html .= '<td>Status</td>';
-        $html .= '<td>Cancel</td>';
+        $html .= '<td>'.$langs->trans("Id").'</td>';
+        $html .= '<td>'.$langs->trans("Date").'</td>';
+        $html .= '<td>'.$langs->trans("Owner").'</td>';
+        $html .= '<td>'.$langs->trans("Printer").'</td>';
+        $html .= '<td>'.$langs->trans("Filename").'</td>';
+        $html .= '<td>'.$langs->trans("Status").'</td>';
+        $html .= '<td>'.$langs->trans("Cancel").'</td>';
         $html .= '</tr>'."\n";
         $var = True;
         $jobs = $responsedata['jobs'];
@@ -447,6 +449,8 @@ class printing_printgcp extends PrintingDriver
                 $var = !$var;
                 $html .= '<tr '.$bc[$var].'>';
                 $html .= '<td>'.$value['id'].'</td>';
+                $dates=dol_print_date((int) substr($value['createTime'], 0, 10), 'dayhour');
+                $html .= '<td>'.$dates.'</td>';
                 $html .= '<td>'.$value['ownerId'].'</td>';
                 $html .= '<td>'.$value['printerName'].'</td>';
                 $html .= '<td>'.$value['title'].'</td>';
