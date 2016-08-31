@@ -4310,7 +4310,6 @@ border-top-right-radius: 6px;
 .menu_choix1 a {
 	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png',1) ?>') top left no-repeat;
 }
-
 .menu_choix2 a {
 	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png',1) ?>') top left no-repeat;
 }
@@ -4327,12 +4326,34 @@ border-top-right-radius: 6px;
 	padding-top: 18px;
 	padding-left: 54px;
 	font-size: 14px;
-	height: 40px;
+	height: 38px;
 }
 .menu_choix1 a:hover,.menu_choix2 a:hover {
 	color: #6d3f6d;
 }
-
+.menu li.menu_choix1 {
+    padding-top: 6px;
+    padding-right: 10px;
+}
+.menu li.menu_choix2 {
+    padding-top: 6px;
+    padding-right: 10px;
+}
+@media only screen and (max-width: 767px)
+{
+	.menu_choix1 a, .menu_choix2 a {
+		background-size: 30px 30px;
+		height: 30px;
+		padding-left: 40px;
+	}
+    .menu li.menu_choix1, .menu li.menu_choix2 {
+        padding-left: 4px;
+        padding-right: 0;
+    }
+    .liste_articles {
+    	margin-right: 0 !important;
+    }
+}
 
 
 /* ============================================================================== */

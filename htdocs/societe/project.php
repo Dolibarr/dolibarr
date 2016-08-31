@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("companies");
+$langs->load("projects");
 
 // Security check
 $socid = GETPOST('socid','int');
