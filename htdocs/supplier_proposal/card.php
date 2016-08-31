@@ -1150,7 +1150,7 @@ if ($action == 'create')
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
 		$currency_code = (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency));
-	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code');
+	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code',1);
 		print '</td></tr>';
 	}
 
