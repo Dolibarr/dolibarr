@@ -35,7 +35,9 @@ $langs->load("bills");
  * View
  */
 
-llxHeader('', $langs->trans("InvoiceCustomer"));
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Info');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 $fac = new Facture($db);
 $fac->fetch($_GET["facid"]);

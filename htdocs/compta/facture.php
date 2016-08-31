@@ -1880,7 +1880,9 @@ if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $now = dol_now();
 
-llxHeader('', $langs->trans('InvoiceCustomer'), 'EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes');
+$title = $langs->trans('InvoiceCustomer') . " - " . $langs->trans('Card');
+$helpurl = "EN:Customers_Invoices|FR:Factures_Clients|ES:Facturas_a_clientes";
+llxHeader('', $title, $helpurl);
 
 
 // Mode creation
@@ -2368,7 +2370,7 @@ if ($action == 'create')
 	}
 
 	// Date invoice
-	print '<tr><td class="fieldrequired">' . $langs->trans('Date') . '</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">' . $langs->trans('DateInvoice') . '</td><td colspan="2">';
 	$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 	print $form->select_date($datefacture?$datefacture:$dateinvoice, '', '', '', '', "add", 1, 1, 1);
 	print '</td></tr>';
@@ -3055,7 +3057,7 @@ else if ($id > 0 || ! empty($ref))
 	// Date invoice
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('Date');
+	print $langs->trans('DateInvoice');
 	print '</td>';
 	if ($object->type != Facture::TYPE_CREDIT_NOTE && $action != 'editinvoicedate' && ! empty($object->brouillon) && $user->rights->facture->creer && empty($conf->global->FAC_FORCE_DATE_VALIDATION))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editinvoicedate&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
