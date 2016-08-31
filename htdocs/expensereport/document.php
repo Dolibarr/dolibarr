@@ -81,8 +81,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader("",$langs->trans("ExpenseReport"));
-
+$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Documents");
+$helpurl="EN:Module_Expense_Reports";
+llxHeader("",$title,$helpurl);
 
 if ($object->id)
 {
@@ -90,7 +91,7 @@ if ($object->id)
 
 	$head=expensereport_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("TripCard"), 0, 'trip');
+	dol_fiche_head($head, 'documents',  $langs->trans("ExpenseReport"), 0, 'trip');
 
 
 	// Construit liste des fichiers
