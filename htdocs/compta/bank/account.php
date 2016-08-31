@@ -177,8 +177,9 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->m
 /*
  * View
  */
-
-llxHeader('',$langs->trans("FinancialAccount").'-'.$langs->trans("Transactions"));
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Transactions");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $societestatic=new Societe($db);
 $userstatic=new User($db);

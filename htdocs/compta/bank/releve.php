@@ -81,7 +81,9 @@ $pagenext = $page + 1;
  * View
  */
 
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("AccountStatements");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 $societestatic=new Societe($db);
