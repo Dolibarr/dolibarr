@@ -1113,7 +1113,9 @@ $formfile = new FormFile($db);
 $bankaccountstatic=new Account($db);
 $paymentstatic=new PaiementFourn($db);
 
-llxHeader('',$langs->trans('SupplierInvoice'),'');
+$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Card');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 // Mode creation
 if ($action == 'create')
@@ -1827,7 +1829,7 @@ else
 	    $form_permission = $object->statut<FactureFournisseur::STATUS_CLOSED && $user->rights->fournisseur->facture->creer && $object->getSommePaiement() <= 0;
 
         // Date
-        print '<tr><td>'.$form->editfieldkey("Date",'datef',$object->datep,$object,$form_permission,'datepicker').'</td><td colspan="3">';
+        print '<tr><td>'.$form->editfieldkey("DateInvoice",'datef',$object->datep,$object,$form_permission,'datepicker').'</td><td colspan="3">';
         print $form->editfieldval("Date",'datef',$object->datep,$object,$form_permission,'datepicker');
         print '</td>';
 

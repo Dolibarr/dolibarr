@@ -43,7 +43,9 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
  * View
  */
 
-llxHeader('',$langs->trans('SupplierInvoice'));
+$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Info');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 $object = new FactureFournisseur($db);
 $object->fetch($id);
