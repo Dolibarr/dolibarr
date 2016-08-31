@@ -557,7 +557,9 @@ $form = new Form($db);
 
 $now=dol_now();
 
-llxHeader('',$langs->trans("Subscriptions"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
+$title=$langs->trans("Member") . " - " . $langs->trans("Subscriptions");
+$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+llxHeader("",$title,$helpurl);
 
 if ($rowid > 0)
 {
