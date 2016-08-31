@@ -438,6 +438,7 @@ ListOfYourUnpaidInvoices=List of unpaid invoices
 NoteListOfYourUnpaidInvoices=Note: This list contains only invoices for third parties you are linked to as a sale representative.
 RevenueStamp=Revenue stamp
 YouMustCreateInvoiceFromThird=This option is only available when creating invoice from tab "customer" of thirdparty
+YouMustCreateInvoiceFromSupplier=This option is only available when creating invoice from tab "supplier" of thirdparty
 YouMustCreateStandardInvoiceFirstDesc=You have to create a standard invoice first and convert it to "template" to create a new template invoice
 PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (recommended Template)
 PDFCrevetteDescription=Invoice PDF template Crevette. A complete invoice template for situation invoices
