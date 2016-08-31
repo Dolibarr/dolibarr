@@ -662,6 +662,19 @@ jQuery(document).ready(function() {
 	<?php if (GETPOST('prod_entry_mode') == 'predef') { // When we submit with a predef product and it fails we must start with predef ?>
 		setforpredef();
 	<?php } ?>
+	
+	<?php if (!empty($conf->multicurrency->enabled)) { ?>
+		$("#multicurrency_price_ht").change(function() {
+			var new_value = price2numjs($(this).val()) / <?php echo !empty($object->multicurrency_tx) ? $object->multicurrency_tx : 1; ?>; 
+			$("#price_ht").val(new_value);
+		});
+		
+		$("#price_ht").change(function() {
+			var new_value = price2numjs($(this).val()) * <?php echo !empty($object->multicurrency_tx) ? $object->multicurrency_tx : 1; ?>;
+			$("#multicurrency_price_ht").val(new_value);
+		});
+
+	<?php } ?>
 
 });
 
@@ -682,6 +695,7 @@ function setforfree() {
 	jQuery("#fournprice_predef").hide();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
+	jQuery("#title_up_ht_currency").show();
 	jQuery("#title_up_ttc").show();
 	jQuery("#np_marginRate").show();	// May no exists
 	jQuery("#np_markRate").show();	// May no exists

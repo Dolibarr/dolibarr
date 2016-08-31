@@ -329,6 +329,19 @@ jQuery(document).ready(function()
     <?php
     }
     ?>
+    
+    <?php if (!empty($conf->multicurrency->enabled)) { ?>
+		$("#multicurrency_subprice").change(function() {
+			var new_value = price2numjs($(this).val()) / <?php echo !empty($object->multicurrency_tx) ? $object->multicurrency_tx : 1; ?>; 
+			$("#price_ht").val(new_value);
+		});
+		
+		$("#price_ht").change(function() {
+			var new_value = price2numjs($(this).val()) * <?php echo !empty($object->multicurrency_tx) ? $object->multicurrency_tx : 1; ?>;
+			$("#multicurrency_subprice").val(new_value);
+		});
+
+	<?php } ?>
 });
 
 </script>
