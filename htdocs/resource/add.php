@@ -35,9 +35,9 @@ $langs->load("other");
 $langs->load("resource");
 
 // Get parameters
-$id                     = GETPOST('id','int');
-$action         = GETPOST('action','alpha');
-$cancel         = GETPOST('cancel','alpha');
+$id	= GETPOST('id','int');
+$action	= GETPOST('action','alpha');
+$cancel	= GETPOST('cancel','alpha');
 if (empty($sortorder)) $sortorder="DESC";
 if (empty($sortfield)) $sortfield="t.rowid";
 if (empty($arch)) $arch = 0;

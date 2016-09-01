@@ -298,7 +298,9 @@ if (GETPOST('removefilter'))
     $filteraccountid=0;
 }
 
-llxHeader();
+$title=$langs->trans("Cheques") . " - " . $langs->trans("Card");
+$helpurl="";
+llxHeader("",$title,$helpurl);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -386,9 +388,10 @@ if ($action == 'new')
 	print '<table class="border" width="100%">';
 	//print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dol_print_date($now,'day').'</td></tr>';
 	// Filter
-	print '<tr><td width="200">'.$langs->trans("DateChequeReceived").'</td><td>';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans("DateChequeReceived").'</td><td>';
 	print $form->select_date($filterdate,'fd',0,0,1,'',1,1,1);
 	print '</td></tr>';
+
     print '<tr><td>'.$langs->trans("BankAccount").'</td><td>';
     $form->select_comptes($filteraccountid,'accountid',0,'courant <> 2',1);
     print '</td></tr>';
@@ -563,7 +566,7 @@ else
 	$accountstatic->label=$object->account_label;
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width=20%>';
+	print '<tr><td class="titlefield">';
 
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Ref');
