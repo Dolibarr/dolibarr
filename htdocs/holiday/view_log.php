@@ -100,8 +100,8 @@ foreach($cp->logs as $logs_CP)
    	print '<tr '.$bc[$var].'>';
    	print '<td>'.$logs_CP['rowid'].'</td>';
    	print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
-   	print '<td>'.$user_action->getNomUrl(1).'</td>';
-   	print '<td>'.$user_update->getNomUrl(1).'</td>';
+   	print '<td>'.$user_action->getNomUrl(-1).'</td>';
+   	print '<td>'.$user_update->getNomUrl(-1).'</td>';
    	print '<td>'.$logs_CP['type_action'].'</td>';
    	print '<td>';
 	$label=$alltypeleaves[$logs_CP['fk_type']]['label'];

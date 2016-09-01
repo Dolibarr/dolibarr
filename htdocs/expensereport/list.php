@@ -20,7 +20,7 @@
  */
 
 /**
- *	    \file       htdocs/expensereport/index.php
+ *	    \file       htdocs/expensereport/list.php
  *      \ingroup    expensereport
  *		\brief      list of expense reports
  */
@@ -130,7 +130,7 @@ $pagenext = $page + 1;
 
 $sql = "SELECT d.rowid, d.ref, d.fk_user_author, d.total_ht, d.total_tva, d.total_ttc, d.fk_statut as status,";
 $sql.= " d.date_debut, d.date_fin, d.date_valid,";
-$sql.= " u.rowid as id_user, u.firstname, u.lastname";
+$sql.= " u.rowid as id_user, u.firstname, u.lastname, u.login, u.statut, u.photo";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d";
 $sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON d.fk_user_author = u.rowid";
 $sql.= " WHERE d.entity = ".$conf->entity;
@@ -314,19 +314,20 @@ if ($resql)
 	$total_total_tva = 0;
 	
 	$expensereportstatic=new ExpenseReport($db);
-
+	$usertmp = new User($db);
+	
 	if ($num > 0)
 	{
 		while ($i < min($num,$limit))
 		{
-			$objp = $db->fetch_object($resql);
-			
-			$expensereportstatic->id=$objp->rowid;
-			$expensereportstatic->ref=$objp->ref;
-			$expensereportstatic->status=$objp->status;
-			$expensereportstatic->valid=$objp->date_valid;
-			$expensereportstatic->date_debut=$objp->date_debut;
-			$expensereportstatic->date_fin=$objp->date_fin;
+			$obj = $db->fetch_object($resql);
+
+			$expensereportstatic->id=$obj->rowid;
+			$expensereportstatic->ref=$obj->ref;
+			$expensereportstatic->status=$obj->status;
+			$expensereportstatic->valid=$obj->date_valid;
+			$expensereportstatic->date_debut=$obj->date_debut;
+			$expensereportstatic->date_fin=$obj->date_fin;
 
 			$var=!$var;
 			print "<tr ".$bc[$var].">";
@@ -335,12 +336,20 @@ if ($resql)
 			if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) print img_warning($langs->trans("Late"));
 			if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) print img_warning($langs->trans("Late"));
 			print '</td>';
-			print '<td align="center">'.($objp->date_debut > 0 ? dol_print_date($objp->date_debut, 'day') : '').'</td>';
-			print '<td align="center">'.($objp->date_fin > 0 ? dol_print_date($objp->date_fin, 'day') : '').'</td>';
-			print '<td align="left"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$objp->id_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.dolGetFirstLastname($objp->firstname, $objp->lastname).'</a></td>';
-			print '<td align="right">'.price($objp->total_ht).'</td>';
-			print '<td align="right">'.price($objp->total_tva).'</td>';
-			print '<td align="right">'.price($objp->total_ttc).'</td>';
+			print '<td align="center">'.($obj->date_debut > 0 ? dol_print_date($obj->date_debut, 'day') : '').'</td>';
+			print '<td align="center">'.($obj->date_fin > 0 ? dol_print_date($obj->date_fin, 'day') : '').'</td>';
+			print '<td align="left">';
+			$usertmp->id=$obj->id_user;
+			$usertmp->lastname=$obj->lastname;
+			$usertmp->firstname=$obj->firstname;
+			$usertmp->login=$obj->login;
+			$usertmp->statut=$obj->statut;
+			$usertmp->photo=$obj->photo;
+			print $usertmp->getNomUrl(-1);
+			print '</td>';
+			print '<td align="right">'.price($obj->total_ht).'</td>';
+			print '<td align="right">'.price($obj->total_tva).'</td>';
+			print '<td align="right">'.price($obj->total_ttc).'</td>';
 			print '<td align="right">';
 			print $expensereportstatic->getLibStatut(5);
 			print '</td>';
@@ -349,9 +358,9 @@ if ($resql)
 
 			print "</tr>\n";
 
-			$total_total_ht = $total_total_ht + $objp->total_ht;
-			$total_total_tva = $total_total_tva + $objp->total_tva;
-			$total_total_ttc = $total_total_ttc + $objp->total_ttc;
+			$total_total_ht = $total_total_ht + $obj->total_ht;
+			$total_total_tva = $total_total_tva + $obj->total_tva;
+			$total_total_ttc = $total_total_ttc + $obj->total_ttc;
 
 			$i++;
 		}

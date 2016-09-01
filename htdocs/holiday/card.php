@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
@@ -1010,7 +1010,7 @@ else
 
                 print '<td>'.$langs->trans("User").'</td>';
         		print '<td>';
-        		print $userRequest->getNomUrl(1, 'leave');
+        		print $userRequest->getNomUrl(-1, 'leave');
         		print '</td></tr>';
 
 		        // Type
@@ -1120,14 +1120,14 @@ else
                 	$userCreate->fetch($cp->fk_user_create);
 	                print '<tr>';
 	                print '<td>'.$langs->trans('RequestByCP').'</td>';
-	                print '<td>'.$userCreate->getNomUrl(1).'</td>';
+	                print '<td>'.$userCreate->getNomUrl(-1).'</td>';
 	                print '</tr>';
                 }
 
                 if (!$edit) {
                     print '<tr>';
                     print '<td width="50%">'.$langs->trans('ReviewedByCP').'</td>';
-                    print '<td>'.$valideur->getNomUrl(1).'</td>';
+                    print '<td>'.$valideur->getNomUrl(-1).'</td>';
                     print '</tr>';
                 } else {
                     print '<tr>';

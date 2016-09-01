@@ -1262,7 +1262,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($object->fk_user_valid);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 				}
 
@@ -1271,7 +1271,7 @@ else
 				print '<td>';
 				$userfee=new User($db);
 				$userfee->fetch($object->fk_user_author);
-				print $userfee->getNomUrl(1);
+				print $userfee->getNomUrl(-1);
 				print '</td></tr>';
 				if ($object->fk_statut==6)
 				{
@@ -1280,7 +1280,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($user->id);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 
 				}
@@ -1504,7 +1504,7 @@ else
 					$userauthor=new User($db);
 					$result=$userauthor->fetch($object->fk_user_author);
 					if ($result < 0) dol_print_error('',$userauthor->error);
-					print $userauthor->getNomUrl(1);
+					print $userauthor->getNomUrl(-1);
 				}
 				print '</td></tr>';
 
@@ -1527,7 +1527,7 @@ else
 					{
 						$userfee=new User($db);
 						$userfee->fetch($object->fk_user_validator);
-						print $userfee->getNomUrl(1);
+						print $userfee->getNomUrl(-1);
 						if (empty($userfee->email) || ! isValidEmail($userfee->email)) 
 						{
 						    $langs->load("errors");
@@ -1545,7 +1545,7 @@ else
 					{
 						$userfee=new User($db);
 						$userfee->fetch($object->fk_user_cancel);
-						print $userfee->getNomUrl(1);
+						print $userfee->getNomUrl(-1);
 					}
 					print '</td></tr>';
 					print '<tr>';
@@ -1566,7 +1566,7 @@ else
 					{
 						$userapp=new User($db);
 						$userapp->fetch($object->fk_user_approve);
-						print $userapp->getNomUrl(1);
+						print $userapp->getNomUrl(-1);
 					}
 					print '</td></tr>';
 					print '<tr>';
@@ -1582,7 +1582,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($object->fk_user_refuse);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
@@ -1600,7 +1600,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($object->fk_user_paid);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_PAIEMENT").'</td>';

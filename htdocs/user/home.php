@@ -139,7 +139,7 @@ if ($resql)
         $fuserstatic->email = $obj->email;
         $fuserstatic->skype = $obj->skype;
         $fuserstatic->societe_id = $obj->fk_soc;
-        print $fuserstatic->getNomUrl(1);
+        print $fuserstatic->getNomUrl(-1);
 		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"),'redstar');
