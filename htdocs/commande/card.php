@@ -2513,7 +2513,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 
 				// Create contract
-				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED)) {
+				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED || $object->statut == Commande::STATUS_CLOSED)) {
 				    $langs->load("contracts");
 
 				    if ($user->rights->contrat->creer) {
