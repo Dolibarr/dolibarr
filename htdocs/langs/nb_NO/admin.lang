@@ -1311,8 +1311,6 @@ SyslogFilename=Filnavn og bane
 YouCanUseDOL_DATA_ROOT=Du kan bruke DOL_DATA_ROOT / dolibarr.log som loggfil i Dolibarr "dokumenter"-mappen. Du kan angi en annen bane for å lagre denne filen.
 ErrorUnknownSyslogConstant=Konstant %s er ikke en kjent syslog-konstant
 OnlyWindowsLOG_USER=Windows støtter bare LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN fra ditt Sentry-prosjekt
 ##### Donations #####
 DonationsSetup=Oppsett av Donasjonsmodulen
 DonationsReceiptModel=Mal for donasjonskvittering

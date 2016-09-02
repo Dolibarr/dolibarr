@@ -1311,8 +1311,6 @@ SyslogFilename=Име на файла и пътя
 YouCanUseDOL_DATA_ROOT=Можете да използвате DOL_DATA_ROOT / dolibarr.log за лог файл в Dolibarr директория &quot;документи&quot;. Можете да зададете различен път, за да се съхранява този файл.
 ErrorUnknownSyslogConstant=Постоянни %s не е известен Syslog постоянно
 OnlyWindowsLOG_USER=Windows поддържа само LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Настройка на модул Дарение
 DonationsReceiptModel=Шаблон на получаване на дарение

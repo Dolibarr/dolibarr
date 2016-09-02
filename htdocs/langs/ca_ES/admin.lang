@@ -1311,8 +1311,6 @@ SyslogFilename=Nom i ruta de l'arxiu
 YouCanUseDOL_DATA_ROOT=Utilitza DOL_DATA_ROOT/dolibarr.log per un fitxer de registre en la carpeta documents de Dolibarr. Tanmateix, es pot definir una carpeta diferent per guardar aquest fitxer.
 ErrorUnknownSyslogConstant=La constant %s no és una constant syslog coneguda
 OnlyWindowsLOG_USER=Windows només suporta LOG_USER
-SyslogSentryDSN=DSN Sentry
-SyslogSentryFromProject=DSN del teu projecte Sentry
 ##### Donations #####
 DonationsSetup=Configuració del mòdul donacions
 DonationsReceiptModel=Plantilla de rebut de donació
