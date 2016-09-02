@@ -10,6 +10,7 @@
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +214,7 @@ if (empty($reshook))
 					'price' => $newprice[$i],
 					'price_min' => $newprice_min[$i],
 					'price_base_type' => $newpricebase[$i],
-					'vat_tx' => $tva_tx,
+					'vat_tx' => $tva_tx_txt,
 					'npr' => $npr,
 				    'localtaxes_array' => array('0'=>$localtax1_type, '1'=>$localtax1, '2'=>$localtax2_type, '3'=>$localtax2)
 				);
