@@ -1311,8 +1311,6 @@ SyslogFilename=Tên tập tin và đường dẫn
 YouCanUseDOL_DATA_ROOT=You can use DOL_DATA_ROOT/dolibarr.log for a log file in Dolibarr "documents" directory. You can set a different path to store this file.
 ErrorUnknownSyslogConstant=Constant %s is not a known Syslog constant
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Cài đặt module Tài trợ
 DonationsReceiptModel=Mẫu biên nhận Tài trợ
