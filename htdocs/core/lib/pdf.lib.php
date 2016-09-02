@@ -1846,6 +1846,7 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
  *	@param	string		$type				Type
  *  @param  Translate	$outputlangs		Object langs for output
  * 	@return	integer
+ *  @deprecated Not used by Dolibarr core, so will be removed.
  */
 function pdf_getTotalQty($object,$type,$outputlangs)
 {
