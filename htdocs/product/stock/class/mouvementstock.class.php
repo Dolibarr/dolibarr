@@ -137,17 +137,26 @@ class MouvementStock extends CommonObject
             	while ($i < $num)
             	{
             		$obj = $this->db->fetch_object($resql);
-            		if ($this->db->jdate($obj->eatby) != $eatby)
+					// only check date values
+					$tmparray=dol_getdate($eatby, true);
+					$eatby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+					$tmparray=dol_getdate($sellby, true);
+					$sellby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+					$tmparray=dol_getdate($this->db->jdate($obj->eatby), true);
+					$dbEatby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+					$tmparray=dol_getdate($this->db->jdate($obj->sellby), true);
+					$dbSellby=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+            		if ($dbEatby != $eatby)
             		{
-						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby));
-						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby)), LOG_ERR);
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbEatby), dol_print_date($eatby));
+						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbEatby), dol_print_date($eatby)), LOG_ERR);
 						$this->db->rollback();
             			return -3;
             		}
-            		if ($this->db->jdate($obj->sellby) != $sellby)
+            		if ($dbSellby != $sellby)
             		{
-						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby));
-						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby)), LOG_ERR);
+						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbSellby), dol_print_date($sellby));
+						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($dbSellby), dol_print_date($sellby)), LOG_ERR);
 						$this->db->rollback();
             			return -3;
             		}
