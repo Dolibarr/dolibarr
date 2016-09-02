@@ -74,8 +74,6 @@ llxHeader('', $title, $helpurl);
 
 $form=new Form($b);
 
-llxHeader('', $title, $help_url);
-
 if ($id > 0 || $ref)
 {
 	$result = $object->fetch($id,$ref);
