@@ -97,8 +97,6 @@ if (empty($reshook))
 	{
 	    $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5
 	    
-	    $tva_tx_txt; 
-
 	    // We must define tva_tx, npr and local taxes
 	    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
 	    $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
@@ -204,6 +202,7 @@ if (empty($reshook))
 				}
 
 				$tva_tx_txt = $newvattx[$i];
+				$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
                 $npr = $newvatnpr[$i];
 				$localtax1 = $newlocaltax1_tx[$i];
 				$localtax1_type = $newlocaltax1_type[$i];
@@ -214,7 +213,7 @@ if (empty($reshook))
 					'price' => $newprice[$i],
 					'price_min' => $newprice_min[$i],
 					'price_base_type' => $newpricebase[$i],
-					'vat_tx' => $tva_tx_txt,
+					'vat_tx' => $tva_tx,
 					'npr' => $npr,
 				    'localtaxes_array' => array('0'=>$localtax1_type, '1'=>$localtax1, '2'=>$localtax2_type, '3'=>$localtax2)
 				);
