@@ -926,7 +926,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-			    $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price');
+				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot');
     			foreach($elements as $table)
     			{
     				if (! $error)
