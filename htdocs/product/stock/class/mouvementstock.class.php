@@ -415,8 +415,8 @@ class MouvementStock extends CommonObject
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".$fk_product;
     			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET p.pmp = ".$newpmp.", ";
-				$sql.= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock ps WHERE ps.fk_product = p.rowid)";
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$newpmp.", ";
+				$sql.= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 				$sql.= " WHERE rowid = ".$fk_product;
 				
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);
