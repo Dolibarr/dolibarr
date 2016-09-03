@@ -138,10 +138,11 @@ function user_prepare_head($object)
     {
 		// Notes
         $nbNote = 0;
-        if(!empty($object->note)) $nbNote++;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/note.class.php';
+		$nbNotes = Note::count($db, $object->element, $object->id);
         $head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$object->id;
         $head[$h][1] = $langs->trans("Note");
-		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if ($nbNotes > 0) $head[$h][1].= ' <span class="badge">'.$nbNotes.'</span>';
         $head[$h][2] = 'note';
         $h++;
 

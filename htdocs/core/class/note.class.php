@@ -35,8 +35,8 @@ class Note extends CommonObject
     public $datec;
     public $title;
     public $text;
-    public $element;
-    public $id_element;
+    public $objecttype;
+    public $objectid;
 
 
     /**
@@ -84,12 +84,12 @@ class Note extends CommonObject
 
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."note (entity, datec, title, text, element, id_element)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."note (entity, datec, title, text, objecttype, objectid)";
         $sql .= " VALUES ('".$conf->entity."', '".$this->db->idate($this->datec)."'";
         $sql .= ", '" . $this->db->escape($this->title) . "'";
         $sql .= ", '" . $this->db->escape($this->text) . "'";
-        $sql .= ", '" . $this->element . "'";
-        $sql .= ", " . $this->id_element . ")";
+        $sql .= ", '" . $this->objecttype . "'";
+        $sql .= ", " . $this->objectid . ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -170,8 +170,8 @@ class Note extends CommonObject
         $sql .= ", datec = '" . $this->db->idate(dol_now()) . "'";
         $sql .= ", title = '" . $this->db->escape($this->title) . "'";
         $sql .= ", text = '" . $this->db->escape($this->text) . "'";
-        $sql .= ", element = '" . $this->element . "'";
-        $sql .= ", id_element = " . $this->id_element;
+        $sql .= ", objecttype = '" . $this->objecttype . "'";
+        $sql .= ", objectid = " . $this->objectid;
         $sql .= " WHERE rowid = '" . $this->id ."'";
 
         dol_syslog(get_class($this)."::update sql = " .$sql);
@@ -219,18 +219,18 @@ class Note extends CommonObject
      *  Loads all notes from database
      *
      *  @param  array   $note		array of note objects to fill
-     *  @param  string  $element	type of the associated element in dolibarr
-     *  @param  int     $id_element	id of the associated element in dolibarr
+     *  @param  string  $objecttype	type of the associated object in dolibarr
+     *  @param  int     $objectid	id of the associated object in dolibarr
      *  @param  string  $sortfield  field used to sort
      *  @param  string  $sortorder  sort order
      *  @return int                 1 if ok, 0 if no records, -1 if error
      **/
-    public function fetchAll($note, $element, $id_element, $sortfield=null, $sortorder=null)
+    public function fetchAll(&$notes, $objecttype, $objectid, $sortfield=null, $sortorder=null)
     {
         global $conf;
 
-        $sql = "SELECT rowid, entity, datec, title, text, element, id_element FROM " . MAIN_DB_PREFIX . "note";
-        $sql .= " WHERE element = '" . $element . "' AND id_element = " . $id_element;
+        $sql = "SELECT rowid, entity, datec, title, text, objecttype, objectid FROM " . MAIN_DB_PREFIX . "note";
+        $sql .= " WHERE objecttype = '" . $objecttype . "' AND objectid = " . $objectid;
         if ($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
         if ($sortfield) {
             if (empty($sortorder)) {
@@ -255,8 +255,8 @@ class Note extends CommonObject
                     $note->datec = $this->db->jdate($obj->datec);
                     $note->title = $obj->title;
                     $note->text = $obj->text;
-                    $note->element = $obj->element;
-                    $note->id_element = $obj->id_element;
+                    $note->objecttype = $obj->objecttype;
+                    $note->objectid = $obj->objectid;
                     $notes[] = $note;
                 }
                 return 1;
@@ -272,16 +272,16 @@ class Note extends CommonObject
      *  Return nb of notes
      *
      *  @param  DoliDb  $db         Database handler
-     *  @param  string  $element 	Type of the associated element in dolibarr
-     *  @param  int     $id_element Id of the associated element in dolibarr
+     *  @param  string  $objecttype	Type of the associated object in dolibarr
+     *  @param  int     $objectid 	Id of the associated object in dolibarr
      *  @return int                 Nb of notes, -1 if error
      **/
-    public static function count($db, $element, $id_element)
+    public static function count($db, $objecttype, $objectid)
     {
         global $conf;
     
         $sql = "SELECT COUNT(rowid) as nb FROM " . MAIN_DB_PREFIX . "note";
-        $sql .= " WHERE element = '" . $element . "' AND id_element = " . $id_element;
+        $sql .= " WHERE objecttype = '" . $objecttype . "' AND objectid = " . $objectid;
         if ($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
     
         $resql = $db->query($sql);
@@ -307,7 +307,7 @@ class Note extends CommonObject
             $rowid = $this->id;
         }
 
-        $sql = "SELECT rowid, entity, title, text, element, id_element FROM " . MAIN_DB_PREFIX . "note";
+        $sql = "SELECT rowid, entity, title, text, objecttype, objectid FROM " . MAIN_DB_PREFIX . "note";
         $sql .= " WHERE rowid = " . $rowid;
         if($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
 
@@ -321,8 +321,8 @@ class Note extends CommonObject
                 $this->entity = $obj->entity;
                 $this->title = $obj->title;
                 $this->text = $obj->text;
-                $this->element = $obj->element;
-                $this->id_element = $obj->id_element;
+                $this->objecttype = $obj->objecttype;
+                $this->objectid = $obj->objectid;
                 return 1;
             }
             else

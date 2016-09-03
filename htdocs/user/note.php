@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2016		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +21,12 @@
 /**
  *      \file       htdocs/user/note.php
  *      \ingroup    usergroup
- *      \brief      Fiche de notes sur un utilisateur Dolibarr
+ *      \brief      Note card of an user
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/note.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $id = GETPOST('id','int');
@@ -74,13 +76,17 @@ if (empty($reshook)) {
 }
 
 
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
-llxHeader();
+$title=$langs->trans("User").' - '.$langs->trans("Note");
+$helpurl='';
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
+$note = New Note($db);
+$modulepart = 'user';
 
 if ($id)
 {
@@ -100,26 +106,52 @@ if ($id)
 
     print '<table class="border" width="100%">';
 
-    // Login
-    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
+    // Notes
+	$notes = array();
+	$result = $note->fetchAll($notes, $modulepart, $id, $sortorder, $sortfield);
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+	
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+		$limit=10;
 
-	// Note
-    print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td>';
-	if ($action == 'edit' && $user->rights->user->user->creer)
-	{
-		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
-	    // Editeur wysiwyg
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note_private',$object->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
-		$doleditor->Create();
+		$i = 0;
+		while ($i < min($num,$limit))
+		{
+			// Id
+			// print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
+			// Title
+			print '<tr><td>'.$notes->title.' ('.dol_print_date($db->jdate($notes->datec),'day').')</td></tr>';
+			// Text
+			print '<tr><td align="center">'.dol_htmlentitiesbr($notes->text).'</td><tr>';
+			
+			/*
+			// User
+			print '<td>';
+			$userstatic->id = $obj->fk_user;
+			$userstatic->lastname = $obj->lastname;
+			$userstatic->firstname = $obj->firstname;
+			print $userstatic->getNomUrl(1);
+			print '</td>';
+
+			if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
+			else print '<td>&nbsp;</td>';
+
+			print '<td align="right">'.$obj->km.'</td>';
+
+			$tripandexpense_static->statut=$obj->fk_statut;
+			print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
+			print "</tr>\n";
+			*/
+
+			$i++;
+		}
+	//print dol_htmlentitiesbr($object->note);
+
 	}
-	else
-	{
-		print dol_htmlentitiesbr($object->note);
-	}
-	print "</td></tr>";
 
     print "</table>";
 

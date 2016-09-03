@@ -15,5 +15,5 @@
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 -- ========================================================================
 
-ALTER TABLE llx_note ADD INDEX idx_note_id_element (id_element);
+ALTER TABLE llx_note ADD INDEX idx_note_object_id (objectid);
 

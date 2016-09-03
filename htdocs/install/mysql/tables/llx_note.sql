@@ -22,8 +22,8 @@ create table llx_note
 	entity			integer   DEFAULT 1 NOT NULL,			-- Multi company id
 	datec			datetime,
 	tms				timestamp,
-	element			varchar(24) NOT NULL,					-- Example : Salary / Product / Contact
-	id_element		integer,								-- Id of the element
+	objecttype		varchar(24) NOT NULL,					-- Example : Salary / Product / Contact
+	objectid		integer,								-- Id of the object
 	type			tinyint DEFAULT 0,						-- 0 : private note | 1 : public note
 	title			varchar(255),
 	text			text DEFAULT NULL,
