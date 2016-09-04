@@ -23,6 +23,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
 $langs->load("companies");
@@ -36,9 +37,11 @@ if (!$user->admin) accessforbidden();
 
 $id=GETPOST('rowid','int');
 $action=GETPOST('action','alpha');
+
 $langcode=GETPOST('langcode','alpha');
 $transkey=GETPOST('transkey','alpha');
 $transvalue=GETPOST('transvalue','alpha');
+
 
 $mode = GETPOST('mode')?GETPOST('mode'):'overwrite';
 
@@ -131,82 +134,44 @@ print load_fiche_titre($langs->trans("Translation"),'','title_setup');
 print $langs->trans("TranslationDesc")."<br>\n";
 print "<br>\n";
 
-print $langs->trans("CurrentUserLanguage").': <strong>'.$langs->defaultlang.'</strong><br>';
+$current_language_code=$langs->defaultlang;
+$s=picto_from_langcode($current_language_code);
+print $langs->trans("CurrentUserLanguage").': <strong>'.$s.' '.$current_language_code.'</strong><br>';
 
 print '<br>';
 
-print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
-$urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
-print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a>)<br>';
-print $langs->trans("TranslationOverwriteDesc",$langs->transnoentitiesnoconv("Language"),$langs->transnoentitiesnoconv("Key"),$langs->transnoentitiesnoconv("NewTranslationStringToShow"))."<br>\n";
-
-print '<br>';
-
-
-$param='mode='.$mode;
+$param='&mode='.$mode;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($langcode)        $param.='&langcode='.urlencode($langcode);
+if ($transkey)        $param.='&transkey='.urlencode($transkey);
+if ($transvalue)      $param.='&transvalue='.urlencode($transvalue);
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 $head=translation_prepare_head();
 
 dol_fiche_head($head, $mode, '', 0, '');
 
-if ($mode == 'searchkey')
-{
-    //print '<br>';
-    //print load_fiche_titre($langs->trans("TranslationKeySearch"), '', '')."\n";
-    
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" id="action" name="action" value="search">';
-    print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
-    
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Language").' (en_US, es_MX, ...)</td>';
-    print '<td>'.$langs->trans("Key").'</td>';
-    print '<td>'.$langs->trans("TranslationString").'</td>';
-    if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
-    print '<td align="center"></td>';
-    print "</tr>\n";
-    
-    // Line to search new record
-    $var=false;
-    print "\n";
-    
-    print '<tr '.$bc[$var].'><td>';
-    print $formadmin->select_language(GETPOST('langcodesearch'),'langcodesearch',0,null,$langs->trans("All"),0,0,'',1);
-    //print '<input type="text" class="flat" size="24" name="langcode" value="'.GETPOST('langcode').'">';
-    print '</td>'."\n";
-    print '<td>';
-    print '<input type="text" class="flat maxwidthonsmartphone" name="transkeysearch" value="">';
-    print '</td><td>';
-    print '<input type="text" class="quatrevingtpercent" name="transvaluesearch" value="">';
-    print '</td>';
-    // Limit to superadmin
-    if (! empty($conf->multicompany->enabled) && !$user->entity)
-    {
-        print '<td>';
-        print '<input type="text" class="flat" size="1" name="entitysearch" value="'.$conf->entity.'">';
-        print '</td>';
-        print '<td align="center">';
-    }
-    else
-    {
-        print '<td align="center">';
-        print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
-    }
-    print '<input type="submit" class="button" value="'.$langs->trans("Search").'" name="search">';
-    print "</td>\n";
-    print '</tr>';
-    
-    print '</table>';
-    print '</form>';
-}
-
 if ($mode == 'overwrite')
 {
     //print load_fiche_titre($langs->trans("TranslationOverwriteKey"), '', '')."\n";
+
+    print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
+    $urlwikitranslatordoc='https://wiki.dolibarr.org/index.php/Translator_documentation';
+    print ' ('.$langs->trans("SeeAlso").': <a href="'.$urlwikitranslatordoc.'" target="_blank">'.$urlwikitranslatordoc.'</a>)<br>';
+    print $langs->trans("TranslationOverwriteDesc",$langs->transnoentitiesnoconv("Language"),$langs->transnoentitiesnoconv("Key"),$langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
+    print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
+    print '<br>';
+    
     
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" id="action" name="action" value="">';
@@ -227,8 +192,7 @@ if ($mode == 'overwrite')
     print "\n";
     
     print '<tr '.$bc[$var].'><td>';
-    print $formadmin->select_language(GETPOST('langcode'),'langcode',0,null,1,0,0,'',1);
-    //print '<input type="text" class="flat" size="24" name="langcode" value="'.GETPOST('langcode').'">';
+    print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, null, 1, 0, 0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
     print '<td>';
     print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="">';
@@ -311,6 +275,128 @@ if ($mode == 'overwrite')
     
     print '</table>';
 
+}
+
+if ($mode == 'searchkey')
+{
+    $recordtoshow=array();
+    
+    $nbempty=0;
+    /*var_dump($langcode);
+     var_dump($transkey);
+     var_dump($transvalue);*/
+    if (empty($langcode) || $langcode == '-1') $nbempty++;
+    if (empty($transkey)) $nbempty++;
+    if (empty($transvalue)) $nbempty++;
+    if ($action == 'search' && ($nbempty > 1))
+    {
+        setEventMessages($langs->trans("WarningAtLeastKeyOrTranslationRequired"), null, 'warnings');
+    }
+    else
+    {
+        $newlang=new Translate('',$conf);
+        $newlang->setDefaultLang($langcode);
+    
+        // Load all translations keys
+        foreach($conf->file->dol_document_root as $keydir => $searchdir)
+        {
+            // Directory of translation files
+            $dir_lang = $searchdir."/langs/".$langcode;
+            $dir_lang_osencoded=dol_osencode($dir_lang);
+    
+            $filearray=dol_dir_list($dir_lang_osencoded,'files',0,'','',$sortfield,(strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC),1);
+    
+            foreach($filearray as $file)
+            {
+                $tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
+                $newlang->load($tmpfile, 0, 0, '', 0);
+                //print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
+            }
+        }
+    
+        // Now search into translation array
+        foreach($newlang->tab_translate as $key => $val)
+        {
+            if ($transkey && ! preg_match('/'.preg_quote($transkey).'/', $key)) continue;
+            if ($transvalue && ! preg_match('/'.preg_quote($transvalue).'/', $val)) continue;
+            $recordtoshow[$key]=$val;
+        }
+    }
+    
+    //print '<br>';
+    $nbtotalofrecordswithoutfilters = count($newlang->tab_translate);
+    $nbtotalofrecords = count($recordtoshow);
+    $num = $limit + 1;
+    if (($offset + $num) > $nbtotalofrecords) $num = $limit;
+    
+    //print 'param='.$param.' $_SERVER["PHP_SELF"]='.$_SERVER["PHP_SELF"].' num='.$num.' page='.$page.' nbtotalofrecords='.$nbtotalofrecords." sortfield=".$sortfield." sortorder=".$sortorder;
+    $title = $langs->trans("TranslationKeySearch");
+    if ($nbtotalofrecords > 0) $title.=' ('.$nbtotalofrecords.' / '.$nbtotalofrecordswithoutfilters.')';
+    print print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, '', '', $limit)."\n";
+
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" id="action" name="action" value="search">';
+    print '<input type="hidden" id="mode" name="mode" value="'.$mode.'">';
+
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Language").' (en_US, es_MX, ...)',$_SERVER["PHP_SELF"],'lang,transkey','',$param,'',$sortfield,$sortorder).'</td>';
+    print_liste_field_titre($langs->trans("Key"),$_SERVER["PHP_SELF"],'transkey','',$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("CurrentTranslationString"),$_SERVER["PHP_SELF"],'transvalue','',$param,'',$sortfield,$sortorder);
+    if (! empty($conf->multicompany->enabled) && !$user->entity) print_liste_field_titre($langs->trans("Entity"),$_SERVER["PHP_SELF"],'entity,transkey','',$param,'',$sortfield,$sortorder);
+    print '<td align="center"></td>';
+    print "</tr>\n";
+
+    // Line to search new record
+    $var=false;
+    print "\n";
+
+    print '<tr '.$bc[$var].'><td>';
+    $langcode=GETPOST('langcode')?GETPOST('langcode'):$langs->defaultlang;
+    //print $formadmin->select_language($langcode,'langcode',0,null,$langs->trans("All"),0,0,'',1);
+    print $formadmin->select_language($langcode,'langcode', 0, null, 0, 0, 0, 'maxwidthonsmartphone', 1);
+    print '</td>'."\n";
+    print '<td>';
+    print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="'.$transkey.'">';
+    print '</td><td>';
+    print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.$transvalue.'">';
+    print '</td>';
+    // Limit to superadmin
+    if (! empty($conf->multicompany->enabled) && !$user->entity)
+    {
+        print '<td>';
+        print '<input type="text" class="flat" size="1" name="entitysearch" value="'.$conf->entity.'">';
+        print '</td>';
+        print '<td align="center">';
+    }
+    else
+    {
+        print '<td align="center">';
+        print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
+    }
+    print '<input type="submit" class="button" value="'.$langs->trans("Search").'" name="search">';
+    print "</td>\n";
+    print '</tr>';
+    
+    if ($sortfield == 'transkey' && strtolower($sortorder) == 'asc') ksort($recordtoshow);
+    if ($sortfield == 'transkey' && strtolower($sortorder) == 'desc') krsort($recordtoshow);
+    if ($sortfield == 'transvalue' && strtolower($sortorder) == 'asc') asort($recordtoshow);
+    if ($sortfield == 'transvalue' && strtolower($sortorder) == 'desc') arsort($recordtoshow);
+    
+    // Show result
+    $i=0;
+    foreach($recordtoshow as $key => $val)
+    {
+        $i++;
+        if ($i <= $offset) continue;
+        if ($i > ($offset + $limit)) break;
+        print '<tr><td>'.$langcode.'</td><td>'.$key.'</td><td colspan="2">';
+        print dol_escape_htmltag($val);
+        print '</td></tr>'."\n";
+    }
+
+    print '</table>';
+    print '</form>';
 }
 
 dol_fiche_end();

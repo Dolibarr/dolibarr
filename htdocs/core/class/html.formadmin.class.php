@@ -58,7 +58,7 @@ class FormAdmin
 	 *      @param      int         $showcode       Add language code into label
 	 *      @return		string						Return HTML select string with list of languages
 	 */
-	function select_language($selected='',$htmlname='lang_id',$showauto=0,$filter=null,$showempty='',$showwarning=0,$disabled=0,$morecss='',$showcode=0)
+	function select_language($selected='', $htmlname='lang_id', $showauto=0, $filter=null, $showempty='', $showwarning=0, $disabled=0, $morecss='', $showcode=0)
 	{
 		global $langs;
 

@@ -3041,7 +3041,7 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
  *	@param	string	    $sortorder       	Order to sort ('' by default)
  *	@param	string	    $center          	Strin gin the middle ('' by default). We often find here string $massaction comming from $form->selectMassAction() 
  *	@param	int		    $num				Number of records found by select with limit+1
- *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to no show number.
+ *	@param	int		    $totalnboflines		Total number of records/lines for all pages (if known). Use a negative value to not show number.
  *	@param	string	    $picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		    $pictoisfullpath	1=Icon name is a full absolute url of image
  *  @param	string	    $morehtml			More html to show
