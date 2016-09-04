@@ -61,6 +61,28 @@ if (! $sortorder) $sortorder='ASC';
  * Actions
  */
 
+/*
+ * Actions
+ */
+
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+// Purge search criteria
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+{
+    $transkey='';
+    $transvalue='';
+    $toselect='';
+    $search_array_options=array();
+}
+
 
 if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 {
@@ -296,7 +318,7 @@ if ($mode == 'searchkey')
     if (empty($langcode) || $langcode == '-1') $nbempty++;
     if (empty($transkey)) $nbempty++;
     if (empty($transvalue)) $nbempty++;
-    if ($action == 'search' && ($nbempty > 1))
+    if ($action == 'search' && ($nbempty > 999))    // 999 to disable this
     {
         setEventMessages($langs->trans("WarningAtLeastKeyOrTranslationRequired"), null, 'warnings');
     }
@@ -365,22 +387,22 @@ if ($mode == 'searchkey')
     print '<input type="text" class="flat maxwidthonsmartphone" name="transkey" value="'.$transkey.'">';
     print '</td><td>';
     print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.$transvalue.'">';
-    print '</td>';
     // Limit to superadmin
     if (! empty($conf->multicompany->enabled) && !$user->entity)
     {
-        print '<td>';
+        print '</td><td>';
         print '<input type="text" class="flat" size="1" name="entitysearch" value="'.$conf->entity.'">';
-        print '</td>';
-        print '<td align="right">';
     }
     else
     {
-        print '<td align="right">';
         print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
     }
-    print '<input type="submit" class="button" value="'.$langs->trans("Search").'" name="search">';
-    print "</td>\n";
+    print '</td>';    
+    // Action column
+    print '<td class="liste_titre" align="middle">';
+    $searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
+    print $searchpitco;
+    print '</td>';
     print '</tr>';
     
     if ($sortfield == 'transkey' && strtolower($sortorder) == 'asc') ksort($recordtoshow);
