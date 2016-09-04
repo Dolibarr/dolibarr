@@ -1047,6 +1047,7 @@ TranslationString=Translation string
 CurrentTranslationString=Current translation string
 WarningAtLeastKeyOrTranslationRequired=A search criteria is required at least for key or translation string
 NewTranslationStringToShow=New translation string to show
+OriginalValueWas=The original translation is overwritten. Original value was:<br><br>%s
 TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=You must at least enable 1 module
 ClassNotFoundIntoPathWarning=Class %s not found into PHP path

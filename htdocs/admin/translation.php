@@ -279,6 +279,14 @@ if ($mode == 'overwrite')
 
 if ($mode == 'searchkey')
 {
+    $langcode=GETPOST('langcode')?GETPOST('langcode'):$langs->defaultlang;
+    
+    $newlang=new Translate('',$conf);
+    $newlang->setDefaultLang($langcode);
+
+    $newlangfileonly=new Translate('',$conf);
+    $newlangfileonly->setDefaultLang($langcode);
+    
     $recordtoshow=array();
     
     $nbempty=0;
@@ -294,9 +302,6 @@ if ($mode == 'searchkey')
     }
     else
     {
-        $newlang=new Translate('',$conf);
-        $newlang->setDefaultLang($langcode);
-    
         // Load all translations keys
         foreach($conf->file->dol_document_root as $keydir => $searchdir)
         {
@@ -310,6 +315,7 @@ if ($mode == 'searchkey')
             {
                 $tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
                 $newlang->load($tmpfile, 0, 0, '', 0);
+                $newlangfileonly->load($tmpfile, 0, 0, '', 1);
                 //print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";
             }
         }
@@ -352,7 +358,6 @@ if ($mode == 'searchkey')
     print "\n";
 
     print '<tr '.$bc[$var].'><td>';
-    $langcode=GETPOST('langcode')?GETPOST('langcode'):$langs->defaultlang;
     //print $formadmin->select_language($langcode,'langcode',0,null,$langs->trans("All"),0,0,'',1);
     print $formadmin->select_language($langcode,'langcode', 0, null, 0, 0, 0, 'maxwidthonsmartphone', 1);
     print '</td>'."\n";
@@ -367,11 +372,11 @@ if ($mode == 'searchkey')
         print '<td>';
         print '<input type="text" class="flat" size="1" name="entitysearch" value="'.$conf->entity.'">';
         print '</td>';
-        print '<td align="center">';
+        print '<td align="right">';
     }
     else
     {
-        print '<td align="center">';
+        print '<td align="right">';
         print '<input type="hidden" name="entitysearch" value="'.$conf->entity.'">';
     }
     print '<input type="submit" class="button" value="'.$langs->trans("Search").'" name="search">';
@@ -385,13 +390,21 @@ if ($mode == 'searchkey')
     
     // Show result
     $i=0;
+    $var=false;
     foreach($recordtoshow as $key => $val)
     {
         $i++;
         if ($i <= $offset) continue;
         if ($i > ($offset + $limit)) break;
-        print '<tr><td>'.$langcode.'</td><td>'.$key.'</td><td colspan="2">';
+        $var=!$var;
+        print '<tr '.$bc[$var].'><td>'.$langcode.'</td><td>'.$key.'</td><td>';
         print dol_escape_htmltag($val);
+        print '</td><td align="right">';
+        if ($val != $newlangfileonly->tab_translate[$key]) 
+        {
+            $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
+            print $form->textwithpicto('', $htmltext, 1, 'warning');
+        }
         print '</td></tr>'."\n";
     }
 
