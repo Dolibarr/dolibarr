@@ -60,7 +60,7 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) acces
  * Actions
  */
 
-if ($user->rights->banque->consolidate)
+if ($user->rights->banque->consolidate && ($action == 'dvnext' || $action == 'dvprev'))
 {
     $al = new AccountLine($db);
 	$al->fetch($_GET['rowid']);
