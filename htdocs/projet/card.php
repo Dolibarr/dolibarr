@@ -519,7 +519,9 @@ if ($action == 'create' && $user->rights->projet->creer)
 
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-    $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
+    $array=array();
+    if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
+    if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
     print $form->selectarray('public',$array,GETPOST('public')?GETPOST('public'):(isset($conf->global->PROJECT_DEFAULT_PUBLIC)?$conf->global->PROJECT_DEFAULT_PUBLIC:$object->public));
     print '</td></tr>';
 
@@ -716,7 +718,9 @@ else
 
         // Visibility
         print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
-        $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
+        $array=array();
+        if (empty($conf->global->PROJECT_DISABLE_PRIVATE_PROJECT)) $array[0] = $langs->trans("PrivateProject");
+        if (empty($conf->global->PROJECT_DISABLE_PUBLIC_PROJECT)) $array[1] = $langs->trans("SharedProject");
         print $form->selectarray('public',$array,$object->public);
         print '</td></tr>';
 
