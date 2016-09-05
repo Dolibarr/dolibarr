@@ -1311,8 +1311,6 @@ SyslogFilename=Bestandsnaam en -pad
 YouCanUseDOL_DATA_ROOT=U kunt DOL_DATA_ROOT/dolibarr.log gebruiken voor een logbestand in de Dolibarr "documenten"-map. U kunt ook een ander pad gebruiken om dit bestand op te slaan.
 ErrorUnknownSyslogConstant=Constante %s is geen bekende 'syslog' constante
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Donatiemoduleinstellingen
 DonationsReceiptModel=Sjabloon van donatie-ontvangst

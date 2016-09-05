@@ -1011,7 +1011,6 @@ SyslogFilename=Nome do arquivo e caminho
 YouCanUseDOL_DATA_ROOT=Você pode usar DOL_DATA_ROOT/dolibarr.log para um arquivo de log no diretório dos "documentos" do Dolibarr.
 ErrorUnknownSyslogConstant=A Constante %s não é conhecida pelas constantes do Syslog
 OnlyWindowsLOG_USER=Somente Windows suporta LOG_USER
-SyslogSentryFromProject=DSN do seu projeto Sentry
 DonationsSetup=Configurações do módulo de doações
 DonationsReceiptModel=Templates de recibos de doação
 BarcodeSetup=Configurações de código de barras

@@ -298,11 +298,17 @@ class Holiday extends CommonObject
         $sql.= " cp.detail_refuse,";
 
 		$sql.= " uu.lastname as user_lastname,";
-        $sql.= " uu.firstname as user_firstname,";
-
+		$sql.= " uu.firstname as user_firstname,";
+		$sql.= " uu.login as user_login,";
+		$sql.= " uu.statut as user_statut,";
+		$sql.= " uu.photo as user_photo,";
+		
         $sql.= " ua.lastname as validator_lastname,";
-        $sql.= " ua.firstname as validator_firstname";
-
+        $sql.= " ua.firstname as validator_firstname,";
+        $sql.= " ua.login as validator_login,";
+        $sql.= " ua.statut as validator_statut,";
+        $sql.= " ua.photo as validator_photo";
+        
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
@@ -360,10 +366,16 @@ class Holiday extends CommonObject
 
                 $tab_result[$i]['user_firstname'] = $obj->user_firstname;
                 $tab_result[$i]['user_lastname'] = $obj->user_lastname;
-
+                $tab_result[$i]['user_login'] = $obj->user_login;
+                $tab_result[$i]['user_statut'] = $obj->user_statut;
+                $tab_result[$i]['user_photo'] = $obj->user_photo;
+                
                 $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
                 $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-
+                $tab_result[$i]['validator_login'] = $obj->validator_login;
+                $tab_result[$i]['validator_statut'] = $obj->validator_statut;
+                $tab_result[$i]['validator_photo'] = $obj->validator_photo;
+                
                 $i++;
             }
 
@@ -412,10 +424,16 @@ class Holiday extends CommonObject
 
         $sql.= " uu.lastname as user_lastname,";
         $sql.= " uu.firstname as user_firstname,";
-
+        $sql.= " uu.login as user_login,";
+        $sql.= " uu.statut as user_statut,";
+        $sql.= " uu.photo as user_photo,";
+        
         $sql.= " ua.lastname as validator_lastname,";
-        $sql.= " ua.firstname as validator_firstname";
-
+        $sql.= " ua.firstname as validator_firstname,";
+        $sql.= " ua.login as validator_login,";
+        $sql.= " ua.statut as validator_statut,";
+        $sql.= " ua.photo as validator_photo";
+        
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp, ".MAIN_DB_PREFIX."user as uu, ".MAIN_DB_PREFIX."user as ua";
         $sql.= " WHERE cp.entity IN (".getEntity('holiday', 1).")";
         $sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
@@ -473,10 +491,16 @@ class Holiday extends CommonObject
 
                 $tab_result[$i]['user_firstname'] = $obj->user_firstname;
                 $tab_result[$i]['user_lastname'] = $obj->user_lastname;
-
+                $tab_result[$i]['user_login'] = $obj->user_login;
+                $tab_result[$i]['user_statut'] = $obj->user_statut;
+                $tab_result[$i]['user_photo'] = $obj->user_photo;
+                
                 $tab_result[$i]['validator_firstname'] = $obj->validator_firstname;
                 $tab_result[$i]['validator_lastname'] = $obj->validator_lastname;
-
+                $tab_result[$i]['validator_login'] = $obj->validator_login;
+                $tab_result[$i]['validator_statut'] = $obj->validator_statut;
+                $tab_result[$i]['validator_photo'] = $obj->validator_photo;
+                
                 $i++;
             }
             // Retourne 1 et ajoute le tableau à la variable
