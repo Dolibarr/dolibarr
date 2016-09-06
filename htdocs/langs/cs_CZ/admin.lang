@@ -1311,8 +1311,6 @@ SyslogFilename=Název souboru a cesta
 YouCanUseDOL_DATA_ROOT=Můžete použít DOL_DATA_ROOT / dolibarr.log pro soubor protokolu Dolibarr &quot;Dokumenty&quot; adresáře. Můžete nastavit jinou cestu k uložení tohoto souboru.
 ErrorUnknownSyslogConstant=Konstantní %s není známo, Syslog konstantní
 OnlyWindowsLOG_USER=Windows podporuje pouze LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Darování modul nastavení
 DonationsReceiptModel=Vzor darovací přijetí

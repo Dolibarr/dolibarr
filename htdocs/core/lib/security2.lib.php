@@ -106,6 +106,7 @@ function checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmod
     				sleep(1);
     				$langs->load('main');
     				$langs->load('other');
+    				$langs->load('errors');
     				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorFailedToLoadLoginFileForMode",$mode);
     			}
     		}

@@ -30,17 +30,20 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$action = GETPOST('action');
-
 $langs->load("companies");
 
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action');
+
 // Security check
-$id = GETPOST('id')?GETPOST('id','int'):GETPOST('socid','int');
-if ($user->societe_id) $id=$user->societe_id;
-$result = restrictedArea($user, 'societe', $id, '&societe');
+$fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
+$fieldtype = (! empty($ref) ? 'ref' : 'rowid');
+if ($user->societe_id) $socid=$user->societe_id;
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
 $object = new Product($db);
-if ($id > 0) $object->fetch($id);
+if ($id > 0 || ! empty($ref)) $object->fetch($id, $ref);
 
 $permissionnote=$user->rights->produit->creer;	// Used by the include of actions_setnotes.inc.php
 
@@ -64,7 +67,7 @@ $form = new Form($db);
 
 llxHeader('', $langs->trans("ThirdParty").' - '.$langs->trans("Notes"), $help_url);
 
-if ($id > 0)
+if ($id > 0 || ! empty($ref))
 {
     /*
      * Affichage onglets
@@ -81,13 +84,14 @@ if ($id > 0)
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+
+    dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
         
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
-    //$colwidth='25';
-    $cssclass='titlefield';
+	$cssclass='titlefield';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 

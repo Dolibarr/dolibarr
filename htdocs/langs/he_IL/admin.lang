@@ -1311,8 +1311,6 @@ SyslogFilename=שם קובץ ונתיב
 YouCanUseDOL_DATA_ROOT=ניתן להשתמש DOL_DATA_ROOT / dolibarr.log עבור קובץ יומן בספרייה Dolibarr &quot;מסמכים&quot;. ניתן להגדיר בדרך אחרת כדי לאחסן קובץ זה.
 ErrorUnknownSyslogConstant=%s קבועים אינו ידוע Syslog מתמיד
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=מודול תרומה ההתקנה
 DonationsReceiptModel=תבנית של קבלת תרומה
