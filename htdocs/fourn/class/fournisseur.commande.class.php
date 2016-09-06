@@ -271,6 +271,8 @@ class CommandeFournisseur extends CommonOrder
 
 			$this->fetchObjectLinked();
 
+            $this->lines=array();
+
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
             $sql.= " l.qty,";
             $sql.= " l.tva_tx, l.remise_percent, l.subprice,";
