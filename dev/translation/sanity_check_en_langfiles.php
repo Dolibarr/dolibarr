@@ -298,6 +298,8 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    // boxes.lang
 	    if (preg_match('/^BoxTitleLast/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^BoxTitleLatest/', $value)) $qualifiedforclean=0;
+	    // install.lang
+	    if (preg_match('/^KeepDefaultValues/', $value)) $qualifiedforclean=0;
 	    // main.lang
 	    if (preg_match('/^Duration/', $value)) $qualifiedforclean=0;
 	    if (preg_match('/^FormatDate/', $value)) $qualifiedforclean=0;
@@ -342,7 +344,7 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
 	    }
 	    
 	    //$search = '\'trans("'.$value.'")\'';
-	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\' -e "('.$value.')"';
+	    $search = '-e "\''.$value.'\'" -e \'"'.$value.'"\' -e "('.$value.')" -e "('.$value.',"';
 		$string =  'grep -R -m 1 -F --exclude=includes/* --include=*.php '.$search.' '.$htdocs.'* '.$scripts.'*';
 		//print $string."<br>\n";
 		exec($string,$output);

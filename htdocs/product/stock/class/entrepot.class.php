@@ -548,7 +548,7 @@ class Entrepot extends CommonObject
 
 		$result='';
         $label = '<u>' . $langs->trans("ShowWarehouse").'</u>';
-        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->libelle;
+        $label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . (empty($this->label)?$this->libelle:$this->label);
         if (! empty($this->lieu))
             $label.= '<br><b>' . $langs->trans('LocationSummary').':</b> '.$this->lieu;
 
@@ -556,7 +556,7 @@ class Entrepot extends CommonObject
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($label, 'stock', 'class="classfortooltip"').$linkend.' ');
-		$result.=$link.$this->libelle.$linkend;
+		$result.=$link.(empty($this->label)?$this->libelle:$this->label).$linkend;
 		return $result;
 	}
 

@@ -50,6 +50,10 @@ $langs->load('bills');
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 $orderyear=GETPOST("orderyear","int");
 $ordermonth=GETPOST("ordermonth","int");
 $orderday=GETPOST("orderday","int");
@@ -72,7 +76,6 @@ $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
-$toselect = GETPOST('toselect', 'array');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
@@ -92,10 +95,10 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='c.ref';
 if (! $sortorder) $sortorder='DESC';
 
+$viewstatut=GETPOST('viewstatut');
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='orderlist';
-
-$viewstatut=GETPOST('viewstatut');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('orderlist'));
@@ -151,7 +154,7 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
  */
 
 if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -160,7 +163,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
 {
     $search_categ='';
     $search_user='';
@@ -192,161 +195,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 
 if (empty($reshook))
 {
-    // Mass actions. Controls on number of lines checked
-    $maxformassaction=1000;
-    if (! empty($massaction) && count($toselect) < 1)
-    {
-        $error++;
-        setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
-    }
-    if (! $error && count($toselect) > $maxformassaction)
-    {
-        setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
-        $error++;
-    }
-
-    // TODO Use a common inc.php file
-    if (! $error && $massaction == 'delete' && $user->rights->commande->supprimer)
-    {
-        $db->begin();
-
-        $objecttmp=new Commande($db);
-        $nbok = 0;
-        foreach($toselect as $toselectid)
-        {
-            $result=$objecttmp->fetch($toselectid);
-            if ($result > 0)
-            {
-                $result = $objecttmp->delete($user);
-                if ($result <= 0)
-                {
-                    setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-                    $error++;
-                    break;
-                }
-                else $nbok++;
-            }
-            else
-            {
-                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-                $error++;
-                break;
-            }
-        }
-        
-        if (! $error)
-        {
-            if ($nbok > 1) setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
-            else setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
-            $db->commit();
-        }
-        else
-        {
-            $db->rollback();
-        }
-        //var_dump($listofobjectthirdparties);exit;
-    }
-    
-    if (! $error && $massaction == "builddoc" && $user->rights->commande->lire && ! GETPOST('button_search'))
-    {
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-        require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-         
-        $objecttmp=new Commande($db);
-        $listofobjectid=array();
-        $listofobjectthirdparties=array();
-        $listofobjectref=array();
-        foreach($toselect as $toselectid)
-        {
-            $objecttmp=new Commande($db);	// must create new instance because instance is saved into $listofobjectref array for future use
-            $result=$objecttmp->fetch($toselectid);
-            if ($result > 0)
-            {
-                $listoinvoicesid[$toselectid]=$toselectid;
-                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
-                $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
-                $listofobjectref[$toselectid]=$objecttmp->ref;
-            }
-        }
-    
-        $arrayofinclusion=array();
-        foreach($listofobjectref as $tmppdf) $arrayofinclusion[]=preg_quote($tmppdf.'.pdf','/');
-        $listoffiles = dol_dir_list($conf->commande->dir_output,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
-    
-        // build list of files with full path
-        $files = array();
-        foreach($listofobjectref as $basename)
-        {
-            foreach($listoffiles as $filefound)
-            {
-                if (strstr($filefound["name"],$basename))
-                {
-                    $files[] = $conf->commande->dir_output.'/'.$basename.'/'.$filefound["name"];
-                    break;
-                }
-            }
-        }
-    
-        // Define output language (Here it is not used because we do only merging existing PDF)
-        $outputlangs = $langs;
-        $newlang='';
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id')) $newlang=GETPOST('lang_id');
-        if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-        if (! empty($newlang))
-        {
-            $outputlangs = new Translate("",$conf);
-            $outputlangs->setDefaultLang($newlang);
-        }
-    
-        // Create empty PDF
-        $pdf=pdf_getInstance();
-        if (class_exists('TCPDF'))
-        {
-            $pdf->setPrintHeader(false);
-            $pdf->setPrintFooter(false);
-        }
-        $pdf->SetFont(pdf_getPDFFont($outputlangs));
-    
-        if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
-    
-        // Add all others
-        foreach($files as $file)
-        {
-            // Charge un document PDF depuis un fichier.
-            $pagecount = $pdf->setSourceFile($file);
-            for ($i = 1; $i <= $pagecount; $i++)
-            {
-                $tplidx = $pdf->importPage($i);
-                $s = $pdf->getTemplatesize($tplidx);
-                $pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-                $pdf->useTemplate($tplidx);
-            }
-        }
-    
-        // Create output dir if not exists
-        dol_mkdir($diroutputmassaction);
-    
-        // Save merged file
-        $filename=strtolower(dol_sanitizeFileName($langs->transnoentities("Orders")));
-        if ($year) $filename.='_'.$year;
-        if ($month) $filename.='_'.$month;
-        if ($pagecount)
-        {
-            $now=dol_now();
-            $file=$diroutputmassaction.'/'.$filename.'_'.dol_print_date($now,'dayhourlog').'.pdf';
-            $pdf->Output($file,'F');
-            if (! empty($conf->global->MAIN_UMASK))
-                @chmod($file, octdec($conf->global->MAIN_UMASK));
-    
-                $langs->load("exports");
-                setEventMessages($langs->trans('FileSuccessfullyBuilt',$filename.'_'.dol_print_date($now,'dayhourlog')), null, 'mesgs');
-        }
-        else
-        {
-            setEventMessages($langs->trans('NoPDFAvailableForDocGenAmongChecked'), null, 'errors');
-        }
-    }    
+    $objectclass='Commande';
+    $objectlabel='Orders';
+    $permtoread = $user->rights->commande->lire;
+    $permtodelete = $user->rights->commande->supprimer;
+    $uploaddir = $conf->commande->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -484,6 +338,7 @@ $sql.=$hookmanager->resPrint;
 
 $sql.= $db->order($sortfield,$sortorder);
 
+// Count total nb of records
 $nbtotalofrecords = 0;
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
@@ -547,7 +402,8 @@ if ($resql)
 	if ($search_total_ht != '') $param.='&search_total_ht='.$search_total_ht;
 	if ($search_total_vat != '') $param.='&search_total_vat='.$search_total_vat;
 	if ($search_total_ttc != '') $param.='&search_total_ttc='.$search_total_ttc;
-	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+    if ($show_files)            $param.='&show_files=' .$show_files;
+    if ($optioncss != '')       $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
@@ -556,16 +412,17 @@ if ($resql)
 	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
 	}
 	
+	// List of mass actions available
 	$arrayofmassactions =  array(
-	    //'presend'=>$langs->trans("SendByMail"),
-	    //'builddoc'=>$langs->trans("PDFMerge"),
+	    'presend'=>$langs->trans("SendByMail"),
+	    'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
 	if ($massaction == 'presend') $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lignes des champs de filtre
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -575,6 +432,102 @@ if ($resql)
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_commercial.png', 0, '', '', $limit);
+	
+	if ($massaction == 'presend')
+	{
+	    $langs->load("mails");
+	
+	    if (! GETPOST('cancel'))
+	    {
+	        $objecttmp=new Commande($db);
+	        $listofselectedid=array();
+	        $listofselectedthirdparties=array();
+	        $listofselectedref=array();
+	        foreach($arrayofselected as $toselectid)
+	        {
+	            $result=$objecttmp->fetch($toselectid);
+	            if ($result > 0)
+	            {
+	                $listofselectedid[$toselectid]=$toselectid;
+	                $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
+	                $listofselectedthirdparties[$thirdpartyid]=$thirdpartyid;
+	                $listofselectedref[$thirdpartyid][$toselectid]=$objecttmp->ref;
+	            }
+	        }
+	    }
+	
+	    print '<input type="hidden" name="massaction" value="confirm_presend">';
+	
+	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	    $formmail = new FormMail($db);
+	
+	    dol_fiche_head(null, '', '');
+	
+	    $topicmail="SendOrderRef";
+	    $modelmail="order_send";
+	
+	    // Cree l'objet formulaire mail
+	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	    $formmail = new FormMail($db);
+	    $formmail->withform=-1;
+	    $formmail->fromtype = 'user';
+	    $formmail->fromid   = $user->id;
+	    $formmail->fromname = $user->getFullName($langs);
+	    $formmail->frommail = $user->email;
+	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 1))	// If bit 1 is set
+	    {
+	        $formmail->trackid='ord'.$object->id;
+	    }
+	    if (! empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
+	    {
+	        include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+	        $formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'ord'.$object->id);
+	    }
+	    $formmail->withfrom=1;
+	    $liste=$langs->trans("AllRecipientSelected");
+	    if (count($listofselectedthirdparties) == 1)
+	    {
+	        $liste=array();
+	        $thirdpartyid=array_shift($listofselectedthirdparties);
+	        $soc=new Societe($db);
+	        $soc->fetch($thirdpartyid);
+	        foreach ($soc->thirdparty_and_contact_email_array(1) as $key=>$value)
+	        {
+	            $liste[$key]=$value;
+	        }
+	        $formmail->withtoreadonly=0;
+	    }
+	    else
+	    {
+	        $formmail->withtoreadonly=1;
+	    }
+	    $formmail->withto=$liste;
+	    $formmail->withtofree=0;
+	    $formmail->withtocc=1;
+	    $formmail->withtoccc=$conf->global->MAIN_EMAIL_USECCC;
+	    $formmail->withtopic=$langs->transnoentities($topicmail, '__REF__', '__REFCLIENT__');
+	    $formmail->withfile=$langs->trans("OnlyPDFattachmentSupported");
+	    $formmail->withbody=1;
+	    $formmail->withdeliveryreceipt=1;
+	    $formmail->withcancel=1;
+	    // Tableau des substitutions
+	    $formmail->substit['__REF__']='__REF__';	// We want to keep the tag
+	    $formmail->substit['__SIGNATURE__']=$user->signature;
+	    $formmail->substit['__REFCLIENT__']='__REFCLIENT__';	// We want to keep the tag
+	    $formmail->substit['__PERSONALIZED__']='';
+	    $formmail->substit['__CONTACTCIVNAME__']='';
+	
+	    // Tableau des parametres complementaires du post
+	    $formmail->param['action']=$action;
+	    $formmail->param['models']=$modelmail;
+	    $formmail->param['models_id']=GETPOST('modelmailselected','int');
+	    $formmail->param['id']=join(',',$arrayofselected);
+	    //$formmail->param['returnurl']=$_SERVER["PHP_SELF"].'?id='.$object->id;
+	
+	    print $formmail->get_form();
+	
+	    dol_fiche_end();
+	}
 	
 	if ($sall)
     {
@@ -611,10 +564,11 @@ if ($resql)
 		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, '', 1);
 		$moreforfilter.='</div>';
 	}
-    	$parameters=array();
-    	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
 	else $moreforfilter = $hookmanager->resPrint;
+	
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -627,6 +581,7 @@ if ($resql)
 	
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
+	// Fields title
 	print '<tr class="liste_titre">';
 	if (! empty($arrayfields['c.ref']['checked']))            print_liste_field_titre($arrayfields['c.ref']['label'],$_SERVER["PHP_SELF"],'c.ref','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.ref_client']['checked']))     print_liste_field_titre($arrayfields['c.ref_client']['label'],$_SERVER["PHP_SELF"],'c.ref_client','',$param,'',$sortfield,$sortorder);
@@ -639,7 +594,7 @@ if ($resql)
 	if (! empty($arrayfields['c.date_commande']['checked']))  print_liste_field_titre($arrayfields['c.date_commande']['label'],$_SERVER["PHP_SELF"],'c.date_commande','',$param, 'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.date_delivery']['checked']))  print_liste_field_titre($arrayfields['c.date_delivery']['label'],$_SERVER["PHP_SELF"],'c.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.total_ht']['checked']))       print_liste_field_titre($arrayfields['c.total_ht']['label'],$_SERVER["PHP_SELF"],'c.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
-	if (! empty($arrayfields['c.total_vat']['checked']))            print_liste_field_titre($arrayfields['c.total_vat']['label'],$_SERVER["PHP_SELF"],'c.tva','',$param, 'align="right"',$sortfield,$sortorder);
+	if (! empty($arrayfields['c.total_vat']['checked']))      print_liste_field_titre($arrayfields['c.total_vat']['label'],$_SERVER["PHP_SELF"],'c.tva','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.total_ttc']['checked']))      print_liste_field_titre($arrayfields['c.total_ttc']['label'],$_SERVER["PHP_SELF"],'c.total_ttc','',$param, 'align="right"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -662,7 +617,7 @@ if ($resql)
 	if (! empty($arrayfields['c.fk_statut']['checked'])) print_liste_field_titre($arrayfields['c.fk_statut']['label'],$_SERVER["PHP_SELF"],"c.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['c.facture']['checked']))   print_liste_field_titre($arrayfields['c.facture']['label'],$_SERVER["PHP_SELF"],'c.facture','',$param,'align="center"',$sortfield,$sortorder,'');
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
-	print '</tr>';
+	print '</tr>'."\n";
 
 	print '<tr class="liste_titre">';
 	// Ref
@@ -1156,7 +1111,7 @@ if ($resql)
         
         // Action column
         print '<td class="nowrap" align="center">';
-        if ($massactionbutton)
+        if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
         {
             $selected=0;
     		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
@@ -1165,8 +1120,8 @@ if ($resql)
         print '</td>';
         if (! $i) $totalarray['nbfield']++;
 		
-		print '</tr>';
-
+		print "</tr>\n";
+        
 		$total+=$obj->total_ht;
 		$subtotal+=$obj->total_ht;
 		$i++;
@@ -1199,17 +1154,41 @@ if ($resql)
 	$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 				
-	print '</table>';
+	print '</table>'."\n";
 
 	print '</form>'."\n";
 
 	print '<br>'.img_help(1,'').' '.$langs->trans("ToBillSeveralOrderSelectCustomer", $langs->transnoentitiesnoconv("CreateInvoiceForThisCustomer")).'<br>';
+	
+	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
+	{
+	    /*
+	     * Show list of available documents
+	     */
+	    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+	    $urlsource.=str_replace('&amp;','&',$param);
+	
+	    $filedir=$diroutputmassaction;
+	    $genallowed=$user->rights->commande->lire;
+	    $delallowed=$user->rights->commande->lire;
+	
+	    print '<br><a name="show_files"></a>';
+	    $paramwithoutshowfiles=preg_replace('/show_files=1&?/','',$param);
+	    $title=$langs->trans("MassFilesArea").' <a href="'.$_SERVER["PHP_SELF"].'?'.$paramwithoutshowfiles.'">('.$langs->trans("Hide").')</a>';
+	
+	    print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+	}
+	else
+	{
+	    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
+	}
+	
 }
 else
 {
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

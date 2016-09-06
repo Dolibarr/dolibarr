@@ -84,6 +84,7 @@ SeeAbove=در بالا مشاهده کنید
 HomeArea=منطقه خانه
 LastConnexion=آخرین اتصال
 PreviousConnexion=ارتباط قبلی
+PreviousValue=Previous value
 ConnectedOnMultiCompany=اتصال در محیط زیست
 ConnectedSince=از اتصال
 AuthenticationMode=حالت مجوزهای

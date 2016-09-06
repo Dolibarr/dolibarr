@@ -86,6 +86,7 @@ DirectoryRecommendation=Ieteicams izmantot mapi ārpus mājas lapas failu direkt
 LoginAlreadyExists=Jau eksistē
 DolibarrAdminLogin=Dolibarr administratora lietotāja vārds
 AdminLoginAlreadyExists=Dolibarr administratora konts '<b>%s</b>' jau eksistē. Dodieties atpakaļ, ja jūs vēlaties izveidot vēl vienu kontu.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Brīdinājums, drošības apsvērumu dēļ pēc instalēšanas vai atjaunināšanas beigām, lai izvairītos no instalēšanas rīku atkārtotas izmantošanas, Jums jāpievieno failu ar nosaukumu <b>install.lock</b> Dolibarr dokumentu direktorijā, lai novērstu ļaunprātīgu instalācijas izmantošanu.
 FunctionNotAvailableInThisPHP=Nav pieejams šajā PHP versijā
 ChoosedMigrateScript=Izvēlieties migrācijas skriptu

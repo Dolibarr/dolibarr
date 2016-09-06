@@ -113,17 +113,6 @@ function societe_prepare_head(Societe $object)
     	$head[$h][2] = 'project';
     	$h++;
     }
-    //show categorie tab
-    /*if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
-    {
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-        $type = Categorie::TYPE_CUSTOMER;
-        if ($object->fournisseur) $type = Categorie::TYPE_SUPPLIER;
-        $head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$object->id."&type=".$type;
-        $head[$h][1] = $langs->trans('Categories');
-        $head[$h][2] = 'category';
-        $h++;
-    }*/
 
     // Tab to link resources
 	if (! empty($conf->resource->enabled) && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
@@ -320,6 +309,8 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
 {
     global $db,$langs;
 
+    $result='';
+    
     // Check parameters
     if (empty($searchkey) && empty($searchlabel))
     {
@@ -334,7 +325,6 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
     elseif (! empty($searchkey)) $sql.= " WHERE code='".$db->escape($searchkey)."'";
     else $sql.= " WHERE label='".$db->escape($searchlabel)."'";
 
-    dol_syslog("Company.lib::getCountry", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
     if ($resql)
     {
@@ -348,17 +338,18 @@ function getCountry($searchkey,$withcode='',$dbtouse=0,$outputlangs='',$entconv=
                 if ($entconv) $label=($obj->code && ($outputlangs->trans("Country".$obj->code)!="Country".$obj->code))?$outputlangs->trans("Country".$obj->code):$label;
                 else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code)!="Country".$obj->code))?$outputlangs->transnoentitiesnoconv("Country".$obj->code):$label;
             }
-            if ($withcode == 1) return $label?"$obj->code - $label":"$obj->code";
-            else if ($withcode == 2) return $obj->code;
-            else if ($withcode == 3) return $obj->rowid;
-            else if ($withcode === 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
-            else return $label;
+            if ($withcode == 1) $result=$label?"$obj->code - $label":"$obj->code";
+            else if ($withcode == 2) $result=$obj->code;
+            else if ($withcode == 3) $result=$obj->rowid;
+            else if ($withcode === 'all') $result=array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
+            else $result=$label;
         }
         else
         {
-            return 'NotDefined';
+            $result='NotDefined';
         }
         $dbtouse->free($resql);
+        return $result;
     }
     else dol_print_error($dbtouse,'');
     return 'Error';
@@ -653,6 +644,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 
     $colspan=9;
     print '<tr class="liste_titre">';
+    print_liste_field_titre('');
     print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"p.lastname","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Poste"),$_SERVER["PHP_SELF"],"p.poste","",$param,'',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email"),$_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder);
@@ -668,8 +660,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	print "</tr>\n";
 
 
-    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut ";
-    $sql .= ", p.civility as civility_id, p.address, p.zip, p.town";
+    $sql = "SELECT p.rowid, p.lastname, p.firstname, p.fk_pays as country_id, p.civility, p.poste, p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.email, p.skype, p.statut, p.photo,";
+    $sql .= " p.civility as civility_id, p.address, p.zip, p.town";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$object->id;
     if ($search_status!='' && $search_status != '-1') $sql .= " AND p.statut = ".$db->escape($search_status);
@@ -686,6 +678,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
 	if ($num || (GETPOST('button_search') || GETPOST('button_search.x') || GETPOST('button_search_x')))
     {
         print '<tr class="liste_titre">';
+        
+        // Photo
+        print '<td class="liste_titre">';
+        print '</td>';
         
         // Name - Position
         print '<td class="liste_titre">';
@@ -732,6 +728,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             $contactstatic->civility_id = $obj->civility_id;
+            $contactstatic->civility_code = $obj->civility_id;
             $contactstatic->poste = $obj->poste;
             $contactstatic->address = $obj->address;
             $contactstatic->zip = $obj->zip;
@@ -742,15 +739,27 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             $contactstatic->email = $obj->email;
             $contactstatic->web = $obj->web;
             $contactstatic->skype = $obj->skype;
+            $contactstatic->photo = $obj->photo;
 
             $country_code = getCountry($obj->country_id, 2);
             $contactstatic->country_code = $country_code;
+
+            $contactstatic->setGenderFromCivility();
             
             print "<tr ".$bc[$var].">";
 
-            print '<td>';
-            print $contactstatic->getNomUrl(1,'',0,'&backtopage='.urlencode($backtopage));
-			print '</td><td>';
+            // Photo
+            print '<td width="50px">';
+            print $form->showphoto('contact',$contactstatic,0,0,0,'photorefnoborder','small',1,0,1);
+			print '</td>';
+            
+			// Name
+			print '<td>';
+            print $contactstatic->getNomUrl(0,'',0,'&backtopage='.urlencode($backtopage));
+			print '</td>';
+			
+			// Job position
+			print '<td>';
             if ($obj->poste) print $obj->poste;
             print '</td>';
 

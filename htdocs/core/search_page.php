@@ -67,51 +67,58 @@ $hookmanager->initHooks(array('searchform'));
 // Define $searchform
 $searchform = '';
 
-// TODO Mutualize code here with function left_menu into main.inc.php page
-if ($conf->use_javascript_ajax && 1 == 2)
+if ($conf->use_javascript_ajax && 1 == 2)   // select2 is ko with jmobile
 {
     if (! is_object($form)) $form=new Form($db);
     $selected=-1;
-    $searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, 'data-role="none"', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 0);
+    $searchform.='<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, 'data-role="none"', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
 }
 else
 {
+    $conf->global->MAIN_HTML5_PLACEHOLDER = 1;
+    
     // Define $searchform
     if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && $user->rights->societe->lire)
     {
         $langs->load("companies");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_picto('','object_company','', 0, 1));
+        //$searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', 'notitle');
     }
 
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
     {
         $langs->load("companies");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_picto('','object_contact','', 0, 1));
+        //$searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', 'notitle');
     }
 
     if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
     )
     {
         $langs->load("products");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_picto('','object_product','', 0, 1));
+        //$searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', 'notitle');
     }
 
     if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
     {
         $langs->load("projects");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_picto('','object_projectpub','', 0, 1));
+        //$searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', 'notitle');
     }
 
     if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
     {
         $langs->load("members");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_picto('','object_user','', 0, 1));
+        //$searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', 'notitle');
     }
 
 	if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
     {
         $langs->load("users");
-        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/index.php', DOL_URL_ROOT.'/user/index.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
+        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/index.php', DOL_URL_ROOT.'/user/index.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_picto('','object_user','', 0, 1));
+        //$searchform.=printSearchForm(DOL_URL_ROOT.'/user/index.php', DOL_URL_ROOT.'/user/index.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', 'notitle');
     }
 }
 

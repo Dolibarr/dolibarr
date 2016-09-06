@@ -84,6 +84,7 @@ SeeAbove=Ver acima
 HomeArea=Área Principal
 LastConnexion=Ultima Ligação
 PreviousConnexion=Ligação Anterior
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Conectado sobre entidade
 ConnectedSince=Conectado desde
 AuthenticationMode=Modo de autenticação

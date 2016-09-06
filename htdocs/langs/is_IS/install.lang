@@ -86,6 +86,7 @@ DirectoryRecommendation=Það er recommanded að nota skrá utan möppuna á vef
 LoginAlreadyExists=Þegar til
 DolibarrAdminLogin=Dolibarr admin Innskráning
 AdminLoginAlreadyExists=reikningur <b>' %s </b> Dolibarr stjórnandi' er þegar til.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Aðvörun, vegna öryggis, þegar setja upp eða uppfæra er heill, þá ættir þú að fjarlægja <b>setja möppu eða gefa henni nýtt heiti með hana til install.lock í því skyni að koma í veg fyrir notkun þess illgjarn.</b>
 FunctionNotAvailableInThisPHP=Ekki í boði á þessari PHP
 ChoosedMigrateScript=Veldu fólksflutninga handrit

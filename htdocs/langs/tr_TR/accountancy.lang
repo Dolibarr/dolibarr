@@ -75,19 +75,19 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Satılan hizmetler için varsayılan muhasebe ko
 Doctype=Belge türü
 Docdate=Tarih
 Docref=Referans
-Code_tiers=Üçüncü parti
+Code_tiers=Üçüncü taraf
 Labelcompte=Hesap etiketi
 Sens=Sens (borsa haberleri yayınlama günlüğü)
 Codejournal=Günlük
 NumPiece=Parça sayısı
 AccountingCategory=Muhasebe kategorisi
 
-NotMatch=Not Set
+NotMatch=Ayarlanmamış
 
-DeleteMvt=Delete general ledger lines
-DelYear=Year to delete
-DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+DeleteMvt=Büyük defter satırı sil
+DelYear=Silinecek yıl
+DelJournal=Silinecek günlük
+ConfirmDeleteMvt=Bu, büyük defterde yıl için ve/veya belirli bir günlükten tüm satırları siecektir.
 
 DelBookKeeping=Büyük defter kayıtlarını sil
 
@@ -98,15 +98,15 @@ DescFinanceJournal=Banka hesabından yapılan tüm ödeme türlerini içeren fin
 
 CustomerInvoicePayment=Müşteri faturası ödemesi
 
-ThirdPartyAccount=Üçüncü parti hesabı
+ThirdPartyAccount=Üçüncü taraf hesabı
 
 NewAccountingMvt=Yeni hareket
 NumMvts=Hareket sayısı
 ListeMvts=Hareket listesi
 ErrorDebitCredit=Borç ve Alacak aynı anda bir değere sahip olamaz
 
-ReportThirdParty=Üçüncü parti hesabını listele
-DescThirdPartyReport=Burada üçüncü parti müşterileri ve tedarikçileri ile onların muhasebe hesaplarının listesine bakın
+ReportThirdParty=Üçüncü taraf hesabını listele
+DescThirdPartyReport=Burada üçüncü taraf müşterileri ve tedarikçileri ile onların muhasebe hesaplarının listesine bakın
 
 ListAccounts=Muhasebe hesapları listesi
 
@@ -147,7 +147,7 @@ Modelcsv_bob50=Sage BOB 50'ye doğru dişaaktar
 Modelcsv_ciel=Sage Ciel Compta ya da Compta Evolution'a doğru dışaaktar
 Modelcsv_quadratus=Quadratus QuadraCompta'ya doğru dışaaktar
 Modelcsv_ebp=EBP'ye yönelik dışaaktarım
-Modelcsv_cogilog=Export towards Cogilog
+Modelcsv_cogilog=Cogilog'a dışaaktar
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Muhasebe başlangıcı
@@ -166,4 +166,4 @@ Formula=Formül
 ## Error
 ErrorNoAccountingCategoryForThisCountry=Bu ülke için mevcut muhasebe kategorisi yok
 ExportNotSupported=Ayarlanan dışaaktarım biçimi bu sayfada desteklenmiyor
-BookeppingLineAlreayExists=Lines already existing into bookeeping
+BookeppingLineAlreayExists=Satırlar zaten muhasebede bulunmaktadır

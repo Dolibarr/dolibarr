@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - receiptprinter
+ReceiptPrinterSetup=Einstellung der Belegdrucker
+ReceiptPrinter=Belegdrucker
+ReceiptPrinterDesc=Einstellungen der Belegdrucker
+ReceiptPrinterTemplateDesc=Vorlagen einstellen
+ReceiptPrinterTypeDesc=Typ des Belegdruckers
+ReceiptPrinterProfileDesc=Profil des Belegdruckers
+SetupReceiptTemplate=Vorlagensetup
+PROFILE_SIMPLE=Einfaches Profil
+PROFILE_DEFAULT_HELP=Standard Profil für Epson Drucker
+PROFILE_EPOSTEP_HELP=Hilfe zu Epos Tep Profil

@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("companies");
+$langs->load("projects");
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -94,7 +95,7 @@ if ($socid)
 
 	if ($object->client)
 	{
-		print '<tr><td>';
+		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $object->code_client;
 		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -103,7 +104,7 @@ if ($socid)
 
 	if ($object->fournisseur)
 	{
-		print '<tr><td>';
+		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print $object->code_fournisseur;
 		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';

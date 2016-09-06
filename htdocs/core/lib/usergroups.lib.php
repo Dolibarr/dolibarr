@@ -296,7 +296,7 @@ function entity_prepare_head($object, $aEntities)
  */
 function show_theme($fuser,$edit=0,$foruserprofile=false)
 {
-    global $conf,$langs,$db;
+    global $conf,$langs,$db,$form;
     global $bc;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
@@ -514,6 +514,52 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
     	print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 	    print '</td>';
 	}
+	
+	// TopMenuBackgroundColor
+	if ($foruserprofile)
+	{
+	    /*$var=!$var;
+	     print '<tr '.$bc[$var].'>';
+	     print '<td>'.$langs->trans("TopMenuBackgroundColor").'</td>';
+	     print '<td>'.($conf->global->THEME_ELDY_TOPMENU_BACK1?$conf->global->THEME_ELDY_TOPMENU_BACK1:$langs->trans("Default")).'</td>';
+	     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_THEME_ELDY_TOPMENU_BACK1" id="check_THEME_ELDY_TOPMENU_BACK1" type="checkbox" '.(! empty($object->conf->THEME_ELDY_TOPMENU_BACK1)?" checked":"");
+	     print (empty($dolibarr_main_demo) && $edit)?'':' disabled="disabled"';	// Disabled for demo
+	     print '> '.$langs->trans("UsePersonalValue").'</td>';
+	     print '<td>';
+	     if ($edit)
+	     {
+	     print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),''),'THEME_ELDY_TOPMENU_BACK1','formcolor',1).' ';
+	     }
+	     else
+	     {
+	     $color = colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TOPMENU_BACK1,array()),'');
+	     if ($color) print '<input type="text" class="colorthumb" disabled style="padding: 1px; margin-top: 0; margin-bottom: 0; background-color: #'.$color.'" value="'.$color.'">';
+	     else print '';
+	     }
+	    	if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    	print '</td>';*/
+	}
+	else
+	{
+	    $default=$langs->trans('No');
+	    $var=!$var;
+	    print '<tr '.$bc[$var].'>';
+	    print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
+	    print '<td colspan="'.($colspan-1).'">';
+	    if ($edit)
+	    {
+	        print $form->selectyesno('THEME_TOPMENU_DISABLE_IMAGE', $conf->global->THEME_TOPMENU_DISABLE_IMAGE, 1);
+	    }
+	    else
+	    {
+	        print yn($conf->global->THEME_TOPMENU_DISABLE_IMAGE);
+	    }
+	    print ' &nbsp; ('.$langs->trans("Default").': <strong>'.$default.'</strong>, '.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
+	    print '</td>';
+	}
+	
+	
+	
 	
 	// BackgroundTableTitleColor
 	if ($foruserprofile)

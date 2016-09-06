@@ -74,6 +74,7 @@ DefaultLang=Ngôn ngữ mặc định
 VATIsUsed=Thuế VAT được dùng
 VATIsNotUsed=Thuế VAT không được dùng
 CopyAddressFromSoc=Điền địa chỉ với địa chỉ của bên thứ ba
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE được dùng
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Tổ chức
 FiscalYearInformation=Thông tin về năm tài chính
 FiscalMonthStart=Tháng bắt đầu của năm tài chính
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Danh sách nhà cung cấp
 ListProspectsShort=Danh sách KH tiềm năng
 ListCustomersShort=Danh sách khách hàng

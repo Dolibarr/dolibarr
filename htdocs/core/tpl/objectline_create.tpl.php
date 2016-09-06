@@ -51,7 +51,10 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
-
+<?php
+$nolinesbefore=(count($this->lines) == 0);
+if ($nolinesbefore) {
+?>
 <tr id="addline" class="liste_titre liste_titre_add nodrag nodrop">
 	<td class="linecoldescription" <?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>>
 	<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
@@ -100,8 +103,10 @@ if (in_array($object->element,array('propal', 'supplier_proposal','facture','fac
 	?>
 	<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
 </tr>
-
-<tr <?php echo $bcnd[$var]; ?>>
+<?php
+}
+?>
+<tr class="pair nodrag nodrop nohoverpair<?php echo $nolinesbefore?'':' liste_titre_add'; ?>">
 <?php
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2; }

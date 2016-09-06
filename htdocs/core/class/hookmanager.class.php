@@ -170,7 +170,8 @@ class HookManager
                 'printObjectLine',
                 'printObjectSubLine',
 				'createDictionaryFieldList',
-				'editDictionaryFieldlist'
+				'editDictionaryFieldlist',
+				'getFormMail'
 				)
 			)) $hooktype='addreplace';
         // Deprecated hook types ('returnvalue')

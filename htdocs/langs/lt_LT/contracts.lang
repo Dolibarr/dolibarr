@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Nėra pasibaigęs
 ServiceStatusLate=Veikia, pasibaigęs
 ServiceStatusLateShort=Pasibaigęs
 ServiceStatusClosed=Uždarytas
+ShowContractOfService=Show contract of service
 Contracts=Sutartys
 ContractsSubscriptions=Sutartys / Abonentai
 ContractsAndLine=Sutartys ir sutarčių eilutė

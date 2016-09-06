@@ -86,6 +86,7 @@ DirectoryRecommendation=Rekomenduojama naudoti aplanką išorėje savo web pusla
 LoginAlreadyExists=Jau egzistuoja
 DolibarrAdminLogin=Dolibarr administratoriaus prisijungimas
 AdminLoginAlreadyExists=Dolibarr administratoriaus sąskaita '<b>%s</b>' jau egzistuoja. Grįžkite, jei norite sukurti dar vieną.
+FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=Įspėjimas. Dėl saugumo priežasčių, kai įdiegimas ar atnaujinimas baigtas, kad būtų išvengta diegimo iš naujo, turėtumėte pridėti failą pavadinimu <b>install.lock</b> į Dolibarr dokumentų aplanką, siekiant išvengti neteisingo jo naudojimo.
 FunctionNotAvailableInThisPHP=Negalimas su šiuo PHP
 ChoosedMigrateScript=Pasirinkite migracijos skriptą

@@ -74,6 +74,7 @@ DefaultLang=Predvolený jazyk
 VATIsUsed=DPH sa používa
 VATIsNotUsed=DPH sa nepoužíva
 CopyAddressFromSoc=Vyplňte adresu s thirdparty adresu
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE sa používa
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=Organizácia
 FiscalYearInformation=Informácie o fiškálny rok
 FiscalMonthStart=Počiatočný mesiac fiškálneho roka
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=Zoznam dodávateľov
 ListProspectsShort=Zoznam vyhliadky
 ListCustomersShort=Zoznam zákazníkov

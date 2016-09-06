@@ -660,7 +660,7 @@ function updateContact($authentication,$contact)
 			$object->civility_id=$contact['civility_id'];
 			$object->poste=$contact['poste'];
 
-			$object->statut=$contact['statut'];
+			$object->statut=$contact['status'];
 
 
 			//Retreive all extrafield for contact

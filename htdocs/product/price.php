@@ -10,6 +10,7 @@
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,10 +93,18 @@ if (empty($reshook))
         $search_soc = '';        
     }
     
+    if ($action == 'setlabelsellingprice' && $user->admin)
+    {
+        require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
+        $keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.GETPOST('pricelevel');
+        dolibarr_set_const($db, $keyforlabel, GETPOST('labelsellingprice','alpha'), 'chaine', 0, '', $conf->entity);
+        $action = '';
+    }
+    
 	if (($action == 'update_vat') && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 	    $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
-	    	  
+
 	    // We must define tva_tx, npr and local taxes
 	    $vatratecode = '';
 	    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
@@ -618,7 +627,22 @@ if (! empty($id) || ! empty($ref))
 	// fetch updated prices
 	$object->fetch($id, $ref);
 }
-llxHeader("", "", $langs->trans("CardProduct" . $object->type));
+
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('SellingPrices');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('SellingPrices');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('', $title, $helpurl);
 
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct" . $object->type);
@@ -646,7 +670,9 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 		$soc->fetch($socid);
 
 		// Selling price
-		print '<tr><td class="titlefield">' . $langs->trans("SellingPrice") . '</td>';
+		print '<tr><td class="titlefield">';
+		print $langs->trans("SellingPrice");
+		print '</td>';
 		print '<td colspan="2">';
 		if ($object->multiprices_base_type[$soc->price_level] == 'TTC') {
 			print price($object->multiprices_ttc[$soc->price_level]);
@@ -707,16 +733,34 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 	        print '</td></tr>';
 		}
 	   
-		print '<tr class="liste_titre"><td style="text-align: center">'.$langs->trans("PriceLevel").'</td><td style="text-align: center">'.$langs->trans("SellingPrice").'</td><td style="text-align: center">'.$langs->trans("MinPrice").'</td></tr>';
+		print '<tr class="liste_titre"><td style="text-align: center">';
+		print $langs->trans("PriceLevel");
+		if ($user->admin) print ' <a href="'.$_SERVER["PHP_SELF"].'?action=editlabelsellingprice&amp;pricelevel='.$i.'&amp;id='.$object->id.'">'.img_edit($langs->trans('EditSellingPriceLabel'),0).'</a>';
+		print '</td><td style="text-align: center">'.$langs->trans("SellingPrice").'</td><td style="text-align: center">'.$langs->trans("MinPrice").'</td></tr>';
 
 		for($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 		{
 			print '<tr>';
 
 			// Label of price
-			print '<td>' . $langs->trans("SellingPrice") . ' ' . $i;
+			print '<td>';
 			$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
-			if (! empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
+			if (preg_match('/editlabelsellingprice/', $action))
+			{
+			    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+			    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+			    print '<input type="hidden" name="action" value="setlabelsellingprice">';
+			    print '<input type="hidden" name="pricelevel" value="'.$i.'">';
+			    print $langs->trans("SellingPrice") . ' ' . $i.' - ';
+			    print '<input size="10" class="maxwidthonsmartphone" type="text" name="labelsellingprice" value="'.$conf->global->$keyforlabel.'">';
+			    print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+			    print '</form>';
+			}
+			else
+			{
+			    print $langs->trans("SellingPrice") . ' ' . $i;
+			    if (! empty($conf->global->$keyforlabel)) print ' - '.$langs->trans($conf->global->$keyforlabel);
+			}
 			print '</td>';
 
 			if ($object->multiprices_base_type [$i] == 'TTC') {

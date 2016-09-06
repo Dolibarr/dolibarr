@@ -41,7 +41,8 @@ class Contact extends CommonObject
 	public $table_element='socpeople';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
-	var $civility_id;  // In fact we store civility_code
+	var $civility_id;      // In fact we store civility_code
+	var $civility_code;
 	var $address;
 	var $zip;
 	var $town;
@@ -216,9 +217,9 @@ class Contact extends CommonObject
                 }
 			}
 
-            if (! $error)
+			if (! $error)
             {
-                $result=$this->update_perso($this->id, $user);
+                $result=$this->update_perso($this->id, $user, 1);   // TODO Remove function update_perso, should be same than update
                 if ($result < 0)
                 {
                     $error++;
@@ -226,7 +227,7 @@ class Contact extends CommonObject
                 }
             }
 
-            if (! $error)
+			if (! $error)
             {
                 // Call trigger
                 $result=$this->call_trigger('CONTACT_CREATE',$user);
@@ -474,13 +475,16 @@ class Contact extends CommonObject
 	 *
 	 *  @param      int			$id         Id of contact
 	 *  @param      User		$user		User asking to change alert or birthday
+	 *  @param      int		    $notrigger	0=no, 1=yes
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
-	function update_perso($id, $user=null)
+	function update_perso($id, $user=null, $notrigger=0)
 	{
 	    $error=0;
 	    $result=false;
 
+	    $this->db->begin();
+	    
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET";
 		$sql.= " birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
@@ -531,7 +535,25 @@ class Contact extends CommonObject
 			}
 		}
 
-		return $result;
+		if (! $error && ! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('CONTACT_MODIFY',$user);
+		    if ($result < 0) { $error++; }
+		    // End call triggers
+		}
+		
+		if (! $error)
+		{
+		    $this->db->commit();
+		    return 1;
+		}
+		else
+		{
+		    dol_syslog(get_class($this)."::update Error ".$this->error,LOG_ERR);
+		    $this->db->rollback();
+		    return -$error;
+		}
 	}
 
 
@@ -589,6 +611,7 @@ class Contact extends CommonObject
 				$this->ref				= $obj->rowid;
 				$this->ref_ext			= $obj->ref_ext;
 				$this->civility_id		= $obj->civility_id;
+				$this->civility_code	= $obj->civility_id;
 				$this->lastname			= $obj->lastname;
 				$this->firstname		= $obj->firstname;
 				$this->address			= $obj->address;
@@ -636,11 +659,7 @@ class Contact extends CommonObject
 				$this->import_key		= $obj->import_key;
 				
 				// Define gender according to civility
-				if(in_array($this->civility_id, array('MR'))) {
-					$this->gender = 'man';
-				} else if(in_array($this->civility_id, array('MME','MLE'))) {
-					$this->gender = 'woman';
-				}
+				$this->setGenderFromCivility();
 
 				// Search Dolibarr user linked to this contact
 				$sql = "SELECT u.rowid ";
@@ -712,6 +731,21 @@ class Contact extends CommonObject
 	}
 
 
+	/**
+	 * Set property ->gender from property ->civility_id
+	 * 
+	 * @return void
+	 */
+	function setGenderFromCivility()
+	{
+	    unset($this->gender);
+    	if (in_array($this->civility_id, array('MR'))) {
+    	    $this->gender = 'man';
+    	} else if(in_array($this->civility_id, array('MME','MLE'))) {
+    	    $this->gender = 'woman';
+    	}
+	}	
+	
 	/**
 	 *  Load number of elements the contact is used as a link for
 	 *  ref_facturation

@@ -15,10 +15,7 @@ Alias /dolibarr "WAMPROOT/www/dolibarr/htdocs/"
 # NOTE FOR APACHE 2.3:
 # To restrict access to dolibarr from outside set lines
 #
-#	<RequireAny>
-#	Require ip 127.0.0.1
-#	Require host localhost
-#   <RequireAny>
+#   Require local
 #
 # instead of
 #

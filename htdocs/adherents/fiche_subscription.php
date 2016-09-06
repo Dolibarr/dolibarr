@@ -419,14 +419,16 @@ if ($rowid && $action != 'edit')
     print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
     $somethingshown = $formfile->numoffiles;
     */
-    // Linked object block
-    $somethingshown = $form->showLinkedObjectBlock($object);
+	// Show links to link elements
+	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
+    $somethingshown = $form->showLinkedObjectBlock($object, '');
     
     // Show links to link elements
     /*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-    if ($linktoelem) print '<br>'.$linktoelem;
+	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
     
     // Link for paypal payment
+    /*
     if (! empty($conf->paypal->enabled) && $object->statut != 0) {
         include_once DOL_DOCUMENT_ROOT . '/paypal/lib/paypal.lib.php';
         print showPaypalPaymentUrl('invoice', $object->ref);

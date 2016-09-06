@@ -261,7 +261,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'export';
 
-	    if (! empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+	    if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 	    {
 			$r++;
 		    $this->rights[$r][0] = 1190;
@@ -449,7 +449,7 @@ class modFournisseur extends DolibarrModules
 		$this->export_permission[$r]=array(array("fournisseur","commande","export"));
 		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','s.tva_intra'=>'VATIntra','f.rowid'=>"OrderId",'f.ref'=>"Ref",'f.ref_supplier'=>"RefSupplier",'f.date_creation'=>"DateCreation",'f.date_commande'=>"OrderDate",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.fk_statut'=>'Status','f.date_approve'=>'DateApprove','f.date_approve2'=>'DateApprove2','f.note_public'=>"NotePublic",'f.note_private'=>"NotePrivate",'ua1.login'=>'ApprovedBy','ua2.login'=>'ApprovedBy2','fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.remise_percent'=>"Discount",'fd.total_ht'=>"LineTotalHT",'fd.total_ttc'=>"LineTotalTTC",'fd.total_tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.fk_product'=>'ProductId',
 											  'p.ref'=>'ProductRef','p.label'=>'ProductLabel','project.rowid'=>'ProjectId','project.ref'=>'ProjectRef','project.title'=>'ProjectLabel');
-		if (empty($conf->global->SUPPLIER_ORDER_DOUBLE_APPROVAL))
+		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 		{
 			unset($this->export_fields_array['f.date_approve2']);
 			unset($this->export_fields_array['ua2.login']);

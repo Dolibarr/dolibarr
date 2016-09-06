@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=Non scaduto
 ServiceStatusLate=Attivo, scaduto
 ServiceStatusLateShort=Scaduto
 ServiceStatusClosed=Chiuso
+ShowContractOfService=Show contract of service
 Contracts=Contratti
 ContractsSubscriptions=Contratto/sottoscrizione
 ContractsAndLine=Contratti e righe di contratto

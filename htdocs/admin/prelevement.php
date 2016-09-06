@@ -48,11 +48,11 @@ if ($action == "set")
 
     $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
     $account = new Account($db);
-
     if($account->fetch($id)>0)
     {
         $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
+        /*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
@@ -67,6 +67,7 @@ if ($action == "set")
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
+        */
     }
     else $error++;
 
@@ -141,7 +142,7 @@ print '</td></tr>';
 // ICS
 print '<tr class="pair"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
 print '<td align="left">';
-print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="9" ></td>';
+print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" ></td>';
 print '</td></tr>';
 
 //User

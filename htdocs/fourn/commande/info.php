@@ -62,7 +62,8 @@ if ($id > 0 || ! empty($ref))
         
 	    $soc->fetch($object->socid);
 
-		llxHeader('',$langs->trans("History"),"CommandeFournisseur");
+		$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+		llxHeader('',$langs->trans("Order"),$help_url);
 
 		$head = ordersupplier_prepare_head($object);
 

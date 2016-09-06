@@ -74,6 +74,7 @@ DefaultLang=ภาษาโดยปริยาย
 VATIsUsed=ภาษีมูลค่าเพิ่มถูกนำมาใช้
 VATIsNotUsed=ภาษีมูลค่าเพิ่มที่ไม่ได้ใช้
 CopyAddressFromSoc=กรอกที่อยู่ที่อยู่ thirdparty
+ThirdpartyNotCustomerNotSupplierSoNoRef=Thirdparty neither customer nor supplier, no available refering objects
 ##### Local Taxes #####
 LocalTax1IsUsed=Use second tax
 LocalTax1IsUsedES= RE ถูกนำมาใช้
@@ -368,7 +369,8 @@ AllocateCommercial=Assigned to sales representative
 Organization=องค์กร
 FiscalYearInformation=ข้อมูลเกี่ยวกับปีงบประมาณ
 FiscalMonthStart=เริ่มต้นเดือนของปีงบประมาณ
-YouMustCreateContactFirst=To be able to add email notifications, you must first insert email contacts for the third party
+YouMustAssignUserMailFirst=You must create email for this user first to be able to add emails notifications for him.
+YouMustCreateContactFirst=To be able to add email notifications, you must first define contacts with valid emails for the third party
 ListSuppliersShort=รายชื่อของซัพพลายเออร์
 ListProspectsShort=รายชื่อของลูกค้า
 ListCustomersShort=รายชื่อของลูกค้า

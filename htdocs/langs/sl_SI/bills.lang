@@ -312,6 +312,7 @@ LatestRelatedBill=Zadnji povezan račun
 WarningBillExist=Pozor, obstaja že en ali več računov
 MergingPDFTool=Orodje za spajanje PDF
 AmountPaymentDistributedOnInvoice=Payment amount distributed on invoice
+PaymentOnDifferentThirdBills=Allow payments on different thirdparties bills but same parent company
 PaymentNote=Payment note
 ListOfPreviousSituationInvoices=List of previous situation invoices
 ListOfNextSituationInvoices=List of next situation invoices

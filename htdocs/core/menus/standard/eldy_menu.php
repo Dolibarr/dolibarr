@@ -185,7 +185,11 @@ class MenuManager
         				print '<a href="'.$relurl.'"';
         				//print ' data-ajax="false"';
         				print '>';
-        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") print $langs->trans("Access");	// No translation
+        				if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard")  // No translation 
+        				{
+        				    if ($val['mainmenu'] == 'cashdesk') print $langs->trans("Access");
+        				    else print $langs->trans("Dashboard");	
+        				}
         				else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
         				print '</a>';
         				print '</li>'."\n";

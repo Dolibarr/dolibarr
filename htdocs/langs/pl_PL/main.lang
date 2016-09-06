@@ -84,6 +84,7 @@ SeeAbove=Patrz wyżej
 HomeArea=Strona Startowa
 LastConnexion=Ostatnie połączenia
 PreviousConnexion=Poprzednie połączenia
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Podłączono do środowiska
 ConnectedSince=Połączeno od
 AuthenticationMode=Tryb autentycznośći

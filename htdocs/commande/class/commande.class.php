@@ -693,8 +693,8 @@ class Commande extends CommonOrder
      *	Note that this->ref can be set or empty. If empty, we will use "(PROV)"
      *
      *	@param		User	$user 		Objet user that make creation
-     *	@param		int	$notrigger	Disable all triggers
-     *	@return 	int			<0 if KO, >0 if OK
+     *	@param		int	    $notrigger	Disable all triggers
+     *	@return 	int			        <0 if KO, >0 if OK
      */
     function create($user, $notrigger=0)
     {
@@ -808,37 +808,43 @@ class Commande extends CommonOrder
                  */
                 for ($i=0;$i<$num;$i++)
                 {
+                	$line = $this->lines[$i];
+                	
+                	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+                	if (! is_object($line)) $line = (object) $line;
+                	 
                     // Reset fk_parent_line for no child products and special product
-                    if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
+                    if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
                         $fk_parent_line = 0;
                     }
 
                     $result = $this->addline(
-                        $this->lines[$i]->desc,
-                        $this->lines[$i]->subprice,
-                        $this->lines[$i]->qty,
-                        $this->lines[$i]->tva_tx,
-                        $this->lines[$i]->localtax1_tx,
-                        $this->lines[$i]->localtax2_tx,
-                        $this->lines[$i]->fk_product,
-                        $this->lines[$i]->remise_percent,
-                        $this->lines[$i]->info_bits,
-                        $this->lines[$i]->fk_remise_except,
+                        $line->desc,
+                        $line->subprice,
+                        $line->qty,
+                        $line->tva_tx,
+                        $line->localtax1_tx,
+                        $line->localtax2_tx,
+                        $line->fk_product,
+                        $line->remise_percent,
+                        $line->info_bits,
+                        $line->fk_remise_except,
                         'HT',
                         0,
-                        $this->lines[$i]->date_start,
-                        $this->lines[$i]->date_end,
-                        $this->lines[$i]->product_type,
-                        $this->lines[$i]->rang,
-                        $this->lines[$i]->special_code,
+                        $line->date_start,
+                        $line->date_end,
+                        $line->product_type,
+                        $line->rang,
+                        $line->special_code,
                         $fk_parent_line,
-                        $this->lines[$i]->fk_fournprice,
-                        $this->lines[$i]->pa_ht,
-                    	$this->lines[$i]->label,
-                    	$this->lines[$i]->array_options,
-	                    $this->lines[$i]->fk_unit,
+                        $line->fk_fournprice,
+                        $line->pa_ht,
+                    	$line->label,
+                    	$line->array_options,
+	                    $line->fk_unit,
                         $this->element,
-                        $this->lines[$i]->id
+                        $line->id
                     );
                     if ($result < 0)
                     {
@@ -851,7 +857,7 @@ class Commande extends CommonOrder
                         return -1;
                     }
                     // Defined the new fk_parent_line
-                    if ($result > 0 && $this->lines[$i]->product_type == 9) {
+                    if ($result > 0 && $line->product_type == 9) {
                         $fk_parent_line = $result;
                     }
                 }
@@ -879,30 +885,40 @@ class Commande extends CommonOrder
                         			$error++;
                         		}
 
-                        		// TODO mutualiser
-                        		if ($origin == 'propal' && $origin_id)
+                        		if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
                         		{
-                        			// On recupere les differents contact interne et externe
-                        			$prop = new Propal($this->db);
-									$prop->fetch($origin_id);
-
-                        			// We get ids of sales representatives of proposal
-                        			$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-
-                        			if ($this->userid)
-                        			{
-                        				//On passe le commercial suivi propale en commercial suivi commande
-                        				$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-                        			}
-
-                        			// We get ids of customer follower of proposal
-                        			$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-
-                        			if ($this->contactid)
-                        			{
-                        				//On passe le contact client suivi propale en contact client suivi commande
-                        				$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
-                        			}
+                        		    $originforcontact = $origin;
+                        		    $originidforcontact = $origin_id;
+                        		    if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
+                        		    {
+                        		        require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+                        		        $exp = new Expedition($db);
+                        		        $exp->fetch($origin_id);
+                        		        $exp->fetchObjectLinked();
+                        		        if (count($exp->linkedObjectsIds['commande']) > 0)
+                        		        {
+                        		            foreach ($exp->linkedObjectsIds['commande'] as $key => $value)
+                        		            {
+                        		                $originforcontact = 'commande';
+                        		                $originidforcontact = $value->id;
+                        		                break; // We take first one
+                        		            }
+                        		        }
+                        		    }
+                        		    	
+                        		    $sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+                        		    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
+                        		    	
+                        		    $resqlcontact = $this->db->query($sqlcontact);
+                        		    if ($resqlcontact)
+                        		    {
+                        		        while($objcontact = $this->db->fetch_object($resqlcontact))
+                        		        {
+                					        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+                        		            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source);    // May failed because of duplicate key or because code of contact type does not exists for new object
+                        		        }
+                        		    }
+                        		    else dol_print_error($resqlcontact);
                         		}
                         	}
                         }
@@ -910,22 +926,8 @@ class Commande extends CommonOrder
 
                     if (! $error)
                     {
-                    	//$action='create';
-
-	                    // Actions on extra fields (by external module or standard code)
-	                    // TODO le hook fait double emploi avec le trigger !!
-	                    /*$hookmanager->initHooks(array('orderdao'));
-	                    $parameters=array('socid'=>$this->id);
-	                    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-	                    if (empty($reshook))
-	                    {
-	                    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-	                    	{*/
-	                    		$result=$this->insertExtraFields();
-	                    		if ($result < 0) $error++;
-	                    /*	}
-	                    }
-	                    else if ($reshook < 0) $error++;*/
+                   		$result=$this->insertExtraFields();
+                   		if ($result < 0) $error++;
                     }
 
                     if (! $error && ! $notrigger)
@@ -3327,7 +3329,7 @@ class Commande extends CommonOrder
      */
     function getNomUrl($withpicto=0,$option=0,$max=0,$short=0)
     {
-        global $conf, $langs;
+        global $conf, $langs, $user;
 
         $result='';
 
@@ -3337,17 +3339,29 @@ class Commande extends CommonOrder
         if ($short) return $url;
 
         $picto = 'order';
-        $label = '<u>' . $langs->trans("ShowOrder") . '</u>';
-        if (! empty($this->ref))
-            $label .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->ref_client))
-            $label.= '<br><b>' . $langs->trans('RefCustomer') . ':</b> ' . $this->ref_client;
-        if (! empty($this->total_ht))
-            $label.= '<br><b>' . $langs->trans('AmountHT') . ':</b> ' . price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_tva))
-            $label.= '<br><b>' . $langs->trans('VAT') . ':</b> ' . price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
-        if (! empty($this->total_ttc))
-            $label.= '<br><b>' . $langs->trans('AmountTTC') . ':</b> ' . price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
+        $label = '';
+
+		if ($user->rights->commande->lire) {
+			$label = '<u>'.$langs->trans("ShowOrder").'</u>';
+			if (!empty($this->ref)) {
+				$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+			}
+			if (!empty($this->ref_client)) {
+				$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.$this->ref_client;
+			}
+			if (!empty($this->total_ht)) {
+				$label .= '<br><b>'.$langs->trans('AmountHT').':</b> '.price($this->total_ht, 0, $langs, 0, -1, -1,
+						$conf->currency);
+			}
+			if (!empty($this->total_tva)) {
+				$label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1,
+						$conf->currency);
+			}
+			if (!empty($this->total_ttc)) {
+				$label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1,
+						$conf->currency);
+			}
+		}
 
         $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';

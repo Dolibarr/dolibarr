@@ -529,7 +529,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		$sql.= ' WHERE f.entity = '.$conf->entity;
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
         
-		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS)) {
+		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
 			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->parent.')';
 		}
 		

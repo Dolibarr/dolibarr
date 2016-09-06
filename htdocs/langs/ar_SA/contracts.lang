@@ -14,6 +14,7 @@ ServiceStatusNotLateShort=لا تنتهي
 ServiceStatusLate=على التوالي ، وانتهت
 ServiceStatusLateShort=انتهى
 ServiceStatusClosed=مغلقة
+ShowContractOfService=Show contract of service
 Contracts=عقود
 ContractsSubscriptions=العقود / الاشتراكات
 ContractsAndLine=العقود وخط عقود

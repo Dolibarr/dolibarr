@@ -91,12 +91,12 @@
 			print '<input type="text" name="batch_number" size="40" value="'.GETPOST("batch_number").'">';
 			print '</td>';
 			print '</tr><tr>';
-			print '<td colspan="2">'.$langs->trans("l_eatby").'</td><td>';
+			print '<td colspan="2">'.$langs->trans("EatByDate").'</td><td>';
 			$eatbyselected=dol_mktime(0, 0, 0, GETPOST('eatbymonth'), GETPOST('eatbyday'), GETPOST('eatbyyear'));
 			$form->select_date($eatbyselected,'eatby','','',1,"");
 			print '</td>';
 			print '<td></td>';
-			print '<td>'.$langs->trans("l_sellby").'</td><td>';
+			print '<td>'.$langs->trans("SellByDate").'</td><td>';
 			$sellbyselected=dol_mktime(0, 0, 0, GETPOST('sellbymonth'), GETPOST('sellbyday'), GETPOST('sellbyyear'));
 			$form->select_date($sellbyselected,'sellby','','',1,"");
 			print '</td>';

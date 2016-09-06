@@ -84,6 +84,7 @@ SeeAbove=Žiūrėti aukščiau
 HomeArea=Pagrindinė sritis
 LastConnexion=Paskutinis prisijungimas
 PreviousConnexion=Ankstesnis prisijungimas
+PreviousValue=Previous value
 ConnectedOnMultiCompany=Prisijungta aplinkoje
 ConnectedSince=Prisijungta nuo
 AuthenticationMode=Autentifikavimo režimas

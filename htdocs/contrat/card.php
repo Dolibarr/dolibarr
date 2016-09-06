@@ -368,31 +368,6 @@ if (empty($reshook))
 		                $error++;
 		            }
 		            
-		            // Now we create same links to contact than the ones found on origin object
-		            if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
-		            {
-		                $originforcontact = $object->origin;
-		                $originidforcontact = $object->origin_id;
-		                if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
-		                {
-		                    $originforcontact=$srcobject->origin;
-		                    $originidforcontact=$srcobject->origin_id;
-		                }
-		                $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
-		                $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-	                	
-		                $resqlcontact = $db->query($sqlcontact);
-		                if ($resqlcontact)
-		                {
-		                    while($objcontact = $db->fetch_object($resqlcontact))
-		                    {
-		                        //print $objcontact->code.'-'.$objcontact->fk_socpeople."\n";
-		                        $object->add_contact($objcontact->fk_socpeople, $objcontact->code);
-		                    }
-		                }
-		                else dol_print_error($resqlcontact);
-		            }
-
 		            // Hooks
 		            $parameters = array('objFrom' => $srcobject);
 		            $reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
@@ -998,7 +973,7 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('',$langs->trans("ContractCard"),"Contrat");
+llxHeader('',$langs->trans("Contract"),"");
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1094,7 +1069,7 @@ if ($action == 'create')
     } else {
     	$tmpcode='<input name="ref" size="20" maxlength="128" value="'.dol_escape_htmltag(GETPOST('ref')?GETPOST('ref'):$tmpcode).'">';
     }
-	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$tmpcode.'</td></tr>';
 
 	// Ref customer
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td>';
@@ -1117,7 +1092,7 @@ if ($action == 'create')
 	else
 	{
 		print '<td colspan="2">';
-		print $form->select_company('','socid','',1,1);
+		print $form->select_company('','socid','','SelectThirdParty',1);
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -1137,12 +1112,12 @@ if ($action == 'create')
 	}
 
     // Commercial suivi
-    print '<tr><td width="20%" class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
+    print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPFOLL").'</span></td><td>';
     print $form->select_dolusers(GETPOST("commercial_suivi_id")?GETPOST("commercial_suivi_id"):$user->id,'commercial_suivi_id',1,'');
     print '</td></tr>';
 
     // Commercial signature
-    print '<tr><td width="20%" class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
+    print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("TypeContact_contrat_internal_SALESREPSIGN").'</span></td><td>';
     print $form->select_dolusers(GETPOST("commercial_signature_id")?GETPOST("commercial_signature_id"):$user->id,'commercial_signature_id',1,'');
     print '</td></tr>';
 
@@ -1188,7 +1163,7 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div align="center">';
+    print '<div class="center">';
     print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
@@ -1295,13 +1270,13 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
         // Ref du contrat
-        if (!empty($modCodeContract->code_auto)) {
-	        print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+        if (! empty($modCodeContract->code_auto)) {
+	        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	        print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	        print "</td></tr>";
         } else {
         	print '<tr>';
-        	print '<td  width="20%">';
+        	print '<td class="titlefieldcreate">';
         	print $form->editfieldkey("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
         	print '</td><td>';
         	print $form->editfieldval("Ref",'ref',$object->ref,$object,$user->rights->contrat->creer);
@@ -1310,7 +1285,7 @@ else
         }
 
         print '<tr>';
-		print '<td  width="20%">';
+		print '<td>';
 		print $form->editfieldkey("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
 		print '</td><td>';
 		print $form->editfieldval("RefCustomer",'ref_customer',$object->ref_customer,$object,$user->rights->contrat->creer);
@@ -1318,7 +1293,7 @@ else
 		print '</tr>';
         
 		print '<tr>';
-		print '<td  width="20%">';
+		print '<td>';
 		print $form->editfieldkey("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
 		print '</td><td>';
 		print $form->editfieldval("RefSupplier",'ref_supplier',$object->ref_supplier,$object,$user->rights->contrat->creer);
@@ -1348,7 +1323,7 @@ else
 
         // Date
         print '<tr>';
-		print '<td  width="20%">';
+		print '<td>';
 		print $form->editfieldkey("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer);
 		print '</td><td>';
 		print $form->editfieldval("Date",'date_contrat',$object->date_contrat,$object,$user->rights->contrat->creer,'datehourpicker');
@@ -1513,7 +1488,7 @@ else
                     // Remise
                     if ($objp->remise_percent > 0)
                     {
-                        print '<td align="right" '.$bc[$var].'>'.$objp->remise_percent."%</td>\n";
+                        print '<td align="right">'.$objp->remise_percent."%</td>\n";
                     }
                     else
                     {
@@ -1584,7 +1559,7 @@ else
                     }
 
 
-                    //Display lines extrafields
+                    // Display lines extrafields
                     if (is_array($extralabelslines) && count($extralabelslines)>0) {
                     	print '<tr '.$bc[$var].'>';
                     	$line = new ContratLigne($db);
@@ -1975,6 +1950,13 @@ else
                 else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateBill").'</a></div>';
             }
 
+            if (! empty($conf->commande->enabled) && $object->statut > 0 && $object->nbofservicesclosed < $nbofservices)
+            {
+            	$langs->load("bills");
+            	if ($user->rights->facture->creer) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->thirdparty->id.'">'.$langs->trans("CreateOrder").'</a></div>';
+            	else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CreateOrder").'</a></div>';
+            }
+
             if ($object->nbofservicesclosed < $nbofservices)
             {
                 //if (! $numactive)
@@ -2017,12 +1999,10 @@ else
 
         $somethingshown = $formfile->show_documents('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
-		// Linked object block
-		$somethingshown = $form->showLinkedObjectBlock($object);
-
+        
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object);
-		if ($linktoelem) print '<br>'.$linktoelem;
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('contrat'));
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';

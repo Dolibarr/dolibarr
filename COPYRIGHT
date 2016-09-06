@@ -52,7 +52,7 @@ jQuery Mobile          1.3.0         GPL and MIT License         Yes            
 jQuery TableDnD        0.6           GPL and MIT License         Yes             JS library plugin TableDnD (to reorder table rows)
 jQuery Timepicker      1.1.0         GPL and MIT License         Yes             JS library Timepicker addon for Datepicker
 jQuery Tiptip          1.3           GPL and MIT License         Yes             JS library for tooltips
-jsGantt                1.2           BSD License                 Yes             JS library (to build Gantt reports)
+jsGanttImproved        1.7.5.2       BSD License                 Yes             JS library (to build Gantt reports)
 JsTimezoneDetect       1.0.6         MIT License                 Yes             JS library to detect user timezone
 
 For licenses compatibility informations:

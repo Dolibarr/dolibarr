@@ -41,7 +41,7 @@ class ExpenseReport extends CommonObject
 
     var $fk_user_validator;
     var $status;
-    var $fk_statut;     // -- 1=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
+    var $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
     var $fk_c_paiement;
     var $paid;
 

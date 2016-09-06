@@ -84,6 +84,7 @@ SeeAbove=见上文
 HomeArea=信息状态
 LastConnexion=最后一个连接
 PreviousConnexion=前连接
+PreviousValue=Previous value
 ConnectedOnMultiCompany=对实体连接
 ConnectedSince=自连接
 AuthenticationMode=认证模式
