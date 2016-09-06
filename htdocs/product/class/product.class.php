@@ -926,7 +926,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-			    $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price');
+				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot');
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -3175,7 +3175,7 @@ class Product extends CommonObject
 	if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
 
-        if ($option == 'supplier') {
+        if ($option == 'supplier' || $option == 'category') {
             $link = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$this->id.$linkclose;
             $linkend='</a>';
         } else if ($option == 'stock') {
@@ -3184,8 +3184,6 @@ class Product extends CommonObject
         } else if ($option == 'composition') {
             $link = '<a href="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$this->id.$linkclose;
             $linkend='</a>';
-        } else if ($option == 'category') {
-            $link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&amp;type=0'.$linkclose;
         } else {
             $link = '<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$this->id.$linkclose;
             $linkend='</a>';
@@ -3727,11 +3725,11 @@ class Product extends CommonObject
     						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
     						{
     							$return.= '<!-- Show thumb -->';
-    							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
     						}
     						else {
     							$return.= '<!-- Show original file -->';
-    							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
     						}
 
     						if (empty($nolink)) $return.= '</a>';

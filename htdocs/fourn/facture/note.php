@@ -67,7 +67,9 @@ if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('SupplierInvoice'));
+$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Notes');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 if ($object->id > 0)
 {

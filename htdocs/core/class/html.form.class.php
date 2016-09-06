@@ -449,7 +449,7 @@ class Form
      *	@param	string	$text				Text to show
      *	@param  string	$htmltext	     	Content of tooltip
      *	@param	int		$direction			1=Icon is after text, -1=Icon is before text, 0=no icon
-     * 	@param	string	$type				Type of picto (info, help, warning, superadmin...)
+     * 	@param	string	$type				Type of picto (info, help, warning, superadmin...) OR image filepath (mypicto@mymodule)
      *  @param  string	$extracss           Add a CSS style to td tags
      *  @param  int		$noencodehtmltext   Do not encode into html entity the htmltext
      *  @param	int		$notabs				0=Include table and tr tags, 1=Do not include table and tr tags, 2=use div, 3=use span
@@ -487,6 +487,7 @@ class Form
         elseif ($type == 'superadmin') $img = img_picto($alt, 'redstar');
         elseif ($type == 'admin') $img = img_picto($alt, 'star');
         elseif ($type == 'warning') $img = img_warning($alt);
+		else $img = img_picto($alt, $type);
 
         return $this->textwithtooltip($text, $htmltext, 2, $direction, $img, $extracss, $notabs, '', $noencodehtmltext);
     }
@@ -1117,7 +1118,8 @@ class Form
         $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
         $sql.= " re.description, re.fk_facture_source";
         $sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
-        $sql.= " WHERE fk_soc = ".(int) $socid;
+        $sql.= " WHERE re.fk_soc = ".(int) $socid;
+        $sql.= " AND re.entity = " . $conf->entity;
         if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
 
@@ -5061,8 +5063,8 @@ class Form
             <dt>
             <a href="#">
               '.img_picto('','list').'
-              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </a>
+            <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </dt>
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
@@ -5165,9 +5167,9 @@ class Form
 
         	print '<br>';
             print load_fiche_titre($langs->trans('RelatedObjects'), $morehtmlright, '');
-        
+
             print '<table class="noborder allwidth">';
-        
+
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Type").'</td>';
             print '<td>'.$langs->trans("Ref").'</td>';
@@ -5177,9 +5179,9 @@ class Form
             print '<td align="right">'.$langs->trans("Status").'</td>';
             print '<td></td>';
             print '</tr>';
-            
+
             $numoutput=0;
-            
+
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
         		$tplpath = $element = $subelement = $objecttype;
@@ -5239,7 +5241,7 @@ class Form
         		foreach($dirtpls as $reldir)
         		{
                     $res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
-        			if ($res) 
+        			if ($res)
         			{
         			    $numoutput++;
         			    break;
@@ -5251,7 +5253,7 @@ class Form
         	{
         	    print '<tr><td class="opacitymedium" colspan="7">'.$langs->trans("None").'</td></tr>';
         	}
-        	
+
         	print '</table>';
 
         	return $num;
@@ -5260,7 +5262,7 @@ class Form
 
     /**
      *  Show block with links to link to other objects.
-     * 
+     *
      *  @param	CommonObject	$object				Object we want to show links to
      *  @param	array			$restrictlinksto	Restrict links to some elements, for exemple array('order') or array('supplier_order'). null or array() if no restriction.
      *  @param	array			$excludelinksto		Do not show links of this type, for exemple array('order') or array('supplier_order'). null or array() if no exclusion.
@@ -5285,12 +5287,12 @@ class Form
 			'order_supplier'=>array('enabled'=>$conf->fournisseur->commande->enabled , 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
 			'invoice_supplier'=>array('enabled'=>$conf->fournisseur->facture->enabled , 'perms'=>1, 'label'=>'LinkToSupplierInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id)
 		);
-		
+
 
 		foreach($possiblelinks as $key => $possiblelink)
 		{
 			$num = 0;
-			
+
 			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
 			{
 				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
@@ -5300,7 +5302,7 @@ class Form
 				{
 					$num = $this->db->num_rows($resqllist);
 					$i = 0;
-	
+
 					print '<br><form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formlinked'.$key.'">';
 					print '<input type="hidden" name="id" value="'.$object->id.'">';
 					print '<input type="hidden" name="action" value="addlink">';
@@ -5316,7 +5318,7 @@ class Form
 					while ($i < $num)
 					{
 						$objp = $this->db->fetch_object($resqlorderlist);
-	
+
 						$var = ! $var;
 						print '<tr ' . $bc [$var] . '>';
 						print '<td aling="left">';
@@ -5331,7 +5333,7 @@ class Form
 					}
 					print '</table>';
 					print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
-					
+
 					print '</form>';
 					$this->db->free($resqllist);
 				} else {
@@ -5340,8 +5342,8 @@ class Form
 				print '</div>';
 				if ($num > 0)
 				{
-				}	
-			
+				}
+
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
 				if ($num > 0) $linktoelem.='<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a></li>';
 				//else $linktoelem.=$langs->trans($possiblelink['label']);
@@ -5359,7 +5361,7 @@ class Form
 		</div>
 		</dd>
 		</dl>';
-		
+
 		print '<!-- Add js to show linkto box -->
 				<script type="text/javascript" language="javascript">
 				jQuery(document).ready(function() {
@@ -5371,7 +5373,7 @@ class Form
 				});
 				</script>
 		';
-		
+
 		return $linktoelem;
     }
 
@@ -5474,15 +5476,15 @@ class Form
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
      *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
-     *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field)
+     *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
      *    @param	string	$morehtmlref  	More html to show after ref
      *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
      *	  @param	string	$morehtmlleft	More html code to show before ref
      *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place)
      *	  @param	string	$morehtmlright	More html code to show after ref
-     * 	  @return	string    				Portion HTML avec ref + boutons nav
+     * 	  @return	string    				Portion HTML with ref + navigation buttons
      */
     function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
     {
@@ -5507,7 +5509,7 @@ class Form
 
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
-        // For thirdparty and contact, the ref is the id, so we show something else
+        // For thirdparty, contact, user, member, the ref is the id, so we show something else
         if ($object->element == 'societe')
         {
         	$ret.=dol_htmlentities($object->name);
@@ -5516,7 +5518,7 @@ class Form
         {
         	$ret.=dol_htmlentities($object->getFullName($langs));
         }
-        else $ret.=dol_htmlentities($object->$fieldref);
+        else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
@@ -5666,7 +5668,7 @@ class Form
         {
             if ($file && file_exists($dir."/".$file))
             {
-                if ($addlinktofullsize) 
+                if ($addlinktofullsize)
                 {
                     $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
                     if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';
@@ -5677,7 +5679,7 @@ class Form
             }
             else if ($altfile && file_exists($dir."/".$altfile))
             {
-                if ($addlinktofullsize) 
+                if ($addlinktofullsize)
                 {
                     $urladvanced=getAdvancedPreviewUrl($modulepart, $originalfile);
                     if ($urladvanced) $ret.='<a href="'.$urladvanced.'">';

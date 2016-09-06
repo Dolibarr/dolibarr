@@ -440,7 +440,7 @@ $sql.= ' a.percent,';
 $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql.= ' a.fk_soc, a.fk_contact,';
-$sql.= ' ca.code as type_code, ca.libelle as type_label';
+$sql.= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 // We must filter on resource table
@@ -531,6 +531,8 @@ if ($resql)
 
         $event->type_code=$obj->type_code;
         $event->type_label=$obj->type_label;
+        $event->type_color=$obj->type_color;
+
         $event->libelle=$obj->label;
         $event->percentage=$obj->percent;
         $event->authorid=$obj->fk_user_author;		// user id of creator

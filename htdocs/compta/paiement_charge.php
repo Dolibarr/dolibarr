@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("bills");
 
-$chid=GETPOST("id");
-$action=GETPOST('action');
+$chid=GETPOST("id", 'int');
+$action=GETPOST('action', 'alpha');
 $amounts = array();
 
 // Security check
@@ -45,13 +45,13 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if ($action == 'add_payment')
+if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm=='yes'))
 {
 	$error=0;
 
 	if ($_POST["cancel"])
 	{
-		$loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+		$loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
 		header("Location: ".$loc);
 		exit;
 	}
@@ -109,7 +109,7 @@ if ($action == 'add_payment')
 
     		if (! $error)
     		{
-    		    $paymentid = $paiement->create($user);
+    		    $paymentid = $paiement->create($user, (GETPOST('closepaidcontrib')=='on'?1:0));
                 if ($paymentid < 0)
                 {
                     $errmsg=$paiement->error;
@@ -130,7 +130,7 @@ if ($action == 'add_payment')
     	    if (! $error)
             {
                 $db->commit();
-                $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+                $loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
                 header('Location: '.$loc);
                 exit;
             }
@@ -155,7 +155,7 @@ $form=new Form($db);
 
 
 // Formulaire de creation d'un paiement de charge
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
 
 	$charge = new ChargeSociales($db);
@@ -185,7 +185,7 @@ if ($_GET["action"] == 'create')
 
 	print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("SocialContribution")."</td></tr>";
 
-	print '<tr><td>'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	print '<tr><td>'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_libelle."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->lib."</td></tr>\n";
@@ -317,8 +317,9 @@ if ($_GET["action"] == 'create')
 
 	print "</table>";
 
-	print '<br><div class="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	// Bouton Save payment
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';

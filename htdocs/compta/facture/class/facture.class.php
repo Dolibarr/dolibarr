@@ -1738,7 +1738,7 @@ class Facture extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function set_paid($user,$close_code='',$close_note='')
+	function set_paid($user, $close_code='', $close_note='')
 	{
 		$error=0;
 

@@ -1460,7 +1460,6 @@ class CommandeFournisseur extends CommonOrder
             $this->line->date_start=$date_start;
             $this->line->date_end=$date_end;
 
-
             // Multicurrency
             $this->line->fk_multicurrency			= $this->fk_multicurrency;
             $this->line->multicurrency_code			= $this->multicurrency_code;
@@ -1989,28 +1988,58 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param      User			$user        		Objet user making change
      *	@param      timestamp		$date_livraison     Planned delivery date
+     *  @param     	int				$notrigger			1=Does not execute triggers, 0= execuete triggers
      *	@return     int         						<0 if KO, >0 if OK
      */
-    function set_date_livraison($user, $date_livraison)
+    function set_date_livraison($user, $date_livraison, $notrigger=0)
     {
         if ($user->rights->fournisseur->commande->creer)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+        	$error=0;
+
+        	$this->db->begin();
+
+        	$sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
             $sql.= " SET date_livraison = ".($date_livraison ? "'".$this->db->idate($date_livraison)."'" : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::set_date_livraison", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                $this->date_livraison = $date_livraison;
-                return 1;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                return -1;
-            }
+        	dol_syslog(__METHOD__, LOG_DEBUG);
+        	$resql=$this->db->query($sql);
+        	if (!$resql)
+        	{
+        		$this->errors[]=$this->db->error();
+        		$error++;
+        	}
+
+        	if (! $error)
+        	{
+        		$this->oldcopy= clone $this;
+        		$this->date_livraison = $date_livraison;
+        	}
+
+        	if (! $notrigger && empty($error))
+        	{
+        		// Call trigger
+        		$result=$this->call_trigger('ORDER_SUPPLIER_MODIFY',$user);
+        		if ($result < 0) $error++;
+        		// End call triggers
+        	}
+
+        	if (! $error)
+        	{
+        		$this->db->commit();
+        		return 1;
+        	}
+        	else
+        	{
+        		foreach($this->errors as $errmsg)
+        		{
+        			dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+        			$this->error.=($this->error?', '.$errmsg:$errmsg);
+        		}
+        		$this->db->rollback();
+        		return -1*$error;
+        	}
         }
         else
         {
@@ -2023,27 +2052,57 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param      User			$user        		Objet utilisateur qui modifie
      *	@param      int				$id_projet    	 	Date de livraison
+     *  @param     	int				$notrigger			1=Does not execute triggers, 0= execuete triggers
      *	@return     int         						<0 si ko, >0 si ok
      */
-    function set_id_projet($user, $id_projet)
+    function set_id_projet($user, $id_projet, $notrigger=0)
     {
         if ($user->rights->fournisseur->commande->creer)
         {
+        	$error=0;
+
+        	$this->db->begin();
+
             $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
             $sql.= " SET fk_projet = ".($id_projet > 0 ? (int) $id_projet : 'null');
             $sql.= " WHERE rowid = ".$this->id;
 
-            dol_syslog(get_class($this)."::set_id_projet", LOG_DEBUG);
+            dol_syslog(__METHOD__, LOG_DEBUG);
             $resql=$this->db->query($sql);
-            if ($resql)
+            if (!$resql)
             {
-                $this->fk_projet = $id_projet;
-                return 1;
+            	$this->errors[]=$this->db->error();
+            	$error++;
+            }
+
+            if (! $error)
+            {
+            	$this->oldcopy= clone $this;
+            	$this->fk_projet = $id_projet;
+            }
+
+            if (! $notrigger && empty($error))
+            {
+            	// Call trigger
+            	$result=$this->call_trigger('ORDER_SUPPLIER_MODIFY',$user);
+            	if ($result < 0) $error++;
+            	// End call triggers
+            }
+
+            if (! $error)
+            {
+            	$this->db->commit();
+            	return 1;
             }
             else
             {
-                $this->error=$this->db->error();
-                return -1;
+            	foreach($this->errors as $errmsg)
+            	{
+            		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
+            		$this->error.=($this->error?', '.$errmsg:$errmsg);
+            	}
+            	$this->db->rollback();
+            	return -1*$error;
             }
         }
         else
@@ -2974,7 +3033,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= "'".price2num($this->total_localtax2)."',";
         $sql.= "'".price2num($this->total_ttc)."',";
         $sql.= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'":"null");
-        $sql.= ", ".$this->fk_multicurrency;
+        $sql.= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
         $sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
         $sql.= ", ".price2num($this->pu_ht * $this->multicurrency_tx);
         $sql.= ", ".$this->multicurrency_total_ht;

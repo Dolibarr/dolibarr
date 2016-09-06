@@ -986,13 +986,14 @@ function top_httphead()
  *
  * @param 	string 	$head			Optionnal head lines
  * @param 	string 	$title			HTML title
- * @param 	int    	$disablejs		More content into html header
- * @param 	int    	$disablehead	More content into html header
+ * @param 	int    	$disablejs		Disable js output
+ * @param 	int    	$disablehead	Disable head output
  * @param 	array  	$arrayofjs		Array of complementary js files
  * @param 	array  	$arrayofcss		Array of complementary css files
+ * @param 	int    	$disablejmobile	Disable jmobile
  * @return	void
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0)
 {
     global $user, $conf, $langs, $db;
 
@@ -1065,7 +1066,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css'.($ext?'?'.$ext:'').'">'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
+            if (! $disablejmobile && (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile)))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css'.($ext?'?'.$ext:'').'">'."\n";
             }
@@ -1237,7 +1238,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/select2_locale.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
+            if (! $disablejmobile && (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0)))
             {
             	// We must force not using ajax because cache of jquery does not load js of other pages.
             	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
@@ -1291,16 +1292,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '</script>'."\n";
                 print '<script type="text/javascript" src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
             }
-
-			// Raven.js for client-side Sentry logging support
-			if (array_key_exists('mod_syslog_sentry', $conf->loghandlers)) {
-				print '<!-- Includes Raven.js for Sentry -->' . "\n";
-				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/dist/raven.min.js"></script>' . "\n";
-				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/native.js"></script>' . "\n";
-				if (! defined('DISABLE_JQUERY')) {
-					print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/jquery.js"></script>' . "\n";
-				}
-			}
 
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
@@ -1386,23 +1377,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
     print '<body id="mainbody">' . "\n";
-
-    if ($conf->use_javascript_ajax)
-    {
-		// Raven.js for client-side Sentry logging support
-		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN))
-		{
-			// Filter out secret key
-			$dsn = parse_url($conf->global->SYSLOG_SENTRY_DSN);
-			$public_dsn = $dsn['scheme'] . '://' . $dsn['user'] .'@' . $dsn['host'] . $dsn['path'];
-
-			print '<script type="text/javascript">' . "\n";
-			print "Raven.config('" . $public_dsn . "').install()\n";
-			print "Raven.setUserContext({username: '" . $user->login . "'})\n";
-			print "Raven.setTagsContext({version: '" . DOL_VERSION . "'})\n";
-			print "</script>\n";
-		}
-    }
 
     /*
      * Top menu
@@ -1841,20 +1815,24 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
-	$ret.='<div class="menu_titre menu_titre_search"';
-	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
-	$ret.='>';
-	$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
-	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
-	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
-	else $ret.=$img.' '.$title;
-	$ret.='</a>';
-	$ret.='</label>';
-	$ret.='</div>';
+	if (empty($conf->global->MAIN_HTML5_PLACEHOLDER))
+	{
+        $ret.='<div class="menu_titre menu_titre_search"';
+    	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
+    	$ret.='>';
+    	$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
+    	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
+       	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
+       	else if ($img || $title) $ret.=$img.' '.$title;
+    	$ret.='</a>';
+    	$ret.='</label>';
+    	$ret.='</div>';
+	}
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
     $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';
     $ret.='<input type="text" class="flat"';
+    if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
     $ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.strip_tags($title).'"';		// Will work only if MAIN_HTML5_PLACEHOLDER is set to 1
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
@@ -1940,7 +1918,7 @@ if (! function_exists("llxFooter"))
                       //console.log($(this).parent().parent().find(\'dd ul\'));
                       $(this).parent().parent().find(\'dd ul\').slideToggle(\'fast\');
                       // Note: Did not find a way to get exact height (value is update at exit) so i calculate a generic from nb of lines
-                      heigthofcontent = 19 * $(this).parent().parent().find(\'dd div ul li\').length;
+                      heigthofcontent = 21 * $(this).parent().parent().find(\'dd div ul li\').length;
                       if (heigthofcontent > 300) heigthofcontent = 300; // limited by max-height on css .dropdown dd ul
                       posbottom = $(this).parent().parent().find(\'dd\').offset().top + heigthofcontent + 8;
                       //console.log(posbottom);

@@ -1166,7 +1166,7 @@ class Societe extends CommonObject
                 $this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
                 $this->shipping_method_id   = ($obj->fk_shipping_method>0)?$obj->fk_shipping_method:null;
 				$this->fk_account			= $obj->fk_account;
-				
+
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
 
@@ -1431,6 +1431,18 @@ class Societe extends CommonObject
                 }
             }
 
+            // Remove societe_remise
+            if (! $error)
+            {
+            	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise";
+            	$sql.= " WHERE fk_soc = " . $id;
+            	if (! $this->db->query($sql))
+            	{
+            		$error++;
+            		$this->error = $this->db->lasterror();
+            	}
+            }
+
 		    // Remove societe_remise_except
             if (! $error)
             {
@@ -1542,7 +1554,7 @@ class Societe extends CommonObject
      */
     function set_remise_client($remise, $note, User $user)
     {
-        global $langs;
+        global $conf, $langs;
 
         // Nettoyage parametres
         $note=trim($note);
@@ -1574,8 +1586,8 @@ class Societe extends CommonObject
 
             // Ecrit trace dans historique des remises
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise";
-            $sql.= " (datec, fk_soc, remise_client, note, fk_user_author)";
-            $sql.= " VALUES ('".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
+            $sql.= " (entity, datec, fk_soc, remise_client, note, fk_user_author)";
+            $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($now)."', ".$this->id.", '".$this->db->escape($remise)."',";
             $sql.= " '".$this->db->escape($note)."',";
             $sql.= " ".$user->id;
             $sql.= ")";
@@ -1684,7 +1696,7 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.email, u.statut, u.entity";
+        $sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
         if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
         {
@@ -1712,6 +1724,8 @@ class Societe extends CommonObject
                 $reparray[$i]['email']=$obj->email;
                 $reparray[$i]['statut']=$obj->statut;
                 $reparray[$i]['entity']=$obj->entity;
+                $reparray[$i]['login']=$obj->login;
+                $reparray[$i]['photo']=$obj->photo;
                 $i++;
             }
             return $reparray;
@@ -1843,7 +1857,7 @@ class Societe extends CommonObject
 
         $label.= '<div width="100%">';
 
-        if ($option == 'customer' || $option == 'compta')
+        if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
         {
            $label.= '<u>' . $langs->trans("ShowCustomer") . '</u>';
            $link = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
@@ -1867,16 +1881,6 @@ class Societe extends CommonObject
         {
             $label.= '<u>' . $langs->trans("ShowProject") . '</u>';
             $link = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
-        }
-        else if ($option == 'category')
-        {
-            $label.= '<u>' . $langs->trans("ShowCategory") . '</u>';
-        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=2';
-        }
-        else if ($option == 'category_supplier')
-        {
-            $label.= '<u>' . $langs->trans("ShowCategorySupplier") . '</u>';
-        	$link = '<a href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$this->id.'&type=1';
         }
         else if ($option == 'margin')
         {
@@ -1922,7 +1926,7 @@ class Societe extends CommonObject
             }
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
-        
+
          	if (! is_object($hookmanager))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -2760,7 +2764,7 @@ class Societe extends CommonObject
 
         $url='';
         $action = '';
-        
+
         $hookmanager->initHooks(array('idprofurl'));
         $parameters=array('idprof'=>$idprof, 'company'=>$thirdparty);
         $reshook=$hookmanager->executeHooks('getIdProfUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2773,14 +2777,14 @@ class Societe extends CommonObject
             //if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) $url='http://www.companieshouse.gov.uk/WebCHeck/findinfolink/';     // Link no more valid
             if ($idprof == 1 && $thirdparty->country_code == 'ES') $url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
             if ($idprof == 1 && $thirdparty->country_code == 'IN') $url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
-        
+
             if ($url) return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
         }
         else
         {
             return $hookmanager->resPrint;
         }
-        
+
         return '';
     }
 
@@ -3508,9 +3512,9 @@ class Societe extends CommonObject
 		 */
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
 		$sql .= ' WHERE fk_soc = '.(int) $dest_id.' AND fk_user IN ( ';
-		$sql = ' SELECT fk_user ';
-		$sql = ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
-		$sql = ' WHERE fk_soc = '.(int) $origin_id.') ';
+		$sql .= ' SELECT fk_user ';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
+		$sql .= ' WHERE fk_soc = '.(int) $origin_id.') ';
 
 		$query = $db->query($sql);
 

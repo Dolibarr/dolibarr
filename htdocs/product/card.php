@@ -817,12 +817,19 @@ if (empty($reshook))
  * View
  */
 
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-
-if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.GETPOST('type'));
-else $title = $langs->trans('ProductServiceCard');
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Card');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
 llxHeader('', $title, $helpurl);
 
@@ -955,7 +962,7 @@ else
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
-	        print '<input size="40" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
+	        print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 	        print '</td></tr>';
         }
 
@@ -969,7 +976,7 @@ else
 
         // Public URL
         print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
-		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
+		print '<input type="text" name="url" class="quatrevingtpercent" value="'.GETPOST('url').'">';
         print '</td></tr>';
 
         // Stock min level
@@ -1154,7 +1161,11 @@ else
 
         dol_fiche_end();
 
-        print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+		print '</div>';
 
         print '</form>';
     }
@@ -1257,7 +1268,7 @@ else
 		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
-		        print '<input size="40" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
+		        print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 		        print '</td></tr>';
 	        }
 
@@ -1273,7 +1284,7 @@ else
 
             // Public Url
             print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
-			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
+			print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
             print '</td></tr>';
 
             // Stock
@@ -1364,7 +1375,7 @@ else
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$object->customcode.'"></td>';
 	            // Origin country
 	            print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
-	            print $form->select_country($object->country_id,'country_id');
+	            print $form->select_country($object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	            print '</td></tr>';
         	}
@@ -1515,8 +1526,9 @@ else
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="setbarcode">';
                     print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-                    print '<input size="40" type="text" name="barcode" value="'.$object->barcode.'">';
+                    print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$object->barcode.'">';
                     print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+                    print '</form>';
                 }
                 else
                 {

@@ -1311,8 +1311,6 @@ SyslogFilename=Ime datoteke in pot
 YouCanUseDOL_DATA_ROOT=Za log datoteko v Dolibarr dokumentni mapi lahko uporabite DOL_DATA_ROOT/dolibarr.log. Za shranjevanje te datoteke lahko nastavite tudi drugačno pot.
 ErrorUnknownSyslogConstant=Konstanta %s ni znana syslog konstanta
 OnlyWindowsLOG_USER=Windowsi podpirajo samo LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Nastanitev modula za donacije
 DonationsReceiptModel=Predloga računa za donacijo

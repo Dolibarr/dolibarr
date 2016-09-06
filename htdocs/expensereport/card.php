@@ -1079,8 +1079,9 @@ else if ($action == 'remove_file')
 /*
  * View
  */
-
-llxHeader('', $langs->trans("ExpenseReport"));
+$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Card");
+$helpurl="EN:Module_Expense_Reports";
+llxHeader("",$title,$helpurl);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -1137,7 +1138,7 @@ if ($action == 'create')
 	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td valign="top" colspan="2">';
+	print '<td valign="top">';
 
 	$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -1147,7 +1148,7 @@ if ($action == 'create')
 	if (empty($user->societe_id)) {
 		print '<tr>';
 		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td valign="top" colspan="2">';
+		print '<td valign="top">';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -1159,7 +1160,7 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div align="center">';
+	print '<div class="center">';
 	print '<input type="submit" value="'.$langs->trans("AddTrip").'" name="bouton" class="button" />';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" value="'.$langs->trans("Cancel").'" class="button" onclick="history.go(-1)" />';
 	print '</div>';
@@ -1200,7 +1201,7 @@ else
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 
-				dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
+				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
 				if($object->fk_statut==99)
 				{
@@ -1216,7 +1217,7 @@ else
 				$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
             	// Ref
-            	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+            	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td>';
             	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
             	print '</td></tr>';
 
@@ -1261,7 +1262,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($object->fk_user_valid);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 				}
 
@@ -1270,7 +1271,7 @@ else
 				print '<td>';
 				$userfee=new User($db);
 				$userfee->fetch($object->fk_user_author);
-				print $userfee->getNomUrl(1);
+				print $userfee->getNomUrl(-1);
 				print '</td></tr>';
 				if ($object->fk_statut==6)
 				{
@@ -1279,7 +1280,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($user->id);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 
 				}
@@ -1287,7 +1288,7 @@ else
 				// Public note
 				print '<tr>';
 				print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-				print '<td valign="top" colspan="2">';
+				print '<td valign="top">';
 
 				$doleditor = new DolEditor('note_public', $object->note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 				print $doleditor->Create(1);
@@ -1297,7 +1298,7 @@ else
 				if (empty($user->societe_id)) {
 					print '<tr>';
 					print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-					print '<td valign="top" colspan="2">';
+					print '<td valign="top">';
 
 					$doleditor = new DolEditor('note_private', $object->note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 					print $doleditor->Create(1);
@@ -1317,7 +1318,7 @@ else
 			}
 			else
 			{
-				dol_fiche_head($head, 'card', $langs->trans("TripCard"), 0, 'trip');
+				dol_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
 				if ($action == 'save')
 				{
@@ -1435,7 +1436,6 @@ else
 				$sql.= " AND p.fk_typepayment = c.id";
 				$sql.= " ORDER BY dp";
 
-				//print $sql;
 				$resql = $db->query($sql);
 				if ($resql)
 				{
@@ -1504,7 +1504,7 @@ else
 					$userauthor=new User($db);
 					$result=$userauthor->fetch($object->fk_user_author);
 					if ($result < 0) dol_print_error('',$userauthor->error);
-					print $userauthor->getNomUrl(1);
+					print $userauthor->getNomUrl(-1);
 				}
 				print '</td></tr>';
 
@@ -1527,7 +1527,7 @@ else
 					{
 						$userfee=new User($db);
 						$userfee->fetch($object->fk_user_validator);
-						print $userfee->getNomUrl(1);
+						print $userfee->getNomUrl(-1);
 						if (empty($userfee->email) || ! isValidEmail($userfee->email)) 
 						{
 						    $langs->load("errors");
@@ -1545,7 +1545,7 @@ else
 					{
 						$userfee=new User($db);
 						$userfee->fetch($object->fk_user_cancel);
-						print $userfee->getNomUrl(1);
+						print $userfee->getNomUrl(-1);
 					}
 					print '</td></tr>';
 					print '<tr>';
@@ -1566,7 +1566,7 @@ else
 					{
 						$userapp=new User($db);
 						$userapp->fetch($object->fk_user_approve);
-						print $userapp->getNomUrl(1);
+						print $userapp->getNomUrl(-1);
 					}
 					print '</td></tr>';
 					print '<tr>';
@@ -1582,7 +1582,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($object->fk_user_refuse);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_REFUS").'</td>';
@@ -1600,7 +1600,7 @@ else
 					print '<td>';
 					$userfee=new User($db);
 					$userfee->fetch($object->fk_user_paid);
-					print $userfee->getNomUrl(1);
+					print $userfee->getNomUrl(-1);
 					print '</td></tr>';
 					print '<tr>';
 					print '<td>'.$langs->trans("DATE_PAIEMENT").'</td>';
@@ -1702,17 +1702,19 @@ else
 								}
 
 								// Ajout des boutons de modification/suppression
-								print '<td style="text-align:right;" class="nowrap">';
 								if (($object->fk_statut < 2 || $object->fk_statut == 99) && $user->rights->expensereport->creer)
 								{
+									print '<td style="text-align:right;" class="nowrap">';
+
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
 									print img_edit();
 									print '</a> &nbsp; ';
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_line&amp;rowid='.$objp->rowid.'">';
 									print img_delete();
 									print '</a>';
+
+									print '</td>';
 								}
-								print '</td>';
 								
 								print '</tr>';
 							}
@@ -1904,12 +1906,12 @@ if ($action != 'create' && $action != 'edit')
 		if ($object->fk_user_author == $user->id)
 		{
 			// Modify
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 			// Validate
 			if (count($object->lines) > 0 || count($object->lignes) > 0)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 			}
 		}
 	}
@@ -1924,12 +1926,12 @@ if ($action != 'create' && $action != 'edit')
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Modify
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$object->id.'">'.$langs->trans('Modify').'</a></div>';
 
 			// Brouillonner (le statut refusée est identique à brouillon)
 			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$id.'">'.$langs->trans('BROUILLONNER').'</a>';
 			// Enregistrer depuis le statut "Refusée"
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=save_from_refuse&id='.$object->id.'">'.$langs->trans('ValidateAndSubmit').'</a></div>';
 		}
 	}
 
@@ -1938,7 +1940,7 @@ if ($action != 'create' && $action != 'edit')
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 
@@ -1952,7 +1954,7 @@ if ($action != 'create' && $action != 'edit')
 		if ($object->fk_user_author == $user->id)
 		{
 			// Brouillonner
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=brouillonner&id='.$object->id.'">'.$langs->trans('SetToDraft').'</a></div>';
 		}
 	}
 
@@ -1961,15 +1963,15 @@ if ($action != 'create' && $action != 'edit')
 		//if($object->fk_user_validator==$user->id)
 		//{
 			// Validate
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$object->id.'">'.$langs->trans('Approve').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=validate&id='.$object->id.'">'.$langs->trans('Approve').'</a></div>';
 			// Deny
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 		//}
 
 		if ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid)
 		{
 			// Cancel
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 		}
 	}
 
@@ -1979,7 +1981,7 @@ if ($action != 'create' && $action != 'edit')
 	
 	if ($user->rights->expensereport->approve && $object->fk_statut == 5)
 	{
-	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a>';
+	    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=refuse&id='.$object->id.'">'.$langs->trans('Deny').'</a></div>';
 	}
 	
 	// If bank module is used
@@ -2008,14 +2010,14 @@ if ($action != 'create' && $action != 'edit')
 	if ($user->rights->expensereport->creer && ($user->id == $object->fk_user_author || $user->id == $object->fk_user_valid) && $object->fk_statut == 5)
 	{
     	// Cancel
-   		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
+   		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 	
     // TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
 	if (($user->rights->expensereport->approve || $user->rights->expensereport->to_paid) && $object->fk_statut == 6)
 	{
 	    // Cancel
-	    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a>';
+	    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&id='.$object->id.'">'.$langs->trans('Cancel').'</a></div>';
 	}
 	
 	
@@ -2023,12 +2025,12 @@ if ($action != 'create' && $action != 'edit')
 	if ($user->rights->expensereport->creer && $user->id == $object->fk_user_author && $object->fk_statut <= 4)
 	{
 	    // Delete
-		print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
+		print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}
 	else if($user->rights->expensereport->supprimer && $object->fk_statut != 6)
 	{
     	// Delete
-	    print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a>';
+	    print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$object->id.'">'.$langs->trans('Delete').'</a></div>';
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Juanjo Menent	    <jmenent@2byte.es>
@@ -127,6 +127,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
 include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
+
+if (GETPOST('cancel')) $action='';
 
 // Create predefined invoice
 if ($action == 'add')
@@ -264,6 +266,16 @@ elseif ($action == 'setmode' && $user->rights->facture->creer)
 elseif ($action == 'classin' && $user->rights->facture->creer)
 {
 	$object->setProject(GETPOST('projectid', 'int'));
+}
+// Set bank account
+elseif ($action == 'setref' && $user->rights->facture->creer)
+{
+    $result=$object->setValueFrom('titre', GETPOST('ref', 'alpha'));
+    if ($result > 0)
+    {
+    	$object->titre = GETPOST('ref', 'alpha');
+    	$object->ref = $object->titre;
+    }
 }
 // Set bank account
 elseif ($action == 'setbankaccount' && $user->rights->facture->creer)
@@ -840,14 +852,14 @@ if ($action == 'create')
 
 		$object->fetch_thirdparty();
 
+		// Title
+		print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Title").'</td><td>';
+		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.$_POST["titre"].'">';
+		print '</td></tr>';
+
 		// Third party
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Customer").'</td><td>'.$object->thirdparty->getNomUrl(1,'customer').'</td>';
 		print '</tr>';
-
-		// Title
-		print '<tr><td class="fieldrequired">'.$langs->trans("Title").'</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="titre" value="'.$_POST["titre"].'">';
-		print '</td></tr>';
 
 		// Note public
 		print '<tr><td>'.$langs->trans("NotePublic").'</td><td valign="top">';
@@ -950,176 +962,7 @@ if ($action == 'create')
 		}
 		
 		print "</table>\n";
-		
-		/*
-		print '<table class="notopnoleftnoright" width="100%">';
-		print '<tr><td colspan="3">';
-
-		$sql = 'SELECT l.fk_product, l.product_type, l.label as custom_label, l.description, l.qty, l.rowid, l.tva_tx,';
-		$sql.= ' l.fk_remise_except,';
-		$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
-		$sql.= ' l.total_ht, l.total_tva as total_vat, l.total_ttc,';
-		$sql.= ' l.date_start,';
-		$sql.= ' l.date_end,';
-		$sql.= ' l.product_type,';
-		$sql.= ' l.fk_unit,';
-		$sql.= ' p.ref, p.fk_product_type, p.label as product_label,';
-		$sql.= ' p.description as product_desc';
-		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as l";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
-		$sql.= " WHERE l.fk_facture = ".$object->id;
-		$sql.= " ORDER BY l.rowid";
-
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$num = $db->num_rows($result);
-			$i = 0; $total = 0;
-
-			echo '<table class="noborder" width="100%">';
-			if ($num)
-			{
-				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans("Description").'</td>';
-				print '<td align="center">'.$langs->trans("VAT").'</td>';
-				print '<td align="center">'.$langs->trans("Qty").'</td>';
-				if ($conf->global->PRODUCT_USE_UNITS) {
-					print '<td width="8%" align="left">'.$langs->trans("Unit").'</td>';
-				}
-				print '<td>'.$langs->trans("ReductionShort").'</td>';
-				print '<td align="right">'.$langs->trans("TotalHT").'</td>';
-				print '<td align="right">'.$langs->trans("TotalVAT").'</td>';
-				print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
-				print '<td align="right">'.$langs->trans("PriceUHT").'</td>';
-				if (empty($conf->global->PRODUIT_MULTIPRICES)) print '<td align="right">'.$langs->trans("CurrentProductPrice").'</td>';
-				print "</tr>\n";
-			}
-			$var=true;
-			while ($i < $num)
-			{
-				$objp = $db->fetch_object($result);
-
-				if ($objp->fk_product > 0)
-				{
-					$product = New Product($db);
-					$product->fetch($objp->fk_product);
-				}
-
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
-
-				// Show product and description
-				$type=(isset($objp->product_type)?$objp->product_type:$objp->fk_product_type);
-				$product_static->fk_unit=$objp->fk_unit;
-
-				if ($objp->fk_product > 0)
-				{
-					print '<td>';
-
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-					// Show product and description
-					$product_static->fetch($objp->fk_product);	// We need all information later
-					$text=$product_static->getNomUrl(1);
-					$text.= ' - '.(! empty($objp->custom_label)?$objp->custom_label:$objp->product_label);
-					$description=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text,$description,3,'','',$i);
-
-					// Show range
-					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
-
-					// Add description in form
-					if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-						print (! empty($objp->description) && $objp->description!=$objp->product_label)?'<br>'.dol_htmlentitiesbr($objp->description):'';
-
-					print '</td>';
-				}
-				else
-				{
-					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-
-					if ($type==1) $text = img_object($langs->trans('Service'),'service');
-					else $text = img_object($langs->trans('Product'),'product');
-
-					if (! empty($objp->custom_label)) {
-
-						$text.= ' <strong>'.$objp->custom_label.'</strong>';
-						print $form->textwithtooltip($text,dol_htmlentitiesbr($objp->description),3,'','',$i);
-
-					} else {
-
-						print $text.' '.nl2br($objp->description);
-					}
-
-					// Show range
-					print_date_range($db->jdate($objp->date_start), $db->jdate($objp->date_end));
-
-					print "</td>\n";
-				}
-
-				// Vat rate
-				print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
-
-				// Qty
-				print '<td align="center">'.$objp->qty.'</td>';
-
-				if ($conf->global->PRODUCT_USE_UNITS) {
-					print '<td align="left">'.$product_static->getLabelOfUnit().'</td>';
-				}
-
-				// Percent
-				if ($objp->remise_percent > 0)
-				{
-					print '<td align="right">'.$objp->remise_percent." %</td>\n";
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-
-				// Total HT
-				print '<td align="right">'.price($objp->total_ht)."</td>\n";
-
-				// Total VAT
-				print '<td align="right">'.price($objp->total_vat)."</td>\n";
-
-				// Total TTC
-				print '<td align="right">'.price($objp->total_ttc)."</td>\n";
-
-				// Total Unit price
-				print '<td align="right">'.price($objp->subprice)."</td>\n";
-
-				// Current price of product
-				if (empty($conf->global->PRODUIT_MULTIPRICES))
-				{
-					if ($objp->fk_product > 0)
-					{
-						$flag_price_may_change++;
-						$prodprice=$product_static->price;	// price HT
-						print '<td align="right">'.price($prodprice)."</td>\n";
-					}
-					else
-					{
-						print '<td>&nbsp;</td>';
-					}
-				}
-
-				print "</tr>";
-
-				$i++;
-			}
-
-			$db->free($result);
-
-		}
-		else
-		{
-			print $db->error();
-		}
-		print "</table>";
-        */
-					
+				
 		print '</td></tr>';
 
 		if ($flag_price_may_change)
@@ -1159,7 +1002,7 @@ else
     	if ($action == 'ask_deleteline') {
     		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
     	}
-    
+
     	print $formconfirm;
     	
 		$author = new User($db);
@@ -1178,20 +1021,13 @@ else
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/fiche-rec.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		// Ref
-		print '<tr><td width="20%">' . $langs->trans('Ref') . '</td>';
-		print '<td colspan="5">';
-		$morehtmlref = '';
-		/*
-		require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
-        $discount = new DiscountAbsolute($db);
-		$result = $discount->fetch(0, $object->id);
-		if ($result > 0) {
-		    $morehtmlref = ' (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
-		}
-		if ($result < 0) {
-		    dol_print_error('', $discount->error);
-		}*/
-		print $form->showrefnav($object, 'ref', $linkback, 1, 'titre', 'titre', $morehtmlref);
+		print '<tr><td class="titlefield">';
+		//print $langs->trans('Ref');
+		print $form->editfieldkey($langs->trans("Ref"), 'ref', $object->ref, $object, $user->rights->facture->creer);
+		print '</td>';
+		print '<td colspan="3">';
+		$morehtmlref = $form->editfieldval($langs->trans("Ref"), 'ref', $object->ref, $object, $user->rights->facture->creer, 'string');
+		print $form->showrefnav($object, 'ref', $linkback, 1, 'titre', 'none', $morehtmlref);
 		print '</td></tr>';
 		
 		
@@ -1324,7 +1160,7 @@ else
 		print '<table class="border" width="100%">';
 
 		// if "frequency" is empty or = 0, the reccurence is disabled
-		print '<tr><td width="20%">';
+		print '<tr><td class="titlefield">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');
 		print '</td>';
@@ -1427,7 +1263,7 @@ else
     		print '<table class="border" width="100%">';
     		
     		// Nb of generation already done
-    		print '<tr><td width="20%">'.$langs->trans("NbOfGenerationDone").'</td>';
+    		print '<tr><td class="titlefield">'.$langs->trans("NbOfGenerationDone").'</td>';
     		print '<td>';
     		print $object->nb_gen_done?$object->nb_gen_done:'0';
     		print '</td>';
@@ -1807,7 +1643,7 @@ else
 					$i++;
 				}
 			}
-			else print '<tr '.$bc[false].'><td colspan="9">'.$langs->trans("NoneF").'</td></tr>';
+			else print '<tr '.$bc[false].'><td colspan="9" class="opacitymedium">'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";
 			$db->free($resql);

@@ -274,19 +274,26 @@ if (empty($reshook))
  * view
  */
 
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('BuyingPrices');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('BuyingPrices');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
 if ($id > 0 || $ref)
 {
-	if ($action <> 're-edit')
-	{
-		llxHeader("", $langs->trans("CardProduct".$object->type), $helpurl);
-	}
-
 	if ($result)
 	{
 		if ($action == 'ask_remove_pf') {
@@ -365,7 +372,7 @@ if ($id > 0 || $ref)
 				print '<table class="border" width="100%">';
 
 				// Supplier
-				print '<tr><td class="fieldrequired" width="25%">'.$langs->trans("Supplier").'</td><td>';
+				print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Supplier").'</td><td>';
 				if ($rowid)
 				{
 					$supplier=new Fournisseur($db);

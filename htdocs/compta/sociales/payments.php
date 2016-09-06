@@ -21,7 +21,7 @@
  */
 
 /**
- *      \file       htdocs/compta/charges/index.php
+ *      \file       htdocs/compta/sociales/payments.php
  *      \ingroup    compta
  *		\brief      Page to list payments of special expenses
  */
@@ -32,7 +32,6 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -46,8 +45,6 @@ $year=GETPOST("year",'int');
 $filtre=GETPOST("filtre",'alpha');
 if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
 
-$search_account = GETPOST('search_account','int');
-
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -56,7 +53,7 @@ if ($page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="cs.date_ech";
+if (! $sortfield) $sortfield="pc.datep";
 if (! $sortorder) $sortorder="DESC";
 
 
@@ -68,7 +65,6 @@ $tva_static = new Tva($db);
 $socialcontrib=new ChargeSociales($db);
 $payment_sc_static=new PaymentSocialContribution($db);
 $sal_static = new PaymentSalary($db);
-$accountstatic = new Account($db);
 
 llxHeader('',$langs->trans("SpecialExpensesArea"));
 
@@ -119,29 +115,25 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="140px"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"cs.fk_type","",$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pc.rowid","",$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pc.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"pct.code","",$param,'',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("LabelContrib"),$_SERVER["PHP_SELF"],"c.libelle","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("TypeContrib"),$_SERVER["PHP_SELF"],"cs.fk_type","",$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"cs.date_ech","",$param,'width="140px"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"cs.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pc.amount","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	$sql = "SELECT c.id, c.libelle as lib,";
 	$sql.= " cs.rowid, cs.libelle, cs.fk_type as type, cs.periode, cs.date_ech, cs.amount as total,";
-	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment, pc.fk_bank,";
-	$sql.= " pct.code as payment_code,";
-	$sql.= " ba.rowid as bid, ba.label as blabel";
+	$sql.= " pc.rowid as pid, pc.datep, pc.amount as totalpaye, pc.num_paiement as num_payment,";
+	$sql.= " pct.code as payment_code";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
-	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
+	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs,";
+	$sql.= " ".MAIN_DB_PREFIX."paiementcharge as pc";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-	$sql.= " WHERE cs.fk_type = c.id";
+	$sql.= " WHERE cs.fk_type = c.id AND pc.fk_charge = cs.rowid";
 	$sql.= " AND cs.entity = ".$conf->entity;
 	if ($year > 0)
 	{
@@ -156,7 +148,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
 
-	dol_syslog("compta/charges/index.php: select payment", LOG_DEBUG);
+	dol_syslog("compta/sociales/payments.php: select payment", LOG_DEBUG);
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -172,21 +164,6 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			$obj = $db->fetch_object($resql);
 			$var = !$var;
 			print "<tr ".$bc[$var].">";
-			// Date
-			$date=$obj->periode;
-			if (empty($date)) $date=$obj->date_ech;
-			print '<td>'.dol_print_date($date,'day').'</td>';
-			// Label
-			print '<td>';
-			$socialcontrib->id=$obj->rowid;
-			$socialcontrib->ref=$obj->libelle;
-			$socialcontrib->lib=$obj->libelle;
-			print $socialcontrib->getNomUrl(1,'20');
-			print '</td>';
-			// Type
-			print '<td><a href="../sociales/index.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
-			// Expected to pay
-			print '<td align="right">'.price($obj->total).'</td>';
 			// Ref payment
 			$payment_sc_static->id=$obj->pid;
 			$payment_sc_static->ref=$obj->pid;
@@ -197,20 +174,21 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
     	    print '<td>';
     	    if ($obj->payment_code) print $langs->trans("PaymentTypeShort".$obj->payment_code).' ';
     	    print $obj->num_payment.'</td>';
-			// Account
-	    	if (! empty($conf->banque->enabled))
-		    {
-		        print '<td>';
-		        if ($obj->fk_bank > 0)
-		        {
-		        	//$accountstatic->fetch($obj->fk_bank);
-		            $accountstatic->id=$obj->bid;
-		            $accountstatic->label=$obj->blabel;
-		            print $accountstatic->getNomUrl(1);
-		        }
-		        else print '&nbsp;';
-		        print '</td>';
-		    }
+			// Label
+			print '<td>';
+			$socialcontrib->id=$obj->rowid;
+			$socialcontrib->ref=$obj->libelle;
+			$socialcontrib->lib=$obj->libelle;
+			print $socialcontrib->getNomUrl(1,'20');
+			print '</td>';
+			// Type
+			print '<td><a href="../sociales/index.php?filtre=cs.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+			// Date
+			$date=$obj->periode;
+			if (empty($date)) $date=$obj->date_ech;
+			print '<td>'.dol_print_date($date,'day').'</td>';
+			// Expected to pay
+			print '<td align="right">'.price($obj->total).'</td>';
 			// Paid
 			print '<td align="right">';
 			if ($obj->totalpaye) print price($obj->totalpaye);
@@ -227,7 +205,6 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
 	    print '<td align="center" class="liste_total">&nbsp;</td>';
-        if (! empty($conf->banque->enabled)) print '<td></td>';
 	    print '<td align="right" class="liste_total">'.price($totalpaye)."</td>";
 		print "</tr>";
 	}
@@ -303,7 +280,8 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		    }
 		    print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 		    print '<td align="right">'.price($total).'</td>';
-		    print '<td colspan="2">&nbsp;</td>';
+		    print '<td align="center">&nbsp;</td>';
+		    print '<td align="center">&nbsp;</td>';
 		    print '<td align="right">'.price($total)."</td>";
 		    print "</tr>";
 
@@ -371,6 +349,7 @@ while($j<$numlt)
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"pv.datev","",$param,'width="120"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"pv.label","",$param,'',$sortfield,$sortorder);
+			print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"pv.rowid","",$param,'',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"pv.datep","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
@@ -388,6 +367,8 @@ while($j<$numlt)
 
 				print "<td>".$obj->label."</td>\n";
 
+				print '<td align="right">'.price($obj->amount)."</td>";
+
 				// Ref payment
 				$tva_static->id=$obj->rowid;
 				$tva_static->ref=$obj->rowid;
@@ -399,7 +380,10 @@ while($j<$numlt)
 
 				$i++;
 			}
-			print '<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total").'</td>';
+			print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+			print '<td align="right">'.price($total)."</td>";
+			print '<td align="center">&nbsp;</td>';
+			print '<td align="center">&nbsp;</td>';
 			print '<td align="right">'.price($total)."</td>";
 			print "</tr>";
 
@@ -447,6 +431,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
             print '<tr class="liste_titre">';
             print_liste_field_titre($langs->trans("PeriodEndDate"),$_SERVER["PHP_SELF"],"s.dateep","",$param,'width="140px"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"s.label","",$param,'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("ExpectedToPay"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("RefPayment"),$_SERVER["PHP_SELF"],"s.rowid","",$param,'',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
             print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
@@ -465,6 +450,8 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 print "<td>".$obj->label."</td>\n";
 
+                print '<td align="right">'.($obj->salary?price($obj->salary):'')."</td>";
+
                 // Ref payment
                 $sal_static->id=$obj->rowid;
                 $sal_static->ref=$obj->rowid;
@@ -476,7 +463,10 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
                 $i++;
             }
-            print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
+            print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
+            print '<td align="right"></td>';      // A total here has no sense
+            print '<td align="center">&nbsp;</td>';
+            print '<td align="center">&nbsp;</td>';
             print '<td align="right">'.price($total)."</td>";
             print "</tr>";
 

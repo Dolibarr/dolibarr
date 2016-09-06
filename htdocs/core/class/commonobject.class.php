@@ -601,13 +601,13 @@ abstract class CommonObject
         $datecreate = dol_now();
 
         $this->db->begin();
-
+        
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
         $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
         $sql.= "'".$this->db->idate($datecreate)."'";
-        $sql.= ", 4, '". $id_type_contact . "' ";
+        $sql.= ", 4, ". $id_type_contact;
         $sql.= ")";
 
         $resql=$this->db->query($sql);
@@ -4508,7 +4508,7 @@ abstract class CommonObject
 
 			if (! $db->query($sql))
 			{
-			    if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B. 
+			    if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
 				//$this->errors = $db->lasterror();
 			    return false;
 			}

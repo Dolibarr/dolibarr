@@ -45,6 +45,19 @@ $sall=GETPOST("sall","alpha");
 $sref=GETPOST("sref","alpha");
 $filteremail=GETPOST('filteremail','alpha');
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('mailinglist'));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('mailing');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+    'm.titre'=>'Ref',
+);
+
 
 
 /*
@@ -107,6 +120,7 @@ if ($result)
 	if (! $filteremail) print_liste_field_titre($langs->trans("DateLastSend"),$_SERVER["PHP_SELF"],"m.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
 	else print_liste_field_titre($langs->trans("DateSending"),$_SERVER["PHP_SELF"],"mc.date_envoi",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],($filteremail?"mc.statut":"m.statut"),$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
@@ -120,8 +134,11 @@ if ($result)
 	print '<td class="liste_titre">&nbsp;</td>';
 	if (! $filteremail) print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print "</td>";
+	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td class="liste_titre" align="right">';
+	$searchpitco=$form->showFilterAndCheckAddButtons(0);
+	print $searchpitco;
+	print '</td>';
 	print "</tr>\n";
 
 	$var=True;
@@ -172,6 +189,7 @@ if ($result)
 			print $email->LibStatut($obj->statut,5);
 		}
 		print '</td>';
+		print '<td></td>';
 		print "</tr>\n";
 		$i++;
 	}

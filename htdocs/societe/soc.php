@@ -287,7 +287,7 @@ if (empty($reshook))
 	        $object->name_alias   = GETPOST('name_alias');
         }
 
-        $object->address               = GETPOST('address', 'alpha');
+        $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
         $object->country_id            = GETPOST('country_id', 'int');
@@ -739,7 +739,7 @@ if ($socid > 0 && empty($object->id))
 }
 
 $title=$langs->trans("ThirdParty");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('Card');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
@@ -1535,7 +1535,7 @@ else
 
             // Prospect/Customer
             print '<tr><td>'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
-	        print '<td><select class="flat" name="client" id="customerprospect">';
+	        print '<td class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
@@ -1571,7 +1571,7 @@ else
             if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
             {
                 print '<tr>';
-                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
+                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td class="maxwidthonsmartphone">';
                 print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
                 print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
@@ -1782,7 +1782,7 @@ else
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td class="maxwidthonsmartphone" colspan="3">';
             print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 

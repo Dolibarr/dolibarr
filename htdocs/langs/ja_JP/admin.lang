@@ -1311,8 +1311,6 @@ SyslogFilename=ファイル名とパス
 YouCanUseDOL_DATA_ROOT=あなたがDolibarr &quot;ドキュメント&quot;ディレクトリ内のログ·ファイルのDOL_DATA_ROOT / dolibarr.logを使用することができます。このファイルを格納する別のパスを設定することができます。
 ErrorUnknownSyslogConstant=定数%sは知られているSyslogの定数ではありません。
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=寄付モジュールのセットアップ
 DonationsReceiptModel=寄付金の領収書のテンプレート

@@ -81,7 +81,9 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans('SupplierInvoice'));
+$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Documents');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 if ($object->id > 0)
 {

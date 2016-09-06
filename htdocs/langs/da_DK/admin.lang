@@ -1311,8 +1311,6 @@ SyslogFilename=Filnavn og sti
 YouCanUseDOL_DATA_ROOT=Du kan bruge DOL_DATA_ROOT / dolibarr.log for en logfil i Dolibarr "dokumenter" mappen. Du kan indstille en anden vej til at gemme denne fil.
 ErrorUnknownSyslogConstant=Konstant %s er ikke en kendt syslog konstant
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Donation modul opsætning
 DonationsReceiptModel=Skabelon for donationen modtagelse

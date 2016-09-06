@@ -635,6 +635,7 @@ div.myavailability {
 
 @media only screen and (max-width: 960px)
 {
+    .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth100imp { min-width: 50px !important; }
     .minwidth200imp { min-width: 100px !important; }
@@ -650,6 +651,7 @@ div.myavailability {
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
     .maxwidth100onsmartphone { max-width: 100px; }
+    .maxwidth150onsmartphone { max-width: 150px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
@@ -1867,10 +1869,10 @@ div.tabsElem {
 
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
-    padding-top: <?php echo ($dol_optimize_smallscreen?'4':'16'); ?>px;
-    padding-left: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
-    padding-right: <?php echo ($dol_optimize_smallscreen?'4':'18'); ?>px;
-    padding-bottom: <?php echo ($dol_optimize_smallscreen?'4':'14'); ?>px;
+    padding-top: 16px;
+    padding-left: 18px;
+    padding-right: 18px;
+    padding-bottom: 14px;
     margin: 0px 0px 14px 0px;
     -moz-border-radius:4px;
     -webkit-border-radius: 4px;
@@ -1911,12 +1913,11 @@ div.tabsAction > a {
 
 a.tabTitle {
     color:rgba(0,0,0,.5) !important;
-    margin-right:10px;
     text-shadow:1px 1px 1px #ffffff;
 	font-family: <?php print $fontlist ?>;
 	font-weight: normal !important;
-    padding: 4px 6px 2px 6px;
-    margin: 0px 6px;
+    padding: 4px 6px 2px 0px;
+    margin-right: 10px;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -2829,7 +2830,7 @@ div.tabBar .noborder {
     margin-bottom: 8px !important;*/
     border: 1px solid #CCC;
     text-align: center;
-    border-radius: 4px;
+    border-radius: 2px;
 }
 .boxstats:hover {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
@@ -3364,9 +3365,6 @@ li.cal_event       { border: none; list-style-type: none; }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 100px; height: 22px; }
 
-.topmenuimage {
-	background-size: 28px auto;
-}
 
 /* ============================================================================== */
 /*  Ajax - Liste deroulante de l'autocompletion                                   */
@@ -3798,9 +3796,9 @@ div.ecmjqft {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-    -moz-box-shadow: 3px 3px 4px #888 !important;
-    -webkit-box-shadow: 3px 3px 4px #888 !important;
-    box-shadow: 3px 3px 4px #888 !important;
+    -moz-box-shadow: 2px 2px 4px #888 !important;
+    -webkit-box-shadow: 2px 2px 4px #888 !important;
+    box-shadow: 2px 2px 4px #888 !important;
 }
 
 /* ============================================================================== */
@@ -4090,13 +4088,17 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
+	padding: 2px;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-right: 3px;
 }
-.dropdown dd ul li a {
-    padding:5px;
-    display:block;
+.dropdown dd ul li a, .dropdown dd ul li span {
+    padding: 3px;
+    display: block;
+}
+.dropdown dd ul li span {
+	color: #888;
 }
 .dropdown dd ul li a:hover {
     background-color:#fff;
@@ -4320,7 +4322,6 @@ border-top-right-radius: 6px;
 .menu_choix1 a {
 	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png',1) ?>') top left no-repeat;
 }
-
 .menu_choix2 a {
 	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png',1) ?>') top left no-repeat;
 }
@@ -4337,12 +4338,34 @@ border-top-right-radius: 6px;
 	padding-top: 18px;
 	padding-left: 54px;
 	font-size: 14px;
-	height: 40px;
+	height: 38px;
 }
 .menu_choix1 a:hover,.menu_choix2 a:hover {
 	color: #6d3f6d;
 }
-
+.menu li.menu_choix1 {
+    padding-top: 6px;
+    padding-right: 10px;
+}
+.menu li.menu_choix2 {
+    padding-top: 6px;
+    padding-right: 10px;
+}
+@media only screen and (max-width: 767px)
+{
+	.menu_choix1 a, .menu_choix2 a {
+		background-size: 30px 30px;
+		height: 30px;
+		padding-left: 40px;
+	}
+    .menu li.menu_choix1, .menu li.menu_choix2 {
+        padding-left: 4px;
+        padding-right: 0;
+    }
+    .liste_articles {
+    	margin-right: 0 !important;
+    }
+}
 
 
 /* ============================================================================== */
@@ -4378,6 +4401,10 @@ img.demothumb {
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
+.topmenuimage {
+	background-size: 22px auto;
+	top: 2px;
+}
 .imgopensurveywizard
 {
 	padding: 0 4px 0 4px;
@@ -4397,6 +4424,16 @@ img.demothumb {
         margin-left: 4px;
         width: 80px;
     }
+
+    div.tabBar {
+        padding-left: 0px;
+        padding-right: 0px;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+    	border-radius: 0px;
+        border-right: none;
+        border-left: none;
+    }
 }
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
@@ -4415,7 +4452,7 @@ img.demothumb {
   		font-size: 10px;
     }
     .topmenuimage {
-    	background-size: 26px auto;
+    	background-size: 22px auto;
     	margin-top: 0px;
 	}
 

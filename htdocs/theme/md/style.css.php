@@ -633,6 +633,7 @@ div.myavailability {
 
 @media only screen and (max-width: 960px)
 {
+    .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth100imp { min-width: 50px !important; }
     .minwidth200imp { min-width: 100px !important; }
@@ -648,6 +649,7 @@ div.myavailability {
     .noenlargeonsmartphone { width : 50px !important; display: inline !important; }
     .maxwidthonsmartphone { max-width: 100px; }
     .maxwidth100onsmartphone { max-width: 100px; }
+    .maxwidth150onsmartphone { max-width: 150px; }
     .maxwidth200onsmartphone { max-width: 200px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
@@ -3694,9 +3696,9 @@ div.ecmjqft {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-    -moz-box-shadow: 3px 3px 4px #888 !important;
-    -webkit-box-shadow: 3px 3px 4px #888 !important;
-    box-shadow: 3px 3px 4px #888 !important;
+    -moz-box-shadow: 2px 2px 4px #888 !important;
+    -webkit-box-shadow: 2px 2px 4px #888 !important;
+    box-shadow: 2px 2px 4px #888 !important;
 }
 
 /* ============================================================================== */
@@ -3986,13 +3988,17 @@ dl.dropdown {
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
+	padding: 2px;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-right: 3px;
 }
-.dropdown dd ul li a {
-    padding:5px;
-    display:block;
+.dropdown dd ul li a, .dropdown dd ul li span {
+    padding: 3px;
+    display: block;
+}
+.dropdown dd ul li span {
+	color: #888;
 }
 .dropdown dd ul li a:hover {
     background-color:#fff;
@@ -4288,6 +4294,17 @@ img.demothumb {
 		position: absolute;
 		width: <?php print dol_size(350,'width'); ?>px;
 	}
+	
+    div.tabBar {
+        padding-left: 0px;
+        padding-right: 0px;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+    	border-radius: 0px;
+        border-right: none;
+        border-left: none;
+    }
+	
 }
 
 

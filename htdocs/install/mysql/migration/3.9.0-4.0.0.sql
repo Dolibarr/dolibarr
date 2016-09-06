@@ -329,6 +329,9 @@ ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DE
 ALTER TABLE llx_paiementfourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_societe_remise ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_tva double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ttc double(24,8) DEFAULT 0 NOT NULL;
@@ -536,4 +539,8 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17803', 'Sociedad de Responsabilidad Limitada', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17804', 'Sociedad Civil', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17805', 'Sociedad Anónima', 1);
+
+
+-- VMYSQL4.1 ALTER TABLE llx_establishment CHANGE COLUMN fk_user_mod fk_user_mod integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_establishment ALTER COLUMN fk_user_mod DROP NOT NULL;
 

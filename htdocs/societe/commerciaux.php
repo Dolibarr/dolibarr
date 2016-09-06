@@ -137,7 +137,7 @@ if (! empty($socid))
 	print '<tr><td>'.$langs->trans("SalesRepresentatives").'</td>';
 	print '<td colspan="3">';
 
-	$sql = "SELECT DISTINCT u.rowid, u.login, u.fk_soc, u.lastname, u.firstname, u.statut, u.entity";
+	$sql = "SELECT DISTINCT u.rowid, u.login, u.fk_soc, u.lastname, u.firstname, u.statut, u.entity, u.photo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 	$sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
@@ -184,7 +184,8 @@ if (! empty($socid))
       		$tmpuser->login = $obj->login;
       		$tmpuser->entity = $obj->entity;
       		$tmpuser->societe_id = $obj->fk_soc;
-      		print $tmpuser->getNomUrl(1);
+      		$tmpuser->photo = $obj->photo;
+      		print $tmpuser->getNomUrl(-1);
       		
 			/*print '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->rowid.'">';
 			print img_object($langs->trans("ShowUser"),"user").' ';
@@ -227,7 +228,7 @@ if (! empty($socid))
 		$langs->load("users");
 		$title=$langs->trans("ListOfUsers");
 
-		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login, u.email, u.statut, u.fk_soc";
+		$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.login, u.email, u.statut, u.fk_soc, u.photo";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
 		{
@@ -273,10 +274,11 @@ if (! empty($socid))
 				$tmpuser->login=$obj->login;
 				$tmpuser->email=$obj->email;
 				$tmpuser->societe_id=$obj->fk_soc;
-				print $tmpuser->getNomUrl(1);
+				$tmpuser->photo=$obj->photo;
+				print $tmpuser->getNomUrl(-1);
 				print '</td>';
 				print '<td>'.$obj->login.'</td>';
-				print '<td>'.User::LibStatut($obj->statut,0).'</td>';
+				print '<td>'.$tmpuser->getLibStatut(2).'</td>';
 				print '<td><a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
 
 				print '</tr>'."\n";

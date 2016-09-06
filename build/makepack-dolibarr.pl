@@ -603,7 +603,7 @@ if ($nboftargetok) {
 		if ($target eq 'TGZ') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
@@ -635,7 +635,7 @@ if ($nboftargetok) {
 		if ($target eq 'XZ') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
@@ -672,7 +672,7 @@ if ($nboftargetok) {
 		if ($target eq 'ZIP') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
@@ -713,7 +713,7 @@ if ($nboftargetok) {
 			if ($target =~ /FEDO/i) { $subdir="package_rpm_redhat-fedora"; }
 			if ($target =~ /MAND/i) { $subdir="package_rpm_mandriva"; }
 			if ($target =~ /OPEN/i) { $subdir="package_rpm_opensuse"; }
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/'.$subdir);
 				if (-d $DESTI.'/'.$subdir) { $NEWDESTI=$DESTI.'/'.$subdir; }
@@ -799,7 +799,7 @@ if ($nboftargetok) {
 		if ($target eq 'DEB') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_debian-ubuntu');
 				if (-d $DESTI.'/package_debian-ubuntu') { $NEWDESTI=$DESTI.'/package_debian-ubuntu'; }
@@ -1002,7 +1002,7 @@ if ($nboftargetok) {
 		if ($target eq 'APS') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_aps');
 				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
@@ -1088,7 +1088,7 @@ if ($nboftargetok) {
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_windows');
 				if (-d $DESTI.'/package_windows') { $NEWDESTI=$DESTI.'/package_windows'; }
