@@ -2160,7 +2160,7 @@ print '<div style="width:50%">';
  * Generate documents
  */
 
-if($user->rights->expensereport->export && $object->fk_statut>0 && $action != 'edit')
+if($user->rights->expensereport->export && $action != 'edit')
 {
 	$filename	=	dol_sanitizeFileName($object->ref);
 	$filedir	=	$conf->expensereport->dir_output . "/" . dol_sanitizeFileName($object->ref);

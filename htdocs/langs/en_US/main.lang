@@ -67,6 +67,7 @@ SelectDate=Select a date
 SeeAlso=See also %s
 SeeHere=See here
 BackgroundColorByDefault=Default background color
+FileRenamed=The file was successfully renamed
 FileUploaded=The file was successfully uploaded
 FileWasNotUploaded=A file is selected for attachment but was not yet uploaded. Click on "Attach file" for this.
 NbOfEntries=Nb of entries
