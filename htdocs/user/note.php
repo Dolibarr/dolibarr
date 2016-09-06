@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/note.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $id = GETPOST('id','int');
+$noteid = GETPOST('noteid','int');
 $action = GETPOST('action');
 
 $langs->load("companies");
@@ -38,6 +39,8 @@ $langs->load("bills");
 $langs->load("users");
 
 $object = new User($db);
+$note = New Note($db);
+$modulepart = 'user';
 $object->fetch($id);
 
 // If user is not user read and no permission to read other users, we stop
@@ -53,25 +56,21 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('usercard','globalcard'));
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+/*
+ * Actions
+ */
 
-$parameters=array('id'=>$socid);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-
-if (empty($reshook)) {
-	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
-		$db->begin();
-
-		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
-		if ($res < 0) {
-			$mesg = '<div class="error">'.$adh->error.'</div>';
-			$db->rollback();
-		} else {
-			$db->commit();
-		}
+if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->user->user->lire)
+{
+	$result=$note->delete($noteid);
+	if ($result >= 0)
+	{
+		header("Location: index.php");
+		exit;
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
 
@@ -85,8 +84,6 @@ $helpurl='';
 llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
-$note = New Note($db);
-$modulepart = 'user';
 
 if ($id)
 {
@@ -97,88 +94,66 @@ if ($id)
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
 	
-    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-    
-    print '<div class="underbanner clearboth"></div>';
-    
-    print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+	dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+
+	/*
+	 * Confirm delete note 
+	 */
+	if ($action == 'delete')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=" . $id . "&noteid=" . $noteid,$langs->trans("DeleteNote"),$langs->trans("ConfirmDeleteNote"),"confirm_delete");
+	}
+
+	print '<div class="underbanner clearboth"></div>';
+
+	print '<br>';
+
+	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-    print '<table class="border" width="100%">';
-
-    // Notes
+	// Notes
 	$notes = array();
 	$result = $note->fetchAll($notes, $modulepart, $id, $sortorder, $sortfield);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 	
-	if ($result)
+	foreach ( $notes as $note )
 	{
-		$num = $db->num_rows($result);
-		$limit=10;
+		print '<table class="border" width="100%">';
 
-		$i = 0;
-		while ($i < min($num,$limit))
-		{
-			// Id
-			// print '<td><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$obj->rowid.'</a></td>';
-			// Title
-			print '<tr><td>'.$notes->title.' ('.dol_print_date($db->jdate($notes->datec),'day').')</td></tr>';
-			// Text
-			print '<tr><td align="center">'.dol_htmlentitiesbr($notes->text).'</td><tr>';
-			
-			/*
-			// User
-			print '<td>';
-			$userstatic->id = $obj->fk_user;
-			$userstatic->lastname = $obj->lastname;
-			$userstatic->firstname = $obj->firstname;
-			print $userstatic->getNomUrl(1);
-			print '</td>';
+		$userstatic = New User($db);
 
-			if ($obj->socid) print '<td>'.$soc->getNomUrl(1).'</td>';
-			else print '<td>&nbsp;</td>';
+		// Title
+		print '<tr class="liste_titre">';
+		print '<td>'.$note->title.' ('.$userstatic->getNomUrl($note->fk_user_author).' - '.dol_print_date($db->jdate($note->datec),'day').')';
+		//print '<td class="right">';
+		print '<a class="right" href="./note.php?action=delete&id=' . $id . '&noteid=' . $note->id . '">'.img_delete().'</a>';
+		print '&nbsp;&nbsp;&nbsp;';
+		print '<a class="right" href="./note.php?action=edit&id=' . $id . '&noteid=' . $note->id . '">'.img_edit().'</a>';
+		print '</td></tr>';
 
-			print '<td align="right">'.$obj->km.'</td>';
+		// Text
+		print '<tr><td colspan="2">'.dol_htmlentitiesbr($note->text).'</td><tr>';
 
-			$tripandexpense_static->statut=$obj->fk_statut;
-			print '<td align="right">'.$tripandexpense_static->getLibStatut(5).'</td>';
-			print "</tr>\n";
-			*/
-
-			$i++;
-		}
-	//print dol_htmlentitiesbr($object->note);
-
+		print "</table>";
+		print '<br>';
 	}
-
-    print "</table>";
 
 	dol_fiche_end();
 
-	if ($action == 'edit')
+	/*
+	 * Actions
+	 */
+
+	print '<div class="tabsAction">';
+
+	if ($user->rights->user->user->creer && $action != 'add')
 	{
-		print '<div class="center">';
-		print '<input type="submit" class="button" name="update" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		print '</div>';
+		print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=add\">".$langs->trans('AddNote')."</a>";
 	}
 
-
-	/*
-     * Actions
-     */
-
-    print '<div class="tabsAction">';
-
-    if ($user->rights->user->user->creer && $action != 'edit')
-    {
-        print "<a class=\"butAction\" href=\"note.php?id=".$object->id."&amp;action=edit\">".$langs->trans('Modify')."</a>";
-    }
-
-    print "</div>";
+	print "</div>";
 
 	print "</form>\n";
 }
