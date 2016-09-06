@@ -74,7 +74,7 @@ create table llx_note
 	tms				timestamp,
 	objecttype		varchar(24) NOT NULL,					-- Example : Salary / Product / Contact
 	objectid		integer,								-- Id of the element
-	type			tinyint DEFAULT 0,						-- 0 : private note | 1 : public note
+	typenote		tinyint DEFAULT 0,						-- 0 : private note | 1 : public note
 	title			varchar(255),
 	text			text DEFAULT NULL,
 	fk_user_author	integer DEFAULT NULL,
