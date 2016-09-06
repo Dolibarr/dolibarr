@@ -262,7 +262,6 @@ if (empty($reshook))
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-
 			// Fill array 'array_options' with data from add form
 			if (! $error)
 			{
@@ -1212,7 +1211,6 @@ if (empty($reshook))
 		if (! $error)
 		{
 			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
 			$hookmanager->initHooks(array('orderdao'));
 			$parameters = array('id' => $object->id);
 			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
