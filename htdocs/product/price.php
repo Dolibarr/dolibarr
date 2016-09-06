@@ -10,6 +10,7 @@
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,8 +97,6 @@ if (empty($reshook))
 	{
 	    $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5
 	    
-	    $tva_tx_txt; 
-
 	    // We must define tva_tx, npr and local taxes
 	    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
 	    $npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
@@ -203,6 +202,7 @@ if (empty($reshook))
 				}
 
 				$tva_tx_txt = $newvattx[$i];
+				$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
                 $npr = $newvatnpr[$i];
 				$localtax1 = $newlocaltax1_tx[$i];
 				$localtax1_type = $newlocaltax1_type[$i];

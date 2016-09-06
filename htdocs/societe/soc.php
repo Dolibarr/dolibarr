@@ -285,7 +285,7 @@ if (empty($reshook))
 	        $object->name_alias   = GETPOST('name_alias');
         }
 
-        $object->address               = GETPOST('address', 'alpha');
+        $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
         $object->country_id            = GETPOST('country_id', 'int');
