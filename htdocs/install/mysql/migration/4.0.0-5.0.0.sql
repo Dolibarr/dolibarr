@@ -68,4 +68,17 @@ ALTER TABLE llx_societe_remise_except ADD COLUMN entity	integer DEFAULT 1 NOT NU
 ALTER TABLE llx_societe_remise ADD COLUMN entity	integer DEFAULT 1 NOT NULL after rowid;
 
 
+create table llx_expensereport_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafields (fk_object);
+
+
+
+
 
