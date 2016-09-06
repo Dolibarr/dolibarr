@@ -68,7 +68,7 @@ class pdf_standard extends ModeleExpenseReport
 
 		$langs->load("main");
 		$langs->load("trips");
-		$langs->load("project");
+		$langs->load("projects");
 
 		$this->db = $db;
 		$this->name = "";
@@ -107,11 +107,11 @@ class pdf_standard extends ModeleExpenseReport
 		$this->posxcomment=$this->marge_gauche+10;
 		$this->posxdate=88;
 		$this->posxtype=107;
-		$this->posxprojet=126;
-		$this->posxtva=146;
-		$this->posxup=158;
-		$this->posxqty=176;
-		$this->postotalttc=188;
+		$this->posxprojet=120;
+		$this->posxtva=136;
+		$this->posxup=152;
+		$this->posxqty=168;
+		$this->postotalttc=178;
         if (empty($conf->projet->enabled)) {
             $this->posxtva-=20;
             $this->posxup-=20;
@@ -158,7 +158,7 @@ class pdf_standard extends ModeleExpenseReport
 		$outputlangs->load("main");
 		$outputlangs->load("dict");
 		$outputlangs->load("trips");
-		$outputlangs->load("project");
+		$outputlangs->load("projects");
 
 		$nblignes = count($object->lines);
 
@@ -435,6 +435,7 @@ class pdf_standard extends ModeleExpenseReport
 
 				if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT))
 				{
+				    // TODO Show vat amout per tax level
 					$posy+=5;
 					$pdf->SetXY(100, $posy);
 					$pdf->SetTextColor(0,0,60);
