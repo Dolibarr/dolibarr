@@ -299,7 +299,7 @@ ALTER TABLE llx_c_type_resource CHANGE libelle label VARCHAR(64) NOT NULL;
 ALTER TABLE llx_c_type_resource ADD UNIQUE INDEX uk_c_type_resource_id (label, code);
 
 -- Fix :: account_parent must be an int, not an account number
-DELETE FROM llx_accountingaccount;
+-- DELETE FROM llx_accountingaccount;
 
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  1,'PCG99-ABREGE','CAPIT', 'CAPITAL', '101', '1401', 'Capital', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (  2,'PCG99-ABREGE','CAPIT', 'XXXXXX',  '105', '1401', 'Ecarts de réévaluation', '1');
