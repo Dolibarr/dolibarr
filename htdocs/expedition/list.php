@@ -82,7 +82,7 @@ $fieldstosearchall = array(
     's.nom'=>"ThirdParty",
     'e.note_public'=>'NotePublic',
 );
-if (empty($user->socid)) $fieldstosearchall["c.note_private"]="NotePrivate";
+if (empty($user->socid)) $fieldstosearchall["e.note_private"]="NotePrivate";
 
 $checkedtypetiers=0;
 $arrayfields=array(
