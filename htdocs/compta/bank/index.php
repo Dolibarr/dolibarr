@@ -87,7 +87,7 @@ print_barre_liste($title,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder
 /*
  * Comptes courants (courant = 1)
  */
-print '<table class="liste" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</td>';
@@ -149,7 +149,7 @@ print '<br>';
 /*
  * Comptes caisse/liquide (courant = 2)
  */
-print '<table class="liste" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CashAccounts").'</td><td width="20%">&nbsp;</td>';
 print '<td align="left">&nbsp;</td>';
 print '<td align="left" width="100">&nbsp;</td>';
@@ -202,7 +202,7 @@ print '<br>';
 /*
  * Comptes placements (courant = 0)
  */
-print '<table class="liste" width="100%">';
+print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("SavingAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
