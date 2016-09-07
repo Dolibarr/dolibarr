@@ -7,6 +7,7 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,23 +184,42 @@ class pdf_crabe extends ModelePDFFactures
 		$realpatharray=array();
 		if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
 		{
+			$objphoto = new Product($this->db);
+			
 			for ($i = 0 ; $i < $nblignes ; $i++)
 			{
 				if (empty($object->lines[$i]->fk_product)) continue;
 
-				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
-				$pdir = get_exdir($object->lines[$i]->fk_product,2,0,0,$objphoto,'product') . $object->lines[$i]->fk_product ."/photos/";
-				$dir = $conf->product->dir_output.'/'.$pdir;
-
-				$realpath='';
-				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+				
+				if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 				{
-					$filename=$obj['photo'];
-					//if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
-					$realpath = $dir.$filename;
-					break;
+					$pdir[0] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";
+					$pdir[1] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';
+				}
+				else
+				{
+					$pdir[0] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
+					$pdir[1] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";	// alternative
+				}
+				
+				$realpath='';
+				$arephoto = false;
+				foreach ($pdir as $midir)
+				{
+					if (! $arephoto)
+					{
+						$dir = $conf->product->dir_output.'/'.$midir;
+
+						foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+						{
+							$filename=$obj['photo'];
+							
+							$realpath = $dir.$filename;
+							$arephoto = true;
+						}
+					}
 				}
 
 				if ($realpath) $realpatharray[$i]=$realpath;

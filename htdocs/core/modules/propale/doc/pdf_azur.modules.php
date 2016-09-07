@@ -6,6 +6,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015      Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,6 +190,7 @@ class pdf_azur extends ModelePDFPropales
 					$pdir[1] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";	// alternative
 				}
 
+				$realpath='';
 				$arephoto = false;
 				foreach ($pdir as $midir)
 				{
@@ -198,22 +200,8 @@ class pdf_azur extends ModelePDFPropales
 
 						foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
 						{
-							if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
-							{
-								if ($obj['photo_vignette'])
-								{
-									$filename= $obj['photo_vignette'];
-								}
-								else
-								{
-									$filename=$obj['photo'];
-								}
-							}
-							else
-							{
-								$filename=$obj['photo'];
-							}
-
+							$filename=$obj['photo'];
+							
 							$realpath = $dir.$filename;
 							$arephoto = true;
 						}
