@@ -133,7 +133,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
-
+		
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
@@ -202,12 +202,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				$result = $expedition->fetch($object->origin_id);
 				// Now we get the order that is origin of shipment
 				$commande = new Commande($this->db);
-				if ($expedition->origin == 'commande')
+				if ($object->origin == 'commande')
 				{
-					$commande->fetch($expedition->origin_id);
+					$commande->fetch($object->origin_id);
 				}
 				$object->commande=$commande;	// We set order of shipment onto delivery.
-
 
 				$pdf->Open();
 				$pagenb=0;

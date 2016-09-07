@@ -202,6 +202,8 @@ if ($action == 'builddoc')	// En get ou en post
 	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	{
 	    $ret=$object->fetch($id);    // Reload to get new records
+		$object->origin = 'commande';
+		$object->fetch_origin();
     	$result=delivery_order_pdf_create($db, $object, $object->modelpdf, $outputlangs);
 	}
 	if ($result < 0)
