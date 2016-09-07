@@ -30,6 +30,10 @@
  *	\brief      Setup page of module Order
  */
 
+error_reporting(E_ALL);
+ini_set('display_errors', true);
+ini_set('html_errors', false);
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -120,12 +124,12 @@ else if ($action == 'specimen')
 // Activate a model
 else if ($action == 'set')
 {
-	$ret = addDocumentModel($value, $type, $label, $scandir);
+	$ret = addDocumentModel($value, 'order', $label, $scandir);
 }
 
 else if ($action == 'del')
 {
-	$ret = delDocumentModel($value, $type);
+	$ret = delDocumentModel($value, 'order');
 	if ($ret > 0)
 	{
         if ($conf->global->COMMANDE_ADDON_PDF == "$value") dolibarr_del_const($db, 'COMMANDE_ADDON_PDF',$conf->entity);
@@ -143,10 +147,10 @@ else if ($action == 'setdoc')
 	}
 
 	// On active le modele
-	$ret = delDocumentModel($value, $type);
+	$ret = delDocumentModel($value, 'order');
 	if ($ret > 0)
 	{
-		$ret = addDocumentModel($value, $type, $label, $scandir);
+		$ret = addDocumentModel($value, 'order', $label, $scandir);
 	}
 }
 
