@@ -57,7 +57,7 @@ create table llx_commandedet
   fk_unit            integer      DEFAULT NULL,           -- lien vers table des unités
   import_key					varchar(14),
   
-  fk_commandefourndet					integer NOT NULL,       -- link to detail line of commande fourn (resplenish)
+  fk_commandefourndet			integer DEFAULT NULL,       -- link to detail line of commande fourn (resplenish)
   
   fk_multicurrency		integer,
   multicurrency_code			varchar(255),
