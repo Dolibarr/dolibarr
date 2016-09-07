@@ -86,7 +86,7 @@
 		</properties>
 	</rule>
 
-	<!-- Use Unix newlines -->
+    <!-- Allow only unix file endings (newlines) -->
 	<rule ref="Generic.Files.LineEndings">
 		<properties>
 			<property name="eolChar" value="\n" />
