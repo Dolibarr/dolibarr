@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		J. Fernando Lagrange	<fernando@demo-tic.org>
+/* Copyright (C) 2008-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +24,7 @@
  *  \brief			Library of admin functions
  */
 
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 
 /**
  *  Renvoi une version en chaine depuis une version en tableau
@@ -666,29 +668,7 @@ function activateModule($value,$withdeps=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-
-    // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
-
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
+	$modulesdir = dolGetModulesDirs();
 
     // Loop on each directory
     $found=false;
@@ -785,29 +765,7 @@ function unActivateModule($value, $requiredby=1)
     $ret='';
     $modName = $value;
     $modFile = $modName . ".class.php";
-
-    // Loop on each directory to fill $modulesdir
-    $modulesdir = array();
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[] = $dirroot."/core/modules/";
-
-            $handle=@opendir(dol_osencode($dirroot));
-            if (is_resource($handle))
-            {
-                while (($file = readdir($handle))!==false)
-                {
-                    if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                    {
-                        if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                        {
-                            $modulesdir[] = $dirroot . '/' . $file . '/core/modules/';
-                        }
-                    }
-                }
-                closedir($handle);
-            }
-    }
+	$modulesdir = dolGetModulesDirs();
 
     // Loop on each directory
     $found=false;
@@ -871,36 +829,10 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
     global $db, $modules, $conf, $langs;
 
     // Search modules
-    $filename = array();
-    $modules = array();
-    $orders = array();
-    $categ = array();
-    $dirmod = array();
-    $modulesdir = array();
+	$modulesdir = dolGetModulesDirs();
     $i = 0; // is a sequencer of modules found
     $j = 0; // j is module number. Automatically affected if module number not defined.
 
-    foreach ($conf->file->dol_document_root as $type => $dirroot)
-    {
-        $modulesdir[$dirroot . '/core/modules/'] = $dirroot . '/core/modules/';
-
-        $handle=@opendir($dirroot);
-        if (is_resource($handle))
-        {
-            while (($file = readdir($handle))!==false)
-            {
-                if (is_dir($dirroot.'/'.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS' && $file != 'includes')
-                {
-                    if (is_dir($dirroot . '/' . $file . '/core/modules/'))
-                    {
-                        $modulesdir[$dirroot . '/' . $file . '/core/modules/'] = $dirroot . '/' . $file . '/core/modules/';
-                    }
-                }
-            }
-            closedir($handle);
-        }
-    }
-    //var_dump($modulesdir);
 
     foreach ($modulesdir as $dir)
     {
@@ -950,14 +882,6 @@ function complete_dictionnary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsq
                                		$langs->load($langfile);
                                	}
                            	}
-
-                            $modules[$i] = $objMod;
-                            $filename[$i]= $modName;
-                            $orders[$i]  = $objMod->family."_".$j;   // Tri par famille puis numero module
-                            //print "x".$modName." ".$orders[$i]."\n<br>";
-                            if (isset($categ[$objMod->special])) $categ[$objMod->special]++;                    // Array of all different modules categories
-                            else $categ[$objMod->special]=1;
-                            $dirmod[$i] = $dirroot;
 
                             // Complete arrays
                             //&$tabname,&$tablib,&$tabsql,&$tabsqlsort,&$tabfield,&$tabfieldvalue,&$tabfieldinsert,&$tabrowid,&$tabcond
