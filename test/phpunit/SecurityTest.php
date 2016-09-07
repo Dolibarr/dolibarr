@@ -145,6 +145,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 		$_GET["param2"]='a/b#e(pr)qq-rr\cc';
         $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
         $_GET["param4"]='../dir';
+		$_GET["param5"] = '<h1>This is HTML</h1>';
 
         $result=GETPOST('id','int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
@@ -162,13 +163,17 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,$_GET["param2"]);
 
-        $result=GETPOST("param3",'alpha');  // Must return '' as there is a forbidden char "
+        $result=GETPOST("param3",'alpha');  // Must be escaped as there is a forbidden char "
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals($result,'');
+        $this->assertEquals($result,'&quot;a/b#e(pr)qq-rr\cc');
 
         $result=GETPOST("param4",'alpha');  // Must return '' as there is a forbidden char ../
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
+
+		$result = GETPOST("param5", 'alpha');  // Must be escaped as it contains HTML characters
+		print __METHOD__ . " result=" . $result . "\n";
+		$this->assertEquals($result, '&lt;h1&gt;This is HTML&lt;/h1&gt;');
 
         return $result;
     }
