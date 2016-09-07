@@ -102,6 +102,7 @@ CancelBill=Cancel an invoice
 SendRemindByMail=Send reminder by EMail
 DoPayment=Do payment
 DoPaymentBack=Do payment back
+DoPaymentRejected=Do payement rejected
 ConvertToReduc=Convert into future discount
 EnterPaymentReceivedFromCustomer=Enter payment received from customer
 EnterPaymentDueToCustomer=Make payment due to customer
