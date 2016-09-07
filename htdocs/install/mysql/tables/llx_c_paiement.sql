@@ -27,11 +27,12 @@
 create table llx_c_paiement
 (
   id         integer     PRIMARY KEY,
-  code       varchar(6)  UNIQUE NOT NULL,
+  code       varchar(6)  NOT NULL,
   libelle    varchar(30),
   type       smallint,	
   active     tinyint DEFAULT 1  NOT NULL,
-  module     varchar(32) NULL
+  module     varchar(32) NULL,
+  UNIQUE KEY uk_c_paiement (code)
 )ENGINE=innodb;
 
 

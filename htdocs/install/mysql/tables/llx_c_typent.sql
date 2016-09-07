@@ -20,8 +20,9 @@
 create table llx_c_typent
 (
   id        integer      PRIMARY KEY,
-  code      varchar(12)  UNIQUE NOT NULL,
+  code      varchar(12)  NOT NULL,
   libelle   varchar(30),
   active    tinyint DEFAULT 1   NOT NULL,
-  module    varchar(32) NULL
+  module    varchar(32) NULL,
+  UNIQUE KEY uk_c_typent (code)
 )ENGINE=innodb;
