@@ -151,6 +151,20 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][4] = 'paiement';
 
 		$r++;
+		$this->rights[$r][0] = 17;
+		$this->rights[$r][1] = 'Consulter les rapports de paiement';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'paiement_lire';
+
+		$r++;
+		$this->rights[$r][0] = 18;
+		$this->rights[$r][1] = 'Générer les rapports de paiement';
+		$this->rights[$r][2] = 'a';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'paiement_generer';
+
+		$r++;
 		$this->rights[$r][0] = 19;
 		$this->rights[$r][1] = 'Supprimer les factures';
 		$this->rights[$r][2] = 'a';
