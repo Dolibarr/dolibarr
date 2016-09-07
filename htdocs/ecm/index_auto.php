@@ -346,7 +346,7 @@ if ($action == 'refreshmanual')
 
 // Define height of file area (depends on $_SESSION["dol_screenheight"])
 //print $_SESSION["dol_screenheight"];
-$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-186):660;	// Also into index.php file
+$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index.php file
 
 $morejs=array();
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
@@ -414,7 +414,7 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	
 }
 
-print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+//print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
 $helptext1=''; $helptext2='';
 $helptext1.=$langs->trans("ECMAreaDesc");
@@ -441,11 +441,9 @@ if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
 else $classviewhide='visible';
 
 
-if (empty($conf->dol_use_jmobile))
-{
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index_auto', '', 1, '');
-}
+dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
+
 
 // Start container of all panels
 ?>
@@ -589,7 +587,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 // End of page
 
 
-//dol_fiche_end();
+dol_fiche_end();
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {
