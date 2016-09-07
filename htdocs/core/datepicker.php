@@ -26,7 +26,7 @@
  */
 
 if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
-if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');		// Not disabled cause need to load personalized language
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');		// Not disabled cause need to do translations
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
@@ -184,13 +184,14 @@ function displayBox($selectedDate,$month,$year)
 			onClick="loadMonth('<?php echo DOL_URL_ROOT.'/core/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>','<?php echo $langs->defaultlang ?>')">&gt;&gt;</td>
 	</tr>
 	<tr class="dpDayNames">
-		<td width="14%"><?php echo $langs->trans("ShortSunday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortMonday") ?></td>
-		<td width="15%"><?php echo $langs->trans("ShortTuesday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortWednesday") ?></td>
-		<td width="15%"><?php echo $langs->trans("ShortThursday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortFriday") ?></td>
-		<td width="14%"><?php echo $langs->trans("ShortSaturday") ?></td>
+	<?php
+	$first_day_of_week = isset($conf->global->MAIN_START_WEEK) ? (int) $conf->global->MAIN_START_WEEK : 0;
+	$day_names = array('ShortSunday', 'ShortMonday', 'ShortTuesday', 'ShortWednesday', 'ShortThursday', 'ShortFriday', 'ShortSaturday');
+	for( $i=0; $i < 7; $i++ )
+	{
+		echo '<td width="', (int) (($i+1)*100/7) - (int) ($i*100/7), '%">', $langs->trans($day_names[($i + $first_day_of_week) % 7]), '</td>', "\n";
+	}
+	?>
 	</tr>
 	<?php
 	//print "x ".$thedate." y";
@@ -206,7 +207,7 @@ function displayBox($selectedDate,$month,$year)
 		{
 			echo "<TR class=\"dpWeek\">";
 			$cols=0;
-			for($i=0;$i< $mydate["wday"];$i++)
+			for($i=0;$i< ($mydate["wday"]+7-$first_day_of_week)%7;$i++)
 			{
 				echo "<TD>&nbsp;</TD>";
 				$cols++;
@@ -214,7 +215,7 @@ function displayBox($selectedDate,$month,$year)
 		}
 		else
 		{
-			if ($mydate["wday"]==0)
+			if ($mydate["wday"]==$first_day_of_week)
 			{
 				echo "<TR class=\"dpWeek\">";
 				$cols=0;
@@ -238,7 +239,7 @@ function displayBox($selectedDate,$month,$year)
 		echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 		$cols++;
 
-		if ($mydate["wday"]==6) echo "</TR>\n";
+		if ($mydate != $firstdate && $mydate["wday"]==(($first_day_of_week + 6)%7)) echo "</TR>\n";
 
 		//$thedate=strtotime("tomorrow",$thedate);
 		$day++;
