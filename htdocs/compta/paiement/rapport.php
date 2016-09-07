@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Security check
-if (! $user->rights->facture->lire) accessforbidden();
+if (empty($user->rights->facture->paiement_lire)) accessforbidden();
 
 $action=GETPOST('action');
 
@@ -52,6 +52,7 @@ if (! $year) { $year=date("Y"); }
 
 if ($action == 'builddoc')
 {
+    if (empty($user->rights->facture->paiement_generer)) accessforbidden();
     $rap = new pdf_paiement($db);
 
     $outputlangs = $langs;
@@ -90,19 +91,22 @@ $titre=($year?$langs->trans("PaymentsReportsForYear",$year):$langs->trans("Payme
 print_fiche_titre($titre);
 
 // Formulaire de generation
-print '<form method="post" action="rapport.php?year='.$year.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="builddoc">';
-$cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
-$syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());
+if (! empty($user->rights->facture->paiement_generer))
+{
+    print '<form method="post" action="rapport.php?year='.$year.'">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="action" value="builddoc">';
+    $cmonth = GETPOST("remonth")?GETPOST("remonth"):date("n", time());
+    $syear = GETPOST("reyear")?GETPOST("reyear"):date("Y", time());
 
-print $formother->select_month($cmonth,'remonth');
+    print $formother->select_month($cmonth,'remonth');
 
-print $formother->select_year($syear,'reyear');
+    print $formother->select_year($syear,'reyear');
 
-print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
-print '</form>';
-print '<br>';
+    print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
+    print '</form>';
+    print '<br>';
+}
 
 clearstatcache();
 
