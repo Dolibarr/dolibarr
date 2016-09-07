@@ -3322,7 +3322,7 @@ class Form
         if($m == '') $m=0;
         if($empty == '') $empty=0;
 
-        if (! $set_time && $empty == 0) $set_time = dol_now('tzuser');
+        if (! $set_time && $empty == 0) $set_time = dol_now();
 
         // Analysis of the pre-selection date
         if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))
