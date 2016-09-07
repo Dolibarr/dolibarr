@@ -446,6 +446,7 @@ if (! defined('NOLOGIN'))
         	$login = checkLoginPassEntity($usertotest,$passwordtotest,$entitytotest,$authmode);
         	if ($login)
             {
+            	$user->entity = $entitytotest;
                 $dol_authmode=$conf->authmode;	// This properties is defined only when logged, to say what mode was successfully used
                 $dol_tz=$_POST["tz"];
                 $dol_tz_string=$_POST["tz_string"];
