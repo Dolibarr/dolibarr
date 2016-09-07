@@ -121,11 +121,12 @@ class modOpenSurvey extends DolibarrModules
 		// Main menu entries
 		$this->menus = array();			// List of menus to add
 		$r=0;
-		/*
+
 		$this->menu[$r]=array(	'fk_menu'=>0,		    						// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top',
 								'titre'=>'Surveys',
-								'mainmenu'=>'opensurvey',
+								'mainmenu'=>'tools',
+								'leftmenu'=>'opensurvey',
 								'url'=>'/opensurvey/index.php',
 								'langs'=>'opensurvey',
 								'position'=>200,
@@ -133,7 +134,7 @@ class modOpenSurvey extends DolibarrModules
 								'perms'=>'$user->rights->opensurvey->read',
 								'target'=>'',
 								'user'=>0);
-		$r++;*/
+		$r++;
 
 		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'left',
