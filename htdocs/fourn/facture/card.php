@@ -7,7 +7,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013-2015	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -467,6 +467,11 @@ if (empty($reshook))
 	                    
 	                    // Now reload line
 	                    $object->fetch_lines();
+
+                        //Mark as billed
+                        if (method_exists($srcobject, 'classifyBilled')) {
+                            $srcobject->classifyBilled();
+                        }
 	                }
 	                else
 	                {
