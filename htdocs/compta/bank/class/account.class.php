@@ -805,7 +805,7 @@ class Account extends CommonObject
         $sql = "SELECT sum(amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank";
         $sql.= " WHERE fk_account = ".$this->id;
-        if ($option == 1) $sql.= " AND dateo <= '".$this->db->idate(dol_now())."'";
+        if ($option == 1) $sql.= " AND dateo <= ".$this->db->idate(dol_now());
 
         $resql = $this->db->query($sql);
         if ($resql)
