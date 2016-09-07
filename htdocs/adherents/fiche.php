@@ -825,11 +825,11 @@ else
 		print '</tr>';
 
 		// Lastname
-		print '<tr><td id="tdlastname">'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" value="'.(GETPOST('nom','alpha')?GETPOST('nom','alpha'):$object->lastname).'" size="40"></td>';
+		print '<tr><td id="tdlastname"><span class="fieldrequired">'.$langs->trans("Lastname").'</span></td><td><input type="text" name="nom" value="'.(GETPOST('nom','alpha')?GETPOST('nom','alpha'):$object->lastname).'" size="40"></td>';
 		print '</tr>';
 
 		// Firstname
-		print '<tr><td id="tdfirstname">'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.(GETPOST('prenom','alpha')?GETPOST('prenom','alpha'):$object->firstname).'"></td>';
+		print '<tr><td id="tdfirstname"><span class="fieldrequired">'.$langs->trans("Firstname").'</span></td><td><input type="text" name="prenom" size="40" value="'.(GETPOST('prenom','alpha')?GETPOST('prenom','alpha'):$object->firstname).'"></td>';
 		print '</tr>';
 
 		// Password
