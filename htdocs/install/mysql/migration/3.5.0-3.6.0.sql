@@ -62,6 +62,7 @@ ALTER TABLE llx_societe MODIFY COLUMN fk_currency varchar(3) NULL;
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 
+ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
 -- ALTER TABLE llx_opensurvey_sondage DROP COLUMN survey_link_visible;
