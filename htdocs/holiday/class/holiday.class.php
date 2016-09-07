@@ -684,7 +684,7 @@ class Holiday extends CommonObject
 	 *
 	 *	@param      int		$statut     id statut
 	 *	@param      int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 *  @param		date	$startdate	Date holiday should start
+	 *  @param		date	$startdate	Date holiday should start toto
 	 *	@return     string      		Label
 	 */
 	function LibStatut($statut, $mode=0, $startdate='')
