@@ -171,13 +171,11 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 
         		//find all shippement on order origin
         		$order = new Commande($this->db);
-        		$ret=$order->fetch($this->origin_id);
+        		$ret=$order->fetch($object->origin_id);
         		if ($ret<0) {
         			$this->error=$order->error; $this->errors=$order->errors;
         			return $ret;
         		}
-        		var_dump($order);
-        		exit;
         		$ret=$order->fetchObjectLinked($order->id,'commande',null,'shipping');
         		if ($ret<0) {
         			$this->error=$order->error; $this->errors=$order->errors;
@@ -185,11 +183,15 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         		}
         		//Build array of quantity shipped by product for an order
         		if (is_array($order->linkedObjects) && count($order->linkedObjects)>0) {
-        			foreach($order->linkedObjects as $shipping) {
-        				if (is_array($shipping->lines) && count($shipping->lines)>0) {
-        					foreach($shipping->lines as $shippingline) {
-        						$qtyshipped[$shippingline->fk_product]+=$shippingline->qty;
-        					}
+        			foreach($order->linkedObjects as $type=>$shipping_array) {
+        				if ($type=='shipping' && is_array($shipping_array) && count($shipping_array)>0) {
+        					foreach ($shipping_array as $shipping) {
+		        				if (is_array($shipping->lines) && count($shipping->lines)>0) {
+		        					foreach($shipping->lines as $shippingline) {
+		        						$qtyshipped[$shippingline->fk_product]+=$shippingline->qty;
+		        					}
+		        				}
+	        				}
         				}
         			}
         		}
@@ -199,13 +201,13 @@ class InterfaceWorkflowManager extends DolibarrTriggers
         				$qtyordred[$orderline->fk_product]+=$orderline->qty;
         			}
         		}
-        		dol_syslog(var_export($qtyordred,true));
-        		dol_syslog(var_export($qtyshipped,true));
+        		//dol_syslog(var_export($qtyordred,true),LOG_DEBUG);
+        		//dol_syslog(var_export($qtyshipped,true),LOG_DEBUG);
         		//Compare array
         		$diff_array=array_diff_assoc($qtyordred,$qtyshipped);
         		if (count($diff_array)==0) {
         			//No diff => mean everythings is shipped
-        			$ret=$object->setStatut(Commande::STATUS_CLOSED, $this->origin_id, $this->origin);
+        			$ret=$object->setStatut(Commande::STATUS_CLOSED, $object->origin_id, $object->origin);
         			if ($ret<0) {
         				$this->error=$object->error; $this->errors=$object->errors;
         				return $ret;
