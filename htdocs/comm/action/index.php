@@ -315,7 +315,7 @@ $sql.= ' AND a.entity IN ('.getEntity().')';
 if ($actioncode) $sql.=" AND ca.code='".$db->escape($actioncode)."'";
 if ($pid) $sql.=" AND a.fk_project=".$db->escape($pid);
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-if ($user->societe_id) $sql.= ' AND a.fk_soc = '.$user->societe_id; // To limit to external user company
+if ($user->societe_id) $sql.= ' AND (a.fk_soc = '.$user->societe_id.' OR a.fk_soc IS NULL)'; // To limit to external user company
 if ($action == 'show_day')
 {
     $sql.= " AND (";
