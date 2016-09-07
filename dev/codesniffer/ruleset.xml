@@ -343,7 +343,7 @@
         <severity>0</severity>
 	</rule>
 	<!-- some phpcs have a typo error in rule, so we add it too -->
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCaptial">
+	<rule ref="PEAR.NamingConventions.ValidFunctionName.FunctionNoCapital">
         <severity>0</severity>
 	</rule>
 
