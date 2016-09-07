@@ -397,7 +397,8 @@ if (! defined('NOLOGIN'))
         if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
         {
             $sessionkey = 'dol_antispam_value';
-            $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+            //$ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+            $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && ($_SESSION[$sessionkey] == $_POST['code']));
 
             // Check code
             if (! $ok)
