@@ -9,6 +9,7 @@
  * Copyright (C) 2008      Matteli
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
+ * Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -397,7 +398,13 @@ if (! defined('NOLOGIN'))
         if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
         {
             $sessionkey = 'dol_antispam_value';
-            $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+            $ok= array_key_exists($sessionkey, $_SESSION) === TRUE ;
+
+            if(! empty($conf->global->MAIN_SECURITY_KEYSENSITIVECAPTCHA)){
+                $ok &= $_SESSION[$sessionkey] == $_POST['code'];
+            }else{
+                $ok &= strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code']);
+            }
 
             // Check code
             if (! $ok)
