@@ -369,12 +369,12 @@ abstract class CommonDocGenerator
 		$array_key.'_total_localtax2_locale'=>price($object->total_localtax2, 0, $outputlangs),
 		$array_key.'_total_ttc_locale'=>price($object->total_ttc, 0, $outputlangs),
 		$array_key.'_total_discount_ht_locale' => price($object->getTotalDiscount(), 0, $outputlangs),
-		$array_key.'_total_ht'=>price2num($object->total_ht),
-		$array_key.'_total_vat'=>price2num($object->total_tva),
-		$array_key.'_total_localtax1'=>price2num($object->total_localtax1),
-		$array_key.'_total_localtax2'=>price2num($object->total_localtax2),
-		$array_key.'_total_ttc'=>price2num($object->total_ttc),
-		$array_key.'_total_discount_ht' => price2num($object->getTotalDiscount()),
+		$array_key.'_total_ht'=>price($object->total_ht),
+		$array_key.'_total_vat'=>price($object->total_tva),
+		$array_key.'_total_localtax1'=>price($object->total_localtax1),
+		$array_key.'_total_localtax2'=>price($object->total_localtax2),
+		$array_key.'_total_ttc'=>price($object->total_ttc),
+		$array_key.'_total_discount_ht' => price($object->getTotalDiscount()),
 
 		$array_key.'_note_private'=>$object->note,
 		$array_key.'_note_public'=>$object->note_public,
@@ -383,7 +383,7 @@ abstract class CommonDocGenerator
 		$array_key.'_already_payed_locale'=>price($alreadypayed, 0, $outputlangs),
 		$array_key.'_remain_to_pay_locale'=>price($object->total_ttc - $sumpayed, 0, $outputlangs),
 		$array_key.'_already_payed'=>$alreadypayed,
-		$array_key.'_remain_to_pay'=>price2num($object->total_ttc - $sumpayed)
+		$array_key.'_remain_to_pay'=>price($object->total_ttc - $sumpayed)
 		);
 
 		// Add vat by rates
@@ -432,13 +432,13 @@ abstract class CommonDocGenerator
 			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
 			'line_vatrate'=>vatrate($line->tva_tx,true,$line->info_bits),
-			'line_up'=>price2num($line->subprice),
+			'line_up'=>price($line->subprice),
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
 			'line_qty'=>$line->qty,
 			'line_discount_percent'=>($line->remise_percent?$line->remise_percent.'%':''),
-			'line_price_ht'=>price2num($line->total_ht),
-			'line_price_ttc'=>price2num($line->total_ttc),
-			'line_price_vat'=>price2num($line->total_tva),
+			'line_price_ht'=>price($line->total_ht),
+			'line_price_ttc'=>price($line->total_ttc),
+			'line_price_vat'=>price($line->total_tva),
 			'line_price_ht_locale'=>price($line->total_ht, 0, $outputlangs),
 			'line_price_ttc_locale'=>price($line->total_ttc, 0, $outputlangs),
 			'line_price_vat_locale'=>price($line->total_tva, 0, $outputlangs),
