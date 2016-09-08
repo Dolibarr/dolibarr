@@ -904,7 +904,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
  *      @param  int			$noprint	       Return string but does not output it
  *      @return	mixed						   Return html part or void if noprint is 1
  */
-function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
+function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0,$actioncode='')
 {
     global $bc,$user,$conf;
 
@@ -966,6 +966,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
         }
         if (get_class($object) == 'Societe' && $object->id) $sql.= " AND a.fk_soc = ".$object->id;
         if (! empty($objcon->id)) $sql.= " AND a.fk_contact = ".$objcon->id;
+        if (! empty($actioncode)) $sql.= " AND c.code='".$actioncode."' ";
         $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
@@ -1085,7 +1086,7 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0)
  *      @return	mixed					Return html part or void if noprint is 1
  * TODO change function to be able to list event linked to an object.
  */
-function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
+function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0,$actioncode='')
 {
     global $bc,$user,$conf;
 
@@ -1120,6 +1121,7 @@ function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0)
         if (get_class($object) == 'Adherent') $sql.= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
         if (get_class($object) == 'Adherent' && $object->id) $sql.= " AND a.fk_element = ".$object->id;
         if (is_object($objcon) && $objcon->id) $sql.= " AND a.fk_contact = ".$objcon->id;
+        if (!empty($actioncode)) $sql.= " AND c.code='".$actioncode."' ";
         $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
         $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
