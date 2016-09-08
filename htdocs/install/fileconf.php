@@ -561,17 +561,7 @@ function jscheckparam()
 		ok=false;
 		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
 	}
-	else if (document.forminstall.db_create_database.checked == true && (document.forminstall.db_user_root.value == ''))
-	{
-		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseSoRootRequired")); ?>');
-	}
 	// If create user asked
-	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
-	{
-		ok=false;
-		alert('<?php echo dol_escape_js($langs->transnoentities("YouAskToCreateDatabaseUserSoRootRequired")); ?>');
-	}
 	else if (document.forminstall.db_create_user.checked == true && (document.forminstall.db_user_root.value == ''))
 	{
 		ok=false;
