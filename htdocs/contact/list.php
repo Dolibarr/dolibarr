@@ -702,13 +702,12 @@ if ($result)
     		print '<td>';
             if ($obj->socid)
             {
-                print '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
-                print img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,20).'</a>';
+			$objsoc = new Societe($db);
+			$objsoc->fetch($obj->socid);
+			print $objsoc->getNomUrl(1);
             }
             else
-            {
                 print '&nbsp;';
-            }
             print '</td>';
         }
 
