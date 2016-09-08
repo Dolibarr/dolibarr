@@ -420,7 +420,7 @@ if ($resql)
 	if (! empty($arrayfields['d.firstname']['checked'])) 
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_ref" value="'.$search_firstname.'" size="6"></td>';
+		print '<input class="flat" type="text" name="search_firstname" value="'.$search_firstname.'" size="6"></td>';
 	}
 	
 	if (! empty($arrayfields['d.lastname']['checked'])) 
