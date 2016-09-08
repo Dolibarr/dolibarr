@@ -62,7 +62,7 @@ class modMyModule extends DolibarrModules
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module MyModule";
-		$this->descriptionlong = "A very lon description. Can be a full HTML content";
+		$this->descriptionlong = "A very long description. Can be a full HTML content";
 		$this->editor_name = 'Editor name';
 		$this->editor_url = 'http://www.dolibarr.org';
 		
