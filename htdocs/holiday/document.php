@@ -121,14 +121,14 @@ if ($object->id)
 
     print '<td>'.$langs->trans("User").'</td>';
     print '<td>';
-    print $userRequest->getNomUrl(1);
+    print $userRequest->getNomUrl(-1);
     print '</td></tr>';
 
     // Type
     print '<tr>';
     print '<td>'.$langs->trans("Type").'</td>';
     print '<td>';
-    $typeleaves=$object->getTypes(1,1);
+    $typeleaves=$object->getTypes(1,-1);
     print $typeleaves[$object->fk_type]['label'];
     print '</td>';
     print '</tr>';

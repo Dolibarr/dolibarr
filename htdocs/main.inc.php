@@ -302,13 +302,13 @@ if (! defined('NOTOKENRENEWAL'))
     if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
     $_SESSION['newtoken'] = $token;
 }
-if (! empty($conf->global->MAIN_SECURITY_CSRF))	// Check validity of token, only if option enabled (this option breaks some features sometimes)
+if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))	// Check validity of token, only if option enabled (this option breaks some features sometimes)
 {
-    if (isset($_POST['token']) && isset($_SESSION['token']))
+    if ($_SERVER['REQUEST_METHOD'] === 'POST')
     {
-        if (($_POST['token'] != $_SESSION['token']))
+        if (GETPOST('token') != $_SESSION['token'])
         {
-            dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action').", _POST['token']=".GETPOST('token').", _SESSION['token']=".$_SESSION['token'],LOG_WARNING);
+            dol_syslog("Invalid token in ".$_SERVER['HTTP_REFERER'].", action=".GETPOST('action').", _POST['token']=".GETPOST('token').", _SESSION['token']=".$_SESSION['token'], LOG_WARNING);
             //print 'Unset POST by CSRF protection in main.inc.php.';	// Do not output anything because this create problems when using the BACK button on browsers.
             unset($_POST);
         }
@@ -1293,16 +1293,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.$pathckeditor.$jsckeditor.($ext?'?'.$ext:'').'"></script>'."\n";
             }
 
-			// Raven.js for client-side Sentry logging support
-			if (array_key_exists('mod_syslog_sentry', $conf->loghandlers)) {
-				print '<!-- Includes Raven.js for Sentry -->' . "\n";
-				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/dist/raven.min.js"></script>' . "\n";
-				print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/native.js"></script>' . "\n";
-				if (! defined('DISABLE_JQUERY')) {
-					print '<script src="' . DOL_URL_ROOT . '/includes/raven-js/plugins/jquery.js"></script>' . "\n";
-				}
-			}
-
             // Global js function
             print '<!-- Includes JS of Dolibarr -->'."\n";
             print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/lib_head.js.php?version='.urlencode(DOL_VERSION).($ext?'&amp;'.$ext:'').'"></script>'."\n";
@@ -1387,23 +1377,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
     if (empty($conf->headerdone)) top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
     print '<body id="mainbody">' . "\n";
-
-    if ($conf->use_javascript_ajax)
-    {
-		// Raven.js for client-side Sentry logging support
-		if (array_key_exists('mod_syslog_sentry', $conf->loghandlers) && ! empty($conf->global->SYSLOG_SENTRY_DSN))
-		{
-			// Filter out secret key
-			$dsn = parse_url($conf->global->SYSLOG_SENTRY_DSN);
-			$public_dsn = $dsn['scheme'] . '://' . $dsn['user'] .'@' . $dsn['host'] . $dsn['path'];
-
-			print '<script type="text/javascript">' . "\n";
-			print "Raven.config('" . $public_dsn . "').install()\n";
-			print "Raven.setUserContext({username: '" . $user->login . "'})\n";
-			print "Raven.setTagsContext({version: '" . DOL_VERSION . "'})\n";
-			print "</script>\n";
-		}
-    }
 
     /*
      * Top menu
@@ -1599,38 +1572,38 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'maxwidth100', 'sall', 'T', 'searchleftt', img_object('','company'));
     	    }
 
     	    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'maxwidth100', 'sall', 'A', 'searchleftc', img_object('','contact'));
     	    }
 
     	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
     	    )
     	    {
     	        $langs->load("products");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'maxwidth100', 'sall', 'P', 'searchleftp', img_object('','product'));
     	    }
 
             if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
     	    {
     	        $langs->load("projects");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'maxwidth100', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
     	    }
 
     	    if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
     	    {
     	        $langs->load("members");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'maxwidth100', 'sall', 'M', 'searchleftm', img_object('','user'));
     	    }
 
     		if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
     	    {
     	        $langs->load("users");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'maxwidth100', 'sall', 'M', 'searchleftuser', img_object('','user'));
     	    }
 	    }
 
@@ -1825,14 +1798,14 @@ function getHelpParamFor($helppagename,$langs)
  *  @param  string	$urlaction          Url post
  *  @param  string	$urlobject          Url of the link under the search box
  *  @param  string	$title              Title search area
- *  @param  string	$htmlmodesearch     Value to set into parameter "mode_search" ('soc','contact','products','member',...)
+ *  @param  string	$htmlmorecss        Add more css
  *  @param  string	$htmlinputname      Field Name input form
  *  @param	string	$accesskey			Accesskey
  *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
  *  @param	string	$img				Image to use
  *  @return	string
  */
-function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname,$accesskey='', $prefhtmlinputname='',$img='')
+function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='')
 {
     global $conf,$langs;
 
@@ -1857,13 +1830,12 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 	}
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
-    $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';
-    $ret.='<input type="text" class="flat"';
+    $ret.='<input type="text" class="flat '.$htmlmorecss.'"';
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
     $ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.strip_tags($title).'"';		// Will work only if MAIN_HTML5_PLACEHOLDER is set to 1
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
-    $ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" size="10" />';
+    $ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
     $ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
     $ret.="</form>\n";
     return $ret;

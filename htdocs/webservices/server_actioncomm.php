@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011 	Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012	 	Florian Henry			<florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,16 +14,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Path to WSDL is: http://localhost/dolibarr/webservices/server_actioncomm.php?wsdl
  */
 
 /**
  *       \file       htdocs/webservices/server_actioncomm.php
  *       \brief      File that is entry point to call Dolibarr WebServices
- *       \version    $Id: server_actioncomm.php,v 1.7 2010/12/19 11:49:37 eldy Exp $
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP

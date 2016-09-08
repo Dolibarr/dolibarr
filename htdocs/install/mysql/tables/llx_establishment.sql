@@ -33,7 +33,7 @@ CREATE TABLE llx_establishment (
   profid3			varchar(20),
   phone				varchar(20),
   fk_user_author 	integer NOT NULL,
-  fk_user_mod		integer NOT NULL,
+  fk_user_mod		integer,
   datec				datetime NOT NULL,
   tms				timestamp NOT NULL,
   status            tinyint DEFAULT 1

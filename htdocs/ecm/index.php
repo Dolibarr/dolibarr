@@ -347,7 +347,7 @@ if ($action == 'refreshmanual')
 
 // Define height of file area (depends on $_SESSION["dol_screenheight"])
 //print $_SESSION["dol_screenheight"];
-$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-186):660;	// Also into index_auto.php file
+$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466)?($_SESSION["dol_screenheight"]-136):660;	// Also into index_auto.php file
 
 $morejs=array();
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
@@ -416,7 +416,7 @@ if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	if (! empty($conf->projet->enabled))      { $rowspan++; $sectionauto[]=array('level'=>1, 'module'=>'project', 'test'=>$conf->projet->enabled, 'label'=>$langs->trans("Projects"),     'desc'=>$langs->trans("ECMDocsByProjects")); }
 }
 
-print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
+//print load_fiche_titre($langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"));
 
 /*
 print '<div class="hideonsmartphone">';
@@ -437,11 +437,8 @@ if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
 else $classviewhide='visible';
 
 
-if (empty($conf->dol_use_jmobile))
-{
 $head = ecm_prepare_dasboard_head('');
-dol_fiche_head($head, 'index', '', 1, '');
-}
+dol_fiche_head($head, 'index', $langs->trans("ECMArea").' - '.$langs->trans("ECMFileManager"), 1, '');
 
 // Start container of all panels
 ?>
@@ -759,7 +756,7 @@ else print '&nbsp;';
 // End of page
 
 
-//dol_fiche_end();
+dol_fiche_end();
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {

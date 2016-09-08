@@ -21,13 +21,14 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+DELETE FROM llx_menu where module='expensereport';
 
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
 
 ALTER TABLE llx_societe ADD COLUMN fk_account integer;
 
-ALTER TABLE llx_commandedet ADD COLUMN fk_commandefourndet	integer NOT NULL after import_key;   -- link to detail line of commande fourn (resplenish)
+ALTER TABLE llx_commandedet ADD COLUMN fk_commandefourndet	integer DEFAULT NULL after import_key;   -- link to detail line of commande fourn (resplenish)
 
 ALTER TABLE llx_website ADD COLUMN virtualhost varchar(255) after fk_default_home;
 
@@ -65,6 +66,19 @@ ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project
 
 ALTER TABLE llx_societe_remise_except ADD COLUMN entity	integer DEFAULT 1 NOT NULL after rowid;
 ALTER TABLE llx_societe_remise ADD COLUMN entity	integer DEFAULT 1 NOT NULL after rowid;
+
+
+create table llx_expensereport_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafields (fk_object);
+
+
 
 
 

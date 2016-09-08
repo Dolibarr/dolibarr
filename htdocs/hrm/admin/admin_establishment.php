@@ -110,7 +110,8 @@ if ($result)
             
 			$establishmentstatic->id=$obj->rowid;
 			$establishmentstatic->name=$obj->name;
-
+			$establishmentstatic->status=$obj->status;
+			
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
 			print '<td>'.$establishmentstatic->getNomUrl(1).'</td>';
@@ -119,7 +120,7 @@ if ($result)
 			print '<td align="left">'.$obj->town.'</td>';
 
             print '<td align="right">';
-			print $establishmenttmp->getLibStatus(5);
+			print $establishmentstatic->getLibStatus(5);
 			print '</td>';
             print "</tr>\n";
 

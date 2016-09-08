@@ -80,8 +80,8 @@ $max = 100;
 $form = new Form($db);
 
 $title = $langs->trans('FiscalYears');
-
-llxHeader('', $title, LOG_ERR);
+$helpurl = "";
+llxHeader('', $title, $helpurl);
 
 $sql = "SELECT f.rowid, f.label, f.date_start, f.date_end, f.statut, f.entity";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_fiscalyear as f";
@@ -94,7 +94,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-}	
+}
 
 $sql.= $db->plimit($limit+1, $offset);
 
@@ -102,12 +102,12 @@ $result = $db->query($sql);
 if ($result) {
 	$var = false;
 	$num = $db->num_rows($result);
-	
+
 	$i = 0;
 
 	$title = $langs->trans('FiscalYears');
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit, 1);
-	
+
 	// Load attribute_label
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -117,10 +117,10 @@ if ($result) {
 	print '<td>' . $langs->trans("DateEnd") . '</td>';
 	print '<td align="right">' . $langs->trans("Statut") . '</td>';
 	print '</tr>';
-	
+
 	if ($num) {
 		$fiscalyearstatic = new Fiscalyear($db);
-		
+
 		while ( $i < $num && $i < $max ) {
 			$obj = $db->fetch_object($result);
 			$fiscalyearstatic->id = $obj->rowid;
@@ -137,7 +137,6 @@ if ($result) {
 	} else {
 		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
-	
 	print '</table>';
 } else {
 	dol_print_error($db);

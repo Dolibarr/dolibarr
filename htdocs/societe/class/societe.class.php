@@ -1696,7 +1696,7 @@ class Societe extends CommonObject
 
         $reparray=array();
 
-        $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.email, u.statut, u.entity";
+        $sql = "SELECT DISTINCT u.rowid, u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."user as u";
         if (! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode))
         {
@@ -1724,6 +1724,8 @@ class Societe extends CommonObject
                 $reparray[$i]['email']=$obj->email;
                 $reparray[$i]['statut']=$obj->statut;
                 $reparray[$i]['entity']=$obj->entity;
+                $reparray[$i]['login']=$obj->login;
+                $reparray[$i]['photo']=$obj->photo;
                 $i++;
             }
             return $reparray;

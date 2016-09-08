@@ -1311,8 +1311,6 @@ SyslogFilename=Fitxategiaren izena eta kokapena
 YouCanUseDOL_DATA_ROOT=You can use DOL_DATA_ROOT/dolibarr.log for a log file in Dolibarr "documents" directory. You can set a different path to store this file.
 ErrorUnknownSyslogConstant=%s konstantea ez da Syslog-eko konstante ezaguna
 OnlyWindowsLOG_USER=Windows-ek LOG_USER soilik jasaten du
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Donation module setup
 DonationsReceiptModel=Template of donation receipt

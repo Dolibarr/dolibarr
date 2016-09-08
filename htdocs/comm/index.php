@@ -71,7 +71,7 @@ if (! empty($conf->supplier_proposal->enabled)) $supplierproposalstatic=new Supp
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
-llxHeader();
+llxHeader("",$langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
 

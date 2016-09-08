@@ -404,12 +404,18 @@ if (! empty($holiday->holiday))
 		$userstatic->id=$infos_CP['fk_user'];
 		$userstatic->lastname=$infos_CP['user_lastname'];
 		$userstatic->firstname=$infos_CP['user_firstname'];
-
+		$userstatic->login=$infos_CP['user_login'];
+		$userstatic->statut=$infos_CP['user_statut'];
+		$userstatic->photo=$infos_CP['user_photo'];
+		
 		// Valideur
 		$approbatorstatic->id=$infos_CP['fk_validator'];
 		$approbatorstatic->lastname=$infos_CP['validator_lastname'];
 		$approbatorstatic->firstname=$infos_CP['validator_firstname'];
-
+		$approbatorstatic->login=$infos_CP['validator_login'];
+		$approbatorstatic->statut=$infos_CP['validator_statut'];
+		$approbatorstatic->photo=$infos_CP['validator_photo'];
+		
 		$date = $infos_CP['date_create'];
 
 		print '<tr '.$bc[$var].'>';
@@ -419,8 +425,8 @@ if (! empty($holiday->holiday))
 		print $holidaystatic->getNomUrl(1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
-		print '<td>'.$userstatic->getNomUrl('1', 'leave').'</td>';
-		print '<td>'.$approbatorstatic->getNomUrl('1').'</td>';
+		print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
+		print '<td>'.$approbatorstatic->getNomUrl(-1).'</td>';
 		print '<td>';
 		$label=$alltypeleaves[$infos_CP['fk_type']]['label'];
 		print $label?$label:$infos_CP['fk_type'];

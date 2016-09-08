@@ -58,8 +58,8 @@ class Establishment extends CommonObject
 	{
 		$this->db = $db;
 
-		$this->statuts_short = array(0 => 'Opened', 1 => 'Closed');
-        $this->statuts = array(0 => 'Opened', 1 => 'Closed');
+		$this->statuts_short = array(0 => 'Closed', 1 => 'Opened');
+        $this->statuts = array(0 => 'Closed', 1 => 'Opened');
 
 		return 1;
 	}
@@ -157,7 +157,7 @@ class Establishment extends CommonObject
 		$sql .= ", address = '".$this->address."'";
 		$sql .= ", zip = '".$this->zip."'";
 		$sql .= ", town = '".$this->town."'";
-		
+		$sql .= ", fk_country = ".($this->country_id > 0 ? $this->country_id : 'null');
 		$sql .= ", status = '".$this->status."'";
 		$sql .= ", fk_user_mod = " . $user->id;
 		$sql .= " WHERE rowid = ".$this->id;
@@ -273,23 +273,23 @@ class Establishment extends CommonObject
 		}
 		if ($mode == 2)
 		{
-			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts_short[$status]);
-			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'statut8').' '.$langs->trans($this->statuts_short[$status]);
+			if ($status==0) return img_picto($langs->trans($this->statuts_short[$status]),'statut5').' '.$langs->trans($this->statuts_short[$status]);
+			if ($status==1) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts_short[$status]);
 		}
 		if ($mode == 3)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4');
 		}
 		if ($mode == 4)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts[$status]);
-			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut8').' '.$langs->trans($this->statuts[$status]);
+			if ($status==0 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut5').' '.$langs->trans($this->statuts[$status]);
+			if ($status==1 && ! empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]),'statut4').' '.$langs->trans($this->statuts[$status]);
 		}
 		if ($mode == 5)
 		{
-			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
-			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut8');
+			if ($status==0 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut5');
+			if ($status==1 && ! empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut4');
 		}
 	}
 

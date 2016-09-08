@@ -1311,8 +1311,6 @@ SyslogFilename=اسم الملف ومسار
 YouCanUseDOL_DATA_ROOT=يمكنك استخدام DOL_DATA_ROOT / dolibarr.log لملف الدخول في Dolibarr "وثائق" دليل. يمكنك أن تحدد مسارا مختلفا لتخزين هذا الملف.
 ErrorUnknownSyslogConstant=ثابت %s ليس ثابت سيسلوغ معروفة
 OnlyWindowsLOG_USER=نوافذ يعتمد فقط LOG_USER
-SyslogSentryDSN=ترقب DSN
-SyslogSentryFromProject=DSN من مشروع ترقب بك
 ##### Donations #####
 DonationsSetup=وحدة الإعداد للتبرع
 DonationsReceiptModel=قالب من استلام التبرع
