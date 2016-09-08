@@ -41,36 +41,47 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
     /**
      * @var int Module unique ID
+     * @see https://wiki.dolibarr.org/index.php/List_of_modules_id
      */
     public $numero;
 
     /**
-     * @var string  Publisher name
+     * @var string Publisher name
+     * @since 4.0.0
      */
     public $editor_name;
     
     /**
-     * @var string  URL of module at publisher site
+     * @var string URL of module at publisher site
+     * @since 4.0.0
      */
     public $editor_url;
     
     /**
-     * @var string Family
+     * @var 'crm'|'financial'|'hr'|'projects'|'products'|'ecm'|'technic'|'other' Family
      */
     public $family;
     
     /**
-     * @var int module_position
+     * @var int Module position
+     * @since 3.9.0
      */
     public $module_position=500;
     
     /**
      * @var string Module name
+     *
+     * Only used if Module[ID]Name translation string is not found.
+     *
+     * You can use the following code to automatically derive it from your module's class name:
+     * preg_replace('/^mod/i', '', get_class($this))
      */
     public $name;
 
     /**
-     * @var array Paths to create when module is activated
+     * @var string[] Paths to create when module is activated
+     *
+     * e.g.: array('/mymodule/temp')
      */
     public $dirs = array();
 
@@ -110,27 +121,27 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      *      // Set this to 1 if module has its own trigger directory (/mymodule/core/triggers)
      *      'triggers' => 0,
      *      // Set this to 1 if module has its own login method directory (/mymodule/core/login)
-	 *  	'login' => 0,
+     *      'login' => 0,
      *      // Set this to 1 if module has its own substitution function file (/mymodule/core/substitutions)
-	 *	    'substitutions' => 0,
+     *      'substitutions' => 0,
      *      // Set this to 1 if module has its own menus handler directory (/mymodule/core/menus)
-	 *	    'menus' => 0,
+     *      'menus' => 0,
      *      // Set this to 1 if module has its own theme directory (/mymodule/theme)
-	 *	    'theme' => 0,
+     *      'theme' => 0,
      *      // Set this to 1 if module overwrite template dir (/mymodule/core/tpl)
      *      'tpl' => 0,
      *      // Set this to 1 if module has its own barcode directory (/mymodule/core/modules/barcode)
-	 *	    'barcode' => 0,
+     *      'barcode' => 0,
      *      // Set this to 1 if module has its own models directory (/mymodule/core/modules/xxx)
-	 *	    'models' => 0,
+     *      'models' => 0,
      *      // Set this to relative path of css file if module has its own css file
-	 *	    'css' => '/mymodule/css/mymodule.css.php',
+     *      'css' => '/mymodule/css/mymodule.css.php',
      *      // Set this to relative path of js file if module must load a js on all pages
-	 *	    'js' => '/mymodule/js/mymodule.js',
+     *      'js' => '/mymodule/js/mymodule.js',
      *      // Set here all hooks context managed by module
-	 *	    'hooks' => array('hookcontext1','hookcontext2'),
+     *      'hooks' => array('hookcontext1','hookcontext2'),
      *      // Set here all workflow context managed by module
-	 *	    'workflow' => array(
+     *      'workflow' => array(
      *          'WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2' = >array(
      *              'enabled' => '! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)',
      *              'picto'=>'yourpicto@mymodule'
@@ -159,16 +170,29 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
     /**
      * @var string Module version
+     * @see http://semver.org
+     *
+     * The following keywords can also be used:
+     * 'development'
+     * 'experimental'
+     * 'dolibarr': only for core modules that share its version
+     * 'dolibarr_deprecated': only for deprecated core modules
+     *
      */
     public $version;
 
     /**
      * @var string Module description (short text)
+     *
+     * Only used if Module[ID]Desc translation string is not found.
      */
     public $description;
 
     /**
      * @var string Module description (long text)
+     * @since 4.0.0
+     *
+     * HTML content supported.
      */
     public $descriptionlong;
     
@@ -219,8 +243,67 @@ class DolibarrModules           // Can not be abstract, because we need to insta
      */
     public $style_sheet = '';
 
-    
-	
+	/**
+	 * @var 0|1|2|3 Where to display the module in setup page
+	 *
+	 * 0: common
+	 * 1: interface
+	 * 2: others
+	 * 3: very specific
+	 */
+	public $special;
+
+	/**
+	 * @var string Name of image file used for this module
+	 *
+	 * If file is in theme/yourtheme/img directory under name object_pictoname.png use 'pictoname'
+	 * If file is in module/img directory under name object_pictoname.png use 'pictoname@module'
+	 */
+	public $picto;
+
+	/**
+	 * @var string[] List of config pages
+	 *
+	 * Name of php pages stored into module/admin directory, used to setup module.
+	 * e.g.: "admin.php@module"
+	 */
+	public $config_page_url;
+
+	/**
+	 * @var string[] List of module class names that must be enabled if this module is enabled.
+	 *
+	 * e.g.: array('modAnotherModule', 'modYetAnotherModule')
+	 */
+	public $depends;
+
+	/**
+	 * @var int[] List of module ids to disable if this one is disabled.
+	 */
+	public $requiredby;
+
+	/**
+	 * @var string[] List of module class names as string this module is in conflict with.
+	 * @see depends
+	 */
+	public $conflictwith;
+
+	/**
+	 * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 */
+	public $phpmin;
+
+	/**
+	 * @var array Minimum version of Dolibarr required by module.
+	 * e.g.: Dolibarr ≥ 3.6 = array(3, 6)
+	 */
+	public $need_dolibarr_version;
+
+	/**
+	 * @var bool Whether to hide the module.
+	 */
+	public $hidden = false;
+
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
