@@ -253,6 +253,8 @@ class CommandeFournisseur extends CommonOrder
             if ($this->statut == 0) $this->brouillon = 1;
 
 			$this->fetchObjectLinked();
+			
+				$this->lines=array();
 
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
             $sql.= " l.qty,";
