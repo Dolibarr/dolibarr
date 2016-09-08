@@ -52,7 +52,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     /**
      * @var string  URL of module at publisher site
      */
-    public $editor_web;    
+    public $editor_url;
     
     /**
      * @var string Family
@@ -538,7 +538,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     {
         if ($this->version == 'dolibarr' || $this->version == 'dolibarr_deprecated') return 'core';
         if (! empty($this->version) && ! in_array($this->version,array('experimental','development'))) return 'external';
-        if (! empty($this->editor_name) || ! empty($this->editor_web)) return 'external';
+        if (! empty($this->editor_name) || ! empty($this->editor_url)) return 'external';
         if ($this->numero >= 100000) return 'external';
         return 'unknown';
     }
