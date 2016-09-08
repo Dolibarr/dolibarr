@@ -58,7 +58,6 @@ if ($user->societe_id > 0)
 }
 
 $mode=GETPOST("mode");
-$modesearch=GETPOST("mode_search");
 
 $search_product_category=GETPOST('search_product_category','int');
 $search_ref=GETPOST('sf_ref')?GETPOST('sf_ref','alpha'):GETPOST('search_ref','alpha');
@@ -213,27 +212,6 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter") || GETPOS
     $search_array_options=array();
     $filter='';
     $option='';
-}
-
-if ($mode == 'search')
-{
-	if ($modesearch == 'soc')
-	{
-		$sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
-		$sql.= " WHERE s.nom LIKE '%".$db->escape($socname)."%'";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
-	}
-
-    $resql=$db->query($sql);
-	if ($resql)
-	{
-		if ( $db->num_rows($resql) == 1)
-		{
-			$obj = $db->fetch_object($resql);
-			$socid = $obj->rowid;
-		}
-		$db->free($resql);
-	}
 }
 
 if (empty($reshook))

@@ -2280,6 +2280,12 @@ table.noborder tr, div.noborder form {
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
+.liste_titre_add td, .liste_titre_add .tagtd
+{
+    border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
+}
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 	padding: 8px 2px 8px 3px;			/* t r b l */

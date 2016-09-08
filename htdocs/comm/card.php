@@ -63,7 +63,6 @@ $result = restrictedArea($user,'societe',$id,'&societe');
 
 $action		= GETPOST('action');
 $mode		= GETPOST("mode");
-$modesearch	= GETPOST("mode_search");
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
@@ -201,33 +200,6 @@ if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/'
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
-
-/*
-if ($mode == 'search')
-{
-	if ($modesearch == 'soc')
-	{
-		// TODO move to DAO class
-		$sql = "SELECT s.rowid";
-		if (!$user->rights->societe->client->voir && !$id) $sql .= ", sc.fk_soc, sc.fk_user ";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->rights->societe->client->voir && !$id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-		if (!$user->rights->societe->client->voir && !$id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	}
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		if ( $db->num_rows($resql) == 1)
-		{
-			$obj = $db->fetch_object($resql);
-			$id = $obj->rowid;
-		}
-		$db->free($resql);
-	}
-}
-*/
 
 if ($id > 0)
 {
