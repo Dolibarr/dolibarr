@@ -363,6 +363,9 @@ class Cronjob extends CommonObject
     function fetch_all($sortorder='DESC', $sortfield='t.rowid', $limit=0, $offset=0, $status=1, $filter='')
     {
     	global $langs;
+    	
+    	$this->lines=array();
+    	
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
     	$sql.= " t.tms,";
@@ -399,8 +402,10 @@ class Cronjob extends CommonObject
     	if ($status == 2) $sql.= " AND t.status = 2";
     	//Manage filter
     	if (is_array($filter) && count($filter)>0) {
-    		foreach($filter as $key => $value) {
-    				$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+    		foreach($filter as $key => $value) 
+    		{
+    		    if ($key == 't.rowid') $sql.= ' AND '.$key.' = '.$this->db->escape($value);
+   				else $sql.= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     		}
     	}
 
@@ -427,8 +432,6 @@ class Cronjob extends CommonObject
 
     		if ($num)
     		{
-    			$this->lines=array();
-
 	    		while ($i < $num)
 	    		{
 

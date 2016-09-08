@@ -43,6 +43,7 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel');
 $backtourl=GETPOST('backtourl','alpha');
+$securitykey = GETPOST('securitykey','alpha');
 
 
 /*
@@ -100,30 +101,38 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
 {
-    $now = dol_now();   // Date we start
+    if (! empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
+    {
+        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
+        $action='';
+    }
+    else
+    {
+        $now = dol_now();   // Date we start
+        
+    	$result=$object->run_jobs($user->login);
     
-	$result=$object->run_jobs($user->login);
-
-	if ($result < 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$action='';
-	}
-	else
-	{
-		$res = $object->reprogram_jobs($user->login, $now);
-		if ($res > 0)
-		{
-			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
-			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
-			$action='';
-		}
-		else
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action='';
-		}
-	}
+    	if ($result < 0)
+    	{
+    		setEventMessages($object->error, $object->errors, 'errors');
+    		$action='';
+    	}
+    	else
+    	{
+    		$res = $object->reprogram_jobs($user->login, $now);
+    		if ($res > 0)
+    		{
+    			if ($object->lastresult > 0) setEventMessages($langs->trans("JobFinished"), null, 'warnings');
+    			else setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+    			$action='';
+    		}
+    		else
+    		{
+    			setEventMessages($object->error, $object->errors, 'errors');
+    			$action='';
+    		}
+    	}
+    }
 }
 
 
@@ -284,7 +293,7 @@ if ($action == 'delete')
 }
 
 if ($action == 'execute'){
-	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id.(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY),$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id.'&securitykey='.$securitykey,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 
 	$action='';
 }
