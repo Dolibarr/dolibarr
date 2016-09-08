@@ -58,9 +58,28 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     public $editor_url;
     
     /**
-     * @var 'crm'|'financial'|'hr'|'projects'|'products'|'ecm'|'technic'|'other' Family
+     * @var string Family
+     * @see familyinfo
+     *
+     * Native values: 'crm', 'financial', 'hr', 'projects', 'products', 'ecm', 'technic', 'other'.
+     * Use familyinfo to declare a custom value.
      */
     public $family;
+
+    /**
+     * @var array Custom family informations
+     * @see family
+     *
+     * e.g.:
+     * array(
+     *     'myownfamily' => array(
+     *         'position' => '001',
+     *         'label' => $langs->trans("MyOwnFamily")
+     *     )
+     * );
+     *
+     */
+    public $familyinfo;
     
     /**
      * @var int Module position
@@ -245,6 +264,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * @var 0|1|2|3 Where to display the module in setup page
+	 * @deprecated @since 4.0.0
+	 * @see family
+	 * @see familyinfo
 	 *
 	 * 0: common
 	 * 1: interface
