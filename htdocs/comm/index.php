@@ -69,7 +69,7 @@ if (! empty($conf->propal->enabled)) $propalstatic=new Propal($db);
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
-llxHeader();
+llxHeader("",$langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
 
