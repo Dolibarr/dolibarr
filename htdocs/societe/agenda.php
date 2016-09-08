@@ -181,7 +181,7 @@ if ($socid)
 				
 			print '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="get">';
 			print '<input type="hidden" name="socid" value="'.$objthirdparty->id.'" />';
-			$formactions->select_type_actions($actioncode, "actioncode", $excludetype, 0, 0, $multiselect);
+			$formactions->select_type_actions($actioncode, "actioncode", '', 0, 0, 0);
 			print '<input type="submit" class="button" name="refresh" value="' . $langs->trans("Refresh") . '">';
 			print '</form><br />'	;
 			
