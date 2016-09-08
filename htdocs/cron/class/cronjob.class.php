@@ -191,7 +191,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->params)?'NULL':"'".$this->db->escape($this->params)."'").",";
 		$sql.= " ".(! isset($this->md5params)?'NULL':"'".$this->db->escape($this->md5params)."'").",";
 		$sql.= " ".(! isset($this->module_name)?'NULL':"'".$this->db->escape($this->module_name)."'").",";
-		$sql.= " ".(! isset($this->priority)?'NULL':"'".$this->priority."'").",";
+		$sql.= " ".(! isset($this->priority)?'0':$this->priority).",";
 		$sql.= " ".(! isset($this->datelastrun) || dol_strlen($this->datelastrun)==0?'NULL':$this->db->idate($this->datelastrun)).",";
 		$sql.= " ".(! isset($this->datenextrun) || dol_strlen($this->datenextrun)==0?'NULL':$this->db->idate($this->datenextrun)).",";
 		$sql.= " ".(! isset($this->dateend) || dol_strlen($this->dateend)==0?'NULL':$this->db->idate($this->dateend)).",";
@@ -200,13 +200,13 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':$this->db->idate($this->datelastresult)).",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
 		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
-		$sql.= " ".(! isset($this->frequency)?'NULL':"'".$this->frequency."'").",";
-		$sql.= " ".(! isset($this->status)?'0':"'".$this->status."'").",";
+		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
+		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".$user->id.",";
 		$sql.= " ".(! isset($this->note)?'NULL':"'".$this->db->escape($this->note)."'").",";
-		$sql.= " ".(! isset($this->nbrun)?'0':"'".$this->db->escape($this->nbrun)."'").",";
-		$sql.= " ".(empty($this->maxrun)?'null':"'".$this->db->escape($this->maxrun)."'").",";
+		$sql.= " ".(! isset($this->nbrun)?'0':$this->db->escape($this->nbrun)).",";
+		$sql.= " ".(empty($this->maxrun)?'0':$this->db->escape($this->maxrun)).",";
 		$sql.= " ".(! isset($this->libname)?'NULL':"'".$this->db->escape($this->libname)."'").",";
 		$sql.= " ".(! isset($this->test)?'NULL':"'".$this->db->escape($this->test)."'")."";
 		$sql.= ")";
@@ -518,7 +518,7 @@ class Cronjob extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->note)) $this->note=trim($this->note);
 		if (isset($this->nbrun)) $this->nbrun=trim($this->nbrun);
-		if (isset($this->maxrun)) $this->maxrun=trim($this->maxrun);
+		if (empty($this->maxrun)) $this->maxrun=0;
         if (isset($this->libname)) $this->libname = trim($this->libname);
         if (isset($this->test)) $this->test = trim($this->test);
         
@@ -589,7 +589,7 @@ class Cronjob extends CommonObject
 		$sql.= " fk_user_mod=".$user->id.",";
 		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
 		$sql.= " nbrun=".((isset($this->nbrun) && $this->nbrun >0)?$this->nbrun:"null").",";
-		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"null").",";
+		$sql.= " maxrun=".((isset($this->maxrun) && $this->maxrun > 0)?$this->maxrun:"0").",";
 		$sql.= " libname=".(isset($this->libname)?"'".$this->db->escape($this->libname)."'":"null").",";
 		$sql.= " test=".(isset($this->test)?"'".$this->db->escape($this->test)."'":"null");
 		$sql.= " WHERE rowid=".$this->id;

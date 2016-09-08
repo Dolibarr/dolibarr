@@ -350,7 +350,7 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->execute)
 		{
-		    if (!empty($line->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&action=execute".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    if (!empty($line->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$line->id."&action=execute".(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
 		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"play")."</a>";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"play")."</a>";
