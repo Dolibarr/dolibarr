@@ -80,6 +80,7 @@ $workflowcodes=array(
 	// For the following 2 options, if module invoice is disabled, they does not exists, so "Classify billed" for order must be done manually from order card.
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>40, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>50, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>'WarningCloseAlways'),
+	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->expedition->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
