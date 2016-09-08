@@ -250,9 +250,11 @@ class CommandeFournisseur extends CommonOrder
             $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
             $this->fetch_optionals($this->id,$extralabels);
 
-            if ($this->statut == 0) $this->brouillon = 1;
-
-			$this->fetchObjectLinked();
+            if ($this->statut == 0) $this->brouillon = 1;		
+				
+				$this->fetchObjectLinked();
+				
+				$this->lines=array();
 
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
             $sql.= " l.qty,";
