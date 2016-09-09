@@ -274,14 +274,14 @@ if (! empty($conf->margin->enabled))
 				options += '>'+this.label+'</option>';
 			});
 			options += '<option value=null'+(trouve?'':' selected')+'><?php echo $langs->trans("InputPrice"); ?></option>';
-			$("#fournprice").html(options);
+			$("#fournprice_predef").html(options);
 			if (trouve) {
 				$("#buying_price").hide();
-				$("#fournprice").show();
+				$("#fournprice_predef").show();
 			} else {
 				$("#buying_price").show();
 			}
-			$("#fournprice").change(function() {
+			$("#fournprice_predef").change(function() {
 				var selval = $(this).find('option:selected').attr("price");
 				if (selval)
 					$("#buying_price").val(selval).hide();
@@ -289,7 +289,7 @@ if (! empty($conf->margin->enabled))
 					$('#buying_price').show();
 			});
 		} else {
-			$("#fournprice").hide();
+			$("#fournprice_predef").hide();
 			$('#buying_price').show();
 		}
 		}, 'json');
