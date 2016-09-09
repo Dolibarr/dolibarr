@@ -84,33 +84,33 @@ class Orders extends DolibarrApi
      * 
      * Get a list of orders
      * 
-     * @param string	$sortfield	Sort field
-     * @param string	$sortorder	Sort order
-     * @param int		$limit		Limit for list
-     * @param int		$page		Page number
-     * @param string	$societe	Societe filter field
+     * @param string	$sortfield	        Sort field
+     * @param string	$sortorder	        Sort order
+     * @param int		$limit		        Limit for list
+     * @param int		$page		        Page number
+     * @param string   	$thirdparty_ids	    Thirdparty ids to filter orders of. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
      *
      * @return  array   Array of order objects
      */
-    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $societe = 0) {
+    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '') {
         global $db, $conf;
         
         $obj_ret = array();
-        // case of external user, $societe param is ignored and replaced by user's socid
-        $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+        // case of external user, $thirdpartyid param is ignored and replaced by user's socid
+        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
             
         // If the internal user must only see his customers, force searching by him
-        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT s.rowid";
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as s";
         
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
         $sql.= ' WHERE s.entity IN ('.getEntity('commande', 1).')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
-        if ($socid) $sql.= " AND s.fk_soc = ".$socid;
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
+        if ($socids) $sql.= " AND s.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
         
         // Insert sale filter
