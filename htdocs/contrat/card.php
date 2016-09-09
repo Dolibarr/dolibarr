@@ -1542,7 +1542,11 @@ else
                         {
                             print dol_print_date($db->jdate($objp->date_debut));
                             // Warning si date prevu passee et pas en service
-                            if ($objp->statut == 0 && $db->jdate($objp->date_debut) < ($now - $conf->contrat->services->inactifs->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
+                            if ($objp->statut == 0 && $db->jdate($objp->date_debut) < ($now - $conf->contrat->services->inactifs->warning_delay)) { 
+                    		    $warning_delay=$conf->contrat->services->inactifs->warning_delay / 3600 / 24;
+                                $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
+                    		    print " ".img_warning($textlate);
+                            }
                         }
                         else print $langs->trans("Unknown");
                         print ' &nbsp;-&nbsp; ';
@@ -1550,7 +1554,11 @@ else
                         if ($objp->date_fin)
                         {
                             print dol_print_date($db->jdate($objp->date_fin));
-                            if ($objp->statut == 4 && $db->jdate($objp->date_fin) < ($now - $conf->contrat->services->expires->warning_delay)) { print " ".img_warning($langs->trans("Late")); }
+                            if ($objp->statut == 4 && $db->jdate($objp->date_fin) < ($now - $conf->contrat->services->expires->warning_delay)) { 
+                    		    $warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
+                                $textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
+                    		    print " ".img_warning($textlate);
+                            }
                         }
                         else print $langs->trans("Unknown");
 

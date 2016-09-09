@@ -263,6 +263,7 @@ EditContactAddress=Edit contact/address
 Contact=Contact
 ContactId=Contact id
 ContactsAddresses=Contacts/Addresses
+FromContactName=Name:
 NoContactDefinedForThirdParty=No contact defined for this third party
 NoContactDefined=No contact defined
 DefaultContact=Default contact/address

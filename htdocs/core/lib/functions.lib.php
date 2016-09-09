@@ -443,15 +443,31 @@ function dol_size($size,$type='')
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
- *  @param	int	$unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
- * 	@see        	dol_string_nospecial, dol_string_unaccent
+ * 	@see        	dol_string_nospecial, dol_string_unaccent, dol_sanitizePathName
  */
 function dol_sanitizeFileName($str,$newstr='_',$unaccent=1)
 {
 	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"','°');
 	return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
+}
+
+/**
+ *	Clean a string to use it as a path name
+ *
+ *	@param	string	$str            String to clean
+ * 	@param	string	$newstr			String to replace bad chars with
+ *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
+ *	@return string          		String cleaned (a-zA-Z_)
+ *
+ * 	@see        	dol_string_nospecial, dol_string_unaccent, dol_sanitizeFileName
+ */
+function dol_sanitizePathName($str,$newstr='_',$unaccent=1)
+{
+    $filesystem_forbidden_chars = array('<','>','?','*','|','"','°');
+    return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
