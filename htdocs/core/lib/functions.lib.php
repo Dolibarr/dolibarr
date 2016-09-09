@@ -275,6 +275,9 @@ function GETPOST($paramname,$check='',$method=0,$filter=NULL,$options=NULL)
 	            if (empty($filter)) return 'BadFourthParameterForGETPOST';
 	            $out=filter_var($out, $filter, $options);
 	            break;
+			case 'nohtml':
+				$out=dol_string_nohtmltag($out);
+				break;
 	    }
 	}
 
