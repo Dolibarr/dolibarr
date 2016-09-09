@@ -4334,15 +4334,17 @@ border-top-right-radius: 6px;
 .menu li.menu_choix1 {
     padding-top: 6px;
     padding-right: 10px;
+    padding-bottom: 2px;
 }
 .menu li.menu_choix2 {
     padding-top: 6px;
     padding-right: 10px;
+    padding-bottom: 2px;
 }
 @media only screen and (max-width: 767px)
 {
 	.menu_choix1 a, .menu_choix2 a {
-		background-size: 30px 30px;
+		background-size: 36px 36px;
 		height: 30px;
 		padding-left: 40px;
 	}
