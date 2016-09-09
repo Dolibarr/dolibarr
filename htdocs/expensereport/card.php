@@ -172,7 +172,8 @@ if (empty($reshook))
     if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $id > 0 && $user->rights->expensereport->supprimer)
     {
     	$object = new ExpenseReport($db);
-    	$result=$object->delete($id, $user);
+    	$result = $object->fetch($id);
+    	$result = $object->delete($user);
     	if ($result >= 0)
     	{
     		header("Location: index.php");

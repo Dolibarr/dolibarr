@@ -26,6 +26,8 @@ check you make a fetch on object before calling the delete.
 - The old driver of "mysql" has been removed. Dolibarr use the new one (mysqli) by default.
 - Remove not used function calculate_byte(). Use dol_print_size() instead.
 - Function pdf_getTotalQty is now deprecated. Not used by Dolibarr core.
+- Method expensereport->delete(id, user) has been replaced with delete(user) to follow good practice to
+  make a fetch on object before deleting it.
 
 
 

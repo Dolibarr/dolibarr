@@ -76,6 +76,7 @@ $search_sale=GETPOST('search_sale','int');
 $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
+$viewstatut=GETPOST('viewstatut');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
@@ -94,8 +95,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='c.ref';
 if (! $sortorder) $sortorder='DESC';
-
-$viewstatut=GETPOST('viewstatut');
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $contextpage='orderlist';
@@ -317,7 +316,6 @@ if ($search_company) $sql .= natural_search('s.nom', $search_company);
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0) $sql.= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal' AND ec.element_id = c.rowid AND ec.fk_socpeople = ".$search_user;
 if ($search_total_ht != '') $sql.= natural_search('c.total_ht', $search_total_ht, 1);
-
 // Add where from extra fields
 foreach ($search_array_options as $key => $val)
 {

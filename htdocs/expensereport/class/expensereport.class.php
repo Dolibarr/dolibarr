@@ -810,7 +810,7 @@ class ExpenseReport extends CommonObject
      * @param   User    $fuser      User that delete
      * @return  int                 <0 if KO, >0 if OK
      */
-    function delete($rowid=0, User $fuser=null)
+    function delete(User $fuser=null)
     {
         global $user,$langs,$conf;
 
