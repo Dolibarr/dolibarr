@@ -364,6 +364,7 @@ if ($result)
 	$param ='&begin='.urlencode($begin).'&view='.urlencode($view).'&userid='.urlencode($userid).'&contactname='.urlencode($sall);
     $param.='&type='.urlencode($type).'&view='.urlencode($view).'&search_lastname='.urlencode($search_lastname).'&search_firstname='.urlencode($search_firstname).'&search_societe='.urlencode($search_societe).'&search_email='.urlencode($search_email);
     if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
+    if ($sall != '') $param.='&amp;sall='.urlencode($sall);
     if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
     if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
     if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
