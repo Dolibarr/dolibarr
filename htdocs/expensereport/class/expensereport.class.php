@@ -806,7 +806,6 @@ class ExpenseReport extends CommonObject
     /**
      * delete
      *
-     * @param   int     $rowid      Id to delete (optional)
      * @param   User    $fuser      User that delete
      * @return  int                 <0 if KO, >0 if OK
      */
