@@ -368,6 +368,7 @@ class Cronjob extends CommonObject
     	
     	$sql = "SELECT";
     	$sql.= " t.rowid,";
+    	$sql.= " t.entity,";
     	$sql.= " t.tms,";
     	$sql.= " t.datec,";
     	$sql.= " t.jobtype,";
@@ -442,6 +443,7 @@ class Cronjob extends CommonObject
 	    			$line->id    = $obj->rowid;
 	    			$line->ref = $obj->rowid;
 
+	    			$line->entity = $obj->entity;
 	    			$line->tms = $this->db->jdate($obj->tms);
 	    			$line->datec = $this->db->jdate($obj->datec);
 	    			$line->label = $obj->label;
@@ -896,6 +898,7 @@ class Cronjob extends CommonObject
 
 		// Update last run date start (to track running jobs)
 		$this->datelastrun=$now;
+		$this->datelastresult=null;
 		$this->lastoutput='';
 		$this->lastresult='';
 		$this->nbrun=$this->nbrun + 1;
@@ -1095,6 +1098,8 @@ class Cronjob extends CommonObject
 		
     		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
+		
+		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
 		
 		$this->datelastresult=dol_now();
 		$result = $this->update($user);       // This include begin/commit

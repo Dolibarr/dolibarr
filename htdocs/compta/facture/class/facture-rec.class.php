@@ -241,7 +241,7 @@ class FactureRec extends CommonInvoice
 	 */
 	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.rowid, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
+		$sql = 'SELECT f.rowid, f.entity, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
@@ -269,6 +269,7 @@ class FactureRec extends CommonInvoice
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                     = $obj->rowid;
+				$this->entity                 = $obj->entity;
 				$this->titre                  = $obj->titre;
 				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
@@ -754,7 +755,7 @@ class FactureRec extends CommonInvoice
 		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
 		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
 		    
-		    while ($i < $num)
+		    while ($i < $num)     // Loop on each template invoice
 			{
 			    $line = $db->fetch_object($resql);
 
@@ -774,7 +775,7 @@ class FactureRec extends CommonInvoice
 			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
 			    
-			    $invoiceidgenerated = $facture->create($user);       // This will also update fields of recurring invoice
+			    $invoiceidgenerated = $facture->create($user);
 			    if ($invoiceidgenerated <= 0)
 			    {
 			        $this->errors = $facture->errors;
@@ -794,14 +795,14 @@ class FactureRec extends CommonInvoice
 
 				if (! $error && $invoiceidgenerated >= 0)
 				{
-					$db->commit();
+					$db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
 					$this->output.=$langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
 				}
 				else
 				{
-				    $db->rollback();
+				    $db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
 				$i++;
