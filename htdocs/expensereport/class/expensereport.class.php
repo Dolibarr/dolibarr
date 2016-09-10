@@ -36,8 +36,10 @@ class ExpenseReport extends CommonObject
     var $fk_element = 'fk_expensereport';
 
     var $lignes=array();
-    var $date_debut;
-    var $date_fin;
+    
+    public $date_debut;
+    
+    public $date_fin;
 
     var $fk_user_validator;
     var $status;
@@ -262,8 +264,8 @@ class ExpenseReport extends CommonObject
     /**
      *  Load an object from database
      *
-     *  @param  int     $id     Id
-     *  @param  string  $ref    Ref
+     *  @param  int     $id     Id                      {@min 1}
+     *  @param  string  $ref    Ref                     {@name ref}
      *  @return int             <0 if KO, >0 if OK
      */
     function fetch($id, $ref='')
@@ -806,11 +808,10 @@ class ExpenseReport extends CommonObject
     /**
      * delete
      *
-     * @param   int     $rowid      Id to delete (optional)
      * @param   User    $fuser      User that delete
      * @return  int                 <0 if KO, >0 if OK
      */
-    function delete($rowid=0, User $fuser=null)
+    function delete(User $fuser=null)
     {
         global $user,$langs,$conf;
 

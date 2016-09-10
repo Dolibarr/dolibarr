@@ -127,6 +127,7 @@ class CommandeFournisseur extends CommonOrder
     public $multicurrency_total_tva;
     public $multicurrency_total_ttc;
 
+    
 	/**
      * 	Constructor
      *
@@ -270,6 +271,8 @@ class CommandeFournisseur extends CommonOrder
             if ($this->statut == 0) $this->brouillon = 1;
 
 			$this->fetchObjectLinked();
+
+            $this->lines=array();
 
             $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description,";
             $sql.= " l.qty,";
@@ -617,7 +620,7 @@ class CommandeFournisseur extends CommonOrder
      *  Returns the following order reference not used depending on the numbering model activated
      *                  defined within COMMANDE_SUPPLIER_ADDON_NUMBER
      *
-     *  @param	    Societe		$soc  		company object
+     *  @param	    Company		$soc  		company object
      *  @return     string                  free reference for the invoice
      */
     public function getNextNumRef($soc)
@@ -2746,13 +2749,15 @@ class CommandeFournisseur extends CommonOrder
         return $text;
     }
 
+    
     /**
      * Calc status regarding dispatch stock
      *
      * @param 		User 	$user User action
-     * @return		int		<0 si ko, >0 si ok
+     * @return		int		<0 if KO, 0 if not applicable, >0 if OK
      */
-    public function calcAndSetStatusDispatch(User $user) {
+    public function calcAndSetStatusDispatch(User $user) 
+    {
     	global $conf;
 
     	if (! empty($conf->commande->enabled) && ! empty($conf->fournisseur->enabled))
@@ -2764,15 +2769,19 @@ class CommandeFournisseur extends CommonOrder
 
     		$supplierorderdispatch = new CommandeFournisseurDispatch($this->db);
     		$filter=array('t.fk_commande'=>$this->id);
-    		if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
+    		if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) {
     			$filter['t.status']=1;
     		}
     		$ret=$supplierorderdispatch->fetchAll('','',0,0,$filter);
-    		if ($ret<0) {
+    		if ($ret<0) 
+    		{
     			$this->error=$supplierorderdispatch->error; $this->errors=$supplierorderdispatch->errors;
     			return $ret;
-    		} else {
-    			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) {
+    		} 
+    		else 
+    		{
+    			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines)>0) 
+    			{
     				//Build array with quantity deliverd by product
     				foreach($supplierorderdispatch->lines as $line) {
     					$qtydelivered[$line->fk_product]+=$line->qty;
@@ -2782,25 +2791,29 @@ class CommandeFournisseur extends CommonOrder
     				}
     				//Compare array
     				$diff_array=array_diff_assoc($qtydelivered,$qtywished);
-    				if (count($diff_array)==0) {
+    				if (count($diff_array)==0) 
+    				{
     					//No diff => mean everythings is received
     					$ret=$this->setStatus($user,5);
     					if ($ret<0) {
     						$this->error=$object->error; $this->errors=$object->errors;
     					}
-    				} else {
+    					return 5;
+    				} 
+    				else 
+    				{
     					//Diff => received partially
     					$ret=$this->setStatus($user,4);
     					if ($ret<0) {
     						$this->error=$object->error; $this->errors=$object->errors;
     					}
+    					return 4;
     				}
     			}
+    			return 1;
     		}
-
-
-    		return 1;
     	}
+    	return 0;
     }
 }
 

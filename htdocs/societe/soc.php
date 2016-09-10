@@ -939,13 +939,13 @@ else
 	        print '<label for="radiocompany">';
             print '<input type="radio" id="radiocompany" class="flat" name="private"  value="0"'.($private?'':' checked').'>';
 	        print '&nbsp;';
-            print $langs->trans("Company/Fundation");
+            print $langs->trans("CreateThirdPartyOnly");
 	        print '</label>';
             print ' &nbsp; &nbsp; ';
 	        print '<label for="radioprivate">';
             $text ='<input type="radio" id="radioprivate" class="flat" name="private" value="1"'.($private?' checked':'').'>';
 	        $text.='&nbsp;';
-	        $text.= $langs->trans("Individual");
+	        $text.= $langs->trans("CreateThirdPartyAndContact");
 	        $htmltext=$langs->trans("ToCreateContactWithSameName");
 	        print $form->textwithpicto($text, $htmltext, 1, 'help', '', 0, 3);
             print '</label>';

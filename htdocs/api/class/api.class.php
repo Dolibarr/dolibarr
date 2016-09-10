@@ -91,6 +91,12 @@ class DolibarrApi
         // Remove linkedObjects. We should already have linkedObjectIds that avoid huge responses
         unset($object->linkedObjects);
         
+        unset($object->lignes); // should be lines
+        
+        unset($object->statuts);
+        unset($object->statuts_short);
+        unset($object->statuts_logo);
+        
         // Remove the $oldcopy property because it is not supported by the JSON
         // encoder. The following error is generated when trying to serialize
         // it: "Error encoding/decoding JSON: Type is not supported"

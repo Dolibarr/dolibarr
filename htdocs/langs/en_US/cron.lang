@@ -7,7 +7,7 @@ Permission23103 = Delete Scheduled job
 Permission23104 = Execute Scheduled job
 # Admin
 CronSetup= Scheduled job management setup
-URLToLaunchCronJobs=URL to check and launch cron jobs if required
+URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Security key for URL to launch cron jobs
 FileToLaunchCronJobs=Command line to launch cron jobs

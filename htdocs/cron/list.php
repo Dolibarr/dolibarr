@@ -58,7 +58,7 @@ if ($status == '') $status=-2;
 
 //Search criteria
 $search_label=GETPOST("search_label",'alpha');
-if (empty($arch)) $arch = 0;
+$securitykey = GETPOST('securitykey','alpha');
 
 $diroutputmassaction=$conf->cronjob->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -106,35 +106,43 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->cron->del
 // Execute jobs
 if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->execute)
 {
-	$object = new Cronjob($db);
-	$job = $object->fetch($id);
-
-    $now = dol_now();   // Date we start
-
-    $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
-	if ($resrunjob < 0) {
-		setEventMessages($object->error, $object->errors, 'errors');
-	}
-
-	// Programm next run
-	$res = $object->reprogram_jobs($user->login, $now);
-	if ($res > 0)
-	{
-		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported 
-		{
-		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
-		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
-		}
-		$action='';
-	}
-	else
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-		$action='';
-	}
-
-	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
-	exit;
+    if (! empty($conf->global->CRON_KEY) && $conf->global->CRON_KEY != $securitykey)
+    {
+        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
+        $action='';
+    }
+    else
+    {
+        $object = new Cronjob($db);
+    	$job = $object->fetch($id);
+    
+        $now = dol_now();   // Date we start
+    
+        $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
+    	if ($resrunjob < 0) {
+    		setEventMessages($object->error, $object->errors, 'errors');
+    	}
+    
+    	// Programm next run
+    	$res = $object->reprogram_jobs($user->login, $now);
+    	if ($res > 0)
+    	{
+    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported 
+    		{
+    		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
+    		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
+    		}
+    		$action='';
+    	}
+    	else
+    	{
+    		setEventMessages($object->error, $object->errors, 'errors');
+    		$action='';
+    	}
+    
+    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
+    	exit;
+    }
 }
 
 
@@ -251,11 +259,11 @@ if ($num > 0)
 	
 	if ($action == 'delete')
 	{
-	    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronDelete"),$langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
+	    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronDelete"), $langs->trans("CronConfirmDelete"),"confirm_delete",'','',1);
 	}
 	if ($action == 'execute')
 	{
-	    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status,$langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
+	    print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&status='.$status.'&securitykey='.$securitykey, $langs->trans("CronExecute"),$langs->trans("CronConfirmExecute"),"confirm_execute",'','',1);
 	}
 	
 	
@@ -442,7 +450,7 @@ if ($num > 0)
 		}
 		if ($user->rights->cron->execute)
 		{
-		    if (!empty($obj->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=execute".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
+		    if (!empty($obj->status)) print "<a href=\"".$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=execute".(empty($conf->global->CRON_KEY)?'':'&securitykey='.$conf->global->CRON_KEY).($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'),"play")."</a>";
 		    else print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('JobDisabled'))."\">".img_picto($langs->trans('JobDisabled'),"play")."</a>";
 		} else {
 			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'),"play")."</a>";

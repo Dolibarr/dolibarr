@@ -55,6 +55,6 @@
         "ext-soap": "Native SOAP",
         "ext-zip": "ODT and Excel support",
         "ext-xml": "Excel support",
-        "firephp/firephp-core": "Logging to Firebug console support",
+        "firephp/firephp-core": "Logging to Firebug console support"
     }
 }
