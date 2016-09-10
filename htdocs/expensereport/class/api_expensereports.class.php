@@ -90,7 +90,7 @@ class ExpenseReports extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
-     * @param string   	$userids    User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+     * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
      *
      * @return  array   Array of Expense Report objects
      */
