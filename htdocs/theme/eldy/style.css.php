@@ -2206,7 +2206,7 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 }
 End bootstrap */
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
 .butActionRefused {
 	display: none;
 }
