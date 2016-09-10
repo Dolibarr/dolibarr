@@ -871,6 +871,11 @@ div.nopadding {
     padding-left: 2px;
     padding-right: 2px;
 }
+.pictostatus {
+	width: 15px;
+	vertical-align: middle;
+	margin-top: -3px
+}
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
@@ -902,8 +907,8 @@ div.divphotoref {
 }
 div.statusref {
 	float: right;
-	padding-right: 12px;
-	margin-top: 6px;
+	padding-left: 12px;
+	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
 }
@@ -1870,17 +1875,18 @@ div.tabsElem {
 div.tabBar {
     color: #<?php echo $colortextbacktab; ?>;
     padding-top: 16px;
-    padding-left: 18px;
-    padding-right: 18px;
+    padding-left: 0px; padding-right: 0px;
+    /*padding-left: 18px;
+    padding-right: 18px;*/
     padding-bottom: 14px;
     margin: 0px 0px 14px 0px;
-    -moz-border-radius:4px;
+    /*-moz-border-radius:4px;
     -webkit-border-radius: 4px;
 	border-radius: 4px;
     border-right: 1px solid #AAA;
-    border-bottom: 1px solid #AAA;
-    border-left: 1px solid #AAA;
+    border-left: 1px solid #AAA; */
     border-top: 1px solid #BBB;
+    border-bottom: 1px solid #AAA;
 	width: auto;
 
 	background: rgb(<?php echo $colorbacktabcard1; ?>);
@@ -2456,18 +2462,18 @@ div.pagination li.pagination a,
 div.pagination li.pagination span {
 <?php if (empty($conf->dol_use_jmobile)) { ?>
   padding: 6px 12px;
-  border-color: #ccc;
   margin-left: -1px;
   line-height: 1.42857143;
   color: #000;
   text-decoration: none;
-
+  /*
+  border-color: #ccc;
 	background-color: #f5f5f5;
 	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
 	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);*/
 	background-repeat: repeat-x;
 <?php } ?>
 }
@@ -2515,7 +2521,7 @@ div.pagination li.noborder a:hover {
 div.pagination li a,
 div.pagination li span {
   background-color: #fff;
-  border: 1px solid #ddd;
+  /* border: 1px solid #ddd; */
 }
 div.pagination li:first-child a,
 div.pagination li:first-child span {
