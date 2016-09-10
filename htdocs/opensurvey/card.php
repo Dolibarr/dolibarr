@@ -313,7 +313,11 @@ print '</td></tr>';
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
 if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
-else print dol_print_date($object->date_fin,'day');
+else 
+{
+    print dol_print_date($object->date_fin,'day');
+    if ($object->date_fin && $object->date_fin < dol_now()) print img_warning($langs->trans("Expired"));
+}
 print '</td></tr>';
 
 // Author

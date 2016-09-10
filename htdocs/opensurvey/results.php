@@ -543,7 +543,7 @@ if (GETPOST('ajoutsujet'))
 		//ajout d'une date avec creneau horaire
 		print $langs->trans("AddADate") .':<br><br>'."\n";
 		print '<select name="nouveaujour"> '."\n";
-		print '<OPTION VALUE="vide"></OPTION>'."\n";
+		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
 		for ($i=1;$i<32;$i++){
 			print '<OPTION VALUE="'.$i.'">'.$i.'</OPTION>'."\n";
 		}
@@ -557,13 +557,13 @@ if (GETPOST('ajoutsujet'))
 
 		print '<br><br>'. $langs->trans("AddStartHour") .': <br><br>'."\n";
 		print '<select name="nouvelleheuredebut"> '."\n";
-		print '<OPTION VALUE="vide"></OPTION>'."\n";
+		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
 		for ($i = 0; $i < 24; $i++) {
 			print '<OPTION VALUE="'.$i.'">'.$i.' H</OPTION>'."\n";
 		}
 		print '</SELECT>'."\n";
 		print '<select name="nouvelleminutedebut"> '."\n";
-		print '<OPTION VALUE="vide"></OPTION>'."\n";
+		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
 		print '<OPTION VALUE="00">00</OPTION>'."\n";
 		print '<OPTION VALUE="15">15</OPTION>'."\n";
 		print '<OPTION VALUE="30">30</OPTION>'."\n";
@@ -571,13 +571,13 @@ if (GETPOST('ajoutsujet'))
 		print '</SELECT>'."\n";
 		print '<br><br>'. $langs->trans("AddEndHour") .': <br><br>'."\n";
 		print '<select name="nouvelleheurefin"> '."\n";
-		print '<OPTION VALUE="vide"></OPTION>'."\n";
+		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
 		for ($i = 0; $i < 24; $i++) {
 			print '<OPTION VALUE="'.$i.'">'.$i.' H</OPTION>'."\n";
 		}
 		print '</SELECT>'."\n";
 		print '<select name="nouvelleminutefin"> '."\n";
-		print '<OPTION VALUE="vide"></OPTION>'."\n";
+		print '<OPTION VALUE="vide">&nbsp;</OPTION>'."\n";
 		print '<OPTION VALUE="00">00</OPTION>'."\n";
 		print '<OPTION VALUE="15">15</OPTION>'."\n";
 		print '<OPTION VALUE="30">30</OPTION>'."\n";
@@ -598,7 +598,7 @@ if (GETPOST('ajoutsujet'))
 }
 
 if ($user->rights->opensurvey->write) {
-	print '<br />'.$langs->trans("PollAdminDesc",img_picto('','cancel.png@opensurvey'),img_picto('','add-16.png@opensurvey')).'<br>';
+	print '<br />'.$langs->trans("PollAdminDesc",img_picto('','delete'),img_picto('','edit_add')).'<br>';
 }
 
 $nbcolonnes=substr_count($object->sujet,',')+1;
@@ -622,7 +622,7 @@ print '<td></td>'."\n";
 if ($user->rights->opensurvey->write) {
 	for ($i = 0; isset($toutsujet[$i]); $i++) {
 
-		print '<td class=somme><input type="image" name="effacecolonne'.$i.'" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'"></td>'."\n";
+		print '<td class=somme><input type="image" name="effacecolonne'.$i.'" src="'.img_picto('','delete.png', '', false, 1).'"></td>'."\n";
 	}
 }
 
@@ -654,10 +654,17 @@ if ($object->format=="D")
 			$next = $toutsujet[$i+1];
 		}
 
-		if (isset($toutsujet[$i+1]) && strftime("%Y",$current) == strftime("%Y",$next)){
+		$currenty = 0;
+		if ($current) $currenty=strftime("%Y",$current);
+		$next = 0;
+		if ($next) $nexty=strftime("%Y",$next);
+		if (isset($toutsujet[$i+1]) && ($currenty == $nexty))
+		{
 			$colspan++;
 		} else {
-			print '<td colspan='.$colspan.' class="annee">'.strftime("%Y", $current).'</td>'."\n";
+			print '<td colspan='.$colspan.' class="annee">';
+			if ($current) print strftime("%Y", $current);
+			print '</td>'."\n";
 			$colspan=1;
 		}
 	}
@@ -788,7 +795,7 @@ while ($compteur < $num)
 	print '<tr><td>'."\n";
 
 	if ($user->rights->opensurvey->write) {
-		print '<input type="image" name="effaceligne'.$compteur.'" src="'.dol_buildpath('/opensurvey/img/cancel.png',1).'">'."\n";
+		print '<input type="image" name="effaceligne'.$compteur.'" src="'.img_picto('','delete.png', '', false, 1).'">'."\n";
 	}
 
 	// Name
