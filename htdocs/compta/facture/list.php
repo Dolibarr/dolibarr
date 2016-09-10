@@ -568,6 +568,7 @@ if ($resql)
     }
 
     $param='&socid='.$socid;
+	if ($sall)				 $param.='&sall='.$sall;
     if ($day)                $param.='&day='.$day;
     if ($month)              $param.='&month='.$month;
     if ($year)               $param.='&year=' .$year;
