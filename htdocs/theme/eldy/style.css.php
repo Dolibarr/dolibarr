@@ -522,8 +522,8 @@ div.myavailability {
 }
 .checkallactions {
 	vertical-align: top;
-    margin-top: 6px;	
-    margin-left: 4px;	
+    margin-top: 6px;
+    margin-left: 4px;
 }
 .selectlimit {
 	margin-right: 10px !important;
@@ -722,7 +722,7 @@ $minwidthtmenu=66;		/* minimul widht for one top menu entry */
 $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
-$maxwidthloginblock = 110;
+$maxwidthloginblock = 130;
 if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; }
 ?>
 
