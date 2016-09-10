@@ -598,7 +598,7 @@ if (GETPOST('ajoutsujet'))
 }
 
 if ($user->rights->opensurvey->write) {
-	print '<br />'.$langs->trans("PollAdminDesc",img_picto('','delete'),img_picto('','edit_add')).'<br>';
+	print '<br />'.$langs->trans("PollAdminDesc", img_picto('','delete'), $langs->trans("Add")).'<br>';
 }
 
 $nbcolonnes=substr_count($object->sujet,',')+1;
