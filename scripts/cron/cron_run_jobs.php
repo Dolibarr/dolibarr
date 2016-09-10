@@ -151,7 +151,7 @@ if(is_array($object->lines) && (count($object->lines)>0))
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
-			dol_syslog("cron_run_jobs.php:: to run line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php:: to run line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 		    
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
@@ -182,7 +182,7 @@ if(is_array($object->lines) && (count($object->lines)>0))
 		}
 		else
 		{
-			dol_syslog("cron_run_jobs.php:: job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			dol_syslog("cron_run_jobs.php:: job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 		}
 	}
 }
