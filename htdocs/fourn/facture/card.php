@@ -1455,35 +1455,6 @@ if ($action == 'create')
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
 		}
     }
-    else
-    {
-    	// TODO more bugs
-        if (1==2 && ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
-        {
-            print '<tr class="liste_titre">';
-            print '<td>&nbsp;</td>';
-            print '<td>'.$langs->trans('Label').'</td>';
-            print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-            print '<td align="right">'.$langs->trans('VAT').'</td>';
-            print '<td align="right">'.$langs->trans('Qty').'</td>';
-            print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-            print '</tr>';
-
-            for ($i = 1 ; $i < 9 ; $i++)
-            {
-                $value_qty = '1';
-                $value_tauxtva = '';
-                print '<tr><td>'.$i.'</td>';
-                print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
-                print '<td align="right"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
-                print '<td align="right">';
-                print $form->load_tva('tauxtva'.$i,$value_tauxtva,$societe,$mysoc);
-                print '</td>';
-                print '<td align="right"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td>';
-                print '<td align="right"><input type="text" size="8" name="amountttc'.$i.'" value=""></td></tr>';
-            }
-        }
-    }
 
     // Other options
     $parameters=array('colspan' => ' colspan="6"');

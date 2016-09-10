@@ -282,16 +282,6 @@ if (empty($reshook))
 					$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 				}
 
-				for($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i ++)
-				{
-					if ($_POST['idprod' . $i]) {
-						$xid = 'idprod' . $i;
-						$xqty = 'qty' . $i;
-						$xremise = 'remise' . $i;
-						$object->add_product($_POST[$xid], $_POST[$xqty], $_POST[$xremise]);
-					}
-				}
-
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
 				if ($ret < 0) {
@@ -1207,9 +1197,10 @@ if ($action == 'create')
 
 	if (empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) print '<input type="hidden" name="createmode" value="empty">';
 
-	if (! empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '<br><table>';
 	if (! empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE))
 	{
+	    print '<br><table>';
+
 		// For backward compatibility
 		print '<tr>';
 		print '<td><input type="radio" name="createmode" value="copy"></td>';
@@ -1242,42 +1233,11 @@ if ($action == 'create')
 		}
 		print '</td></tr>';
 
-		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
-			print '<tr><td colspan="3">&nbsp;</td></tr>';
-
 		print '<tr><td valign="top"><input type="radio" name="createmode" value="empty" checked></td>';
 		print '<td valign="top" colspan="2">' . $langs->trans("CreateEmptyAsk") . '</td></tr>';
 	}
 
-	if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
-	{
-		print '<tr><td colspan="3">';
-		if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) {
-			$lib = $langs->trans("ProductsAndServices");
-
-			print '<table class="border" width="100%">';
-			print '<tr>';
-			print '<td>' . $lib . '</td>';
-			print '<td>' . $langs->trans("Qty") . '</td>';
-			print '<td>' . $langs->trans("ReductionShort") . '</td>';
-			print '</tr>';
-			for($i = 1; $i <= $conf->global->PRODUCT_SHOW_WHEN_CREATE; $i ++) {
-				print '<tr><td>';
-				// multiprix
-				if ($conf->global->PRODUIT_MULTIPRICES && $soc->price_level)
-					$form->select_produits('', "idprod" . $i, '', $conf->product->limit_size, $soc->price_level);
-				else
-					$form->select_produits('', "idprod" . $i, '', $conf->product->limit_size);
-				print '</td>';
-				print '<td><input type="text" size="2" name="qty' . $i . '" value="1"></td>';
-				print '<td><input type="text" size="2" name="remise' . $i . '" value="' . $soc->remise_percent . '">%</td>';
-				print '</tr>';
-			}
-			print "</table>";
-		}
-		print '</td></tr>';
-	}
-	if (! empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE) || ! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE)) print '</table>';
+	if (! empty($conf->global->SUPPLIER_PROPOSAL_CLONE_ON_CREATE_PAGE)) print '</table>';
 
 	dol_fiche_end();
 

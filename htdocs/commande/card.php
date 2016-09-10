@@ -1702,38 +1702,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
 		}
 	}
-	else
-	{
-		if (! empty($conf->global->PRODUCT_SHOW_WHEN_CREATE))
-		{
-			/*
-			 * Services/produits predefinis
-			*/
-			$NBLINES = 8;
-
-			print '<tr><td colspan="3">';
-
-			print '<table class="noborder">';
-			print '<tr><td>' . $langs->trans('ProductsAndServices') . '</td>';
-			print '<td>' . $langs->trans('Qty') . '</td>';
-			print '<td>' . $langs->trans('ReductionShort') . '</td>';
-			print '</tr>';
-			for($i = 1; $i <= $NBLINES; $i ++) {
-				print '<tr><td>';
-				// multiprix
-				if (! empty($conf->global->PRODUIT_MULTIPRICES))
-					print $form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size, $soc->price_level);
-				else
-					print $form->select_produits('', 'idprod' . $i, '', $conf->product->limit_size);
-				print '</td>';
-				print '<td><input type="text" size="3" name="qty' . $i . '" value="1"></td>';
-				print '<td><input type="text" size="3" name="remise_percent' . $i . '" value="' . $soc->remise_percent . '">%</td></tr>';
-			}
-
-			print '</table>';
-			print '</td></tr>';
-		}
-	}
 
 	print '</table>';
 
