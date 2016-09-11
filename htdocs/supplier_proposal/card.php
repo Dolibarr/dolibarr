@@ -1619,7 +1619,7 @@ if ($action == 'create')
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	if (! empty($object->lines))
-		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+		$ret = $object->printObjectLines($action, $soc, $mysoc, $lineid, 1);
 
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->supplier_proposal->creer)
@@ -1629,7 +1629,7 @@ if ($action == 'create')
 			$var = true;
 
 			// Add products/services form
-			$object->formAddObjectLine(1, $mysoc, $soc);
+			$object->formAddObjectLine(1, $soc, $mysoc);
 
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
