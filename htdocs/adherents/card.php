@@ -284,38 +284,38 @@ if (empty($reshook))
 			$object->oldcopy = clone $object;
 
 			// Change values
-			$object->civility_id = trim($_POST["civility_id"]);
-			$object->firstname   = trim($_POST["firstname"]);
-			$object->lastname	= trim($_POST["lastname"]);
-			$object->login	   = trim($_POST["login"]);
-			$object->pass		= trim($_POST["pass"]);
+			$object->civility_id	= trim($_POST["civility_id"]);
+			$object->firstname		= trim($_POST["firstname"]);
+			$object->lastname		= trim($_POST["lastname"]);
+			$object->login			= trim($_POST["login"]);
+			$object->pass			= trim($_POST["pass"]);
 
-			$object->societe	 = trim($_POST["societe"]);
-			$object->company	 = trim($_POST["societe"]);
+			$object->societe		= trim($_POST["societe"]);
+			$object->company		= trim($_POST["societe"]);
 
-			$object->address	 = trim($_POST["address"]);
-			$object->zip		 = trim($_POST["zipcode"]);
-			$object->town		= trim($_POST["town"]);
-			$object->state_id	= $_POST["state_id"];
-			$object->country_id  = $_POST["country_id"];
+			$object->address		= trim($_POST["address"]);
+			$object->zip			= trim($_POST["zipcode"]);
+			$object->town			= trim($_POST["town"]);
+			$object->state_id		= $_POST["state_id"];
+			$object->country_id		= $_POST["country_id"];
 
-			$object->phone	   = trim($_POST["phone"]);
-			$object->phone_perso = trim($_POST["phone_perso"]);
-			$object->phone_mobile= trim($_POST["phone_mobile"]);
-			$object->email	   = trim($_POST["email"]);
-			$object->skype	   = trim($_POST["skype"]);
-			$object->birth	   = $birthdate;
+			$object->phone			= trim($_POST["phone"]);
+			$object->phone_perso	= trim($_POST["phone_perso"]);
+			$object->phone_mobile	= trim($_POST["phone_mobile"]);
+			$object->email			= trim($_POST["email"]);
+			$object->skype			= trim($_POST["skype"]);
+			$object->birth			 $birthdate;
 
-			$object->typeid	  = $_POST["typeid"];
-			//$object->note		= trim($_POST["comment"]);
-			$object->morphy	  = $_POST["morphy"];
+			$object->typeid			= $_POST["typeid"];
+			//$object->note			= trim($_POST["comment"]);
+			$object->morphy			= $_POST["morphy"];
 
 			if (GETPOST('deletephoto')) $object->photo='';
 			elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 
 			// Get status and public property
-			$object->statut	  = $_POST["statut"];
-			$object->public	  = $_POST["public"];
+			$object->statut			= $_POST["statut"];
+			$object->public			= $_POST["public"];
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -457,30 +457,30 @@ if (empty($reshook))
 		$userid=$_POST["userid"];
 		$socid=$_POST["socid"];
 
-		$object->civility_id = $civility_id;
-		$object->firstname   = $firstname;
-		$object->lastname	= $lastname;
-		$object->societe	 = $societe;
-		$object->address	 = $address;
-		$object->zip		 = $zip;
-		$object->town		= $town;
-		$object->state_id	= $state_id;
-		$object->country_id  = $country_id;
-		$object->phone	   = $phone;
-		$object->phone_perso = $phone_perso;
-		$object->phone_mobile= $phone_mobile;
-		$object->skype	   = $skype;
-		$object->email	   = $email;
-		$object->login	   = $login;
-		$object->pass		= $pass;
-		$object->birth	   = $birthdate;
-		$object->photo	   = $photo;
-		$object->typeid	  = $typeid;
-		//$object->note		= $comment;
-		$object->morphy	  = $morphy;
-		$object->user_id	 = $userid;
-		$object->fk_soc	  = $socid;
-		$object->public	  = $public;
+		$object->civility_id	= $civility_id;
+		$object->firstname		= $firstname;
+		$object->lastname		= $lastname;
+		$object->societe		= $societe;
+		$object->address		= $address;
+		$object->zip			= $zip;
+		$object->town			= $town;
+		$object->state_id		= $state_id;
+		$object->country_id		= $country_id;
+		$object->phone			= $phone;
+		$object->phone_perso	= $phone_perso;
+		$object->phone_mobile	= $phone_mobile;
+		$object->skype			= $skype;
+		$object->email			= $email;
+		$object->login			= $login;
+		$object->pass			= $pass;
+		$object->birth			= $birthdate;
+		$object->photo			= $photo;
+		$object->typeid			= $typeid;
+		//$object->note			= $comment;
+		$object->morphy			= $morphy;
+		$object->user_id		= $userid;
+		$object->fk_soc			= $socid;
+		$object->public			= $public;
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -745,11 +745,11 @@ else
 
 	if ($action == 'create')
 	{
-		/* **************************************************************************/
-		/*																			*/
-		/* Creation mode															*/
-		/*																			*/
-		/* **************************************************************************/
+		/********************************************
+		 *
+		 * Create mode
+		 *
+		 ********************************************/
 		$object->canvas=$canvas;
 		$object->state_id = GETPOST('state_id', 'int');
 
@@ -1237,11 +1237,11 @@ else
 
 	if ($rowid && $action != 'edit')
 	{
-		/* ************************************************************************** */
-		/*																			*/
-		/* View mode																  */
-		/*																			*/
-		/* ************************************************************************** */
+		/********************************************
+		 *
+		 * View mode
+		 *
+		 ********************************************/
 
 		$res=$object->fetch($rowid);
 		if ($res < 0) {

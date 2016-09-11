@@ -174,7 +174,6 @@ class Adherent extends CommonObject
 	 *
 	 * @param	string	$text	Text to make substitution to
 	 * @return	string			Value of input text string with substitutions done
-	 * @return	string			Value of input text string with substitutions done
 	 */
 	function makeSubstitution($text)
 	{
