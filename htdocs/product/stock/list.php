@@ -125,6 +125,10 @@ if ($result)
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($search_ref)	$param.="&search_ref=".$search_ref;
+	if ($search_label)	$param.="&search_label=".$search_label;
+	if ($search_status)	$param.="&search_status=".$search_status;
+	if ($sall)			$param.="&sall=".$sall;
 	
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -141,7 +145,7 @@ if ($result)
 	}
 	
 	$moreforfilter='';
-	
+
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print "<tr class=\"liste_titre\">";

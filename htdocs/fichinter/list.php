@@ -213,6 +213,7 @@ if ($result)
 	$param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall) $urlparam.="&sall=".$sall;
 	if ($socid) $param.="&socid=".$socid;
 	if ($search_ref) $param.="&search_ref=".urlencode($search_ref);
 	if ($search_company) $param.="&search_company=".urlencode($search_company);

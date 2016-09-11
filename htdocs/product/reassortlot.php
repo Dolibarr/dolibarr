@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -237,9 +238,18 @@ if ($resql)
         print $hookmanager->resPrint;
         print '</div>';
     }
-	
 
-	$param="&tosell=$tosell&tobuy=$tobuy".(isset($type)?"&type=$type":"")."&fourn_id=$fourn_id&snom=$snom&sref=$sref&batch=$batch&eatby=$eatby&sellby=$sellby";
+
+	$param='';
+	if ($tosell)		$param.="&tosell=".$tosell;
+	if ($tobuy)			$param.="&tobuy=".$tobuy;
+	if ($type)			$param.="&type=".$type;
+	if ($fourn_id)		$param.="&fourn_id=".$fourn_id;
+	if ($snom)			$param.="&snom=".$snom;
+	if ($sref)			$param.="&sref=".$sref;
+	if ($search_batch)	$param.="&search_batch=".$search_batch;
+	/*if ($eatby)		$param.="&eatby=".$eatby;
+	if ($sellby)	$param.="&sellby=".$sellby;*/
 
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 	
@@ -257,8 +267,8 @@ if ($resql)
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre($langs->trans("TheoreticalStock"),$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
-	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell",$param,"",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy",$param,"",'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Sell").')',$_SERVER["PHP_SELF"], "p.tosell","",$param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status").' ('.$langs->trans("Buy").')',$_SERVER["PHP_SELF"], "p.tobuy","",$param,'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
