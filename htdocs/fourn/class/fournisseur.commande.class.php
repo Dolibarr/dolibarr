@@ -1293,7 +1293,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param      float	$txtva           		Taux tva
      *	@param      float	$txlocaltax1        	Localtax1 tax
      *  @param      float	$txlocaltax2        	Localtax2 tax
-     *	@param      int		$fk_product      		Id produit
+     *	@param      int		$fk_product      		Id product
      *  @param      int		$fk_prod_fourn_price	Id supplier price
      *  @param      string	$fourn_ref				Supplier reference
      *	@param      float	$remise_percent  		Remise
