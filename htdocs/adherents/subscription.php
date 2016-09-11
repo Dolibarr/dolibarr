@@ -827,8 +827,8 @@ if ($rowid > 0)
 				$objp = $db->fetch_object($result);
 				$var=!$var;
 				print "<tr ".$bc[$var].">";
-				$cotisationstatic->ref=$objp->crowid;
-				$cotisationstatic->id=$objp->crowid;
+				$subscriptionstatic->ref=$objp->crowid;
+				$subscriptionstatic->id=$objp->crowid;
 				print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
 				print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
 				print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";

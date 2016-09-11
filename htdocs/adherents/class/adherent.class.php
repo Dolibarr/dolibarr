@@ -1587,7 +1587,7 @@ class Adherent extends CommonObject
 		}
 		if ($option == 'subscription')
 		{
-			$link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.$linkclose;
+			$link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$this->id.$linkclose;
 			$linkend='</a>';
 		}
 

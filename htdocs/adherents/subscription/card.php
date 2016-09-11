@@ -144,7 +144,7 @@ if ($action == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->right
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
-		header("Location: card.php?rowid=".$object->fk_adherent);
+		header("Location: ../subscription.php?rowid=".$object->fk_adherent);
 		exit;
 	}
 	else
