@@ -831,7 +831,7 @@ if (empty($reshook))
 	    {
 	        $date_liv = dol_mktime(GETPOST('rehour'),GETPOST('remin'),GETPOST('resec'),GETPOST("remonth"),GETPOST("reday"),GETPOST("reyear"));
 
-	        $result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));
+	        $result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment"));   // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 	        if ($result > 0)
 	        {
 	            $langs->load("deliveries");

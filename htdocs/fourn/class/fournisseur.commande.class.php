@@ -1924,7 +1924,7 @@ class CommandeFournisseur extends CommonOrder
 	    		}
             }
 
-            // TODO LDR01 Add option to accept only if ALL predefined products are received (same qty).
+            // TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
 
             if (! $error && ! ($statut == 4 or $statut == 5 or $statut == 7))
@@ -2753,10 +2753,11 @@ class CommandeFournisseur extends CommonOrder
     /**
      * Calc status regarding dispatch stock
      *
-     * @param 		User 	$user User action
-     * @return		int		<0 if KO, 0 if not applicable, >0 if OK
+     * @param 		User 	$user                   User action
+     * @param       int     $closeopenorder         Close if received
+     * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
      */
-    public function calcAndSetStatusDispatch(User $user) 
+    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1) 
     {
     	global $conf;
 
@@ -2794,18 +2795,30 @@ class CommandeFournisseur extends CommonOrder
     				if (count($diff_array)==0) 
     				{
     					//No diff => mean everythings is received
-    					$ret=$this->setStatus($user,5);
-    					if ($ret<0) {
-    						$this->error=$object->error; $this->errors=$object->errors;
+    					if ($closeopenorder)
+    					{
+        					$ret=$this->setStatus($user,5);
+        					if ($ret<0) {
+        						return -1;
+        					}
+    					    return 5;
     					}
-    					return 5;
+    					else
+    					{
+    					    //Diff => received partially
+    					    $ret=$this->setStatus($user,4);
+    					    if ($ret<0) {
+    					        return -1;
+    					    }
+    					    return 4;
+    					}
     				} 
     				else 
     				{
     					//Diff => received partially
     					$ret=$this->setStatus($user,4);
     					if ($ret<0) {
-    						$this->error=$object->error; $this->errors=$object->errors;
+    						return -1;
     					}
     					return 4;
     				}
