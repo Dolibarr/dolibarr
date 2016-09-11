@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -424,10 +424,10 @@ if (empty($reshook))
 		{
 			$birthdate=dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 		}
-		$datecotisation='';
+		$datesubscription='';
 		if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
 		{
-			$datecotisation=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+			$datesubscription=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		}
 
 		$typeid=$_POST["typeid"];
@@ -451,7 +451,7 @@ if (empty($reshook))
 		$photo=$_POST["photo"];
 		//$comment=$_POST["comment"];
 		$morphy=$_POST["morphy"];
-		$cotisation=$_POST["cotisation"];
+		$subscription=$_POST["subscription"];
 		$public=$_POST["public"];
 
 		$userid=$_POST["userid"];
@@ -1497,7 +1497,7 @@ else
 		}
 		else
 		{
-			if (! $adht->cotisation)
+			if (! $adht->subscription)
 			{
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated

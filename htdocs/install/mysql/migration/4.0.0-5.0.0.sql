@@ -78,7 +78,10 @@ create table llx_expensereport_extrafields
 
 ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafields (fk_object);
 
-
+ALTER TABLE llx_cotisation RENAME TO llx_subscription;
+ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
+ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
+ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT 'yes';
 
 
 
