@@ -45,7 +45,7 @@ delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
-update llx_cotisation set fk_bank = null where fk_bank not in (select rowid from llx_bank);
+update llx_subscription set fk_bank = null where fk_bank not in (select rowid from llx_bank);
 
 update llx_propal set fk_projet = null where fk_projet not in (select rowid from llx_projet);
 update llx_commande set fk_projet = null where fk_projet not in (select rowid from llx_projet);

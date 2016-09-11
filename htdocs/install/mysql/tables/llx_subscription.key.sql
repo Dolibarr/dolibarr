@@ -1,5 +1,5 @@
--- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- ============================================================================
+-- Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,17 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- ===================================================================
+-- ============================================================================
 
-create table llx_cotisation
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  tms             timestamp,
-  datec           datetime,
-  fk_adherent     integer,
-  dateadh         datetime,
-  datef           date,
-  cotisation      real,
-  fk_bank         integer DEFAULT NULL,
-  note            text
-)ENGINE=innodb;
+ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
