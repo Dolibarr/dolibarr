@@ -374,11 +374,10 @@ if ($rowid && $action != 'edit')
 	}
 
 	print '</div>';
-	
-	
+
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 	print '<a name="builddoc"></a>'; // ancre
-	
+
 	// Documents generes
 	/*
 	$filename = dol_sanitizeFileName($object->ref);
@@ -386,18 +385,18 @@ if ($rowid && $action != 'edit')
 	$urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
 	$genallowed = $user->rights->facture->creer;
 	$delallowed = $user->rights->facture->supprimer;
-	
+
 	print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 	$somethingshown = $formfile->numoffiles;
 	*/
 	// Show links to link elements
 	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
 	$somethingshown = $form->showLinkedObjectBlock($object, '');
-	
+
 	// Show links to link elements
 	/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-	
+
 	// Link for paypal payment
 	/*
 	if (! empty($conf->paypal->enabled) && $object->statut != 0) {
@@ -406,14 +405,14 @@ if ($rowid && $action != 'edit')
 	}
 	*/
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-	
+
 	// List of actions on element
 	/*
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'invoice', $socid);
 	*/
-	
+
 	print '</div></div></div>';	
 }
 

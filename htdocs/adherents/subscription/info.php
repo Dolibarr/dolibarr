@@ -48,17 +48,17 @@ llxHeader();
 
 $form = new Form($db);
 
-$subscription = new Subscription($db);
-$result=$subscription->fetch($rowid);
+$object = new Subscription($db);
+$result = $object->fetch($rowid);
 
 $head = subscription_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Subscription"), '', 'payment');
 
-$subscription->info($rowid);
+$object->info($rowid);
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($subscription);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';

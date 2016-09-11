@@ -116,16 +116,16 @@ class Subscription extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id			 = $obj->rowid;
+				$this->id			= $obj->rowid;
 				$this->ref			= $obj->rowid;
 
 				$this->fk_adherent	= $obj->fk_adherent;
-				$this->datec		  = $this->db->jdate($obj->datec);
-				$this->datem		  = $this->db->jdate($obj->tms);
-				$this->dateh		  = $this->db->jdate($obj->dateh);
-				$this->datef		  = $this->db->jdate($obj->datef);
-				$this->amount		 = $obj->subscription;
-				$this->note		   = $obj->note;
+				$this->datec		= $this->db->jdate($obj->datec);
+				$this->datem		= $this->db->jdate($obj->tms);
+				$this->dateh		= $this->db->jdate($obj->dateh);
+				$this->datef		= $this->db->jdate($obj->datef);
+				$this->amount		= $obj->subscription;
+				$this->note			= $obj->note;
 				$this->fk_bank		= $obj->fk_bank;
 				return 1;
 			}

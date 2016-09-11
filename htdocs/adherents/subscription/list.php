@@ -54,7 +54,7 @@ if (! $sortfield) {  $sortfield="c.dateadh"; }
 $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
 
 // Security check
-$result=restrictedArea($user,'adherent','','','subscription');
+$result=restrictedArea($user,'adherent','','','cotisation');
 
 
 /*

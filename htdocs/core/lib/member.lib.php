@@ -237,10 +237,10 @@ function member_stats_prepare_head($object)
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Adherent	$object		Member
- *  @return array					head
+ *  @param	Subscription	$object		Subscription
+ *  @return array						head
  */
-function subscription_prepare_head(Adherent $object)
+function subscription_prepare_head(Subscription $object)
 {
 	global $db, $langs, $conf, $user;
 
@@ -261,9 +261,9 @@ function subscription_prepare_head(Adherent $object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'member');
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'subscription');
 
-	complete_head_from_modules($conf,$langs,$object,$head,$h,'member','remove');
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'subscription','remove');
 
 	return $head;
 }
