@@ -2885,7 +2885,7 @@ elseif (! empty($object->id))
 			print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
 			$liv = array();
 			$liv[''] = '&nbsp;';
-			$liv['tot']	= $langs->trans("TotalWoman");
+			$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
 			$liv['par']	= $langs->trans("PartialWoman");
 			$liv['nev']	= $langs->trans("NeverReceived");
 			$liv['can']	= $langs->trans("Canceled");

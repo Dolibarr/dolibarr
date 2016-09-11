@@ -959,18 +959,18 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             $morehtmlright.=ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
         } else {
-            $morehtmlright.=$object->getLibStatut(2,0);
+            $morehtmlright.=$object->getLibStatut(5,0);
         }
         $morehtmlright.=' &nbsp; ';
         //$morehtmlright.=$langs->trans("Status").' ('.$langs->trans("Buy").') ';
 	    if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
             $morehtmlright.=ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
         } else {
-            $morehtmlright.=$object->getLibStatut(2,1);
+            $morehtmlright.=$object->getLibStatut(5,1);
         }
 	}
 	else {
-		$morehtmlright.=$object->getLibStatut(2);
+		$morehtmlright.=$object->getLibStatut(5);
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
 	if (! empty($object->label))      $morehtmlref.='<div class="refidno">'.$object->label.'</div>';           // For product
