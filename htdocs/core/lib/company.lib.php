@@ -1087,16 +1087,17 @@ function show_actions_todo($conf,$langs,$db,$object,$objcon='',$noprint=0,$actio
 /**
  *    	Show html area with actions done
  *
- * 		@param	Conf		$conf		Object conf
- * 		@param	Translate	$langs		Object langs
- * 		@param	DoliDB		$db			Object db
- * 		@param	Adherent|Societe		$object		Object third party or member
- * 		@param	Contact		$objcon		Object contact
- *      @param  int			$noprint    Return string but does not output it
- *      @return	mixed					Return html part or void if noprint is 1
- * TODO change function to be able to list event linked to an object.
+ * 		@param	Conf		       $conf		   Object conf
+ * 		@param	Translate	       $langs		   Object langs
+ * 		@param	DoliDB		       $db			   Object db
+ * 		@param	Adherent|Societe   $object		   Object third party or member
+ * 		@param	Contact		       $objcon		   Object contact
+ *      @param  int			       $noprint        Return string but does not output it
+ *      @param  string		       $actioncode     Filter on actioncode
+ *      @return	mixed					           Return html part or void if noprint is 1
+ *      TODO change function to be able to list event linked to an object.
  */
-function show_actions_done($conf,$langs,$db,$object,$objcon='',$noprint=0,$actioncode='')
+function show_actions_done($conf, $langs, $db, $object, $objcon='', $noprint=0, $actioncode='')
 {
     global $bc,$user,$conf;
 
