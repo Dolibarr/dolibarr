@@ -334,7 +334,10 @@ if ($object->id > 0)
 				print '<td class="nowrap">';
 				print $productstatic->getNomUrl(1);
 				print '</td>';
-				print '<td align="center">';
+				print '<td>';
+				print $productstatic->ref;
+				print '</td>';
+				print '<td>';
 				print dol_trunc(dol_htmlentities($objp->label), 30);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.dol_print_date($objp->tms).'</td>';
