@@ -106,7 +106,21 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-    if ($action == 'update_extras')
+	if ($action == 'seteatby' && $user->rights->stock->creer)
+	{
+	    $newvalue = dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) dol_print_error($db, $object->error);
+	}
+    
+	if ($action == 'setsellby' && $user->rights->stock->creer)
+	{
+	    $newvalue=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) dol_print_error($db, $object->error);
+	}
+	
+	if ($action == 'update_extras')
     {
         // Fill array 'array_options' with data from update form
         $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -153,8 +167,6 @@ if (empty($reshook))
     	$object->fk_user_creat=GETPOST('fk_user_creat','int');
     	$object->fk_user_modif=GETPOST('fk_user_modif','int');
     	$object->import_key=GETPOST('import_key','int');
-
-		
 
 		if (empty($object->ref))
 		{
@@ -307,49 +319,6 @@ if ($action == 'create')
 }
 
 
-
-// Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
-	print load_fiche_titre($langs->trans("Batch"));
-    
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	
-	dol_fiche_head();
-
-	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// 
-	print '<tr><td class="titlefield">'.$langs->trans("Batch").'</td><td>'.$object->batch.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Product").'</td><td>';
-	$producttmp = new Product($db);
-	$producttmp->fetch($object->fk_product);
-	print $producttmp->getNomUrl(1, 'stock');
-	print '</td></tr>';
-	
-	print '<tr><td>'.$langs->trans("Eatby").'</td><td>'.$object->eatby.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Sellby").'</td><td>'.$object->sellby.'</td></tr>';
-	
-	// Other attributes
-	$cols = 2;
-	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-	
-	print '</table>';
-	
-	dol_fiche_end();
-
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
-
-	print '</form>';
-}
-
-
-
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
@@ -377,14 +346,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</td>';
 	print '</tr>';
 	
+	// Product
     print '<tr><td>'.$langs->trans("Product").'</td><td>';
     $producttmp = new Product($db);
     $producttmp->fetch($object->fk_product);
     print $producttmp->getNomUrl(1, 'stock');
     print '</td></tr>';
-    print '<tr><td>'.$langs->trans("Eatby").'</td><td>'.$object->eatby.'</td></tr>';
-    print '<tr><td>'.$langs->trans("Sellby").'</td><td>'.$object->sellby.'</td></tr>';
 
+    // Eat by
+    print '<tr><td>';
+    print $form->editfieldkey($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td><td colspan="5">';
+    print $form->editfieldval($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td>';
+    print '</tr>';
+    
+    // Sell by
+    print '<tr><td>';
+    print $form->editfieldkey($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td><td colspan="5">';
+    print $form->editfieldval($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td>';
+    print '</tr>';
+    
     // Other attributes
     $cols = 2;
     include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';

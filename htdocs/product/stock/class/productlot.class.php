@@ -122,7 +122,6 @@ class Productlot extends CommonObject
 
 		// Insert request
 		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
-		
 		$sql.= 'entity,';
 		$sql.= 'fk_product,';
 		$sql.= 'batch,';
@@ -132,10 +131,7 @@ class Productlot extends CommonObject
 		$sql.= 'fk_user_creat,';
 		$sql.= 'fk_user_modif,';
 		$sql.= 'import_key';
-
-		
 		$sql .= ') VALUES (';
-		
 		$sql .= ' '.(! isset($this->entity)?'NULL':$this->entity).',';
 		$sql .= ' '.(! isset($this->fk_product)?'NULL':$this->fk_product).',';
 		$sql .= ' '.(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").',';
@@ -145,8 +141,6 @@ class Productlot extends CommonObject
 		$sql .= ' '.(! isset($this->fk_user_creat)?'NULL':$this->fk_user_creat).',';
 		$sql .= ' '.(! isset($this->fk_user_modif)?'NULL':$this->fk_user_modif).',';
 		$sql .= ' '.(! isset($this->import_key)?'NULL':$this->import_key);
-
-		
 		$sql .= ')';
 
 		$this->db->begin();
@@ -165,10 +159,10 @@ class Productlot extends CommonObject
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
 
-				//// Call triggers
-				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
-				//if ($result < 0) $error++;
-				//// End call triggers
+				// Call triggers
+				$result=$this->call_trigger('PRODUCTLOT_CREATE',$user);
+				if ($result < 0) $error++;
+				// End call triggers
 			}
 		}
 
@@ -333,8 +327,6 @@ class Productlot extends CommonObject
 				$line->fk_user_modif = $obj->fk_user_modif;
 				$line->import_key = $obj->import_key;
 
-				
-
 				$this->lines[$line->id] = $line;
 			}
 			$this->db->free($resql);
@@ -383,14 +375,11 @@ class Productlot extends CommonObject
 			 $this->import_key = trim($this->import_key);
 		}
 
-		
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-		
 		$sql .= ' entity = '.(isset($this->entity)?$this->entity:"null").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product)?$this->fk_product:"null").',';
 		$sql .= ' batch = '.(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").',';
@@ -401,8 +390,6 @@ class Productlot extends CommonObject
 		$sql .= ' fk_user_creat = '.(isset($this->fk_user_creat)?$this->fk_user_creat:"null").',';
 		$sql .= ' fk_user_modif = '.(isset($this->fk_user_modif)?$this->fk_user_modif:"null").',';
 		$sql .= ' import_key = '.(isset($this->import_key)?$this->import_key:"null");
-
-        
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -418,10 +405,10 @@ class Productlot extends CommonObject
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
 
-			//// Call triggers
-			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-			//// End call triggers
+			// Call triggers
+			$result=$this->call_trigger('PRODUCTLOT_MODIFY',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Commit or rollback

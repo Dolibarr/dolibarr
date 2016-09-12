@@ -1215,24 +1215,30 @@ abstract class CommonObject
     }
 
     /**
-     *	Setter generic. Update a specific field into database
+     *	Setter generic. Update a specific field into database.
+     *  Warning: Trigger is run only if param trigkey is provided
      *
      *	@param	string		$field		Field to update
      *	@param	mixed		$value		New value
      *	@param	string		$table		To force other table element or element line (should not be used)
      *	@param	int			$id			To force other object id (should not be used)
      *	@param	string		$format		Data format ('text', 'date'). 'text' is used if not defined
-     *	@param	string		$id_field	To force rowid field name. 'rowid' is used it not defined
+     *	@param	string		$id_field	To force rowid field name. 'rowid' is used if not defined
      *	@param	User|string	$user		Update last update fields also if user object provided
+     *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
      *	@return	int						<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $user='')
+    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $user='', $trigkey='')
     {
-        if (empty($table)) 	$table=$this->table_element;
-        if (empty($id))    	$id=$this->id;
-		if (empty($format)) 	$format='text';
-		if (empty($id_field)) 	$id_field='rowid';
+        global $user,$langs,$conf;
+        
+        if (empty($table)) 	  $table=$this->table_element;
+        if (empty($id))    	  $id=$this->id;
+		if (empty($format))   $format='text';
+		if (empty($id_field)) $id_field='rowid';
 
+		$error=0;
+		
         $this->db->begin();
 
         // Special case
@@ -1240,7 +1246,7 @@ abstract class CommonObject
         
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
-        else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
+        else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
         if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
@@ -1248,8 +1254,23 @@ abstract class CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->db->commit();
-            return 1;
+            if ($trigkey)
+            {
+                $result=$this->call_trigger($trigkey, $user);   // This may set this->errors
+                if ($result < 0) $error++;
+            }
+
+            if (! $error)
+            {
+                if (property_exists($this, $field)) $this->$field = $value;
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -2;
+            }
         }
         else
         {
