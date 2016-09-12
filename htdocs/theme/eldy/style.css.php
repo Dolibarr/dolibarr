@@ -4415,11 +4415,7 @@ img.demothumb {
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
 /* rule to reduce top menu - 1st reduction */
-<<<<<<< HEAD
 @media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 20; ?>px)
-=======
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 6.9, 0) + 8; ?>px)
->>>>>>> branch '3.9' of git@github.com:Dolibarr/dolibarr.git
 {
 	div.tmenucenter {
 	    max-width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
