@@ -47,7 +47,7 @@ DELETE FROM llx_user_param where param = 'MAIN_THEME' and value in ('auguria', '
 -- DROP TABLE llx_product_lot;
 CREATE TABLE llx_product_lot (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  entity          integer,
+  entity          integer DEFAULT 1,
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
   eatby           date DEFAULT NULL,			-- Eatby date
@@ -60,6 +60,10 @@ CREATE TABLE llx_product_lot (
 ) ENGINE=InnoDB;
 
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
+
+-- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
+ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
+UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
 DROP TABLE llx_stock_serial; 
 
