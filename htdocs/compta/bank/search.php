@@ -65,10 +65,52 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='b.dateo';
 
+// Initialize technical object to manage context to save list fields
+$contextpage='banktransactionlist';
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array($contextpage));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('banktransaction');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+$arrayfields=array(
+    'b.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
+    'b.date_commande'=>array('label'=>$langs->trans("OrderDateShort"), 'checked'=>1),
+    'b.date_delivery'=>array('label'=>$langs->trans("DateDeliveryPlanned"), 'checked'=>1, 'enabled'=>empty($conf->global->ORDER_DISABLE_DELIVERY_DATE)),
+    'b.total_ht'=>array('label'=>$langs->trans("AmountHT"), 'checked'=>1),
+    'b.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
+    'b.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
+    'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'b.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
+    'b.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
+    'b.facture'=>array('label'=>$langs->trans("Billed"), 'checked'=>1, 'position'=>1000, 'enabled'=>(empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)))
+);
+// Extra fields
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+{
+    foreach($extrafields->attribute_label as $key => $val)
+    {
+        $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>$extrafields->attribute_list[$key], 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>$extrafields->attribute_perms[$key]);
+    }
+}
+
+
 
 /*
  * Actions
  */       
+
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -82,6 +124,16 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_req_nb='';
 	$search_thirdparty='';
 	$thirdparty='';
+}
+
+if (empty($reshook))
+{
+    $objectclass='Account';
+    $objectlabel='BankTransaction';
+    $permtoread = $user->rights->banque->lire;
+    $permtodelete = $user->rights->banque->supprimer;
+    $uploaddir = $conf->banque->dir_output;
+    include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -105,10 +157,17 @@ $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
 $sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
+// Add fields from extrafields
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 $sql.= " FROM ";
 if ($bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_extrafields as ef on (b.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND type = 'company'";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 $sql.= " WHERE b.fk_account = ba.rowid";
@@ -127,6 +186,24 @@ $debit = price2num(str_replace('-','',$debit));
 $credit = price2num(str_replace('-','',$credit));
 if ($debit) $sql.= natural_search('- b.amount', $debit, 1);
 if ($credit) $sql.= natural_search('b.amount', $credit, 1);
+// Add where from extra fields
+foreach ($search_array_options as $key => $val)
+{
+    $crit=$val;
+    $tmpkey=preg_replace('/search_options_/','',$key);
+    $typ=$extrafields->attribute_type[$tmpkey];
+    $mode=0;
+    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
+    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    {
+        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
+    }
+}
+// Add where from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = 0;
@@ -144,49 +221,68 @@ if ($resql)
 {
 	$var=True;
 	$num = $db->num_rows($resql);
-	$i = 0;
-
+	
+	$arrayofselected=is_array($toselect)?$toselect:array();
+	
 	$param='';
-	if (!empty($search_ref)) $param.='&search_ref='.$search_ref;
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if (!empty($search_ref)) $param.='&search_ref='.$search_ref;
 	if (!empty($description)) $param.='&description='.$description;
 	if (!empty($type)) $param.='&type='.$type;
 	if (!empty($debit)) $param.='&debit='.$debit;
 	if (!empty($credit)) $param.='&credit='.$credit;
 	if (!empty($account)) $param.='&account='.$account;
 	if (!empty($bid))  $param.='&bid='.$bid;
-	if (dol_strlen($search_dt_start) > 0)
-	    $param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
-    if (dol_strlen($search_dt_end) > 0)
-        $param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
+	if (dol_strlen($search_dt_start) > 0) $param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
+    if (dol_strlen($search_dt_end) > 0)   $param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
     if (GETPOST("req_nb")) $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
     if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
-	
+    if ($optioncss != '')       $param.='&optioncss='.$optioncss;
+    // Add $param from extra fields
+    foreach ($search_array_options as $key => $val)
+    {
+        $crit=$val;
+        $tmpkey=preg_replace('/search_options_/','',$key);
+        if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
+    }
+    
+    // List of mass actions available
+    $arrayofmassactions =  array(
+        'presend'=>$langs->trans("SendByMail"),
+        'builddoc'=>$langs->trans("PDFMerge"),
+    );
+    if ($user->rights->commande->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+    if ($massaction == 'presend') $arrayofmassactions=array();
+    $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+    
+    // Lines of title fields
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="search_form">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-
-	print '<input type="hidden" name="action" value="search">';
 	if (! empty($_REQUEST['bid'])) print '<input type="hidden" name="bid" value="'.$_REQUEST["bid"].'">';
+	
+	$i = 0;
 	
 	// Title
 	$bankcateg=new BankCateg($db);
 	if (GETPOST("bid"))
 	{
 		$result=$bankcateg->fetch(GETPOST("bid"));
-		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("BankTransactionForCategory",$bankcateg->label).' '.($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, '', '', $limit);
 	}
 	else
 	{
-		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_bank.png', 0, '', '', $limit);
 	}
 	
 	$moreforfilter = '';
+	
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Period') . ' ('.$langs->trans('DateOperationShort').') : ';
 	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('DateStart') . ' ';
@@ -194,15 +290,25 @@ if ($resql)
 	$moreforfilter .= ' - ';
 	$moreforfilter .= '<div class="nowrap inline-block">'.$langs->trans('DateEnd') . ' ' . $form->select_date($search_dt_end, 'search_end_dt', 0, 0, 1, "search_form", 1, 0, 1).'</div>';
 	$moreforfilter .= '</div>';
-
+	
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+	else $moreforfilter = $hookmanager->resPrint;
+	
 	if ($moreforfilter) 
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		print '</div>'."\n";
 	}
-
+	
+    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+	
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	
+	// Fields title
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'b.rowid','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('DateOperationShort'),$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
