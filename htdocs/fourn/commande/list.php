@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,6 +400,7 @@ if ($resql)
 	if ($socid > 0)             $param.='&socid='.$socid;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)					$param.="&search_all=".$sall;
 	if ($orderday)      		$param.='&orderday='.$orderday;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
 	if ($orderyear)       		$param.='&orderyear='.$orderyear;

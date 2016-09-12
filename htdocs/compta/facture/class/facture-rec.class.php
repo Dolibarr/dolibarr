@@ -43,6 +43,7 @@ class FactureRec extends CommonInvoice
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
 
+	var $entity;
 	var $number;
 	var $date;
 	var $amount;
@@ -241,7 +242,7 @@ class FactureRec extends CommonInvoice
 	 */
 	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.rowid, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
+		$sql = 'SELECT f.rowid, f.entity, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
@@ -269,6 +270,7 @@ class FactureRec extends CommonInvoice
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                     = $obj->rowid;
+				$this->entity                 = $obj->entity;
 				$this->titre                  = $obj->titre;
 				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
@@ -519,6 +521,7 @@ class FactureRec extends CommonInvoice
 		{
 			// Clean parameters
 			$remise_percent=price2num($remise_percent);
+			if (empty($remise_percent)) $remise_percent=0;
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
 			if (! $info_bits) $info_bits=0;
@@ -579,12 +582,12 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".price2num($txtva);
 			$sql.= ", ".(! empty($fk_product)?"'".$fk_product."'":"null");
 			$sql.= ", ".$product_type;
-			$sql.= ", '".price2num($remise_percent)."'";
-			$sql.= ", '".price2num($pu_ht)."'";
+			$sql.= ", ".price2num($remise_percent);
+			$sql.= ", ".price2num($pu_ht);
 			$sql.= ", null";
-			$sql.= ", '".price2num($total_ht)."'";
-			$sql.= ", '".price2num($total_tva)."'";
-			$sql.= ", '".price2num($total_ttc)."'";
+			$sql.= ", ".price2num($total_ht);
+			$sql.= ", ".price2num($total_tva);
+			$sql.= ", ".price2num($total_ttc);
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code;
 			$sql.= ", ".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null").")";
@@ -721,14 +724,16 @@ class FactureRec extends CommonInvoice
 	}
 	
 	/**
-	 *  Create all recurrents invoices.
-	 *  A result may also be provided into this->output
+	 *  Create all recurrents invoices (for all entities if multicompany is used).
+	 *  A result may also be provided into this->output.
+	 *  
+	 *  WARNING: This method change context $conf->entity to be in correct context for each recurring invoice found. 
 	 * 
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
 	 */
 	function createRecurringInvoices()
 	{
-		global $langs, $db, $user;
+		global $conf, $langs, $db, $user;
 		
 		$langs->load("bills");
 		
@@ -743,6 +748,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ' WHERE frequency > 0';      // A recurring invoice is an invoice with a frequency
 		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
 		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
+		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
 		
 		$resql = $db->query($sql);
@@ -754,7 +760,9 @@ class FactureRec extends CommonInvoice
 		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
 		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
 		    
-		    while ($i < $num)
+		    $saventity = $conf->entity;
+		
+		    while ($i < $num)     // Loop on each template invoice
 			{
 			    $line = $db->fetch_object($resql);
 
@@ -763,7 +771,10 @@ class FactureRec extends CommonInvoice
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
 			
-				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+				// Set entity context
+				$conf->entity = $facturerec->entity;
+				
+				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
 			    $error=0;
 
@@ -774,7 +785,7 @@ class FactureRec extends CommonInvoice
 			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
 			    
-			    $invoiceidgenerated = $facture->create($user);       // This will also update fields of recurring invoice
+			    $invoiceidgenerated = $facture->create($user);
 			    if ($invoiceidgenerated <= 0)
 			    {
 			        $this->errors = $facture->errors;
@@ -794,18 +805,20 @@ class FactureRec extends CommonInvoice
 
 				if (! $error && $invoiceidgenerated >= 0)
 				{
-					$db->commit();
+					$db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
 					$this->output.=$langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
 				}
 				else
 				{
-				    $db->rollback();
+				    $db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
 				$i++;
 			}
+			
+			$conf->entity = $saventity;      // Restore entity context
 		}
 		else dol_print_error($db);
 		
@@ -1060,7 +1073,7 @@ class FactureRec extends CommonInvoice
             return -1;
         }
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' SET date_when = "'.$this->db->idate($date).'"';
+        $sql.= " SET date_when = ".($date ? "'".$this->db->idate($date)."'" : "null");
         if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
         $sql.= ' WHERE rowid = '.$this->id;
 

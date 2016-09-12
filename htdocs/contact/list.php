@@ -380,6 +380,7 @@ if ($result)
     if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
     if (!empty($search_categ_thirdparty)) $param.='&search_categ_thirdparty='.urlencode($search_categ_thirdparty);
     if (!empty($search_categ_supplier)) $param.='&search_categ_supplier='.urlencode($search_categ_supplier);
+    if ($sall != '') $param.='&amp;sall='.urlencode($sall);
     if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
     if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
     if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);

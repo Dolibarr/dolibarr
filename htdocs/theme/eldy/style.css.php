@@ -546,8 +546,8 @@ div.myavailability {
 }
 .checkallactions {
 	vertical-align: top;
-    margin-top: 6px;	
-    margin-left: 4px;	
+    margin-top: 6px;
+    margin-left: 4px;
 }
 .selectlimit {
 	margin-right: 10px !important;
@@ -945,7 +945,7 @@ $minwidthtmenu=66;		/* minimum width for one top menu entry */
 $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
-$maxwidthloginblock = 110;
+$maxwidthloginblock = 130;
 if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
@@ -1397,6 +1397,7 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
+	min-width: 120px;
 }
 div.login_block_other {
 	display: inline-block;
@@ -1406,7 +1407,7 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
-	padding: 0px 0px 0px 4px !important;
+	padding: 0px 3px 0px 4px !important;
 	height: 16px;
 }
 .atoplogin, .atoplogin:hover {
@@ -2224,7 +2225,7 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 }
 End bootstrap */
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
 .butActionRefused {
 	display: none;
 }
@@ -4512,6 +4513,9 @@ img.demothumb {
 		padding-<?php echo $right; ?>: 78px;
 	<?php } ?>
 	}
+	div.login_block_user {
+		min-width: 0;
+	}
 	div.login_block {
 		top: 2px;
 		<?php if ($disableimages) {  ?>
@@ -4519,6 +4523,9 @@ img.demothumb {
 		<?php } else { ?>
 			max-width: 82px;
 		<?php } ?>
+	}
+	.login_block_elem {
+		padding: 0 !important;
 	}
     li.tmenu, li.tmenusel {
         min-width: 32px;
