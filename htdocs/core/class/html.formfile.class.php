@@ -268,9 +268,10 @@ class FormFile
      * 		@param		string				$buttonlabel		Label on submit button
      * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
      * 		@param		string				$morepicto			Add more HTML content into cell with picto
+     *      @param      Object              $object             Object when method is called from an object card.
      * 		@return		string              					Output string with HTML array of documents (might be empty string)
      */
-    function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='')
+    function showdocuments($modulepart,$modulesubdir,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$allowgenifempty=1,$forcenomultilang=0,$iconPDF=0,$maxfilenamelength=28,$noform=0,$param='',$title='',$buttonlabel='',$codelang='',$morepicto='',$object=null)
     {
 		// Deprecation warning
 		if (0 !== $iconPDF) {
@@ -581,15 +582,25 @@ class FormFile
             }
 
         }
+
         // Get list of files
         if (! empty($filedir))
         {
             $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
 
+            $link_list = array();
+            if (is_object($object))
+            {
+                require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+                $link = new Link($this->db);
+                $sortfield = $sortorder = null;
+                $res = $link->fetchAll($link_list, $object->element, $object->id, $sortfield, $sortorder);
+            }
+            
             $out.= '<!-- html.formfile::showdocuments -->'."\n";
             
             // Show title of array if not already shown
-            if ((! empty($file_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
+            if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
@@ -621,7 +632,6 @@ class FormFile
 					$out.= ' target="_blank">';
 					$out.= img_mime($file["name"],$langs->trans("File").': '.$file["name"]).' '.dol_trunc($file["name"],$maxfilenamelength);
 					$out.= '</a>'."\n";
-						
                     $out.= $this->showPreview($file,$modulepart,$relativepath);
 					$out.= '</td>';
 
@@ -673,13 +683,37 @@ class FormFile
               		}
 				}
 
-			 	if (count($file_list) == 0 && $headershown)
-	            {
-    	        	$out.='<tr '.$bc[0].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-        	    }
-
                 $this->numoffiles++;
             }
+            // Loop on each file found
+            if (is_array($link_list))
+            {
+                $colspan=2;
+                    
+                foreach($link_list as $file)
+                {
+                    $var=!$var;
+                    
+                    $out.= "<tr ".$bc[$var].">";
+                    $out.='<td colspan="'.$colspan.'" class="maxwidhtonsmartphone">';
+                    $out.='<a data-ajax="false" href="' . $link->url . '" target="_blank">';
+                    $out.=$file->label;
+                    $out.='</a>';
+                    $out.='</td>';
+                    $out.='<td align="right">';
+                    $out.=dol_print_date($file->datea,'dayhour');
+                    $out.='</td>';
+                    if ($delallowed || $printer || $morepicto) $out.='<td></td>';
+                    $out.='</tr>';
+                }
+                $this->numoffiles++;
+            }
+            
+		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
+            {
+	        	$out.='<tr '.$bc[0].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    	    }
+
         }
 
         if ($headershown)
