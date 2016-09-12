@@ -46,6 +46,11 @@ if (GETPOST('id')) {
 $object=new Opensurveysondage($db);
 
 $result=$object->fetch(0, $numsondage);
+if ($result <= 0)
+{
+    dol_print_error($db,$object->error);
+    exit;
+}
 
 $expiredate=dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
 
@@ -201,17 +206,6 @@ foreach ($toutsujet as $value)
 $toutsujet=str_replace("@","<br>",$toutsujet);
 $toutsujet=str_replace("°","'",$toutsujet);
 
-if (empty($object->ref))     // For survey, id is a hex string
-{
-    $langs->load("errors");
-    print $langs->trans("ErrorRecordNotFound");
-    
-    llxFooter();
-    
-    $db->close();
-    exit;
-}
-    
 print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'" method="POST">'."\n";
 print '<input type="hidden" name="action" value="update">';
 
@@ -444,8 +438,6 @@ if ($object->allow_comments) {
 }
 
 print '</form>';
-
-print '<br>';
 
 llxFooter();
 
