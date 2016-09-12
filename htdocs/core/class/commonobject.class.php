@@ -1216,7 +1216,7 @@ abstract class CommonObject
 
     /**
      *	Setter generic. Update a specific field into database.
-     *  Warning: Trigger is run only if param trigkey is provided
+     *  Warning: Trigger is run only if param trigkey is provided.
      *
      *	@param	string		$field		Field to update
      *	@param	mixed		$value		New value
@@ -1246,6 +1246,7 @@ abstract class CommonObject
         
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
+        else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
         else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
         if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;

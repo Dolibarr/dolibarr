@@ -95,7 +95,7 @@ if ($action == 'setrefext' && $user->rights->banque->cheque)
     {
         $ref_ext = GETPOST('ref_ext');
 
-        $result=$object->setValueFrom('ref_ext', $ref_ext);
+        $result=$object->setValueFrom('ref_ext', $ref_ext, '', null, 'text', '', $user, 'CHECKDEPOSIT_MODIFY');
         if ($result < 0)
         {
             setEventMessages($object->error, $object->errors, 'errors');

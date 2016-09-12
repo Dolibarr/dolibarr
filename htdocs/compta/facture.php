@@ -254,7 +254,7 @@ if (empty($reshook))
 	else if ($action == 'set_thirdparty' && $user->rights->facture->creer)
 	{
 		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid);
+		$object->setValueFrom('fk_soc', $socid, '', null, 'int', '', $user, 'BILL_MODIFY');
 
 		header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 		exit();

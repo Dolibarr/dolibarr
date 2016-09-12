@@ -140,9 +140,8 @@ if (empty($reshook))
 
 	if ($action == 'setref_supplier' && $user->rights->fournisseur->commande->creer)
 	{
-	    $result=$object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
+	    $result=$object->setValueFrom('ref_supplier', GETPOST('ref_supplier','alpha'), '', null, 'text', '', $user, 'ORDER_SUPPLIER_MODIFY');
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
-		else $object->ref_supplier = GETPOST('ref_supplier','alpha');	// The setValueFrom does not set new property of object
 	}
 
 	// Set incoterm

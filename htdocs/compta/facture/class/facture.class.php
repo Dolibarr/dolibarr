@@ -319,7 +319,7 @@ class Facture extends CommonInvoice
 			    dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
 			    if (empty($_facrec->date_when)) $_facrec->date_when = $now;
                 $next_date = $_facrec->getNextDate();   // Calculate next date
-                $result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
+                $result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
                 //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
                 $result = $_facrec->setNextDate($next_date,1);
 			}

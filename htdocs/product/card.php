@@ -135,7 +135,7 @@ if (empty($reshook))
     // Type
     if ($action ==	'setfk_product_type' && $user->rights->produit->creer)
     {
-    	$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'));
+    	$result = $object->setValueFrom('fk_product_type', GETPOST('fk_product_type'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
@@ -169,7 +169,7 @@ if (empty($reshook))
     // Barcode type
     if ($action ==	'setfk_barcode_type' && $createbarcode)
     {
-        $result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'));
+        $result = $object->setValueFrom('fk_barcode_type', GETPOST('fk_barcode_type'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
     	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     	exit;
     }
