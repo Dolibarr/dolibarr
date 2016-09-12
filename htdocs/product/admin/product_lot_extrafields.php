@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/product/admin/product_extrafields.php
+ *      \file       htdocs/product/admin/product_lot_extrafields.php
  *		\ingroup    societe
  *		\brief      Page to setup extra fields of third party
  */
@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->load("companies");
 $langs->load("admin");
 $langs->load("products");
+$langs->load("productbatch");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -43,7 +44,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='product'; //Must be the $element of the class that manage extrafield
+$elementtype='product_lot'; //Must be the $element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -60,18 +61,8 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$title = $langs->trans('ProductServiceSetup');
-$textobject = $langs->trans("ProductsAndServices");
-if (empty($conf->produit->enabled))
-{
-	$title = $langs->trans('ServiceSetup');
-	$textobject = $langs->trans('Services');
-}
-else if (empty($conf->service->enabled))
-{
-	$title = $langs->trans('ProductSetup');
-	$textobject = $langs->trans('Products');
-}
+$title = $langs->trans('ProductLotSetup');
+$textobject = $langs->trans("Batch");
 
 //$help_url='EN:Module Third Parties setup|FR:Paramétrage_du_module_Tiers';
 $help_url='';
@@ -82,9 +73,9 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($title,$linkback,'title_setup');
 
 
-$head = product_admin_prepare_head();
+$head = product_lot_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $textobject, 0, 'product');
+dol_fiche_head($head, 'attributes', $textobject, 0, 'stock');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
