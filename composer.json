@@ -13,7 +13,8 @@
         "source": "https://github.com/Dolibarr/dolibarr"
     },
     "config": {
-        "vendor-dir": "htdocs/includes"
+        "vendor-dir": "htdocs/includes",
+        "bin-dir": "dev/bin"
     },
     "require": {
         "php": ">=5.3.0",

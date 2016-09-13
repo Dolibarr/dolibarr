@@ -83,6 +83,7 @@ install:
   composer self-update
   composer -n init
   composer -n config vendor-dir htdocs/includes
+  composer -n config bin-dir dev/bin
   echo
 
 - |
@@ -108,7 +109,7 @@ install:
 
 - |
   echo "Adding path of binaries tools installed by composer to the PATH"
-  export PATH="$TRAVIS_BUILD_DIR/htdocs/includes/bin:$PATH"
+  export PATH="$TRAVIS_BUILD_DIR/dev/bin:$PATH"
   echo
   
 
