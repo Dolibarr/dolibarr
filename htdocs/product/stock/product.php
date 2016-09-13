@@ -50,7 +50,7 @@ $cancel=GETPOST('cancel');
 
 $id=GETPOST('id', 'int');
 $ref=GETPOST('ref', 'alpha');
-$stocklimit = GETPOST('stocklimit');
+$stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel');
 $fieldid = isset($_GET["ref"])?'ref':'rowid';
@@ -70,7 +70,7 @@ $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldi
 if ($cancel) $action='';
 
 // Set stock limit
-if ($action == 'setstocklimit')
+if ($action == 'setseuil_stock_alerte')
 {
     $object = new Product($db);
     $result=$object->fetch($id);
@@ -78,6 +78,8 @@ if ($action == 'setstocklimit')
     $result=$object->update($object->id,$user,0,'update');
     if ($result < 0)
     	setEventMessages($object->error, $object->errors, 'errors');
+    //else
+    //	setEventMessage($lans->trans("SavedRecordSuccessfully"));
     $action='';
 }
 
@@ -405,8 +407,21 @@ if ($id > 0 || $ref)
 	
 	$object->load_stock();
 
-	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("",$langs->trans("CardProduct".$object->type),$help_url);
+	$title = $langs->trans('ProductServiceCard');
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->label,16);
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+	{
+		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+	{
+		$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
+
+	llxHeader('', $title, $helpurl);
 
 	if ($result > 0)
 	{
@@ -485,13 +500,14 @@ if ($id > 0 || $ref)
 		}
 
         // Stock alert threshold
-        print '<tr><td>'.$form->editfieldkey("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
-        print $form->editfieldval("StockLimit",'stocklimit',$object->seuil_stock_alerte,$object,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
+        print $form->editfieldval("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer,'string');
         print '</td></tr>';
 
         // Desired stock
-        print '<tr><td>'.$form->editfieldkey("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer).'</td><td colspan="2">';
-        print $form->editfieldval("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer);
+        print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1),'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer);
+        print '</td><td colspan="2">';
+        print $form->editfieldval("DesiredStock",'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer,'string');
         print '</td></tr>';
 
         // Real stock
@@ -503,7 +519,7 @@ if ($id > 0 || $ref)
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER)?$langs->trans("ReStockOnValidateOrder").'<br>':'');
         $text_stock_options.= (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)?$langs->trans("ReStockOnDispatchOrder").'<br>':'');
         print '<tr><td>';
-        print $form->textwithtooltip($langs->trans("PhysicalStock"), $text_stock_options, 2, 1, img_picto('', 'info'), '', 2);
+        print $form->textwithpicto($langs->trans("PhysicalStock"), $text_stock_options, 1);
         print '</td>';
 		print '<td>'.$object->stock_reel;
 		if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit"));

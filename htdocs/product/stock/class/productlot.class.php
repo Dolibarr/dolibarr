@@ -189,11 +189,12 @@ class Productlot extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  Id object
-	 * @param string $ref Ref
+	 * @param int    $product_id  Id of product, batch number parameter required
+	 * @param string $batch batch number
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id = 0, $product_id = null, $batch = null)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -213,8 +214,8 @@ class Productlot extends CommonObject
 
 		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+		if ((null !== $product_id) && (null !== $batch)) {
+			$sql .= ' WHERE t.batch = ' . '\'' . $batch . '\' AND t.fk_product = ' . $product_id;
 		} else {
 			$sql .= ' WHERE t.rowid = ' . $id;
 		}
@@ -528,101 +529,6 @@ class Productlot extends CommonObject
 			return - 1;
 		}
 	}
-
-	/**
-	 *  Return a link to the user card (with optionaly the picto)
-	 * 	Use this->id,this->lastname, this->firstname
-	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
-     *  @param	integer	$notooltip			1=Disable tooltip
-     *  @param	int		$maxlen				Max length of visible user name
-     *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
-	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
-	{
-		global $langs, $conf, $db;
-        global $dolibarr_main_authentication, $dolibarr_main_demo;
-        global $menumanager;
-
-
-        $result = '';
-        $companylink = '';
-
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
-        $label.= '<div width="100%">';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
-
-        $link = '<a href="'.DOL_URL_ROOT.'/stock/card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $link.= '>';
-		$linkend='</a>';
-
-        if ($withpicto)
-        {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"')).$linkend);
-            if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $link . $this->ref . $linkend;
-		return $result;
-	}
-	
-	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
-	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return	string 			       Label of status
-	 */
-	function getLibStatut($mode=0)
-	{
-		return $this->LibStatut($this->status,$mode);
-	}
-
-	/**
-	 *  Renvoi le libelle d'un status donne
-	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
-	 */
-	function LibStatut($status,$mode=0)
-	{
-		global $langs;
-
-		if ($mode == 0)
-		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
-		{
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 2)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 3)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
-		}
-		if ($mode == 4)
-		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 5)
-		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
-		}
-	}
-	
 	
 	/**
 	 * Initialise object with example values

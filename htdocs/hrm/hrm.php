@@ -97,7 +97,7 @@ if (count($listofsearchfields))
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
 		print '</tr>';
 		$i++;
@@ -207,7 +207,7 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
         }
         else
         {
-            print '<tr '.$bc[$var].'><td colspan="7">'.$langs->trans("None").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table><br>';
     }
@@ -272,7 +272,7 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -336,7 +336,7 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}

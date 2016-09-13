@@ -96,7 +96,7 @@ class ProductApi extends DolibarrApi
      * 
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
      * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to nuy (1) or not to buy (0)  
+     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -124,7 +124,7 @@ class ProductApi extends DolibarrApi
         // Show product on sell
         if ($to_sell) $sql.= " AND p.to_sell = ".$db->escape($to_sell);
         // Show product on buy
-        if ($to_buy) $sql.= " AND p.to_nuy = ".$db->escape($to_nuy);
+        if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -147,6 +147,7 @@ class ProductApi extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
+        	$i=0;
             $num = $db->num_rows($result);
             while ($i < $num)
             {
@@ -176,7 +177,7 @@ class ProductApi extends DolibarrApi
      * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
      * @param int		$category		Use this param to filter list by category
      * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to nuy (1) or not to buy (0)  
+     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -209,7 +210,7 @@ class ProductApi extends DolibarrApi
         // Show product on sell
         if ($to_sell) $sql.= " AND p.to_sell = ".$db->escape($to_sell);
         // Show product on buy
-        if ($to_buy) $sql.= " AND p.to_nuy = ".$db->escape($to_nuy);
+        if ($to_buy) $sql.= " AND p.to_buy = ".$db->escape($to_buy);
 
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -232,6 +233,7 @@ class ProductApi extends DolibarrApi
         $result = $db->query($sql);
         if ($result)
         {
+        	$i=0;
             $num = $db->num_rows($result);
             while ($i < $num)
             {

@@ -89,8 +89,8 @@ if ($_POST["action"] == 'add')
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-	if (GETPOST('account_number') <= 0) { $accountancy_code_number = ''; } else { $accountancy_code_number = GETPOST('account_number'); }
-    $account->account_number  = $accountancy_code_number;
+	$account_number 		 = GETPOST('account_number','alpha');
+	if ($account_number <= 0) { $account->account_number = ''; } else { $account->account_number = $account_number; }
 	$account->accountancy_journal  = trim($_POST["accountancy_journal"]);
 
     $account->solde           = $_POST["solde"];
@@ -172,8 +172,8 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account->proprio 	      = trim($_POST["proprio"]);
     $account->owner_address   = trim($_POST["owner_address"]);
 
-    if (GETPOST('account_number') <= 0) { $accountancy_code_number = ''; } else { $accountancy_code_number = GETPOST('account_number'); }
-    $account->account_number  = $accountancy_code_number;
+	$account_number 		 = GETPOST('account_number', 'int');
+	if ($account_number <= 0) { $account->account_number = ''; } else { $account->account_number = $account_number; }
 	$account->accountancy_journal = trim($_POST["accountancy_journal"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
@@ -287,7 +287,7 @@ if ($action == 'create')
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.($_POST["ref"]?$_POST["ref"]:$account->ref).'" maxlength="12"></td></tr>';
+	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.(GETPOST("ref")?GETPOST("ref",'alpha'):$account->ref).'" maxlength="12"></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
@@ -393,10 +393,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.($_POST["account_min_allowed"]?$_POST["account_min_allowed"]:$account->min_allowed).'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(GETPOST("account_min_allowed")?GETPOST("account_min_allowed"):$account->min_allowed).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.($_POST["account_min_desired"]?$_POST["account_min_desired"]:$account->min_desired).'"></td></tr>';
+	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.(GETPOST("account_min_desired")?GETPOST("account_min_desired"):$account->min_desired).'"></td></tr>';
 
 	print '</table>';
 	print '<br>';
@@ -407,7 +407,7 @@ if ($action == 'create')
 
 		// If bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
-		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
+		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.(GETPOST('bank')?GETPOST('bank','alpha'):$account->bank).'"></td>';
 		print '</tr>';
 
 		// Show fields of bank account
@@ -431,7 +431,7 @@ if ($action == 'create')
 			}
 
 			print '<td>'.$langs->trans($val).'</td>';
-			print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.$content.'"></td>';
+			print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.(GETPOST($name)?GETPOST($name,'alpha'):$content).'"></td>';
 			print '</tr>';
 		}
 		$ibankey = FormBank::getIBANLabel($account);
@@ -440,23 +440,23 @@ if ($action == 'create')
 
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
-		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$account->iban.'"></td></tr>';
+		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOST('iban')?GETPOST('iban','alpha'):$account->iban).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
-		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
+		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOST('bic')?GETPOST('bic','alpha'):$account->bic).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
 		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
-		print $account->domiciliation;
+		print (GETPOST('domiciliation')?GETPOST('domiciliation'):$account->domiciliation);
 		print "</textarea></td></tr>";
 
 		print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-		print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$account->proprio.'">';
+		print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.(GETPOST('proprio')?GETPOST('proprio','alpha'):$account->proprio).'">';
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
 		print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
-		print $account->owner_address;
+		print (GETPOST('owner_address')?GETPOST('owner_address','alpha'):$account->owner_address);
 		print "</textarea></td></tr>";
 
 		print '</table>';
@@ -507,7 +507,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("CreateAccount") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print '</form>';
 }

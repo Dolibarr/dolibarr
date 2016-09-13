@@ -61,23 +61,19 @@ $helpurl='';
 if ($type == '0')
 {
     $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-    //$title=$langs->trans("StatisticsOfProducts");
-    $title=$langs->trans("Statistics");
 }
 else if ($type == '1')
 {
     $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-    //$title=$langs->trans("StatisticsOfServices");
-    $title=$langs->trans("Statistics");
 }
 else
 {
     $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-    //$title=$langs->trans("StatisticsOfProductsOrServices");
-    $title=$langs->trans("Statistics");
 }
+$title=$langs->trans("Statistics");
 
-llxHeader('','',$helpurl);
+
+llxHeader('', $title, $helpurl);
 
 print load_fiche_titre($title, $mesg,'title_products.png');
 

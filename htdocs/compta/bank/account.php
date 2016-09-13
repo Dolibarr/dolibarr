@@ -366,16 +366,11 @@ if ($id > 0 || ! empty($ref))
 		{
 			if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) 
 			{
-                if (empty($conf->accounting->enabled))
-                {
-                    if ($user->rights->banque->modifier) {
-                        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
-                    } else {
-                        print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-                    }
-                } else {
-                    print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
-                }
+				if ($user->rights->banque->modifier) {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&amp;id='.$object->id.'&amp;page='.$page.($vline?'&amp;vline='.$vline:'').'">'.$langs->trans("AddBankRecord").'</a>';
+				} else {
+					print '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+				}
 			} else {
                 print '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
             }
@@ -734,7 +729,7 @@ if ($id > 0 || ! empty($ref))
 						{
 							$banklinestatic->fetch($links[$key]['url_id']);
 							$bankstatic->id=$banklinestatic->fk_account;
-							$bankstatic->label=$banklinestatic->bank_account_label;
+							$bankstatic->label=$banklinestatic->bank_account_ref;
 							print ' ('.$langs->trans("TransferFrom").' ';
 							print $bankstatic->getNomUrl(1,'transactions');
 							print ' '.$langs->trans("toward").' ';
@@ -752,7 +747,7 @@ if ($id > 0 || ! empty($ref))
 							print ' '.$langs->trans("toward").' ';
 							$banklinestatic->fetch($links[$key]['url_id']);
 							$bankstatic->id=$banklinestatic->fk_account;
-							$bankstatic->label=$banklinestatic->bank_account_label;
+							$bankstatic->label=$banklinestatic->bank_account_ref;
 							print $bankstatic->getNomUrl(1,'transactions');
 							print ')';
 						}

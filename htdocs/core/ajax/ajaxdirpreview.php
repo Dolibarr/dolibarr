@@ -82,6 +82,7 @@ else    // For no ajax call
     $relativepath=$ecmdir->getRelativePath();
     $upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
 }
+if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 
 // Load traductions files
 $langs->load("ecm");
@@ -138,10 +139,10 @@ if (! dol_is_dir($upload_dir))
 }
 
 print '<!-- TYPE='.$type.' -->'."\n";
-print '<!-- Page called with mode='.(isset($mode)?$mode:'').' type='.$type.' module='.$module.' url='.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+print '<!-- Page called with mode='.(isset($mode)?$mode:'').' type='.$type.' module='.$module.' url='.$url.' '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
 
 $param=($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'');
-$url=DOL_URL_ROOT.'/ecm/index.php';
+
 
 // Dir scan
 if ($type == 'directory')
@@ -240,7 +241,10 @@ if ($section)
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		$useglobalvars=1;
 		$form = new Form($db);
-		$formquestion=array('urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'));
+		$formquestion=array(
+			'urlfile'=>array('type'=>'hidden','value'=>$urlfile,'name'=>'urlfile'),
+			'section'=>array('type'=>'hidden','value'=>$section,'name'=>'section')
+		);
 		print $form->formconfirm($url,$langs->trans("DeleteFile"),$langs->trans("ConfirmDeleteFile"),'confirm_deletefile',$formquestion,"no",($useajax?'deletefile':0));
 	}
 

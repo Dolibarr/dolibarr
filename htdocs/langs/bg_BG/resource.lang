@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ресурси
 MenuResourceAdd=Нов ресурс
-MenuResourcePlanning=Планиране на ресурс
 DeleteResource=Изтриване на ресурс
 ConfirmDeleteResourceElement=Потвърждаване на изтриване на ресурса за този елемент
 NoResourceInDatabase=Няма ресурс в базата данни.
@@ -18,8 +17,6 @@ ResourceFormLabel_description=Описание на ресурс
 ResourcesLinkedToElement=Ресурси свързани към елемент
 
 ShowResource=Показване на ресурс
-ShowResourcePlanning=Показване на планиране на ресурс
-GotoDate=Отиване на дата
 
 ResourceElementPage=Ресурси на елемент
 ResourceCreatedWithSuccess=Ресурсът е успешно създаден
@@ -27,7 +24,6 @@ RessourceLineSuccessfullyDeleted=Линията на ресурса е успе�
 RessourceLineSuccessfullyUpdated=Линията на ресурса е успешно обновена
 ResourceLinkedWithSuccess=Ресурсът е свързан успешно 
 
-TitleResourceCard=Карта на ресурс
 ConfirmDeleteResource=Потвърждаване на изтриването на този ресурс
 RessourceSuccessfullyDeleted=Ресурсът е успешно изтрит
 DictionaryResourceType=Тип на ресурси

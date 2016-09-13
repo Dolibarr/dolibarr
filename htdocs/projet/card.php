@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -307,17 +307,19 @@ if (empty($reshook))
 	// Delete file in doc form
 	if ($action == 'remove_file' && $user->rights->projet->creer)
 	{
-	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 	    if ($object->id > 0)
 	    {
-	        $langs->load("other");
-	        $upload_dir =	$conf->projet->dir_output . "/";
-	        $urlfile=GETPOST('urlfile','alpha');
-	        $file =	$upload_dir	. '/' .	$filetodelete;
-	        $ret=dol_delete_file($file);
-	        if ($ret) setEventMessages($langs->trans("FileWasRemoved", $urlfile), null, 'mesgs');
-	        else setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	    	
+			$langs->load("other");
+			$upload_dir = $conf->projet->dir_output;
+			$file = $upload_dir . '/' . GETPOST('file');
+			$ret = dol_delete_file($file, 0, 0, 0, $object);
+			if ($ret)
+				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
+			else
+				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+			$action = '';
 	    }
 	}
 
@@ -490,7 +492,7 @@ if ($action == 'create' && $user->rights->projet->creer)
     // Public
     print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
     $array=array(0 => $langs->trans("PrivateProject"),1 => $langs->trans("SharedProject"));
-    print $form->selectarray('public',$array,$object->public);
+    print $form->selectarray('public',$array,GETPOST('public')?GETPOST('public'):(isset($conf->global->PROJECT_DEFAULT_PUBLIC)?$conf->global->PROJECT_DEFAULT_PUBLIC:$object->public));
     print '</td></tr>';
 
     // Date start
@@ -508,7 +510,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	    // Opportunity status
 	    print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
 	    print '<td>';
-	    print $formproject->selectOpportunityStatus('opp_status',$object->opp_status);
+	    print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status')?GETPOST('opp_status'):$object->opp_status);
 	    print '</tr>';
 
 	    // Opportunity probability
@@ -666,9 +668,13 @@ else
     	    $filteronlist='';
     	    if (! empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist=$conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
             $text=$form->select_thirdparty_list($object->thirdparty->id, 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), '', 0, 0, 'minwidth300');
-            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
-            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-            print '</td></tr>';
+	        if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
+		    {
+	            $texthelp=$langs->trans("IfNeedToUseOhterObjectKeepEmpty");
+	            print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
+	    	}
+	    	else print $text;
+	        print '</td></tr>';
         }
         
         // Visibility
@@ -704,7 +710,9 @@ else
 
 		    // Opportunity probability
 		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent'])?GETPOST('opp_percent'):(strcmp($object->opp_percent,'')?price($object->opp_percent,0,$langs,1,0):'')).'"> %';
+            print '<span id="oldopppercent"></span>';
+		    print '</td>';
 		    print '</tr>';
 		    
 		    // Opportunity amount
@@ -741,7 +749,7 @@ else
         $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 
         // Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
+        print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
         // Define a complementary filter for search of next/prev ref.
         if (! $user->rights->projet->all->lire)
         {
@@ -831,14 +839,22 @@ else
     print '</form>';
 
     // Change probability from status
-    print '<script type="text/javascript" language="javascript">
+    if (! empty($conf->use_javascript_ajax))
+    {
+        print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
         	function change_percent()
         	{
                 var element = jQuery("#opp_status option:selected");
                 var defaultpercent = element.attr("defaultpercent");
-                /*if (jQuery("#opp_percent_not_set").val() == "") */
-                jQuery("#opp_percent").val(defaultpercent);
+                var elemcode = element.attr("elemcode");
+                /* Change percent of default percent of new status is higher */
+                if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
+                {
+                    if (jQuery("#opp_percent").val() != \'\' && ! jQuery("#oldopppercent").text()) jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->trans("PreviousValue")).': \'+jQuery("#opp_percent").val()+\' %\');
+                    jQuery("#opp_percent").val(defaultpercent);
+                    
+                }
         	}
         	/*init_myfunc();*/
         	jQuery("#opp_status").change(function() {
@@ -846,7 +862,7 @@ else
         	});
         });
         </script>';
-    
+    }    
     
     /*
      * Boutons actions
@@ -886,7 +902,7 @@ else
 	        }
 	
 	        // Close
-	        if (($object->statut == 0 || $object->statut == 1) && $user->rights->projet->creer)
+	        if ($object->statut == 1 && $user->rights->projet->creer)
 	        {
 	            if ($userWrite > 0)
 	            {
@@ -956,7 +972,6 @@ else
 	            }
 	            if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->creer)
 	            {
-	                $langs->load("expensereports");
 	                $langs->load("trips");
 	                print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&projectid='.$object->id.'&socid='.$object->socid.'">'.$langs->trans("AddTrip").'</a></div>';
 	            }
@@ -981,9 +996,9 @@ else
 	        }
 	
 	        // Delete
-	        if ($user->rights->projet->supprimer)
+	        if ($user->rights->projet->supprimer || ($object->statut == 0 && $user->rights->projet->creer))
 	        {
-	            if ($userDelete > 0)
+	            if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 	            {
 	                print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 	            }

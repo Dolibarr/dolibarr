@@ -61,8 +61,14 @@ $originid=GETPOST('originid','int');
 $confirm = GETPOST('confirm', 'alpha');
 
 $fulldayevent=GETPOST('fullday');
-$datep=dol_mktime($fulldayevent?'00':GETPOST("aphour"), $fulldayevent?'00':GETPOST("apmin"), 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
-$datef=dol_mktime($fulldayevent?'23':GETPOST("p2hour"), $fulldayevent?'59':GETPOST("p2min"), $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
+
+$aphour = GETPOST('aphour');
+$apmin = GETPOST('apmin');
+$p2hour = GETPOST('p2hour');
+$p2min = GETPOST('p2min');
+
+$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
+$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -91,7 +97,6 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('actioncard','globalcard'));
-
 
 /*
  * Actions
@@ -781,7 +786,7 @@ if ($action == 'create')
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
-		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:0),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
+		$numproject=$formproject->select_projects((! empty($societe->id)?$societe->id:-1),GETPOST("projectid")?GETPOST("projectid"):'','projectid');
 		if ($numproject==0)
 		{
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1445,7 +1450,7 @@ if ($id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarweek','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
+		print img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewweek" value="'.$langs->trans("ViewWeek").'">';
 		print '</form>'."\n";
 		print '<form name="listactionsfilterday" action="'.DOL_URL_ROOT.'/comm/action/index.php" method="POST" style="float: left; padding-right: 10px;">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1454,7 +1459,7 @@ if ($id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarday','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewday" value="'.$langs->trans("ViewDay").'">';
+		print img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewday" value="'.$langs->trans("ViewDay").'">';
 		print '</form>'."\n";
 		print '<form name="listactionsfilterperuser" action="'.DOL_URL_ROOT.'/comm/action/peruser.php" method="POST" style="float: left; padding-right: 10px;">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -1463,7 +1468,7 @@ if ($id > 0)
 		print '<input type="hidden" name="month" value="'.dol_print_date($object->datep,'%m').'">';
 		print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
 		//print '<input type="hidden" name="day" value="'.dol_print_date($object->datep,'%d').'">';
-		print img_picto($langs->trans("ViewCal"),'object_calendarperuser','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
+		print img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"').' <input type="submit" style="min-width: 120px" class="button buttonactionview" name="viewperuser" value="'.$langs->trans("ViewPerUser").'">';
 		print '</form>'."\n";
 		print '</div>';
 

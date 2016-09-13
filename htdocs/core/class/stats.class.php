@@ -388,6 +388,12 @@ abstract class Stats
 				if($i>0 && $row->total) $result[$i-1]['total_diff'] = ($result[$i-1]['total'] - $row->total) / $row->total * 100;
 				$result[$i]['avg'] = $row->avg;
 				if($i>0 && $row->avg) $result[$i-1]['avg_diff'] = ($result[$i-1]['avg'] - $row->avg) / $row->avg * 100;
+				// For some $sql only
+				if (isset($row->weighted))
+				{
+				    $result[$i]['weighted'] = $row->weighted;
+				    if($i>0 && $row->weighted) $result[$i-1]['avg_weighted'] = ($result[$i-1]['weighted'] - $row->weighted) / $row->weighted * 100;
+				}
 				$i++;
 			}
 			$this->db->free($resql);

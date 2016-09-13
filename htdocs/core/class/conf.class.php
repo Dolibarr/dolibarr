@@ -429,7 +429,7 @@ class Conf
 		$this->liste_limit=$this->global->MAIN_SIZE_LISTE_LIMIT;
 
 		// conf->product->limit_size = constante de taille maximale des select de produit
-		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=100;
+		if (! isset($this->global->PRODUIT_LIMIT_SIZE)) $this->global->PRODUIT_LIMIT_SIZE=1000;
 		$this->product->limit_size=$this->global->PRODUIT_LIMIT_SIZE;
 
 		// conf->theme et $this->css
@@ -508,7 +508,7 @@ class Conf
 		{
 		    $this->projet->warning_delay=(isset($this->global->MAIN_DELAY_PROJECT_TO_CLOSE)?$this->global->MAIN_DELAY_PROJECT_TO_CLOSE:7)*24*60*60;
 		    $this->projet->task                 = new StdClass();
-		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
+		    $this->projet->task->warning_delay=(isset($this->global->MAIN_DELAY_TASKS_TODO)?$this->global->MAIN_DELAY_TASKS_TODO:7)*24*60*60;
 		}
 		
         if (isset($this->commande)) {

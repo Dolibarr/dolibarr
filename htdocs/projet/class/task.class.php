@@ -679,7 +679,8 @@ class Task extends CommonObject
                     $tasks[$i]->projectstatus	= $obj->projectstatus;
                     $tasks[$i]->label			= $obj->label;
                     $tasks[$i]->description		= $obj->description;
-                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;
+                    $tasks[$i]->fk_parent		= $obj->fk_task_parent;      // deprecated
+                    $tasks[$i]->fk_task_parent	= $obj->fk_task_parent;
                     $tasks[$i]->duration		= $obj->duration_effective;
                     $tasks[$i]->planned_workload= $obj->planned_workload;
                     $tasks[$i]->progress		= $obj->progress;
@@ -913,14 +914,19 @@ class Task extends CommonObject
     /**
      *  Calculate total of time spent for task
      *
-     *  @param	int		$id 		Id of object (here task)
+     *  @param  int     $userid     Filter on user id. 0=No filter
      *  @return array		        Array of info for task array('min_date', 'max_date', 'total_duration')
      */
-    function getSummaryOfTimeSpent($id='')
+    function getSummaryOfTimeSpent($userid=0)
     {
         global $langs;
 
-        if (empty($id)) $id=$this->id;
+        $id=$this->id;
+        if (empty($id)) 
+        {
+            dol_syslog("getSummaryOfTimeSpent called on a not loaded task", LOG_ERR);
+            return -1; 
+        }
 
         $result=array();
 
@@ -930,7 +936,8 @@ class Task extends CommonObject
         $sql.= " SUM(t.task_duration) as total_duration";
         $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
         $sql.= " WHERE t.fk_task = ".$id;
-
+        if ($userid > 0) $sql.=" AND t.fk_user = ".$userid;
+        
         dol_syslog(get_class($this)."::getSummaryOfTimeSpent", LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1599,7 +1606,7 @@ class Task extends CommonObject
 	            $task_static->projectstatus = $obj->projectstatus;
 	            $task_static->progress = $obj->progress;
 	            $task_static->fk_statut = $obj->status;
-	            $task_static->datee = $this->db->jdate($obj->datee);
+	            $task_static->date_end = $this->db->jdate($obj->datee);
 	
 	            if ($task_static->hasDelay()) {
 	                $response->nbtodolate++;
@@ -1616,7 +1623,7 @@ class Task extends CommonObject
 	}
 	
 	/**
-	 * Is the action delayed?
+	 * Is the task delayed?
 	 *
 	 * @return bool
 	 */
@@ -1630,6 +1637,8 @@ class Task extends CommonObject
 
         $now = dol_now();
 
-        return ($this->datee > 0 && $this->datee < ($now - $conf->projet->task->warning_delay));
+        $datetouse = ($this->date_end > 0) ? $this->date_end : ($this->datee > 0 ? $this->datee : 0);
+
+        return ($datetouse > 0 && ($datetouse < ($now - $conf->projet->task->warning_delay)));
 	}	
 }

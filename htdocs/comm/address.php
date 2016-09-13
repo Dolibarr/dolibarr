@@ -253,7 +253,7 @@ if ($action == 'create')
         print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td><td><input type="text" size="30" name="label" id="label" value="'.($object->label?$object->label:$langs->trans('RequiredField')).'"></td></tr>';
         print '<tr><td class="fieldrequired">'.$langs->trans('Name').'</td><td><input type="text" size="30" name="name" id="name" value="'.($object->name?$object->name:$langs->trans('RequiredField')).'"></td></tr>';
 
-        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
+        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -353,7 +353,7 @@ elseif ($action == 'edit')
         print '<tr><td>'.$langs->trans('AddressLabel').'</td><td colspan="3"><input type="text" size="40" name="label" value="'.$object->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="name" value="'.$object->name.'"></td></tr>';
 
-        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
+        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 

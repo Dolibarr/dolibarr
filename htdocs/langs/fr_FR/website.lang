@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - website
+Shortname=Code
+WebsiteSetupDesc=Créer ici autant d'entrée que de nombre différents de sites web que nécessaire.\nEnsuite, aller dans le menu Sites Web pour les éditer.
+DeleteWebsite=Effacer site web
+ConfirmDeleteWebsite=Êtes-vous sûr de vouloir supprimer ce site web. Toutes les pages et le contenu seront également supprimés.
+WEBSITE_PAGENAME=Nom/alias de la page
+WEBSITE_CSS_URL=URL du fichier de la feuille de style (CSS) externe
+WEBSITE_CSS_INLINE=Contenu de la feuille de style (CSS)
+MediaFiles=Répertoire de médias
+EditCss=Modifier la feuille de style (CSS)
+EditMenu=Modifier menu
+EditPageMeta=Modifier métadonnées
+EditPageContent=Modifier contenu
+Website=Site web
+AddPage=Ajouter une page
+PreviewOfSiteNotYetAvailable=La prévisualisation de votre site web <strong>%s</strong> n'est pas disponible actuellement. Vous devez créer une première page.
+RequestedPageHasNoContentYet=La page demandée d'id %s est vide ou le fichier cache .tpl.php a été supprimé. Modifiez le contenu de la page pour résoudre ce problème.
+PageDeleted=Page '%s' du site web %s effacée
+PageAdded=Page '%s' ajouté
+ViewSiteInNewTab=Pré-visualiser le site dans un nouvel onglet
+ViewPageInNewTab=Pré-visualiser la page dans un nouvel onglet
+SetAsHomePage=Définir comme page d'accueil
+RealURL=URL réelle
+ViewWebsiteInProduction=Pré-visualiser le site web en utilisant l'URL de la page d'accueil
+SetHereVirtualHost=If you can set, on your web server, a dedicated virtual host with a root directory on <strong>%s</strong>, define here the virtual hostname so the preview will be done using this direct access instead of Dolibarr URLs wrapper.

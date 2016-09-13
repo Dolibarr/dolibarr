@@ -2,8 +2,8 @@
 Foundation=موسسه
 Version=نسخه
 VersionProgram=نسخه برنامه 
-VersionLastInstall=نسخه اولیه نصب
-VersionLastUpgrade=نسخه آخرین به روز رسانی
+VersionLastInstall=Initial install version
+VersionLastUpgrade=Latest version upgrade
 VersionExperimental=تجربی
 VersionDevelopment=توسعه
 VersionUnknown=ناشناخته
@@ -26,18 +26,15 @@ YourSession=نشست شما
 Sessions=کاربران را وارد نمایید
 WebUserGroup=کاربر وب سرور / گروه
 NoSessionFound=PHP شما به نظر می رسد اجازه نمی دهد به لیست نمود. دایرکتوری استفاده می شود برای صرفه جویی در جلسات <b>(٪ ها)</b> ممکن است از آن محافظت شود (به عنوان مثال، با مجوز OS یا با PHP open_basedir باشد بخشنامه).
-HTMLCharset=مجموعه کاراکتر برای صفحات HTML تولید
 DBStoringCharset=پایگاه داده مجموعه کاراکتر برای ذخیره داده ها
 DBSortingCharset=مجموعه نویسه پایگاه داده به مرتب سازی داده ها
 WarningModuleNotActive=<b>بخش٪ s</b> باید فعال باشد
 WarningOnlyPermissionOfActivatedModules=تنها مجوز مربوط به ماژول های فعال در اینجا نشان داده شده است. شما می توانید ماژول های دیگر در صفحه صفحه اصلی> راه اندازی-> ماژول ها فعال کنید.
 DolibarrSetup=Dolibarr نصب و یا ارتقا
-DolibarrUser=Dolibarr کاربر
 InternalUser=کاربر داخلی
 ExternalUser=کاربر خارجی
 InternalUsers=کاربران داخلی
 ExternalUsers=کاربران خارجی
-GlobalSetup=راه اندازی جهانی
 GUISetup=نمایش
 SetupArea=منطقه راه اندازی
 FormToTestFileUploadForm=فرم برای تست آپلود فایل (با توجه به راه اندازی)
@@ -45,6 +42,7 @@ IfModuleEnabled=توجه داشته باشید: بله موثر است تنها 
 RemoveLock=حذف <b>فایل٪ s</b> در صورت وجود اجازه می دهد تا استفاده از ابزار به روز رسانی.
 RestoreLock=بازگرداندن <b>فایل٪ s،</b> با مجوز فقط خواندن، به هر استفاده از ابزار به روز رسانی را غیر فعال کنید.
 SecuritySetup=راه اندازی امنیت
+SecurityFilesDesc=Define here options related to security about uploading files.
 ErrorModuleRequirePHPVersion=خطا، این ماژول نیاز به PHP نسخه٪ s و یا بالاتر
 ErrorModuleRequireDolibarrVersion=خطا، این ماژول نیاز به Dolibarr نسخه٪ s و یا بالاتر
 ErrorDecimalLargerThanAreForbidden=خطا، دقت بالاتر <b>از٪ s</b> پشتیبانی نمی شود.
@@ -55,20 +53,14 @@ Fiscalyear=Fiscal years
 ErrorReservedTypeSystemSystemAuto=ارزش 'سیستم' و 'systemauto برای نوع محفوظ است. شما می توانید 'کاربر' به عنوان ارزش برای اضافه کردن رکورد خود استفاده کنید
 ErrorCodeCantContainZero=کد می تواند مقدار 0 را شامل نمی شود
 DisableJavascript=توابع غیر فعال کردن جاوا اسکریپت و آژاکس (توصیه شده برای فرد نابینا یا مرورگرهای متنی)
-ConfirmAjax=استفاده از popup ها به تایید آژاکس
 UseSearchToSelectCompanyTooltip=همچنین اگر شما تعداد زیادی از اشخاص ثالث (> 100 000)، شما می توانید سرعت با تنظیم COMPANY_DONOTSEARCH_ANYWHERE ثابت به 1 در راه اندازی-> دیگر افزایش دهد. جست و جو خواهد شد و سپس محدود به شروع از رشته است.
-UseSearchToSelectCompany=استفاده از رشته های تکمیل خودکار را انتخاب کنید اشخاص ثالث به جای استفاده از یک جعبه لیست.
-ActivityStateToSelectCompany= اضافه کردن یک گزینه فیلتر برای نشان دادن / پنهان کن thirdparties که در حال حاضر در فعالیت و یا تا به آن متوقف شد
 UseSearchToSelectContactTooltip=همچنین اگر شما تعداد زیادی از اشخاص ثالث (> 100 000)، شما می توانید سرعت با تنظیم CONTACT_DONOTSEARCH_ANYWHERE ثابت به 1 در راه اندازی-> دیگر افزایش دهد. جست و جو خواهد شد و سپس محدود به شروع از رشته است.
-UseSearchToSelectContact=استفاده از رشته های تکمیل خودکار را انتخاب کنید تماس با (به جای استفاده از جعبه لیست).
 DelaiedFullListToSelectCompany=Wait you press a key before loading content of thirdparties combo list (This may increase performance if you have a large number of thirdparties)
 DelaiedFullListToSelectContact=Wait you press a key before loading content of contact combo list (This may increase performance if you have a large number of contact)
-SearchFilter=جستجو فیلتر گزینه
 NumberOfKeyToSearch=اسمشو نبر از شخصیت های به ماشه جستجو:٪ s را
-ViewFullDateActions=نمایش رویدادهای تاریخ های کامل در برگه سوم
 NotAvailableWhenAjaxDisabled=در دسترس نیست زمانی که آژاکس غیر فعال است
+AllowToSelectProjectFromOtherCompany=On document of a thirdparty, can choose a project linked to another thirdparty
 JavascriptDisabled=جاوا اسکریپت غیر فعال شده
-UsePopupCalendar=استفاده از پنجره برای تاریخ های ورودی
 UsePreviewTabs=استفاده از زبانه ها پیش نمایش
 ShowPreview=نشان دادن پیش نمایش
 PreviewNotAvailable=پیش بازی در دسترس نیست
@@ -90,22 +82,19 @@ MustBeLowerThanPHPLimit=توجه: PHP خود را محدود به اندازه �
 NoMaxSizeByPHPLimit=توجه داشته باشید: هیچ محدودیتی در تنظیمات PHP شما تنظیم
 MaxSizeForUploadedFiles=حداکثر اندازه فایل ارسالی (0 تا ندهید هر آپلود)
 UseCaptchaCode=استفاده از کد های گرافیکی (CAPTCHA) در صفحه ورود
-UseAvToScanUploadedFiles=استفاده از ضد ویروس به اسکن فایل های آپلود شده
 AntiVirusCommand= مسیر کامل فرمان آنتی ویروس
 AntiVirusCommandExample= به عنوان مثال برای کلموین: c: \\ Progra ~ 1 \\ کلموین \\ بن \\ clamscan.exe <br> به عنوان مثال برای ClamAV درحال: / usr / بن / clamscan
 AntiVirusParam= پارامترهای بیشتر در خط فرمان
 AntiVirusParamExample= به عنوان مثال برای کلموین: - پایگاه داده = "C: \\ فایلها برنامه (X86) \\ کلموین \\ معاونت"
 ComptaSetup=راه اندازی ماژول حسابداری
 UserSetup=راه اندازی مدیریت کاربر
-MenuSetup=راه اندازی مدیریت منو
+MultiCurrencySetup=Multi-currency setup
 MenuLimits=محدوده و دقت
 MenuIdParent=منو پدر و مادر ID
 DetailMenuIdParent=ID از منو پدر و مادر (خالی برای منوی بالا)
 DetailPosition=تعداد مرتب سازی بر برای تعریف موقعیت منو
-PersonalizedMenusNotSupported=منوهای شخصی پشتیبانی نمی شود
 AllMenus=همه
 NotConfigured=ماژول تنظیم نشده است
-Activation=فعال سازی
 Active=فعال
 SetupShort=برپایی
 OtherOptions=گزینه های دیگر
@@ -116,34 +105,23 @@ Destination=مقصد
 IdModule=ماژول ID
 IdPermissions=مجوز های ID
 Modules=ماژول ها
-ModulesCommon=ماژول های اصلی
-ModulesOther=سایر ماژول ها
-ModulesInterfaces=رابط و مبدل های ماژول
-ModulesSpecial=ماژول های بسیار خاص
-ParameterInDolibarr=پارامتر٪ بازدید کنندگان
-LanguageParameter=پارامتر زبان از٪ s
 LanguageBrowserParameter=پارامتر٪ بازدید کنندگان
 LocalisationDolibarrParameters=پارامترهای محلی سازی
 ClientTZ=کارفرما منطقه زمان (کاربر)
 ClientHour=زمان مشتری (کاربر)
 OSTZ=سرور OS منطقه زمان
 PHPTZ=PHP سرور منطقه زمان
-PHPServerOffsetWithGreenwich=PHP سرور جبران عرض گرینویچ (ثانیه)
-ClientOffsetWithGreenwich=مشتری / مرورگر جبران عرض گرینویچ (ثانیه)
 DaylingSavingTime=نور روز صرفه جویی در زمان
 CurrentHour=PHP زمان (سرور)
-CompanyTZ=شرکت منطقه زمان (شرکت اصلی)
-CompanyHour=شرکت زمان (شرکت اصلی)
 CurrentSessionTimeOut=فاصله را وارد نمایید کنونی
 YouCanEditPHPTZ=برای تنظیم منطقه زمانی PHP مختلف (مورد نیاز نمی باشد)، شما می توانید سعی کنید برای اضافه کردن یک فایل. htacces با یک خط مثل این "SetEnv TZ اروپا / پاریس"
-OSEnv=OS محیط زیست
-Box=جعبه
-Boxes=جعبه
-MaxNbOfLinesForBoxes=حداکثر تعداد خطوط برای جعبه
+Box=Widget
+Boxes=Widgets
+MaxNbOfLinesForBoxes=Max number of lines for widgets
 PositionByDefault=به طور پیش فرض منظور
 Position=موقعیت
-MenusDesc=مدیران منوها محتوا از 2 میله منو (نوار افقی و نوار عمودی) را تعریف کنیم.
-MenusEditorDesc=ویرایشگر منو به شما اجازه تعریف نوشته های شخصی در منوها. استفاده از آن را به دقت برای جلوگیری از ساخت dolibarr نوشته های ناپایدار و منو برای همیشه غیر قابل دسترس. <br> برخی از ماژول اضافه کردن ورودی در منو (در منو <b>همه</b> در اغلب موارد). اگر برخی از این نوشته های به اشتباه حذف خواهند، شما می توانید آنها را غیر فعال و reenabling ماژول بازگرداند.
+MenusDesc=Menu managers set content of the two menu bars (horizontal and vertical).
+MenusEditorDesc=The menu editor allows you to define custom menu entries. Use it carefully to avoid instability and permanently unreachable menu entries.<br />Some modules add menu entries (in menu <b>All</b> mostly). If you remove some of these entries by mistake, you can restore them disabling and reenabling the module.
 MenuForUsers=منو برای کاربران
 LangFile=فایل زبان
 System=سیستم
@@ -151,23 +129,20 @@ SystemInfo=اطلاعات سیستم
 SystemToolsArea=ابزار های سیستم منطقه
 SystemToolsAreaDesc=این منطقه فراهم می کند ویژگی های دولت. با استفاده از منوی را انتخاب کنید از ویژگی های شما دنبال آن هستید.
 Purge=پالایش
-PurgeAreaDesc=این صفحه اجازه می دهد تا شما را به حذف تمام فایل های ساخته شده و یا ذخیره شده توسط Dolibarr (فایل های موقت و یا تمام فایل ها در <b>شاخه٪ s).</b> با استفاده از این ویژگی ضروری نیست. این است که برای کاربران که Dolibarr است که توسط یک ارائه دهنده است که مجوز فایل های ساخته شده توسط وب سرور به حذف ارائه نمی میزبانی.
-PurgeDeleteLogFile=فایل حذف ورود به <b>سیستم٪ s را</b> تعریف ماژول های Syslog (بدون ریسک از دست داده)
-PurgeDeleteTemporaryFiles=حذف همه فایل های موقت (بدون خطر از دست داده)
+PurgeAreaDesc=This page allows you to delete all files generated or stored by Dolibarr (temporary files or all files in <b>%s</b> directory). Using this feature is not necessary. It is provided as a workaround for users whose Dolibarr is hosted by a provider that does not offer permissions to delete files generated by the web server.
+PurgeDeleteLogFile=Delete log file <b>%s</b> defined for Syslog module (no risk of losing data)
+PurgeDeleteTemporaryFiles=Delete all temporary files (no risk of losing data)
 PurgeDeleteTemporaryFilesShort=Delete temporary files
 PurgeDeleteAllFilesInDocumentsDir=حذف همه فایل ها در <b>دایرکتوری٪ است.</b> فایل های موقتی، بلکه افسردگی پشتیبان پایگاه داده، فایل های پیوست شده به عناصر (اشخاص ثالث، فاکتورها، ...) و ارسال به ماژول ECM حذف خواهد شد.
 PurgeRunNow=اکنون پاکسازی
-PurgeNothingToDelete=بدون شاخه یا فایل را حذف کنید.
+PurgeNothingToDelete=No directory or files to delete.
 PurgeNDirectoriesDeleted=<b>٪ s فایل</b> یا دایرکتوری حذف شده است.
 PurgeAuditEvents=پاکسازی تمام حوادث امنیتی
 ConfirmPurgeAuditEvents=آیا مطمئن هستید که می خواهید برای پاکسازی تمامی رویدادهای امنیتی؟ تمام سیاهههای مربوط به امنیت حذف خواهد شد، هیچ اطلاعات دیگر حذف خواهد شد.
-NewBackup=پشتیبان گیری جدید
 GenerateBackup=ایجاد پشتیبان گیری
 Backup=پشتیبان
 Restore=بازیابی
 RunCommandSummary=پشتیبان گیری شده است با دستور زیر راه اندازی
-RunCommandSummaryToLaunch=پشتیبان گیری را می توان با دستور زیر راه اندازی
-WebServerMustHavePermissionForCommand=وب سرور شما باید اجازه برای اجرای دستورات دارند
 BackupResult=نتیجه پشتیبان گیری
 BackupFileSuccessfullyCreated=فایل پشتیبان با موفقیت تولید
 YouCanDownloadBackupFile=فایل های تولید شده هم اکنون می توانید دانلود شود
@@ -202,25 +177,20 @@ IgnoreDuplicateRecords=نادیده گرفتن خطا از رکورد تکرار
 AutoDetectLang=آشکارسازی خودکار (زبان مرورگر)
 FeatureDisabledInDemo=از ویژگی های غیر فعال در نسخه ی نمایشی
 Rights=مجوز
-BoxesDesc=جعبه ها منطقه روی صفحه نمایش نشان می دهد که یک تکه از اطلاعات در برخی از صفحات. شما می توانید بین نشان دادن جعبه یا نه با انتخاب صفحه مورد نظر و کلیک کردن 'فعال'، و یا با کلیک کردن روی سطل آشغال به غیر فعال کردن آن را انتخاب کنید.
+BoxesDesc=Widgets are components showing some information that you can add to personalize some pages. You can choose between showing the widget or not by selecting target page and clicking 'Activate', or by clicking the dustbin to disable it.
 OnlyActiveElementsAreShown=تنها عناصر از <a href="%s">ماژول های فعال</a> نمایش داده می شود.
 ModulesDesc=ماژول های Dolibarr تعریف که قابلیت در نرم افزار را فعال کنید. برخی از ماژول نیاز به مجوز شما باید به کاربران عطا کند، پس از فعال کردن ماژول. بر روی دکمه روشن / خاموش در ستون "وضعیت" را کلیک کنید برای فعال کردن یک ماژول / ویژگی.
-ModulesInterfaceDesc=رابط ماژول Dolibarr شما اجازه می دهد برای اضافه کردن ویژگی های بسته نرم افزار خارجی، سیستم و یا خدمات.
-ModulesSpecialDesc=ماژول های ویژه ماژول های بسیار خاص و یا به ندرت استفاده می شود.
-ModulesJobDesc=ماژول های کسب و کار راه اندازی از پیش تعریف ساده از Dolibarr برای یک کسب و کار خاص فراهم می کند.
-ModulesMarketPlaceDesc=شما می توانید ماژول های بیشتری برای دانلود در وب سایت های خارجی را در اینترنت پیدا کنید ...
+ModulesMarketPlaceDesc=You can find more modules to download on external websites on the Internet...
 ModulesMarketPlaces=ماژول های بیشتر ...
 DoliStoreDesc=DoliStore، محل رسمی بازار برای ماژول های خارجی Dolibarr ERP / CRM
-DoliPartnersDesc=List with some companies that can provide/develop on-demand modules or features (Note: any Open Source company knowning PHP language can provide you specific development)
-WebSiteDesc=ارائه دهندگان وب سایت شما می توانید جستجو برای پیدا کردن ماژول های بیشتر ...
+DoliPartnersDesc=List of companies providing custom developed modules or features (Note: anyone experienced in PHP programming can provide custom development for an open source project)
+WebSiteDesc=Reference websites to find more modules...
 URL=پیوند
-BoxesAvailable=جعبه دسترس
-BoxesActivated=جعبه های فعال
+BoxesAvailable=Widgets available
+BoxesActivated=Widgets activated
 ActivateOn=فعال در
 ActiveOn=فعال در
 SourceFile=فایل منبع
-AutomaticIfJavascriptDisabled=به صورت خودکار اگر جاوا اسکریپت غیر فعال است
-AvailableOnlyIfJavascriptNotDisabled=فقط در صورت های جاوا اسکریپت غیر فعال است
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=فقط در صورت های جاوا اسکریپت غیر فعال است
 Required=ضروری
 UsedOnlyWithTypeOption=Used by some agenda option only
@@ -234,9 +204,7 @@ ProtectAndEncryptPdfFiles=حفاظت از فایل های پی دی اف ایج�
 ProtectAndEncryptPdfFilesDesc=محافظت از یک سند PDF آن را نگه می دارد قابل مطالعه و چاپ با هر مرورگر PDF. با این حال، ویرایش و کپی امکان پذیر نیست. توجه داشته باشید که با استفاده از این ویژگی ساختمان از پی دی اف انباشت شده و متراکم جهانی کار نمی کند (مثل صورت حساب های پرداخت نشده).
 Feature=خصیصه
 DolibarrLicense=پروانه
-DolibarrProjectLeader=رهبر پروژه
 Developpers=توسعه دهندگان / همکاران
-OtherDeveloppers=دیگر توسعه دهندگان / همکاران
 OfficialWebSite=Dolibarr وب سایت رسمی بین المللی
 OfficialWebSiteLocal=Local web site (%s)
 OfficialWiki=Dolibarr مستندات در ویکی
@@ -249,10 +217,7 @@ ForDocumentationSeeWiki=برای کاربر و یا اسناد و مدارک ت�
 ForAnswersSeeForum=برای هر گونه سوال / کمک های دیگر، شما می توانید انجمن Dolibarr استفاده کنید: <br> <a href="%s" target="_blank"><b>از٪ s</b></a>
 HelpCenterDesc1=این منطقه می تواند به شما کمک کند برای دریافت خدمات پشتیبانی راهنما در Dolibarr.
 HelpCenterDesc2=بخشی از این سرویس <b>تنها</b> در <b>انگلیسی</b> موجود است.
-CurrentTopMenuHandler=منوی بالای کنونی کنترل
-CurrentLeftMenuHandler=منوی سمت چپ کنونی کنترل
 CurrentMenuHandler=منو کنترل کنونی
-CurrentSmartphoneMenuHandler=منو گوشی های هوشمند کنونی کنترل
 MeasuringUnit=اندازه گیری واحد
 Emails=ایمیل
 EMailsSetup=راه اندازی ایمیل
@@ -264,21 +229,18 @@ MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike=SMTP / SMTPS هاست (به PHP ب
 MAIN_MAIL_EMAIL_FROM=فرستنده ایمیل برای ایمیل های خودکار (به طور پیش فرض در فایل php.ini <b>اجرا:٪ بازدید کنندگان)</b>
 MAIN_MAIL_ERRORS_TO=فرستنده ایمیل مورد استفاده برای خطا را برمی گرداند ایمیل های فرستاده شده
 MAIN_MAIL_AUTOCOPY_TO= ارسال سیستماتیک مخفی کربن کپی از همه ایمیل های ارسال شده به
-MAIN_MAIL_AUTOCOPY_PROPOSAL_TO= Send systematically a hidden carbon-copy of proposals sent by email to
-MAIN_MAIL_AUTOCOPY_ORDER_TO= Send systematically a hidden carbon-copy of orders sent by email to
-MAIN_MAIL_AUTOCOPY_INVOICE_TO= Send systematically a hidden carbon-copy of invoice sent by emails to
 MAIN_DISABLE_ALL_MAILS=غیر فعال کردن همه sendings ایمیل (برای تست و یا دموی)
 MAIN_MAIL_SENDMODE=روش استفاده برای ارسال ایمیل
 MAIN_MAIL_SMTPS_ID=SMTP ID اگر احراز هویت مورد نیاز
 MAIN_MAIL_SMTPS_PW=SMTP رمز عبور در صورت احراز هویت مورد نیاز
 MAIN_MAIL_EMAIL_TLS= استفاده از TLS (SSL) رمزگذاری
-MAIN_MAIL_EMAIL_STARTTLS= استفاده از TLS (STARTTLS) رمزگذاری
+MAIN_MAIL_EMAIL_STARTTLS= Use TLS (STARTTLS) encrypt
 MAIN_DISABLE_ALL_SMS=غیر فعال کردن همه sendings SMS (برای تست و یا دموی)
 MAIN_SMS_SENDMODE=روش استفاده برای ارسال SMS
 MAIN_MAIL_SMS_FROM=شماره تلفن پیش فرض فرستنده برای ارسال SMS
 FeatureNotAvailableOnLinux=این قابلیت وجود ندارد در یونیکس مانند سیستم های. تست برنامه در Sendmail خود را به صورت محلی.
-SubmitTranslationENUS=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit modified files on dolibarr.org/forum or for developers on github.com/Dolibarr/dolibarr.
 SubmitTranslation=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit your change to www.transifex.com/dolibarr-association/dolibarr/
+SubmitTranslationENUS=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit modified files on dolibarr.org/forum or for developers on github.com/Dolibarr/dolibarr.
 ModuleSetup=ماژول راه اندازی
 ModulesSetup=راه اندازی ماژول ها
 ModuleFamilyBase=سیستم
@@ -309,8 +271,8 @@ InfDirAlt=از آنجا که نسخه 3 این امکان وجود دارد که
 InfDirExample=<br> سپس آن را در conf.php فایل اعلام <br> $ dolibarr_main_url_root_alt = 'http://myserver/custom' <br> $ dolibarr_main_document_root_alt = '/ راه / از / dolibarr / htdocs / سفارشی' <br> * این خطوط با "#" نظر، به کامنت فقط حذف شخصیت.
 YouCanSubmitFile=For this step, you can send package using this tool: Select module file
 CurrentVersion=نسخه فعلی Dolibarr
-CallUpdatePage=برو به صفحه ای که به روز رسانی ساختار بانک اطلاعاتی و دادهها:٪ است.
-LastStableVersion=آخرین نسخه پایدار
+CallUpdatePage=Go to the page that updates the database structure and data: %s.
+LastStableVersion=Latest stable version
 UpdateServerOffline=بروزرسانی آفلاین سرور
 GenericMaskCodes=شما می توانید ماسک شماره را وارد کنید. در این ماسک، تگ های زیر می تواند مورد استفاده قرار گیرد: <br> <b>{000000}</b> مربوط به تعداد خواهد شد که در هر یک از٪ s را افزایش مییابد. به عنوان بسیاری از صفر را وارد کنید به عنوان طول مورد نظر از ضد. شمارنده خواهد شد صفر از سمت چپ به منظور به صفر کرده اند و بسیاری از ماسک به پایان رسید. <br> <b>{000.000 +000}</b> همان قبلی است اما جبران مربوطه را به شماره در سمت راست علامت + شروع به کار رفته در اولین٪ است. <br> <b>{000000 @ X}</b> همان قبلی است اما شمارنده به صفر زمانی که ماه X برسد (x بین 1 و 12، و یا 0 به استفاده از ماه های اولیه سال مالی تعیین شده در تنظیمات خود را، و یا 99 به صفر هر ماه ). اگر این گزینه استفاده می شود و x است 2 یا بالاتر، و سپس دنباله {YY} {میلی متر} یا {تاریخ برای ورود yyyy} {میلی متر} نیز مورد نیاز است. <br> <b>{تولد}</b> روز (01 تا 31). <br> <b>{میلی متر}</b> ماه (01 تا 12). <br> <b>{YY}، {تاریخ برای ورود yyyy}</b> یا <b>{Y}</b> سال بیش از 2، 4 و یا 1 عدد. <br>
 GenericMaskCodes2=<b>{CCCC}</b> کد مشتری در تعداد کاراکتر <br> <b>{cccc000}</b> کد مشتری در تعداد کاراکتر توسط شمارنده اختصاص داده شده برای مشتری است. این مبارزه اختصاص داده شده به مشتری است که در همان زمان از مبارزه جهانی بازنشانی کنید. <br> <b>{TTTT}</b> کد از نوع thirdparty در تعداد شخصیت (نگاه کنید به انواع فرهنگ لغت-thirdparty). <br>
@@ -334,8 +296,6 @@ UseACacheDelay= تاخیر برای ذخیره پاسخ صادرات در ثان
 DisableLinkToHelpCenter=مخفی کردن لینک <b>"آیا نیازمند کمک و یا حمایت"</b> در صفحه ورود
 DisableLinkToHelp=Hide link to online help "<b>%s</b>"
 AddCRIfTooLong=هیچ بسته بندی اتوماتیک وجود دارد، بنابراین اگر خط از صفحه در اسناد به دلیل بیش از حد طولانی، شما باید خودتان بازده حمل در ناحیه ی متن اضافه کنید.
-ModuleDisabled=ماژول غیر فعال است
-ModuleDisabledSoNoEvent=بنابراین رویداد ماژول غیر فعال است هرگز وجود نداشته است
 ConfirmPurge=آیا مطمئن هستید که می خواهید برای اجرای این پاکسازی؟ <br> این قطعا با هیچ راهی به آنها (فایل های ECM، فایل های پیوست ...) بازگرداندن حذف تمام فایل های داده های شما خواهد شد.
 MinLength=حداقل طول
 LanguageFilesCachedIntoShmopSharedMemory=فایل های. زبان بارگذاری شده در حافظه به اشتراک گذاشته شده
@@ -364,7 +324,7 @@ PDFAddressForging=قوانین برای ایجاد جعبه آدرس
 HideAnyVATInformationOnPDF=مخفی کردن همه اطلاعات مربوط به مالیات بر ارزش افزوده در تولید PDF
 HideDescOnPDF=پنهان کردن محصولات توضیحات در تولید PDF
 HideRefOnPDF=پنهان کردن محصولات کد عکس. در تولید PDF
-HideDetailsOnPDF=جزئیات پنهان کردن محصولات خطوط در تولید PDF
+HideDetailsOnPDF=Hide product lines details on generated PDF
 PlaceCustomerAddressToIsoLocation=Use french standard position (La Poste) for customer address position
 Library=کتابخانه
 UrlGenerationParameters=پارامترهای به امن آدرس
@@ -399,7 +359,7 @@ ExtrafieldParamHelpradio=فهرست پارامترها را به مانند کل
 ExtrafieldParamHelpsellist=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 ExtrafieldParamHelpchkbxlst=Parameters list comes from a table<br>Syntax : table_name:label_field:id_field::filter<br>Example : c_typent:libelle:id::filter<br><br>filter can be a simple test (eg active=1) to display only active value<br>You can also use $ID$ in filter witch is the current id of current object<br>To do a SELECT in filter use $SEL$<br>if you want to filter on extrafields use syntaxt  extra.fieldcode=... (where field code is the code of extrafield)<br><br>In order to have the list depending on another :<br>c_typent:libelle:id:parent_list_code|parent_column:filter
 ExtrafieldParamHelplink=Parameters must be ObjectName:Classpath<br>Syntax : ObjectName:Classpath<br>Example : Societe:societe/class/societe.class.php
-LibraryToBuildPDF=کتابخانه مورد استفاده برای ساخت PDF
+LibraryToBuildPDF=Library used for PDF generation
 WarningUsingFPDF=اخطار: <b>conf.php</b> شما شامل <b>dolibarr_pdf_force_fpdf</b> بخشنامه <b>= 1.</b> این به این معنی شما استفاده از کتابخانه FPDF برای تولید فایل های PDF. این کتابخانه قدیمی است و بسیاری از ویژگی های (یونیکد، شفافیت تصویر، زبان سیریلیک، عربی و آسیایی، ...) را پشتیبانی نمی کند، بنابراین شما ممکن است خطا در PDF نسل را تجربه کنند. <br> برای حل این و دارای پشتیبانی کامل از PDF نسل، لطفا دانلود کنید <a href="http://www.tcpdf.org/" target="_blank">کتابخانه TCPDF</a> ، پس از آن اظهار نظر و یا حذف خط <b>$ dolibarr_pdf_force_fpdf = 1،</b> و اضافه کردن به جای <b>$ dolibarr_lib_TCPDF_PATH = 'path_to_TCPDF_dir'</b>
 LocalTaxDesc=Some countries apply 2 or 3 taxes on each invoice line. If this is the case, choose type for second and third tax and its rate. Possible type are:<br>1 : local tax apply on products and services without vat (localtax is calculated on amount without tax)<br>2 : local tax apply on products and services including vat (localtax is calculated on amount + main tax)<br>3 : local tax apply on products without vat (localtax is calculated on amount without tax)<br>4 : local tax apply on products including vat (localtax is calculated on amount + main vat)<br>5 : local tax apply on services without vat (localtax is calculated on amount without tax)<br>6 : local tax apply on services including vat (localtax is calculated on amount + tax)
 SMS=SMS
@@ -408,6 +368,7 @@ RefreshPhoneLink=تازه کردن لینک
 LinkToTest=لینک قابل کلیک تولید شده برای <strong>کاربر٪ s را</strong> (کلیک کنید شماره تلفن برای تست)
 KeepEmptyToUseDefault=خالی نگه دارید به استفاده از مقدار پیش فرض
 DefaultLink=لینک پیش فرض
+SetAsDefault=Set as default
 ValueOverwrittenByUserSetup=اخطار، این مقدار ممکن است با راه اندازی خاص کاربر رونویسی (هر کاربر می تواند آدرس clicktodial خود تنظیم)
 ExternalModule=ماژول های خارجی - نصب به شاخه٪ s
 BarcodeInitForThirdparties=init انجام بارکد جمعی برای thirdparties
@@ -418,8 +379,15 @@ EraseAllCurrentBarCode=پاک کردن همه ارزش بارکد فعلی
 ConfirmEraseAllCurrentBarCode=آیا مطمئن هستید که می خواهید برای پاک کردن تمام ارزش های بارکد در حال حاضر؟
 AllBarcodeReset=همه مقادیر بارکد حذف شده اند
 NoBarcodeNumberingTemplateDefined=بدون قالب بارکد شماره فعال به راه اندازی ماژول بارکد.
-NoRecordWithoutBarcodeDefined=هیچ سابقه ای با ارزش بارکد تعریف شده است.
 EnableFileCache=Enable file cache
+ShowDetailsInPDFPageFoot=Add more details into footer of PDF files, like your company address, or manager names (to complete professional ids, company capital and VAT number).
+NoDetails=No more details in footer
+DisplayCompanyInfo=Display company address
+DisplayCompanyInfoAndManagers=Display company and manager names
+EnableAndSetupModuleCron=If you want to have this recurring invoice beeing generated automatically, module *%s* must be enabled and correctly setup. Otherwise, generation of invoices must be done manually from this template with button *Create*. Note that even if you enabled automatic generation, you can still safely launch manual generation. Duplicates generation for same period are not possible.
+ModuleCompanyCodeAquarium=Return an accountancy code built by:<br>%s followed by third party supplier code for a supplier accountancy code,<br>%s followed by third party customer code for a customer accountancy code.
+ModuleCompanyCodePanicum=Return an empty accountancy code.
+ModuleCompanyCodeDigitaria=Accountancy code depends on third party code. The code is composed of the character "C" in the first position followed by the first 5 characters of the third party code.
 
 # Modules
 Module0Name=کاربران و گروه های
@@ -483,15 +451,15 @@ Module200Desc=هماهنگ سازی دایرکتوری LDAP
 Module210Name=PostNuke
 Module210Desc=ادغام PostNuke
 Module240Name=صادرات داده ها
-Module240Desc=ابزار به صادرات دادهها Dolibarr (با دستیاران)
+Module240Desc=Tool to export Dolibarr data (with assistants)
 Module250Name=واردات داده ها
-Module250Desc=ابزار برای وارد کردن دادهها در Dolibarr (با دستیاران)
+Module250Desc=Tool to import data in Dolibarr  (with assistants)
 Module310Name=کاربران
 Module310Desc=مدیریت اعضای بنیاد
 Module320Name=خوراک RSS
 Module320Desc=اضافه کردن خوراک RSS در داخل صفحات صفحه نمایش Dolibarr
 Module330Name=بوک مارک ها
-Module330Desc=مدیریت چوب الف
+Module330Desc=Bookmarks management
 Module400Name=Projects/Opportunities/Leads
 Module400Desc=Management of projects, opportunities or leads. You can then assign any element (invoice, order, proposal, intervention, ...) to a project and get a transversal view from the project view.
 Module410Name=Webcalendar
@@ -503,7 +471,7 @@ Module510Desc=مدیریت کارکنان حقوق و پرداخت
 Module520Name=Loan
 Module520Desc=Management of loans
 Module600Name=اطلاعیه ها
-Module600Desc=Send EMail notifications (triggered by some business events) to third-party contacts (setup defined on each thirdparty) or fixed emails
+Module600Desc=Send EMail notifications (triggered by some business events) to users (setup defined on each user), third-party contacts (setup defined on each thirdparty) or fixed emails
 Module700Name=کمک های مالی
 Module700Desc=مدیریت کمک مالی
 Module770Name=Expense reports
@@ -519,13 +487,13 @@ Module1520Desc=Mass mail document generation
 Module1780Name=Tags/Categories
 Module1780Desc=Create tags/category (products, customers, suppliers, contacts or members)
 Module2000Name=ویرایشگر WYSIWYG
-Module2000Desc=اجازه می دهد به ویرایش برخی از متن با استفاده از ویرایشگر پیشرفته
+Module2000Desc=Allow to edit some text area using an advanced editor (Based on CKEditor)
 Module2200Name=قیمت های پویا.
 Module2200Desc=Enable the usage of math expressions for prices
 Module2300Name=cron را
 Module2300Desc=Scheduled job management
-Module2400Name=دستور کار
-Module2400Desc=رویدادهای / وظایف و مدیریت برنامه
+Module2400Name=Agenda/Events
+Module2400Desc=Follow events or rendez-vous. Record manual events into Agendas or let application logs automatic events for tracking purposes.
 Module2500Name=الکترونیکی مدیریت محتوا
 Module2500Desc=ذخیره و به اشتراک اسناد
 Module2600Name=API/Web services (SOAP server)
@@ -540,13 +508,15 @@ Module2800Desc=FTP کارفرما
 Module2900Name=GeoIPMaxmind
 Module2900Desc=GeoIP با Maxmind قابلیت تبدیل
 Module3100Name=اسکایپ
-Module3100Desc=Add a Skype button into card of users / third parties / contacts / members
+Module3100Desc=Add a Skype button into users / third parties / contacts / members cards
 Module4000Name=HRM
 Module4000Desc=Human resources management
 Module5000Name=چند شرکت
 Module5000Desc=اجازه می دهد تا به شما برای مدیریت شرکت های متعدد
 Module6000Name=گردش کار
 Module6000Desc=مدیریت گردش کار
+Module10000Name=Websites
+Module10000Desc=Create public websites with a WYSIWG editor. Just setup your web server to point to the dedicated directory to have it online on the Internet.
 Module20000Name=Leave Requests management
 Module20000Desc=Declare and follow employees leaves requests
 Module39000Name=Product lot
@@ -554,7 +524,7 @@ Module39000Desc=Lot or serial number, eat-by and sell-by date management on prod
 Module50000Name=خزانه
 Module50000Desc=ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با خزانه
 Module50100Name=نقطه ای از فروش
-Module50100Desc=نقطه ای از ماژول فروش
+Module50100Desc=Point of sales module (POS).
 Module50200Name=پی پال
 Module50200Desc=ماژول برای ارائه یک صفحه پرداخت آنلاین از طریق کارت اعتباری با پی پال
 Module50400Name=Accounting (advanced)
@@ -567,6 +537,8 @@ Module59000Name=حاشیه
 Module59000Desc=ماژول برای مدیریت حاشیه
 Module60000Name=کمیسیون ها
 Module60000Desc=ماژول برای مدیریت کمیسیون
+Module63000Name=Resources
+Module63000Desc=Manage resources (printers, cars, room, ...) you can then share into events
 Permission11=خوانده شده فاکتورها مشتری
 Permission12=ایجاد / اصلاح صورت حساب مشتری
 Permission13=صورت حساب مشتری Unvalidate
@@ -598,7 +570,7 @@ Permission71=کاربران
 Permission72=ایجاد / تغییر کاربران
 Permission74=حذف کاربران
 Permission75=Setup types of membership
-Permission76=دادهها صادرات
+Permission76=Export data
 Permission78=خوانده شده اشتراک ها
 Permission79=ایجاد / تغییر اشتراک ها
 Permission81=خوانده شده مشتریان سفارشات
@@ -808,15 +780,15 @@ Permission55002=ایجاد / تغییر نظر سنجی
 Permission59001=دفعات بازدید: حاشیه های تجاری
 Permission59002=تعریف حاشیه های تجاری
 Permission59003=Read every user margin
-DictionaryCompanyType=نوع Thirdparties
-DictionaryCompanyJuridicalType=انواع حقوقی thirdparties
+DictionaryCompanyType=Types of thirdparties
+DictionaryCompanyJuridicalType=Legal forms of thirdparties
 DictionaryProspectLevel=سطح بالقوه چشم انداز
 DictionaryCanton=State/Province
 DictionaryRegion=مناطق
 DictionaryCountry=کشورها
 DictionaryCurrency=واحد پول
-DictionaryCivility=عنوان تمدن
-DictionaryActions=نوع حوادث در دستور کار
+DictionaryCivility=Personal and professional titles
+DictionaryActions=Types of agenda events
 DictionarySocialContributions=Social or fiscal taxes types
 DictionaryVAT=نرخ مالیات بر ارزش افزوده و یا فروش نرخ مالیات
 DictionaryRevenueStamp=مقدار تمبر درآمد
@@ -825,25 +797,24 @@ DictionaryPaymentModes=حالت های پرداخت
 DictionaryTypeContact=انواع تماس / آدرس
 DictionaryEcotaxe=Ecotax (WEEE)
 DictionaryPaperFormat=فرمت مقاله
-DictionaryFees=نوع هزینه ها
+DictionaryFees=Types of fees
 DictionarySendingMethods=روش های حمل و نقل
 DictionaryStaff=کارکنان
 DictionaryAvailability=تاخیر در تحویل
 DictionaryOrderMethods=مرتب سازی بر روش
 DictionarySource=منبع از پیشنهادات / سفارشات
-DictionaryAccountancyplan=نمودار حساب
+DictionaryAccountancyCategory=Accounting categories
 DictionaryAccountancysystem=مدل برای نمودار حساب
 DictionaryEMailTemplates=الگوهای ایمیل
 DictionaryUnits=Units
 DictionaryProspectStatus=Prospection status
-DictionaryHolidayTypes=Type of leaves
+DictionaryHolidayTypes=Types of leaves
 DictionaryOpportunityStatus=Opportunity status for project/lead
 SetupSaved=راه اندازی نجات داد
 BackToModuleList=بازگشت به لیست ماژول ها
 BackToDictionaryList=برگشت به فهرست واژه نامه ها
-VATReceivedOnly=نرخ ویژه اتهام نشده است
 VATManagement=مدیریت مالیات بر ارزش افزوده
-VATIsUsedDesc=نرخ مالیات بر ارزش افزوده به طور پیش فرض هنگام ایجاد چشم انداز، فاکتورها، سفارشات و غیره پیروی از قانون استاندارد های فعال: <br> اگر فروشنده به مالیات بر ارزش افزوده در نمی آید، پس از آن مالیات بر ارزش افزوده به طور پیش فرض = 0. پایان حکومت. <br> اگر (فروش کشور = خرید کشور)، پس از آن مالیات بر ارزش افزوده به طور پیش فرض = مالیات بر ارزش افزوده از محصولات در کشور فروش. پایان حکومت. <br> اگر فروشنده و خریدار در جامعه و کالاهای اروپایی محصولات حمل و نقل (اتومبیل، کشتی، هواپیما)، مالیات بر ارزش افزوده به طور پیش فرض = 0 (مالیات بر ارزش افزوده باید توسط خریدار در customoffice کشور خود پرداخت و نه در فروشنده). پایان حکومت. <br> اگر فروشنده و خریدار در جامعه اروپا و خریدار است یک شرکت نیست، پس از آن مالیات بر ارزش افزوده به طور پیش فرض = مالیات بر ارزش افزوده از تولید به فروش می رسد. پایان حکومت. <br> اگر فروشنده و خریدار در جامعه اروپا و خریدار یک شرکت، پس از آن مالیات بر ارزش افزوده به طور پیش فرض = 0 است. پایان حکومت. <br> دیگری به طور پیش فرض مالیات بر ارزش افزوده پیشنهاد = 0. پایان حکومت.
+VATIsUsedDesc=By default when creating prospects, invoices, orders etc the VAT rate follows the active standard rule:<br>If the seller is not subjected to VAT, then VAT defaults to 0. End of rule.<br>If the (selling country= buying country), then the VAT by default equals the VAT of the product in the selling country. End of rule. <br>If seller and buyer are both in the European Community and goods are transport products (car, ship, plane), the default VAT is 0 ( The VAT should be paid by the buyer to the customoffice of his country and not to the seller). End of rule.<br>If seller and buyer are both in the European Community and the buyer is not a company, then the VAT by defaults to the VAT of the product sold.  End of rule.<br>If seller and buyer are both in the European Community and the buyer is a company, then the VAT is 0 by default . End of rule.<br>In any othe case the proposed default is VAT=0. End of rule.
 VATIsNotUsedDesc=به طور پیش فرض مالیات بر ارزش افزوده ارائه شده است 0 که می تواند برای موارد مانند ارتباط استفاده می شود، افراد عضو جدید می توانید شرکت های کوچک است.
 VATIsUsedExampleFR=در فرانسه، به این معنی شرکت و یا سازمان داشتن یک سیستم مالی واقعی (ساده شده واقعی یا عادی واقعی). یک سیستم است که در آن مالیات بر ارزش افزوده اعلام شده است.
 VATIsNotUsedExampleFR=در فرانسه، به این معنی انجمن هایی که بدون مالیات بر ارزش افزوده اعلام کرد و شرکت ها، سازمان ها و یا حرفه های لیبرال که انتخاب کرده اند سیستم میکرو به شرکت های مالی (مالیات بر ارزش افزوده در حق رای دادن) و بدون اعلان مالیات بر ارزش افزوده پرداخت مالیات بر ارزش افزوده حق رای دادن. در فاکتورها - این انتخاب خواهد شد مرجع "هنر 293B از CGI مالیات بر ارزش افزوده قابل اعمال غیر" نشان می دهد.
@@ -884,7 +855,6 @@ NbOfDays=Nb در روز
 AtEndOfMonth=در پایان ماه
 Offset=افست
 AlwaysActive=همیشه فعال
-UpdateRequired=سیستم شما باید به روز شود. برای این کار، با کلیک بر روی <a href="%s">به روز رسانی در حال حاضر</a> .
 Upgrade=به روز رسانی
 MenuUpgrade=ارتقا / تمدید
 AddExtensionThemeModuleOrOther=اضافه کردن پسوند (تم، ماژول، ...)
@@ -894,14 +864,8 @@ DataRootServer=دایرکتوری فایل داده ها
 IP=IP
 Port=بندر
 VirtualServerName=نام سرور مجازی
-AllParameters=تمام پارامترهای
 OS=OS
-PhpEnv=پاکت
-PhpModules=ماژول ها
-PhpConf=کنفرانس
 PhpWebLink=لینک وب پی اچ پی
-Pear=گلابی
-PearPackages=بسته های گلابی
 Browser=مرورگر
 Server=سرور
 Database=پایگاه داده
@@ -910,28 +874,14 @@ DatabaseName=نام پایگاه داده
 DatabasePort=پورت پایگاه داده
 DatabaseUser=کاربر پایگاه داده
 DatabasePassword=رمز عبور پایگاه داده
-DatabaseConfiguration=راه اندازی پایگاه داده
 Tables=جداول
 TableName=نام جدول
-TableLineFormat=فرمت خط
 NbOfRecord=Nb و سوابق
-Constraints=محدودیت
-ConstraintsType=نوع محدودیت
-ConstraintsToShowOrNotEntry=محدودیت ورود به منو را نشان می دهد یا نه
-AllMustBeOk=همه از این باید بررسی می شود
 Host=سرور
 DriverType=نوع درایور
 SummarySystem=سیستم خلاصه اطلاعات
 SummaryConst=فهرست تمام پارامترهای راه اندازی Dolibarr
-SystemUpdate=به روز رسانی سیستم
-SystemSuccessfulyUpdate=سیستم شما با موفقیت به روز رسانی شده است
 MenuCompanySetup=شرکت / موسسه
-MenuNewUser=کاربر جدید
-MenuTopManager=مدیر منو بالا
-MenuLeftManager=مدیر منوی سمت چپ
-MenuSmartphoneManager=مدیر منو گوشی های هوشمند
-DefaultMenuTopManager=مدیر منو بالا
-DefaultMenuLeftManager=مدیر منوی سمت چپ
 DefaultMenuManager= مدیر منوی استاندارد
 DefaultMenuSmartphoneManager=مدیر منو گوشی های هوشمند
 Skin=تم پوست
@@ -945,7 +895,6 @@ PermanentLeftSearchForm=فرم جستجو دائمی در منوی سمت چپ
 DefaultLanguage=زبان پیش فرض برای استفاده از (زبان)
 EnableMultilangInterface=فعال کردن رابط کاربری چند زبانه
 EnableShowLogo=نمایش لوگو را در منوی سمت چپ
-SystemSuccessfulyUpdated=سیستم شما با موفقیت به روز رسانی شده است
 CompanyInfo=شرکت / اطلاعات پایه
 CompanyIds=هویت شرکت / بنیاد
 CompanyName=نام
@@ -956,23 +905,19 @@ CompanyCountry=کشور
 CompanyCurrency=ارز اصلی
 CompanyObject=Object of the company
 Logo=لوگو
-DoNotShow=را نشان نمی
 DoNotSuggestPaymentMode=آیا نشان نمی
 NoActiveBankAccountDefined=بدون حساب بانکی فعال تعریف
 OwnerOfBankAccount=صاحب حساب بانکی از٪ s
 BankModuleNotActive=ماژول حساب بانکی فعال نیست
 ShowBugTrackLink=Show link "<strong>%s</strong>"
-ShowWorkBoard=نمایش "میز کار" در صفحه اصلی
 Alerts=تصویر، موسیقی
-Delays=تاخیر
-DelayBeforeWarning=تاخیر قبل از هشدار دهنده
-DelaysBeforeWarning=تاخیر قبل از هشدار دهنده
 DelaysOfToleranceBeforeWarning=تاخیر تحمل قبل از هشدار دهنده
 DelaysOfToleranceDesc=این صفحه نمایش به شما اجازه تعریف تاخیر قابل تحمل قبل از یک هشدار بر روی صفحه نمایش با picto٪ برای هر یک از عناصر در اواخر گزارش شده است.
-Delays_MAIN_DELAY_ACTIONS_TODO=تحمل (در روز) تاخیر قبل از آماده باش در مراسم برنامه ریزی شده هنوز متوجه شدم
-Delays_MAIN_DELAY_TASKS_TODO=Delay tolerance (in days) before alert on planned tasks not yet realised
-Delays_MAIN_DELAY_ORDERS_TO_PROCESS=تحمل (در روز) تاخیر قبل از آماده باش در دستور هنوز پردازش نشده
-Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=تحمل (در روز) تاخیر قبل از آماده باش در تامین کنندگان سفارشات هنوز پردازش نشده
+Delays_MAIN_DELAY_ACTIONS_TODO=Delay tolerance (in days) before alert on planned events (agenda events) not completed yet
+Delays_MAIN_DELAY_PROJECT_TO_CLOSE=Delay tolerance (in days) before alert on project not closed in time
+Delays_MAIN_DELAY_TASKS_TODO=Delay tolerance (in days) before alert on planned tasks (project tasks) not completed yet
+Delays_MAIN_DELAY_ORDERS_TO_PROCESS=Delay tolerance (in days) before alert on orders not processed yet
+Delays_MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS=Delay tolerance (in days) before alert on suppliers orders not processed yet
 Delays_MAIN_DELAY_PROPALS_TO_CLOSE=تحمل (در روز) تاخیر قبل از آماده باش در طرح به بستن
 Delays_MAIN_DELAY_PROPALS_TO_BILL=تحمل (در روز) تاخیر قبل از آماده باش در طرح های ثبت شده در صورتحساب ندارد
 Delays_MAIN_DELAY_NOT_ACTIVATED_SERVICES=تاخیر تحمل (در روز) قبل از آماده باش در خدمات را به فعال
@@ -983,24 +928,22 @@ Delays_MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE=تاخیر تحمل (در روز) �
 Delays_MAIN_DELAY_MEMBERS=تاخیر تحمل (در روز) قبل از آماده باش در حق عضویت به تاخیر افتاد
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=تاخیر تحمل (در روز) قبل از آماده باش برای چک سپرده به انجام
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
-SetupDescription1=تمام پارامترهای موجود در منطقه راه اندازی شما اجازه می دهد به راه اندازی Dolibarr قبل از شروع به استفاده از آن.
-SetupDescription2=2 مهم ترین مراحل راه اندازی 2 برای اولین بار از آنهایی که در منوی تنظیمات سمت چپ است، این بدان معنی است صفحه راه اندازی شرکت / پایه و اساس و صفحه تنظیمات ماژول ها:
-SetupDescription3=پارامترها در منوی <a href="%s">تنظیمات -> شرکت / پایه</a> مورد نیاز است، زیرا اطلاعات وارد شده بر روی صفحه نمایش Dolibarr استفاده می شود و برای تغییر رفتار Dolibarr (به عنوان مثال برای ویژگی های مربوط به کشور خود را).
-SetupDescription4=پارامترها در منوی <a href="%s">تنظیمات -> ماژول های</a> مورد نیاز به دلیل Dolibarr است ERP / CRM ثابت اما مبلغ از ماژول های مختلف، همه مستقل بیشتر یا کمتر نیست. تنها پس از فعال کردن ماژول های شما جالب در آن خواهید دید ویژگی های در منوهای ظاهر شده است.
+SetupDescription1=The setup area is for initial setup parameters before starting to use Dolibarr.
+SetupDescription2=The two most important setup steps are the first two in the setup menu on the left: Company/foundation setup page and Modules setup page:
+SetupDescription3=Parameters in menu <a href="%s">Setup -> Company/foundation</a> are required because submitted data are used on Dolibarr displays and to customize the default behaviour of the software (for country-related features for example).
+SetupDescription4=Parameters in menu <a href="%s">Setup -> Modules</a> are required because Dolibarr is not a monolithic ERP/CRM but a collection of several modules, all more or less independent. New features will be added to menus for every module you'll enable.
 SetupDescription5=دیگر نوشته های منو مدیریت پارامتر اختیاری دارد.
-EventsSetup=راه اندازی برای رویدادهای سیاهههای مربوط
 LogEvents=رویدادهای ممیزی امنیت
 Audit=ممیزی
-InfoDolibarr=ساعات Dolibarr
-InfoBrowser=ساعات مرورگر
-InfoOS=ساعات OS
-InfoWebServer=ساعات وب سرور
-InfoDatabase=پایگاه داده ساعات روز
-InfoPHP=ساعات PHP
-InfoPerf=ساعات اجرای
+InfoDolibarr=About Dolibarr
+InfoBrowser=About Browser
+InfoOS=About OS
+InfoWebServer=About Web Server
+InfoDatabase=About Database
+InfoPHP=About PHP
+InfoPerf=About Performances
 BrowserName=نام مرورگر
 BrowserOS=مرورگر OS
-ListEvents=رویدادهای حسابرسی
 ListOfSecurityEvents=فهرست حوادث امنیتی Dolibarr
 SecurityEventsPurged=رویدادهای امنیتی پاکسازی
 LogEventDesc=شما می توانید در اینجا قادر به ورود به سیستم برای رویدادهای امنیتی Dolibarr. <b>حسابرسی -</b> مدیران پس از آن می توانید مطالب خود را از طریق <b>ابزارهای سیستم</b> منو را ببینید. اخطار، این ویژگی می تواند مقدار زیادی از داده ها در پایگاه داده مصرف می کند.
@@ -1010,7 +953,6 @@ SystemAreaForAdminOnly=این منطقه در دسترس است فقط برای 
 CompanyFundationDesc=ویرایش شده در این صفحه تمام اطلاعات شناخته شده از این شرکت و یا پایه شما نیاز به مدیریت (برای این کار، بر روی "اصلاح" را فشار دهید در پایین صفحه کلیک کنید)
 DisplayDesc=شما می توانید هر پارامتر مربوط به نگاه Dolibarr را انتخاب کنید و احساس می کنید در اینجا
 AvailableModules=ماژول های موجود
-DeprecatedModules=Deprecated modules
 ToActivateModule=برای فعال کردن ماژول ها، رفتن در منطقه راه اندازی (صفحه اصلی> راه اندازی-> ماژول).
 SessionTimeOut=وقت برای جلسه
 SessionExplanation=این تضمین تعدادی است که در جلسه پیش از این هرگز این تاخیر منقضی خواهد شد، اگر پاک کن جلسه توسط داخلی PHP پاک کن را وارد نمایید (و هیچ چیز دیگری) انجام می شود. داخلی پاک کننده را وارد نمایید PHP می کند گارانتی نیست که جلسه درست بعد از این تاخیر به پایان می رسد. این منقضی خواهد شد، پس از این تاخیر، و هنگامی که پاک کن را وارد نمایید به این صورت اجرا می شود، بنابراین هر <b>از٪ s /٪ دسترسی</b> است، اما تنها در دسترسی ساخته شده توسط جلسات دیگر. <br> توجه: در برخی از سرویس دهنده با یک مکانیزم خارجی تمیز کردن را وارد نمایید (cron را تحت اوبونتو ...)، جلسات می تواند پس از یک دوره تعریف شده توسط <strong>session.gc_maxlifetime</strong> به طور پیش فرض از بین برده، بدون توجه به آنچه ارزش در اینجا وارد شده است.
@@ -1021,16 +963,14 @@ TriggerDisabledAsModuleDisabled=راه اندازی در این فایل ها غ
 TriggerAlwaysActive=راه اندازی در این فایل همیشه فعال، هر آنچه که می ماژول های Dolibarr فعال می شود.
 TriggerActiveAsModuleActive=محرک در این فایل فعال هستند به عنوان <b>بخش٪ s</b> را فعال کنید.
 GeneratedPasswordDesc=تعریف اینجا که رد می خواهید استفاده کنید برای ایجاد رمز عبور جدید اگر شما بخواهید به تولید خودکار رمز عبور
-DictionaryDesc=تعریف در اینجا تمام دادهها مرجع. شما می توانید مقدار از پیش تعریف شده با شما کامل است.
-ConstDesc=این صفحه به شما اجازه ویرایش تمام پارامترهای دیگر در دسترس نیست در صفحات قبل. آنها پارامتر ها را برای توسعه دهندگان پیشرفته و یا برای troubleshouting رزرو شده هستند.
-OnceSetupFinishedCreateUsers=اخطار، شما یک کاربر مدیر Dolibarr می باشد. کاربران مدیر به راه اندازی Dolibarr استفاده می شود. برای استفاده معمول از Dolibarr، توصیه می شود به استفاده از یک کاربر غیر مدیر ایجاد شده از اعضا و منو گروه.
-MiscellaneousDesc=تعریف در اینجا تمام پارامترهای دیگر مربوط به امنیت.
+DictionaryDesc=Insert all reference data. You can add your values to the default.
+ConstDesc=This page allows you to edit all other parameters not available in previous pages. These are mostly reserved parameters for developers or advanced troubleshooting.
+MiscellaneousDesc=All other security related parameters are defined here.
 LimitsSetup=محدوده / راه اندازی دقیق
 LimitsDesc=شما می توانید محدودیت، دقت و بهینه سازی استفاده شده توسط Dolibarr در اینجا تعریف
 MAIN_MAX_DECIMALS_UNIT=حداکثر اعشار برای قیمت واحد
 MAIN_MAX_DECIMALS_TOT=حداکثر اعشار برای کل قیمت
 MAIN_MAX_DECIMALS_SHOWN=حداکثر اعشار برای قیمت نشان داده شده بر روی صفحه نمایش (اضافه کردن <b>...</b> بعد از این شماره اگر شما می خواهید برای دیدن <b>...</b> وقتی که تعداد ناقص است که بر روی صفحه نمایش نشان داده شده است)
-MAIN_DISABLE_PDF_COMPRESSION=استفاده از PDF فشرده سازی برای فایل های PDF تولید شده است.
 MAIN_ROUNDING_RULE_TOT=Step of rounding range (for countries where rounding is done on something else than base 10. For example, put 0.05 if rounding is done by 0.05 steps)
 UnitPriceOfProduct=قیمت واحد خالص محصول
 TotalPriceAfterRounding=قیمت کل (خالص مالیاتی / مالیات بر ارزش افزوده / نرم) پس از گرد کردن
@@ -1060,7 +1000,6 @@ ShowProfIdInAddress=نمایش شناسه professionnal با آدرس در اس�
 ShowVATIntaInAddress=مخفی کردن مالیات بر ارزش افزوده تعداد داخل با آدرس در اسناد
 TranslationUncomplete=ترجمه جزئی
 SomeTranslationAreUncomplete=بعضی از زبان های ممکن است تا حدی ترجمه شده و یا ممکن است دارای خطا است. اگر شما تشخیص برخی، شما می توانید فایل های زبان از ثبت نام به رفع <a href="http://transifex.com/projects/p/dolibarr/" target="_blank">http://transifex.com/projects/p/dolibarr/</a> .
-MenuUseLayout=را hidable منو عمودی (گزینه جاوا اسکریپت باید غیر فعال نمی شود)
 MAIN_DISABLE_METEO=غیر فعال کردن دیدگاه هواشناسی
 TestLoginToAPI=ورود به سیستم تست به API
 ProxyDesc=برخی از ویژگی های Dolibarr نیاز به دسترسی به اینترنت به کار می کنند. تعریف در اینجا پارامتر ها را برای این. اگر سرور Dolibarr است در پشت یک پروکسی سرور، این پارامترها Dolibarr می گوید که چگونه برای دسترسی به اینترنت از طریق آن.
@@ -1079,23 +1018,20 @@ ExtraFieldsThirdParties=ویژگی های مکمل (thirdparty)
 ExtraFieldsContacts=ویژگی های مکمل (تماس / آدرس)
 ExtraFieldsMember=ویژگی های مکمل (عضو)
 ExtraFieldsMemberType=ویژگی های مکمل (نوع عضو)
-ExtraFieldsCustomerOrders=ویژگی های مکمل (سفارشات)
 ExtraFieldsCustomerInvoices=ویژگی های مکمل (فاکتورها)
 ExtraFieldsSupplierOrders=ویژگی های مکمل (سفارشات)
 ExtraFieldsSupplierInvoices=ویژگی های مکمل (فاکتورها)
 ExtraFieldsProject=ویژگی های مکمل (پروژه ها)
 ExtraFieldsProjectTask=ویژگی های مکمل (وظایف)
 ExtraFieldHasWrongValue=ویژگی٪ دارای ارزش اشتباه است.
-AlphaNumOnlyCharsAndNoSpace=فقط alphanumericals بی فضا
 AlphaNumOnlyLowerCharsAndNoSpace=فقط alphanumericals و شخصیت های حروف کوچک و بدون فضا
-SendingMailSetup=راه اندازی sendings توسط ایمیل
 SendmailOptionNotComplete=اخطار، در برخی از سیستم های لینوکس، برای ارسال ایمیل از ایمیل شما، از sendmail باید راه اندازی حکم اعدام گزینه-BA (mail.force_extra_parameters پارامتر به یک فایل php.ini خود را). اگر برخی از دریافت کنندگان هرگز ایمیل های دریافت، سعی کنید به ویرایش این پارامتر PHP با mail.force_extra_parameters =-BA).
 PathToDocuments=مسیر اسناد
 PathDirectory=دایرکتوری
 SendmailOptionMayHurtBuggedMTA=Feature to send mails using method "PHP mail direct" will generate a mail message that might be not correctly parsed by some receiving mail servers. Result is that some mails can't be read by people hosted by those bugged platforms. It's case for some Internet providers (Ex: Orange in France). This is not a problem into Dolibarr nor into PHP but onto receiving mail server. You can however add option MAIN_FIX_FOR_BUGGED_MTA to 1 into setup - other to modify Dolibarr to avoid this. However, you may experience problem with other servers that respect strictly the SMTP standard. The other solution (recommended) is to use the method "SMTP socket library" that has no disadvantages.
 TranslationSetup=پیکربندی د لا traduction
-TranslationDesc=انتخاب زبان بر روی صفحه نمایش قابل مشاهده است می تواند اصلاح شود: <br> * در سطح جهانی را از منوی <strong>صفحه اصلی - راه اندازی - نمایش</strong> <br> * برای کاربر تنها از تب <strong>صفحه نمایش کاربر</strong> از کارت کاربر (در ورود در بالای صفحه کلیک کنید).
-TranslationOverwriteDesc=You can also overwrite some value by completing/editing the following table. You must use for "%s" the language code, for "%s" the key found into file langs/xx_XX/somefile.lang and "%s" the new value you want to use as new translation.
+TranslationDesc=How to set displayed application language<br>* Systemwide: menu <strong>Home - Setup - Display</strong><br>* Per user: <strong>User display setup</strong> tab of user card (click on username at the top of the screen).
+TranslationOverwriteDesc=You can also override strings filling the following table. Choose your language from "%s" dropdown, insert the key string found in the lang file (langs/xx_XX/somefile.lang) into "%s" and your new translation into "%s".
 TotalNumberOfActivatedModules=Total number of activated feature modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=شما باید حداقل قادر می سازد 1 ماژول
 ClassNotFoundIntoPathWarning=کلاس٪ s ​​را به مسیر PHP یافت نشد
@@ -1113,10 +1049,10 @@ BrowserIsKO=شما با استفاده از مرورگر وب از٪ s. این �
 XDebugInstalled=XDebug بارگذاری شده است.
 XCacheInstalled=XCache بارگذاری شده است.
 AddRefInList=Display customer/supplier ref into list (select list or combobox) and most of hyperlink. Third parties will appears with name "CC12345 - SC45678 - The big company coorp", instead of "The big company coorp".
+AskForPreferredShippingMethod=Ask for preferred Sending Method for Third Parties.
 FieldEdition=نسخه فیلد٪ s
 FillThisOnlyIfRequired=به عنوان مثال: +2 (را پر کنید فقط اگر منطقه زمانی جبران مشکلات با تجربه هستند)
 GetBarCode=دریافت بارکد
-EmptyNumRefModelDesc=کد آزاد است. این کد را می توان در هر زمان تغییر یافتهاست.
 ##### Module password generation
 PasswordGenerationStandard=بازگشت یک کلمه عبور تولید شده با توجه به الگوریتم Dolibarr داخلی: 8 کاراکتر شامل اعداد مشترک و شخصیت در حروف کوچک.
 PasswordGenerationNone=Do not suggest any generated password. Password must be typed in manually.
@@ -1124,11 +1060,7 @@ PasswordGenerationPerso=Return a password according to your personally defined c
 SetupPerso=According to your configuration
 PasswordPatternDesc=Password pattern description
 ##### Users setup #####
-UserGroupSetup=کاربران و گروه های راه اندازی ماژول
-GeneratePassword=پیشنهاد یک رمز عبور ایجاد شده
 RuleForGeneratedPasswords=حکومت برای تولید کلمه عبور پیشنهادی و یا اعتبار کلمه عبور
-DoNotSuggest=آیا هر گونه رمز عبور نشان می دهد نیست
-EncryptedPasswordInDatabase=اجازه می دهد تا رمزنگاری کلمات عبور در پایگاه داده
 DisableForgetPasswordLinkOnLogonPage=آیا لینک را نشان نمی دهد "فراموش کردن رمز عبور» در صفحه ورود
 UsersSetup=راه اندازی ماژول کاربران
 UserMailRequired=ایمیل مورد نیاز برای ایجاد یک کاربر جدید
@@ -1138,11 +1070,10 @@ HRMSetup=HRM module setup
 CompanySetup=راه اندازی ماژول شرکت
 CompanyCodeChecker=ماژول برای نسل اشخاص ثالث کد و چک کردن (مشتری یا عرضه کننده کالا)
 AccountCodeManager=ماژول برای تولید کد حسابداری (مشتری یا عرضه کننده کالا)
-ModuleCompanyCodeAquarium=بازگشت یک کد حسابداری ساخته شده توسط: <br> ٪ s را به دنبال شخص ثالث کد منبع برای کد منبع حسابداری، <br> ٪ s را پس از کد مشتری شخص ثالث برای یک کد حسابداری مشتری می باشد.
-ModuleCompanyCodePanicum=بازگشت یک کد حسابداری خالی است.
-ModuleCompanyCodeDigitaria=کد حسابداری بستگی به کد های شخص ثالث. کد از شخصیت "C" در مقام اول و پس از آن 5 حرف اول کد های شخص ثالث تشکیل شده است.
-UseNotifications=استفاده از اطلاعیه
-NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:<br>* per third parties contacts (customers or suppliers), one contact at time.<br>* or by setting global target email addresses in module setup page.
+NotificationsDesc=EMails notifications feature allows you to silently send automatic mail, for some Dolibarr events. Targets of notifications can be defined:
+NotificationsDescUser=* per users, one user at time.
+NotificationsDescContact=* per third parties contacts (customers or suppliers), one contact at time.
+NotificationsDescGlobal=* or by setting global target emails in module setup page.
 ModelModules=اسناد قالب
 DocumentModelOdt=تولید اسناد از OpenDocuments قالب (. ODT و یا فایل های ODS برای آفیس اپن سورس کنند، KOffice، TextEdit، ...)
 WatermarkOnDraft=تعیین میزان مد آب در پیش نویس سند
@@ -1153,59 +1084,26 @@ MustBeMandatory=اجباری برای ایجاد اشخاص ثالث؟
 MustBeInvoiceMandatory=اجباری به اعتبار فاکتورها؟
 Miscellaneous=متفرقه
 ##### Webcal setup #####
-WebCalSetup=راه اندازی لینک Webcalendar
-WebCalSyncro=اضافه کردن رویداد Dolibarr به WebCalendar
-WebCalAllways=همیشه، بدون درخواست
-WebCalYesByDefault=در خواست (بله به طور پیش فرض)
-WebCalNoByDefault=در خواست (بدون پیش فرض)
-WebCalNever=هرگز
-WebCalURL=URL برای دسترسی تقویم
-WebCalServer=سرور میزبانی وب پایگاه داده تقویم
-WebCalDatabaseName=نام پایگاه داده
-WebCalUser=کاربر برای دسترسی به پایگاه داده
-WebCalSetupSaved=راه اندازی Webcalendar با موفقیت ذخیره شد.
-WebCalTestOk=اتصال به سرور '٪ s' را در پایگاه داده '٪ s' را با کاربر '٪ s' موفقیت آمیز.
-WebCalTestKo1=اتصال به کارگزار «٪ s 'موفق اما پایگاه داده'٪ s 'را نمی تواند رسید.
-WebCalTestKo2=اتصال به کارگزار «٪ s 'با کاربر'٪ s 'شکست خورده است.
-WebCalErrorConnectOkButWrongDatabase=اتصال موفق پایگاه داده اما به نظر نمی آید به یک پایگاه داده Webcalendar.
-WebCalAddEventOnCreateActions=اضافه کردن رویداد تقویم در اقدامات ایجاد
-WebCalAddEventOnCreateCompany=اضافه کردن رویداد تقویم در شرکت ایجاد
-WebCalAddEventOnStatusPropal=اضافه کردن رویداد تقویم در تغییر وضعیت طرح های تجاری
-WebCalAddEventOnStatusContract=اضافه کردن رویداد تقویم در تغییر وضعیت قرارداد
-WebCalAddEventOnStatusBill=اضافه کردن رویداد تقویم در تغییر وضعیت صورت حساب
-WebCalAddEventOnStatusMember=اضافه کردن رویداد تقویم در تغییر وضعیت کاربران
 WebCalUrlForVCalExport=لینک صادرات به <b>فرمت٪ s</b> در لینک زیر موجود است:٪ s
-WebCalCheckWebcalSetup=شاید راه اندازی ماژول Webcal صحیح نمی باشد.
 ##### Invoices #####
 BillsSetup=راه اندازی ماژول فاکتورها
-BillsDate=تاریخ فاکتورها
 BillsNumberingModule=فاکتورها و یادداشت های اعتباری مدل شماره
 BillsPDFModules=اسناد فاکتور مدل
-CreditNoteSetup=راه اندازی ماژول توجه داشته باشید اعتباری
-CreditNotePDFModules=مدل های سند توجه داشته باشید اعتباری
 CreditNote=توجه داشته باشید اعتباری
 CreditNotes=یادداشت های اعتباری
 ForceInvoiceDate=تاریخ فاکتور نیروی به تاریخ اعتبار
-AllowCreditNoteWithoutRelatedInvoice=Allow to create credit note without a related invoice
-DisableRepeatable=غیر فعال کردن فاکتورها تکرار
 SuggestedPaymentModesIfNotDefinedInInvoice=حالت پرداخت های پیشنهادی در صورت حساب به طور پیش فرض اگر برای فاکتور تعریف نشده
-EnableEditDeleteValidInvoice=فعال کردن امکان ویرایش / حذف فاکتور معتبر بدون پرداخت
 SuggestPaymentByRIBOnAccount=پیشنهاد پرداخت برداشت در حساب
 SuggestPaymentByChequeToAddress=پیشنهاد پرداخت با چک به
 FreeLegalTextOnInvoices=متن رایگان در صورت حساب
 WatermarkOnDraftInvoices=تعیین میزان مد آب در پیش نویس فاکتورها (هیچ اگر خالی)
 PaymentsNumberingModule=Payments numbering model
+SuppliersPayment=Suppliers payments
+SupplierPaymentSetup=Suppliers payments setup
 ##### Proposals #####
 PropalSetup=راه اندازی ماژول طرح های تجاری
-CreateForm=ایجاد اشکال
-NumberOfProductLines=تعدادی از خطوط تولید
 ProposalsNumberingModules=مدل شماره طرح تجاری
 ProposalsPDFModules=تجاری و مدل های اسناد پیشنهاد
-ClassifiedInvoiced=صورتحساب طبقه بندی شده
-HideTreadedPropal=مخفی کردن طرح تجاری تحت درمان در لیست
-AddShippingDateAbility=توانایی اضافه کردن تاریخ حمل و نقل
-AddDeliveryAddressAbility=توانایی اضافه کردن تاریخ تحویل
-UseOptionLineIfNoQuantity=یک خط از محصول / خدمات با مقدار صفر به عنوان یک گزینه در نظر گرفته
 FreeLegalTextOnProposal=متن رایگان در طرح های تجاری
 WatermarkOnDraftProposal=تعیین میزان مد آب در پیش نویس طرح تجاری (هیچ اگر خالی)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Ask for bank account destination of proposal
@@ -1221,8 +1119,6 @@ WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Ask for Warehouse Source for order
 OrdersSetup=راه اندازی مدیریت سفارش
 OrdersNumberingModules=سفارشات شماره مدل
 OrdersModelModule=اسناد منظور مدل
-HideTreadedOrders=مخفی کردن سفارشات درمان و یا لغو در فهرست
-ValidOrderAfterPropalClosed=به اعتبار منظور پس از پیشنهاد نزدیک تر است، امکان به گام نیست به دستور موقت
 FreeLegalTextOnOrders=متن رایگان در سفارشات
 WatermarkOnDraftOrders=تعیین میزان مد آب به دستور پیش نویس (هیچ اگر خالی)
 ShippableOrderIconInList=Add an icon in Orders list which indicate if order is shippable
@@ -1231,7 +1127,6 @@ BANK_ASK_PAYMENT_BANK_DURING_ORDER=Ask for bank account destination of order
 ClickToDialSetup=کلیک کنید تا شماره گیری راه اندازی ماژول
 ClickToDialUrlDesc=آدرس نامیده می شود که با کلیک بر روی picto تلفن انجام می شود. در URL، شما می توانید برچسب ها <br> <b>__PHONETO__</b> خواهد شد که با شماره تلفن از فرد جایگزین را به تماس <br> <b>__PHONEFROM__</b> خواهد شد که با شماره تلفن تماس شخص (شما) به جای <br> <b>__LOGIN__</b> خواهد شد که با ورود clicktodial خود را جایگزین (تعریف شده در کارت کاربر شما) <br> <b>__PASS__</b> خواهد شد که با رمز عبور clicktodial شما (تعریف شده در کارت کاربر خود را) جایگزین شده است.
 ##### Bookmark4u #####
-Bookmark4uSetup=راه اندازی ماژول Bookmark4u
 ##### Interventions #####
 InterventionsSetup=راه اندازی ماژول مداخلات
 FreeLegalTextOnInterventions=متن رایگان در اسناد مداخله
@@ -1244,11 +1139,9 @@ ContractsNumberingModules=قرارداد شماره ماژول ها
 TemplatePDFContracts=اسناد قرارداد مدل
 FreeLegalTextOnContracts=متن رایگان در قرارداد
 WatermarkOnDraftContractCards=تعیین میزان مد آب در پیش نویس قرارداد (هیچ اگر خالی)
-ContractsAndServices=List of contracts and services
 ##### Members #####
 MembersSetup=راه اندازی ماژول کاربران
 MemberMainOptions=گزینه های اصلی
-AddSubscriptionIntoAccount=پیشنهاد به طور پیش فرض برای ایجاد یک تراکنش های بانکی، در ماژول بانک، که با اضافه کردن یک اشتراک غیر انتفایی جدید
 AdherentLoginRequired= مدیریت ورود برای هر عضو
 AdherentMailRequired=ایمیل مورد نیاز برای ایجاد یک عضو جدید
 MemberSendInformationByMailByDefault=جعبه برای ارسال از تایید پست الکترونیکی به کاربران (اعتبار سنجی و یا اشتراک جدید) است به صورت پیش فرض
@@ -1268,7 +1161,6 @@ LDAPSynchronizeUsers=سازمان از کاربران در LDAP
 LDAPSynchronizeGroups=سازمان از گروه های در LDAP
 LDAPSynchronizeContacts=سازمان از اطلاعات تماس در LDAP
 LDAPSynchronizeMembers=سازمان از اعضای بنیاد در LDAP
-LDAPTypeExample=OpenLdap، گروه افزار یا دایرکتوری فعال
 LDAPPrimaryServer=سرور اولیه
 LDAPSecondaryServer=سرور دوم
 LDAPServerPort=پورت سرور
@@ -1286,11 +1178,9 @@ LDAPGroupDn=DN گروه ها
 LDAPGroupDnExample=کامل DN (سابق: OU = گروه، DC = عنوان مثال، DC = کام)
 LDAPServerExample=آدرس سرور (سابق: localhost را، 192.168.0.2، ldaps :/ / ldap.example.com /)
 LDAPServerDnExample=کامل DN (سابق: DC = عنوان مثال، DC = کام)
-LDAPPasswordExample=رمز عبور مدیریت
 LDAPDnSynchroActive=کاربران و گروه های هماهنگ سازی
 LDAPDnSynchroActiveExample=LDAP به Dolibarr یا Dolibarr به هماهنگ سازی LDAP
 LDAPDnContactActive=هماهنگ سازی اطلاعات تماس '
-LDAPDnContactActiveYes=هماهنگ سازی فعال
 LDAPDnContactActiveExample=فعال / هماهنگ سازی Unactivated
 LDAPDnMemberActive=هماهنگ سازی کاربران '
 LDAPDnMemberActiveExample=فعال / هماهنگ سازی Unactivated
@@ -1306,8 +1196,6 @@ LDAPGroupObjectClassList=فهرست objectClass
 LDAPGroupObjectClassListExample=فهرست objectClass رکورد تعریف ویژگی (سابق: بالا، groupOfUniqueNames)
 LDAPContactObjectClassList=فهرست objectClass
 LDAPContactObjectClassListExample=فهرست objectClass رکورد تعریف ویژگی (سابق: بالا، inetOrgPerson و یا بالا، کاربر برای دایرکتوری فعال)
-LDAPMemberTypeDn=Dolibarr عضو نوع DN
-LDAPMemberTypeDnExample=کامل DN (سابق: OU = type_members، DC = عنوان مثال، DC = کام)
 LDAPTestConnect=اتصال LDAP تست
 LDAPTestSynchroContact=تماس با ما آزمون هماهنگ سازی
 LDAPTestSynchroUser=هماهنگ سازی کاربر تست
@@ -1321,10 +1209,6 @@ LDAPTCPConnectOK=TCP اتصال به سرور LDAP موفق (سرور =٪ S، ب
 LDAPTCPConnectKO=TCP اتصال به سرور LDAP شکست خورده (سرور =٪ S، بندر =٪ بازدید کنندگان)
 LDAPBindOK=به سرور LDAP اتصال / Authentificate موفق (سرور =٪ S، بندر =٪ S، مدیر =٪ ثانیه، رمز عبور =٪ بازدید کنندگان)
 LDAPBindKO=به سرور LDAP اتصال / Authentificate شکست خورده (سرور =٪ S، بندر =٪ S، مدیر =٪ ثانیه، رمز عبور =٪ بازدید کنندگان)
-LDAPUnbindSuccessfull=قطع ارتباط موفق
-LDAPUnbindFailed=قطع شکست خورده
-LDAPConnectToDNSuccessfull=اتصال به DN (٪ بازدید کنندگان) موفق
-LDAPConnectToDNFailed=اتصال به DN (از٪ s) شکست خورد
 LDAPSetupForVersion3=سرور LDAP پیکربندی از نسخه 3
 LDAPSetupForVersion2=سرور LDAP پیکربندی شده برای نسخه 2
 LDAPDolibarrMapping=نقشه برداری Dolibarr
@@ -1337,11 +1221,9 @@ LDAPFieldLoginSamba=ورود (سامبا، با Active Directory)
 LDAPFieldLoginSambaExample=به عنوان مثال: samaccountname
 LDAPFieldFullname=نام و نام خانوادگی
 LDAPFieldFullnameExample=به عنوان مثال: را انتخاب نمایید:
-LDAPFieldPassword=رمز عبور
 LDAPFieldPasswordNotCrypted=رمز عبور crypted نمی
 LDAPFieldPasswordCrypted=رمز عبور crypted
 LDAPFieldPasswordExample=به عنوان مثال: userPassword
-LDAPFieldCommonName=نام مشترک
 LDAPFieldCommonNameExample=به عنوان مثال: را انتخاب نمایید:
 LDAPFieldName=نام
 LDAPFieldNameExample=به عنوان مثال: SN
@@ -1364,7 +1246,6 @@ LDAPFieldZipExample=به عنوان مثال: کدپستی
 LDAPFieldTown=شهر
 LDAPFieldTownExample=به عنوان مثال: L
 LDAPFieldCountry=کشور
-LDAPFieldCountryExample=به عنوان مثال: ج
 LDAPFieldDescription=توصیف
 LDAPFieldDescriptionExample=به عنوان مثال: توضیحات
 LDAPFieldNotePublic=Public Note
@@ -1372,7 +1253,6 @@ LDAPFieldNotePublicExample=Example : publicnote
 LDAPFieldGroupMembers= اعضای گروه
 LDAPFieldGroupMembersExample= به عنوان مثال: uniqueMember
 LDAPFieldBirthdate=تاریخ تولد
-LDAPFieldBirthdateExample=به عنوان مثال:
 LDAPFieldCompany=شرکت
 LDAPFieldCompanyExample=به عنوان مثال: O
 LDAPFieldSid=SID
@@ -1380,7 +1260,6 @@ LDAPFieldSidExample=به عنوان مثال: objectsid
 LDAPFieldEndLastSubscription=تاریخ پایان اشتراک
 LDAPFieldTitle=ارسال / تابع
 LDAPFieldTitleExample=به عنوان مثال: عنوان
-LDAPParametersAreStillHardCoded=پارامترهای LDAP هنوز هم HARDCODED (در کلاس در تماس)
 LDAPSetupNotComplete=راه اندازی LDAP کامل نیست (به به دیگران زبانه)
 LDAPNoUserOrPasswordProvidedAccessIsReadOnly=هیچ مدیر یا کلمه عبور ارائه شده است. دسترسی LDAP ناشناس و در حالت فقط خواندنی خواهد بود.
 LDAPDescContact=این صفحه به شما اجازه تعریف LDAP ویژگی نام در درخت LDAP برای هر یک از داده ها بر روی تماس های Dolibarr.
@@ -1412,15 +1291,11 @@ ProductSetup=راه اندازی ماژول محصولات
 ServiceSetup=راه اندازی خدمات ماژول
 ProductServiceSetup=راه اندازی محصولات و خدمات ماژول ها
 NumberOfProductShowInSelect=تعداد حداکثر از محصولات در combos را از لیست انتخاب کنید (0 = بدون محدودیت)
-ConfirmDeleteProductLineAbility=تأییدیه زمانی که از بین بردن خطوط تولید در اشکال
-ModifyProductDescAbility=شخصی از توصیف محصول در اشکال
 ViewProductDescInFormAbility=تجسم از توصیف محصول در اشکال (در غیر این صورت به عنوان دوست پنجره)
 MergePropalProductCard=Activate in product/service Attached Files tab an option to merge product PDF document to proposal PDF azur if product/service is in the proposal
 ViewProductDescInThirdpartyLanguageAbility=تجسم از محصولات توصیف در زبان thirdparty
-UseMaskOnClone=Use product next ref when we clone a product%s (available if mask configured)
 UseSearchToSelectProductTooltip=همچنین اگر شما تعداد زیادی از محصول (> 100 000)، شما می توانید سرعت با تنظیم PRODUCT_DONOTSEARCH_ANYWHERE ثابت به 1 در راه اندازی-> دیگر افزایش دهد. جست و جو خواهد شد و سپس محدود به شروع از رشته است.
 UseSearchToSelectProduct=استفاده از یک فرم جستجو برای انتخاب یک محصول (و نه از لیست کشویی).
-UseEcoTaxeAbility=پشتیبانی سازگار با محیط زیست Taxe (WEEE)
 SetDefaultBarcodeTypeProducts=فرض نوع بارکد استفاده برای محصولات
 SetDefaultBarcodeTypeThirdParties=فرض نوع بارکد استفاده برای اشخاص ثالث
 UseUnits=Define a unit of measure for Quantity during order, proposal or invoice lines edition
@@ -1430,10 +1305,8 @@ IsNotADir=is not a directory!
 ##### Syslog #####
 SyslogSetup=راه اندازی ماژول گزارش ها
 SyslogOutput=گزارش خروجی
-SyslogSyslog=Syslog
 SyslogFacility=امکان
 SyslogLevel=سطح
-SyslogSimpleFile=پرونده
 SyslogFilename=نام فایل و مسیر
 YouCanUseDOL_DATA_ROOT=شما می توانید DOL_DATA_ROOT / dolibarr.log برای یک فایل در "اسناد" Dolibarr دایرکتوری استفاده کنید. شما می توانید راه های مختلفی را برای ذخیره این فایل را.
 ErrorUnknownSyslogConstant=٪ ثابت است ثابت های Syslog شناخته نشده است
@@ -1447,7 +1320,6 @@ DonationsReceiptModel=الگو از دریافت کمک مالی
 BarcodeSetup=راه اندازی بارکد
 PaperFormatModule=ماژول فرمت چاپ
 BarcodeEncodeModule=نوع پشتیبانی می کند بارکد
-UseBarcodeInProductModule=استفاده از بارکد برای محصولات
 CodeBarGenerator=ژنراتور بارکد
 ChooseABarCode=هیچ ژنراتور تعریف
 FormatNotSupportedByGenerator=نوع های این ژنراتور پشتیبانی نمی شود
@@ -1477,7 +1349,6 @@ MailingDelay=Seconds to wait after sending next message
 ##### Notification #####
 NotificationSetup=EMail notification module setup
 NotificationEMailFrom=پست الکترونیکی فرستنده (از) برای ایمیل های ارسال شده اطلاعیه
-ListOfAvailableNotifications=List of events you can set notification on, for each thirdparty (go into thirdparty card to setup) or by setting a fixed email (List depends on activated modules)
 FixedEmailTarget=Fixed email target
 ##### Sendings #####
 SendingsSetup=در حال ارسال راه اندازی ماژول
@@ -1499,7 +1370,7 @@ FCKeditorForProduct=ایجاد WYSIWIG / نسخه از محصولات / خدما
 FCKeditorForProductDetails=WYSIWIG creation/edition of products details lines for all entities (proposals, orders, invoices, etc...). <font class="warning">Warning: Using this option for this case is seriously not recommended as it can create problems with special characters and page formating when building PDF files.</font>
 FCKeditorForMailing= ایجاد WYSIWIG / نسخه برای eMailings جرم (ابزار> ایمیل)
 FCKeditorForUserSignature=ایجاد WYSIWIG / نسخه از امضای کاربر
-FCKeditorForMail=ایجاد WYSIWIG / نسخه برای تمام نامه (به جز Outils-> ایمیل)
+FCKeditorForMail=WYSIWIG creation/edition for all mail (except Tools->eMailing)
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=اتصال موفق پایگاه داده اما به نظر نمی آید که یک پایگاه داده آهنگ تولد (٪ بازدید کنندگان کلیدی در جدول٪ s را یافت نشد).
 OSCommerceTestOk=اتصال به سرور '٪ s' را در پایگاه داده '٪ s' را با کاربر '٪ s' موفق.
@@ -1507,15 +1378,13 @@ OSCommerceTestKo1=اتصال به کارگزار «٪ s 'موفق اما پای�
 OSCommerceTestKo2=اتصال به کارگزار «٪ s 'با کاربر'٪ s 'شکست خورده است.
 ##### Stock #####
 StockSetup=Warehouse module setup
-UserWarehouse=Use user personal warehouses
 IfYouUsePointOfSaleCheckModule=If you use a Point of Sale module (POS module provided by default or another external module), this setup may be ignored by your Point Of Sale module. Most point of sales modules are designed to create immediatly an invoice and decrease stock by default whatever are options here. So, if you need or not to have a stock decrease when registering a sell from your Point Of Sale, check also your POS module set up.
 ##### Menu #####
 MenuDeleted=منوی حذف
-TreeMenu=منوها درخت
 Menus=منوها
 TreeMenuPersonalized=منوهای شخصی
+NotTopTreeMenuPersonalized=Personalized menus not linked to a top menu entry
 NewMenu=منو های جدید
-MenuConf=راه اندازی منوها
 Menu=انتخاب از منو
 MenuHandler=منوی کنترل
 MenuModule=ماژول منبع
@@ -1525,9 +1394,7 @@ DetailMenuHandler=که در آن منو کنترل برای نشان دادن م
 DetailMenuModule=نام ماژول در صورت ورود به منو از یک ماژول است
 DetailType=نوع منو (بالا و یا سمت چپ)
 DetailTitre=منوی برچسب و یا کد برچسب برای ترجمه
-DetailMainmenu=گروه که به آن تعلق داشت (منسوخ شده)
 DetailUrl=URL که منو شما ارسال (لینک URL مطلق و یا لینک های خارجی با http://)
-DetailLeftmenu=شرایط نمایش یا نه (منسوخ شده)
 DetailEnabled=شرایط برای نشان دادن و یا ورود نمی
 DetailRight=وضعیت برای نمایش منوها خاکستری غیر مجاز
 DetailLangs=نام فایل زبان برای ترجمه کد برچسب
@@ -1596,10 +1463,8 @@ EndPointIs=مشتریان SOAP باید درخواست خود را به نقطه
 ##### API ####
 ApiSetup=API module setup
 ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscellaneous web services.
-KeyForApiAccess=Key to use API (parameter "api_key")
 ApiProductionMode=Enable production mode (this will activate use of a caches for services management)
-ApiEndPointIs=You can access to the API at url
-ApiExporerIs=You can explore the API at url
+ApiExporerIs=You can explore the APIs at url
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
 ApiKey=Key for API
 ##### Bank #####
@@ -1610,6 +1475,8 @@ BankOrderGlobal=عمومی
 BankOrderGlobalDesc=ترتیب نمایش عمومی
 BankOrderES=اسپانیایی
 BankOrderESDesc=ترتیب نمایش اسپانیایی
+ChequeReceiptsNumberingModule=Cheque Receipts Numbering module
+
 ##### Multicompany #####
 MultiCompanySetup=چند شرکت نصب ماژول
 ##### Suppliers #####
@@ -1633,20 +1500,15 @@ TasksNumberingModules=ماژول وظایف شماره
 TaskModelModule=گزارش کارهای سند مدل
 UseSearchToSelectProject=Use autocompletion fields to choose project (instead of using a list box)
 ##### ECM (GED) #####
-ECMSetup = راه اندازی GED
-ECMAutoTree = Show also the automatic tree folder and document
 ##### Fiscal Year #####
 FiscalYears=سال مالی
-FiscalYear=سال مالی
 FiscalYearCard=کارت سال مالی
 NewFiscalYear=سال مالی جدید
-EditFiscalYear=ویرایش سال مالی
 OpenFiscalYear=سال مالی گسترش
 CloseFiscalYear=بستن سال مالی
 DeleteFiscalYear=حذف سال مالی
 ConfirmDeleteFiscalYear=آیا مطمئن هستید این سال مالی را حذف کنید؟
 AlwaysEditable=Can always be edited
-IsHidden=Is not visible
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimum number of uppercase characters
 NbNumMin=Minimum number of numeric characters
@@ -1660,11 +1522,12 @@ TypePaymentDesc=0:Customer payment type, 1:Supplier payment type, 2:Both custome
 IncludePath=Include path (defined into variable %s)
 ExpenseReportsSetup=Setup of module Expense Reports
 TemplatePDFExpenseReports=Document templates to generate expense report document
-NoModueToManageStockDecrease=No module able to manage automatic stock decrease has been activated. Stock decrease will be done on manual input only.
 NoModueToManageStockIncrease=No module able to manage automatic stock increase has been activated. Stock increase will be done on manual input only.
 YouMayFindNotificationsFeaturesIntoModuleNotification=You may find options for EMail notifications by enabling and configuring the module "Notification".
-ListOfNotificationsPerContact=List of notifications per contact*
+ListOfNotificationsPerUser=List of notifications per user*
+ListOfNotificationsPerUserOrContact=List of notifications per user* or per contact**
 ListOfFixedNotifications=List of fixed notifications
+GoOntoUserCardToAddMore=Go on the tab "Notifications" of a user to add or remove notifications for users
 GoOntoContactCardToAddMore=Go on the tab "Notifications" of a thirdparty contact to add or remove notifications for contacts/addresses
 Threshold=Threshold
 BackupDumpWizard=Wizard to build database backup dump file
@@ -1719,3 +1582,23 @@ MultiPriceRuleDesc=When option "Several level of prices per product/service" is 
 ModelModulesProduct=Templates for product documents
 ToGenerateCodeDefineAutomaticRuleFirst=To be able to generate automatically codes, you must first define a manager to auto define barcode number.
 SeeSubstitutionVars=See * note for list of possible substitution variables
+AllPublishers=All publishers
+UnknownPublishers=Unknown publishers
+AddRemoveTabs=Add or remove tabs
+AddDictionaries=Add dictionaries
+AddBoxes=Add widgets
+AddSheduledJobs=Add scheduled jobs
+AddHooks=Add hooks
+AddTriggers=Add triggers
+AddMenus=Add menus
+AddPermissions=Add permissions
+AddExportProfiles=Add export profiles
+AddImportProfiles=Add import profiles
+AddOtherPagesOrServices=Add other pages or services
+AddModels=Add document or numbering templates
+AddSubstitutions=Add keys substitutions
+DetectionNotPossible=Detection not possible
+UrlToGetKeyToUseAPIs=Url to get token to use API (once token has been received it is saved on database user table and will be checked on each future access)
+ListOfAvailableAPIs=List of available APIs
+activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is missing, so module "%1$s" may not work correclty. Please install module "%2$s" or disable module "%1$s" if you want to be safe from any surprise
+CommandIsNotInsideAllowedCommands=The command you try to run is not inside list of allowed commands defined into parameter <strong>$dolibarr_main_restrict_os_commands</strong> into <strong>conf.php</strong> file.

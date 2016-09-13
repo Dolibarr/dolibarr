@@ -4,7 +4,6 @@ EMailSupport=پشتیبانی ایمیل
 RemoteControlSupport=زمان واقعی آنلاین / پشتیبانی از راه دور
 OtherSupport=پشتیبانی دیگر
 ToSeeListOfAvailableRessources=برای تماس / نگاه کنید به منابع در دسترس:
-ClickHere=اینجا را کلیک کنید
 HelpCenter=مرکز راهنما
 DolibarrHelpCenter=کمک Dolibarr و پشتیبانی مرکز
 ToGoBackToDolibarr=در غیر این صورت، با کلیک <a href="%s">در اینجا به استفاده از Dolibarr</a>
@@ -21,8 +20,7 @@ ToGetHelpGoOnSparkAngels1=برخی از شرکت ها می توانند پشتی
 ToGetHelpGoOnSparkAngels3=شما همچنین می توانید به لیستی از تمام مربیان برای Dolibarr بروید، برای این کار با کلیک بر روی دکمه
 ToGetHelpGoOnSparkAngels2=گاهی اوقات، هیچ شرکت های موجود در حال حاضر شما می توانید جستجوی خود را وجود دارد، بنابراین فکر می کنم برای تغییر فیلتر برای "همه در دسترس بودن" است. شما قادر به ارسال درخواست بیشتر خواهد شد.
 BackToHelpCenter=در غیر این صورت، در اینجا کلیک کنید برای رفتن <a href="%s">به عقب برای کمک به صفحه اصلی مرکز</a> .
-LinkToGoldMember=شما می توانید یکی از مربی های Dolibarr برای زبان خود را (از%s) با کلیک کردن ویجت خود (وضعیت و حداکثر قیمت ها به طور خودکار به روز رسانی) از پیش انتخاب شده تماس بگیرید:
+LinkToGoldMember=شما می توانید یکی از مربی های Dolibarr برای زبان خود را (از٪ s) با کلیک کردن ویجت خود (وضعیت و حداکثر قیمت ها به طور خودکار به روز رسانی) از پیش انتخاب شده تماس بگیرید:
 PossibleLanguages=زبانهای پشتیبانی شده
-MakeADonation=کمک به پروژه Dolibarr، کمک مالی
 SubscribeToFoundation=کمک به پروژه Dolibarr، مشترک به پایه و اساس
-SeeOfficalSupport=برای حمایت Dolibarr رسمی در زبان شما: <br> <a href="%s" target="_blank"><b>از%s</b></a>
+SeeOfficalSupport=برای حمایت Dolibarr رسمی در زبان شما: <br> <a href="%s" target="_blank"><b>از٪ s</b></a>

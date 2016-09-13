@@ -178,9 +178,12 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     			if ($numrows == 0) dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1",'chaine',0,'',$conf->entity);
 		    }            
             
+		    // Create user used to create the admin user
             $createuser=new User($db);
             $createuser->id=0;
-
+            $createuser->admin=1;
+            
+            // Set admin user
             $newuser = new User($db);
             $newuser->lastname='SuperAdmin';
             $newuser->firstname='';

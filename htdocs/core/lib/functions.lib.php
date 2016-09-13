@@ -182,15 +182,16 @@ function getBrowserInfo($user_agent)
 	elseif (preg_match('/macintosh/i', $user_agent))	{ $os='macintosh'; }
 
 	// Name
-	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='firefox';   $version=$reg[2]; }
-	elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg))  { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
-	elseif (preg_match('/chrome/i', $user_agent, $reg))  { $name='chrome'; }
-	elseif (preg_match('/iceweasel/i', $user_agent))                      { $name='iceweasel'; $version=$reg[2]; }
-	elseif (preg_match('/epiphany/i', $user_agent))                       { $name='epiphany';  $version=$reg[2]; }
-	elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name='safari'; $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
-	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))  { $name='opera';     $version=$reg[2]; }
-	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie';        $version=end($reg); }    // MS products at end
-
+	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg))      { $name='firefox';   $version=$reg[2]; }
+	elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg))   { $name='chrome';    $version=$reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
+	elseif (preg_match('/chrome/i', $user_agent, $reg))                   { $name='chrome'; }
+	elseif (preg_match('/iceweasel/i', $user_agent))                      { $name='iceweasel'; }
+	elseif (preg_match('/epiphany/i', $user_agent))                       { $name='epiphany';  }
+	elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg))   { $name='safari';    $version=$reg[2]; }	// Safari is often present in string for mobile but its not.
+	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg))    { $name='opera';     $version=$reg[2]; }
+	elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];\srv:([0-9]+\.[0-9]+))/i', $user_agent, $reg))  { $name='ie'; $version=end($reg); }    // MS products at end
+	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) { $name='lynxlinks'; $version=$reg[4]; }
+	
 	if ($tablet) {
 		$layout = 'tablet';
 	} elseif ($phone) {
@@ -332,7 +333,7 @@ function dol_include_once($relpath, $classname='')
  *	Return path of url or filesystem. Return alternate root if exists
  *
  * 	@param	string	$path		Relative path to file (if mode=0) or relative url (if mode=1). Ie: mydir/myfile, ../myfile
- *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path)
+ *  @param	int		$type		0=Used for a Filesystem path, 1=Used for an URL path (output relative), 2=Used for an URL path (output full path using same host that current url), 3=Used for an URL path (output full path using host defined into $dolibarr_main_url_root of conf file)
  *  @return string				Full filesystem path (if mode=0), Full url path (if mode=1)
  */
 function dol_buildpath($path, $type=0)
@@ -363,6 +364,8 @@ function dol_buildpath($path, $type=0)
 		$res='';
 		if ($type == 1) $res = DOL_URL_ROOT.'/'.$path;			// Standard value
 		if ($type == 2) $res = DOL_MAIN_URL_ROOT.'/'.$path;		// Standard value
+		if ($type == 3) $res = DOL_URL_ROOT.'/'.$path;
+		
 		foreach ($conf->file->dol_document_root as $key => $dirroot)	// ex: array(["main"]=>"/home/main/htdocs", ["alt0"]=>"/home/dirmod/htdocs", ...)
 		{
 			if ($key == 'main') continue;
@@ -378,7 +381,18 @@ function dol_buildpath($path, $type=0)
 					}
 					if ($type == 2)
 					{
-						$res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+					    $res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':DOL_MAIN_URL_ROOT).$conf->file->dol_url_root[$key].'/'.$path;
+					}
+					if ($type == 3)
+					{
+					    global $dolibarr_main_url_root;
+					    
+					    // Define $urlwithroot
+					    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+					    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+					    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+					    					
+					    $res=(preg_match('/^http/i',$conf->file->dol_url_root[$key])?'':$urlwithroot).$conf->file->dol_url_root[$key].'/'.$path;
 					}
 					break;
 				}
@@ -429,15 +443,31 @@ function dol_size($size,$type='')
  *
  *	@param	string	$str            String to clean
  * 	@param	string	$newstr			String to replace bad chars with
- *  @param	int	$unaccent		1=Remove also accent (default), 0 do not remove them
+ *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
  *	@return string          		String cleaned (a-zA-Z_)
  *
- * 	@see        	dol_string_nospecial, dol_string_unaccent
+ * 	@see        	dol_string_nospecial, dol_string_unaccent, dol_sanitizePathName
  */
 function dol_sanitizeFileName($str,$newstr='_',$unaccent=1)
 {
-	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"');
+	$filesystem_forbidden_chars = array('<','>',':','/','\\','?','*','|','"','°');
 	return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
+}
+
+/**
+ *	Clean a string to use it as a path name
+ *
+ *	@param	string	$str            String to clean
+ * 	@param	string	$newstr			String to replace bad chars with
+ *  @param	int	    $unaccent		1=Remove also accent (default), 0 do not remove them
+ *	@return string          		String cleaned (a-zA-Z_)
+ *
+ * 	@see        	dol_string_nospecial, dol_string_unaccent, dol_sanitizeFileName
+ */
+function dol_sanitizePathName($str,$newstr='_',$unaccent=1)
+{
+    $filesystem_forbidden_chars = array('<','>','?','*','|','"','°');
+    return dol_string_nospecial($unaccent?dol_string_unaccent($str):$str, $newstr, $filesystem_forbidden_chars);
 }
 
 /**
@@ -902,8 +932,15 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',-$maxvisiblephotos,0,0,0,$width,0).'</div>';
         else 
         {
-			$nophoto='/public/theme/common/nophoto.png';
-            $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
+				$nophoto='';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			}
+			else {
+				$nophoto='/public/theme/common/nophoto.png';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			}
+            
         }
 	}
 	else 
@@ -1002,26 +1039,26 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	global $conf,$langs;
 
 	$ret='';
-	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also MAIN_FORCE_STATE_INTO_ADDRESS
+	$countriesusingstate=array('AU','CA','US','IN','GB','ES','UK','TR');    // See also MAIN_FORCE_STATE_INTO_ADDRESS
 
 	// Address
 	$ret .= $object->address;
 	// Zip/Town/State
-	if (in_array($object->country_code,array('US','AU')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
+	if (in_array($object->country_code,array('AU', 'CA', 'US')) || ! empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS))   	// US: title firstname name \n address lines \n town, state, zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state)
 		{
-			$ret.=", ".$object->state;
+			$ret.=($ret?", ":'').$object->state;
 		}
-		if ($object->zip) $ret .= ', '.$object->zip;
+		if ($object->zip) $ret .= ($ret?", ":'').$object->zip;
 	}
 	else if (in_array($object->country_code,array('GB','UK'))) // UK: title firstname name \n address lines \n town state \n zip \n country
 	{
 		$ret .= ($ret ? $sep : '' ).$object->town;
 		if ($object->state)
 		{
-			$ret.=", ".$object->state;
+			$ret.=($ret?", ":'').$object->state;
 		}
 		if ($object->zip) $ret .= ($ret ? $sep : '' ).$object->zip;
 	}
@@ -1037,7 +1074,7 @@ function dol_format_address($object,$withcountry=0,$sep="\n",$outputlangs='')
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
 		$ret .= $object->zip ? (($ret ? $sep : '' ).$object->zip) : '';
-		$ret .= ($object->town?(($object->zip?' ':$sep).$object->town):'');
+		$ret .= ($object->town?(($object->zip?' ':($ret ? $sep : '' )).$object->town):'');
 		if ($object->state && in_array($object->country_code,$countriesusingstate))
 		{
 			$ret.=($ret?", ":'').$object->state;
@@ -1122,6 +1159,7 @@ function dol_print_date($time,$format='',$tzoutput='tzserver',$outputlangs='',$e
 	if ($formatwithoutreduce != $format) { $format = $formatwithoutreduce; $reduceformat=1; }  // so format 'dayreduceformat' is processed like day
     
 	// Change predefined format into computer format. If found translation in lang file we use it, otherwise we use default.
+	// TODO Add format daysmallyear and dayhoursmallyear 
 	if ($format == 'day')				$format=($outputlangs->trans("FormatDateShort")!="FormatDateShort"?$outputlangs->trans("FormatDateShort"):$conf->format_date_short);
 	else if ($format == 'hour')			$format=($outputlangs->trans("FormatHourShort")!="FormatHourShort"?$outputlangs->trans("FormatHourShort"):$conf->format_hour_short);
 	else if ($format == 'hourduration')	$format=($outputlangs->trans("FormatHourShortDuration")!="FormatHourShortDuration"?$outputlangs->trans("FormatHourShortDuration"):$conf->format_hour_short_duration);
@@ -2974,10 +3012,11 @@ function print_fiche_titre($title, $mesg='', $picto='title_generic.png', $pictoi
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int		$pictoisfullpath	1=Icon name is a full absolute url of image
  * 	@param	int		$id					To force an id on html objects
+ *  @param  string  $morecssontable     More css on table
  * 	@return	string
  *  @see print_barre_liste
  */
-function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0)
+function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictoisfullpath=0, $id=0, $morecssontable='')
 {
 	global $conf;
 
@@ -2987,8 +3026,8 @@ function load_fiche_titre($titre, $mesg='', $picto='title_generic.png', $pictois
 	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
 
 	$return.= "\n";
-	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" width="100%" border="0" class="notopnoleftnoright" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
+	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle" valign="middle">'.img_picto('',$picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -4128,8 +4167,7 @@ function yn($yesno, $case=1, $color=0)
 /**
  *	Return a path to have a directory according to object.
  *  New usage:       $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'modulepart')
- *  Old usage:       '001' with level 3->"0/0/1/", '015' with level 3->"0/1/5/"
- *  Old usage:       'ABC-1' with level 3 ->"0/0/1/", '015' with level 1->"5/"
+ *  Old usage:       '015' with level 3->"0/1/5/", '015' with level 1->"5/", 'ABC-1' with level 3 ->"0/0/1/" 
  *
  *	@param	string	$num            Id of object (deprecated, $object will be used in future)
  *	@param  int		$level		    Level of subdirs to return (1, 2 or 3 levels). (deprecated, global option will be used in future)
@@ -4540,10 +4578,10 @@ function dol_textishtml($msg,$option=0)
 	{
 		if (preg_match('/<html/i',$msg))				return true;
 		elseif (preg_match('/<body/i',$msg))			return true;
-		elseif (preg_match('/<(b|em|i)>/i',$msg))		return true;
-		elseif (preg_match('/<(br|div|font|li|span|strong|table)>/i',$msg)) 	  return true;
-		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
-		elseif (preg_match('/<(br|div|font|li|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
+		elseif (preg_match('/<(b|em|i|u)>/i',$msg))		return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i',$msg)) 	  return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
+		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
 		elseif (preg_match('/<img\s+[^<>]*src[^<>]*>/i',$msg)) return true;	// must accept <img src="http://example.com/aaa.png" />
 		elseif (preg_match('/<a\s+[^<>]*href[^<>]*>/i',$msg)) return true;	// must accept <a href="http://example.com/aaa.png" />
 		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
@@ -4864,6 +4902,7 @@ function get_htmloutput_mesg($mesgstring='',$mesgarray='', $style='ok', $keepemb
 						if (block) {
 							$.dolEventValid("","'.dol_escape_js($out).'");
 						} else {
+							/* jnotify(message, preset of message type, keepmessage) */
 							$.jnotify("'.dol_escape_js($out).'",
 							"'.($style=="ok" ? 3000 : $style).'",
 							'.($style=="ok" ? "false" : "true").',
@@ -5249,7 +5288,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 						if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 						{
 							$substitutionarray=array();
-							complete_substitutions_array($substitutionarray,$langs,$object);
+							complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 							$label=make_substitutions($reg[1], $substitutionarray);
 						}
 						else $label=$langs->trans($values[2]);
@@ -5269,7 +5308,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 					if (preg_match('/SUBSTITUTION_([^_]+)/i',$values[2],$reg))
 					{
 						$substitutionarray=array();
-						complete_substitutions_array($substitutionarray,$langs,$object);
+						complete_substitutions_array($substitutionarray,$langs,$object,array('needforkey'=>$values[2]));
 						$label=make_substitutions($reg[1], $substitutionarray);
 					}
 					else $label=$langs->trans($values[2]);
@@ -5321,6 +5360,7 @@ function printCommonFooter($zone='private')
 	print "\n";
 	if (! empty($conf->use_javascript_ajax))
 	{
+		print '<!-- Reposition management (does not work if a redirect is done after action of submission) -->'."\n";
     	print '<script type="text/javascript" language="javascript">jQuery(document).ready(function() {'."\n";
     	
     	print '<!-- If page_y set, we set scollbar with it -->'."\n";
@@ -5330,9 +5370,15 @@ function printCommonFooter($zone='private')
     	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
     	print 'jQuery(".reposition").click(function() {
     	           var page_y = $(document).scrollTop();
-    	           /* alert(page_y); */
+    	           /*alert(page_y);*/
     	           this.href=this.href+\'&page_y=\'+page_y;
     	           });'."\n";
+    	print '});'."\n";
+    	
+    	print '<!-- Set handler to switch left menu page -->'."\n";
+    	print 'jQuery(".menuhider").click(function() {';
+    	print "  $('.side-nav').toggle();";
+    	if ($conf->theme == 'md') print "  $('.login_block').toggle();";
     	print '});'."\n";
     	
     	print '</script>'."\n";
@@ -5587,7 +5633,7 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
  *
  * @param   string  $file           Original filename (full or relative path)
  * @param   string  $extName        Extension to differenciate thumb file name ('', '_small', '_mini')
- * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image. Use '.png' for generated thumb files.
+ * @param   string  $extImgTarget   Force image extension for thumbs. Use '' to keep same extension than original image (default).
  * @return  string                  New file name (full or relative path, including the thumbs/)
  */
 function getImageFileNameForSize($file, $extName, $extImgTarget='')

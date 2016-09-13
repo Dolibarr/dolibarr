@@ -201,7 +201,7 @@ if ($result)
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6">'.$langs->trans("None").'</td></tr>';
+        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

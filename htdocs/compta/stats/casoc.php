@@ -34,6 +34,8 @@ require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 $langs->load("companies");
 $langs->load("categories");
+$langs->load("bills");
+$langs->load("compta");
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;

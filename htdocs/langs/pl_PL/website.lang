@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - website
+Shortname=Kod
+WebsiteSetupDesc=Stwórz tyle stron ile potrzebujesz. Następnie przejść do menu Strony WWW by je edytować
+DeleteWebsite=Skasuj stronę
+ConfirmDeleteWebsite=Jesteś pewny że chcesz skasować stronę? Całą jej zawartość zostanie usunięta.
+WEBSITE_PAGENAME=Nazwa strony
+WEBSITE_CSS_URL=URL of external CSS file
+WEBSITE_CSS_INLINE=CSS content
+MediaFiles=Media library
+EditCss=Edit Style/CSS
+EditMenu=Edytuj Menu
+EditPageMeta=Edytuj koniec
+EditPageContent=Edytuj zawartość
+Website=Strona WWW
+AddPage=Dodaj stronę
+PreviewOfSiteNotYetAvailable=Podgląd twojej strony <strong>%s</strong> nie jest jeszcze dostępny. Musisz najpierw dodać stronę.
+RequestedPageHasNoContentYet=Requested page with id %s has not content yet or cache file .tpl.php was removed. Edit content of page to solve this.
+PageDeleted=Page '%s' of website %s deleted
+PageAdded=Page '%s' added
+ViewSiteInNewTab=View site in new tab
+ViewPageInNewTab=View page in new tab
+SetAsHomePage=Set as Home page
+RealURL=Real URL
+ViewWebsiteInProduction=View web site using home URLs
+SetHereVirtualHost=If you can set, on your web server, a dedicated virtual host with a root directory on <strong>%s</strong>, define here the virtual hostname so the preview will be done using this direct access instead of Dolibarr URLs wrapper.

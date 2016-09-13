@@ -9,7 +9,8 @@
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
-*
+ * Copyright (C) 2016	   Ferran Marcet         <fmarcet@2byte.es>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -61,6 +62,8 @@ $sall=GETPOST("sall");
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 $year=GETPOST("year");
 $month=GETPOST("month");
+$yearvalid=GETPOST("yearvalid");
+$monthvalid=GETPOST("monthvalid");
 
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
@@ -130,6 +133,8 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") ||GETPO
     $search_societe='';
     $search_montant_ht='';
     $search_author='';
+    $yearvalid='';
+    $monthvalid='';
     $year='';
     $month='';
     $viewstatut='';
@@ -192,7 +197,7 @@ $companystatic=new Societe($db);
 $now=dol_now();
 
 $sql = 'SELECT s.rowid, s.nom as name, s.town, s.client, s.code_client,';
-$sql.= ' p.rowid as supplier_proposalid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_livraison as dp,';
+$sql.= ' p.rowid as supplier_proposalid, p.note_private, p.total_ht, p.ref, p.fk_statut, p.fk_user_author, p.date_valid, p.date_livraison as dp,';
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= ' u.login';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'supplier_proposal as p';
@@ -211,28 +216,13 @@ if (! $user->rights->societe->client->voir && ! $socid) //restriction
 {
 	$sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
-if ($search_ref) {
-	$sql .= natural_search('p.ref', $search_ref);
-}
-if ($search_societe) {
-	$sql .= natural_search('s.nom', $search_societe);
-}
-if ($search_author)
-{
-	$sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
-}
-if ($search_montant_ht)
-{
-	$sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
-}
-if ($sall) {
-    $sql .= natural_search(array_keys($fieldstosearchall), $sall);
-}
+if ($search_ref)     $sql .= natural_search('p.ref', $search_ref);
+if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
+if ($search_author)  $sql.= " AND u.login LIKE '%".$db->escape(trim($search_author))."%'";
+if ($search_montant_ht) $sql.= " AND p.total_ht='".$db->escape(price2num(trim($search_montant_ht)))."'";
+if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($socid) $sql.= ' AND s.rowid = '.$socid;
-if ($viewstatut <> '')
-{
-	$sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
-}
+if ($viewstatut <> '') $sql.= ' AND p.fk_statut IN ('.$viewstatut.')';
 if ($month > 0)
 {
     if ($year > 0 && empty($day))
@@ -245,6 +235,19 @@ if ($month > 0)
 else if ($year > 0)
 {
 	$sql.= " AND p.date_livraison BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+}
+if ($monthvalid > 0)
+{
+    if ($yearvalid > 0 && empty($dayvalid))
+    $sql.= " AND p.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,$monthvalid,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,$monthvalid,false))."'";
+    else if ($yearvalid > 0 && ! empty($dayvalid))
+    $sql.= " AND p.date_valid BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $monthvalid, $dayvalid, $yearvalid))."' AND '".$db->idate(dol_mktime(23, 59, 59, $monthvalid, $dayvalid, $yearvalid))."'";
+    else
+    $sql.= " AND date_format(p.date_valid, '%m') = '".$monthvalid."'";
+}
+else if ($yearvalid > 0)
+{
+	$sql.= " AND p.date_valid BETWEEN '".$db->idate(dol_get_first_day($yearvalid,1,false))."' AND '".$db->idate(dol_get_last_day($yearvalid,12,false))."'";
 }
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
 if ($search_user > 0)
@@ -277,7 +280,9 @@ if ($result)
 	}
 
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)				 $param.='&sall='.$sall;
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
@@ -340,6 +345,7 @@ if ($result)
     print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'p.ref','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Supplier'),$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.date_valid','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('SupplierProposalDate'),$_SERVER["PHP_SELF"],'p.date_livraison','',$param, 'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('AmountHT'),$_SERVER["PHP_SELF"],'p.total_ht','',$param, 'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans('Author'),$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
@@ -355,6 +361,15 @@ if ($result)
 	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
 	print '</td>';
 
+	// Date valid
+	print '<td class="liste_titre" colspan="1" align="center">';
+	//print $langs->trans('Month').': ';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="monthvalid" value="'.$monthvalid.'">';
+	//print '&nbsp;'.$langs->trans('Year').': ';
+	$syearvalid = $yearvalid;
+	$formother->select_year($syearvalid,'yearvalid',1, 20, 5);
+	print '</td>';
+	
 	// Date
 	print '<td class="liste_titre" colspan="1" align="center">';
 	//print $langs->trans('Month').': ';
@@ -434,7 +449,12 @@ if ($result)
 		print $companystatic->getNomUrl(1,'customer');
 		print '</td>';
 
-		// Date askprice
+		// Date
+		print '<td align="center">';
+		print dol_print_date($db->jdate($objp->date_valid), 'day');
+		print "</td>\n";
+		
+		// Date delivery
 		print '<td align="center">';
 		print dol_print_date($db->jdate($objp->dp), 'day');
 		print "</td>\n";
@@ -465,14 +485,14 @@ if ($result)
 		if($num<$limit){
 			$var=!$var;
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHT").'</td>';
-			print '<td colspan="3" align="right">'.price($total).'</td><td colspan="3"></td>';
+			print '<td colspan="4" align="right">'.price($total).'</td><td colspan="3"></td>';
 			print '</tr>';
 		}
 		else
 		{
 			$var=!$var;
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("TotalHTforthispage").'</td>';
-			print '<td colspan="3" align="right">'.price($total).'</td><td colspan="3"></td>';
+			print '<td colspan="4" align="right">'.price($total).'</td><td colspan="3"></td>';
 			print '</tr>';
 		}
 

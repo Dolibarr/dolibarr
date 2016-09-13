@@ -3,55 +3,35 @@ ACCOUNTING_EXPORT_SEPARATORCSV=คั่นคอลัมน์สำหรั�
 ACCOUNTING_EXPORT_DATE=รูปแบบวันที่สำหรับไฟล์การส่งออก
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
-ACCOUNTING_EXPORT_LABEL=Export the label
-ACCOUNTING_EXPORT_AMOUNT=Export the amount
-ACCOUNTING_EXPORT_DEVISE=Export the devise
+ACCOUNTING_EXPORT_LABEL=Export label
+ACCOUNTING_EXPORT_AMOUNT=Export amount
+ACCOUNTING_EXPORT_DEVISE=Export currency
 Selectformat=Select the format for the file
 ACCOUNTING_EXPORT_PREFIX_SPEC=Specify the prefix for the file name
-
-Accounting=การบัญชี
-Globalparameters=พารามิเตอร์ทั่วโลก
-Menuaccount=บัญชีการบัญชี
-Menuthirdpartyaccount=บัญชี Thirdparty
-MenuTools=เครื่องมือ
 
 ConfigAccountingExpert=การกำหนดค่าของบัญชีโมดูลผู้เชี่ยวชาญ
 Journaux=วารสาร
 JournalFinancial=วารสารการเงิน
-Exports=การส่งออก
-Export=ส่งออก
-Modelcsv=รูปแบบของการส่งออก
-OptionsDeactivatedForThisExportModel=สำหรับรูปแบบการส่งออกนี้ตัวเลือกที่จะปิดการใช้งาน
-Selectmodelcsv=เลือกรูปแบบของการส่งออก
-Modelcsv_normal=การส่งออกคลาสสิก
-Modelcsv_CEGID=การส่งออกที่มีต่อ CEGID ผู้เชี่ยวชาญ
 BackToChartofaccounts=กลับผังบัญชี
 
-Definechartofaccounts=กำหนดผังบัญชี
 Selectchartofaccounts=เลือกผังบัญชี
 Addanaccount=เพิ่มบัญชีบัญชี
 AccountAccounting=บัญชีการบัญชี
+AccountAccountingShort=Account
 AccountAccountingSuggest=Accounting account suggest
 Ventilation=การเสีย
 
 MenuAccountancy=Accountancy
 CustomersVentilation=รายละเอียดของลูกค้า
 SuppliersVentilation=ซัพพลายเออร์ที่พังทลาย
-TradeMargin=อัตรากำไรขั้นต้นการค้า
 Reports=รายงาน
-ByCustomerInvoice=โดยลูกค้าใบแจ้งหนี้
 NewAccount=บัญชีการบัญชีใหม่
 Create=สร้าง
 CreateMvts=Create movement
-UpdateAccount=การเปลี่ยนแปลงของบัญชีบัญชี
 UpdateMvts=การปรับเปลี่ยนของการเคลื่อนไหว
 WriteBookKeeping=บันทึกในบัญชีแยกประเภททั่วไป
 Bookkeeping=บัญชีแยกประเภททั่วไป
 AccountBalance=Account balance
-
-AccountingVentilation=รายละเอียดบัญชี
-AccountingVentilationSupplier=รายละเอียดผู้จัดจำหน่ายบัญชี
-AccountingVentilationCustomer=รายละเอียดบัญชีของลูกค้า
 
 CAHTF=Total purchase supplier before tax
 InvoiceLines=เส้นของใบแจ้งหนี้ที่จะต้องมีการระบายอากาศ
@@ -59,7 +39,6 @@ InvoiceLinesDone=สายช่องระบายความร้อนข
 IntoAccount=Ventilate in the accounting account
 
 Ventilate=ระบายอากาศ
-VentilationAuto=สลายอัตโนมัติ
 
 Processing=การประมวลผล
 EndProcessing=ในตอนท้ายของการประมวลผล
@@ -69,14 +48,10 @@ Lineofinvoice=สายของใบแจ้งหนี้
 VentilatedinAccount=อากาศถ่ายเทได้ประสบความสำเร็จในบัญชีของบัญชี
 NotVentilatedinAccount=การระบายอากาศไม่ได้อยู่ในบัญชีการบัญชี
 
-ACCOUNTING_SEPARATORCSV=คั่นคอลัมน์ในไฟล์การส่งออก
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=จำนวนขององค์ประกอบที่จะเป็นรายละเอียดที่แสดงโดยหน้า (สูงสุดที่แนะนำ: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=เริ่มต้นการเรียงลำดับของรายละเอียดหน้า "มีการสลาย" โดยองค์ประกอบล่าสุด
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=เริ่มต้นการเรียงลำดับของรายละเอียดหน้า "ถล่ม" โดยองค์ประกอบล่าสุด
 
-AccountLength=ความยาวของบัญชีที่แสดงในบัญชี Dolibarr
-AccountLengthDesc=ฟังก์ชั่นที่ช่วยให้การแสร้งความยาวของบัญชีบัญชีโดยการเปลี่ยนพื้นที่โดยตัวเลขที่ศูนย์ ฟังก์ชั่นนี้เพียงสัมผัสหน้าจอก็ไม่ได้ปรับเปลี่ยนบัญชีบัญชีจดทะเบียนใน Dolibarr เพื่อการส่งออก, ฟังก์ชั่นนี้มีความจำเป็นต้องใช้งานร่วมกับซอฟต์แวร์
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=ความยาวของบัญชีทั่วไป
@@ -90,6 +65,7 @@ ACCOUNTING_SOCIAL_JOURNAL=วารสารสังคม
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=บัญชีการโอน
 ACCOUNTING_ACCOUNT_SUSPENSE=บัญชีของการรอคอย
+DONATION_ACCOUNTINGACCOUNT=Account to register donations
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=บัญชีบัญชีโดยค่าเริ่มต้นสำหรับผลิตภัณฑ์ที่ซื้อ (ถ้าไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=บัญชีบัญชีโดยเริ่มต้นสำหรับผลิตภัณฑ์ที่ขาย (ถ้าไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
@@ -99,12 +75,19 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=บัญชีบัญชีโดยค่า
 Doctype=ประเภทของเอกสาร
 Docdate=วันที่
 Docref=การอ้างอิง
-Numerocompte=บัญชี
 Code_tiers=Thirdparty
 Labelcompte=บัญชีฉลาก
 Sens=ซองส์
 Codejournal=วารสาร
 NumPiece=Piece number
+AccountingCategory=Accounting category
+
+NotMatch=Not Set
+
+DeleteMvt=Delete general ledger lines
+DelYear=Year to delete
+DelJournal=Journal to delete
+ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
 
 DelBookKeeping=ลบบันทึกบัญชีแยกประเภททั่วไป
 
@@ -113,9 +96,6 @@ DescPurchasesJournal=ซื้อวารสาร
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
 
-CashPayment=ชำระด้วยเงินสด
-
-SupplierInvoicePayment=การชำระเงินของผู้จัดจำหน่ายใบแจ้งหนี้
 CustomerInvoicePayment=การชำระเงินของลูกค้าใบแจ้งหนี้
 
 ThirdPartyAccount=บัญชี Thirdparty
@@ -130,7 +110,6 @@ DescThirdPartyReport=ให้คำปรึกษาที่นี่รา�
 
 ListAccounts=รายการบัญชีที่บัญชี
 
-Pcgversion=รุ่นของแผน
 Pcgtype=ชั้นบัญชี
 Pcgsubtype=ภายใต้ระดับบัญชี
 Accountparent=รากของบัญชี
@@ -143,7 +122,6 @@ DescVentilTodoCustomer=ระบายอากาศในสายของค
 ChangeAccount=เปลี่ยนบัญชีบัญชีสำหรับสายการคัดเลือกจากบัญชี:
 Vide=-
 DescVentilSupplier=ที่นี่ให้คำปรึกษารายละเอียดบัญชีประจำปีของซัพพลายเออร์ใบแจ้งหนี้ของคุณ
-DescVentilTodoSupplier=ระบายอากาศในสายของคุณผู้จัดจำหน่ายใบแจ้งหนี้กับบัญชีการบัญชี
 DescVentilDoneSupplier=ให้คำปรึกษาที่นี่รายชื่อของเส้นของผู้จัดจำหน่ายใบแจ้งหนี้และบัญชีบัญชีของพวกเขา
 
 ValidateHistory=ตรวจสอบโดยอัตโนมัติ
@@ -153,21 +131,23 @@ MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %
 FicheVentilation=บัตรพังทลาย
 GeneralLedgerIsWritten=Operations are written in the general ledger
 
-MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
+## Admin
+ApplyMassCategories=Apply mass categories
 
-##Export Journal Feature
-ExportFormat=Format of Export
-Prefixname=Prefix of export File
-Separate=Export separator
-Textframe=Frame of text value
-Headercol=Colname in header of file
-Fieldname=Name of Field
-Headername=Name in header
-Type=Type of fields
-Param=Additionnal parameters
-EnabledProduct=In Product
-EnabledTiers=In third party
-EnabledVat=In VAT
+## Export
+Exports=การส่งออก
+Export=ส่งออก
+Modelcsv=รูปแบบของการส่งออก
+OptionsDeactivatedForThisExportModel=สำหรับรูปแบบการส่งออกนี้ตัวเลือกที่จะปิดการใช้งาน
+Selectmodelcsv=เลือกรูปแบบของการส่งออก
+Modelcsv_normal=การส่งออกคลาสสิก
+Modelcsv_CEGID=Export towards CEGID Expert Comptabilité
+Modelcsv_COALA=Export towards Sage Coala
+Modelcsv_bob50=Export towards Sage BOB 50
+Modelcsv_ciel=Export towards Sage Ciel Compta or Compta Evolution
+Modelcsv_quadratus=Export towards Quadratus QuadraCompta
+Modelcsv_ebp=Export towards EBP
+Modelcsv_cogilog=Export towards Cogilog
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
@@ -177,3 +157,13 @@ OptionModeProductSell=Mode sales
 OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
+
+## Dictionary
+Range=Range of accounting account
+Calculated=Calculated
+Formula=Formula
+
+## Error
+ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
+ExportNotSupported=The export format setuped is not supported into this page
+BookeppingLineAlreayExists=Lines already existing into bookeeping

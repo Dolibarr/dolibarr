@@ -46,7 +46,7 @@ CKEDITOR.editorConfig = function( config )
 	// Used for mailing fields
 	config.toolbar_dolibarr_mailings = 
 	[
-	 	['Source','Maximize'],
+	 	['Source','Maximize','Preview'],
 	 	['Cut','Copy','Paste','-','SpellChecker'],
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],

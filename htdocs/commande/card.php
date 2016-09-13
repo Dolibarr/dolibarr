@@ -262,14 +262,14 @@ if (empty($reshook))
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
 			$object->multicurrency_tx = GETPOST('originmulticurrency_tx', 'int');
-			
+
 			// Fill array 'array_options' with data from add form
 			if (! $error)
 			{
     			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
     			if ($ret < 0) $error++;
 			}
-			
+
 			// If creation from another object of another module (Example: origin=propal, originid=1)
 			if (! empty($origin) && ! empty($originid))
 			{
@@ -388,7 +388,7 @@ if (empty($reshook))
 						    }
 						    $sqlcontact = "SELECT code, fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
 						    $sqlcontact.= " WHERE element_id = ".$originidforcontact." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$originforcontact."'";
-						    	
+
 						    $resqlcontact = $db->query($sqlcontact);
 						    if ($resqlcontact)
 						    {
@@ -400,14 +400,14 @@ if (empty($reshook))
 						    }
 						    else dol_print_error($resqlcontact);
 						}
-							
+
 						// Hooks
 						$parameters = array('objFrom' => $srcobject);
 						$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
 						// modified by hook
 						if ($reshook < 0)
 						    $error++;
-						
+
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
@@ -472,6 +472,14 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
+	else if ($action == 'classifyunbilled' && $user->rights->commande->creer)
+	{
+	    $ret=$object->classifyUnBilled();
+
+	    if ($ret < 0) {
+	        setEventMessages($object->error, $object->errors, 'errors');
+	    }
+	}
 
 	// Positionne ref commande client
 	else if ($action == 'set_ref_client' && $user->rights->commande->creer) {
@@ -515,9 +523,9 @@ if (empty($reshook))
 	else if ($action == 'setmode' && $user->rights->commande->creer) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 	}
-	
+
 	// Multicurrency Code
 	else if ($action == 'setmulticurrencycode' && $user->rights->commande->creer) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
@@ -525,19 +533,19 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	else if ($action == 'setmulticurrencyrate' && $user->rights->commande->creer) {
-		$result = $object->setMulticurrencyRate(GETPOST('multicurrency_tx', 'int'));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
-	
+
 	else if ($action == 'setavailability' && $user->rights->commande->creer) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+		    setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	else if ($action == 'setdemandreason' && $user->rights->commande->creer) {
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0)
-			dol_print_error($db, $object->error);
+			setEventMessages($object->error, $object->errors, 'errors');
 	}
 
 	else if ($action == 'setconditions' && $user->rights->commande->creer) {
@@ -1187,9 +1195,9 @@ if (empty($reshook))
 			$file = $upload_dir . '/' . GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret)
-				setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
 			else
-				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 			$action = '';
 		}
 	}
@@ -1326,7 +1334,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$remise_absolue = 0;
 
 	$currency_code = $conf->currency;
-	
+
 	if (! empty($origin) && ! empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;
@@ -1397,7 +1405,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			if (!empty($conf->multicurrency->enabled))
 			{
 				if (!empty($objectsrc->multicurrency_code)) $currency_code = $objectsrc->multicurrency_code;
-				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx; 
+				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
 			}
 
 			$note_private = $object->getDefaultCreateValueFor('note_private', (! empty($objectsrc->note_private) ? $objectsrc->note_private : null));
@@ -1420,7 +1428,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
 		$projectid          = 0;
-		
+
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 
 		$note_private = $object->getDefaultCreateValueFor('note_private');
@@ -1464,7 +1472,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</td>';
 	} else {
 		print '<td colspan="2">';
-		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 1);
+		print $form->select_company('', 'socid', 's.client = 1 OR s.client = 3', 'SelectThirdParty');
 		// reload page to retrieve customer informations
 		if (!empty($conf->global->RELOAD_PAGE_ON_CUSTOMER_CHANGE))
 		{
@@ -1688,12 +1696,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 		}
 
 		print '<tr><td>' . $langs->trans('TotalTTC') . '</td><td colspan="2">' . price($objectsrc->total_ttc) . "</td></tr>";
-		
+
 		if (!empty($conf->multicurrency->enabled))
 		{
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalHT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ht) . '</td></tr>';
 			print '<tr><td>' . $langs->trans('MulticurrencyTotalVAT') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_tva) . "</td></tr>";
-			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";	
+			print '<tr><td>' . $langs->trans('MulticurrencyTotalTTC') . '</td><td colspan="2">' . price($objectsrc->multicurrency_total_ttc) . "</td></tr>";
 		}
 	}
 	else
@@ -1739,7 +1747,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
 	print '</div>';
-	
+
 	print '</form>';
 
 	// Show origin lines
@@ -2010,7 +2018,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		    print '</td>';
 		    print '</tr>';
 		}
-		
+
 		// Relative and absolute discounts
 		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final
@@ -2147,7 +2155,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
-		if ($action != 'editconditions' && $object->brouillon)
+		if ($action != 'editconditions')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
@@ -2165,7 +2173,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $object->brouillon)
+		if ($action != 'editmode')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
@@ -2195,12 +2203,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
 			}
 			print '</td></tr>';
-		
+
 			// Multicurrency rate
 			print '<tr>';
 			print '<td width="25%">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print fieldLabel('Rate','multicurrency_tx');
+			print fieldLabel('CurrencyRate','multicurrency_tx');
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2261,8 +2269,8 @@ if ($action == 'create' && $user->rights->commande->creer)
         	print ' / ';
     		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
     		print '</td></tr>';
-		}		
-		
+		}
+
     	// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Project
@@ -2377,16 +2385,16 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
-			
+
 			// Multicurrency Amount VAT
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
-			
+
 			// Multicurrency Amount TTC
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-			print '</tr>';	
+			print '</tr>';
 		}
 
 		// Statut
@@ -2505,7 +2513,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 				}
 
 				// Create contract
-				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED)) {
+				if ($conf->contrat->enabled && ($object->statut == Commande::STATUS_VALIDATED || $object->statut == Commande::STATUS_ACCEPTED || $object->statut == Commande::STATUS_CLOSED)) {
 				    $langs->load("contracts");
 
 				    if ($user->rights->contrat->creer) {
@@ -2552,7 +2560,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifybilled">' . $langs->trans("ClassifyBilled") . '</a></div>';
 					}
 				}
-
+				if ($object->statut > Commande::STATUS_DRAFT && $object->billed) {
+				    if ($user->rights->commande->creer && $object->statut >= Commande::STATUS_VALIDATED && empty($conf->global->WORKFLOW_DISABLE_CLASSIFY_BILLED_FROM_ORDER) && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) {
+				        print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;action=classifyunbilled">' . $langs->trans("ClassifyUnBilled") . '</a></div>';
+				    }
+				}
 				// Clone
 				if ($user->rights->commande->creer) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';

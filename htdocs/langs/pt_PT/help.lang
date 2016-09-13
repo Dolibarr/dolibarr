@@ -4,7 +4,6 @@ EMailSupport=Emails apoio
 RemoteControlSupport=On-line em tempo real / suporte remoto
 OtherSupport=Outros apoios
 ToSeeListOfAvailableRessources=Para entrar em contato / ver recursos disponíveis:
-ClickHere=Clique aqui
 HelpCenter=Central de Ajuda
 DolibarrHelpCenter=Dolibarr Ajuda e Centro de Suporte
 ToGoBackToDolibarr=Caso contrário, clique <a href="%s">aqui para utilizar Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Às vezes, não há nenhuma empresa disponível no mom
 BackToHelpCenter=Caso contrário, clique aqui para ir <a href="%s">de volta ao centro de ajuda home page.</a>
 LinkToGoldMember=Você pode chamar um assistente selecionado pelo Dolibarr para o seu idioma ( %s) clicando em seu Widget (status e preço máximo são atualizadas automaticamente):
 PossibleLanguages=Línguas de apoio
-MakeADonation=Ajuda Dolibarr projecto, faça uma doação
 SubscribeToFoundation=Ajude o  projeto Dolibarr, inscreva-se na fundação
 SeeOfficalSupport=Para obter suporte oficial do Dolibarr na sua língua: <br><b><a href="%s" target="_blank">%s</a></b>

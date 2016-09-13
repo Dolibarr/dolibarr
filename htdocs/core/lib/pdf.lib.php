@@ -318,15 +318,17 @@ function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
     else 
     {
         for ($page=$start_page; $page <= $end_page; ++$page) {
-        	$this->setPage($page);
+        	$pdf->setPage($page);
+        	$tmpm=$pdf->getMargins();
+        	$tMargin = $tmpm['top'];
         	if ($page == $start_page) {
         		// first page
-        		$height = $this->h - $start_y - $this->bMargin;
+        		$height = $pdf->getPageHeight() - $start_y - $pdf->getBreakMargin();
         	} elseif ($page == $end_page) {
         		// last page
-        		$height = $end_y - $this->tMargin;
+        		$height = $end_y - $tMargin;
         	} else {
-        		$height = $this->h - $this->tMargin - $this->bMargin;
+        		$height = $pdf->getPageHeight() - $tMargin - $pdf->getBreakMargin();
         	}
         }
 	}
@@ -949,7 +951,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	if ($line)	// Free text
 	{
 		//$line="eee<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
-	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))   // by default
+	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 		{
 			$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
     		if (! empty($conf->global->MAIN_USE_AUTOWRAP_ON_FREETEXT)) {
@@ -1476,7 +1478,10 @@ function pdf_getlineupexcltax($object,$i,$outputlangs,$hidedetails=0)
  */
 function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
-	global $hookmanager;
+	global $hookmanager,$conf;
+
+	$sign=1;
+	if (isset($object->type) && $object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
 
 	$result='';
 	$reshook=0;
@@ -1493,7 +1498,7 @@ function pdf_getlineupwithtax($object,$i,$outputlangs,$hidedetails=0)
 	}
 	if (empty($reshook))
 	{
-		if (empty($hidedetails) || $hidedetails > 1) $result.=price(($object->lines[$i]->subprice) + ($object->lines[$i]->subprice)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
+		if (empty($hidedetails) || $hidedetails > 1) $result.=price($sign * (($object->lines[$i]->subprice) + ($object->lines[$i]->subprice)*($object->lines[$i]->tva_tx)/100), 0, $outputlangs);
 	}
 	return $result;
 }
@@ -1801,7 +1806,10 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
  */
 function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
 {
-	global $hookmanager;
+	global $hookmanager,$conf;
+
+	$sign=1;
+	if (isset($object->type) && $object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
 
 	$reshook=0;
 	$result='';
@@ -1822,7 +1830,7 @@ function pdf_getlinetotalwithtax($object,$i,$outputlangs,$hidedetails=0)
     	{
     		$result.=$outputlangs->transnoentities("Option");
     	}
-		elseif (empty($hidedetails) || $hidedetails > 1) $result.=price(($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
+		elseif (empty($hidedetails) || $hidedetails > 1) $result.=price($sign * ($object->lines[$i]->total_ht) + ($object->lines[$i]->total_ht)*($object->lines[$i]->tva_tx)/100, 0, $outputlangs);
 	}
 	return $result;
 }
@@ -1948,7 +1956,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 			        $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSending");
 			        if (! empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'].=' / ';
 			        $linkedobjects[$objecttype]['ref_value'].= $outputlangs->transnoentities($elementobject->ref);
-			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateSending");
+			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DateShipment");
 			        //if (! empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'].=' / '; 
 			        //$linkedobjects[$objecttype]['date_value'].= dol_print_date($elementobject->date_delivery,'day','',$outputlangs);
 			    }
@@ -1957,7 +1965,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 			        $linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefOrder") . ' / ' . $outputlangs->transnoentities("RefSending");
 			        if (empty($linkedobjects[$objecttype]['ref_value'])) $linkedobjects[$objecttype]['ref_value'] = $outputlangs->convToOutputCharset($order->ref) . ($order->ref_client ? ' ('.$order->ref_client.')' : '');
 			        $linkedobjects[$objecttype]['ref_value'].= ' / ' . $outputlangs->transnoentities($elementobject->ref);
-			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateSending") : '');
+			        //$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("OrderDate") . ($elementobject->date_delivery ? ' / ' . $outputlangs->transnoentities("DateShipment") : '');
 			        //if (empty($linkedobjects[$objecttype]['date_value'])) $linkedobjects[$objecttype]['date_value'] = dol_print_date($order->date,'day','',$outputlangs);
 			        //$linkedobjects[$objecttype]['date_value'].= ($elementobject->date_delivery ? ' / ' . dol_print_date($elementobject->date_delivery,'day','',$outputlangs) : '');
 			    }

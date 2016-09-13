@@ -47,7 +47,11 @@ if (!isset($conf->global->MAIN_INFO_SOCIETE_NOM) || empty($conf->global->MAIN_IN
     header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
     exit;
 }
-
+if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
+{
+    header("Location: ".DOL_URL_ROOT."/admin/index.php?mainmenu=home&leftmenu=setup&mesg=setupnotcomplete");
+    exit;
+}
 if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax disabled)
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
@@ -473,7 +477,7 @@ if (! empty($conf->banque->enabled) && $user->rights->banque->lire && ! $user->s
 {
     include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
     $board=new Account($db);
-    $nb = $board::countAccountToReconcile();
+    $nb = $board::countAccountToReconcile();    // Get nb of account to reconciliate
     if ($nb > 0)
     {
         $dashboardlines[] = $board->load_board($user);

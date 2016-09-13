@@ -168,6 +168,7 @@ if (empty($reshook))
 					if (!$errors && !$object_name::replaceThirdparty($db, $soc_origin->id, $object->id))
 					{
 						$errors++;
+						setEventMessages($db->lasterror(), null, 'errors');
 					}
 				}
 
@@ -202,6 +203,7 @@ if (empty($reshook))
 				} 
 				else 
 				{
+				    $langs->load("errors");
 					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
 					$db->rollback();
 				}
@@ -285,7 +287,7 @@ if (empty($reshook))
 	        $object->name_alias   = GETPOST('name_alias');
         }
 
-        $object->address               = GETPOST('address', 'alpha');
+        $object->address               = GETPOST('address');
         $object->zip                   = GETPOST('zipcode', 'alpha');
         $object->town                  = GETPOST('town', 'alpha');
         $object->country_id            = GETPOST('country_id', 'int');
@@ -403,7 +405,7 @@ if (empty($reshook))
             // Only for companies
 	        if (!($object->particulier || $private))
         	{
-	        	for ($i = 1; $i < 5; $i++)
+	        	for ($i = 1; $i <= 6; $i++)
 	        	{
 	        	    $slabel="idprof".$i;
 	    			$_POST[$slabel]=trim($_POST[$slabel]);
@@ -418,15 +420,18 @@ if (empty($reshook))
 						}
 					}
 
-					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-
-					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
-					{
-						$langs->load("errors");
-						$error++;
-						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
-						$action = (($action=='add'||$action=='create')?'create':'edit');
-					}
+            		// Check for mandatory prof id (but only if country is than than ours)
+					if ($mysoc->country_id > 0 && $object->country_id == $mysoc->country_id)
+            		{
+    					$idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
+    					if (! $vallabel && ! empty($conf->global->$idprof_mandatory))
+    					{
+    						$langs->load("errors");
+    						$error++;
+    						$errors[] = $langs->trans("ErrorProdIdIsMandatory", $langs->transcountry('ProfId'.$i, $object->country_code));
+    						$action = (($action=='add'||$action=='create')?'create':'edit');
+    					}
+            		}
 	        	}
         	}
         }
@@ -441,7 +446,7 @@ if (empty($reshook))
                 if (empty($object->fournisseur)) $object->code_fournisseur='';
 
                 $result = $object->create($user);
-                if ($result >= 0)
+				if ($result >= 0)
                 {
                     if ($object->particulier)
                     {
@@ -504,6 +509,13 @@ if (empty($reshook))
                 }
                 else
 				{
+					
+					if($result == -3) {
+						$duplicate_code_error = true;
+						$object->code_fournisseur = null;
+						$object->code_client = null;
+					}
+					
                     $error=$object->error; $errors=$object->errors;
                 }
 
@@ -727,7 +739,7 @@ if ($socid > 0 && empty($object->id))
 }
 
 $title=$langs->trans("ThirdParty");
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name;
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('Card');
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
@@ -797,8 +809,14 @@ else
         $object->particulier		= $private;
         $object->prefix_comm		= GETPOST('prefix_comm');
         $object->client				= GETPOST('client')?GETPOST('client'):$object->client;
-        $object->code_client		= GETPOST('code_client', 'alpha');
-        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        
+        if(empty($duplicate_code_error)) {
+	        $object->code_client		= GETPOST('code_client', 'alpha');
+	        $object->fournisseur		= GETPOST('fournisseur')?GETPOST('fournisseur'):$object->fournisseur;
+        }		else {
+			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'),'', 'warnings');
+		}
+		
         $object->code_fournisseur	= GETPOST('code_fournisseur', 'alpha');
         $object->address			= GETPOST('address', 'alpha');
         $object->zip				= GETPOST('zipcode', 'alpha');
@@ -999,7 +1017,7 @@ else
 
         print '<td>'.fieldLabel('CustomerCode','customer_code').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
-        $tmpcode=$object->code_client;
+		$tmpcode=$object->code_client;
         if (empty($tmpcode) && ! empty($modCodeClient->code_auto)) $tmpcode=$modCodeClient->getNextValue($object,0);
         print '<input type="text" name="code_client" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
         print '</td><td>';
@@ -1044,7 +1062,7 @@ else
 
         // Address
         print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	    print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="'._ROWS_2.'" wrap="soft">';
+	    print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="'._ROWS_2.'" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -1101,12 +1119,9 @@ else
                 if (($j % 2) == 0) print '<tr>';
 
                 $idprof_mandatory ='SOCIETE_IDPROF'.($i).'_MANDATORY';
-               	if(empty($conf->global->$idprof_mandatory))
-                	print '<td>'.fieldLabel($idprof,$key).'</td><td>';
-                else
-                    print '<td>'.fieldLabel($idprof,$key,1).'</td><td>';
+                print '<td>'.fieldLabel($idprof,$key, (empty($conf->global->$idprof_mandatory)?0:1)).'</td><td>';
 
-                print $formcompany->get_input_id_prof($i,$key,$object->$key,$object->country_code);
+                print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
                 print '</td>';
                 if (($j % 2) == 1) print '</tr>';
                 $j++;
@@ -1150,12 +1165,12 @@ else
         print '</tr>';
 
         // Type - Size
-        print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>'."\n";
+        print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">'."\n";
         $sortparam=(empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
         print $form->selectarray("typent_id", $formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td>';
-        print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
+        print '<td>'.fieldLabel('Staff','effectif_id').'</td><td class="maxwidthonsmartphone">';
         print $form->selectarray("effectif_id", $formcompany->effectif_array(0), $object->effectif_id);
         if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
         print '</td></tr>';
@@ -1520,7 +1535,7 @@ else
 
             // Prospect/Customer
             print '<tr><td>'.fieldLabel('ProspectCustomer','customerprospect',1).'</td>';
-	        print '<td><select class="flat" name="client" id="customerprospect">';
+	        print '<td class="maxwidthonsmartphone"><select class="flat" name="client" id="customerprospect">';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2"'.($object->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="3"'.($object->client==3?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
             if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1"'.($object->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
@@ -1556,7 +1571,7 @@ else
             if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
             {
                 print '<tr>';
-                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td>';
+                print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td class="maxwidthonsmartphone">';
                 print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
                 print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
@@ -1601,7 +1616,7 @@ else
 
             // Address
             print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	        print '<td colspan="3"><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+	        print '<td colspan="3"><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 
@@ -1757,17 +1772,17 @@ else
             }
 
             // Type - Size
-            print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td>';
+            print '<tr><td>'.fieldLabel('ThirdPartyType','typent_id').'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("typent_id",$formcompany->typent_array(0), $object->typent_id, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td>';
-            print '<td>'.fieldLabel('Staff','effectif_id').'</td><td>';
+            print '<td>'.fieldLabel('Staff','effectif_id').'</td><td class="maxwidthonsmartphone">';
             print $form->selectarray("effectif_id",$formcompany->effectif_array(0), $object->effectif_id);
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
             print '</td></tr>';
 
             // Juridical type
-            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td colspan="3">';
+            print '<tr><td>'.fieldLabel('JuridicalStatus','forme_juridique_code').'</td><td class="maxwidthonsmartphone" colspan="3">';
             print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
             print '</td></tr>';
 
@@ -1889,7 +1904,7 @@ else
         /*
          * View
          */
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
         //if ($res < 0) { dol_print_error($db); exit; }
 
 
@@ -2169,7 +2184,7 @@ else
         print '<table class="border tableforfield" width="100%">';
         
         // Legal
-        print '<tr><td width="25%">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
+        print '<tr><td class="titlefield">'.$langs->trans('JuridicalStatus').'</td><td>'.$object->forme_juridique.'</td></tr>';
 
         // Capital
         print '<tr><td>'.$langs->trans('Capital').'</td><td>';
@@ -2442,6 +2457,8 @@ else
 			$formmail->withdeliveryreceipt=1;
 			$formmail->withcancel=1;
 			// Tableau des substitutions
+			//$formmail->setSubstitFromObject($object);
+			$formmail->substit['__THIRDPARTY_NAME__']=$object->name;
 			$formmail->substit['__SIGNATURE__']=$user->signature;
 			$formmail->substit['__PERSONALIZED__']='';
 			$formmail->substit['__CONTACTCIVNAME__']='';

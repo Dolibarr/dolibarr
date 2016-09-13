@@ -41,12 +41,20 @@ foreach($linkedObjectBlock as $key => $objectlink)
     <td></td>
 	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
 	<td align="right"><?php
-		/*if ($user->rights->expedition->lire) {
+		if ($user->rights->expedition->lire) {
 			$total = $total + $objectlink->total_ht;
 			echo price($objectlink->total_ht);
-		}*/ ?></td>
+		} ?></td>
 	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+	<td align="right">
+		<?php
+		// For now, shipments must stay linked to order, so link is not deletable
+		if($object->element != 'commande') {
+			?>
+			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+			<?php
+		}
+		?>
 </tr>
 <?php
 }

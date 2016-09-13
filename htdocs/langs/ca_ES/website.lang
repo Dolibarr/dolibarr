@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - website
+Shortname=Codi
+WebsiteSetupDesc=Crea tantes entrades com número de pàgines web que necessitis. Després ves al menú Pàgines web per editar-les.
+DeleteWebsite=Elimina la pàgina web
+ConfirmDeleteWebsite=Estàs segur de voler elimiar aquesta pàgina web? També s'esborraran totes les pàgines i el seu contingut.
+WEBSITE_PAGENAME=Nom/alies de pàgina
+WEBSITE_CSS_URL=URL del fitxer CSS extern
+WEBSITE_CSS_INLINE=Contingut CSS
+MediaFiles=Llibreria Media
+EditCss=Edita estil/CSS
+EditMenu=Edita menú
+EditPageMeta=Edita "meta"
+EditPageContent=Edita contingut
+Website=Lloc web
+AddPage=Afegeix pàgina
+PreviewOfSiteNotYetAvailable=La previsualització del teu lloc web <strong>%s</strong> encara no està disponible. Primer has d'afegir una pàgina.
+RequestedPageHasNoContentYet=La pàgina solicitada amb id %s encara no té contingut o el fitxer cau .tpl.php s'ha eliminat. Edita el contingut de la pàgina per solucionar-ho.
+PageDeleted=La pàgina '%s' del lloc web %s s'ha eliminat
+PageAdded=Pàgina '%s' afegida
+ViewSiteInNewTab=Mostra el lloc en una nova pestanya
+ViewPageInNewTab=Mostra la pàgina en una nova pestanya
+SetAsHomePage=Indica com a Pàgina principal
+RealURL=URL real
+ViewWebsiteInProduction=Mostra la pàgina web utilitzant les URLs d'inici
+SetHereVirtualHost=Si en el teu servidor web pots definir un host virtual dedicat amb un directori root en <strong>%s</strong>, defineix aquí el nom del host virtual i així la previsualització es farà utilitzant aquest accés directe enlloc del contenidor d'URLs de Dolibarr.

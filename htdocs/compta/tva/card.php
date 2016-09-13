@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
@@ -266,19 +266,19 @@ if ($action == 'create')
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
         $form->select_comptes($_POST["accountid"],"accountid",0,"courant=1",1);  // Affiche liste des comptes courant
         print '</td></tr>';
+    }
 
-		// Type payment
-		print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-		$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
-		print "</td>\n";
-		print "</tr>";
-		
-		// Number
-		print '<tr><td>'.$langs->trans('Numero');
-		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
-	}
-
+    // Type payment
+	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	$form->select_types_paiements(GETPOST("type_payment"), "type_payment");
+	print "</td>\n";
+	print "</tr>";
+	
+	// Number
+	print '<tr><td>'.$langs->trans('Numero');
+	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+	print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+	
     // Other attributes
     $parameters=array('colspan' => ' colspan="1"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -365,8 +365,8 @@ if ($id)
 
 	
 	/*
-	* Boutons d'actions
-	*/
+	 * Action buttons
+	 */
 	print "<div class=\"tabsAction\">\n";
 	if ($object->rappro == 0)
 	{
@@ -381,7 +381,7 @@ if ($id)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

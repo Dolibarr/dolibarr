@@ -38,6 +38,7 @@ $langs->load("companies");
 
 $id=GETPOST('id','int');
 $ref=GETPOST("ref",'alpha',1);
+$taskref=GETPOST("taskref",'alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $withproject=GETPOST('withproject','int');
@@ -68,6 +69,11 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 {
 	$error=0;
 
+	if (empty($taskref))
+	{
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
+	}
 	if (empty($_POST["label"]))
 	{
 		$error++;
@@ -81,7 +87,7 @@ if ($action == 'update' && ! $_POST["cancel"] && $user->rights->projet->creer)
 		$task_parent=$tmparray[1];
 		if (empty($task_parent)) $task_parent = 0;	// If task_parent is ''
 
-		$object->ref = GETPOST("ref",'alpha',2);
+		$object->ref = $taskref?$taskref:GETPOST("ref",'alpha',2);
 		$object->label = $_POST["label"];
 		$object->description = $_POST['description'];
 		$object->fk_task_parent = $task_parent;
@@ -223,7 +229,7 @@ if ($id > 0 || ! empty($ref))
 			$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 				
 			// Ref
-			print '<tr><td width="30%">';
+			print '<tr><td class="titlefield">';
 			print $langs->trans("Ref");
 			print '</td><td>';
 			// Define a complementary filter for search of next/prev ref.
@@ -310,11 +316,11 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="30%">'.$langs->trans("Ref").'</td>';
-			print '<td><input size="12" name="ref" value="'.$object->ref.'"></td></tr>';
+			print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Ref").'</td>';
+			print '<td><input size="12" name="taskref" value="'.$object->ref.'"></td></tr>';
 
 			// Label
-			print '<tr><td>'.$langs->trans("Label").'</td>';
+			print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
 			print '<td><input size="30" name="label" value="'.$object->label.'"></td></tr>';
 
 			// Project
@@ -399,7 +405,7 @@ if ($id > 0 || ! empty($ref))
 			print '<table class="border" width="100%">';
 
 			// Ref
-			print '<tr><td width="30%">';
+			print '<tr><td class="titlefield">';
 			print $langs->trans("Ref");
 			print '</td><td colspan="3">';
 			if (! GETPOST('withproject') || empty($projectstatic->id))
@@ -437,6 +443,7 @@ if ($id > 0 || ! empty($ref))
 			// Date end
 			print '<tr><td>'.$langs->trans("DateEnd").'</td><td colspan="3">';
 			print dol_print_date($object->date_end,'dayhour');
+        	if ($object->hasDelay()) print img_warning("Late");
 			print '</td></tr>';
 
 			// Planned workload

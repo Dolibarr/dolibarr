@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
-About = Despre
-CronAbout = Despre Cron
-CronAboutPage = Despre pagina cron
 # Right
 Permission23101 = Citeste Job programat
 Permission23102 = Creare/Modificare job programat
@@ -16,17 +13,12 @@ KeyForCronAccess=Cheie de securitate pentru URL de lansare a joburilor cron
 FileToLaunchCronJobs=Linie de comandă pentru lansare joburi cron
 CronExplainHowToRunUnix=Pe mediul Unix veţi  utiliza instrumentul crontab pentru a  rula urmatoarea  linia de comanda la fiecare 5 minute
 CronExplainHowToRunWin=Pe mediul Microsoft(tm) Windows puteţi utiliza instrumentul Scheduled task pentru a rula linia de comanda la fiecare 5 minute
-CronMethodDoesNotExists=Class %s does not contains any method %s
+CronMethodDoesNotExists= Clasa %s nu conține metoda %s
 # Menu
-CronJobs=Joburi programate
-CronListActive=List of enabled/scheduled jobs
-CronListInactive=Lista joburilor dezactivate
-EnabledAndDisabled=Enabled and disabled
+EnabledAndDisabled=Activat și dezactivat
 # Page list
-CronDateLastRun=Ultima rulare
 CronLastOutput=Ieşirea ultimei rulări
 CronLastResult=Codul ultimului rezultat
-CronListOfCronJobs=Lista joburilor programate
 CronCommand=Comandă
 CronList=Joburi programate
 CronDelete=Şterge Joburi programate
@@ -34,36 +26,30 @@ CronConfirmDelete=Sunteţi sigur că doriţi să ştergeţi aceaste job-uri ?
 CronExecute=Lanseaza joburi programate
 CronConfirmExecute=Sunteţi sigur că doriţi să executati  aceaste job-uri programate  acum ?
 CronInfo=Modul de joburi programate permite să  se execute  job-uri  care au fost planificate
-CronWaitingJobs=Joburi în aşteptare
 CronTask=Job
 CronNone=Niciunul
-CronDtStart=Not before
-CronDtEnd=Not after
+CronDtStart=Dată începere
+CronDtEnd=Data de final
 CronDtNextLaunch=Urmatoarea execuţie
-CronDtLastLaunch=Start date of last execution
-CronDtLastResult=End date of last execution
+CronDtLastLaunch=Ultima rulare
+CronDtLastResult=Data ultimei  rulări
 CronFrequency=Frecvenţă
 CronClass=Clasa
 CronMethod=Metoda
 CronModule=Modulul
-CronAction=Acţiunea
-CronStatus=Statut
-CronStatusActive=Activat
-CronStatusInactive=Dezactivat
 CronNoJobs=Niciun job înregistrat
 CronPriority=Prioritate
 CronLabel=Descriere
 CronNbRun=Nr. lansări
-CronMaxRun=Max nb. launch
+CronMaxRun=Nr. max. lansări
 CronEach=Fiecare
 JobFinished=Job lansat şi terminat
 #Page card
 CronAdd= Adaugă joburi
-CronHourStart= Data şi Ora de start a jobului
 CronEvery=Executa fiecare job
 CronObject=Instanţă/Obiect de creat
 CronArgs=Parametri
-CronSaveSucess=Salvare realizată
+CronSaveSucess=Salvare cu succes
 CronNote=Comenteaza
 CronFieldMandatory=Câmpurile %s sunt obligatorii
 CronErrEndDateStartDt=Data de sfârşit nu poate fi înaintea datei de început
@@ -78,17 +64,15 @@ CronObjectHelp=Numele obiectului de încărcat. <BR> De exemplu să aducă metod
 CronMethodHelp=Metoda obiectului de încărcat. <BR> De exemplu să aducă metoda de obiect Produs Dolibarr  /htdocs/product/class/product.class.php, valoarea metodei  este  <i>fecth</i>
 CronArgsHelp=Argumentele metodei . <BR> De exemplu să aducă metoda  obiect ului Produs Dolibarr  /htdocs/product/class/product.class.php, valoarea parametrilor pot fi este  <i>0, ProductRef</i>
 CronCommandHelp=Linia de comandă de sistem pentru a executa.
-CronCreateJob=Create new Scheduled Job
+CronCreateJob=Creare job programat
 CronFrom=De la
 # Info
-CronInfoPage=Informatie
 # Common
 CronType=Tip job
 CronType_method=Apel metodă a Clasei Dolibarr
 CronType_command=Comandă shell
-CronMenu=Cron
 CronCannotLoadClass=Nu pot încărca clasa %s sau  obiectul %s
-UseMenuModuleToolsToAddCronJobs=Intrați în meniul ''Acasă - Instrumentele modulelor - Lista de job-uri'' pentru a vedea și edita job-urile programate.
-TaskDisabled=Job dezactivat
-MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump
+UseMenuModuleToolsToAddCronJobs=Intrați în meniul ''Acasă - Module Instrumente - Joburi programate'' pentru a vedea și edita job-urile programate.
+JobDisabled=Job dezactivat
+MakeLocalDatabaseDumpShort=Backup local baza de date
+MakeLocalDatabaseDump=Creare dump local baza de date

@@ -128,9 +128,10 @@ if ($result)
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($statut != '')    $param.="&statut=".$statut;
     if ($date_select)     $param.="&date_select=".$date_select;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($search_lastname) $param.="&search_lastname=".$search_lastname;
 	if ($search_login)    $param.="&search_login=".$search_login;
 	if ($search_acount)   $param.="&search_account=".$search_account;

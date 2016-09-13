@@ -189,7 +189,7 @@ if ($result)
     }
   else
     {
-     print '<tr><td>'.$langs->trans("None").'</td></tr>';
+     print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
   print "</table><br>";
   $db->free($result);

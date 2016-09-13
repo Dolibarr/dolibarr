@@ -126,7 +126,6 @@ class MouvementStock extends CommonObject
 				return -2;
 			}
 
-			// FIXME Code not complete to implement this
 			// Check table llx_product_lot from batchnumber for same product
 			// If found and eatby/sellby defined into table and provided and differs, return error
 			// If found and eatby/sellby defined into table and not provided, we take value from table
@@ -150,8 +149,11 @@ class MouvementStock extends CommonObject
                         {
                             if ($eatby)
                             {
-                        		if ($this->db->jdate($obj->eatby) != $eatby)  // If found and eatby/sellby defined into table and provided and differs, return error
+                                $tmparray=dol_getdate($eatby, true);
+                                $eatbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+                        		if ($this->db->jdate($obj->eatby) != $eatby && $this->db->jdate($obj->eatby) != $eatbywithouthour)    // We test date without hours and with hours for backward compatibility 
                                 {
+                                    // If found and eatby/sellby defined into table and provided and differs, return error
                                     $this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby));
                                     dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->eatby)), dol_print_date($eatby)), LOG_ERR);
                                     $this->db->rollback();
@@ -184,8 +186,11 @@ class MouvementStock extends CommonObject
                         {
                             if ($sellby)
                             {
-                                if ($this->db->jdate($obj->sellby) != $sellby) // If found and eatby/sellby defined into table and provided and differs, return error
+                                $tmparray=dol_getdate($sellby, true);
+                                $sellbywithouthour=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+                                if ($this->db->jdate($obj->sellby) != $sellby && $this->db->jdate($obj->sellby) != $sellbywithouthour)    // We test date without hours and with hours for backward compatibility
                         		{
+                        		    // If found and eatby/sellby defined into table and provided and differs, return error
             						$this->errors[]=$langs->trans("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby));
             						dol_syslog($langs->transnoentities("ThisSerialAlreadyExistWithDifferentDate", $batch, dol_print_date($this->db->jdate($obj->sellby)), dol_print_date($sellby)), LOG_ERR);
             						$this->db->rollback();
@@ -218,11 +223,14 @@ class MouvementStock extends CommonObject
                         $i++;
                 	}
             	}
-            	else
+            	else   // If not found, we add record
             	{
             	    $productlot = new Productlot($this->db);
             	    $productlot->fk_product = $fk_product;
             	    $productlot->batch = $batch;
+            	    // If we are here = first time we manage this batch, so we used dates provided by users to create lot
+            	    $productlot->eatby = $eatby;
+            	    $productlot->sellby = $sellby;
             	    $result = $productlot->create($user);
             	    if ($result <= 0)
             	    {
@@ -407,8 +415,8 @@ class MouvementStock extends CommonObject
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".$fk_product;
     			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET p.pmp = ".$newpmp.", ";
-				$sql.= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock ps WHERE ps.fk_product = p.rowid)";
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$newpmp.", ";
+				$sql.= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 				$sql.= " WHERE rowid = ".$fk_product;
 				
 				dol_syslog(get_class($this)."::_create", LOG_DEBUG);

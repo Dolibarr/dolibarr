@@ -44,9 +44,10 @@ function versiontostring($versionarray)
 /**
  *	Compare 2 versions (stored into 2 arrays).
  *  To check if Dolibarr version is lower than (x,y,z), do "if versioncompare(versiondolibarrarray(), array(x.y.z)) <= 0"
- *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 beta or higher.
+ *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,-4)) >= 0) is true if version is 4.0 alpha or higher.
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,0)) >= 0) is true if version is 4.0 final or higher.
  *  For example: if (versioncompare(versiondolibarrarray(),array(4,0,1)) >= 0) is true if version is 4.0.1 or higher.
+ *  Alternative way to compare: if ((float) DOL_VERSION >= 4.0) is true if version is 4.0 alpha or higher (works only to compare first and second level)
  *
  *	@param      array		$versionarray1      Array of version (vermajor,verminor,patch)
  *	@param      array		$versionarray2		Array of version (vermajor,verminor,patch)
@@ -736,17 +737,24 @@ function activateModule($value,$withdeps=1)
         if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
         {
             // Activation des modules dont le module depend
+            $TError=array();
             $num = count($objMod->depends);
             for ($i = 0; $i < $num; $i++)
             {
+            	$activate = false;
             	foreach ($modulesdir as $dir)
             	{
             		if (file_exists($dir.$objMod->depends[$i].".class.php"))
             		{
             			activateModule($objMod->depends[$i]);
+						$activate = true;
             		}
             	}
+				
+				if (!$activate) $TError[] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
             }
+            
+            setEventMessages('', $TError, 'errors');
         }
 
         if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))

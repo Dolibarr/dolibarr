@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2008		Raphael Bertrand		<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
@@ -2098,6 +2098,8 @@ class Contrat extends CommonObject
 	{
 		global $user,$langs,$conf;
 
+        // Load array of products prodids
+		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -2116,8 +2118,6 @@ class Contrat extends CommonObject
 			}
 		}
 
-
-
 		// Initialise parametres
 		$this->id=0;
 		$this->specimen=1;
@@ -2127,6 +2127,7 @@ class Contrat extends CommonObject
 		$this->ref_supplier = 'SPECIMENSUPP';
 		$this->socid = 1;
 		$this->statut= 0;
+		$this->date_creation = (dol_now() - 3600 * 24 * 7);
 		$this->date_contrat = dol_now();
 		$this->commercial_signature_id = 1;
 		$this->commercial_suivi_id = 1;
@@ -2147,8 +2148,11 @@ class Contrat extends CommonObject
 			$line->total_ht=90;
 			$line->total_ttc=107.64;	// 90 * 1.196
 			$line->total_tva=17.64;
-			$prodid = mt_rand(1, $num_prods);
-			$line->fk_product=$prodids[$prodid];
+            if ($num_prods > 0)
+            {
+				$prodid = mt_rand(1, $num_prods);
+				$line->fk_product=$prodids[$prodid];
+            }
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
 		}
@@ -2217,18 +2221,18 @@ class Contrat extends CommonObject
  */
 class ContratLigne extends CommonObjectLine
 {
-
+    public $element='contratdet';
+    public $table_element='contratdet';
+    
 	var $id;
 	var $ref;
 	var $tms;
+
 	var $fk_contrat;
 	var $fk_product;
 	var $statut;					// 0 inactive, 4 active, 5 closed
+	var $type;                     // 0 for product, 1 for service
 	var $label;
-
-	public $element='contratdet';
-	public $table_element='contratdet';
-
 	/**
 	 * @var string
 	 * @deprecated Use $label instead
@@ -2237,6 +2241,10 @@ class ContratLigne extends CommonObjectLine
 	public $libelle;
 
 	var $description;
+	
+	var $product_ref;
+	var $product_label;
+	
 	var $date_commande;
 	var $date_ouverture_prevue;		// date start planned
 	var $date_ouverture;			// date start real
@@ -2376,16 +2384,17 @@ class ContratLigne extends CommonObjectLine
 
 		$result='';
         $label=$langs->trans("ShowContractOfService").': '.$this->label;
-
+        if (empty($label)) $label=$this->description;
+        
         $link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		$picto='contract';
-
+		$picto='service';
+		if ($this->type == 0) $picto='product';
 
         if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->label.$linkend;
+		if ($withpicto != 2) $result.=$link.($this->product_ref?$this->product_ref.' ':'').($this->label?$this->label:$this->description).$linkend;
 		return $result;
 	}
 
@@ -2398,7 +2407,6 @@ class ContratLigne extends CommonObjectLine
 	 */
 	function fetch($id, $ref='')
 	{
-		global $langs,$user;
 
 		// Check parameters
 		if (empty($id) && empty($ref)) return -1;
@@ -2414,6 +2422,7 @@ class ContratLigne extends CommonObjectLine
 		$sql.= " p.ref as product_ref,";
 		$sql.= " p.label as product_label,";
 		$sql.= " p.description as product_desc,";
+		$sql.= " p.fk_product_type as product_type,";
 		$sql.= " t.description,";
 		$sql.= " t.date_commande,";
 		$sql.= " t.date_ouverture_prevue as date_ouverture_prevue,";
@@ -2464,6 +2473,7 @@ class ContratLigne extends CommonObjectLine
 				$this->product_ref = $obj->product_ref;
 				$this->product_label = $obj->product_label;
 				$this->product_description = $obj->product_description;
+				$this->product_type = $obj->product_type;
 				$this->label = $obj->label;					// deprecated. We do not use this field. Only ref and label of product, and description of contract line
 				$this->description = $obj->description;
 				$this->date_commande = $this->db->jdate($obj->date_commande);

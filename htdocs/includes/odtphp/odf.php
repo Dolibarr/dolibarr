@@ -39,6 +39,7 @@ class Odf
 	public $userdefined=array();
 	
 	const PIXEL_TO_CM = 0.026458333;
+	
 	/**
 	 * Class constructor
 	 *
@@ -108,7 +109,7 @@ class Odf
 		copy($filename, $this->tmpfile);
 
 		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the 
-		// <table:table-row tag
+		// <table:table-row tag and clean bad lines tags.
 		$this->_moveRowSegments();
 	}
 
@@ -203,7 +204,9 @@ class Odf
 	public function phpEval()
 	{
 		preg_match_all('/[\{\<]\?(php)?\s+(?P<content>.+)\?[\}\>]/iU',$this->contentXml, $matches); // detecting all {?php code ?} or <?php code ? >
-		for ($i=0;$i < count($matches['content']);$i++) {
+		$nbfound=count($matches['content']);
+		for ($i=0; $i < $nbfound; $i++) 
+		{
 			try {
 				$ob_output = ''; // flush the output for each code. This var will be filled in by the eval($code) and output buffering : any print or echo or output will be redirected into this variable
 				$code = $matches['content'][$i];
@@ -249,13 +252,18 @@ IMG;
 
 	/**
 	 * Move segment tags for lines of tables
-	 * Called automatically within the constructor
+	 * This function is called automatically within the constructor, so this->contentXml is clean before any other thing
 	 *
 	 * @return void
 	 */
 	private function _moveRowSegments()
 	{
-		// Search all possible rows in the document
+	    // Replace BEGIN<text:s/>xxx into BEGIN xxx
+	    $this->contentXml = preg_replace('/\[!--\sBEGIN<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- BEGIN \\1 --]', $this->contentXml);
+	    // Replace END<text:s/>xxx into END xxx
+	    $this->contentXml = preg_replace('/\[!--\sEND<text:s[^>]>(row.[\S]*)\s--\]/sm', '[!-- END \\1 --]', $this->contentXml);
+    
+	    // Search all possible rows in the document
 		$reg1 = "#<table:table-row[^>]*>(.*)</table:table-row>#smU";
 		preg_match_all($reg1, $this->contentXml, $matches);
 		for ($i = 0, $size = count($matches[0]); $i < $size; $i++) {
@@ -278,7 +286,7 @@ IMG;
 
 	/**
 	 * Merge template variables
-	 * Called automatically for a save
+	 * Called at the beginning of the _save function
 	 *
 	 * @param  string	$type		'content', 'styles' or 'meta'
 	 * @return void
@@ -288,6 +296,7 @@ IMG;
 	    // Search all tags fou into condition to complete $this->vars, so we will proceed all tests even if not defined
 	    $reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 	    preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
+	    
 	    //var_dump($this->vars);exit;
 	    foreach($matches as $match)   // For each match, if there is no entry into this->vars, we add it
 		{
@@ -305,15 +314,24 @@ IMG;
 			// If value is true (not 0 nor false nor null nor empty string)
 			if ($value)
 			{
+			    //dol_syslog("Var ".$key." is defined, we remove the IF, ELSE and ENDIF ");
+			    //$sav=$this->contentXml;
 				// Remove the IF tag
 				$this->contentXml = str_replace('[!-- IF '.$key.' --]', '', $this->contentXml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
 				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				$this->contentXml = preg_replace($reg, '', $this->contentXml);
+				/*if ($sav != $this->contentXml)
+				{
+				    dol_syslog("We found a IF and it was processed");
+				    //var_dump($sav);exit;
+				}*/
 			}
 			// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
 			else
 			{
+			    //dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
+			    //$sav=$this->contentXml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
 				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $this->contentXml, $matches, PREG_SET_ORDER);
@@ -322,6 +340,11 @@ IMG;
 				}
 				// Cleanup the other conditional blocks (all the others where there were no ELSE clause, we can just remove them altogether)
 				$this->contentXml = preg_replace($reg, '', $this->contentXml);
+				/*if ($sav != $this->contentXml)
+				{
+				    dol_syslog("We found a IF and it was processed");
+				    //var_dump($sav);exit;
+				}*/
 			}
 		}
 
@@ -335,7 +358,7 @@ IMG;
 	/**
 	 * Add the merged segment to the document
 	 *
-	 * @param Segment $segment
+	 * @param Segment $segment     Segment
 	 * @throws OdfException
 	 * @return odf
 	 */
@@ -386,7 +409,7 @@ IMG;
 	 * Declare a segment in order to use it in a loop.
 	 * Extract the segment and store it into $this->segments[]. Return it for next call.
 	 *
-	 * @param string $segment
+	 * @param  string      $segment        Segment
 	 * @throws OdfException
 	 * @return Segment
 	 */
@@ -398,7 +421,7 @@ IMG;
 		// $reg = "#\[!--\sBEGIN\s$segment\s--\]<\/text:p>(.*)<text:p\s.*>\[!--\sEND\s$segment\s--\]#sm";
 		$reg = "#\[!--\sBEGIN\s$segment\s--\](.*)\[!--\sEND\s$segment\s--\]#sm";
 		if (preg_match($reg, html_entity_decode($this->contentXml), $m) == 0) {
-			throw new OdfException("'$segment' segment not found in the document");
+			throw new OdfException("'".$segment."' segment not found in the document. The tag [!-- BEGIN xxx --] or [!-- END xxx --] is not present into content file.");
 		}
 		$this->segments[$segment] = new Segment($segment, $m[1], $this);
 		return $this->segments[$segment];
@@ -677,9 +700,9 @@ IMG;
 
 	/**
 	 * return the value present on odt in [valuename][/valuename]
-	 * @param string $value name balise in the template
-	 * @return string the value inside the balise
-	 *
+	 * 
+	 * @param  string $value   name balise in the template
+	 * @return string          the value inside the balise
 	 */
 	public function getvalue($valuename)
 	{
@@ -691,4 +714,3 @@ IMG;
 
 }
 
-?>

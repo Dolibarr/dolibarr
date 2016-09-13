@@ -53,7 +53,7 @@ if ($year == 0) {
 }
 
 if($cat_id == 0){
-	$cat_id = null;	
+	$cat_id = null;
 }
 
 // Security check
@@ -76,31 +76,31 @@ $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current -
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
 print load_fiche_titre($langs->trans('ReportInOut') . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
-	
+
 print '<table class="border" width="100%">';
-	
-$months = array( $langs->trans("JanuaryMin"), 
-				$langs->trans("FebruaryMin"), 
-				$langs->trans("MarchMin"), 
-				$langs->trans("AprilMin"), 
-				$langs->trans("MayMin"), 
-				$langs->trans("JuneMin"), 
-				$langs->trans("JulyMin"), 
-				$langs->trans("AugustMin"), 
-				$langs->trans("SeptemberMin"), 
-				$langs->trans("OctoberMin"), 
-				$langs->trans("NovemberMin"), 
+
+$months = array( $langs->trans("JanuaryMin"),
+				$langs->trans("FebruaryMin"),
+				$langs->trans("MarchMin"),
+				$langs->trans("AprilMin"),
+				$langs->trans("MayMin"),
+				$langs->trans("JuneMin"),
+				$langs->trans("JulyMin"),
+				$langs->trans("AugustMin"),
+				$langs->trans("SeptemberMin"),
+				$langs->trans("OctoberMin"),
+				$langs->trans("NovemberMin"),
 				$langs->trans("DecemberMin"),
 			);
 
 print '<tr class="liste_titre"><th class="liste_titre">'.$langs->trans("Account").'</th>';
 print '<th class="liste_titre">'.$langs->trans("Description").'</th>';
-print '<th class="liste_titre" align="center">N-1</th>';		
+print '<th class="liste_titre" align="center">N-1</th>';
 print '<th class="liste_titre" align="center">'.$langs->trans("NReal").'</th>';
 foreach($months as $k => $v){
 	print '<th class="liste_titre"  align="center">'.$langs->trans($v).'</th>';
 }
-print	'</tr>';			
+print	'</tr>';
 
 $cats = $AccCat->getCatsCpts();
 $catsCalcule = $AccCat->getCatsCal();
@@ -123,22 +123,41 @@ if(!empty($cats))
 			$position = $cpt['position'];
 			$code = $cpt['code'];
 
-			$resultNP = $AccCat->getResult($cpt['account_number'], 0, $year_current -1, $cpt['dc']);
-			$resultN = $AccCat->getResult($cpt['account_number'], 0, $year_current, $cpt['dc']);
+			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current -1, $cpt['dc']);
+			if ($return < 0) {
+				setEventMessages(null, $AccCat->errors, 'errors');
+				$resultNP=0;
+			} else {
+				$resultNP=$AccCat->sdc;
+			}
+
+			$return = $AccCat->getResult($cpt['account_number'], 0, $year_current, $cpt['dc']);
+			if ($return < 0) {
+				setEventMessages(null, $AccCat->errors, 'errors');
+				$resultN=0;
+			} else {
+				$resultN=$AccCat->sdc;
+			}
 			$sommes[$code]['NP'] += $resultNP;
-			$sommes[$code]['N'] += $resultN; 
-			print "<tr $bc[$var]>";
+			$sommes[$code]['N'] += $resultN;
+			print '<tr'. $bc[$var].'>';
 			print '<td>' . $cpt['account_number'] . '</td>';
 			print '<td>' . $cpt['name_cpt'] . '</td>';
 			print '<td>' . price($resultNP)  . '</td>';
 			print '<td>' . price($resultN) . '</td>';
-				
+
 			foreach($months as $k => $v){
-				$resultM = $AccCat->getResult($cpt['account_number'], $k+1, $year_current, $cpt['dc']);
+				$return = $AccCat->getResult($cpt['account_number'], $k+1, $year_current, $cpt['dc']);
+				if ($return < 0) {
+					setEventMessages(null, $AccCat->errors, 'errors');
+					$resultM=0;
+				} else {
+					$resultM=$AccCat->sdc;
+				}
 				$sommes[$code]['M'][$k] += $resultM;
 				print '<td align="right">' . price($resultM) . '</td>';
 			}
-				
+
 			print "</tr>\n";
 		}
 
@@ -168,9 +187,9 @@ if(!empty($cats))
 			}
 			$result = strtr($formula, $vars);
 			eval( '$result = (' . $result . ');' );
-			print '<td align="right">' . price($result) . '</td>';	
+			print '<td align="right">' . price($result) . '</td>';
 			$sommes[$code]['N'] += $result;
-				
+
 			// Detail by month
 			foreach($months as $k => $v){
 				foreach($sommes as $code => $det){
@@ -181,14 +200,14 @@ if(!empty($cats))
 				print '<td align="right">' . price($result) . '</td>';
 				$sommes[$code]['M'][$k] += $result;
 			}
-	
+
 			//print '<td colspan="15">' . $catsCalcule[$p]['formula'] . '</td>';
 			print "</tr>\n";
 			unset($catsCalcule[$p]); // j'élimine la catégorie calculée après affichage
 		}
 		$j++;
 	}
-		
+
 	// Others calculed category
 	foreach($catsCalcule as $p => $catc)
 	{
@@ -215,7 +234,7 @@ if(!empty($cats))
 		}
 		$result = strtr($formula, $vars);
 		eval( '$result = (' . $result . ');' );
-		print '<td align="right">' . price($result) . '</td>';	
+		print '<td align="right">' . price($result) . '</td>';
 		$sommes[$code]['N'] += $result;
 
 		// Detail by month

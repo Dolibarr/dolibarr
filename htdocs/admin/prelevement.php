@@ -45,22 +45,14 @@ $action = GETPOST('action','alpha');
 if ($action == "set")
 {
     $db->begin();
-    for ($i = 0 ; $i < 2 ; $i++)
-    {
-    	$res = dolibarr_set_const($db, GETPOST("nom$i",'alpha'), GETPOST("value$i",'alpha'),'chaine',0,'',$conf->entity);
-        if (! $res > 0) $error++;
-    }
-
-    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
-    if (! $res > 0) $error++;
 
     $id=GETPOST('PRELEVEMENT_ID_BANKACCOUNT','int');
     $account = new Account($db);
-
     if($account->fetch($id)>0)
     {
         $res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
+        /*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_GUICHET", $account->code_guichet,'chaine',0,'',$conf->entity);
@@ -75,9 +67,19 @@ if ($action == "set")
         if (! $res > 0) $error++;
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
+        */
     }
     else $error++;
 
+    $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
+    if (! $res > 0) $error++;
+    
+    if (GETPOST("PRELEVEMENT_USER") > 0)
+    {
+        $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
+    
     if (! $error)
 	{
 		$db->commit();
@@ -131,32 +133,24 @@ print '<td width="30%">'.$langs->trans("Parameter").'</td>';
 print '<td width="40%">'.$langs->trans("Value").'</td>';
 print "</tr>";
 
-//User
-print '<tr class="impair"><td>'.$langs->trans("ResponsibleUser").'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom0" value="PRELEVEMENT_USER">';
-print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'value0', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-print '</td>';
-print '</tr>';
-
-//Profid1 of Transmitter
-print '<tr class="pair"><td>'.$langs->trans("NumeroNationalEmetter").' - '.$langs->transcountry('ProfId1',$mysoc->country_code).'</td>';
-print '<td align="left">';
-print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
-print '<input type="text"   name="value1" value="'.$conf->global->PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
-print '</tr>';
-
 // Bank account (from Banks module)
-print '<tr class="impair"><td>'.$langs->trans("BankToReceiveWithdraw").'</td>';
+print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
 print '<td align="left">';
 $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT,'PRELEVEMENT_ID_BANKACCOUNT',0,"courant=1",1);
 print '</td></tr>';
 
 // ICS
-print '<tr class="pair"><td>'.$langs->trans("ICS").'</td>';
+print '<tr class="pair"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
 print '<td align="left">';
-print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="9" ></td>';
+print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" ></td>';
 print '</td></tr>';
+
+//User
+print '<tr class="impair"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
+print '<td align="left">';
+print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print '</td>';
+print '</tr>';
 
 print '</table>';
 print '<br>';

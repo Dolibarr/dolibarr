@@ -14,6 +14,5 @@ BehaviourOnClick=Ponašanje kad se klikne na URL
 CreateBookmark=Kreiraj zabilješku
 SetHereATitleForLink=Postavi naslov za zabilješku
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Koristi eksterni http URL ili relativni Bolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izaberi da li će se stanica otvorena sa linka otvorini u trenutnom ili novom prozoru
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Upravljanje zabilješkama
-ListOfBookmarks=Lista zabilješki

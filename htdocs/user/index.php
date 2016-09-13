@@ -229,6 +229,15 @@ $sql.=$hookmanager->resPrint;
 $sql.=$db->order($sortfield,$sortorder);
 //$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
+/*$totalnboflines=0;
+$result=$db->query($sql);
+if ($result)
+{
+    $totalnboflines = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit+1, $offset);
+*/
 $result = $db->query($sql);
 if ($result)
 {
@@ -236,6 +245,8 @@ if ($result)
     $i = 0;
 
     $param='';
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
     if ($sall != '') $param.='&sall='.urlencode($sall);
     if ($search_user != '') $param.="&search_user=".$search_user;
     if ($search_login != '') $param.="&search_login=".$search_login;

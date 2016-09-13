@@ -386,15 +386,15 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 				/*
 	             * Autres factures impayees
 	             */
-	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df';
-	            $sql.= ', SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
+	            $sql = 'SELECT f.rowid as facid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef as df,';
+	            $sql.= ' SUM(pf.amount) as am, SUM(pf.multicurrency_amount) as multicurrency_am';
 	            $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 	            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 	            $sql.= " WHERE f.entity = ".$conf->entity;
 	            $sql.= ' AND f.fk_soc = '.$object->socid;
 	            $sql.= ' AND f.paye = 0';
 	            $sql.= ' AND f.fk_statut = 1';  // Statut=0 => non validee, Statut=2 => annulee
-	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef';
+	            $sql.= ' GROUP BY f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.multicurrency_total_ttc, f.datef';
 	            $resql = $db->query($sql);
 	            if ($resql)
 	            {

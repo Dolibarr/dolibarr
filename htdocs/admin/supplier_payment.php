@@ -94,7 +94,7 @@ dol_fiche_head($head, 'supplierpayment', $langs->trans("Suppliers"), 0, 'company
 
 if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
     
-print load_fiche_titre($langs->trans("PaymentsNumberingModule"));
+print load_fiche_titre($langs->trans("PaymentsNumberingModule"), '', '');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';

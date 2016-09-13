@@ -1,9 +1,3 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
-SupplierProposalDraft=Brouillon
-SupplierProposalOpened=Ouverte
 SupplierProposalStatusClosed=Fermées
-SupplierProposalStatusBilled=Facturées
-SupplierProposalStatusValidatedShort=Validée
-SupplierProposalStatusOpenedShort=Ouverte
 SupplierProposalStatusClosedShort=Fermées
-SupplierProposalStatusBilledShort=Facturées

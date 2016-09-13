@@ -10,6 +10,7 @@
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +96,7 @@ if (empty($reshook))
 	if (($action == 'update_vat') && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer))
 	{
 	    $tva_tx_txt = GETPOST('tva_tx', 'alpha');           // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
-	    	  
+
 	    // We must define tva_tx, npr and local taxes
 	    $vatratecode = '';
 	    $tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt);     // keep remove all after the numbers and dot
@@ -618,7 +619,22 @@ if (! empty($id) || ! empty($ref))
 	// fetch updated prices
 	$object->fetch($id, $ref);
 }
-llxHeader("", "", $langs->trans("CardProduct" . $object->type));
+
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('SellingPrices');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('SellingPrices');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('', $title, $helpurl);
 
 $head = product_prepare_head($object);
 $titre = $langs->trans("CardProduct" . $object->type);
@@ -1315,7 +1331,7 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
     		{
     			$objp = $db->fetch_object($result);
     			$var = ! $var;
-    			print "<tr $bc[$var]>";
+    			print '<tr'. $bc[$var].'>';
     			// Date
     			print "<td>" . dol_print_date($db->jdate($objp->dp), "dayhour") . "</td>";
     

@@ -254,7 +254,7 @@ class Form
      * @param	string	$value			Value to show/edit
      * @param	string	$htmlname		DIV ID (field name)
      * @param	int		$condition		Condition to edit
-     * @param	string	$inputType		Type of input ('numeric', 'datepicker', 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:xxx')
+     * @param	string	$inputType		Type of input ('string', 'numeric', 'datepicker', 'textarea:rows:cols', 'ckeditor:dolibarr_zzz:width:height:?:1:rows:cols', 'select:xxx')
      * @param	string	$editvalue		When in edit mode, use this value as $value instead of value
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
@@ -280,6 +280,7 @@ class Form
             $savemethod		= false;
             $ext_element	= false;
             $button_only	= false;
+            $inputOption    = '';
 
             if (is_object($object))
             {
@@ -299,6 +300,7 @@ class Form
                 $inputType=$tmp[0];
                 if (! empty($tmp[1])) $inputOption=$tmp[1];
                 if (! empty($tmp[2])) $savemethod=$tmp[2];
+				$out.= '<input id="width_'.$htmlname.'" value="'.$inputOption.'" type="hidden"/>'."\n";
             }
             else if ((preg_match('/^datepicker/',$inputType)) || (preg_match('/^datehourpicker/',$inputType)))
             {
@@ -363,7 +365,6 @@ class Form
             	$out.= '<input id="textarea_'.$htmlname.'_rows" value="'.$rows.'" type="hidden"/>'."\n";
             	$out.= '<input id="textarea_'.$htmlname.'_cols" value="'.$cols.'" type="hidden"/>'."\n";
             }
-
             $out.= '<span id="viewval_'.$htmlname.'" class="viewval_'.$inputType.($button_only ? ' inactive' : ' active').'">'.$value.'</span>'."\n";
             $out.= '<span id="editval_'.$htmlname.'" class="editval_'.$inputType.($button_only ? ' inactive' : ' active').' hideobject">'.(! empty($editvalue) ? $editvalue : $value).'</span>'."\n";
         }
@@ -1435,7 +1436,7 @@ class Form
 		            $nodatarole=($comboenhancement?' data-role="none"':'');
 		        }
 
-                $out.= '<select class="flat minwidth200'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
+                $out.= '<select class="flat'.($morecss?' minwidth100 '.$morecss:' minwidth200').'" id="'.$htmlname.'" name="'.$htmlname.'"'.($disabled?' disabled':'').$nodatarole.'>';
                 if ($show_empty) $out.= '<option value="-1"'.((empty($selected) || $selected==-1)?' selected':'').'>&nbsp;</option>'."\n";
 				if ($show_every) $out.= '<option value="-2"'.(($selected==-2)?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
@@ -1766,7 +1767,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($objp->price_by_qty) && $objp->price_by_qty == 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -1914,8 +1915,8 @@ class Form
             $sql.= " WHERE fk_product='".$objp->rowid."'";
             $sql.= " AND entity IN (".getEntity('productprice', 1).")";
             $sql.= " AND price_level=".$price_level;
-            $sql.= " ORDER BY date_price, rowid";
-            $sql.= " DESC LIMIT 1";
+            $sql.= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
+            $sql.= " LIMIT 1";
 
             dol_syslog(get_class($this).'::constructProductListOption search price for level '.$price_level.'', LOG_DEBUG);
             $result2 = $this->db->query($sql);
@@ -2059,9 +2060,10 @@ class Form
      *	@param  string	$filtre			For a SQL filter
      *	@param	array	$ajaxoptions	Options for ajax_autocompleter
 	 *  @param	int		$hidelabel		Hide label (0=no, 1=yes)
+	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
      *	@return	void
      */
-    function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0)
+    function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0, $alsoproductwithnosupplierprice=0)
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
@@ -2083,7 +2085,7 @@ class Form
 				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
 			}
 			// mode=2 means suppliers products
-            $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
+            $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
             print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'">';
         }
@@ -2094,7 +2096,7 @@ class Form
 				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
 				print '<script type="text/javascript">$("#'.$htmlname.'").change(function() { $("#idprod").val($(this).val());});</script>';
 			}
-        	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0);
+        	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0,0,$alsoproductwithnosupplierprice);
         }
     }
 
@@ -2110,9 +2112,10 @@ class Form
      *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell (not used here, a filter on tobuy is already hard coded in request)
      *  @param  int		$outputmode     0=HTML select string, 1=Array
      *  @param  int     $limit          Limit of line number
+	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
      *  @return array           		Array of keys for json
      */
-    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100)
+    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100,$alsoproductwithnosupplierprice=0)
     {
         global $langs,$conf,$db;
 
@@ -2166,7 +2169,7 @@ class Form
             $num = $this->db->num_rows($result);
 
             //$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
-            $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+            $out.='<select class="flat maxwidthonsmartphone" id="'.$htmlname.'" name="'.$htmlname.'">';
             if (! $selected) $out.='<option value="0" selected>&nbsp;</option>';
             else $out.='<option value="0">&nbsp;</option>';
 
@@ -2175,7 +2178,9 @@ class Form
             {
                 $objp = $this->db->fetch_object($result);
 
-                $outkey=$objp->idprodfournprice;
+                $outkey=$objp->idprodfournprice;                                                    // id in table of price
+                if (! $outkey && $alsoproductwithnosupplierprice) $outkey='idprod_'.$objp->rowid;   // id of product
+
                 $outref=$objp->ref;
                 $outval='';
                 $outqty=1;
@@ -2184,9 +2189,9 @@ class Form
                 $outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration,0,dol_strlen($objp->duration)-1):'';
                 $outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration,-1):'';
 
-                $opt = '<option value="'.$objp->idprodfournprice.'"';
+                $opt = '<option value="'.$outkey.'"';
                 if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
-                if (empty($objp->idprodfournprice)) $opt.=' disabled';
+                if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt.=' disabled';
                 $opt.= '>';
 
                 $objRef = $objp->ref;
@@ -2265,18 +2270,25 @@ class Form
                     }
                     if ($objp->supplier_reputation)
                     {
-			//TODO dictionnary
-			$reputations=array(''=>$langs->trans('Standard'),'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
+            			//TODO dictionnary
+            			$reputations=array(''=>$langs->trans('Standard'),'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 
                         $opt .= " - ".$reputations[$objp->supplier_reputation];
                         $outval.=" - ".$reputations[$objp->supplier_reputation];
                     }
-
                 }
                 else
                 {
-                    $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
-                    $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+                    if (empty($alsoproductwithnosupplierprice))     // No supplier price defined for couple product/supplier
+                    {
+                        $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
+                        $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+                    }
+                    else                                            // No supplier price defined for product, even on other suppliers
+                    {
+                        $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
+                        $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+                    }
                 }
                 $opt .= "</option>\n";
 
@@ -2329,7 +2341,7 @@ class Form
         $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-        $sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE p.entity IN (".getEntity('productprice', 1).")";
         $sql.= " AND p.tobuy = 1";
         $sql.= " AND s.fournisseur = 1";
         $sql.= " AND p.rowid = ".$productid;
@@ -2736,12 +2748,12 @@ class Form
 
 
     /**
-     *      Retourne la liste des types de paiements possibles
+     *      Return list of payment modes
      *
      *      @param	string	$selected        Id du type de paiement pre-selectionne
      *      @param  string	$htmlname        Nom de la zone select
-     *      @param  string	$filtertype      Pour filtre
-     *		@param	int		$addempty		Ajoute entree vide
+     *      @param  int 	$filtertype      Not used
+     *		@param	int		$addempty		 Add an empty entry
      *		@return	void
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
@@ -3812,7 +3824,7 @@ class Form
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            print $this->selectMultiCurrency($selected, $htmlname, 1);
+            print $this->selectMultiCurrency($selected, $htmlname, 0);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
             print '</tr></table></form>';
@@ -4091,7 +4103,7 @@ class Form
 		
 		$out='';
         $out.= '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
-		if ($useempty) $out .= '<option value="'.$conf->currency.'"'.((empty($selected) || $selected == $conf->currency)?' selected="selected"':'').'>'.$langs->cache_currencies[$conf->currency]['label'].'</option>';
+		if ($useempty) $out .= '<option value=""></option>';
 		if (count($TCurrency) > 0)
 		{
 			foreach ($langs->cache_currencies as $code_iso => $currency)
@@ -4261,7 +4273,8 @@ class Form
         }
 
         // Now we get list
-        $num = $this->load_cache_vatrates($code_country);
+        $num = $this->load_cache_vatrates($code_country);   // If no vat defined, return -1 with message into this->error
+ 
         if ($num > 0)
         {
         	// Definition du taux a pre-selectionner (si defaulttx non force et donc vaut -1 ou '')
@@ -5010,7 +5023,9 @@ class Form
      */
     static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
     {
-        global $user;
+        global $conf,$user;
+        
+        if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
         
         $tmpvar="MAIN_SELECTEDFIELDS_".$varpage;
         if (! empty($user->conf->$tmpvar))
@@ -5052,8 +5067,8 @@ class Form
             <dt>
             <a href="#">
               '.img_picto('','list').'    
-              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </a>
+            <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </dt>
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">
@@ -5108,7 +5123,7 @@ class Form
 	 * 	@param		int		$id				Id of object
  	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
  	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect (recommended)
-	 * 	@return		mixed					Array of category objects or < 0 if KO
+	 * 	@return		string					String with categories
 	 */
 	function showCategories($id, $type, $rendermode=0)
 	{
@@ -5169,7 +5184,7 @@ class Form
         {
         	$num = count($object->linkedObjects);
             $numoutput=0;
-            
+
         	foreach($object->linkedObjects as $objecttype => $objects)
         	{
         		$tplpath = $element = $subelement = $objecttype;
@@ -5216,7 +5231,10 @@ class Form
         		else if ($objecttype == 'expensereport')   {
         			$tplpath = 'expensereport';
         		}
-
+        		else if ($objecttype == 'subscription')   {
+        		    $tplpath = 'adherents';
+        		}
+        		
                 global $linkedObjectBlock;
         		$linkedObjectBlock = $objects;
 
@@ -5224,7 +5242,7 @@ class Form
         		{
         		    $numoutput++;
         		    
-        		    echo '<br>';
+        		    print '<br>';
         		    print load_fiche_titre($langs->trans('RelatedObjects'), '', '');
         		    
         		    print '<table class="noborder allwidth">';
@@ -5305,6 +5323,7 @@ class Form
 				$i = 0;
 
 				print '<br><form action="" method="POST" name="LinkedOrder">';
+				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<table class="noborder">';
 				print '<tr class="liste_titre">';
 				print '<td class="nowrap"></td>';
@@ -5572,16 +5591,17 @@ class Form
      *    @param	string	$paramid   		Name of parameter to use to name the id into the URL next/previous link
      *    @param	string	$morehtml  		More html content to output just before the nav bar
      *    @param	int		$shownav	  	Show Condition (navigation is shown if value is 1)
-     *    @param	string	$fieldid   		Nom du champ en base a utiliser pour select next et previous (we make the select max and min on this field)
-     *    @param	string	$fieldref   	Nom du champ objet ref (object->ref) a utiliser pour select next et previous
+     *    @param	string	$fieldid   		Name of field id into database to use for select next and previous (we make the select max and min on this field)
+     *    @param	string	$fieldref   	Name of field ref of object (object->ref) to show or 'none' to not show ref.
      *    @param	string	$morehtmlref  	More html to show after ref
      *    @param	string	$moreparam  	More param to add in nav link url.
      *	  @param	int		$nodbprefix		Do not include DB prefix to forge table name
      *	  @param	string	$morehtmlleft	More html code to show before ref
-     *	  @param	string	$morehtmlright	More html code to show before navigation arrows
-     * 	  @return	string    				Portion HTML avec ref + boutons nav
+     *	  @param	string	$morehtmlstatus	More html code to show under navigation arrows (status place)
+     *	  @param	string	$morehtmlright	More html code to show after ref
+     * 	  @return	string    				Portion HTML with ref + navigation buttons
      */
-    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlright='')
+    function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid',$fieldref='ref',$morehtmlref='',$moreparam='',$nodbprefix=0,$morehtmlleft='',$morehtmlstatus='',$morehtmlright='')
     {
     	global $langs,$conf;
 
@@ -5600,11 +5620,11 @@ class Form
         //print "xx".$previous_ref."x".$next_ref;
         $ret.='<div style="vertical-align: middle">';
         
-		$ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
+		if ($morehtmlleft) $ret.='<div class="inline-block floatleft">'.$morehtmlleft.'</div>';
         
         $ret.='<div class="inline-block floatleft valignmiddle refid'.(($shownav && ($previous_ref || $next_ref))?' refidpadding':'').'">';
 
-        // For thirdparty and contact, the ref is the id, so we show something else
+        // For thirdparty, contact, user, member, the ref is the id, so we show something else
         if ($object->element == 'societe')
         {
         	$ret.=dol_htmlentities($object->name);
@@ -5613,13 +5633,15 @@ class Form
         {
         	$ret.=dol_htmlentities($object->getFullName($langs));
         }
-        else $ret.=dol_htmlentities($object->$fieldref);
+        else if ($fieldref != 'none') $ret.=dol_htmlentities($object->$fieldref);
         if ($morehtmlref)
         {
             $ret.=' '.$morehtmlref;
         }
 		$ret.='</div>';
 
+		if ($morehtmlright) $ret.='<div class="inline-block floatleft">'.$morehtmlright.'</div>';
+		
         if ($previous_ref || $next_ref || $morehtml)
         {
         	$ret.='<div class="pagination"><ul>';
@@ -5637,7 +5659,7 @@ class Form
         {
             $ret.='</ul></div>';
         }
-		if ($morehtmlright) $ret.='<div class="statusref">'.$morehtmlright.'</div>';
+		if ($morehtmlstatus) $ret.='<div class="statusref">'.$morehtmlstatus.'</div>';
         $ret.='</div>';
 		
         return $ret;
@@ -5921,7 +5943,7 @@ class Form
     /**
      *	Return HTML to show the search and clear seach button
      *
-     *  @param	int  	$addcheckuncheckall        Add the check all uncheck al button
+     *  @param	int  	$addcheckuncheckall        Add the check all uncheck all button
      *  @param  string  $cssclass                  CSS class
      *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
      *  @return	string                          
@@ -5948,7 +5970,7 @@ class Form
                         {
                             console.log("We uncheck all");
                     		$(".'.$cssclass.'").prop(\'checked\', false);
-                        }';
+                        }'."\n";
         if ($calljsfunction) $out.='if (typeof initCheckForSelect == \'function\') { initCheckForSelect(); } else { console.log("No function initCheckForSelect found. Call won\'t done."); }';
         $out.='         });
                 });

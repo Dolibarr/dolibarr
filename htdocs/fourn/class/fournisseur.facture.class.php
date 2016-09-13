@@ -1507,7 +1507,7 @@ class FactureFournisseur extends CommonInvoice
 	        $response = new WorkboardResponse();
 	        $response->warning_delay=$conf->facture->fournisseur->warning_delay/60/60/24;
 	        $response->label=$langs->trans("SupplierBillsToPay");
-	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0';
+	        $response->url=DOL_URL_ROOT.'/fourn/facture/list.php?filtre=fac.fk_statut:1,paye:0&mainmenu=accountancy&leftmenu=suppliers_bills';
 	        $response->img=img_object($langs->trans("Bills"),"bill");
 
             $facturestatic = new FactureFournisseur($this->db);
@@ -1647,7 +1647,8 @@ class FactureFournisseur extends CommonInvoice
 
         $now = dol_now();
 
-        // Charge tableau des produits prodids
+        // Load array of products prodids
+        $num_prods = 0;
         $prodids = array();
 
         $sql = "SELECT rowid";
@@ -1708,8 +1709,11 @@ class FactureFournisseur extends CommonInvoice
     			$line->remise_percent=0;
 			}
 
-			$prodid = mt_rand(1, $num_prods);
-            $line->fk_product=$prodids[$prodid];
+            if ($num_prods > 0)
+            {
+				$prodid = mt_rand(1, $num_prods);
+            	$line->fk_product=$prodids[$prodid];
+            }
             $line->product_type=0;
 
             $this->lines[$xnbp]=$line;

@@ -484,7 +484,7 @@ function dol_print_object_info($object, $usetable=0)
  *
  *	@param	string	$email       	Email address (Ex: "toto@example.com", "John Do <johndo@example.com>")
  *	@param	string	$trackingid    	Tracking id (Ex: thi123 for thirdparty with id 123)
- *	@return boolean     			True if domain email is OK, False if KO
+ *	@return string     			    Return email tracker string
  */
 function dolAddEmailTrackId($email, $trackingid)
 {
@@ -606,8 +606,8 @@ function clean_url($url,$http=1)
  * 	Returns an email value with obfuscated parts.
  *
  * 	@param 		string		$mail				Email
- * 	@param 		string		$replace			Replacement character (defaul : *)
- * 	@param 		int			$nbreplace			Number of replacement character (default : 8)
+ * 	@param 		string		$replace			Replacement character (defaul: *)
+ * 	@param 		int			$nbreplace			Number of replacement character (default: 8)
  * 	@param 		int			$nbdisplaymail		Number of character unchanged (default: 4)
  * 	@param 		int			$nbdisplaydomain	Number of character unchanged of domain (default: 3)
  * 	@param 		bool		$displaytld			Display tld (default: true)
@@ -1239,7 +1239,7 @@ function hexbin($hexa)
  *	Retourne le numero de la semaine par rapport a une date
  *
  *	@param	string	$time   	Date au format 'timestamp'
- *	@return int					Number of week
+ *	@return string					Number of week
  */
 function numero_semaine($time)
 {
@@ -1577,7 +1577,8 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
 /**
  * This function evaluates a string that should be a valid IPv4
- *
+ * Note: For ip 169.254.0.0, it returns 0 with some PHP (5.6.24) and 2 with some minor patchs of PHP (5.6.25). See https://github.com/php/php-src/pull/1954.
+ *   
  * @param	string $ip IP Address
  * @return	int 0 if not valid or reserved range, 1 if valid and public IP, 2 if valid and private range IP
  */

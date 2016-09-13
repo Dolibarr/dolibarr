@@ -43,6 +43,7 @@ class FactureRec extends CommonInvoice
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
 
+	var $entity;
 	var $number;
 	var $date;
 	var $amount;
@@ -241,7 +242,7 @@ class FactureRec extends CommonInvoice
 	 */
 	function fetch($rowid, $ref='', $ref_ext='', $ref_int='')
 	{
-		$sql = 'SELECT f.rowid, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
+		$sql = 'SELECT f.rowid, f.entity, f.titre, f.fk_soc, f.amount, f.tva, f.total, f.total_ttc, f.remise_percent, f.remise_absolue, f.remise';
 		$sql.= ', f.date_lim_reglement as dlr';
 		$sql.= ', f.note_private, f.note_public, f.fk_user_author';
 		$sql.= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet';
@@ -269,6 +270,7 @@ class FactureRec extends CommonInvoice
 				$obj = $this->db->fetch_object($result);
 
 				$this->id                     = $obj->rowid;
+				$this->entity                 = $obj->entity;
 				$this->titre                  = $obj->titre;
 				$this->ref                    = $obj->titre;
 				$this->ref_client             = $obj->ref_client;
@@ -509,7 +511,7 @@ class FactureRec extends CommonInvoice
 	    
 		$facid=$this->id;
 
-		dol_syslog("FactureRec::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
@@ -519,6 +521,7 @@ class FactureRec extends CommonInvoice
 		{
 			// Clean parameters
 			$remise_percent=price2num($remise_percent);
+			if (empty($remise_percent)) $remise_percent=0;
 			$qty=price2num($qty);
 			if (! $qty) $qty=1;
 			if (! $info_bits) $info_bits=0;
@@ -579,12 +582,12 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".price2num($txtva);
 			$sql.= ", ".(! empty($fk_product)?"'".$fk_product."'":"null");
 			$sql.= ", ".$product_type;
-			$sql.= ", '".price2num($remise_percent)."'";
-			$sql.= ", '".price2num($pu_ht)."'";
+			$sql.= ", ".price2num($remise_percent);
+			$sql.= ", ".price2num($pu_ht);
 			$sql.= ", null";
-			$sql.= ", '".price2num($total_ht)."'";
-			$sql.= ", '".price2num($total_tva)."'";
-			$sql.= ", '".price2num($total_ttc)."'";
+			$sql.= ", ".price2num($total_ht);
+			$sql.= ", ".price2num($total_tva);
+			$sql.= ", ".price2num($total_ttc);
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code;
 			$sql.= ", ".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null").")";
@@ -605,6 +608,111 @@ class FactureRec extends CommonInvoice
 	}
 
 	/**
+	 * 	Update a line to invoice
+	 *
+	 *  @param     	int			$rowid           	Id of line to update
+	 *	@param    	string		$desc            	Description de la ligne
+	 *	@param    	double		$pu_ht              Prix unitaire HT (> 0 even for credit note)
+	 *	@param    	double		$qty             	Quantite
+	 *	@param    	double		$txtva           	Taux de tva force, sinon -1
+	 *	@param    	int			$fk_product      	Id du produit/service predefini
+	 *	@param    	double		$remise_percent  	Pourcentage de remise de la ligne
+	 *	@param		string		$price_base_type	HT or TTC
+	 *	@param    	int			$info_bits			Bits de type de lignes
+	 *	@param    	int			$fk_remise_except	Id remise
+	 *	@param    	double		$pu_ttc             Prix unitaire TTC (> 0 even for credit note)
+	 *	@param		int			$type				Type of line (0=product, 1=service)
+	 *	@param      int			$rang               Position of line
+	 *	@param		int			$special_code		Special code
+	 *	@param		string		$label				Label of the line
+	 *	@param		string		$fk_unit			Unit
+	 *	@return    	int             				<0 if KO, Id of line if OK
+	 */
+	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
+	{
+	    global $mysoc;
+	     
+	    $facid=$this->id;
+	
+	    dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
+	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+	
+	    // Check parameters
+	    if ($type < 0) return -1;
+	
+	    if ($this->brouillon)
+	    {
+	        // Clean parameters
+	        $remise_percent=price2num($remise_percent);
+	        $qty=price2num($qty);
+	        if (! $qty) $qty=1;
+	        if (! $info_bits) $info_bits=0;
+	        $pu_ht=price2num($pu_ht);
+	        $pu_ttc=price2num($pu_ttc);
+	        $txtva=price2num($txtva);
+	
+	        if ($price_base_type=='HT')
+	        {
+	            $pu=$pu_ht;
+	        }
+	        else
+	        {
+	            $pu=$pu_ttc;
+	        }
+	
+	        // Calcul du total TTC et de la TVA pour la ligne a partir de
+	        // qty, pu, remise_percent et txtva
+	        // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+	        // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+	        $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, 0, 0, $price_base_type, $info_bits, $type, $mysoc);
+	        $total_ht  = $tabprice[0];
+	        $total_tva = $tabprice[1];
+	        $total_ttc = $tabprice[2];
+	        	
+	        $product_type=$type;
+	        if ($fk_product)
+	        {
+	            $product=new Product($this->db);
+	            $result=$product->fetch($fk_product);
+	            $product_type=$product->type;
+	        }
+	
+	        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
+	        $sql.= "fk_facture = '".$facid."'";
+	        $sql.= ", label=".(! empty($label)?"'".$this->db->escape($label)."'":"null");
+	        $sql.= ", description='".$this->db->escape($desc)."'";
+	        $sql.= ", price=".price2num($pu_ht);
+	        $sql.= ", qty=".price2num($qty);
+	        $sql.= ", tva_tx=".price2num($txtva);
+	        $sql.= ", fk_product=".(! empty($fk_product)?"'".$fk_product."'":"null");
+	        $sql.= ", product_type=".$product_type;
+	        $sql.= ", remise_percent='".price2num($remise_percent)."'";
+	        $sql.= ", subprice='".price2num($pu_ht)."'";
+	        $sql.= ", total_ht='".price2num($total_ht)."'";
+	        $sql.= ", total_tva='".price2num($total_tva)."'";
+	        $sql.= ", total_ttc='".price2num($total_ttc)."'";
+	        $sql.= ", rang=".$rang;
+	        $sql.= ", special_code=".$special_code;
+	        $sql.= ", fk_unit=".($fk_unit?"'".$this->db->escape($fk_unit)."'":"null");
+	        $sql.= " WHERE rowid = ".$rowid;
+	        
+	        dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
+	        if ($this->db->query($sql))
+	        {
+	            $this->id=$facid;
+	            $this->update_price();
+	            return 1;
+	        }
+	        else
+	        {
+	            $this->error=$this->db->lasterror();
+	            return -1;
+	        }
+	    }
+	}	
+	
+	
+	/**
 	 * Return the next date of 
 	 * 
 	 * @return	timestamp	false if KO, timestamp if OK
@@ -616,14 +724,16 @@ class FactureRec extends CommonInvoice
 	}
 	
 	/**
-	 *  Create all recurrents invoices.
-	 *  A result may also be provided into this->output
+	 *  Create all recurrents invoices (for all entities if multicompany is used).
+	 *  A result may also be provided into this->output.
+	 *  
+	 *  WARNING: This method change context $conf->entity to be in correct context for each recurring invoice found. 
 	 * 
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
 	 */
 	function createRecurringInvoices()
 	{
-		global $langs, $db, $user;
+		global $conf, $langs, $db, $user;
 		
 		$langs->load("bills");
 		
@@ -638,6 +748,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ' WHERE frequency > 0';      // A recurring invoice is an invoice with a frequency
 		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
 		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
+		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
 		
 		$resql = $db->query($sql);
@@ -649,7 +760,9 @@ class FactureRec extends CommonInvoice
 		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
 		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
 		    
-		    while ($i < $num)
+		    $saventity = $conf->entity;
+		
+		    while ($i < $num)     // Loop on each template invoice
 			{
 			    $line = $db->fetch_object($resql);
 
@@ -658,7 +771,10 @@ class FactureRec extends CommonInvoice
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
 			
-				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+				// Set entity context
+				$conf->entity = $facturerec->entity;
+				
+				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
 			    $error=0;
 
@@ -666,10 +782,10 @@ class FactureRec extends CommonInvoice
 				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
 			    $facture->type = self::TYPE_STANDARD;
 			    $facture->brouillon = 1;
-			    $facture->date = $now;
+			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
 			    
-			    $invoiceidgenerated = $facture->create($user);       // This will also update fields of recurring invoice
+			    $invoiceidgenerated = $facture->create($user);
 			    if ($invoiceidgenerated <= 0)
 			    {
 			        $this->errors = $facture->errors;
@@ -689,18 +805,20 @@ class FactureRec extends CommonInvoice
 
 				if (! $error && $invoiceidgenerated >= 0)
 				{
-					$db->commit();
+					$db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
 					$nb_create++;
 					$this->output.=$langs->trans("InvoiceGeneratedFromTemplate", $facture->ref, $facturerec->ref)."\n";
 				}
 				else
 				{
-				    $db->rollback();
+				    $db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
 				$i++;
 			}
+			
+			$conf->entity = $saventity;      // Restore entity context
 		}
 		else dol_print_error($db);
 		
@@ -760,8 +878,9 @@ class FactureRec extends CommonInvoice
 		$arraynow=dol_getdate($now);
 		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
-		$prodids = array();
+        // Load array of products prodids
 		$num_prods = 0;
+		$prodids = array();
 		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -954,7 +1073,7 @@ class FactureRec extends CommonInvoice
             return -1;
         }
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-        $sql.= ' SET date_when = "'.$this->db->idate($date).'"';
+        $sql.= " SET date_when = ".($date ? "'".$this->db->idate($date)."'" : "null");
         if ($increment_nb_gen_done>0) $sql.= ', nb_gen_done = nb_gen_done + 1';
         $sql.= ' WHERE rowid = '.$this->id;
 
@@ -962,6 +1081,7 @@ class FactureRec extends CommonInvoice
         if ($this->db->query($sql))
         {
             $this->date_when = $date;
+            if ($increment_nb_gen_done>0) $this->nb_gen_done++;
             return 1;
         }
         else

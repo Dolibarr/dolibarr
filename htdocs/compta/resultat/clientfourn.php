@@ -279,7 +279,7 @@ if ($total_ttc == 0)
 {
     $var=!$var;
     print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-    print '<td colspan="3">'.$langs->trans("None").'</td>';
+    print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
     print '</tr>';
 }
 
@@ -362,7 +362,7 @@ if ($result) {
     {
         $var=!$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 
@@ -439,7 +439,7 @@ if ($result) {
     else {
         $var = !$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 } else {
@@ -517,7 +517,7 @@ if ($result) {
     else {
         $var = !$var;
         print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-        print '<td colspan="3">'.$langs->trans("None").'</td>';
+        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
 } else {
@@ -606,7 +606,7 @@ if (! empty($conf->salaries->enabled))
 	    {
 	        $var = !$var;
 	        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-	        print '<td colspan="3">'.$langs->trans("None").'</td>';
+	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
 	    }
 	}
@@ -629,7 +629,7 @@ if (! empty($conf->expensereport->enabled))
 {
 	$langs->load('trips');
 	if ($modecompta == 'CREANCES-DETTES') {
-		$sql = "SELECT p.rowid, p.ref, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
+		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
@@ -688,7 +688,7 @@ if (! empty($conf->expensereport->enabled))
 			{
 				$var = !$var;
 				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-				print '<td colspan="3">'.$langs->trans("None").'</td>';
+				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 		}
@@ -757,7 +757,7 @@ if (! empty($conf->don->enabled))
 		{
 			$var = !$var;
 			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
-			print '<td colspan="3">'.$langs->trans("None").'</td>';
+			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
 	}

@@ -62,8 +62,9 @@ class Paiement extends CommonObject
 	var $bank_line;     // Id de la ligne d'ecriture bancaire
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
+    var $fk_paiement;    // Type of paiment
 
-
+    
 	/**
 	 *	Constructor
 	 *

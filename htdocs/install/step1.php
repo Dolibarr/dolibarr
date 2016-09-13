@@ -853,23 +853,29 @@ function write_conf_file($conffile)
 		fputs($fp,"\n");
 
 		/* Authentication */
+		fputs($fp, '// Authentication settings');
+        fputs($fp,"\n");
+
 		fputs($fp, '$dolibarr_main_authentication=\'dolibarr\';');
 		fputs($fp,"\n\n");
 
-		fputs($fp, '// Specific settings');
+        fputs($fp, '//$dolibarr_main_demo=\'autologin,autopass\';');
         fputs($fp,"\n");
 
-        fputs($fp, '//$dolibarr_main_demo=\'autologin,autopass\';');
+		fputs($fp, '// Security settings');
         fputs($fp,"\n");
 
         fputs($fp, '$dolibarr_main_prod=\'0\';');
         fputs($fp,"\n");
 
-        fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
-        fputs($fp,"\n");
-
         fputs($fp, '$dolibarr_main_force_https=\''.$main_force_https.'\';');
 		fputs($fp,"\n");
+
+        fputs($fp, '$dolibarr_main_restrict_os_commands=\'mysqldump, mysql, pg_dump, pgrestore\';');
+		fputs($fp,"\n");
+		
+        fputs($fp, '$dolibarr_nocsrfcheck=\'0\';');
+        fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_cookie_cryptkey=\''.$key.'\';');
 		fputs($fp,"\n");

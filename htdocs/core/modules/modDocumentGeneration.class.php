@@ -20,7 +20,7 @@
 /**
  *	\defgroup   	document     Module mass mailings
  *	\brief      	Module pour gerer des generations de documents
- *	\file       	htdocs/core/modules/modDocument.class.php
+ *	\file       	htdocs/core/modules/modDocumentGeneration.class.php
  *	\ingroup    	document
  *	\brief      	Fichier de description et activation du module Generation document
  */

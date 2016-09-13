@@ -660,8 +660,20 @@ if (empty($reshook))
                     $pu_ttc = price2num($pu_ht * (1 + ($tva_tx / 100)), 'MU');
                 }
             }
-
+            
             if (GETPOST('propalid') > 0) {
+                // Define cost price for margin calculation
+                $buyprice=0;
+                if (($result = $propal->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+                {
+                    dol_syslog($langs->trans('FailedToGetCostPrice'));
+                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                }
+                else
+                {
+                    $buyprice = $result;
+                }
+                
                 $result = $propal->addline(
                     $desc,
                     $pu_ht,
@@ -679,7 +691,7 @@ if (empty($reshook))
                     0,
                     0,
                     0,
-                    0,
+                    $buyprice,
                     '',
                     '',
                     '',
@@ -693,6 +705,18 @@ if (empty($reshook))
 
                 setEventMessages($langs->trans("ErrorUnknown") . ": $result", null, 'errors');
             } elseif (GETPOST('commandeid') > 0) {
+                // Define cost price for margin calculation
+                $buyprice=0;
+                if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+                {
+                    dol_syslog($langs->trans('FailedToGetCostPrice'));
+                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                }
+                else
+                {
+                    $buyprice = $result;
+                }
+                
                 $result = $commande->addline(
                     $desc,
                     $pu_ht,
@@ -713,7 +737,7 @@ if (empty($reshook))
                     0,
                     0,
                     null,
-                    0,
+                    $buyprice,
                     '',
                     0,
                     $object->fk_unit
@@ -724,6 +748,18 @@ if (empty($reshook))
                     exit;
                 }
             } elseif (GETPOST('factureid') > 0) {
+                // Define cost price for margin calculation
+                $buyprice=0;
+                if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
+                {
+                    dol_syslog($langs->trans('FailedToGetCostPrice'));
+                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                }
+                else
+                {
+                    $buyprice = $result;
+                }
+                
                 $result = $facture->addline(
                     $desc,
                     $pu_ht,
@@ -747,7 +783,7 @@ if (empty($reshook))
                     0,
                     0,
                     null,
-                    0,
+                    $buyprice,
                     '',
                     0,
                     100,
@@ -775,12 +811,19 @@ if (empty($reshook))
  * View
  */
 
-$helpurl='';
-if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT)) $helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) $helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-
-if (isset($_GET['type'])) $title = $langs->trans('CardProduct'.GETPOST('type'));
-else $title = $langs->trans('ProductServiceCard');
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Card');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
 llxHeader('', $title, $helpurl);
 
@@ -913,7 +956,7 @@ else
 	        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 	        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 	        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
-	        print '<input size="40" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
+	        print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 	        print '</td></tr>';
         }
 
@@ -927,7 +970,7 @@ else
 
         // Public URL
         print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
-		print '<input type="text" name="url" size="90" value="'.GETPOST('url').'">';
+		print '<input type="text" name="url" class="quatrevingtpercent" value="'.GETPOST('url').'">';
         print '</td></tr>';
 
         // Stock min level
@@ -1008,7 +1051,7 @@ else
 	    }
 
         // Custom code
-        if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+        if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO) && empty($type))
         {
 	        print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.GETPOST('customcode').'"></td>';
 	        // Origin country
@@ -1109,7 +1152,11 @@ else
 
         dol_fiche_end();
 
-        print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+		print '<div class="center">';
+		print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+		print '</div>';
 
         print '</form>';
     }
@@ -1121,7 +1168,7 @@ else
     else if ($object->id > 0)
     {
         // Fiche en mode edition
-        if ($action == 'edit' && ($user->rights->produit->creer || $user->rights->service->creer))
+        if ($action == 'edit' &&  ((($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) ||  ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))))
         {
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -1212,7 +1259,7 @@ else
 		        print '</td><td>'.$langs->trans("BarcodeValue").'</td><td>';
 		        $tmpcode=isset($_POST['barcode'])?GETPOST('barcode'):$object->barcode;
 		        if (empty($tmpcode) && ! empty($modBarCodeProduct->code_auto)) $tmpcode=$modBarCodeProduct->getNextValue($object,$type);
-		        print '<input size="40" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
+		        print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 		        print '</td></tr>';
 	        }
 
@@ -1228,7 +1275,7 @@ else
 
             // Public Url
             print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="3">';
-			print '<input type="text" name="url" size="80" value="'.$object->url.'">';
+			print '<input type="text" name="url" class="quatrevingtpercent" value="'.$object->url.'">';
             print '</td></tr>';
 
             // Stock
@@ -1314,12 +1361,12 @@ else
 	        }
 
 	        // Custom code
-    	    if (empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
+    	    if (! $object->isService() && empty($conf->global->PRODUCT_DISABLE_CUSTOM_INFO))
         	{
 	            print '<tr><td>'.$langs->trans("CustomCode").'</td><td><input name="customcode" size="10" value="'.$object->customcode.'"></td>';
 	            // Origin country
 	            print '<td>'.$langs->trans("CountryOrigin").'</td><td>';
-	            print $form->select_country($object->country_id,'country_id');
+	            print $form->select_country($object->country_id, 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 	            if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	            print '</td></tr>';
         	}
@@ -1467,8 +1514,9 @@ else
                     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                     print '<input type="hidden" name="action" value="setbarcode">';
                     print '<input type="hidden" name="barcode_type_code" value="'.$object->barcode_type_code.'">';
-                    print '<input size="40" type="text" name="barcode" value="'.$object->barcode.'">';
+                    print '<input size="40" class="maxwidthonsmartphone" type="text" name="barcode" value="'.$object->barcode.'">';
                     print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+                    print '</form>';
                 }
                 else
                 {
@@ -1733,7 +1781,8 @@ if (empty($reshook))
 {
 	if ($action == '' || $action == 'view')
 	{
-	    if ($user->rights->produit->creer || $user->rights->service->creer)
+	    if (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer ) || 
+	       ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer))
 	    {
 	        if (! isset($object->no_button_edit) || $object->no_button_edit <> 1) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 
@@ -1804,14 +1853,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         {
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $form->selectarray("propalid", $otherprop, 0, 1);
         	$html .= '</td></tr>';
         }
         else
        {
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftProposals").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftProposals").'</td><td>';
         	$html .= $langs->trans("NoDraftProposals");
         	$html .= '</td></tr>';
         }
@@ -1830,14 +1879,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
         {
         	$var=!$var;
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $form->selectarray("commandeid", $othercom, 0, 1);
         	$html .= '</td></tr>';
         }
         else
 		{
         	$html .= '<tr><td style="width: 200px;">';
-        	$html .= $langs->trans("AddToDraftOrders").'</td><td colspan="2">';
+        	$html .= $langs->trans("AddToDraftOrders").'</td><td>';
         	$html .= $langs->trans("NoDraftOrders");
         	$html .= '</td></tr>';
         }
@@ -1856,14 +1905,14 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
     	{
     		$var=!$var;
     		$html .= '<tr><td style="width: 200px;">';
-    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $form->selectarray("factureid", $otherinvoice, 0, 1);
     		$html .= '</td></tr>';
     	}
     	else
     	{
     		$html .= '<tr><td style="width: 200px;">';
-    		$html .= $langs->trans("AddToDraftInvoices").'</td><td colspan="2">';
+    		$html .= $langs->trans("AddToDraftInvoices").'</td><td>';
     		$html .= $langs->trans("NoDraftInvoices");
     		$html .= '</td></tr>';
     	}
@@ -1881,7 +1930,8 @@ if ($object->id && ($action == '' || $action == 'view') && $object->status)
 		dol_fiche_head('');
 
     	$html .= '<tr><td class="nowrap">'.$langs->trans("Quantity").' ';
-    	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td><td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
+    	$html .= '<input type="text" class="flat" name="qty" size="1" value="1"></td>';
+        $html .= '<td class="nowrap">'.$langs->trans("ReductionShort").'(%) ';
     	$html .= '<input type="text" class="flat" name="remise_percent" size="1" value="0">';
     	$html .= '</td></tr>';
 
@@ -1916,7 +1966,7 @@ if ($action == '' || $action == 'view')
 
     $var=true;
     
-    $somethingshown=$formfile->show_documents($modulepart,$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
+    $somethingshown=$formfile->show_documents($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang);
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

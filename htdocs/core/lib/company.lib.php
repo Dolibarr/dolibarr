@@ -79,7 +79,9 @@ function societe_prepare_head(Societe $object)
     if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
         $head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
         $head[$h][2] = 'contact';
         $h++;
     }
@@ -88,6 +90,26 @@ function societe_prepare_head(Societe $object)
     {
     	$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
     	$head[$h][1] = $langs->trans("Projects");
+    	$nbNote = 0;
+    	$sql = "SELECT COUNT(n.rowid) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."projet as n";
+    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$resql=$db->query($sql);
+    	if ($resql)
+    	{
+    		$num = $db->num_rows($resql);
+    		$i = 0;
+    		while ($i < $num)
+    		{
+    			$obj = $db->fetch_object($resql);
+    			$nbNote=$obj->nb;
+    			$i++;
+    		}
+    	}
+    	else {
+    		dol_print_error($db);
+    	}
+		if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
     	$head[$h][2] = 'project';
     	$h++;
     }
@@ -551,7 +573,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
             else
 			{
                 $var = false;
-            	print '<tr '.$bc[$var].'><td colspan="5">'.$langs->trans("None").'</td></tr>';
+            	print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
         }
@@ -766,7 +788,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     else
 	{
         print "<tr ".$bc[! $var].">";
-        print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
+        print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
         print "</tr>\n";
     }
     print "\n</table>\n";

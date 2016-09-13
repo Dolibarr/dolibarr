@@ -54,6 +54,7 @@ $mode		= GETPOST('mode','alpha');
 $confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
+$cancel     = GETPOST('cancel');
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -262,10 +263,7 @@ if (empty($reshook)) {
 			{
 				$langs->load("errors");
 				$db->rollback();
-				if (is_array($object->errors) && count($object->errors))
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = "create";       // Go back to create page
 			}
 		}
@@ -299,7 +297,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update' && !$_POST["cancel"]) {
+	if ($action == 'update' && ! $cancel) 
+	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		if ($caneditfield)    // Case we can edit all field
@@ -333,7 +332,7 @@ if (empty($reshook)) {
 					$object->gender = GETPOST("gender", 'alpha');
 					$object->pass = GETPOST("password");
 					$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
-					$object->admin = empty($user->admin) ? 0 : GETPOST("admin"); // A user can only be set admin by an admin
+					if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 					$object->address = GETPOST('address', 'alpha');
 					$object->zip = GETPOST('zipcode', 'alpha');
 					$object->town = GETPOST('town', 'alpha');
@@ -395,7 +394,7 @@ if (empty($reshook)) {
 					if (!$error) {
 						$ret = $object->update($user);
 						if ($ret < 0) {
-							$error ++;
+							$error++;
 							if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorLoginAlreadyExists", $object->login), null, 'errors');
@@ -889,7 +888,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
     // Address
     print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+	print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
     print $object->address;
     print '</textarea></td></tr>';
 
@@ -1440,6 +1439,49 @@ else
 				print '</td></tr>';
 		    }
 
+		    // Multicompany
+		    // TODO This should be done with hook formObjectOption
+		    if (is_object($mc))
+		    {
+		        if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+		        {
+		            print '<tr><td>'.$langs->trans("Entity").'</td><td>';
+		            if (empty($object->entity))
+		            {
+		                print $langs->trans("AllEntities");
+		            }
+		            else
+		            {
+		                $mc->getInfo($object->entity);
+		                print $mc->label;
+		            }
+		            print "</td></tr>\n";
+		        }
+		    }
+		    
+		    if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
+		    {
+		        print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
+		        print '<td>'.$object->openid.'</td>';
+		        print "</tr>\n";
+		    }
+		    
+		    print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
+		    print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
+		    print "</tr>\n";
+		    
+		    print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
+		    print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
+		    print "</tr>\n";
+		    
+		    // Other attributes
+		    $parameters=array();
+		    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		    if (empty($reshook) && ! empty($extrafields->attribute_label))
+		    {
+		        print $object->showOptionals($extrafields);
+		    }
+		    
             // Company / Contact
             if (! empty($conf->societe->enabled))
             {
@@ -1487,49 +1529,6 @@ else
                 print '</td>';
                 print '</tr>'."\n";
             }
-
-            // Multicompany
-            // TODO This should be done with hook formObjectOption
-            if (is_object($mc))
-            {
-	            if (! empty($conf->multicompany->enabled) && empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
-	            {
-	            	print '<tr><td>'.$langs->trans("Entity").'</td><td>';
-	            	if (empty($object->entity))
-	            	{
-	            		print $langs->trans("AllEntities");
-	            	}
-	            	else
-	            	{
-	            		$mc->getInfo($object->entity);
-	            		print $mc->label;
-	            	}
-	            	print "</td></tr>\n";
-	            }
-            }
-
-            if (isset($conf->file->main_authentication) && preg_match('/openid/',$conf->file->main_authentication) && ! empty($conf->global->MAIN_OPENIDURL_PERUSER))
-            {
-                print '<tr><td>'.$langs->trans("OpenIDURL").'</td>';
-                print '<td>'.$object->openid.'</td>';
-                print "</tr>\n";
-            }
-
-            print '<tr><td class="titlefield">'.$langs->trans("LastConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datelastlogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            print '<tr><td>'.$langs->trans("PreviousConnexion").'</td>';
-            print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
-            print "</tr>\n";
-
-            // Other attributes
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
-			{
-				print $object->showOptionals($extrafields);
-			}
 
 			print "</table>\n";
 			print '</div>';
@@ -1738,7 +1737,7 @@ else
                 }
                 else
                 {
-                    print '<tr '.$bc[false].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
+                    print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
                 }
 
                 print "</table>";
@@ -1914,7 +1913,7 @@ else
                 if ($user->admin								// Need to be admin to allow downgrade of an admin
                 && ($user->id != $object->id)                   // Don't downgrade ourself
                 && (
-                	(empty($conf->multicompany->enabled) && $nbAdmin > 1)
+                	(empty($conf->multicompany->enabled) && $nbAdmin >= 1)
                 	|| (! empty($conf->multicompany->enabled) && ($object->entity > 0 || $nbSuperAdmin > 1))    // Don't downgrade a superadmin if alone
                 	)
                 )
@@ -1998,7 +1997,7 @@ else
 
 			// Address
             print '<tr><td class="tdtop">'.fieldLabel('Address','address').'</td>';
-	        print '<td><textarea name="address" id="address" cols="80" rows="3" wrap="soft">';
+	        print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
             print $object->address;
             print '</textarea></td></tr>';
 
@@ -2222,7 +2221,7 @@ else
 			print '<td>';
 			$cate_arbo = $form->select_all_categories( Categorie::TYPE_CONTACT, null, null, null, null, 1 );
 			$c = new Categorie( $db );
-			$cats = $c->containing( $object->id, 'user' );
+			$cats = $c->containing($object->id, Categorie::TYPE_USER);
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}

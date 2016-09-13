@@ -14,6 +14,5 @@ BehaviourOnClick=Správanie pri kliknutí na URL
 CreateBookmark=Vytvoriť záložku
 SetHereATitleForLink=Nastavte názov pre záložku
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Použite externú http adresu URL alebo relatívnu adresu URL Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Vyberte, či otvorenie stránky odkazom má na súčasnom alebo novom okne
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Záložky riadenie
-ListOfBookmarks=Zoznam záložiek

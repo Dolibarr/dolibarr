@@ -75,12 +75,12 @@ $arrayphpminversionerror = array(5,3,0);
 $arrayphpminversionwarning = array(5,3,0);
 if (versioncompare(versionphparray(),$arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
-	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.2.3');
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
 	$checksok=0;	// 0=error, 1=warning
 }
 else if (versioncompare(versionphparray(),$arrayphpminversionwarning) < 0)    // Minimum supported (warning if lower)
 {
-    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'5.3.0');
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",versiontostring($arrayphpminversionwarning));
     $checksok=0;	// 0=error, 1=warning
 }
 else

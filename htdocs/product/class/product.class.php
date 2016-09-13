@@ -131,7 +131,7 @@ class Product extends CommonObject
 	var $status_buy;
 	// Statut indique si le produit est un produit fini '1' ou une matiere premiere '0'
 	var $finished;
-	// We must manage batch number, sell-by date and so on : '1':yes '0':no
+	// We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	var $status_batch;
 
 	var $customcode;       // Customs code
@@ -879,9 +879,10 @@ class Product extends CommonObject
 	 *  Delete a product from database (if not used)
 	 *
 	 *	@param      int		$id         Product id (usage of this is deprecated, delete should be called without parameters on a fetched object)
+	 *  @param      int     $notrigger  Do not execute trigger
 	 * 	@return		int					< 0 if KO, 0 = Not possible, > 0 if OK
 	 */
-	function delete($id=0)
+	function delete($id=0, $notrigger=0)
 	{
 		// Deprecation warning
 		if ($id > 0) {
@@ -914,7 +915,7 @@ class Product extends CommonObject
 		{
 			$this->db->begin();
 
-			if (! $error)
+			if (! $error && empty($notrigger))
 			{
                 // Call trigger
                 $result=$this->call_trigger('PRODUCT_DELETE',$user);
@@ -925,7 +926,7 @@ class Product extends CommonObject
    			// Delete all child tables
 			if (! $error)
 			{
-			    $elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price');
+				$elements = array('product_fournisseur_price','product_price','product_lang','categorie_product','product_stock','product_customer_price','product_lot');
     			foreach($elements as $table)
     			{
     				if (! $error)
@@ -1308,16 +1309,17 @@ class Product extends CommonObject
 
 
 	/**
-	 *	Read price used by a provider
-	 *	We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref
+	 *	Read price used by a provider.
+	 *	We enter as input couple prodfournprice/qty or triplet qty/product_id/fourn_ref.
+	 *  This also set some properties on product like ->buyprice, ->fourn_pu, ...
 	 *
 	 *  @param     	int		$prodfournprice     Id du tarif = rowid table product_fournisseur_price
 	 *  @param     	double	$qty                Quantity asked
 	 *	@param		int		$product_id			Filter on a particular product id
-	 * 	@param		string	$fourn_ref			Filter on a supplier ref
+	 * 	@param		string	$fourn_ref			Filter on a supplier ref. 'none' to exclude ref in search.
 	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 */
-	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
+	function get_buyprice($prodfournprice, $qty, $product_id=0, $fourn_ref='')
 	{
 		global $conf;
 		$result = 0;
@@ -1327,8 +1329,9 @@ class Product extends CommonObject
 		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 		$sql.= " WHERE pfp.rowid = ".$prodfournprice;
-		if ($qty) $sql.= " AND pfp.quantity <= ".$qty;
-
+		if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
+		$sql.= " ORDER BY pfp.quantity DESC";
+		
 		dol_syslog(get_class($this)."::get_buyprice first search by prodfournprice/qty", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -1361,13 +1364,13 @@ class Product extends CommonObject
 			}
 			else // If not found
 			{
-				// We do a second search by doing a select again but searching with qty, ref and id product
+				// We do a second search by doing a select again but searching with qty and id product
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
 				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-				$sql.= " WHERE pfp.ref_fourn = '".$fourn_ref."'";
-				$sql.= " AND pfp.fk_product = ".$product_id;
-				$sql.= " AND pfp.quantity <= ".$qty;
+				$sql.= " WHERE pfp.fk_product = ".$product_id;
+				if ($fourn_ref != 'none') $sql.= " AND pfp.ref_fourn = '".$fourn_ref."'";
+				if ($qty > 0) $sql.= " AND pfp.quantity <= ".$qty;
 				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 
@@ -1404,7 +1407,7 @@ class Product extends CommonObject
 					}
 					else
 					{
-						return -1;	// Ce produit n'existe pas avec cette ref fournisseur ou existe mais qte insuffisante
+						return -1;	// Ce produit n'existe pas avec cet id tarif fournisseur ou existe mais qte insuffisante, ni pour le couple produit/ref fournisseur dans la quantité.
 					}
 				}
 				else
@@ -2666,7 +2669,7 @@ class Product extends CommonObject
     		$sql.= " WHERE fk_soc = ".$id_fourn;
     		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
     		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity = ".$conf->entity;
+    		$sql.= " AND entity IN (".getEntity('productprice', 1).")";
 
     		$resql=$this->db->query($sql);
     		if ($resql)
@@ -2689,7 +2692,7 @@ class Product extends CommonObject
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
-		$sql.= " AND entity = ".$conf->entity;
+		$sql.= " AND entity IN (".getEntity('productprice', 1).")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3675,7 +3678,7 @@ class Product extends CommonObject
     					if ($size == 1 || $size == 'small') {   // Format vignette
 
     						// Find name of thumb file
-    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small', '.png'));
+    						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
     						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
     						
     						// Get filesize of original file
@@ -3701,11 +3704,11 @@ class Product extends CommonObject
     						if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
     						{
     							$return.= '<!-- Show thumb -->';
-    							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
     						}
     						else {
     							$return.= '<!-- Show original file -->';
-    							$return.= '<img class="photo photowithmargin" border="0" '.($conf->dol_use_jmobile?'max-height':'height').'="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+    							$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
     						}
 
     						if (empty($nolink)) $return.= '</a>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2013-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,12 +42,15 @@ if (! $sortorder) $sortorder="ASC";
 $langs->load("admin");
 $langs->load("compta");
 
-if (! $user->admin)
+// Security check
+if ($user->societe_id > 0)
+	accessforbidden();
+if (! $user->rights->accounting->fiscalyear)
 	accessforbidden();
 
 $error = 0;
 
-// List of statut
+// List of status
 static $tmpstatut2label = array (
 		'0' => 'OpenFiscalYear',
 		'1' => 'CloseFiscalYear' 
@@ -132,7 +135,7 @@ if ($result) {
 			$i ++;
 		}
 	} else {
-		print '<tr ' . $bc[$var] . '><td colspan="5">' . $langs->trans("None") . '</td></tr>';
+		print '<tr ' . $bc[$var] . '><td colspan="5" class="opacitymedium">' . $langs->trans("None") . '</td></tr>';
 	}
 	
 	print '</table>';

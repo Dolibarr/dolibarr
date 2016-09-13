@@ -115,7 +115,7 @@ $head = societe_prepare_head($object);
 dol_fiche_head($head, 'consumption', $langs->trans("ThirdParty"),0,'company');
 
 dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-    
+
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
@@ -145,9 +145,10 @@ if ($object->client)
 	if ($conf->propal->enabled && $user->rights->propal->lire) $elementTypeArray['propal']=$langs->transnoentitiesnoconv('Proposals');
 	if ($conf->commande->enabled && $user->rights->commande->lire) $elementTypeArray['order']=$langs->transnoentitiesnoconv('Orders');
 	if ($conf->facture->enabled && $user->rights->facture->lire) $elementTypeArray['invoice']=$langs->transnoentitiesnoconv('Invoices');
-	if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
 	if ($conf->contrat->enabled && $user->rights->contrat->lire) $elementTypeArray['contract']=$langs->transnoentitiesnoconv('Contracts');
 }
+
+if ($conf->ficheinter->enabled && $user->rights->ficheinter->lire) $elementTypeArray['fichinter']=$langs->transnoentitiesnoconv('Interventions');
 
 if ($object->fournisseur)
 {
@@ -266,7 +267,7 @@ if ($type_element == 'contract')
 { 	// Supplier : Show products from orders.
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
-	$documentstaticline=new ContratLigne($db);	
+	$documentstaticline=new ContratLigne($db);
 	$sql_select = 'SELECT c.rowid as doc_id, c.ref as doc_number, \'1\' as doc_type, c.date_contrat as dateprint, d.statut as status, ';
 	$tables_from = MAIN_DB_PREFIX."contrat as c,".MAIN_DB_PREFIX."contratdet as d";
 	$where = " WHERE c.fk_soc = s.rowid AND s.rowid = ".$socid;
@@ -276,7 +277,7 @@ if ($type_element == 'contract')
 	$thirdTypeSelect='customer';
 }
 
-if ($sql_select)
+if (!empty($sql_select)) 
 {
 	$sql = $sql_select;
 	$sql.= ' d.description as description,';
@@ -302,7 +303,7 @@ if ($sql_select)
 		$sql.= " AND ".$dateprint." BETWEEN '".$db->idate($start)."' AND '".$db->idate($end)."'";
 	}
 	if ($sref) $sql.= " AND ".$doc_number." LIKE '%".$db->escape($sref)."%'";
-	if ($sprod_fulldescr) 
+	if ($sprod_fulldescr)
 	{
 	    $sql.= " AND (d.description LIKE '%".$db->escape($sprod_fulldescr)."%'";
 	    if (GETPOST('type_element') != 'fichinter') $sql.= " OR p.ref LIKE '%".$db->escape($sprod_fulldescr)."%'";
@@ -318,8 +319,16 @@ if ($sql_select)
 	//print $sql;
 }
 
+$disabled=0;
+$showempty=2;
+if (empty($elementTypeArray) && ! $object->client && ! $object->fournisseur)
+{
+    $showempty=$langs->trans("ThirdpartyNotCustomerNotSupplierSoNoRef");
+    $disabled=1;
+}
+
 // Define type of elements
-$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), 2);
+$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled);
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 $param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
 
@@ -331,23 +340,24 @@ if ($sql_select)
 
 	$var=true;
 	$num = $db->num_rows($resql);
-	
+
 	$param="&socid=".$socid."&type_element=".$type_element;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($sprod_fulldescr) $param.= "&sprod_fulldescr=".urlencode($sprod_fulldescr);
 	if ($sref) $param.= "&sref=".urlencode($sref);
 	if ($month) $param.= "&month=".$month;
 	if ($year) $param.= "&year=".$year;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-	
+
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $totalnboflines, '', 0, '', '', $limit);
-    
+
     print '<table class="liste" width="100%">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'doc_number','',$param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'dateprint','',$param,'align="center" width="150"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_status','',$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut','',$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
@@ -382,7 +392,7 @@ if ($sql_select)
 		$documentstatic->statut=$objp->status;
 		$documentstatic->status=$objp->status;
 		$documentstatic->paye=$objp->paid;
-		
+
 		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
 
 		$var=!$var;
@@ -548,7 +558,7 @@ if ($sql_select)
 	}
 
 	print "</table>";
-	
+
 	if ($num > $limit) {
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
 	}
@@ -557,7 +567,7 @@ if ($sql_select)
 else if (empty($type_element) || $type_element == -1)
 {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
-    
+
     print '<table class="liste" width="100%">'."\n";
     // Titles with sort buttons
     print '<tr class="liste_titre">';
@@ -567,17 +577,17 @@ else if (empty($type_element) || $type_element == -1)
     print_liste_field_titre($langs->trans('Product'),$_SERVER['PHP_SELF'],'','',$param,'align="left"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans('Quantity'),$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
-    
-	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
+
+	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClickRefresh").'</td></tr>';
 
 	print "</table>";
 }
 else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
-    
+
     print '<table class="liste" width="100%">'."\n";
-    
-	print '<tr '.$bc[0].'><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+
+	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 
 	print "</table>";
 }

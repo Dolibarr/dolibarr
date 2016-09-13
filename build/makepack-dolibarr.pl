@@ -53,7 +53,7 @@ if (-d "/usr/src/RPM")      { $RPMDIR="/usr/src/RPM"; } # mandrake
 
 
 use vars qw/ $REVISION $VERSION /;
-$VERSION="3.3";
+$VERSION="4.0";
 
 
 
@@ -173,6 +173,7 @@ $build =~ s/-.*$//g;
 # now build is 0+nmu1 for example
 $FILENAMEDEBNATIVE="${PROJECT}_${MAJOR}.${MINOR}.${build}";
 $FILENAMEDEB="${PROJECT}_${MAJOR}.${MINOR}.${newbuild}";
+$FILENAMEDEBSHORT="${PROJECT}_${MAJOR}.${MINOR}.${build}";
 
 
 my $copyalreadydone=0;
@@ -356,6 +357,7 @@ if ($nboftargetok) {
 		# Test that the ChangeLog is ok
 		$TMPBUILDTOCHECKCHANGELOG=$BUILD;
 		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc\d*//;
+		$TMPBUILDTOCHECKCHANGELOG =~ s/\-beta\d*//;
 		print "Check if ChangeLog is ok for version $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret=`grep "ChangeLog for $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG" "$SOURCE/ChangeLog" 2>&1`;
 		if (! $ret)
@@ -388,10 +390,15 @@ if ($nboftargetok) {
 			{
 				print 'Run git tag -a -f -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
+				print 'Run git push -f --tags'."\n";
+				$ret=`git push -f --tags`;
 			}
 		}
-		print 'Run git push --tags'."\n";
-		$ret=`git push --tags`;
+		else
+		{
+			print 'Run git push --tags'."\n";
+			$ret=`git push --tags`;
+		}
 		chdir("$olddir");
 	}
 	
@@ -458,6 +465,7 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/codetemplates`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/dbmodel`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdata`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/initdemo`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/iso-normes`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/ldap`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/dev/licence`;
@@ -595,7 +603,7 @@ if ($nboftargetok) {
 		if ($target eq 'TGZ') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; } 
@@ -627,7 +635,7 @@ if ($nboftargetok) {
 		if ($target eq 'XZ') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
@@ -664,7 +672,7 @@ if ($nboftargetok) {
 		if ($target eq 'ZIP') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/standard');
 				if (-d $DESTI.'/standard') { $NEWDESTI=$DESTI.'/standard'; }
@@ -705,7 +713,7 @@ if ($nboftargetok) {
 			if ($target =~ /FEDO/i) { $subdir="package_rpm_redhat-fedora"; }
 			if ($target =~ /MAND/i) { $subdir="package_rpm_mandriva"; }
 			if ($target =~ /OPEN/i) { $subdir="package_rpm_opensuse"; }
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/'.$subdir);
 				if (-d $DESTI.'/'.$subdir) { $NEWDESTI=$DESTI.'/'.$subdir; }
@@ -791,7 +799,7 @@ if ($nboftargetok) {
 		if ($target eq 'DEB') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_debian-ubuntu');
 				if (-d $DESTI.'/package_debian-ubuntu') { $NEWDESTI=$DESTI.'/package_debian-ubuntu'; }
@@ -822,7 +830,7 @@ if ($nboftargetok) {
 			$ret=`$cmd`;
 
 			print "Remove other files\n";
-			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/README-FR`;
+			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/README-FR.md`;
 			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/README`;
 			$ret=`rm -f  $BUILDROOT/$PROJECT.tmp/build/README-FR`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/build/aps`;
@@ -994,7 +1002,7 @@ if ($nboftargetok) {
 		if ($target eq 'APS') 
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_aps');
 				if (-d $DESTI.'/package_aps') { $NEWDESTI=$DESTI.'/package_aps'; }
@@ -1080,7 +1088,7 @@ if ($nboftargetok) {
 		if ($target eq 'EXEDOLIWAMP')
 		{
 			$NEWDESTI=$DESTI;
-			if ($NEWPUBLISH =~ /stable/)
+			if ($NEWDESTI =~ /stable/)
 			{
 				mkdir($DESTI.'/package_windows');
 				if (-d $DESTI.'/package_windows') { $NEWDESTI=$DESTI.'/package_windows'; }
@@ -1109,6 +1117,7 @@ if ($nboftargetok) {
             print "Move $SOURCE/build/$FILENAMEEXEDOLIWAMP.exe to $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe\n";
             $ret=`mv "$SOURCE/build/$FILENAMEEXEDOLIWAMP.exe" "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe"`;
             
+            print "Remove tmp file $SOURCE/build/exe/doliwamp/doliwamp.tmp.iss\n";
             $ret=`rm "$SOURCE/build/exe/doliwamp/doliwamp.tmp.iss"`;
             
     		next;
@@ -1121,10 +1130,11 @@ if ($nboftargetok) {
 	{
 		if ($CHOOSEDPUBLISH{$target} < 0) { next; }
 	
-		print "\nList of files to publish\n";
+		print "\nList of files to publish (BUILD=$BUILD)\n";
 		%filestoscansf=(
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
@@ -1132,10 +1142,27 @@ if ($nboftargetok) {
 		%filestoscanstableasso=(
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'package_rpm_generic',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'standard'
 		);
+		if ($target eq 'ASSO' && $BUILD =~ /[a-z]/i)   { 	# Not stable
+			%filestoscansf=(
+				"$DESTI/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
+				"$DESTI/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
+				"$DESTI/$FILENAMEEXEDOLIWAMP.exe"=>'Dolibarr installer for Windows (DoliWamp)',
+				"$DESTI/$FILENAMETGZ.tgz"=>'Dolibarr ERP-CRM',
+				"$DESTI/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
+			);
+			%filestoscanstableasso=(
+				"$DESTI/$FILENAMERPM"=>'',
+				"$DESTI/${FILENAMEDEB}_all.deb"=>'',
+				"$DESTI/$FILENAMEEXEDOLIWAMP.exe"=>'',
+				"$DESTI/$FILENAMETGZ.tgz"=>'',
+				"$DESTI/$FILENAMETGZ.zip"=>''
+			);
+		}
 
 		use POSIX qw/strftime/;
 		foreach my $file (sort keys %filestoscansf)
@@ -1177,7 +1204,7 @@ if ($nboftargetok) {
 
 				print "\n";
 	    		
-	    		if ($target eq 'SF') { 
+	    		if ($target eq 'SF' && $filestoscan{$file} ne 'none') { 
 	    			$destFolder="$NEWPUBLISH/$filestoscan{$file}/".$MAJOR.'.'.$MINOR.'.'.$BUILD;
 	    		}
 	    		elsif ($target eq 'ASSO' and $NEWPUBLISH =~ /stable/) {

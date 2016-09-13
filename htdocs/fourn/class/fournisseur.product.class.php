@@ -6,8 +6,6 @@
  * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke           <charlie@patas-monkey.com>
- 
- status
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -445,7 +443,7 @@ class ProductFournisseur extends Product
         $sql.= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.unitcharges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE pfp.entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE pfp.entity IN (".getEntity('productprice', 1).")";
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND s.status=1"; // only enabled company selected
         $sql.= " AND pfp.fk_product = ".$prodid;

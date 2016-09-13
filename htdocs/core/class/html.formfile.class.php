@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
+ * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -569,15 +570,15 @@ class FormFile
             	$reshook = $hookmanager->executeHooks('formBuilddocOptions',$parameters,$GLOBALS['object']);
             	$out.= $hookmanager->resPrint;
             }
-        }
 
+        }
         // Get list of files
         if (! empty($filedir))
         {
             $file_list=dol_dir_list($filedir,'files',0,'','(\.meta|_preview\.png)$','date',SORT_DESC);
 
             // Show title of array if not already shown
-            if ((! empty($file_list) || $modulepart == 'massfilesarea') && ! $headershown)
+            if ((! empty($file_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
             {
                 $headershown=1;
                 $out.= '<div class="titre">'.$titletoshow.'</div>';
@@ -661,7 +662,7 @@ class FormFile
 
 			 	if (count($file_list) == 0 && $headershown)
 	            {
-    	        	$out.='<tr '.$bc[0].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
+    	        	$out.='<tr '.$bc[0].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         	    }
 
                 $this->numoffiles++;
@@ -687,7 +688,7 @@ class FormFile
      *
      *	@param	string	$modulepart		propal, facture, facture_fourn, ...
      *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
-     *	@param	string	$filedir		Directory to scan
+     *	@param	string	$filedir		Full path to directory to scan
      *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
      *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
      */
@@ -720,9 +721,6 @@ class FormFile
     			if ($modulepart == 'export')              {
     				$relativepath = $file["name"];
     			}
-	            if ($modulepart == 'facture_fournisseur' || $modulepart == 'invoice_fournisseur') {
-	                $relativepath = get_exdir($modulesubdir, 2,0,0,null,'invoice_supplier'). $modulesubdir. "/" . $file["name"];
-	            }
 
     			// Show file name with link to download
     			$out.= '<a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
@@ -862,10 +860,8 @@ class FormFile
 						print '<td align="center">';
 						if (image_format_supported($file['name']) > 0)
 						{
-						    $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // Thumbs are created with filename in lower case and with .png extension
-						    //print $relativepath.'<br>';
-						    //print $file['path'].'/'.$minifile.'<br>';
-						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.'.$fileinfo['extension']); // For old thumbs
+						    $minifile=getImageFileNameForSize($file['name'], '_mini'); // For new thumbs using same ext (in lower case howerver) than original
+						    if (! dol_is_file($file['path'].'/'.$minifile)) $minifile=getImageFileNameForSize($file['name'], '_mini', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
 						    //print $file['path'].'/'.$minifile.'<br>';
 						    print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" class="aphoto" target="_blank">';
 							print '<img border="0" height="'.$maxheightmini.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($relativepath.$minifile).'" title="">';
@@ -1267,7 +1263,7 @@ class FormFile
                 print '<input type="hidden" name="id" value="' . $object->id . '">';
                 print '<input type="hidden" name="linkid" value="' . $link->id . '">';
                 print '<input type="hidden" name="action" value="confirm_updateline">';
-                print $langs->trans('Link') . ': <input type="text" name="link" size="50" value="' . $link->url . '">';
+                print $langs->trans('Link') . ': <input type="text" name="link" value="' . $link->url . '">';
                 print '</td>';
                 print '<td>';
                 print $langs->trans('Label') . ': <input type="text" name="label" value="' . $link->label . '">';

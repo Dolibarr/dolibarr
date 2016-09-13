@@ -160,14 +160,14 @@ function CreateFolder( $resourceType, $currentFolder )
 
 				switch ( $sErrorMsg )
 				{
-					case '' :
+					case '':
 						$sErrorNumber = '0' ;
-						break ;
+						break;
 					case 'Invalid argument' :
 					case 'No such file or directory' :
 						$sErrorNumber = '102' ;		// Path too long.
 						break ;
-					default :
+					default:
 						$sErrorNumber = '110' ;
 						break ;
 				}
@@ -266,15 +266,15 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 							break ;
 						}
 
-						$permissions = 0777;
-
+						$permissions = '0777';
 						if ( isset( $Config['ChmodOnUpload'] ) && $Config['ChmodOnUpload'] )
 						{
-							$permissions = $Config['ChmodOnUpload'] ;
+							$permissions = (string) $Config['ChmodOnUpload'] ;
 						}
-
+						$permissionsdec = octdec($permissions);
+						dol_syslog("commands.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
 						$oldumask = umask(0);
-						chmod($sFilePath, $permissions);
+						chmod($sFilePath, $permissionsdec);
 						umask($oldumask);
 					}
 

@@ -79,11 +79,32 @@ if ($result)
 print load_fiche_titre($langs->trans("DonationsArea"));
 
 
-print '<table width="100%" class="notopnoleftnoright">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
-// Left area
-print '<tr><td class="notopnoleft" width="30%" valign="top">';
+if (! empty($conf->don->enabled) && $user->rights->don->lire)
+{
+	$listofsearchfields['search_donation']=array('text'=>'Donation');
+}
 
+if (count($listofsearchfields))
+{
+	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<table class="noborder nohover centpercent">';
+	$i=0;
+	foreach($listofsearchfields as $key => $value)
+	{
+		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+		print '<tr '.$bc[false].'>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="14"></td>';
+		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+		print '</tr>';
+		$i++;
+	}
+	print '</table>';	
+	print '</form>';
+	print '<br>';
+}
 
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
@@ -136,8 +157,7 @@ print '</tr>';
 print "</table>";
 
 
-// Right area
-print '</td><td valign="top">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 $max=10;
@@ -203,7 +223,7 @@ if ($resql)
 else dol_print_error($db);
 
 
-print '</td></tr></table>';
+print '</div></div></div>';
 
 
 llxFooter();

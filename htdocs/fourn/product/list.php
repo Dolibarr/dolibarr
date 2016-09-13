@@ -23,7 +23,7 @@
 /**
  *		\file       htdocs/fourn/product/list.php
  *		\ingroup    produit
- *		\brief      Page liste des produits ou services
+ *		\brief      Page to list supplier products and services
  */
 
 require '../../main.inc.php';

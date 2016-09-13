@@ -1,19 +1,15 @@
 # Dolibarr language file - Source file is en_US - propal
 LastPropals=%s zuletzt bearbeitete Angebote
-LastClosedProposals=%s zuletzt abgeschlossene Angebote
 LastModifiedProposals=%s zuletzt bearbeitete Angebote
 PropalsDraft=Entwurf
 PropalStatusSigned=Unterzeichnet (auf Rechnung)
-NoOtherOpenedPropals=Keine offenen Angebote Anderer
 RefProposal=Angebots Nr.
 DatePropal=Datum des Angebots
 DateEndPropal=Ablauf der Bindefrist
 ValidityDuration=Bindefrist
-Estimate=Geschätzt :
 CopyPropalFrom=Erstelle neues Angebot durch Duplikation
 CreateEmptyPropal=Erstelle leeres Angebot oder aus der Produkt-/Dienstleistungsliste
 DefaultProposalDurationValidity=Standardmäßige Bindefrist (Tage)
 TypeContact_propal_internal_SALESREPFOLL=Angebotsnachverfolgung durch Vertreter
 TypeContact_propal_external_CUSTOMER=Angebots-Nachverfolgung durch Partnerkontakt
 DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, ...)
-DocModelJauneDescription=Angebotsvorlage Jaune

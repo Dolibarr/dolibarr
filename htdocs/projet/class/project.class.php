@@ -248,7 +248,7 @@ class Project extends CommonObject
             $sql.= ", description = '" . $this->db->escape($this->description) . "'";
             $sql.= ", fk_soc = " . ($this->socid > 0 ? $this->socid : "null");
             $sql.= ", fk_statut = " . $this->statut;
-            $sql.= ", fk_opp_status = " . ((is_numeric($this->opp_status) && $this->opp_status != '') ? $this->opp_status : 'null');
+            $sql.= ", fk_opp_status = " . ((is_numeric($this->opp_status) && $this->opp_status > 0) ? $this->opp_status : 'null');
 			$sql.= ", opp_percent = " . ((is_numeric($this->opp_percent) && $this->opp_percent != '') ? $this->opp_percent : 'null');
             $sql.= ", public = " . ($this->public ? 1 : 0);
             $sql.= ", datec=" . ($this->date_c != '' ? "'".$this->db->idate($this->date_c)."'" : 'null');
@@ -1145,6 +1145,7 @@ class Project extends CommonObject
 
 		// Load source object
 		$clone_project->fetch($fromid);
+		$clone_project->fetch_optionals();
 		$clone_project->fetch_thirdparty();
 
 		$orign_dt_start=$clone_project->date_start;
@@ -1627,8 +1628,8 @@ class Project extends CommonObject
             $response = new WorkboardResponse();
             $response->warning_delay = $conf->projet->warning_delay/60/60/24;
             $response->label = $langs->trans("OpenedProjects");
-            if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/index.php?search_status=1&mainmenu=project';
-            else $response->url = DOL_URL_ROOT.'/projet/index.php?mode=mine&search_status=1&mainmenu=project';
+            if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/list.php?search_status=1&mainmenu=project';
+            else $response->url = DOL_URL_ROOT.'/projet/list.php?mode=mine&search_status=1&mainmenu=project';
             $response->img = img_object($langs->trans("Projects"),"project");
     
             // This assignment in condition is not a bug. It allows walking the results.
@@ -1711,7 +1712,7 @@ class Project extends CommonObject
 	
 	
 	/**
-	 * Is the action delayed?
+	 * Is the project delayed?
 	 *
 	 * @return bool
 	 */
@@ -1719,14 +1720,62 @@ class Project extends CommonObject
 	{
 	    global $conf;
 	
-        if (! ($this->statut == 1)) {
-            return false;
-        }
+        if (! ($this->statut == 1)) return false;
+        if (! $this->datee) return false;
 
         $now = dol_now();
 
         return $this->datee < ($now - $conf->projet->warning_delay);
 	}	
 
+	
+	/**
+	 *	Charge les informations d'ordre info dans l'objet commande
+	 *
+	 *	@param  int		$id       Id of order
+	 *	@return	void
+	 */
+	function info($id)
+	{
+	    $sql = 'SELECT c.rowid, datec as datec, tms as datem,';
+	    $sql.= ' date_close as datecloture,';
+	    $sql.= ' fk_user_creat as fk_user_author, fk_user_close as fk_use_cloture';
+	    $sql.= ' FROM '.MAIN_DB_PREFIX.'projet as c';
+	    $sql.= ' WHERE c.rowid = '.$id;
+	    $result=$this->db->query($sql);
+	    if ($result)
+	    {
+	        if ($this->db->num_rows($result))
+	        {
+	            $obj = $this->db->fetch_object($result);
+	            $this->id = $obj->rowid;
+	            if ($obj->fk_user_author)
+	            {
+	                $cuser = new User($this->db);
+	                $cuser->fetch($obj->fk_user_author);
+	                $this->user_creation   = $cuser;
+	            }
+	
+	            if ($obj->fk_user_cloture)
+	            {
+	                $cluser = new User($this->db);
+	                $cluser->fetch($obj->fk_user_cloture);
+	                $this->user_cloture   = $cluser;
+	            }
+	
+	            $this->date_creation     = $this->db->jdate($obj->datec);
+	            $this->date_modification = $this->db->jdate($obj->datem);
+	            $this->date_cloture      = $this->db->jdate($obj->datecloture);
+	        }
+	
+	        $this->db->free($result);
+	
+	    }
+	    else
+	    {
+	        dol_print_error($this->db);
+	    }
+	}
+	
 }
 

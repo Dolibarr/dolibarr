@@ -260,7 +260,7 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
     print "<tr>";
     // Label
-    print '<td class="fieldrequired">';
+    print '<td class="titlefield fieldrequired">';
     print $langs->trans("Label");
     print '</td>';
     print '<td align="left"><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
@@ -305,8 +305,10 @@ if ($action == 'create')
 	dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
-	print '<div>';
+	print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
     print '</form>';
 }
@@ -360,9 +362,11 @@ if ($id > 0)
 		
 		print '<table class="border" width="100%">';
 
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
+		
 		// Ref
 		print '<tr><td class="fieldtitle">'.$langs->trans("Ref").'</td><td colspan="2">';
-		print $form->showrefnav($object,'id');
+		print $form->showrefnav($object,'id',$linkback);
 		print "</td></tr>";
 
 		// Label
@@ -403,7 +407,7 @@ if ($id > 0)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0; $total = 0;
-			print '<table class="nobordernopadding" width="100%">';
+			print '<table class="nobordernopadding paymenttable" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -494,7 +498,7 @@ if ($id > 0)
 		
 		if ($action == 'edit')
 		{
-			print '<div align="center">';
+			print '<div class="center">';
 			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 			print ' &nbsp; ';
 			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

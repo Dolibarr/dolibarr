@@ -71,7 +71,7 @@ if (! empty($conf->supplier_proposal->enabled)) $supplierproposalstatic=new Supp
 if (! empty($conf->commande->enabled)) $orderstatic=new Commande($db);
 if (! empty($conf->fournisseur->enabled)) $supplierorderstatic=new CommandeFournisseur($db);
 
-llxHeader();
+llxHeader("",$langs->trans("CommercialArea"));
 
 print load_fiche_titre($langs->trans("CommercialArea"),'','title_commercial.png');
 
@@ -118,7 +118,7 @@ if (count($listofsearchfields))
 	{
 		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
 		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label>:</td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
 		if ($i == 0) print '<td class="noborderbottom" rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button "></td>';
 		print '</tr>';
 		$i++;
@@ -197,7 +197,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoProposal").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -277,7 +277,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         else
         {
             $var=!$var;
-            print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoProposal").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table><br>";
 
@@ -357,7 +357,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		else
 		{
 			$var=!$var;
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table><br>";
 
@@ -423,7 +423,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1,'customer',16);
+                print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
                 print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
                 $i++;
@@ -438,7 +438,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         else
         {
 			$var=!$var;
-            print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("NoSupplierOrder").'</td></tr>';
+            print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table><br>";
 
@@ -517,7 +517,7 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="3">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
 	}
@@ -571,7 +571,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -729,7 +729,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1, 'company', 44);
+                print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
@@ -828,7 +828,7 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1, 'company', 44);
+                print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";

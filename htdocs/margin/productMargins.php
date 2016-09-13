@@ -122,11 +122,11 @@ else {
 }
 
 // Start date
-print '<td>'.$langs->trans('StartDate').' ('.$langs->trans("DateValidation").')</td>';
+print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td width="20%">';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
 print '</td>';
-print '<td width="20%">'.$langs->trans('EndDate').' ('.$langs->trans("DateValidation").')</td>';
+print '<td width="20%">'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td width="20%">';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
@@ -295,16 +295,16 @@ if ($result)
 	// affichage totaux marges
 	$var=!$var;
 	$totalMargin = $cumul_vente - $cumul_achat;
-	if ($totalMargin < 0)
+	/*if ($totalMargin < 0)
 	{
 		$marginRate = ($cumul_achat != 0)?-1*(100 * $totalMargin / $cumul_achat):'';
 		$markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
 	}
 	else
-	{
+	{*/
 		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
 		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
-	}
+	//}
 	print '<tr class="liste_total">';
 	if ($id > 0)
 		print '<td colspan=2>';

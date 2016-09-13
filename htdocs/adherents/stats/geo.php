@@ -53,7 +53,7 @@ $langs->load("companies");
  * View
  */
 
-$arrayjs=array('http://www.google.com/jsapi');
+$arrayjs=array('https://www.google.com/jsapi');
 if (! empty($conf->dol_use_jmobile)) $arrayjs=array();
 
 $title=$langs->trans("Statistics");

@@ -373,7 +373,7 @@ $moreheadjs=empty($conf->use_javascript_ajax)?"":"
         ,   north__paneSelector:    \"#ecm-layout-north\"
         ,   west__paneSelector:     \"#ecm-layout-west\"
         ,   resizable: true
-        ,   north__size:        32
+        ,   north__size:        36
         ,   north__resizable:   false
         ,   north__closable:    false
         ,   west__size:         340
@@ -574,6 +574,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 
 
 $mode='noajax';
+$url=DOL_URL_ROOT.'/ecm/index_auto.php';
 include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 
 

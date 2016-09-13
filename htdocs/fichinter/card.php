@@ -111,6 +111,36 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
+	// Action clone object
+	if ($action == 'confirm_clone' && $confirm == 'yes' && $user->rights->ficheinter->creer)
+	{
+		if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+		{
+			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+		}
+		else
+		{
+			if ($object->id > 0)
+			{
+				// Because createFromClone modifies the object, we must clone it so that we can restore it later
+				$orig = clone $object;
+
+				$result=$object->createFromClone($socid);
+				if ($result > 0)
+				{
+					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+					exit;
+				}
+				else
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$object = $orig;
+					$action='';
+				}
+			}
+		}
+	}
+
 	if ($action == 'confirm_validate' && $confirm == 'yes' && $user->rights->ficheinter->creer)
 	{
 		$result = $object->setValid($user);
@@ -447,7 +477,7 @@ if (empty($reshook))
 	}
 
 	// Set into a contract
-	else if ($action == 'setcontrat' && $user->rights->contrat->creer)
+	else if ($action == 'setcontract' && $user->rights->contrat->creer)
 	{
 		$result=$object->set_contrat($user,GETPOST('contratid','int'));
 		if ($result < 0) dol_print_error($db,$object->error);
@@ -494,7 +524,7 @@ if (empty($reshook))
 
 			$desc=GETPOST('np_desc');
 			$date_intervention = dol_mktime(GETPOST('dihour','int'), GETPOST('dimin','int'), 0, GETPOST('dimonth','int'), GETPOST('diday','int'), GETPOST('diyear','int'));
-			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION)?0:convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int'));
+			$duration = empty($conf->global->FICHINTER_WITHOUT_DURATION)?convertTime2Seconds(GETPOST('durationhour','int'), GETPOST('durationmin','int')) : 0;
 
 
 			// Extrafields
@@ -700,174 +730,19 @@ if (empty($reshook))
 		exit;
 	}
 
-
-	/*
-	 * Add file in email form
-	*/
-	if (GETPOST('addfile','alpha'))
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		// Set tmp user directory TODO Use a dedicated directory for temp mails files
-		$vardir=$conf->user->dir_output."/".$user->id;
-		$upload_dir_tmp = $vardir.'/temp';
-
-		dol_add_file_process($upload_dir_tmp,0,0);
-		$action='presend';
-	}
-
-	/*
-	 * Remove file in email form
-	*/
-	if (GETPOST('removedfile','alpha'))
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		// Set tmp user directory
-		$vardir=$conf->user->dir_output."/".$user->id;
-		$upload_dir_tmp = $vardir.'/temp';
-
-		// TODO Delete only files that was uploaded from email form
-		dol_remove_file_process(GETPOST('removedfile','alpha'),0);
-		$action='presend';
-	}
-
 	/*
 	 * Send mail
-	*/
-	if ($action == 'send' && ! GETPOST('cancel','alpha') && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->ficheinter->ficheinter_advance->send))
-	{
-		$langs->load('mails');
+	 */
 
-		if (GETPOST('sendto','alpha'))
-		{
-			// Le destinataire a ete fourni via le champ libre
-			$sendto = GETPOST('sendto','alpha');
-			$sendtoid = 0;
-		}
-		elseif (GETPOST('receiver','alpha') != '-1')
-		{
-			// Recipient was provided from combo list
-			if (GETPOST('receiver','alpha') == 'thirdparty') // Id of third party
-			{
-				$sendto = $object->thirdparty->email;
-				$sendtoid = 0;
-			}
-			else    // Id du contact
-			{
-				$sendto = $object->thirdparty->contact_get_property(GETPOST('receiver'),'email');
-				$sendtoid = GETPOST('receiver','alpha');
-			}
-		}
+	// Actions to send emails
+	$actiontypecode='AC_OTH_AUTO';
+	$trigger_name='FICHINTER_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromintervention';
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-		if (dol_strlen($sendto))
-		{
-			$langs->load("commercial");
 
-			$from				= GETPOST('fromname','alpha') . ' <' . GETPOST('frommail','alpha') .'>';
-			$replyto			= GETPOST('replytoname','alpha'). ' <' . GETPOST('replytomail','alpha').'>';
-			$message			= GETPOST('message');
-			$sendtocc			= GETPOST('sendtocc','alpha');
-			$deliveryreceipt	= GETPOST('deliveryreceipt','alpha');
-
-			if ($action == 'send')
-			{
-				if (strlen(GETPOST('subject','alphs'))) $subject = GETPOST('subject','alpha');
-				else $subject = $langs->transnoentities('Intervention').' '.$object->ref;
-				$actiontypecode='AC_OTH_AUTO';
-				$actionmsg = $langs->transnoentities('MailSentBy').' '.$from.' '.$langs->transnoentities('To').' '.$sendto;
-				if ($message)
-				{
-					if ($sendtocc) $actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc') . ": " . $sendtocc);
-					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic') . ": " . $subject);
-					$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody') . ":");
-					$actionmsg = dol_concatdesc($actionmsg, $message);
-				}
-				$actionmsg2=$langs->transnoentities("InterventionSentByEMail",$object->ref);
-			}
-
-			// Create form object
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-
-			$attachedfiles=$formmail->get_attached_files();
-			$filepath = $attachedfiles['paths'];
-			$filename = $attachedfiles['names'];
-			$mimetype = $attachedfiles['mimes'];
-
-			// Send by email
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt,-1);
-			if ($mailfile->error)
-			{
-				$mesg='<div class="error">'.$mailfile->error.'</div>';
-			}
-			else
-			{
-				$result=$mailfile->sendfile();
-				if ($result)
-				{
-					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
-					setEventMessages($mesg, null, 'mesgs');
-					$error=0;
-
-					// Initialisation donnees
-					$object->sendtoid		= $sendtoid;
-					$object->actiontypecode	= $actiontypecode;
-					$object->actionmsg 		= $actionmsg;
-					$object->actionmsg2		= $actionmsg2;
-					$object->fk_element		= $object->id;
-					$object->elementtype	= $object->element;
-
-					// Appel des triggers
-					include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-					$interface=new Interfaces($db);
-					$result=$interface->run_triggers('FICHINTER_SENTBYMAIL',$object,$user,$langs,$conf);
-					if ($result < 0) {
-						$error++; $object->errors=$interface->errors;
-					}
-					// Fin appel triggers
-
-					if ($error)
-					{
-						dol_print_error($db);
-					}
-					else
-					{
-						// Redirect here
-						// This avoid sending mail twice if going out and then back to page
-						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-						exit;
-					}
-				}
-				else
-				{
-					$langs->load("other");
-					$mesg='<div class="error">';
-					if ($mailfile->error)
-					{
-						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-						$mesg.='<br>'.$mailfile->error;
-					}
-					else
-					{
-						$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
-					}
-					$mesg.='</div>';
-				}
-			}
-		}
-		else
-		{
-			$langs->load("other");
-			$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-			dol_syslog('Recipient email is empty');
-		}
-
-	    $action='presend';
-	}
-
-	else if ($action == 'update_extras')
+	if ($action == 'update_extras')
 	{
 		// Fill array 'array_options' with data from update form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
@@ -1080,7 +955,7 @@ if ($action == 'create')
             else
             	$numprojet=select_projects($societe->id,$_POST["projectid"],'projectid');
             	*/
-            $numprojet=$formproject->select_projects($soc->id,GETPOST('projectid','int'),'projectid');
+            $numprojet=$formproject->select_projects($soc->id,$projectid,'projectid');
             if ($numprojet==0)
             {
                 print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddProject").'</a>';
@@ -1152,6 +1027,8 @@ if ($action == 'create')
 	    {
 	        print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
 	        print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		} elseif ($origin == 'project' && !empty($projectid)) {
+			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 		}
 
 		dol_fiche_end();
@@ -1169,9 +1046,16 @@ if ($action == 'create')
 		dol_fiche_head('');
 
 		print '<form name="fichinter" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+		if (is_object($objectsrc))
+		{
+			print '<input type="hidden" name="origin"         value="'.$objectsrc->element.'">';
+			print '<input type="hidden" name="originid"       value="'.$objectsrc->id.'">';
+		} elseif ($origin == 'project' && !empty($projectid)) {
+			print '<input type="hidden" name="projectid" value="' . $projectid . '">';
+		}
 		print '<table class="border" width="100%">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
-		print $form->select_company('','socid','',1,1);
+		print $form->select_company('','socid','','SelectThirdParty',1);
 		print '</td></tr>';
 		print '</table>';
 
@@ -1249,6 +1133,20 @@ else if ($id > 0 || ! empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&line_id='.$lineid, $langs->trans('DeleteInterventionLine'), $langs->trans('ConfirmDeleteInterventionLine'), 'confirm_deleteline','',0,1);
 	}
 
+	// Clone confirmation
+	if ($action == 'clone') {
+		// Create an array for form
+		$formquestion = array(
+							// 'text' => $langs->trans("ConfirmClone"),
+							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
+							// 1),
+							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
+							// => 1),
+							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '', '', 0, 0, null, 0, 'minwidth200')));
+		// Paiement incomplet. On demande si motif = escompte ou autre
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneIntervention'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	}
+
 	if (!$formconfirm)
 	{
 		$parameters=array('lineid'=>$lineid);
@@ -1265,7 +1163,7 @@ else if ($id > 0 || ! empty($ref))
 	$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 	// Ref
-	print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
 	print '</td></tr>';
 
@@ -1279,7 +1177,7 @@ else if ($id > 0 || ! empty($ref))
 		print '<td colspan="3">'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).'</td>';
 		print '</tr>';
 	}
-	
+
 	if (! empty($conf->global->FICHINTER_USE_PLANNED_AND_DONE_DATES))
 	{
 		// Date Start
@@ -1288,14 +1186,14 @@ else if ($id > 0 || ! empty($ref))
 		print $object->dateo ? dol_print_date($object->dateo, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
-		
+
 		// Date End
 		print '<tr><td>'.$langs->trans("Datee").'</td>';
 		print '<td colspan="3">';
 		print $object->datee ? dol_print_date($object->datee, 'daytext') : '&nbsp;';
 		print '</td>';
 		print '</tr>';
-		
+
 		// Date Terminate/close
 		print '<tr><td>'.$langs->trans("Datet").'</td>';
 		print '<td colspan="3">';
@@ -1362,15 +1260,8 @@ else if ($id > 0 || ! empty($ref))
 		print '</td><td colspan="3">';
 		if ($action == 'contrat')
 		{
-			print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-			print '<tr><td>';
-			$htmlcontract= new Formcontract($db);
-			//print "$socid,$selected,$htmlname";
-			$htmlcontract->select_contract($object->socid,$object->fk_contrat,'contratid');
-
-			print '</td>';
-			print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			print '</tr></table>';
+			$formcontract= new Formcontract($db);
+			$formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contrat, 'contratid', 0, 1);
 		}
 		else
 		{
@@ -1546,14 +1437,14 @@ else if ($id > 0 || ! empty($ref))
 					print '<td align="center" class="nowrap">';
 					$form->select_date($db->jdate($objp->date_intervention),'di',1,1,0,"date_intervention");
 					print '</td>';
-                        
+
                     // Duration
                     print '<td align="right">';
                     if (empty($conf->global->FICHINTER_WITHOUT_DURATION)) {
                         $selectmode = 'select';
                         if (!empty($conf->global->INTERVENTION_ADDLINE_FREEDUREATION))
                             $selectmode = 'text';
-                        $form->select_duration('duration', $objp->duree, $selectmode);
+                        $form->select_duration('duration', $objp->duree, 0, $selectmode);
                     }
                     print '</td>';
 
@@ -1743,6 +1634,11 @@ else if ($id > 0 || ! empty($ref))
 					}
 				}
 
+				// Clone
+				if ($user->rights->ficheinter->creer) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=ficheinter">' . $langs->trans("ToClone") . '</a></div>';
+				}
+
 				// Delete
 				if (($object->statut == 0 && $user->rights->ficheinter->creer) || $user->rights->ficheinter->supprimer)
 				{
@@ -1755,7 +1651,6 @@ else if ($id > 0 || ! empty($ref))
 	}
 
 	print '</div>';
-	print '<br>';
 
 	if ($action != 'presend')
 	{
@@ -1856,7 +1751,7 @@ else if ($id > 0 || ! empty($ref))
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'int'.$object->id);
-		}		
+		}
 		$formmail->withfrom=1;
 		$liste=array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key=>$value)	$liste[$key]=$value;

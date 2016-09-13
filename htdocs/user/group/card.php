@@ -491,7 +491,7 @@ else
             }
             else
             {
-                print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';
+                print '<tr><td colspan=2 class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             print "</table>";
             print "<br>";

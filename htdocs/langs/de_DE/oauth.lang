@@ -12,3 +12,4 @@ ListOfSupportedOauthProviders=Hier Anmeldedaten Ihres OAuth2 Anbieters eintragen
 OAUTH_GOOGLE_NAME=Google API
 OAUTH_GOOGLE_ID=Google APi ID
 OAUTH_GOOGLE_SECRET=API Google Secret
+OAUTH_GOOGLE_DESC=Gehen Sie auf  <a href="https://console.developers.google.com/" target="_blank">diese Seite</a> dort auf Credentials um Oauth-Anmeldedaten anzulegen

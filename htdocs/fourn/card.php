@@ -31,6 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -119,8 +120,8 @@ if ($id > 0 && empty($object->id))
 
 if ($object->id > 0)
 {
-	$title=$langs->trans("ThirdParty")." - ".$langs->trans('SupplierCard');
-	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('SupplierCard');
+	$title=$langs->trans("ThirdParty")." - ".$langs->trans('Supplier');
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$langs->trans('Supplier');
 	$help_url='';
 	llxHeader('',$title, $help_url);
 
@@ -231,6 +232,7 @@ if ($object->id > 0)
 	// Categories
 	if (! empty($conf->categorie->enabled))
 	{
+	    $langs->load("categories");
     	print '<tr><td>' . $langs->trans("SuppliersCategoriesShort") . '</td>';
     	print '<td colspan="3">';
     	print $form->showCategories($object->id, 'supplier', 1);
@@ -296,22 +298,22 @@ if ($object->id > 0)
 		$langs->load("products");
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
+		print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
 		print '<a href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("All").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
 		print '</a></td></tr>';
 
 		//Query from product/liste.php
-		$sql = 'SELECT p.rowid, p.ref, p.label, pfp.tms,';
-		$sql.= ' p.fk_product_type, p.entity';
+		$sql = 'SELECT p.rowid, p.ref, p.label, p.fk_product_type, p.entity,';
+		$sql.= ' pfp.tms, pfp.ref_fourn as supplier_ref, pfp.price, pfp.quantity, pfp.unitprice';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp';
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pfp.fk_product";
 		$sql.= ' WHERE p.entity IN ('.getEntity('product', 1).')';
 		$sql.= ' AND pfp.fk_soc = '.$object->id;
 		$sql .= $db->order('pfp.tms', 'desc');
 		$sql.= $db->plimit($MAXLIST);
-
 		$query = $db->query($sql);
-
+        if (! $query) dol_print_error($db);
+        
 		$return = array();
 
 		if ($db->num_rows($query)) {
@@ -332,10 +334,25 @@ if ($object->id > 0)
 				print '<td class="nowrap">';
 				print $productstatic->getNomUrl(1);
 				print '</td>';
-				print '<td align="center">';
+				print '<td>';
+				print $objp->supplier_ref;
+				print '</td>';
+				print '<td class="maxwidthonsmartphone">';
 				print dol_trunc(dol_htmlentities($objp->label), 30);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.dol_print_date($objp->tms).'</td>';
+				//print '<td align="right" class="nowrap">'.dol_print_date($objp->tms, 'day').'</td>';
+				print '<td align="right">';
+				//print (isset($objp->unitprice) ? price($objp->unitprice) : '');
+				if (isset($objp->price))
+				{
+    				print price($objp->price);
+				    if ($objp->quantity > 1)
+				    {
+    				    print ' / ';
+    				    print $objp->quantity;
+				    }
+				}
+				print '</td>';
 				print '</tr>';
 			}
 		}
@@ -343,6 +360,78 @@ if ($object->id > 0)
 		print '</table>';
 	}
 
+	
+	/*
+	 * Last supplier proposal
+	 */
+	$proposalstatic = new SupplierProposal($db);
+	
+	if ($user->rights->supplier_proposal->lire)
+	{
+	    $sql  = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total as total_ttc";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p ";
+	    $sql.= " WHERE p.fk_soc =".$object->id;
+	    $sql.= " AND p.entity =".$conf->entity;
+	    $sql.= " ORDER BY p.date_valid DESC";
+	    $sql.= " ".$db->plimit($MAXLIST);
+	    
+	    $resql=$db->query($sql);
+	    if ($resql)
+	    {
+	        $i = 0 ;
+	        $num = $db->num_rows($resql);
+	
+	        if ($num > 0)
+	        {
+	            print '<table class="noborder" width="100%">';
+	
+	            print '<tr class="liste_titre">';
+	            print '<td colspan="3">';
+	            print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierProposals",($num<$MAXLIST?"":$MAXLIST)).'</td>';
+	            print '<td align="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id.'">'.$langs->trans("AllPriceRequests").' <span class="badge">'.$num.'</span></td>';
+	            print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/supplier_proposal/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
+	            print '</tr></table>';
+	            print '</td></tr>';
+	        }
+	
+	        $var = True;
+	        while ($i < $num && $i <= $MAXLIST)
+	        {
+	            $obj = $db->fetch_object($resql);
+	            $var=!$var;
+	
+	            print "<tr ".$bc[$var].">";
+	            print '<td class="nowrap">';
+	            $proposalstatic->id = $obj->rowid;
+	            $proposalstatic->ref = $obj->ref;
+	            $proposalstatic->total_ht = $obj->total_ht;
+	            $proposalstatic->total_tva = $obj->total_tva;
+	            $proposalstatic->total_ttc = $obj->total_ttc;
+	            print $proposalstatic->getNomUrl(1);
+	            print '</td>';
+	            print '<td align="center" width="80">';
+	            if ($obj->dc)
+	            {
+	                print dol_print_date($db->jdate($obj->dc),'day');
+	            }
+	            else
+	            {
+	                print "-";
+	            }
+	            print '</td>';
+	            print '<td align="right" class="nowrap">'.$proposalstatic->LibStatut($obj->fk_statut,5).'</td>';
+	            print '</tr>';
+	            $i++;
+	        }
+	        $db->free($resql);
+	
+	        if ($num >0) print "</table>";
+	    }
+	    else
+	    {
+	        dol_print_error($db);
+	    }
+	}	
 
 	/*
 	 * Last supplier orders
@@ -374,6 +463,18 @@ if ($object->id > 0)
 		}
 
 		// TODO move to DAO class
+		$sql  = "SELECT count(p.rowid) as total";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+		$sql.= " WHERE p.fk_soc =".$object->id;
+		$sql.= " AND p.entity =".$conf->entity;
+		$sql.= " ORDER BY p.date_commande DESC";
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$object_count = $db->fetch_object($resql);
+			$num = $object_count->total;
+		}
+		
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
@@ -384,7 +485,6 @@ if ($object->id > 0)
 		if ($resql)
 		{
 			$i = 0 ;
-			$num = $db->num_rows($resql);
 
 			if ($num > 0)
 			{
@@ -400,7 +500,7 @@ if ($object->id > 0)
 			}
 
 			$var = True;
-			while ($i < $num && $i <= $MAXLIST)
+			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
 				$var=!$var;
@@ -441,7 +541,6 @@ if ($object->id > 0)
 	/*
 	 * Last supplier invoices
 	 */
-	$MAXLIST=5;
 
 	$langs->load('bills');
 	$facturestatic = new FactureFournisseur($db);

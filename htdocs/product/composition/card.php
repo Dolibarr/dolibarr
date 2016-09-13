@@ -116,13 +116,14 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 else if($action==='save_composed_product')
 {
 	$TProduct = GETPOST('TProduct', 'array');
-	if(!empty($TProduct))
+	if (!empty($TProduct))
 	{
 		foreach ($TProduct as $id_product => $row)
 		{
 			if ($row['qty'] > 0) $object->update_sousproduit($id, $id_product, $row['qty'], isset($row['incdec']) ? 1 : 0 );
 			else $object->del_sousproduit($id, $id_product);
 		}
+		setEventMessages('RecordSaved', null);
 	}
 	$action='';
 }
@@ -172,10 +173,22 @@ if ($action == 'search')
 
 	$resql = $db->query($sql);
 }
-//print $sql;
 
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('AssociatedProducts');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
 
-llxHeader("","",$langs->trans("CardProduct".$object->type));
+llxHeader('', $title, $helpurl);
 
 $head=product_prepare_head($object);
 $titre=$langs->trans("CardProduct".$object->type);
@@ -194,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 	    
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 		
-		print '<table class="border" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		// Nature
 		if($object->type!=Product::TYPE_SERVICE)
@@ -282,7 +295,7 @@ if ($id > 0 || ! empty($ref))
 			else
 			{
 				print '<tr class="impair">';
-				print '<td colspan="3">'.$langs->trans("None").'</td>';
+				print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 			print '</table>';
@@ -453,7 +466,7 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($conf->stock->enabled)) $colspan++;
 
 				print '<tr class="impair">';
-				print '<td colspan="'.$colspan.'">'.$langs->trans("None").'</td>';
+				print '<td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td>';
 				print '</tr>';
 			}
 

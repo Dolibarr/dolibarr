@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -128,8 +130,8 @@ if (empty($user->socid)) $fieldstosearchall["cf.note_private"]="NotePrivate";
 $checkedtypetiers=0;
 $arrayfields=array(
     'cf.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplier"), 'checked'=>1, 'enabled'=>$conf->global->SUPPLIER_ORDER_HIDE_REF_SUPPLIER),
-    'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'enabled'=>$conf->global->PROJECT_SHOW_REF_INTO_LISTS),
+    'cf.ref_supplier'=>array('label'=>$langs->trans("RefOrderSupplier"), 'checked'=>1, 'enabled'=>1),
+    'p.project_ref'=>array('label'=>$langs->trans("ProjectRef"), 'checked'=>0, 'enabled'=>1),
     'u.login'=>array('label'=>$langs->trans("AuthorRequest"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
     's.town'=>array('label'=>$langs->trans("Town"), 'checked'=>1),
@@ -252,7 +254,7 @@ if ($status)
     if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
     else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
 }
-if ($billed) $title.=' - '.$langs->trans("Billed");
+if ($billed > 0) $title.=' - '.$langs->trans("Billed");
 
 //$help_url="EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_Pedidos_de_clientes";
 $help_url='';
@@ -396,7 +398,9 @@ if ($resql)
 
 	$param='';
 	if ($socid > 0)             $param.='&socid='.$socid;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)					$param.="&search_all=".$sall;
 	if ($orderday)      		$param.='&orderday='.$orderday;
 	if ($ordermonth)      		$param.='&ordermonth='.$ordermonth;
 	if ($orderyear)       		$param.='&orderyear='.$orderyear;
@@ -412,7 +416,7 @@ if ($resql)
 	if ($search_total_ttc != '') $param.="&search_total_ttc=".$search_total_ttc;
 	if ($search_refsupp) 		$param.="&search_refsupp=".$search_refsupp;
 	if ($search_status >= 0)  	$param.="&search_status=".$search_status;
-	if ($billed != '')          $param.="billed=".$billed; 
+	if ($billed != '')          $param.="&billed=".$billed; 
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)

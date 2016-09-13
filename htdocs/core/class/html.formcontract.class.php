@@ -50,7 +50,7 @@ class FormContract
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line
-	 *	@return int         		Nbre of project if OK, <0 if KO
+	 *	@return int         		Nbr of project if OK, <0 if KO
 	 */
 	function select_contract($socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
 	{
@@ -137,4 +137,32 @@ class FormContract
 			return -1;
 		}
 	}
+	
+	/**
+	 *	Show a form to select a contract
+	 *
+	 *  @param	int		$page       Page
+	 *	@param	int		$socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
+	 *	@param  int		$selected   Id contract preselected
+	 *	@param  string	$htmlname   Nom de la zone html
+	 *	@param	int		$maxlength	Maximum length of label
+	 *	@param	int		$showempty	Show empty line
+	 *	@return int         		Nbr of project if OK, <0 if KO
+	 */
+	function formSelectContract($page, $socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
+	{
+	    global $langs;
+	
+        print "\n";
+        print '<form method="post" action="'.$page.'">';
+        print '<input type="hidden" name="action" value="setcontract">';
+        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+        print '<tr><td>';
+        $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty);
+        print '</td>';
+        print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+        print '</tr></table></form>';
+	}	
+	
 }

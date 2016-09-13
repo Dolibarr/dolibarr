@@ -58,11 +58,12 @@ class ExtraFields
 	var $attribute_perms;
 	// Array to store permission to check
 	var $attribute_list;
-
+	// Array to store if extra field is hidden
+	var $attribute_hidden;		// warning, do not rely on this. If your module need a hidden data, it must use its own table.
+	
 	var $error;
 	var $errno;
 
-	var $attribute_hidden;
 
 	public static $type2label=array(
 	'varchar'=>'String',
@@ -120,7 +121,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return int      					<=0 if KO, >0 if OK
 	 */
 	function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique=0, $required=0, $default_value='', $param=0, $alwayseditable=0, $perms='', $list=0, $ishidden=0)
@@ -248,7 +249,7 @@ class ExtraFields
 	 *  @param  int				$alwayseditable	Is attribute always editable regardless of the document status
 	 *  @param	string			$perms			Permission to check
 	 *  @param	int				$list			Into list view by default
-	 *  @param	int				$ishidden		Is hidden extrafield
+	 *  @param	int				$ishidden		Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return	int								<=0 if KO, >0 if OK
 	 */
 	private function create_label($attrname, $label='', $type='', $pos=0, $size=0, $elementtype='member', $unique=0, $required=0, $param='', $alwayseditable=0, $perms='', $list=0, $ishidden=0)
@@ -396,7 +397,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
 	function update($attrname,$label,$type,$length,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0, $perms='',$list='',$ishidden=0)
@@ -491,7 +492,7 @@ class ExtraFields
 	 *  @param  int		$alwayseditable		Is attribute always editable regardless of the document status
 	 *  @param	string	$perms				Permission to check
 	 *  @param	int		$list				Into list view by default
-	 *  @param	int		$ishidden			Is hidden extrafield
+	 *  @param	int		$ishidden			Is hidden extrafield (warning, do not rely on this. If your module need a hidden data, it must use its own table)
 	 *  @return	int							<=0 if KO, >0 if OK
 	 */
 	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list=0,$ishidden=0)
@@ -633,7 +634,8 @@ class ExtraFields
 		}
 		else
 		{
-			print dol_print_error($this->db);
+			$this->error=$this->db->lasterror();
+			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 		}
 
 		return $array_name_label;
@@ -793,11 +795,7 @@ class ExtraFields
 				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value
 				$keyList=(empty($InfoFieldList[2])?'rowid':$InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3]))
-				{
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList.= ', '.$parentField;
-				}
+
 				if (count($InfoFieldList) > 4 && ! empty($InfoFieldList[4]))
 				{
 					if (strpos($InfoFieldList[4], 'extra.') !== false)
@@ -806,6 +804,11 @@ class ExtraFields
 					} else {
 						$keyList=$InfoFieldList[2].' as rowid';
 					}
+				}
+				if (count($InfoFieldList) > 3 && ! empty($InfoFieldList[3]))
+				{
+					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+					$keyList.= ', '.$parentField;
 				}
 
 				$fields_label = explode('|',$InfoFieldList[1]);
@@ -1133,7 +1136,7 @@ class ExtraFields
 			if ($InfoFieldList[0] && class_exists($InfoFieldList[0]))
 			{
                 $object = new $InfoFieldList[0]($this->db);
-                $object->fetch($value);
+                if (!empty($value)) $object->fetch($value);
                 $valuetoshow=$object->ref;
                 if ($object->element == 'societe') $valuetoshow=$object->name;  // Special case for thirdparty because ref is id because name is not unique
                 $out.='<input type="text" class="flat" name="'.$keysuffix.'options_'.$key.$keyprefix.'"  size="20" value="'.$valuetoshow.'" >';
@@ -1175,7 +1178,7 @@ class ExtraFields
 		$params=$this->attribute_param[$key];
 		$perms=$this->attribute_perms[$key];
 		$list=$this->attribute_list[$key];
-		$hidden=$this->attribute_hidden[$key];
+		$hidden=$this->attribute_hidden[$key];	// warning, do not rely on this. If your module need a hidden data, it must use its own table.
 
 		$showsize=0;
 		if ($type == 'date')
@@ -1248,7 +1251,14 @@ class ExtraFields
 			{
 				$sql.= ' as main';
 			}
-			$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+			if ($selectkey=='rowid' && empty($value)) {
+				$sql.= " WHERE ".$selectkey."=0";
+			} elseif ($selectkey=='rowid') {
+				$sql.= " WHERE ".$selectkey."=".$this->db->escape($value);
+			}else {
+				$sql.= " WHERE ".$selectkey."='".$this->db->escape($value)."'";
+			}
+
 			//$sql.= ' AND entity = '.$conf->entity;
 
 			dol_syslog(get_class($this).':showOutputField:$type=sellist', LOG_DEBUG);

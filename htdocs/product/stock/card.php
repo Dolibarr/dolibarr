@@ -197,7 +197,7 @@ if ($action == 'create')
 	$doleditor->Create();
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+	print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 	print (!empty($object->address)?$object->address:'');
 	print '</textarea></td></tr>';
 
@@ -234,7 +234,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("Create") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -546,7 +550,7 @@ else
 			$doleditor->Create();
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="60" rows="3" wrap="soft">';
+			print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 			print $object->address;
 			print '</textarea></td></tr>';
 

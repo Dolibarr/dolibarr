@@ -191,10 +191,12 @@ class Interfaces
                 if ($result < 0)
                 {
                     // Action KO
+                    //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($objMod->errors), LOG_ERR);
                     $nbtotal++;
                     $nbko++;
                     if (! empty($objMod->errors)) $this->errors=array_merge($this->errors,$objMod->errors);
                     else if (! empty($objMod->error))  $this->errors[]=$objMod->error;
+                    //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($this->errors), LOG_ERR);
                 }
             }
             else
@@ -205,7 +207,7 @@ class Interfaces
 
         if ($nbko)
         {
-            dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_ERR);
+            dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko." - Nb of error string returned in this->errors = ".count($this->errors), LOG_ERR);
             return -$nbko;
         }
         else

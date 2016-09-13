@@ -255,7 +255,7 @@ class FormMargin
 
 		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
 		{
-			print '<tr class="impair">';
+			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans('TotalMargin').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_total'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_total'], null, null, null, null, $rounding).'</td>';

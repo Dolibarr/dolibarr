@@ -5,7 +5,7 @@
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2012 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
- * Copyright (C) 2010-2014 Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2010-2016 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2010-2015 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2013 Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2012      Cedric Salvador       <csalvador@gpcsolutions.fr>
@@ -279,7 +279,7 @@ if (empty($reshook))
 
 		if ($socid < 1) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
-			
+
 			$action = 'create';
 			$error ++;
 		}
@@ -345,7 +345,7 @@ if (empty($reshook))
 
 				$object->origin = GETPOST('origin');
 				$object->origin_id = GETPOST('originid');
-				
+
 				// Multicurrency
 				if (!empty($conf->multicurrency->enabled))
 				{
@@ -718,7 +718,7 @@ if (empty($reshook))
 					$tva_tx = get_default_tva($mysoc, $object->thirdparty, $prod->id);
 					$tva_npr = get_default_npr($mysoc, $object->thirdparty, $prod->id);
 					if (empty($tva_tx)) $tva_npr=0;
-					
+
 					$pu_ht = $prod->price;
 					$pu_ttc = $prod->price_ttc;
 					$price_min = $prod->price_min;
@@ -932,7 +932,7 @@ if (empty($reshook))
 
 		// Add buying price
 		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
-		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value 
+		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : '');    // If buying_price is '0', we muste keep this value
 
 		$date_start = dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 		$date_end = dol_mktime(GETPOST('date_endhour'), GETPOST('date_endmin'), GETPOST('date_endsec'), GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
@@ -1082,7 +1082,7 @@ if (empty($reshook))
 
 	// Multicurrency rate
 	else if ($action == 'setmulticurrencyrate' && $user->rights->propal->creer) {
-		$result = $object->setMulticurrencyRate(GETPOST('multicurrency_tx', 'int'));
+		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
 	}
 
 	// bank account
@@ -1167,12 +1167,12 @@ if (empty($reshook))
 			}
 		}
 	}
-	
+
     // Actions to build doc
     $upload_dir = $conf->propal->dir_output;
     $permissioncreate=$user->rights->propal->creer;
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	
+
 }
 
 
@@ -1266,6 +1266,8 @@ if ($action == 'create')
 	if ($origin != 'project' && $originid) {
 		print '<input type="hidden" name="origin" value="' . $origin . '">';
 		print '<input type="hidden" name="originid" value="' . $originid . '">';
+	} elseif ($origin == 'project' && !empty($projectid)) {
+		print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 	}
 
 	dol_fiche_head();
@@ -1356,7 +1358,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
     // Bank Account
-    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled) {
+    if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && ! empty($conf->banque->enabled)) {
         print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
@@ -1403,7 +1405,7 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';
 		$numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-		print ' &nbsp; <a href="../projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
+		print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid=' . $soc->id . '&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'">' . $langs->trans("AddProject") . '</a>';
 		print '</td>';
 		print '</tr>';
 	}
@@ -1432,11 +1434,11 @@ if ($action == 'create')
 		print '<tr>';
 		print '<td>'.fieldLabel('Currency','multicurrency_code').'</td>';
         print '<td colspan="3" class="maxwidthonsmartphone">';
-		$currency_code = (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency)); 
-	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code', 1);
+		$currency_code = (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : ($object->multicurrency_code ? $object->multicurrency_code : $conf->currency));
+	    print $form->selectMultiCurrency($currency_code, 'multicurrency_code', 0);
 		print '</td></tr>';
 	}
-	
+
 	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
@@ -1717,7 +1719,7 @@ if ($action == 'create')
 	print '</tr></table>';
 	print '</td><td colspan="5">';
 	if ($user->rights->propal->creer && $action == 'refclient') {
-		print '<form action="propal.php?id=' . $object->id . '" method="post">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="set_ref_client">';
 		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
@@ -1934,12 +1936,12 @@ if ($action == 'create')
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
 		}
 		print '</td></tr>';
-	
+
 		// Multicurrency rate
 		print '<tr>';
 		print '<td width="25%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print fieldLabel('Rate','multicurrency_tx');
+		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
@@ -2001,7 +2003,7 @@ if ($action == 'create')
 		print '</tr>';
 	}
 
-	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && $conf->banque->enabled)
+	if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL) && ! empty($conf->banque->enabled))
 	{
 	    // Bank Account
 	    print '<tr><td>';
@@ -2053,7 +2055,7 @@ if ($action == 'create')
 	print '<td class="nowrap" colspan="2">' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 
 	// Margin Infos
-	if (! empty($conf->margin->enabled)) 
+	if (! empty($conf->margin->enabled))
 	{
 	    $rowspan=4;
 	    if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) $rowspan++;
@@ -2087,25 +2089,25 @@ if ($action == 'create')
 	print '<tr><td height="10">' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap" colspan="2">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
-	
+
 	if (!empty($conf->multicurrency->enabled))
 	{
 		// Multicurrency Amount HT
 		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 		print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
-		
+
 		// Multicurrency Amount VAT
 		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 		print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 		print '</tr>';
-		
+
 		// Multicurrency Amount TTC
 		print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 		print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
-		print '</tr>';	
+		print '</tr>';
 	}
-	
+
 	// Statut
 	print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
 
@@ -2397,7 +2399,7 @@ if ($action == 'create')
 		{
 			include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			$formmail->frommail=dolAddEmailTrackId($formmail->frommail, 'pro'.$object->id);
-		}		
+		}
 		$formmail->withfrom = 1;
 		$liste = array();
 		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value)
@@ -2417,7 +2419,7 @@ if ($action == 'create')
 
 		// Tableau des substitutions
 		$formmail->setSubstitFromObject($object);
-		$formmail->substit['__PROPREF__'] = $object->ref;
+		$formmail->substit['__PROPREF__'] = $object->ref; // For backward compatibility
 
 		// Find the good contact adress
 		$custcontact = '';
