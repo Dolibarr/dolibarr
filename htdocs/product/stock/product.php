@@ -63,11 +63,42 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldid);
 
 
+$object = new Product($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
+if ($id > 0 || ! empty($ref))
+{
+    $result = $object->fetch($id, $ref);
+
+}
+$modulepart='product';
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
+$objcanvas=null;
+if (! empty($canvas))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+    $objcanvas = new Canvas($db,$action);
+    $objcanvas->getCanvas('stockproduct','card',$canvas);
+}
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('stockproductcard','globalcard'));
+
+
 /*
  *	Actions
  */
 
 if ($cancel) $action='';
+
+$parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Set stock limit
 if ($action == 'setseuil_stock_alerte')
@@ -664,26 +695,31 @@ else
 /*                                                                            */
 /* ************************************************************************** */
 
+$parameters=array();
 
-if (empty($action) && $object->id)
+$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+if (empty($reshook))
 {
-    print "<div class=\"tabsAction\">\n";
 
-    if ($user->rights->stock->mouvement->creer)
-    {
-        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
-    }
-
-    //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
-    if ($user->rights->stock->mouvement->creer)
+	if (empty($action) && $object->id)
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
+	    print "<div class=\"tabsAction\">\n";
+	
+	    if ($user->rights->stock->mouvement->creer)
+	    {
+	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+	    }
+	
+	    //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
+	    if ($user->rights->stock->mouvement->creer)
+		{
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
+		}
+	
+		print '</div>';
 	}
 
-	print '</div>';
 }
-
-
 
 
 /*
