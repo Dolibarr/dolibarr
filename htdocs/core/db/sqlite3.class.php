@@ -305,8 +305,9 @@ class DoliDBSqlite3 extends DoliDB
     function select_db($database)
     {
         dol_syslog(get_class($this)."::select_db database=".$database, LOG_DEBUG);
-	    // FIXME: sqlite_select_db() does not exist
-        return sqlite_select_db($this->db,$database);
+	    // sqlite_select_db() does not exist
+        //return sqlite_select_db($this->db,$database);
+        return true;
     }
 
 
