@@ -54,7 +54,7 @@ $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), G
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 $search_thirdparty=GETPOST("thirdparty",'alpha');
 $search_req_nb=GETPOST("req_nb",'alpha');
-$search_num_releve=GETPOST("num_releve",'alpha');
+$search_num_releve=GETPOST("search_num_releve",'alpha');
 
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
@@ -181,7 +181,8 @@ $sql.= " WHERE b.fk_account = ba.rowid";
 $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
 if ($search_ref) $sql.=natural_search("b.rowid", $search_ref);
 if ($account > 0) $sql.=" AND b.fk_account = ".$account;
-if ($search_req_nb) $sql.= " AND b.num_chq LIKE '%".$db->escape($search_req_nb)."%'";
+if ($search_req_nb) $sql.= natural_search("b.num_chq", $search_req_nb);
+if ($search_num_releve) $sql.= natural_search("b.num_releve", $search_num_releve);
 if ($search_thirdparty) $sql.=" AND s.nom LIKE '%".$db->escape($search_thirdparty)."%'";
 if ($bid) $sql.= " AND b.rowid=l.lineid AND l.fk_categ=".$bid;
 if (! empty($type)) $sql.= " AND b.fk_type = '".$db->escape($type)."' ";
