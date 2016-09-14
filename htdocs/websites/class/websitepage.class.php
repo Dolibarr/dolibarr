@@ -183,7 +183,7 @@ class WebsitePage extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id           Id object
-	 * @param string $website_id   Web site page
+	 * @param string $website_id   Web site id
 	 * @param string $page         Page name
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK

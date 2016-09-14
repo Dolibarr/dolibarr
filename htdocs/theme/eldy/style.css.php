@@ -1397,7 +1397,9 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
+	<?php if (empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { ?>
 	min-width: 120px;
+	<?php } ?>
 }
 div.login_block_other {
 	display: inline-block;
@@ -3319,10 +3321,17 @@ td.hidden {
 }
 .websitetools {
 	float: right;
-	padding-top: 2px;
+}
+.websiteinputurl {
+    display: inline-block;
+    vertical-align: top;
 }
 .websiteiframenoborder {
 	border: 0px;
+}
+a.websitebuttonsitepreview img {
+	width: 26px;
+	display: inline-block;
 }
 
 
