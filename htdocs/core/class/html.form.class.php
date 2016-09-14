@@ -2757,20 +2757,23 @@ class Form
     /**
      *      Return list of payment modes
      *
-     *      @param	string	$selected        Id du type de paiement pre-selectionne
+     *      @param	int  	$selected        Id of payment term to preselect by default
      *      @param  string	$htmlname        Nom de la zone select
      *      @param  int 	$filtertype      Not used
      *		@param	int		$addempty		 Add an empty entry
      *		@return	void
      */
-    function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
+    function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0)
     {
-        global $langs,$user;
+        global $langs, $user, $conf;
 
         dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
         $this->load_cache_conditions_paiements();
 
+        // Set default value if not already set by caller
+        if (empty($selected) && ! empty($conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID)) $selected = $conf->global->MAIN_DEFAULT_PAYMENT_TERM_ID;
+        
         print '<select class="flat" name="'.$htmlname.'">';
         if ($addempty) print '<option value="0">&nbsp;</option>';
         foreach($this->cache_conditions_paiements as $id => $arrayconditions)
