@@ -38,7 +38,8 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
 }
 
 global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
-if (empty($dateSelector)) $dateSelector=0;
+if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
+elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
