@@ -622,12 +622,14 @@ if (count($object->records) > 0)
         print $form->textwithpicto('', $htmltext);
         print '</div>';
         
-        print '<a class="websitebuttonsitepreview" id="previewsiteext" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer"), 1, 'preview_ext');
+        $urlext=$realurl;
+        $urlint=DOL_URL_ROOT.'/public/websites/index.php?website='.$website;
+        print '<a class="websitebuttonsitepreview" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlext), 1, 'preview_ext');
         print '</a>';
         
         print '<a class="websitebuttonsitepreview" id="previewsite" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr")).'">';
-        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr"), 1, 'preview');
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlint), 1, 'preview');
         print '</a>';
     }
 
@@ -732,16 +734,17 @@ if (count($object->records) > 0)
             print '<div class="websiteinputurl">';
             print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
             //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
-            $htmltext=$langs->trans("PageAlias", $pagealias);
+            $htmltext=$langs->trans("WEBSITE_PAGENAME", $pagealias);
             print $form->textwithpicto('', $htmltext);
             print '</div>';
             
-            print '<a class="websitebuttonsitepreview" id="previewpageext" href="'.$realurl.'/'.$pagealias.'.php" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
-            print $form->textwithpicto('', $langs->trans("PreviewPageServedByWebServer"), 1, 'preview_ext');
+            $urlext=$realurl.'/'.$pagealias.'.php';
+            print '<a class="websitebuttonsitepreview" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlext), 1, 'preview_ext');
             print '</a>';
             
             print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'">';
-            print $form->textwithpicto('', $langs->trans("PreviewPageServedByDolibarr"), 1, 'preview'); 
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage), 1, 'preview'); 
             print '</a>';       // View page in new Tab
             //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
             
@@ -819,9 +822,10 @@ if ($action == 'editcss')
         
     dol_fiche_head();
 
+    print '<!-- Edit CSS -->'."\n";
     print '<table class="border" width="100%">';
 
-    print '<tr><td>';
+    print '<tr><td class="titelfieldcreate">';
     print $langs->trans('WebSite');
     print '</td><td>';
     print $website;
@@ -858,6 +862,7 @@ if ($action == 'editmeta' || $action == 'create')
     
     dol_fiche_head();
     
+    print '<!-- Edit Meta -->'."\n";
     print '<table class="border" width="100%">';
     
     if ($action != 'create')
@@ -877,7 +882,7 @@ if ($action == 'editmeta' || $action == 'create')
     if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION');
     if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS');
 
-    print '<tr><td>';
+    print '<tr><td class="titlefieldcreate">';
     print $langs->trans('WEBSITE_PAGENAME');
     print '</td><td>';
     print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.$pageurl.'">';
@@ -912,11 +917,13 @@ if ($action == 'editmeta' || $action == 'create')
 
 if ($action == 'editmedia')
 {
+    print '<!-- Edit Media -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 }
 
 if ($action == 'editmenu')
 {
+    print '<!-- Edit Menu -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 }
 
