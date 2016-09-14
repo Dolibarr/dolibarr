@@ -54,6 +54,8 @@ $search_dt_start = dol_mktime(0, 0, 0, GETPOST('search_start_dtmonth', 'int'), G
 $search_dt_end = dol_mktime(0, 0, 0, GETPOST('search_end_dtmonth', 'int'), GETPOST('search_end_dtday', 'int'), GETPOST('search_end_dtyear', 'int'));
 $search_thirdparty=GETPOST("thirdparty",'alpha');
 $search_req_nb=GETPOST("req_nb",'alpha');
+$search_num_releve=GETPOST("num_releve",'alpha');
+
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -82,12 +84,13 @@ $arrayfields=array(
     'b.dateo'=>array('label'=>$langs->trans("DateOperationShort"), 'checked'=>1),
     'b.datev'=>array('label'=>$langs->trans("DateValueShort"), 'checked'=>1),
     'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-    'b.num_releve'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
+    'b.num_chq'=>array('label'=>$langs->trans("Numero"), 'checked'=>1),
     'description'=>array('label'=>$langs->trans("Description"), 'checked'=>1),
     'bu.label'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'position'=>500),
     'b.debit'=>array('label'=>$langs->trans("Debit"), 'checked'=>1, 'position'=>600),
     'b.credit'=>array('label'=>$langs->trans("Credit"), 'checked'=>1, 'position'=>605),
-    'ba.ref'=>array('label'=>$langs->trans("Account"), 'checked'=>1, 'position'=>1000)
+    'ba.ref'=>array('label'=>$langs->trans("Account"), 'checked'=>1, 'position'=>1000),
+    'b.num_releve'=>array('label'=>$langs->trans("AccountStatement"), 'checked'=>1, 'position'=>1010),
 );
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -126,6 +129,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_ref="";
 	$search_req_nb='';
 	$search_thirdparty='';
+	$search_num_releve='';
 	$thirdparty='';
 }
 
@@ -230,16 +234,17 @@ if ($resql)
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if (!empty($search_ref)) $param.='&search_ref='.$search_ref;
-	if (!empty($description)) $param.='&description='.$description;
-	if (!empty($type)) $param.='&type='.$type;
+	if (!empty($search_ref)) $param.='&search_ref='.urlencode($search_ref);
+	if (!empty($description)) $param.='&description='.urlencode($description);
+	if (!empty($type)) $param.='&type='.urlencode($type);
 	if (!empty($debit)) $param.='&debit='.$debit;
 	if (!empty($credit)) $param.='&credit='.$credit;
 	if (!empty($account)) $param.='&account='.$account;
+	if (!empty($search_num_releve)) $param.='&search_num_releve='.urlencode($search_num_releve);
 	if (!empty($bid))  $param.='&bid='.$bid;
 	if (dol_strlen($search_dt_start) > 0) $param .= '&search_start_dtmonth=' . GETPOST('search_start_dtmonth', 'int') . '&search_start_dtday=' . GETPOST('search_start_dtday', 'int') . '&search_start_dtyear=' . GETPOST('search_start_dtyear', 'int');
     if (dol_strlen($search_dt_end) > 0)   $param .= '&search_end_dtmonth=' . GETPOST('search_end_dtmonth', 'int') . '&search_end_dtday=' . GETPOST('search_end_dtday', 'int') . '&search_end_dtyear=' . GETPOST('search_end_dtyear', 'int');
-    if (GETPOST("req_nb")) $param.='&amp;req_nb='.urlencode(GETPOST("req_nb"));
+    if ($search_req_nb) $param.='&amp;req_nb='.urlencode($search_req_nb);
     if (GETPOST("thirdparty")) $param.='&amp;thirdparty='.urlencode(GETPOST("thirdparty"));
     if ($optioncss != '')       $param.='&optioncss='.$optioncss;
     // Add $param from extra fields
@@ -317,12 +322,13 @@ if ($resql)
 	if (! empty($arrayfields['b.dateo']['checked']))            print_liste_field_titre($arrayfields['b.dateo']['label'],$_SERVER['PHP_SELF'],'b.dateo','',$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['b.datev']['checked']))            print_liste_field_titre($arrayfields['b.datev']['label'],$_SERVER['PHP_SELF'],'b.datev','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['type']['checked']))               print_liste_field_titre($arrayfields['type']['label'],$_SERVER['PHP_SELF'],'','',$param,'align="center"',$sortfield,$sortorder);
-    if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
+    if (! empty($arrayfields['b.num_chq']['checked']))          print_liste_field_titre($arrayfields['b.num_chq']['label'],$_SERVER['PHP_SELF'],'b.num_chq','',$param,'align="center"',$sortfield,$sortorder);
 	if (! empty($arrayfields['description']['checked']))        print_liste_field_titre($arrayfields['description']['label'],$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['bu.label']['checked']))           print_liste_field_titre($arrayfields['bu.label']['label'],$_SERVER['PHP_SELF'],'bu.label','',$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.debit']['checked']))            print_liste_field_titre($arrayfields['b.debit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['b.credit']['checked']))           print_liste_field_titre($arrayfields['b.credit']['label'],$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['ba.ref']['checked']))             print_liste_field_titre($arrayfields['ba.ref']['label'],$_SERVER['PHP_SELF'],'ba.ref','',$param,'align="right"',$sortfield,$sortorder);
+    if (! empty($arrayfields['b.num_releve']['checked']))       print_liste_field_titre($arrayfields['b.num_releve']['label'],$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	// Extra fields
 	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 	{
@@ -363,7 +369,7 @@ if ($resql)
         $form->select_types_paiements(empty($type)?'':$type, 'type', '', 2, 0, 1);
         print '</td>';
 	}
-	if (! empty($arrayfields['b.num_releve']['checked']))
+	if (! empty($arrayfields['b.num_chq']['checked']))
 	{
         // Numero
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
@@ -396,7 +402,12 @@ if ($resql)
     	$form->select_comptes($account,'account',0,'',1);
     	print '</td>';
 	}
-    print '<td  class="liste_titre" align="middle">';
+	if (! empty($arrayfields['b.num_releve']['checked']))
+	{
+        // Numero
+        print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="2"></td>';
+	}
+	print '<td  class="liste_titre" align="middle">';
 	$searchpitco=$form->showFilterAndCheckAddButtons($massactionbutton?1:0, 'checkforselect', 1);
 	print $searchpitco;
     print '</td>';
@@ -462,13 +473,13 @@ if ($resql)
                     if (! $i) $totalarray['nbfield']++;
         	}
 
-	        // Num
-        	if (! empty($arrayfields['b.num_releve']['checked']))            
+	        // Num cheque
+        	if (! empty($arrayfields['b.num_releve']['checked']))
         	{
-        	   print '<td class="nowrap" align="center">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
-                    if (! $i) $totalarray['nbfield']++;
+        	    print '<td class="nowrap" align="center">'.($objp->num_chq?$objp->num_chq:"")."</td>\n";
+        	    if (! $i) $totalarray['nbfield']++;
         	}
-
+        	 
 	        // Description
         	if (! empty($arrayfields['description']['checked']))            
         	{
@@ -546,7 +557,13 @@ if ($resql)
                 if (! $i) $totalarray['nbfield']++;
         	}
         	
-            // Action column
+            if (! empty($arrayfields['b.num_releve']['checked']))            
+        	{
+        	    print '<td class="nowrap" align="center">'.($objp->num_releve?$objp->num_releve:"")."</td>\n";
+                if (! $i) $totalarray['nbfield']++;
+        	}
+        	
+        	// Action column
             print '<td class="nowrap" align="center">';
             if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
             {
