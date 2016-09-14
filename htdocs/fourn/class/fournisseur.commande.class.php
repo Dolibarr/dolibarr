@@ -1372,7 +1372,7 @@ class CommandeFournisseur extends CommonOrder
                         {
                             $label = $prod->libelle;
                             $pu    = $prod->fourn_pu;
-                            $ref   = $prod->ref_fourn;
+                            $ref_supplier = $prod->ref_supplier;
                             $product_type = $prod->type;
                         }
                         if ($result == 0 || $result == -1)
@@ -1435,6 +1435,8 @@ class CommandeFournisseur extends CommonOrder
 
             $this->line->fk_commande=$this->id;
             $this->line->label=$label;
+            $this->line->ref_fourn = $ref_supplier;
+            $this->line->ref_supplier = $ref_supplier;
             $this->line->desc=$desc;
             $this->line->qty=$qty;
             $this->line->tva_tx=$txtva;
@@ -2901,7 +2903,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
     public function fetch($rowid)
     {
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx,';
-        $sql.= ' cd.localtax1_tx, cd.localtax2_tx,';
+        $sql.= ' cd.localtax1_tx, cd.localtax2_tx, cd.ref,';
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
         $sql.= ' cd.total_localtax1, cd.total_localtax2,';
@@ -2919,6 +2921,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->fk_commande      = $objp->fk_commande;
             $this->desc             = $objp->description;
             $this->qty              = $objp->qty;
+            $this->ref_fourn        = $objp->ref;
+            $this->ref_supplier     = $objp->ref;
             $this->subprice         = $objp->subprice;
             $this->tva_tx           = $objp->tva_tx;
             $this->localtax1_tx		= $objp->localtax1_tx;
@@ -3050,7 +3054,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ", '".$this->localtax1_type."',";
         $sql.= " '".$this->localtax2_type."'";
 
-        $sql.= ", ".$this->remise_percent.",'".price2num($this->subprice,'MU')."','".$this->product_ref."',";
+        $sql.= ", ".$this->remise_percent.",'".price2num($this->subprice,'MU')."','".$this->ref_supplier."',";
         $sql.= "'".price2num($this->total_ht)."',";
         $sql.= "'".price2num($this->total_tva)."',";
         $sql.= "'".price2num($this->total_localtax1)."',";
