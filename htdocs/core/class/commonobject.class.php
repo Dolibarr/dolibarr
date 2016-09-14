@@ -4173,7 +4173,9 @@ abstract class CommonObject
     						$object = new $InfoFieldList[0]($this->db);
     						if ($value)
     						{
-    							$res=$object->fetch(0,$value);
+    							if (is_numeric($value)) $res=$object->fetch($value);
+								else $res=$object->fetch('',$value);
+								
     							if ($res > 0) $this->array_options[$key]=$object->id;
     							else
     							{
