@@ -427,6 +427,7 @@ InvoiceSituationDesc=Créer une nouvelle situation à la suite d'un autre
 SituationAmount=Montant de facture de situation (HT)
 SituationDeduction=Différence de situation
 Progress=Progression
+ProgressShort=Progr.
 ModifyAllLines=Modifier toutes les lignes
 CreateNextSituationInvoice=Créer prochaine situation
 NotLastInCycle=Cette facture n'est pas la dernière dans le cycle et ne doit pas être modifiée

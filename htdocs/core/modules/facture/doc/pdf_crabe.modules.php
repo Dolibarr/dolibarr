@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2014	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012      	Christophe Battarel <christophe.battarel@altairis.fr>
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012-2016  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1009,7 +1009,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('','', $default_font_size - 1);
 
 		// Tableau total
-		$col1x = 120; $col2x = 170;
+		$col1x = 120; $col2x = 175;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{
 			$col2x-=20;
@@ -1019,11 +1019,47 @@ class pdf_crabe extends ModelePDFFactures
 		$useborder=0;
 		$index = 0;
 
+		// Previous situations summary
+		if ($object->situation_cycle_ref && $object->situation_counter > 1) {
+			// Situations total w/out VAT
+			$counter = ' 1';
+			for ($i = 2; $i <= $object->situation_counter; $i++) {
+				$counter .= ' + ' . $i;
+			}
+			$prevsits = $object->get_prev_sits();
+			$prevsits_total_amount = 0;
+			foreach ($prevsits as $situation) {
+				$prevsits_total_amount += $situation->total_ht;
+			}
+			$prevsits_total_amount += $object->total_ht;
+			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetXY($col1x, $tab2_top + 0);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("SituationAmount") . $counter, 0,
+				'L', true);
+			$over = ceil(($pdf->getY() - $tab2_top) / $tab2_hl) - 1;
+			$pdf->SetXY($col2x, $tab2_top + 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($prevsits_total_amount), 0, 'R', true);
+			$index += $over;
+			// Previous situations deduction
+			for ($i = 0; $i < count($prevsits); $i++) {
+				$index++;
+				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl,
+					$outputlangs->transnoentities("SituationDeduction") . ' ' . ($i + 1) . ' (' . $prevsits[$i]->ref . ')',
+					0, 'L', true);
+				$over += ceil(($pdf->getY() - ($tab2_top + $tab2_hl * $index)) / $tab2_hl) - 1;
+				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+				$pdf->MultiCell($largcol2, $tab2_hl, ' - ' . price($prevsits[$i]->total_ht), 0, 'R', true);
+				$index += $over;
+			}
+			$index++;
+		}
+
 		// Total HT
 		$pdf->SetFillColor(255,255,255);
-		$pdf->SetXY($col1x, $tab2_top + 0);
+		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
-		$pdf->SetXY($col2x, $tab2_top + 0);
+		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * ($object->total_ht + (! empty($object->remise)?$object->remise:0)), 0, $outputlangs), 0, 'R', 1);
 
 		// Show VAT by rates and total
@@ -1392,6 +1428,15 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
 		}
+
+		if (true == $this->situationinvoice) {
+			if (empty($hidetop)) {
+				$pdf->setXY($this->posxprogress - 1, $tab_top + 1);
+				$pdf->MultiCell($this->postotalht-$this->posxprogress+1, 2, $outputlangs->transnoentities("ProgressShort"), '' , 'C');
+			}
+			$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
+		}
+
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->postotalht-1, $tab_top+1);
