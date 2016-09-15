@@ -825,7 +825,7 @@ if ($action == 'editcss')
     print '<!-- Edit CSS -->'."\n";
     print '<table class="border" width="100%">';
 
-    print '<tr><td class="titelfieldcreate">';
+    print '<tr><td class="titlefieldcreate">';
     print $langs->trans('WebSite');
     print '</td><td>';
     print $website;
