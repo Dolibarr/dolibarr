@@ -195,6 +195,7 @@ class DolEditor
             						readOnly : '.($this->readonly?'true':'false').',
                             		htmlEncodeOutput :'.$htmlencode_force.',
             						allowedContent :'.($disallowAnyContent?'false':'true').',
+            						extraAllowedContent : \'\',
             						fullPage : '.($fullpage?'true':'false').', 
                             		toolbar: \''.$this->toolbarname.'\',
             						toolbarStartupExpanded: '.($this->toolbarstartexpanded ? 'true' : 'false').',
