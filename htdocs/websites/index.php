@@ -325,35 +325,54 @@ if ($action == 'updatemeta')
         {
             $db->commit();
 
+            $filemaster=$pathofwebsite.'/master.inc.php';
             $fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
             $filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
-            
-            // Generate the alias.php page
-            //-----------------------------
-            dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
-            
+                        
             dol_mkdir($pathofwebsite);
-            dol_delete_file($fileoldalias);
+
+            
+            // Now generate the master.inc.php page
+            dol_syslog("We regenerate the master file");
+            dol_delete_file($filemaster);
+            
+            $mastercontent = '<?php'."\n";
+            $mastercontent.= '// File generated to link to the master file'."\n";
+            $mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+            $mastercontent.= '?>'."\n";
+            $result = file_put_contents($filemaster, $mastercontent);
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+            
+            if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+            
+            
+            // Now generate the alias.php page
+            if (! empty($fileoldalias))
+            {
+                dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+                dol_delete_file($fileoldalias);
+            }
             
             $aliascontent = '<?php'."\n";
             $aliascontent.= '// File generated to wrap the alias page'."\n";
-            $aliascontent.= "include_once './page".$objectpage->id.".tpl.php'\n";
+            $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
             $aliascontent.= '?>'."\n";
             $result = file_put_contents($filealias, $aliascontent);
             if (! empty($conf->global->MAIN_UMASK))
                 @chmod($filealias, octdec($conf->global->MAIN_UMASK));
             
-            if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
-            else setEventMessages('Failed to write file '.$filealias, null, 'errors');
+            if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 
 
             // Now create the .tpl file (duplicate code with actions updatecontent but we need this to save new header)
             dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
             
-            dol_mkdir($pathofwebsite);
             dol_delete_file($filetpl);
             
-            $tplcontent = '<html>'."\n";
+            $tplcontent ='';
+            $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
+            $tplcontent.= '<html>'."\n";
             $tplcontent.= '<header>'."\n";
             $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
             $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
@@ -376,7 +395,7 @@ if ($action == 'updatemeta')
                  
             if ($result)
             {
-                //setEventMessages($langs->trans("Saved"), null, 'mesgs');
+                setEventMessages($langs->trans("Saved"), null, 'mesgs');
                 //header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
                 //exit;
             }
@@ -423,12 +442,53 @@ if ($action == 'updatecontent')
     	{
     		$db->commit();
     	    
+    		$filemaster=$pathofwebsite.'/master.inc.php';
+    		//$fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
+    		$filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+    		
+    	    dol_mkdir($pathofwebsite);
+    		
+    		
+    		// Now generate the master.inc.php page
+    		dol_syslog("We regenerate the master file");
+    		dol_delete_file($filemaster);
+    		
+    		$mastercontent = '<?php'."\n";
+    		$mastercontent.= '// File generated to link to the master file'."\n";
+    		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+    		$mastercontent.= '?>'."\n";
+    		$result = file_put_contents($filemaster, $mastercontent);
+    		if (! empty($conf->global->MAIN_UMASK))
+    		    @chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+    		
+		    if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+		
+		
+		    // Now generate the alias.php page
+            if (! empty($fileoldalias))
+            {
+    		    dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+    		    dol_delete_file($fileoldalias);
+            }
+            
+		    $aliascontent = '<?php'."\n";
+		    $aliascontent.= '// File generated to wrap the alias page'."\n";
+		    $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
+		    $aliascontent.= '?>'."\n";
+		    $result = file_put_contents($filealias, $aliascontent);
+		    if (! empty($conf->global->MAIN_UMASK))
+		        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
+		
+            if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+		
+    		        
     	    // Now create the .tpl file
     	    // TODO Keep a one time generate file or include a dynamicaly generated content ? 
-    	    dol_mkdir($pathofwebsite);
     	    dol_delete_file($filetpl);
 
-    	    $tplcontent = '<html>'."\n";
+            $tplcontent ='';
+            $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
+    	    $tplcontent.= '<html>'."\n";
     	    $tplcontent.= '<header>'."\n";
     	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
     	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
