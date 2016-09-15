@@ -904,7 +904,7 @@ if ($action == 'editcontent')
     
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,5,60);
-    $doleditor->Create();
+    $doleditor->Create(0, '', false);
 }
 
 print '</div></form>';
