@@ -376,14 +376,11 @@ class WebsitePage extends CommonObject
 			 $this->status = trim($this->status);
 		}
 
-
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
-
 		$sql .= ' fk_website = '.(isset($this->fk_website)?$this->fk_website:"null").',';
 		$sql .= ' pageurl = '.(isset($this->pageurl)?"'".$this->db->escape($this->pageurl)."'":"null").',';
 		$sql .= ' title = '.(isset($this->title)?"'".$this->db->escape($this->title)."'":"null").',';
@@ -394,8 +391,6 @@ class WebsitePage extends CommonObject
 		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
 		$sql .= ' date_modification = '.(! isset($this->date_modification) || dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null').',';
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'");
-
-
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -407,6 +402,12 @@ class WebsitePage extends CommonObject
 			dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 		}
 
+		if ($this->old_object->pageurl != $this->pageurl)
+		{
+		      dol_syslog("The alias was changed, we must rename/recreate the page file into document");
+		      
+		}
+		
 		if (!$error && !$notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.

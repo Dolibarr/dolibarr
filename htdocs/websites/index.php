@@ -183,48 +183,6 @@ if ($action == 'add')
 }
 
 // Update page
-if ($action == 'update')
-{
-    $db->begin();
-
-    $res = $object->fetch(0, $website);
-
-    $objectpage->fk_website = $object->id;
-    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
-
-    $res = $objectpage->fetch(0, $object->fk_website, $objectpage->pageurl);
-
-    if ($res > 0)
-    {
-        $objectpage->title = GETPOST('WEBSITE_TITLE');
-        $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
-        $objectpage->keyword = GETPOST('WEBSITE_KEYWORD');
-
-        $res = $objectpage->update($user);
-        if (! $res > 0)
-        {
-            $error++;
-            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-        }
-
-    	if (! $error)
-    	{
-    		$db->commit();
-    	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    	    $action='';
-    	}
-    	else
-    	{
-    		$db->rollback();
-    	}
-    }
-    else
-    {
-        dol_print_error($db);
-    }
-}
-
-// Update page
 if ($action == 'delete')
 {
     $db->begin();
@@ -338,7 +296,7 @@ if ($action == 'setashome')
     }
 }
 
-// Update page
+// Update page (meta)
 if ($action == 'updatemeta')
 {
     $db->begin();
@@ -349,7 +307,7 @@ if ($action == 'updatemeta')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
-        $oldobjectpage = clone $objectpage;
+        $objectpage->old_object = clone $objectpage;
         
         $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
         $objectpage->title = GETPOST('WEBSITE_TITLE');
@@ -367,11 +325,13 @@ if ($action == 'updatemeta')
         {
             $db->commit();
 
-            $fileoldalias=$pathofwebsite.'/'.$oldobjectpage->pageurl.'.php';
+            $fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
             $filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
             
             // Generate the alias.php page
             //-----------------------------
+            dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+            
             dol_mkdir($pathofwebsite);
             dol_delete_file($fileoldalias);
             
@@ -386,9 +346,10 @@ if ($action == 'updatemeta')
             if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
             else setEventMessages('Failed to write file '.$filealias, null, 'errors');
 
-            
 
             // Now create the .tpl file (duplicate code with actions updatecontent but we need this to save new header)
+            dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
+            
             dol_mkdir($pathofwebsite);
             dol_delete_file($filetpl);
             
