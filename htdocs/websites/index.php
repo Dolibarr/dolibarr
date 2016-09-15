@@ -328,7 +328,7 @@ if ($action == 'updatemeta')
             $filemaster=$pathofwebsite.'/master.inc.php';
             $fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
             $filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
-                        
+
             dol_mkdir($pathofwebsite);
 
             
