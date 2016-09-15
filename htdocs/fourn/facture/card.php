@@ -58,7 +58,6 @@ $id			= (GETPOST('facid','int') ? GETPOST('facid','int') : GETPOST('id','int'));
 $action		= GETPOST("action");
 $confirm	= GETPOST("confirm");
 $ref		= GETPOST('ref','alpha');
-$cancel     = GETPOST('cancel','alpha');
 $lineid     = GETPOST('lineid', 'int');
 
 //PDF
@@ -102,8 +101,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	if ($cancel) $action='';
-
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
@@ -546,7 +543,7 @@ if (empty($reshook))
 	}
 
 	// Edit line
-	elseif ($action == 'updateline' && $user->rights->fournisseur->facture->creer)
+	elseif ($action == 'updateline' && $user->rights->fournisseur->facture->creer && GETPOST('save'))
 	{
 		$db->begin();
 
@@ -611,6 +608,11 @@ if (empty($reshook))
 	            setEventMessage($object->error,'errors');
 	        }
 	}
+
+    elseif ($action == 'updateline' && $user->rights->fournisseur->facture->creer && GETPOST('cancel')){
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
+        exit();
+    }
 
 	elseif ($action == 'addline' && $user->rights->fournisseur->facture->creer)
 	{

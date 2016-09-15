@@ -622,6 +622,11 @@ if (empty($reshook))
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
+    else if ($action == 'updateline' && $user->rights->ficheinter->creer && GETPOST('cancel'))
+    {
+        header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
+        exit();
+    }
 
 	/*
 	 *  Supprime une ligne d'intervention AVEC confirmation
