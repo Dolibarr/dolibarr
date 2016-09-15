@@ -296,7 +296,7 @@ print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],'','','','',$
 print_liste_field_titre($langs->trans("Duration"),$_SERVER["PHP_SELF"],'','','','align="right"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateDebCP"),$_SERVER["PHP_SELF"],"cp.date_debut","",'','align="center"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("DateFinCP"),$_SERVER["PHP_SELF"],"cp.date_fin","",'','align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="center"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cp.statut","",'','align="right"',$sortfield,$sortorder);
 print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 print "</tr>\n";
 
@@ -315,14 +315,14 @@ print '</td>';
 // UTILISATEUR
 if ($user->rights->holiday->write_all)
 {
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
     print $form->select_dolusers($search_employe,"search_employe",1,"",0,'','',0,32,0,'',0,'','maxwidth200');
     print '</td>';
 }
 else
 {
     //print '<td class="liste_titre">&nbsp;</td>';
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
     print $form->select_dolusers($user->id,"search_employe",1,"",1,'','',0,32,0,'',0,'','maxwidth200');
     print '</td>';
 }
@@ -330,7 +330,7 @@ else
 // APPROVER
 if($user->rights->holiday->write_all)
 {
-    print '<td class="liste_titre" align="left">';
+    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
 
     $validator = new UserGroup($db);
     $excludefilter=$user->admin?'':'u.rowid <> '.$user->id;
@@ -365,7 +365,7 @@ $formother->select_year($year_end,'year_end',1, $min_year, $max_year);
 print '</td>';
 
 // STATUT
-print '<td class="liste_titre" width="70px;" align="center">';
+print '<td class="liste_titre maxwidthonsmartphone maxwidth200" align="right">';
 $holiday->selectStatutCP($search_statut);
 print '</td>';
 

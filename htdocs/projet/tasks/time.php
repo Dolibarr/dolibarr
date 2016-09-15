@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load('projects');
 
 $id=GETPOST('id','int');
+$projectid=GETPOST('projectid','int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -45,8 +46,20 @@ $socid=0;
 if ($user->societe_id > 0) $socid = $user->societe_id;
 if (!$user->rights->projet->lire) accessforbidden();
 
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('projecttaskcard','globalcard'));
+
 $object = new Task($db);
 $projectstatic = new Project($db);
+$extrafields_project = new ExtraFields($db);
+$extrafields_task = new ExtraFields($db);
+
+if ($projectid > 0 || ! empty($ref))
+{
+    // fetch optionals attributes and labels
+    $extralabels_projet=$extrafields_project->fetch_name_optionals_label($projectstatic->table_element);
+}
+$extralabels_task=$extrafields_task->fetch_name_optionals_label($object->table_element);
 
 
 /*
@@ -223,12 +236,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     {
         $result=$projectstatic->fetch($projectidforalltimes);
         if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+        $res=$projectstatic->fetch_optionals($object->id,$extralabels_projet);
     }
     elseif ($object->fetch($id, $ref) >= 0)
 	{
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
-
+		$res=$projectstatic->fetch_optionals($object->id,$extralabels_projet);
+		
 		$object->project = clone $projectstatic;
     }
 	
@@ -247,7 +262,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			print '<table class="border" width="100%">';
 
-	       $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+	        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
 			
 			// Ref
 			print '<tr><td class="titlefield">';
@@ -291,19 +306,22 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print dol_print_date($projectstatic->date_end,'day');
 			print '</td></tr>';
 
-			// Budget
-        	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-        	if (strcmp($object->budget_amount, '')) print price($object->budget_amount,'',$langs,0,0,0,$conf->currency);
-        	print '</td></tr>';
-        	
-        	// Other options
-        	$parameters=array();
-        	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
-        	if (empty($reshook) && ! empty($extrafields_project->attribute_label))
+        	if (! $id && ! $ref)   // Not a dedicated task
         	{
-        		print $object->showOptionals($extrafields_project);
-        	}
-        
+    			// Budget
+            	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+            	if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,0,0,0,$conf->currency);
+            	print '</td></tr>';
+            	
+            	// Other options
+            	$parameters=array();
+            	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$projectstatic,$action); // Note that $action and $object may have been modified by hook
+            	if (empty($reshook) && ! empty($extrafields_project->attribute_label))
+            	{
+            		print $projectstatic->showOptionals($extrafields_project);
+            	}
+        	}    
+        	
 			print '</table>';
 
 			dol_fiche_end();
@@ -312,7 +330,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			/*
 			 * Actions
 			 */
-			if (empty($id))
+			if (empty($id) && empty($ref))
 			{
     			print '<div class="tabsAction">';
     			
@@ -353,7 +371,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
 		// Ref
-		print '<tr><td width="30%">';
+		print '<tr><td class="titlefield">';
 		print $langs->trans("Ref");
 		print '</td><td colspan="3">';
 		if (! GETPOST('withproject') || empty($projectstatic->id))
@@ -492,17 +510,23 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	
 	if ($projectstatic->id > 0)
 	{	
-		/*
+		if ($action == 'deleteline')
+		{
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.'&lineid='.$_GET["lineid"].($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
+		}
+
+	    /*
 		 *  List of time spent
 		 */
 		$tasks = array();
 		
-		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm";
-		$sql.= ", u.lastname, u.firstname";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
-		$sql .= " , ".MAIN_DB_PREFIX."user as u";
-		$sql .= " WHERE t.fk_user = u.rowid";
+		$sql = "SELECT t.rowid, t.fk_task, t.task_date, t.task_datehour, t.task_date_withhour, t.task_duration, t.fk_user, t.note, t.thm,";
+		$sql .= " pt.ref, pt.label,";
+		$sql .= " u.lastname, u.firstname";
+		$sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t, ".MAIN_DB_PREFIX."projet_task as pt, ".MAIN_DB_PREFIX."user as u";
+		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 		if (empty($projectidforalltimes)) $sql .= " AND t.fk_task =".$object->id;
+		else $sql.= " AND pt.fk_projet IN (".$projectidforalltimes.")";
 		$sql .= " ORDER BY t.task_date DESC, t.task_datehour DESC, t.rowid DESC";
 
 		$var=true;
@@ -534,15 +558,20 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			dol_print_error($db);
 		}
 
-		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'">';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="updateline">';
-		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="100">'.$langs->trans("Date").'</td>';
+		if (! $id && ! $ref)   // Not a dedicated task
+        {
+		  print '<td>'.$langs->trans("Task").'</td>';
+        }
 		print '<td>'.$langs->trans("By").'</td>';
 		print '<td align="left">'.$langs->trans("Note").'</td>';
 		print '<td align="right">'.$langs->trans("TimeSpent").'</td>';
@@ -553,6 +582,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 
+		$tasktmp = new Task($db);
+		
 		$total = 0;
 		$totalvalue = 0;
 		foreach ($tasks as $task_time)
@@ -575,10 +606,22 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			}
 			print '</td>';
 
+			// Task
+			if (! $id && ! $ref)   // Not a dedicated task
+			{
+    			print '<td class="nowrap">';
+    			$tasktmp->id = $task_time->fk_task;
+    			$tasktmp->ref = $task_time->ref;
+    			$tasktmp->label = $task_time->label;
+    			print $tasktmp->getNomUrl(1, 'withproject', 'time');	
+    			print '</td>';
+			}
+			
 			// User
 			print '<td>';
 			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
-			{
+			{   
+			    if (empty($object->id)) $object->fetch($id);
 				$contactsoftask=$object->getListContactId('internal');
 				if (!in_array($task_time->fk_user,$contactsoftask)) {
 					$contactsoftask[]=$task_time->fk_user;

@@ -9,7 +9,8 @@
  * Copyright (C) 2010-2011 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
-*
+ * Copyright (C) 2016	   Ferran Marcet         <fmarcet@2byte.es>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -281,6 +282,7 @@ if ($result)
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)				 $param.='&sall='.$sall;
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;

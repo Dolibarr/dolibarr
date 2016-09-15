@@ -78,6 +78,7 @@ AccountToCredit=Account to credit
 AccountToDebit=Account to debit
 DisableConciliation=Disable reconciliation feature for this account
 ConciliationDisabled=Reconciliation feature disabled
+LinkedToAConciliatedTransaction=Linked to a conciliated transaction
 StatusAccountOpened=Open
 StatusAccountClosed=Closed
 AccountIdShort=Number

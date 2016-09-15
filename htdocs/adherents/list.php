@@ -420,7 +420,7 @@ if ($resql)
 	if (! empty($arrayfields['d.firstname']['checked'])) 
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" name="search_ref" value="'.$search_firstname.'" size="6"></td>';
+		print '<input class="flat" type="text" name="search_firstname" value="'.$search_firstname.'" size="6"></td>';
 	}
 	
 	if (! empty($arrayfields['d.lastname']['checked'])) 
@@ -610,19 +610,19 @@ if ($resql)
        		print "<td>";
     		print $memberstatic->getNomUrl(1);
     		print "</td>\n";
+    	}		
+		// Firstname
+    	if (! empty($arrayfields['d.firstname']['checked'])) 
+    	{
+        	print "<td>";
+    		print $obj->firstname;
+    		print "</td>\n";
     	}
 		// Lastname
     	if (! empty($arrayfields['d.lastname']['checked'])) 
     	{
         	print "<td>";
     		print $obj->lastname;
-    		print "</td>\n";
-    	}
-		// Firstname
-    	if (! empty($arrayfields['d.firstname']['checked'])) 
-    	{
-        	print "<td>";
-    		print $obj->firstname;
     		print "</td>\n";
     	}
 		// Company

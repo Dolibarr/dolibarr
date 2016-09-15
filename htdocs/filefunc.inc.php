@@ -31,7 +31,7 @@
  */
 
 if (! defined('DOL_APPLICATION_TITLE')) define('DOL_APPLICATION_TITLE','Dolibarr');
-if (! defined('DOL_VERSION')) define('DOL_VERSION','4.0.0-rc2');
+if (! defined('DOL_VERSION')) define('DOL_VERSION','4.0.1');
 
 if (! defined('EURO')) define('EURO',chr(128));
 
@@ -92,7 +92,7 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
         $path=$_SERVER["CONTEXT_PREFIX"];       // example '/dolibarr/' when using an apache alias.
         if (! preg_match('/\/$/', $path)) $path.='/';
     }
-    else if (preg_match('/index\.php', $_SERVER['PHP_SELF']))
+    else if (preg_match('/index\.php/', $_SERVER['PHP_SELF']))
     {
         // When we ask index.php, we MUST BE SURE that $path is '' at the end. This is required to make install process
         // when using apache alias like '/dolibarr/' that point to htdocs.
@@ -113,11 +113,11 @@ if (! $result && ! empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not do
     		if (empty($TDir[$i]) || $TDir[$i] == 'htdocs') break;
             if ($TDir[$i] == 'dolibarr') break;
             if (substr($TDir[$i], -4, 4) == '.php') continue;
-    		
+
     		$path .= '../';
     	}
     }
-    
+
 	header("Location: ".$path."install/index.php");
 	exit;
 }

@@ -221,8 +221,8 @@ if ($resql)
     print_liste_field_titre($langs->trans("Numero"),$_SERVER['PHP_SELF'],'b.num_releve','',$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Description"),$_SERVER['PHP_SELF'],'','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("ThirdParty"),$_SERVER['PHP_SELF'],'bu.label','',$param,'',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Debit"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Credit"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Debit"),$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Credit"),$_SERVER['PHP_SELF'],'b.amount','',$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre($langs->trans("Account"),$_SERVER['PHP_SELF'],'','',$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";

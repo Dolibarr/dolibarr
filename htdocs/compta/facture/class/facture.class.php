@@ -239,7 +239,8 @@ class Facture extends CommonInvoice
 		if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
-
+        if (empty($this->entity)) $this->entity = $conf->entity;
+        
 		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -279,8 +280,9 @@ class Facture extends CommonInvoice
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
 
-			$this->socid 		     = $_facrec->socid;
-
+			$this->socid 		     = $_facrec->socid;  // Invoice created on same thirdparty than template
+			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
+			
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
 			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
 			$this->note_public       = GETPOST('note_public') ? GETPOST('note_public') : $_facrec->note_public;
@@ -309,13 +311,15 @@ class Facture extends CommonInvoice
 
 			$forceduedate = $this->calculate_date_lim_reglement();
 
-			// For recurrn invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
+			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0)
 			{
+			    dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
+			    if (empty($_facrec->date_when)) $_facrec->date_when = $now;
                 $next_date = $_facrec->getNextDate();   // Calculate next date
-                $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
+                $result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
                 //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
-                $_facrec->setNextDate($next_date,1);
+                $result = $_facrec->setNextDate($next_date,1);
 			}
 		}
 
@@ -350,7 +354,7 @@ class Facture extends CommonInvoice
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->entity;
 		$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
 		$sql.= ", '".$this->db->escape($this->type)."'";
 		$sql.= ", '".$socid."'";

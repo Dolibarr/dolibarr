@@ -986,13 +986,14 @@ function top_httphead()
  *
  * @param 	string 	$head			Optionnal head lines
  * @param 	string 	$title			HTML title
- * @param 	int    	$disablejs		More content into html header
- * @param 	int    	$disablehead	More content into html header
+ * @param 	int    	$disablejs		Disable js output
+ * @param 	int    	$disablehead	Disable head output
  * @param 	array  	$arrayofjs		Array of complementary js files
  * @param 	array  	$arrayofcss		Array of complementary css files
+ * @param 	int    	$disablejmobile	Disable jmobile
  * @return	void
  */
-function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='')
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0)
 {
     global $user, $conf, $langs, $db;
 
@@ -1065,7 +1066,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.css'.($ext?'?'.$ext:'').'">'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile))
+            if (! $disablejmobile && (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || ! empty($conf->dol_use_jmobile)))
             {
             	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/mobile/jquery.mobile-latest.min.css'.($ext?'?'.$ext:'').'">'."\n";
             }
@@ -1237,7 +1238,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
                 print '<script type="text/javascript" src="'.DOL_URL_ROOT.'/core/js/select2_locale.js.php'.($ext?'?'.$ext:'').'"></script>'."\n";
             }
             // jQuery jMobile
-            if (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0))
+            if (! $disablejmobile && (! empty($conf->global->MAIN_USE_JQUERY_JMOBILE) || defined('REQUIRE_JQUERY_JMOBILE') || (! empty($conf->dol_use_jmobile) && $conf->dol_use_jmobile > 0)))
             {
             	// We must force not using ajax because cache of jquery does not load js of other pages.
             	// This also increase seriously speed onto mobile device where complex js code is very slow and memory very low.
@@ -1598,38 +1599,38 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
     	    if ((( ! empty($conf->societe->enabled) && (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) || empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))) || ! empty($conf->fournisseur->enabled)) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'soc', 'sall', 'T', 'searchleftt', img_object('','company'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/societe/list.php', DOL_URL_ROOT.'/societe/list.php', $langs->trans("ThirdParties"), 'maxwidth100', 'sall', 'T', 'searchleftt', img_object('','company'));
     	    }
 
     	    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
     	    {
     	        $langs->load("companies");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'contact', 'sall', 'A', 'searchleftc', img_object('','contact'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/contact/list.php', DOL_URL_ROOT.'/contact/list.php', $langs->trans("Contacts"), 'maxwidth100', 'sall', 'A', 'searchleftc', img_object('','contact'));
     	    }
 
     	    if (((! empty($conf->product->enabled) && $user->rights->produit->lire) || (! empty($conf->service->enabled) && $user->rights->service->lire))
     	    )
     	    {
     	        $langs->load("products");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'products', 'sall', 'P', 'searchleftp', img_object('','product'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/product/list.php', DOL_URL_ROOT.'/product/list.php', $langs->trans("Products")."/".$langs->trans("Services"), 'maxwidth100', 'sall', 'P', 'searchleftp', img_object('','product'));
     	    }
 
             if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
     	    {
     	        $langs->load("projects");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'project', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/projet/list.php', DOL_URL_ROOT.'/projet/list.php', $langs->trans("Projects"), 'maxwidth100', 'search_all', 'Q', 'searchleftproj', img_object('','projectpub'));
     	    }
 
     	    if (! empty($conf->adherent->enabled) && $user->rights->adherent->lire)
     	    {
     	        $langs->load("members");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'member', 'sall', 'M', 'searchleftm', img_object('','user'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/adherents/list.php', DOL_URL_ROOT.'/adherents/list.php', $langs->trans("Members"), 'maxwidth100', 'sall', 'M', 'searchleftm', img_object('','user'));
     	    }
 
     		if (! empty($conf->user->enabled) && $user->rights->user->user->lire)
     	    {
     	        $langs->load("users");
-    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'user', 'sall', 'M', 'searchleftuser', img_object('','user'));
+    	        $searchform.=printSearchForm(DOL_URL_ROOT.'/user/list.php', DOL_URL_ROOT.'/user/list.php', $langs->trans("Users"), 'maxwidth100', 'sall', 'M', 'searchleftuser', img_object('','user'));
     	    }
 	    }
 
@@ -1824,14 +1825,14 @@ function getHelpParamFor($helppagename,$langs)
  *  @param  string	$urlaction          Url post
  *  @param  string	$urlobject          Url of the link under the search box
  *  @param  string	$title              Title search area
- *  @param  string	$htmlmodesearch     Value to set into parameter "mode_search" ('soc','contact','products','member',...)
+ *  @param  string	$htmlmorecss        Add more css
  *  @param  string	$htmlinputname      Field Name input form
  *  @param	string	$accesskey			Accesskey
  *  @param  string  $prefhtmlinputname  Complement for id to avoid multiple same id in the page
  *  @param	string	$img				Image to use
  *  @return	string
  */
-function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinputname,$accesskey='', $prefhtmlinputname='',$img='')
+function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinputname, $accesskey='', $prefhtmlinputname='',$img='')
 {
     global $conf,$langs;
 
@@ -1841,24 +1842,27 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch,$htmlinput
 
     $ret='';
     $ret.='<form action="'.$urlaction.'" method="post" class="searchform">';
-	$ret.='<div class="menu_titre menu_titre_search"';
-	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
-	$ret.='>';
-	$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
-	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
-	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
-	else $ret.=$img.' '.$title;
-	$ret.='</a>';
-	$ret.='</label>';
-	$ret.='</div>';
+	if (empty($conf->global->MAIN_HTML5_PLACEHOLDER))
+	{
+        $ret.='<div class="menu_titre menu_titre_search"';
+    	if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="display: inline-block"';
+    	$ret.='>';
+    	$ret.='<label for="'.$prefhtmlinputname.$htmlinputname.'">';
+    	$ret.='<a class="vsmenu" href="'.$urlobject.'">';
+       	if ($img && ! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=$img;
+       	else if ($img || $title) $ret.=$img.' '.$title;
+    	$ret.='</a>';
+    	$ret.='</label>';
+    	$ret.='</div>';
+	}
     $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     $ret.='<input type="hidden" name="mode" value="search">';
-    $ret.='<input type="hidden" name="mode_search" value="'.$htmlmodesearch.'">';
-    $ret.='<input type="text" class="flat"';
+    $ret.='<input type="text" class="flat '.$htmlmorecss.'"';
+    if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
     $ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
     if (! empty($conf->global->MAIN_HTML5_PLACEHOLDER)) $ret.=' placeholder="'.strip_tags($title).'"';		// Will work only if MAIN_HTML5_PLACEHOLDER is set to 1
     else $ret.=' title="'.$langs->trans("SearchOf").''.strip_tags($title).'"';
-    $ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" size="10" />';
+    $ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
     $ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
     $ret.="</form>\n";
     return $ret;

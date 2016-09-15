@@ -804,6 +804,7 @@ if ($resql)
     $param='&socid='.$socid;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)				 $param.='&sall='.$sall;
     if ($day)                $param.='&day='.urlencode($day);
     if ($month)              $param.='&month='.urlencode($month);
     if ($year)               $param.='&year=' .urlencode($year);

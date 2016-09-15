@@ -1473,7 +1473,8 @@ class pdf_azur extends ModelePDFPropales
 		 	if (count($arrayidcontact) > 0)
 		 	{
 		 		$object->fetch_user($arrayidcontact[0]);
-		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Name").": ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+		 		$labelbeforecontactname=($outputlangs->transnoentities("FromContactName")!='FromContactName'?$outputlangs->transnoentities("FromContactName"):$outputlangs->transnoentities("Name"));
+		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
 		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);

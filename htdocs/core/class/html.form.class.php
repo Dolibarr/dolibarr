@@ -2060,9 +2060,10 @@ class Form
      *	@param  string	$filtre			For a SQL filter
      *	@param	array	$ajaxoptions	Options for ajax_autocompleter
 	 *  @param	int		$hidelabel		Hide label (0=no, 1=yes)
+	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
      *	@return	void
      */
-    function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0)
+    function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0, $alsoproductwithnosupplierprice=0)
     {
         global $langs,$conf;
         global $price_level, $status, $finished;
@@ -2084,7 +2085,7 @@ class Form
 				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
 			}
 			// mode=2 means suppliers products
-            $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished;
+            $urloption=($socid > 0?'socid='.$socid.'&':'').'htmlname='.$htmlname.'&outjson=1&price_level='.$price_level.'&type='.$filtertype.'&mode=2&status='.$status.'&finished='.$finished.'&alsoproductwithnosupplierprice='.$alsoproductwithnosupplierprice;
             print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT.'/product/ajax/products.php', $urloption, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT, 0, $ajaxoptions);
             print ($hidelabel?'':$langs->trans("RefOrLabel").' : ').'<input type="text" size="20" name="search_'.$htmlname.'" id="search_'.$htmlname.'" value="'.$selected_input_value.'">';
         }
@@ -2095,7 +2096,7 @@ class Form
 				print '<input type="hidden" id="idprod" name="idprod" value="0" />';
 				print '<script type="text/javascript">$("#'.$htmlname.'").change(function() { $("#idprod").val($(this).val());});</script>';
 			}
-        	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0);
+        	print $this->select_produits_fournisseurs_list($socid,$selected,$htmlname,$filtertype,$filtre,'',-1,0,0,$alsoproductwithnosupplierprice);
         }
     }
 
@@ -2111,9 +2112,10 @@ class Form
      *  @param  int		$statut         -1=Return all products, 0=Products not on sell, 1=Products on sell (not used here, a filter on tobuy is already hard coded in request)
      *  @param  int		$outputmode     0=HTML select string, 1=Array
      *  @param  int     $limit          Limit of line number
+	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
      *  @return array           		Array of keys for json
      */
-    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100)
+    function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100,$alsoproductwithnosupplierprice=0)
     {
         global $langs,$conf,$db;
 
@@ -2167,7 +2169,7 @@ class Form
             $num = $this->db->num_rows($result);
 
             //$out.='<select class="flat" id="select'.$htmlname.'" name="'.$htmlname.'">';	// remove select to have id same with combo and ajax
-            $out.='<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'">';
+            $out.='<select class="flat maxwidthonsmartphone" id="'.$htmlname.'" name="'.$htmlname.'">';
             if (! $selected) $out.='<option value="0" selected>&nbsp;</option>';
             else $out.='<option value="0">&nbsp;</option>';
 
@@ -2176,7 +2178,9 @@ class Form
             {
                 $objp = $this->db->fetch_object($result);
 
-                $outkey=$objp->idprodfournprice;
+                $outkey=$objp->idprodfournprice;                                                    // id in table of price
+                if (! $outkey && $alsoproductwithnosupplierprice) $outkey='idprod_'.$objp->rowid;   // id of product
+
                 $outref=$objp->ref;
                 $outval='';
                 $outqty=1;
@@ -2185,9 +2189,9 @@ class Form
                 $outdurationvalue=$outtype == Product::TYPE_SERVICE?substr($objp->duration,0,dol_strlen($objp->duration)-1):'';
                 $outdurationunit=$outtype == Product::TYPE_SERVICE?substr($objp->duration,-1):'';
 
-                $opt = '<option value="'.$objp->idprodfournprice.'"';
+                $opt = '<option value="'.$outkey.'"';
                 if ($selected && $selected == $objp->idprodfournprice) $opt.= ' selected';
-                if (empty($objp->idprodfournprice)) $opt.=' disabled';
+                if (empty($objp->idprodfournprice) && empty($alsoproductwithnosupplierprice)) $opt.=' disabled';
                 $opt.= '>';
 
                 $objRef = $objp->ref;
@@ -2266,18 +2270,25 @@ class Form
                     }
                     if ($objp->supplier_reputation)
                     {
-			//TODO dictionnary
-			$reputations=array(''=>$langs->trans('Standard'),'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
+            			//TODO dictionnary
+            			$reputations=array(''=>$langs->trans('Standard'),'FAVORITE'=>$langs->trans('Favorite'),'NOTTHGOOD'=>$langs->trans('NotTheGoodQualitySupplier'), 'DONOTORDER'=>$langs->trans('DoNotOrderThisProductToThisSupplier'));
 
                         $opt .= " - ".$reputations[$objp->supplier_reputation];
                         $outval.=" - ".$reputations[$objp->supplier_reputation];
                     }
-
                 }
                 else
                 {
-                    $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
-                    $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+                    if (empty($alsoproductwithnosupplierprice))     // No supplier price defined for couple product/supplier
+                    {
+                        $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
+                        $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+                    }
+                    else                                            // No supplier price defined for product, even on other suppliers
+                    {
+                        $opt.= $langs->trans("NoPriceDefinedForThisSupplier");
+                        $outval.=$langs->transnoentities("NoPriceDefinedForThisSupplier");
+                    }
                 }
                 $opt .= "</option>\n";
 
@@ -5056,8 +5067,8 @@ class Form
             <dt>
             <a href="#">
               '.img_picto('','list').'    
-              <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </a>
+            <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </dt>
             <dd>
                 <div class="multiselectcheckbox'.$htmlname.'">

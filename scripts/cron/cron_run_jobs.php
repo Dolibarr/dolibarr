@@ -27,7 +27,6 @@ if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOLOGIN'))        define('NOLOGIN','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
@@ -110,8 +109,8 @@ else
 {
 	if (empty($user->id))
 	{
-		echo "User user login: ".$userlogin." does not exists";
-		dol_syslog("User user login:".$userlogin." does not exists", LOG_ERR);
+		echo "User login: ".$userlogin." does not exists";
+		dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
 		exit(-1);
 	}
 }
@@ -125,8 +124,7 @@ if (isset($argv[3]) || $argv[3])
 $object = new Cronjob($db);
 
 $filter=array();
-if (empty($id)) {
-	$filter=array();
+if (! empty($id)) {
 	$filter['t.rowid']=$id;
 }
 
@@ -153,22 +151,22 @@ if(is_array($object->lines) && (count($object->lines)>0))
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
-			dol_syslog("cron_run_jobs.php:: torun line->datenextrun:".dol_print_date($line->datenextrun,'dayhourtext')." line->dateend:".dol_print_date($line->dateend,'dayhourtext')." now:".dol_print_date($now,'dayhourtext'));
+			dol_syslog("cron_run_jobs.php:: to run line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 		    
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
 			if ($result<0) 
 			{
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
+				echo "Error cronjob->fetch: ".$cronjob->error;
+				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
 			}
 			// Execute job
 			$result=$cronjob->run_jobs($userlogin);
 			if ($result<0) 
 			{
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
+				echo "Error cronjob->run_job: ".$cronjob->error;
+				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
 			}
 
@@ -176,11 +174,15 @@ if(is_array($object->lines) && (count($object->lines)>0))
 			$result=$cronjob->reprogram_jobs($userlogin, $now);
 			if ($result<0) 
 			{
-				echo "Error:".$cronjob->error;
-				dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
+				echo "Error cronjob->reprogram_job: ".$cronjob->error;
+				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
 				exit(-1);
 			}
 
+		}
+		else
+		{
+			dol_syslog("cron_run_jobs.php:: job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 		}
 	}
 }

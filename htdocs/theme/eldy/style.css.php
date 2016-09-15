@@ -546,8 +546,8 @@ div.myavailability {
 }
 .checkallactions {
 	vertical-align: top;
-    margin-top: 6px;	
-    margin-left: 4px;	
+    margin-top: 6px;
+    margin-left: 4px;
 }
 .selectlimit {
 	margin-right: 10px !important;
@@ -635,6 +635,7 @@ div.myavailability {
 
 @media only screen and (max-width: 960px)
 {
+    .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth100imp { min-width: 50px !important; }
     .minwidth200imp { min-width: 100px !important; }
@@ -929,7 +930,7 @@ $minwidthtmenu=66;		/* minimum width for one top menu entry */
 $heightmenu=46;			/* height of top menu, part with image */
 $heightmenu2=48;        /* height of top menu, part with login  */
 $disableimages = 0;
-$maxwidthloginblock = 110;
+$maxwidthloginblock = 130;
 if (! empty($conf->global->THEME_ELDY_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
 ?>
 
@@ -1379,6 +1380,7 @@ div.login a:hover {
 }
 div.login_block_user {
 	display: inline-block;
+	min-width: 120px;
 }
 div.login_block_other {
 	display: inline-block;
@@ -1388,7 +1390,7 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 .login_block_elem {
 	float: right;
 	vertical-align: top;
-	padding: 0px 0px 0px 4px !important;
+	padding: 0px 3px 0px 4px !important;
 	height: 16px;
 }
 .atoplogin, .atoplogin:hover {
@@ -2205,7 +2207,7 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 }
 End bootstrap */
 
-<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
+<?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
 .butActionRefused {
 	display: none;
 }
@@ -3787,9 +3789,9 @@ div.ecmjqft {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-    -moz-box-shadow: 3px 3px 4px #888 !important;
-    -webkit-box-shadow: 3px 3px 4px #888 !important;
-    box-shadow: 3px 3px 4px #888 !important;
+    -moz-box-shadow: 2px 2px 4px #888 !important;
+    -webkit-box-shadow: 2px 2px 4px #888 !important;
+    box-shadow: 2px 2px 4px #888 !important;
 }
 
 /* ============================================================================== */
@@ -4309,7 +4311,6 @@ border-top-right-radius: 6px;
 .menu_choix1 a {
 	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/money.png',1) ?>') top left no-repeat;
 }
-
 .menu_choix2 a {
 	background: url('<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus_black/home.png',1) ?>') top left no-repeat;
 }
@@ -4326,12 +4327,36 @@ border-top-right-radius: 6px;
 	padding-top: 18px;
 	padding-left: 54px;
 	font-size: 14px;
-	height: 40px;
+	height: 38px;
 }
 .menu_choix1 a:hover,.menu_choix2 a:hover {
 	color: #6d3f6d;
 }
-
+.menu li.menu_choix1 {
+    padding-top: 6px;
+    padding-right: 10px;
+    padding-bottom: 2px;
+}
+.menu li.menu_choix2 {
+    padding-top: 6px;
+    padding-right: 10px;
+    padding-bottom: 2px;
+}
+@media only screen and (max-width: 767px)
+{
+	.menu_choix1 a, .menu_choix2 a {
+		background-size: 36px 36px;
+		height: 30px;
+		padding-left: 40px;
+	}
+    .menu li.menu_choix1, .menu li.menu_choix2 {
+        padding-left: 4px;
+        padding-right: 0;
+    }
+    .liste_articles {
+    	margin-right: 0 !important;
+    }
+}
 
 
 /* ============================================================================== */
@@ -4456,6 +4481,9 @@ img.demothumb {
 		padding-<?php echo $right; ?>: 78px;
 	<?php } ?>
 	}
+	div.login_block_user {
+		min-width: 0;
+	}
 	div.login_block {
 		top: 2px;
 		<?php if ($disableimages) {  ?>
@@ -4463,6 +4491,9 @@ img.demothumb {
 		<?php } else { ?>
 			max-width: 82px;
 		<?php } ?>
+	}
+	.login_block_elem {
+		padding: 0 !important;
 	}
     li.tmenu, li.tmenusel {
         min-width: 32px;

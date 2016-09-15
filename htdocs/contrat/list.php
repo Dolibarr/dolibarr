@@ -6,6 +6,7 @@
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,11 +211,12 @@ if ($resql)
     $param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    $param.='&search_contract='.$search_contract;
-    $param.='&search_name='.$search_name;
-    $param.='&search_ref_supplier='.$search_ref_supplier;
-    $param.='&search_sale=' .$search_sale;
-    if ($optioncss != '') $param.='&optioncss='.$optioncss;
+    if ($sall != '')                $param.='&sall='.$sall;
+    if ($search_contract != '')     $param.='&search_contract='.$search_contract;
+    if ($search_name != '')         $param.='&search_name='.$search_name;
+    if ($search_ref_supplier != '') $param.='&search_ref_supplier='.$search_ref_supplier;
+    if ($search_sale != '')         $param.='&search_sale=' .$search_sale;
+    if ($optioncss != '')           $param.='&optioncss='.$optioncss;
     
     print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

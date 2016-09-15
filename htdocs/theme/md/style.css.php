@@ -633,6 +633,7 @@ div.myavailability {
 
 @media only screen and (max-width: 960px)
 {
+    .maxwidthonsmartphone { max-width: 100px; }
 	.minwidth50imp  { min-width: 50px !important; }
     .minwidth100imp { min-width: 50px !important; }
     .minwidth200imp { min-width: 100px !important; }
@@ -2243,11 +2244,12 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.1em;
 	border-radius: 0.1em;
 }
+/*
 #tablelines tr.liste_titre:first-child td, form.formnoborder, tr.liste_titre.trnoborder td {
     border-top-width: 1px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
-}
+}*/
 table.noborder tr, div.noborder form {
 	border-top-color: #FEFEFE;
 
@@ -2259,6 +2261,12 @@ table.noborder tr, div.noborder form {
 	border-left-color: #BBBBBB;
 	border-left-style: solid;
 	min-height: 26px;
+}
+.liste_titre_add td, .liste_titre_add .tagtd
+{
+    border-top-width: 1px;
+    border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
+    border-top-style: solid;
 }
 
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
@@ -3676,9 +3684,9 @@ div.ecmjqft {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-    -moz-box-shadow: 3px 3px 4px #888 !important;
-    -webkit-box-shadow: 3px 3px 4px #888 !important;
-    box-shadow: 3px 3px 4px #888 !important;
+    -moz-box-shadow: 2px 2px 4px #888 !important;
+    -webkit-box-shadow: 2px 2px 4px #888 !important;
+    box-shadow: 2px 2px 4px #888 !important;
 }
 
 /* ============================================================================== */
@@ -4211,7 +4219,31 @@ border-top-right-radius: 6px;
 .menu_choix1 a:hover,.menu_choix2 a:hover {
 	color: #6d3f6d;
 }
-
+.menu li.menu_choix1 {
+    padding-top: 6px;
+    padding-right: 10px;
+    padding-bottom: 2px;
+}
+.menu li.menu_choix2 {
+    padding-top: 6px;
+    padding-right: 10px;
+    padding-bottom: 2px;
+}
+@media only screen and (max-width: 767px)
+{
+	.menu_choix1 a, .menu_choix2 a {
+		background-size: 36px 36px;
+		background-position-y: 6px;
+		padding-left: 40px;
+	}
+    .menu li.menu_choix1, .menu li.menu_choix2 {
+        padding-left: 4px;
+        padding-right: 0;
+    }
+    .liste_articles {
+    	margin-right: 0 !important;
+    }
+}
 
 
 

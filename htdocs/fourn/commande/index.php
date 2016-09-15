@@ -19,9 +19,9 @@
  */
 
 /**
- *	 \file       htdocs/fourn/commande/index.php
- *	 \ingroup    commande fournisseur
- *	 \brief      Home page of supplier's orders area
+ *	 \file	   htdocs/fourn/commande/index.php
+ *	 \ingroup	commande fournisseur
+ *	 \brief	  Home page of supplier's orders area
  */
 
 require '../../main.inc.php';
@@ -50,8 +50,7 @@ $formfile = new FormFile($db);
 
 print load_fiche_titre($langs->trans("SuppliersOrdersArea"));
 
-print '<table class="notopnoleftnoright" width="100%">';
-print '<tr valign="top"><td class="notopnoleft" width="30%">';
+print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 /*
@@ -84,72 +83,72 @@ $sql.= " GROUP BY cf.fk_statut";
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    $var=True;
+	$var=True;
 
-    $total=0;
-    $totalinprocess=0;
-    $dataseries=array();
-    $vals=array();
-    //    0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
-    //                                                          -> 7=Canceled/Never received -> (reopen) 3=Process runing
-    //                                      -> 6=Canceled -> (reopen) 2=Approved
-    while ($i < $num)
-    {
-        $row = $db->fetch_row($resql);
-        if ($row)
-        {
-            if ($row[1]!=7 && $row[1]!=6 && $row[1]!=5)
-            {
-                $vals[$row[1]]=$row[0];
-                $totalinprocess+=$row[0];
-            }
-            $total+=$row[0];
-        }
-        $i++;
-    }
-    $db->free($resql);
+	$total=0;
+	$totalinprocess=0;
+	$dataseries=array();
+	$vals=array();
+	//	0=Draft -> 1=Validated -> 2=Approved -> 3=Process runing -> 4=Received partially -> 5=Received totally -> (reopen) 4=Received partially
+	//	-> 7=Canceled/Never received -> (reopen) 3=Process runing
+	//	-> 6=Canceled -> (reopen) 2=Approved
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		if ($row)
+		{
+			if ($row[1]!=7 && $row[1]!=6 && $row[1]!=5)
+			{
+				$vals[$row[1]]=$row[0];
+				$totalinprocess+=$row[0];
+			}
+			$total+=$row[0];
+		}
+		$i++;
+	}
+	$db->free($resql);
 
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</td></tr>';
-    print "</tr>\n";
-    foreach (array(0,1,2,3,4,5,6) as $statut)
-    {
-        $dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
-        if (! $conf->use_javascript_ajax)
-        {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
-            print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
-            print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
-            print "</tr>\n";
-        }
-    }
-    if ($conf->use_javascript_ajax)
-    {
-        print '<tr class="impair"><td align="center" colspan="2">';
-        $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
-        print '</td></tr>';
-    }
-    //if ($totalinprocess != $total)
-    //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
-    print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
+	print '<table class="noborder nohover" width="100%">';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</td></tr>';
+	print "</tr>\n";
+	foreach (array(0,1,2,3,4,5,6) as $statut)
+	{
+		$dataseries[]=array('label'=>$commandestatic->LibStatut($statut,1),'data'=>(isset($vals[$statut])?(int) $vals[$statut]:0));
+		if (! $conf->use_javascript_ajax)
+		{
+			$var=!$var;
+			print "<tr ".$bc[$var].">";
+			print '<td>'.$commandestatic->LibStatut($statut,0).'</td>';
+			print '<td align="right"><a href="list.php?statut='.$statut.'">'.(isset($vals[$statut])?$vals[$statut]:0).'</a></td>';
+			print "</tr>\n";
+		}
+	}
+	if ($conf->use_javascript_ajax)
+	{
+		print '<tr class="impair"><td align="center" colspan="2">';
+		$data=array('series'=>$dataseries);
+		dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
+		print '</td></tr>';
+	}
+	//if ($totalinprocess != $total)
+	//print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("SuppliersOrdersRunning").')</td><td align="right">'.$totalinprocess.'</td></tr>';
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.$total.'</td></tr>';
 
-    print "</table><br>";
+	print "</table><br>";
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 /*
  * Legends / Status
  *
- *      Motivo: Mostrar todos os Status e dar a possibilidade de filtrar apenas um deles
- *      Reason: Show all Status and give the possibility to filter only one
+ *	  Motivo: Mostrar todos os Status e dar a possibilidade de filtrar apenas um deles
+ *	  Reason: Show all Status and give the possibility to filter only one
  */
 
 $sql = "SELECT count(cf.rowid), fk_statut";
@@ -165,34 +164,34 @@ $sql.= " GROUP BY cf.fk_statut";
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    print '<table class="liste" width="100%">';
+	print '<table class="liste" width="100%">';
 
-    print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
-    print '<td align="right">'.$langs->trans("Nb").'</td>';
-    print "</tr>\n";
-    $var=True;
+	print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td>';
+	print '<td align="right">'.$langs->trans("Nb").'</td>';
+	print "</tr>\n";
+	$var=True;
 
-    while ($i < $num)
-    {
-        $row = $db->fetch_row($resql);
-        $var=!$var;
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		$var=!$var;
 
-        print "<tr ".$bc[$var].">";
-        print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
-        print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
+		print "<tr ".$bc[$var].">";
+		print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
+		print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
-        print "</tr>\n";
-        $i++;
-    }
-    print "</table><br>";
-    $db->free($resql);
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table><br>";
+	$db->free($resql);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
@@ -202,41 +201,41 @@ else
 
 if (! empty($conf->fournisseur->enabled))
 {
-    $sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-    $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-    if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= " WHERE c.fk_soc = s.rowid";
-    $sql.= " AND c.entity = ".$conf->entity;
-    $sql.= " AND c.fk_statut = 0";
-    if (! empty($socid)) $sql.= " AND c.fk_soc = ".$socid;
-    if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql = "SELECT c.rowid, c.ref, s.nom as name, s.rowid as socid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " WHERE c.fk_soc = s.rowid";
+	$sql.= " AND c.entity = ".$conf->entity;
+	$sql.= " AND c.fk_statut = 0";
+	if (! empty($socid)) $sql.= " AND c.fk_soc = ".$socid;
+	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre">';
-        print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
-        $langs->load("orders");
-        $num = $db->num_rows($resql);
-        if ($num)
-        {
-            $i = 0;
-            $var = True;
-            while ($i < $num)
-            {
-                $var=!$var;
-                $obj = $db->fetch_object($resql);
-                print "<tr ".$bc[$var].">";
-                print '<td class="nowrap">';
-                print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
-                print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
-                $i++;
-            }
-        }
-        print "</table><br>";
-    }
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td colspan="2">'.$langs->trans("DraftOrders").'</td></tr>';
+		$langs->load("orders");
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			$i = 0;
+			$var = True;
+			while ($i < $num)
+			{
+				$var=!$var;
+				$obj = $db->fetch_object($resql);
+				print "<tr ".$bc[$var].">";
+				print '<td class="nowrap">';
+				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dol_trunc($obj->name,24).'</a></td></tr>';
+				$i++;
+			}
+		}
+		print "</table><br>";
+	}
 }
 
 
@@ -258,40 +257,40 @@ $sql.= " AND subperms = 'approuver'";
 $resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    print '<table class="liste" width="100%">';
-    print '<tr class="liste_titre"><td>'.$langs->trans("UserWithApproveOrderGrant").'</td>';
-    print "</tr>\n";
-    $var=True;
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("UserWithApproveOrderGrant").'</td>';
+	print "</tr>\n";
+	$var=True;
 
-    while ($i < $num)
-    {
-        $obj = $db->fetch_object($resql);
-        $var=!$var;
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$var=!$var;
 
-        print "<tr ".$bc[$var].">";
-        print '<td>';
-        $userstatic->id=$obj->rowid;
-        $userstatic->lastname=$obj->lastname;
-        $userstatic->firstname=$obj->firstname;
-        $userstatic->email=$obj->email;
-        print $userstatic->getNomUrl(1);
-        print '</td>';
-        print "</tr>\n";
-        $i++;
-    }
-    print "</table><br>";
-    $db->free($resql);
+		print "<tr ".$bc[$var].">";
+		print '<td>';
+		$userstatic->id=$obj->rowid;
+		$userstatic->lastname=$obj->lastname;
+		$userstatic->firstname=$obj->firstname;
+		$userstatic->email=$obj->email;
+		print $userstatic->getNomUrl(1);
+		print '</td>';
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table><br>";
+	$db->free($resql);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 
-print '</td><td width="70%" valign="top" class="notopnoleftnoright">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
@@ -314,52 +313,52 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</td></tr>';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="4">'.$langs->trans("LastModifiedOrders",$max).'</td></tr>';
 
-    $num = $db->num_rows($resql);
-    if ($num)
-    {
-        $i = 0;
-        $var = True;
-        while ($i < $num)
-        {
-            $var=!$var;
-            $obj = $db->fetch_object($resql);
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		$var = True;
+		while ($i < $num)
+		{
+			$var=!$var;
+			$obj = $db->fetch_object($resql);
 
-            print "<tr ".$bc[$var].">";
-            print '<td width="20%" class="nowrap">';
+			print "<tr ".$bc[$var].">";
+			print '<td width="20%" class="nowrap">';
 
-            $commandestatic->id=$obj->rowid;
-            $commandestatic->ref=$obj->ref;
+			$commandestatic->id=$obj->rowid;
+			$commandestatic->ref=$obj->ref;
 
-            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-            print '<td width="96" class="nobordernopadding nowrap">';
-            print $commandestatic->getNomUrl(1);
-            print '</td>';
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td width="96" class="nobordernopadding nowrap">';
+			print $commandestatic->getNomUrl(1);
+			print '</td>';
 
-            print '<td width="16" class="nobordernopadding nowrap">';
-            print '&nbsp;';
-            print '</td>';
+			print '<td width="16" class="nobordernopadding nowrap">';
+			print '&nbsp;';
+			print '</td>';
 
-            print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
-            $filename=dol_sanitizeFileName($obj->ref);
-            $filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-            $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-            print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
-            print '</td></tr></table>';
+			print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
+			$filename=dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->commande->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
+			print '</td></tr></table>';
 
-            print '</td>';
+			print '</td>';
 
-            print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
-            print '<td>'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
-            print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
-            print '</tr>';
-            $i++;
-        }
-    }
-    print "</table><br>";
+			print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a></td>';
+			print '<td>'.dol_print_date($db->jdate($obj->tms),'day').'</td>';
+			print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,5).'</td>';
+			print '</tr>';
+			$i++;
+		}
+	}
+	print "</table><br>";
 }
 else dol_print_error($db);
 
@@ -433,7 +432,7 @@ print "</table><br>";
 }
 */
 
-print '</td></tr></table>';
+print '</div></div></div>';
 
 llxFooter();
 

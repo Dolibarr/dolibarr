@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015 Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,8 @@ class box_contracts extends ModeleBoxes
     		$sql.= " AND c.entity = ".$conf->entity;
     		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     		if($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
-    		$sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+    		if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+    		else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
     		$sql.= $db->plimit($max, 0);
 
     		$resql = $db->query($sql);

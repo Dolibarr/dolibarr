@@ -59,6 +59,9 @@ function getURLContent($url,$postorget='GET',$param='',$followlocation=1,$addhea
 	if (count($addheaders)) curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true);	// To be able to retrieve request header and log it
 
+	// TLSv1 by default or change to TLSv1.2 in module configuration
+    //curl_setopt($ch, CURLOPT_SSLVERSION, (empty($conf->global->MAIN_CURL_SSLVERSION)?1:$conf->global->MAIN_CURL_SSLVERSION));
+    
     //turning off the server and peer verification(TrustManager Concept).
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
