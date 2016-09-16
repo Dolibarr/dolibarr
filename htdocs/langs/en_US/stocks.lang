@@ -45,6 +45,7 @@ PMPValue=Weighted average price
 PMPValueShort=WAP
 EnhancedValueOfWarehouses=Warehouses value
 UserWarehouseAutoCreate=Create a warehouse automatically when creating a user
+AllowAddLimitStockByWarehouse=Allow to add limit and desired stock by product and warehouse
 IndependantSubProductStock=Product stock and subproduct stock are independant
 QtyDispatched=Quantity dispatched
 QtyDispatchedShort=Qty dispatched

@@ -69,6 +69,13 @@ $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldi
 
 if ($cancel) $action='';
 
+if($action == 'addlimitstockwarehouse') {
+	
+	//var_dump($_REQUEST);exit;
+    $action='';
+	
+}
+
 // Set stock limit
 if ($action == 'setseuil_stock_alerte')
 {
@@ -824,6 +831,28 @@ print '</td>';
 print "</tr>";
 print "</table>";
 
+if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+	
+	print '<br /><br />';
+	print_titre('Indiquer une limite pour alerte et un stock optimal');
+	//print '<br />';
+	
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
+	print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
+	print '<table class="noborder" width="100%">';
+	
+	print '<tr class="liste_titre"><td width="40%" colspan="4">'.$formproduct->selectWarehouses().'</td>';
+	print '<td align="right"><input name="stocklimit" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
+	print '<td align="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
+	print '<td align="right"><input type="submit" class="button" /></td>';
+	print '</tr>';
+	
+	print "</table>";
+	
+	print '</form>';
+	
+}
 
 llxFooter();
 
