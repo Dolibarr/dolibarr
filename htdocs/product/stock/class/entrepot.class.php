@@ -606,4 +606,33 @@ class Entrepot extends CommonObject
         $this->country_id=1;
         $this->country_code='FR';
     }
+
+	function get_full_arbo() {
+		
+		 global $user,$langs,$conf;
+		 
+		 $TArbo = array($this->libelle);
+		 
+		 $id = $this->id;
+
+		 while(true) {
+			 $sql = 'SELECT fk_parent
+			 		FROM '.MAIN_DB_PREFIX.'entrepot
+			 		WHERE rowid = '.$id;
+
+			 $resql = $this->db->query($sql);
+			 if($resql) {
+			 	$res = $this->db->fetch_object($resql);
+			 	if(empty($res->fk_parent)) break;
+				$id = $res->fk_parent;
+				$o = new Entrepot($this->db);
+				$o->fetch($id);
+				$TArbo[] = $o->libelle;
+			 } else break;
+		 }
+
+		 return implode(' >> ', array_reverse($TArbo));
+		
+	}
+
 }
