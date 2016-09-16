@@ -259,6 +259,7 @@ if ($resql)
 	$title.=' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled)?'':$langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
 	$param='';
+	if ($sall)					$param.='&sall='.$sall;
 	if ($socid > 0)             $param.='&socid='.$socid;
 	if ($viewstatut != '')      $param.='&viewstatut='.$viewstatut;
 	if ($orderday)      		$param.='&orderday='.$orderday;
