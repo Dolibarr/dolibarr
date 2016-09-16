@@ -34,5 +34,6 @@ create table llx_entrepot
   fk_pays         integer DEFAULT 0,
   statut          tinyint DEFAULT 1,			-- 1 open, 0 close
   fk_user_author  integer,
-  import_key	  varchar(14)
+  import_key	  varchar(14),
+  fk_parent       integer DEFAULT NULL
 )ENGINE=innodb;

@@ -58,12 +58,14 @@ class FormProduct
 	 * @param	boolean	$sumStock		    sum total stock of a warehouse, default true
 	 * @return  int  		    		    Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
-	function loadWarehouses($fk_product=0, $batch = '', $status=null, $sumStock = true)
+	function loadWarehouses($fk_product=0, $batch = '', $status=null, $sumStock = true, $exclude='')
 	{
 		global $conf, $langs;
 
 		if (empty($fk_product) && count($this->cache_warehouses)) return 0;    // Cache already loaded and we do not want a list with information specific to a product
-
+		
+		if (is_array($exclude))	$excludeGroups = implode("','",$exclude);
+		
 		$sql = "SELECT e.rowid, e.label, e.description";
 		if (!empty($fk_product)) 
 		{
@@ -99,6 +101,8 @@ class FormProduct
 		{
 			$sql.= " AND e.statut = 1";
 		}
+		
+		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.implode(',', $exclude).')';
 		
 		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description";
 		$sql.= " ORDER BY e.label";
@@ -144,7 +148,7 @@ class FormProduct
 	 *  @param  string  $morecss        Add more css classes
 	 * 	@return	string					HTML select
 	 */
-	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200')
+	function selectWarehouses($selected='',$htmlname='idwarehouse',$filtertype='',$empty=0,$disabled=0,$fk_product=0,$empty_label='', $showstock=0, $forcecombo=0, $events=array(), $morecss='minwidth200', $exclude='')
 	{
 		global $conf,$langs,$user;
 
@@ -152,7 +156,7 @@ class FormProduct
 		
 		$out='';
 		
-		$this->loadWarehouses($fk_product, '', + $filtertype); // filter on numeric status
+		$this->loadWarehouses($fk_product, '', + $filtertype, true, $exclude); // filter on numeric status
 		$nbofwarehouses=count($this->cache_warehouses);
 
 		if ($conf->use_javascript_ajax && ! $forcecombo)

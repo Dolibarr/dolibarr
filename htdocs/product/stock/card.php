@@ -31,10 +31,12 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $langs->load("products");
 $langs->load("stocks");
 $langs->load("companies");
+$langs->load("categories");
 
 $action=GETPOST('action');
 $cancel=GETPOST('cancel');
@@ -64,6 +66,7 @@ $object = new Entrepot($db);
 if ($action == 'add' && $user->rights->stock->creer)
 {
 	$object->ref         = GETPOST("ref");
+	$object->fk_parent   = GETPOST("fk_parent");
 	$object->libelle     = GETPOST("libelle");
 	$object->description = GETPOST("desc");
 	$object->statut      = GETPOST("statut");
@@ -128,6 +131,7 @@ if ($action == 'update' && $cancel <> $langs->trans("Cancel"))
 	if ($object->fetch($id))
 	{
 		$object->libelle     = GETPOST("libelle");
+		$object->fk_parent   = GETPOST("fk_parent");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -166,6 +170,7 @@ if ($cancel == $langs->trans("Cancel"))
 
 $productstatic=new Product($db);
 $form=new Form($db);
+$formproduct=new FormProduct($db);
 $formcompany=new FormCompany($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -189,6 +194,11 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value=""></td></tr>';
 
 	print '<tr><td >'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.(!empty($object->lieu)?$object->lieu:'').'"></td></tr>';
+		
+	// Parent entrepot
+	print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+	print $formproduct->selectWarehouses('', 'fk_parent', '', 1);
+	print '</td></tr>';
 
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
@@ -345,6 +355,16 @@ else
 			print '</td>';*/
 
 			//print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3">'.$object->lieu.'</td></tr>';
+
+			// Parent entrepot
+			$e = new Entrepot($db);
+			if(!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0) {
+				
+				print '<tr><td>'.$langs->trans("ParentWarehouse").'</td><td>';
+				print $e->getNomUrl(3);
+				print '</td></tr>';
+				
+			}
 
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>'.nl2br($object->description).'</td></tr>';
@@ -623,6 +643,11 @@ else
 			print '<tr><td width="20%" class="fieldrequired">'.$langs->trans("Ref").'</td><td colspan="3"><input name="libelle" size="20" value="'.$object->libelle.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans("LocationSummary").'</td><td colspan="3"><input name="lieu" size="40" value="'.$object->lieu.'"></td></tr>';
+		
+			// Parent entrepot
+			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+			print $formproduct->selectWarehouses('', 'fk_parent', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array($object->id));
+			print '</td></tr>';
 
 			// Description
 			print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';

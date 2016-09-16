@@ -135,3 +135,5 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN tms               timestamp;
 ALTER TABLE llx_accounting_account ADD INDEX uk_accounting_account (account_number, entity);
 
 ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint
+
+ALTER TABLE llx_entrepot ADD COLUMN fk_parent integer DEFAULT NULL
