@@ -1627,55 +1627,34 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	int		$idline		Id of line to delete
      *	@param	int		$notrigger	1=Disable call to triggers
-     *	@return						<0 if KO, >0 if OK
+     *	@return	int					<0 if KO, >0 if OK
      */
     public function deleteline($idline, $notrigger=0)
     {
-        global $user,$langs,$conf;
-        $error = 0;
-
-        if ($this->statut != 0)
+        if ($this->statut == 0)
         {
-        	return -1;
-        }
+            $line = new CommandeFournisseurLigne($this->db);
 
-        $this->db->begin();
+            if ($line->fetch($idline) <= 0)
+            {
+                return 0;
+            }
 
-		if (! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
-		}
-
-		if (! $error)
-		{
-	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
-	        $resql=$this->db->query($sql);
-
-	        dol_syslog(get_class($this)."::deleteline sql=".$sql);
-			if (! $resql)
-			{
-               	$this->error=$this->db->lasterror();
-               	$error++;
-			}
-		}
-
-		if (! $error)
-        {
-            $result=$this->update_price();
-        }
-
-        if (! $error)
-        {
-            $this->db->commit();
-            return 1;
+            if ($line->delete($notrigger) > 0)
+            {
+                $this->update_price();
+                return 1;
+            }
+            else
+            {
+                $this->error = $line->error;
+                $this->errors = $line->errors;
+                return -1;
+            }
         }
         else
-       {
-			$this->db->rollback();
-            return -1;
+        {
+            return -2;
         }
     }
 
@@ -3089,7 +3068,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEORDER_INSERT',$user);
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE',$user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -3199,6 +3178,56 @@ class CommandeFournisseurLigne extends CommonOrderLine
         {
             $this->error=$this->db->lasterror();
             $this->db->rollback();
+            return -1;
+        }
+    }
+
+    /**
+     * 	Delete line in database
+     *
+     *	@param      int     $notrigger  1=Disable call to triggers
+     *	@return     int                 <0 if KO, >0 if OK
+     */
+    function delete($notrigger)
+    {
+        global $user;
+
+        $error=0;
+
+        $this->db->begin();
+
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid='".$this->rowid."';";
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+
+            if (!$notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+
+            if (!$error)
+            {
+                $this->db->commit();
+                return 1;
+            }
+
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
             return -1;
         }
     }
