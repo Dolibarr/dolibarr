@@ -3068,7 +3068,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEORDER_INSERT',$user);
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE',$user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
