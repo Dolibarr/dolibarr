@@ -228,14 +228,14 @@ if (empty($reshook))
     	//obtidre selected del combobox
     	$value=GETPOST('lt1');
     	$object->fetch($socid);
-    	$res=$object->setValueFrom('localtax1_value', $value);
+    	$res=$object->setValueFrom('localtax1_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
     }
     if($action=='set_localtax2')
     {
     	//obtidre selected del combobox
     	$value=GETPOST('lt2');
     	$object->fetch($socid);
-    	$res=$object->setValueFrom('localtax2_value', $value);
+    	$res=$object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
     }
 
     // Add new or update third party

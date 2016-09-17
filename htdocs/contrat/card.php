@@ -214,7 +214,7 @@ if (empty($reshook))
 	
 		if ($socid<1)
 		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Customer")), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty")), null, 'errors');
 			$action='create';
 			$error++;
 		}
@@ -796,7 +796,7 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 	
-	        $result = $object->setValueFrom('ref_supplier',GETPOST('ref_supplier','alpha'));
+	        $result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'editref_supplier';
@@ -821,7 +821,7 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		
-	        $result = $object->setValueFrom('ref_customer',GETPOST('ref_customer','alpha'));
+	        $result = $object->setValueFrom('ref_customer', GETPOST('ref_customer','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 	        if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'editref_customer';
@@ -845,7 +845,7 @@ if (empty($reshook))
 	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 	
-	        $result = $object->setValueFrom('ref',GETPOST('ref','alpha'));
+	        $result = $object->setValueFrom('ref', GETPOST('ref','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 	        if ($result < 0) {
 	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'editref';
@@ -869,7 +869,7 @@ if (empty($reshook))
 	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
 			$datacontrat=dol_mktime(GETPOST('date_contrathour'), GETPOST('date_contratmin'), 0, GETPOST('date_contratmonth'), GETPOST('date_contratday'), GETPOST('date_contratyear'));
-	        $result = $object->setValueFrom('date_contrat',$datacontrat,'',null,'date');
+	        $result = $object->setValueFrom('date_contrat', $datacontrat, '', null, 'date', '', $user, 'CONTRACT_MODIFY');
 	        if ($result < 0) {
 	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'editdate_contrat';

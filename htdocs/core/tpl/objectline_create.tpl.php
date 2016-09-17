@@ -37,8 +37,9 @@ if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($ob
     $usemargins=1;
 }
 
-global $forceall, $senderissupplier, $inputalsopricewithtax;
-if (empty($dateSelector)) $dateSelector=0;
+global $dateSelector, $forceall, $senderissupplier, $inputalsopricewithtax;
+if (! isset($dateSelector)) $dateSelector=1;    // For backward compatibility
+elseif (empty($dateSelector)) $dateSelector=0;
 if (empty($forceall)) $forceall=0;
 if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
@@ -187,12 +188,21 @@ else {
 		}
 		else
 		{
-			$ajaxoptions=array(
-					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
-					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
-					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
-			);
-			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1);
+		    if ($senderissupplier != 2)
+		    {
+    			$ajaxoptions=array(
+    					'update' => array('qty'=>'qty','remise_percent' => 'discount','idprod' => 'idprod'),	// html id tags that will be edited with which ajax json response key
+    					'option_disabled' => 'addPredefinedProductButton',	// html id to disable once select is done
+    					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'error'
+    			);
+    			$alsoproductwithnosupplierprice=0;
+		    }
+		    else 
+		    {
+		        $ajaxoptions = array();
+		        $alsoproductwithnosupplierprice=1;
+		    }
+			$form->select_produits_fournisseurs($object->socid, GETPOST('idprodfournprice'), 'idprodfournprice', '', '', $ajaxoptions, 1, $alsoproductwithnosupplierprice);
 		}
 		echo '</span>';
 	}
@@ -230,7 +240,7 @@ else {
 	</td>
 
 	<?php if ($object->element == 'supplier_proposal') { ?>
-		<td class="nobottom linecolresupplier" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="" size="12"></td>
+		<td class="nobottom linecolresupplier" align="right"><input id="fourn_ref" name="fourn_ref" class="flat" size="10" value=""></td>
 	<?php } ?>
 
 	<td class="nobottom linecolvat" align="right"><?php

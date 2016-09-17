@@ -1297,7 +1297,7 @@ class CommandeFournisseur extends CommonOrder
      *	@param      float	$txtva           		Taux tva
      *	@param      float	$txlocaltax1        	Localtax1 tax
      *  @param      float	$txlocaltax2        	Localtax2 tax
-     *	@param      int		$fk_product      		Id produit
+     *	@param      int		$fk_product      		Id product
      *  @param      int		$fk_prod_fourn_price	Id supplier price
      *  @param      string	$fourn_ref				Supplier reference
      *	@param      float	$remise_percent  		Remise
@@ -1372,7 +1372,7 @@ class CommandeFournisseur extends CommonOrder
                         {
                             $label = $prod->libelle;
                             $pu    = $prod->fourn_pu;
-                            $ref   = $prod->ref_fourn;
+                            $ref_supplier = $prod->ref_supplier;
                             $product_type = $prod->type;
                         }
                         if ($result == 0 || $result == -1)
@@ -1435,6 +1435,8 @@ class CommandeFournisseur extends CommonOrder
 
             $this->line->fk_commande=$this->id;
             $this->line->label=$label;
+            $this->line->ref_fourn = $ref_supplier;
+            $this->line->ref_supplier = $ref_supplier;
             $this->line->desc=$desc;
             $this->line->qty=$qty;
             $this->line->tva_tx=$txtva;
@@ -1625,55 +1627,34 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	int		$idline		Id of line to delete
      *	@param	int		$notrigger	1=Disable call to triggers
-     *	@return						<0 if KO, >0 if OK
+     *	@return	int					<0 if KO, >0 if OK
      */
     public function deleteline($idline, $notrigger=0)
     {
-        global $user,$langs,$conf;
-        $error = 0;
-
-        if ($this->statut != 0)
+        if ($this->statut == 0)
         {
-        	return -1;
-        }
+            $line = new CommandeFournisseurLigne($this->db);
 
-        $this->db->begin();
+            if ($line->fetch($idline) <= 0)
+            {
+                return 0;
+            }
 
-		if (! $notrigger)
-		{
-			// Call trigger
-			$result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
-		}
-
-		if (! $error)
-		{
-	        $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idline;
-	        $resql=$this->db->query($sql);
-
-	        dol_syslog(get_class($this)."::deleteline sql=".$sql);
-			if (! $resql)
-			{
-               	$this->error=$this->db->lasterror();
-               	$error++;
-			}
-		}
-
-		if (! $error)
-        {
-            $result=$this->update_price();
-        }
-
-        if (! $error)
-        {
-            $this->db->commit();
-            return 1;
+            if ($line->delete($notrigger) > 0)
+            {
+                $this->update_price();
+                return 1;
+            }
+            else
+            {
+                $this->error = $line->error;
+                $this->errors = $line->errors;
+                return -1;
+            }
         }
         else
-       {
-			$this->db->rollback();
-            return -1;
+        {
+            return -2;
         }
     }
 
@@ -1924,7 +1905,7 @@ class CommandeFournisseur extends CommonOrder
 	    		}
             }
 
-            // TODO LDR01 Add option to accept only if ALL predefined products are received (same qty).
+            // TODO LDR01 Add a control test to accept only if ALL predefined products are received (same qty).
 
 
             if (! $error && ! ($statut == 4 or $statut == 5 or $statut == 7))
@@ -2753,10 +2734,11 @@ class CommandeFournisseur extends CommonOrder
     /**
      * Calc status regarding dispatch stock
      *
-     * @param 		User 	$user User action
-     * @return		int		<0 if KO, 0 if not applicable, >0 if OK
+     * @param 		User 	$user                   User action
+     * @param       int     $closeopenorder         Close if received
+     * @return		int		                        <0 if KO, 0 if not applicable, >0 if OK
      */
-    public function calcAndSetStatusDispatch(User $user) 
+    public function calcAndSetStatusDispatch(User $user, $closeopenorder=1) 
     {
     	global $conf;
 
@@ -2794,18 +2776,30 @@ class CommandeFournisseur extends CommonOrder
     				if (count($diff_array)==0) 
     				{
     					//No diff => mean everythings is received
-    					$ret=$this->setStatus($user,5);
-    					if ($ret<0) {
-    						$this->error=$object->error; $this->errors=$object->errors;
+    					if ($closeopenorder)
+    					{
+        					$ret=$this->setStatus($user,5);
+        					if ($ret<0) {
+        						return -1;
+        					}
+    					    return 5;
     					}
-    					return 5;
+    					else
+    					{
+    					    //Diff => received partially
+    					    $ret=$this->setStatus($user,4);
+    					    if ($ret<0) {
+    					        return -1;
+    					    }
+    					    return 4;
+    					}
     				} 
     				else 
     				{
     					//Diff => received partially
     					$ret=$this->setStatus($user,4);
     					if ($ret<0) {
-    						$this->error=$object->error; $this->errors=$object->errors;
+    						return -1;
     					}
     					return 4;
     				}
@@ -2888,7 +2882,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
     public function fetch($rowid)
     {
         $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.product_type, cd.description, cd.qty, cd.tva_tx,';
-        $sql.= ' cd.localtax1_tx, cd.localtax2_tx,';
+        $sql.= ' cd.localtax1_tx, cd.localtax2_tx, cd.ref,';
         $sql.= ' cd.remise, cd.remise_percent, cd.subprice,';
         $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
         $sql.= ' cd.total_localtax1, cd.total_localtax2,';
@@ -2906,6 +2900,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
             $this->fk_commande      = $objp->fk_commande;
             $this->desc             = $objp->description;
             $this->qty              = $objp->qty;
+            $this->ref_fourn        = $objp->ref;
+            $this->ref_supplier     = $objp->ref;
             $this->subprice         = $objp->subprice;
             $this->tva_tx           = $objp->tva_tx;
             $this->localtax1_tx		= $objp->localtax1_tx;
@@ -3037,7 +3033,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ", '".$this->localtax1_type."',";
         $sql.= " '".$this->localtax2_type."'";
 
-        $sql.= ", ".$this->remise_percent.",'".price2num($this->subprice,'MU')."','".$this->product_ref."',";
+        $sql.= ", ".$this->remise_percent.",'".price2num($this->subprice,'MU')."','".$this->ref_supplier."',";
         $sql.= "'".price2num($this->total_ht)."',";
         $sql.= "'".price2num($this->total_tva)."',";
         $sql.= "'".price2num($this->total_localtax1)."',";
@@ -3072,7 +3068,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             if (! $error && ! $notrigger)
             {
                 // Call trigger
-                $result=$this->call_trigger('LINEORDER_INSERT',$user);
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_CREATE',$user);
                 if ($result < 0) $error++;
                 // End call triggers
             }
@@ -3182,6 +3178,56 @@ class CommandeFournisseurLigne extends CommonOrderLine
         {
             $this->error=$this->db->lasterror();
             $this->db->rollback();
+            return -1;
+        }
+    }
+
+    /**
+     * 	Delete line in database
+     *
+     *	@param      int     $notrigger  1=Disable call to triggers
+     *	@return     int                 <0 if KO, >0 if OK
+     */
+    function delete($notrigger)
+    {
+        global $user;
+
+        $error=0;
+
+        $this->db->begin();
+
+        $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid='".$this->rowid."';";
+
+        dol_syslog(__METHOD__, LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+
+            if (!$notrigger)
+            {
+                // Call trigger
+                $result=$this->call_trigger('LINEORDER_SUPPLIER_DELETE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+
+            if (!$error)
+            {
+                $this->db->commit();
+                return 1;
+            }
+
+            foreach($this->errors as $errmsg)
+            {
+                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                $this->error.=($this->error?', '.$errmsg:$errmsg);
+            }
+            $this->db->rollback();
+            return -1*$error;
+        }
+        else
+        {
+            $this->error=$this->db->lasterror();
             return -1;
         }
     }

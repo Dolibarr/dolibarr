@@ -32,18 +32,23 @@ if (! $res && file_exists("../../../../dolibarr/htdocs/main.inc.php")) $res=@inc
 if (! $res) die("Include of main fails");
 // Change this following line to use the correct relative path from htdocs
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-dol_include_once('/stock/class/productlot.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php');
+include_once(DOL_DOCUMENT_ROOT.'/product/class/product.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+dol_include_once('/product/stock/class/productlot.class.php');
 
 // Load traductions files requiredby by page
 $langs->load("stock");
 $langs->load("other");
+$langs->load("productbatch");
 
 // Get parameters
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','alpha');
 $backtopage = GETPOST('backtopage');
-$myparam	= GETPOST('myparam','alpha');
-
+$batch  	= GETPOST('batch','alpha');
+$productid  = GETPOST('productid','int');
+$ref        = GETPOST('ref','alpha');       // ref is productid_batch
 
 $search_entity=GETPOST('search_entity','int');
 $search_fk_product=GETPOST('search_fk_product','int');
@@ -52,35 +57,48 @@ $search_fk_user_creat=GETPOST('search_fk_user_creat','int');
 $search_fk_user_modif=GETPOST('search_fk_user_modif','int');
 $search_import_key=GETPOST('search_import_key','int');
 
+if (empty($action) && empty($id) && empty($ref)) $action='list';
 
 
 // Protection if external user
 if ($user->societe_id > 0)
 {
-	//accessforbidden();
+    //accessforbidden();
 }
+//$result = restrictedArea($user, 'mymodule', $id);
 
-if (empty($action) && empty($id) && empty($ref)) $action='list';
 
-// Load object if id or ref is provided as parameter
-$object=new Productlot($db);
-if (($id > 0 || ! empty($ref)) && $action != 'add')
+$object = new ProductLot($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+//include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+if ($id || $ref)
 {
-	$result=$object->fetch($id,$ref);
-	if ($result < 0) dol_print_error($db);
+    if ($ref)
+    {
+        $tmp=explode('_',$ref);
+        $productid=$tmp[0];
+        $batch=$tmp[1];
+    }
+    $object->fetch($id, $productid, $batch);
 }
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('productlot'));
-$extrafields = new ExtraFields($db);
+$hookmanager->initHooks(array('productlotcard','globalcard'));
 
 
+$permissionnote = $user->rights->stock->creer; 		// Used by the include of actions_setnotes.inc.php
+$permissiondellink = $user->rights->stock->creer; 	// Used by the include of actions_dellink.inc.php
+$permissionedit = $user->rights->stock->creer; 		// Used by the include of actions_lineupdown.inc.php
 
-/*******************************************************************
-* ACTIONS
-*
-* Put here all code to do according to value of "action" parameter
-********************************************************************/
+
+/*
+ * Actions
+ */
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -88,6 +106,47 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($action == 'seteatby' && $user->rights->stock->creer)
+	{
+	    $newvalue = dol_mktime(12, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
+		$result = $object->setValueFrom('eatby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) dol_print_error($db, $object->error);
+	}
+    
+	if ($action == 'setsellby' && $user->rights->stock->creer)
+	{
+	    $newvalue=dol_mktime(12, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+		$result = $object->setValueFrom('sellby', $newvalue, '', null, 'date', '', $user, 'PRODUCTLOT_MODIFY');
+		if ($result < 0) dol_print_error($db, $object->error);
+	}
+	
+	if ($action == 'update_extras')
+    {
+        // Fill array 'array_options' with data from update form
+        $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+        $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+        if ($ret < 0) $error++;
+    
+        if (! $error)
+        {
+            // Actions on extra fields (by external module or standard code)
+            $hookmanager->initHooks(array('productlotdao'));
+            $parameters = array('id' => $object->id);
+            $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
+            // some hooks
+            if (empty($reshook)) {
+                $result = $object->insertExtraFields();
+                if ($result < 0) {
+                    $error++;
+                }
+            } else if ($reshook < 0)
+                $error++;
+        }
+    
+        if ($error)
+            $action = 'edit_extras';
+    }
+    
 	// Action to add record
 	if ($action == 'add')
 	{
@@ -102,14 +161,12 @@ if (empty($reshook))
 
 		/* object_prop_getpost_prop */
 		
-	$object->entity=GETPOST('entity','int');
-	$object->fk_product=GETPOST('fk_product','int');
-	$object->batch=GETPOST('batch','alpha');
-	$object->fk_user_creat=GETPOST('fk_user_creat','int');
-	$object->fk_user_modif=GETPOST('fk_user_modif','int');
-	$object->import_key=GETPOST('import_key','int');
-
-		
+    	$object->entity=GETPOST('entity','int');
+    	$object->fk_product=GETPOST('fk_product','int');
+    	$object->batch=GETPOST('batch','alpha');
+    	$object->fk_user_creat=GETPOST('fk_user_creat','int');
+    	$object->fk_user_modif=GETPOST('fk_user_modif','int');
+    	$object->import_key=GETPOST('import_key','int');
 
 		if (empty($object->ref))
 		{
@@ -147,16 +204,13 @@ if (empty($reshook))
 	if ($action == 'update' && ! GETPOST('cancel'))
 	{
 		$error=0;
-
 		
-	$object->entity=GETPOST('entity','int');
-	$object->fk_product=GETPOST('fk_product','int');
-	$object->batch=GETPOST('batch','alpha');
-	$object->fk_user_creat=GETPOST('fk_user_creat','int');
-	$object->fk_user_modif=GETPOST('fk_user_modif','int');
-	$object->import_key=GETPOST('import_key','int');
-
-		
+    	$object->entity=GETPOST('entity','int');
+    	$object->fk_product=GETPOST('fk_product','int');
+    	$object->batch=GETPOST('batch','alpha');
+    	$object->fk_user_creat=GETPOST('fk_user_creat','int');
+    	$object->fk_user_modif=GETPOST('fk_user_modif','int');
+    	$object->import_key=GETPOST('import_key','int');
 
 		if (empty($object->ref))
 		{
@@ -207,13 +261,11 @@ if (empty($reshook))
 
 
 
-/***************************************************
-* VIEW
-*
-* Put here all code to build page
-****************************************************/
+/*
+ * View
+ */
 
-llxHeader('','MyPageName','');
+llxHeader('','ProductLot','');
 
 $form=new Form($db);
 
@@ -239,7 +291,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewMyModule"));
+	print load_fiche_titre($langs->trans("Batch"));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="action" value="add">';
@@ -250,12 +302,12 @@ if ($action == 'create')
 	print '<table class="border centpercent">'."\n";
 	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
 	// 
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.GETPOST('entity').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.GETPOST('fk_product').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.GETPOST('batch').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td><input class="flat" type="text" name="fk_user_creat" value="'.GETPOST('fk_user_creat').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_modif").'</td><td><input class="flat" type="text" name="fk_user_modif" value="'.GETPOST('fk_user_modif').'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><td><input class="flat" type="text" name="import_key" value="'.GETPOST('import_key').'"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.GETPOST('entity').'"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.GETPOST('fk_product').'"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.GETPOST('batch').'"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td><input class="flat" type="text" name="fk_user_creat" value="'.GETPOST('fk_user_creat').'"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_modif").'</td><td><input class="flat" type="text" name="fk_user_modif" value="'.GETPOST('fk_user_modif').'"></td></tr>';
+    print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><td><input class="flat" type="text" name="import_key" value="'.GETPOST('import_key').'"></td></tr>';
 
 	print '</table>'."\n";
 
@@ -267,64 +319,60 @@ print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><t
 }
 
 
-
-// Part to edit record
-if (($id || $ref) && $action == 'edit')
-{
-	print load_fiche_titre($langs->trans("MyModule"));
-    
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="action" value="update">';
-	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	
-	dol_fiche_head();
-
-	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// 
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td><input class="flat" type="text" name="entity" value="'.$object->entity.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td><input class="flat" type="text" name="fk_product" value="'.$object->fk_product.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td><input class="flat" type="text" name="batch" value="'.$object->batch.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td><input class="flat" type="text" name="fk_user_creat" value="'.$object->fk_user_creat.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_modif").'</td><td><input class="flat" type="text" name="fk_user_modif" value="'.$object->fk_user_modif.'"></td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><td><input class="flat" type="text" name="import_key" value="'.$object->import_key.'"></td></tr>';
-
-	print '</table>';
-	
-	dol_fiche_end();
-
-	print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
-	print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	print '</div>';
-
-	print '</form>';
-}
-
-
-
 // Part to show record
-if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	print load_fiche_titre($langs->trans("MyModule"));
+	$res = $object->fetch_optionals($object->id, $extralabels);
+	
+    print load_fiche_titre($langs->trans("Batch"));
     
-	dol_fiche_head();
-
+    $head = productlot_prepare_head($object);
+	dol_fiche_head($head, 'card', $langs->trans("Batch"), 0, 'stock');
+	
+	    
 	if ($action == 'delete') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyOjbect'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteBatch'), $langs->trans('ConfirmDeleteBatch'), 'confirm_delete', '', 0, 1);
 		print $formconfirm;
 	}
 	
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
-	// 
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldentity").'</td><td>$object->entity</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_product").'</td><td>$object->fk_product</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldbatch").'</td><td>$object->batch</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_creat").'</td><td>$object->fk_user_creat</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldfk_user_modif").'</td><td>$object->fk_user_modif</td></tr>';
-print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><td>$object->import_key</td></tr>';
+	
+	$linkback = '<a href="' . DOL_URL_ROOT . '/product/stock/productlot_list.php' . '">' . $langs->trans("BackToList") . '</a>';
+	
+	// Ref
+	print '<tr><td class="titlefield">' . $langs->trans('Batch') . '</td>';
+	print '<td colspan="3">';
+	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'batch');
+	print '</td>';
+	print '</tr>';
+	
+	// Product
+    print '<tr><td>'.$langs->trans("Product").'</td><td>';
+    $producttmp = new Product($db);
+    $producttmp->fetch($object->fk_product);
+    print $producttmp->getNomUrl(1, 'stock');
+    print '</td></tr>';
 
+    // Eat by
+    print '<tr><td>';
+    print $form->editfieldkey($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td><td colspan="5">';
+    print $form->editfieldval($langs->trans('Eatby'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td>';
+    print '</tr>';
+    
+    // Sell by
+    print '<tr><td>';
+    print $form->editfieldkey($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td><td colspan="5">';
+    print $form->editfieldval($langs->trans('Sellby'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
+    print '</td>';
+    print '</tr>';
+    
+    // Other attributes
+    $cols = 2;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+    
 	print '</table>';
 	
 	dol_fiche_end();
@@ -338,15 +386,16 @@ print '<tr><td class="fieldrequired">'.$langs->trans("Fieldimport_key").'</td><t
 
 	if (empty($reshook))
 	{
-		if ($user->rights->stock->write)
+/*TODO 		if ($user->rights->stock->lire)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>'."\n";
 		}
 
-		if ($user->rights->stock->delete)
+		if ($user->rights->stock->supprimer)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a></div>'."\n";
 		}
+*/
 	}
 	print '</div>'."\n";
 

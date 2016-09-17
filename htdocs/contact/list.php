@@ -129,18 +129,18 @@ $fieldstosearchall = array(
 $arrayfields=array(
     'p.lastname'=>array('label'=>$langs->trans("Lastname"), 'checked'=>1),
     'p.firstname'=>array('label'=>$langs->trans("Firstname"), 'checked'=>1),
-    'p.poste'=>array('label'=>$langs->trans("Post"), 'checked'=>1),
+    'p.poste'=>array('label'=>$langs->trans("PostOrFunction"), 'checked'=>1),
     'p.town'=>array('label'=>$langs->trans("Town"), 'checked'=>0),
     'p.zip'=>array('label'=>$langs->trans("Zip"), 'checked'=>0),
-    'p.phone'=>array('label'=>$langs->trans("PhonePro"), 'checked'=>1),
+    'p.phone'=>array('label'=>$langs->trans("Phone"), 'checked'=>1),
     'p.phone_perso'=>array('label'=>$langs->trans("PhonePerso"), 'checked'=>0),
     'p.phone_mobile'=>array('label'=>$langs->trans("PhoneMobile"), 'checked'=>1),
     'p.fax'=>array('label'=>$langs->trans("Fax"), 'checked'=>1),
-    'p.email'=>array('label'=>$langs->trans("Email"), 'checked'=>1),
+    'p.email'=>array('label'=>$langs->trans("EMail"), 'checked'=>1),
     'p.skype'=>array('label'=>$langs->trans("Skype"), 'checked'=>1, 'enabled'=>(! empty($conf->skype->enabled))),
     'p.thirdparty'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
     'p.priv'=>array('label'=>$langs->trans("ContactVisibility"), 'checked'=>1, 'position'=>200),
-    'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
+    'p.datec'=>array('label'=>$langs->trans("DateCreationShort"), 'checked'=>0, 'position'=>500),
     'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
     'p.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
@@ -380,6 +380,7 @@ if ($result)
     if (!empty($search_categ)) $param.='&search_categ='.urlencode($search_categ);
     if (!empty($search_categ_thirdparty)) $param.='&search_categ_thirdparty='.urlencode($search_categ_thirdparty);
     if (!empty($search_categ_supplier)) $param.='&search_categ_supplier='.urlencode($search_categ_supplier);
+    if ($sall != '') $param.='&amp;sall='.urlencode($sall);
     if ($search_lastname != '') $param.='&amp;search_lastname='.urlencode($search_lastname);
     if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_firstname);
     if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);

@@ -263,10 +263,7 @@ if (empty($reshook)) {
 			{
 				$langs->load("errors");
 				$db->rollback();
-				if (is_array($object->errors) && count($object->errors))
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = "create";       // Go back to create page
 			}
 		}
@@ -753,7 +750,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Employee
     print '<tr>';
     print '<td>'.fieldLabel('Employee','employee',0).'</td><td>';
-    print $form->selectyesno("employee",(isset($_POST['employee'])?GETPOST('employee'):0),1);
+    print $form->selectyesno("employee",(GETPOST('employee')?GETPOST('employee'):0),1);
     print '</td></tr>';
 
     // Position/Job

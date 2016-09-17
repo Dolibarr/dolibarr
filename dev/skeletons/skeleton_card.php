@@ -59,25 +59,27 @@ $myparam	= GETPOST('myparam','alpha');
 $search_field1=GETPOST("search_field1");
 $search_field2=GETPOST("search_field2");
 
+if (empty($action) && empty($id) && empty($ref)) $action='list';
+
 // Protection if external user
 if ($user->societe_id > 0)
 {
 	//accessforbidden();
 }
+//$result = restrictedArea($user, 'mymodule', $id);
 
-if (empty($action) && empty($id) && empty($ref)) $action='list';
 
-// Load object if id or ref is provided as parameter
-$object=new Skeleton_Class($db);
-if (($id > 0 || ! empty($ref)) && $action != 'add')
-{
-	$result=$object->fetch($id,$ref);
-	if ($result < 0) dol_print_error($db);
-}
+$object = new Skeleton_Class($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('skeleton'));
-$extrafields = new ExtraFields($db);
 
 
 
@@ -281,8 +283,13 @@ if (($id || $ref) && $action == 'edit')
 
 
 // Part to show record
-if ($id && (empty($action) || $action == 'view' || $action == 'delete'))
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
+    $res = $object->fetch_optionals($object->id, $extralabels);
+
+	$head = commande_prepare_head($object);
+	dol_fiche_head($head, 'order', $langs->trans("CustomerOrder"), 0, 'order');
+		
 	print load_fiche_titre($langs->trans("MyModule"));
     
 	dol_fiche_head();

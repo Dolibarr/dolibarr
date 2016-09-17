@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -453,6 +454,7 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($search_all != '') $param = "&amp;sall=".urlencode($search_all);
 if ($sall != '') $param .= "&amp;sall=".urlencode($sall);
 if ($search_categ > 0) $param.='&amp;search_categ='.urlencode($search_categ);
 if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);

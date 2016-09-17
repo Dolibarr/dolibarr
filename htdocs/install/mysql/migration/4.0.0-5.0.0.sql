@@ -21,6 +21,12 @@
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
+
+-- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
+ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
+UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
+
+
 DELETE FROM llx_menu where module='expensereport';
 
 ALTER TABLE llx_user DROP COLUMN phenix_login;
@@ -84,5 +90,14 @@ ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,datea
 ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
 ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT 'yes';
 
+create table llx_product_lot_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_product_lot_extrafields ADD INDEX idx_product_lot_extrafields (fk_object);
 
 

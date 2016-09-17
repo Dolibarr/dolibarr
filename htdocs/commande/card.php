@@ -1231,7 +1231,7 @@ if (empty($reshook))
 	if ($action == 'set_thirdparty' && $user->rights->commande->creer)
 	{
 		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid);
+		$object->setValueFrom('fk_soc', $socid, '', '', 'date', '', $user, 'ORDER_MODIFY');
 
 		header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $id);
 		exit();

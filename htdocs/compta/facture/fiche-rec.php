@@ -270,7 +270,7 @@ elseif ($action == 'classin' && $user->rights->facture->creer)
 // Set bank account
 elseif ($action == 'setref' && $user->rights->facture->creer)
 {
-    $result=$object->setValueFrom('titre', GETPOST('ref', 'alpha'));
+    $result=$object->setValueFrom('titre', GETPOST('ref', 'alpha'), '', null, 'text', '', $user, 'BILLREC_MODIFY');
     if ($result > 0)
     {
     	$object->titre = GETPOST('ref', 'alpha');

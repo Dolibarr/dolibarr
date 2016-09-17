@@ -144,6 +144,7 @@ if (! file_exists($original_file_osencoded))
 
 
 // Output page content
+define('USEDOLIBARRSERVER', 1);
 print "\n".'<!-- Page content '.$original_file.' : Html with CSS link + Body was saved into tpl -->'."\n";
 include_once $original_file_osencoded;
 

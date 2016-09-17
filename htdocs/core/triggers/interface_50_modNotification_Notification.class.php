@@ -63,11 +63,13 @@ class InterfaceNotification extends DolibarrTriggers
 	{
 		if (empty($conf->notification->enabled)) return 0;     // Module not active, we do nothing
 
+		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
+		$notify = new Notify($this->db);
+		
+		if (! in_array($notifcode, $notify->arrayofnotifsupported)) return 0;
+
 		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-		require_once DOL_DOCUMENT_ROOT .'/core/class/notify.class.php';
-
-		$notify = new Notify($this->db);
 		$notify->send($action, $object);
 
 		return 1;

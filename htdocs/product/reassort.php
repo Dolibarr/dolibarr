@@ -248,8 +248,13 @@ if ($resql)
         print '</div>';
     }
 	
-
-	$param="&tosell=$tosell&tobuy=$tobuy".(isset($type)?"&type=$type":"")."&fourn_id=$fourn_id&snom=$snom&sref=$sref";
+	$param='';
+	if ($tosell)	$param.="&tosell=".$tosell;
+	if ($tobuy)		$param.="&tobuy=".$tobuy;
+	if ($type)		$param.="&type=".$type;
+	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
+	if ($snom)		$param.="&snom=".$snom;
+	if ($sref)		$param.="&sref=".$sref;
     
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();

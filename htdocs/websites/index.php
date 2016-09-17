@@ -177,48 +177,9 @@ if ($action == 'add')
 	{
 		$db->rollback();
 	}
-}
-
-// Update page
-if ($action == 'update')
-{
-    $db->begin();
-
-    $res = $object->fetch(0, $website);
-
-    $objectpage->fk_website = $object->id;
-    $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
-
-    $res = $objectpage->fetch(0, $object->fk_website, $objectpage->pageurl);
-
-    if ($res > 0)
-    {
-        $objectpage->title = GETPOST('WEBSITE_TITLE');
-        $objectpage->description = GETPOST('WEBSITE_DESCRIPTION');
-        $objectpage->keyword = GETPOST('WEBSITE_KEYWORD');
-
-        $res = $objectpage->update($user);
-        if (! $res > 0)
-        {
-            $error++;
-            setEventMessages($objectpage->error, $objectpage->errors, 'errors');
-        }
-
-    	if (! $error)
-    	{
-    		$db->commit();
-    	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    	    $action='';
-    	}
-    	else
-    	{
-    		$db->rollback();
-    	}
-    }
-    else
-    {
-        dol_print_error($db);
-    }
+	
+	$action = 'preview';
+	$id = $objectpage->id;
 }
 
 // Update page
@@ -335,7 +296,7 @@ if ($action == 'setashome')
     }
 }
 
-// Update page
+// Update page (meta)
 if ($action == 'updatemeta')
 {
     $db->begin();
@@ -346,7 +307,7 @@ if ($action == 'updatemeta')
     $res = $objectpage->fetch($pageid, $object->fk_website);
     if ($res > 0)
     {
-        $oldobjectpage = clone $objectpage;
+        $objectpage->old_object = clone $objectpage;
         
         $objectpage->pageurl = GETPOST('WEBSITE_PAGENAME');
         $objectpage->title = GETPOST('WEBSITE_TITLE');
@@ -364,32 +325,54 @@ if ($action == 'updatemeta')
         {
             $db->commit();
 
-            $fileoldalias=$pathofwebsite.'/'.$oldobjectpage->pageurl.'.php';
+            $filemaster=$pathofwebsite.'/master.inc.php';
+            $fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
             $filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
-            
-            // Generate the alias.php page
-            //-----------------------------
+
             dol_mkdir($pathofwebsite);
-            dol_delete_file($fileoldalias);
+
+            
+            // Now generate the master.inc.php page
+            dol_syslog("We regenerate the master file");
+            dol_delete_file($filemaster);
+            
+            $mastercontent = '<?php'."\n";
+            $mastercontent.= '// File generated to link to the master file'."\n";
+            $mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+            $mastercontent.= '?>'."\n";
+            $result = file_put_contents($filemaster, $mastercontent);
+            if (! empty($conf->global->MAIN_UMASK))
+                @chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+            
+            if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+            
+            
+            // Now generate the alias.php page
+            if (! empty($fileoldalias))
+            {
+                dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+                dol_delete_file($fileoldalias);
+            }
             
             $aliascontent = '<?php'."\n";
             $aliascontent.= '// File generated to wrap the alias page'."\n";
-            $aliascontent.= "include_once './page".$objectpage->id.".tpl.php'\n";
+            $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
             $aliascontent.= '?>'."\n";
             $result = file_put_contents($filealias, $aliascontent);
             if (! empty($conf->global->MAIN_UMASK))
                 @chmod($filealias, octdec($conf->global->MAIN_UMASK));
             
-            if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
-            else setEventMessages('Failed to write file '.$filealias, null, 'errors');
+            if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
 
-            
 
             // Now create the .tpl file (duplicate code with actions updatecontent but we need this to save new header)
-            dol_mkdir($pathofwebsite);
+            dol_syslog("We regenerate the tpl page filetpl=".$filetpl);
+            
             dol_delete_file($filetpl);
             
-            $tplcontent = '<html>'."\n";
+            $tplcontent ='';
+            $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
+            $tplcontent.= '<html>'."\n";
             $tplcontent.= '<header>'."\n";
             $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
             $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
@@ -412,7 +395,7 @@ if ($action == 'updatemeta')
                  
             if ($result)
             {
-                //setEventMessages($langs->trans("Saved"), null, 'mesgs');
+                setEventMessages($langs->trans("Saved"), null, 'mesgs');
                 //header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
                 //exit;
             }
@@ -459,12 +442,53 @@ if ($action == 'updatecontent')
     	{
     		$db->commit();
     	    
+    		$filemaster=$pathofwebsite.'/master.inc.php';
+    		//$fileoldalias=$pathofwebsite.'/'.$objectpage->old_object->pageurl.'.php';
+    		$filealias=$pathofwebsite.'/'.$objectpage->pageurl.'.php';
+    		
+    	    dol_mkdir($pathofwebsite);
+    		
+    		
+    		// Now generate the master.inc.php page
+    		dol_syslog("We regenerate the master file");
+    		dol_delete_file($filemaster);
+    		
+    		$mastercontent = '<?php'."\n";
+    		$mastercontent.= '// File generated to link to the master file'."\n";
+    		$mastercontent.= "if (! defined('USEDOLIBARRSERVER')) require '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+    		$mastercontent.= '?>'."\n";
+    		$result = file_put_contents($filemaster, $mastercontent);
+    		if (! empty($conf->global->MAIN_UMASK))
+    		    @chmod($filemaster, octdec($conf->global->MAIN_UMASK));
+    		
+		    if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
+		
+		
+		    // Now generate the alias.php page
+            if (! empty($fileoldalias))
+            {
+    		    dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+    		    dol_delete_file($fileoldalias);
+            }
+            
+		    $aliascontent = '<?php'."\n";
+		    $aliascontent.= '// File generated to wrap the alias page'."\n";
+		    $aliascontent.= "include_once './page".$objectpage->id.".tpl.php';\n";
+		    $aliascontent.= '?>'."\n";
+		    $result = file_put_contents($filealias, $aliascontent);
+		    if (! empty($conf->global->MAIN_UMASK))
+		        @chmod($filealias, octdec($conf->global->MAIN_UMASK));
+		
+            if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+		
+    		        
     	    // Now create the .tpl file
     	    // TODO Keep a one time generate file or include a dynamicaly generated content ? 
-    	    dol_mkdir($pathofwebsite);
     	    dol_delete_file($filetpl);
 
-    	    $tplcontent = '<html>'."\n";
+            $tplcontent ='';
+            $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
+    	    $tplcontent.= '<html>'."\n";
     	    $tplcontent.= '<header>'."\n";
     	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
     	    $tplcontent.= '<meta name="robots" content="index, follow" />'."\n";
@@ -516,7 +540,7 @@ $help_url='';
 
 llxHeader('', $langs->trans("WebsiteSetup"), $help_url);
 
-print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST"><div>';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 if ($action == 'create')
 {
@@ -590,47 +614,19 @@ if (count($object->records) > 0)
         $realurl=$urlwithroot.'/public/websites/index.php?website='.$website;
         $dataroot=DOL_DATA_ROOT.'/websites/'.$website;
         if (! empty($object->virtualhost)) $realurl=$object->virtualhost; 
-        // TODO If virtual url defined, we use it
-        
-        /*print ' - '.$langs->trans("RealURL").' ';
-        print '<input type="text" name="realurl" value="'.$realurl.'"> ';
-        print '<a href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';*/
-
+    }
+    
+    if ($website && $action == 'preview')
+    {
+        $disabled='';
+        if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
+    
         print ' &nbsp; ';
-
-        print $langs->trans("ViewWebsiteInProduction").': ';
-        print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" value="'.$realurl.'">';
-        //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
-        $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
-        print $form->textwithpicto('', $htmltext);
-        print '<a class="button" id="previewsite" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'">'.$langs->trans("ViewSiteInNewTab").'</a>';
         
-        // Example : Adding jquery code
-        if (! empty($conf->use_javascript_ajax))
-        {
-            print '<script type="text/javascript" language="javascript">
-            jQuery(document).ready(function() {
-            	jQuery("#previewsite").click(function() {
-                    newurl=jQuery("#previewsiteurl").val();
-                    console.log("Open url "+newurl);
-                    /* Save url */
-                    jQuery.ajax({
-                        method: "POST",
-                        url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
-                        data: {
-                            field: \'editval_virtualhost\',
-                            element: \'websites\',
-                            table_element: \'website\',
-                            fk_element: '.$object->id.',
-                            value: newurl,
-                        },
-                        context: document.body
-                    });
-                    $(this).attr("href",newurl);
-                });
-            });
-            </script>';
-        }
+        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
+        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
+        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
+        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
     }
     
     print '</div>';
@@ -640,13 +636,22 @@ if (count($object->records) > 0)
 
     if ($action == 'preview')
     {
-        $disabled='';
-        if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
-
-        //print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="editmedia">';
-        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
-        print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-        print '<input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("AddPage")).'" name="create">';
+        print '<div class="websiteinputurl">';
+        print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" value="'.$realurl.'">';
+        //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
+        $htmltext=$langs->trans("SetHereVirtualHost", $dataroot);
+        print $form->textwithpicto('', $htmltext);
+        print '</div>';
+        
+        $urlext=$realurl;
+        $urlint=DOL_URL_ROOT.'/public/websites/index.php?website='.$website;
+        print '<a class="websitebuttonsitepreview" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlext), 1, 'preview_ext');
+        print '</a>';
+        
+        print '<a class="websitebuttonsitepreview" id="previewsite" href="'.DOL_URL_ROOT.'/public/websites/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByDolibarr")).'">';
+        print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlint), 1, 'preview');
+        print '</a>';
     }
 
     if (in_array($action, array('editcss','editmenu','create')))
@@ -674,60 +679,55 @@ if (count($object->records) > 0)
         print $langs->trans("Page").': ';
         print '</div>';
         print '<div class="websiteselection">';
-        $out='';
-        $out.='<select name="pageid">';
-        if ($atleastonepage)
+        
+        if ($action != 'add')
         {
-            if (empty($pageid) && $action != 'create')      // Page id is not defined, we try to take one
+            $out='';
+            $out.='<select name="pageid">';
+            if ($atleastonepage)
             {
-                $firstpageid=0;$homepageid=0;
+                if (empty($pageid) && $action != 'create')      // Page id is not defined, we try to take one
+                {
+                    $firstpageid=0;$homepageid=0;
+                    foreach($array as $key => $valpage)
+                    {
+                        if (empty($firstpageid)) $firstpageid=$valpage->id;
+                        if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid=$valpage->id;
+                    }
+                    $pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
+                }
+    
                 foreach($array as $key => $valpage)
                 {
-                    if (empty($firstpageid)) $firstpageid=$valpage->id;
-                    if ($object->fk_default_home && $key == $object->fk_default_home) $homepageid=$valpage->id;
+                    $out.='<option value="'.$key.'"';
+                    if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
+                    $out.='>';
+                    $out.=$valpage->title;
+                    if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
+                    $out.='</option>';
                 }
-                $pageid=$homepageid?$homepageid:$firstpageid;   // We choose home page and if not defined yet, we take first page
             }
-
-            foreach($array as $key => $valpage)
-            {
-                $out.='<option value="'.$key.'"';
-                if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
-                $out.='>';
-                $out.=$valpage->title;
-                if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
-                $out.='</option>';
-            }
+            else $out.='<option value="-1">&nbsp;</option>';
+            $out.='</select>';
+            print $out;
         }
-        else $out.='<option value="-1">&nbsp;</option>';
-        $out.='</select>';
-        print $out;
+        else
+        {
+            print $langs->trans("New");
+        }
 
         print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
         //print $form->selectarray('page', $array);
         
-        if ($website && $pageid > 0)
-        {
-            print ' - '.$langs->trans("RealURL").' ';
-            $realurl=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
-            print '<input type="text" name="realurl" class="minwidth200imp" disabled="disabled" value="'.$realurl.'"> ';
-            print '<a href="'.$realurl.'&nocache='.dol_now().'" class="button" target="tab'.$website.'">'.$langs->trans("ViewPageInNewTab").'</a>';       // View page in new Tab
-            //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
-        }
-        
-        print '</div>';
-        print '<div class="websiteselection">';
-        print '</div>';
-
-        print '<div class="websitetools">';
-
         if ($action == 'preview')
         {
             $disabled='';
             if (empty($user->rights->websites->create)) $disabled=' disabled="disabled"';
-
+        
             if ($pageid > 0)
             {
+                print ' &nbsp; ';
+                
                 if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 else print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
                 print '<input type="submit" class="button"'.$disabled.'  value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
@@ -738,15 +738,80 @@ if (count($object->records) > 0)
             }
         }
         
+        print '</div>';
+        print '<div class="websiteselection">';
+        print '</div>';
+
+        print '<div class="websitetools">';
+
+        if ($website && $pageid > 0 && $action == 'preview')
+        {
+            $websitepage = new WebSitePage($db);
+            $websitepage->fetch($pageid);
+            
+            $realpage=$urlwithroot.'/public/websites/index.php?website='.$website.'&page='.$pageid;
+            $pagealias = $websitepage->pageurl;
+            
+            print '<div class="websiteinputurl">';
+            print '<input type="text" id="previewpageurl" class="minwidth200imp" name="previewsite" value="'.$pagealias.'" disabled="disabled">';
+            //print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
+            $htmltext=$langs->trans("WEBSITE_PAGENAME", $pagealias);
+            print $form->textwithpicto('', $htmltext);
+            print '</div>';
+            
+            $urlext=$realurl.'/'.$pagealias.'.php';
+            print '<a class="websitebuttonsitepreview" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer")).'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $urlext), 1, 'preview_ext');
+            print '</a>';
+            
+            print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'">';
+            print $form->textwithpicto('', $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage), 1, 'preview'); 
+            print '</a>';       // View page in new Tab
+            //print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
+            
+            // TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
+        }
         if (! in_array($action, array('editcss','editmenu','create')))
         {
             if ($action != 'preview') print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Cancel")).'" name="preview">';
             if (preg_match('/^create/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
             if (preg_match('/^edit/',$action)) print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'" name="update">';
         }
-
+        
         print '</div>';
 
+        if ($action == 'preview')
+        {
+            // Adding jquery code to change on the fly url of preview ext
+            if (! empty($conf->use_javascript_ajax))
+            {
+                print '<script type="text/javascript" language="javascript">
+                    jQuery(document).ready(function() {
+                    	jQuery("#previewsiteext,#previewpageext").click(function() {
+                            newurl=jQuery("#previewsiteurl").val();
+                            newpage=jQuery("#previewsiteurl").val() + "/" + jQuery("#previewpageurl").val() + ".php";
+                            console.log("Open url "+newurl);
+                            /* Save url */
+                            jQuery.ajax({
+                                method: "POST",
+                                url: "'.DOL_URL_ROOT.'/core/ajax/saveinplace.php",
+                                data: {
+                                    field: \'editval_virtualhost\',
+                                    element: \'websites\',
+                                    table_element: \'website\',
+                                    fk_element: '.$object->id.',
+                                    value: newurl,
+                                },
+                                context: document.body
+                            });
+                    
+                            jQuery("#previewsiteext").attr("href",newurl);
+                            jQuery("#previewpageext").attr("href",newpage);
+                        });
+                    });
+                    </script>';
+            }
+        }
     }
 }
 else
@@ -778,9 +843,10 @@ if ($action == 'editcss')
         
     dol_fiche_head();
 
+    print '<!-- Edit CSS -->'."\n";
     print '<table class="border" width="100%">';
 
-    print '<tr><td>';
+    print '<tr><td class="titlefieldcreate">';
     print $langs->trans('WebSite');
     print '</td><td>';
     print $website;
@@ -817,6 +883,7 @@ if ($action == 'editmeta' || $action == 'create')
     
     dol_fiche_head();
     
+    print '<!-- Edit Meta -->'."\n";
     print '<table class="border" width="100%">';
     
     if ($action != 'create')
@@ -836,7 +903,7 @@ if ($action == 'editmeta' || $action == 'create')
     if (GETPOST('WEBSITE_DESCRIPTION')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION');
     if (GETPOST('WEBSITE_KEYWORDS'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS');
 
-    print '<tr><td>';
+    print '<tr><td class="titlefieldcreate">';
     print $langs->trans('WEBSITE_PAGENAME');
     print '</td><td>';
     print '<input type="text" class="flat" size="96" name="WEBSITE_PAGENAME" value="'.$pageurl.'">';
@@ -871,11 +938,13 @@ if ($action == 'editmeta' || $action == 'create')
 
 if ($action == 'editmedia')
 {
+    print '<!-- Edit Media -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 }
 
 if ($action == 'editmenu')
 {
+    print '<!-- Edit Menu -->'."\n";
     print '<div class="center">'.$langs->trans("FeatureNotYetAvailable").'</center>';
 }
 
@@ -895,10 +964,10 @@ if ($action == 'editcontent')
     
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor=new DolEditor('PAGE_CONTENT',$contentforedit,'',500,'Full','',true,true,true,5,60);
-    $doleditor->Create();
+    $doleditor->Create(0, '', false);
 }
 
-print '</form>';
+print '</div></form>';
 
 
 

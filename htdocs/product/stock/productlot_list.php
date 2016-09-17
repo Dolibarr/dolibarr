@@ -81,11 +81,11 @@ if ($user->societe_id > 0)
 }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('productbatchlist'));
+$hookmanager->initHooks(array('product_lotlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('productbatch');
+$extralabels = $extrafields->fetch_name_optionals_label('product_lot');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // List of fields to search into when doing a "search in all"
@@ -224,7 +224,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ".MAIN_DB_PREFIX."product_lot as t";
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields as ef on (u.rowid = ef.fk_object)";
+if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.rowid = t.fk_product";
 //$sql.= " WHERE u.entity IN (".getEntity('mytable',1).")";
@@ -436,7 +436,8 @@ if ($resql)
     print '</td>';
 	print '</tr>'."\n";
         
-    
+	$productlot = new Productlot($db);
+	
 	$i=0;
 	$var=true;
 	$totalarray=array();
@@ -447,6 +448,9 @@ if ($resql)
         {
             $var = !$var;
             
+            $productlot->id = $obj->rowid;
+            $productlot->batch = $obj->batch;
+            
             // You can use here results
             print '<tr '.$bc[$var].'>';
             if (! empty($arrayfields['t.entity']['checked'])) 
@@ -456,7 +460,7 @@ if ($resql)
             }
             if (! empty($arrayfields['t.batch']['checked'])) 
             {
-                print '<td>'.$obj->batch.'</td>';
+                print '<td>'.$productlot->getNomUrl().'</td>';
     		    if (! $i) $totalarray['nbfield']++;
             }
             if (! empty($arrayfields['t.fk_product']['checked'])) 

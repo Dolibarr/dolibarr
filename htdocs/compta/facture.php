@@ -66,7 +66,6 @@ if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
-$sall = trim(GETPOST('sall'));
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 $id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
@@ -255,7 +254,7 @@ if (empty($reshook))
 	else if ($action == 'set_thirdparty' && $user->rights->facture->creer)
 	{
 		$object->fetch($id);
-		$object->setValueFrom('fk_soc', $socid);
+		$object->setValueFrom('fk_soc', $socid, '', null, 'int', '', $user, 'BILL_MODIFY');
 
 		header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id);
 		exit();
@@ -1961,7 +1960,7 @@ if ($action == 'create')
 			if (empty($socid))
 				$soc = $objectsrc->thirdparty;
 
-			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0));
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
             $fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
@@ -1990,7 +1989,7 @@ if ($action == 'create')
 
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
-
+    
 	if(!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();
 
 	if (! empty($conf->use_javascript_ajax))
@@ -3078,10 +3077,10 @@ else if ($id > 0 || ! empty($ref))
 		if ($action == 'editinvoicedate') {
 			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date, 'invoicedate');
 		} else {
-			print dol_print_date($object->date, 'daytext');
+			print dol_print_date($object->date, 'day');
 		}
 	} else {
-		print dol_print_date($object->date, 'daytext');
+		print dol_print_date($object->date, 'day');
 	}
 	print '</td>';
 
@@ -3419,7 +3418,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($action == 'editdate_pointoftax') {
 			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_pointoftax, 'date_pointoftax');
 		} else {
-			print dol_print_date($object->date_pointoftax, 'daytext');
+			print dol_print_date($object->date_pointoftax, 'day');
 		}
 		print '</td></tr>';
 	}
@@ -3459,7 +3458,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($action == 'editpaymentterm') {
 			$form->form_date($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->date_lim_reglement, 'paymentterm');
 		} else {
-			print dol_print_date($object->date_lim_reglement, 'daytext');
+			print dol_print_date($object->date_lim_reglement, 'day');
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}
