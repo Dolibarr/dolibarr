@@ -1780,7 +1780,7 @@ img.toolbarbutton {
 }
 
 /* hide the toggler-button when the pane is 'slid open' */
-.ui-layout-resizer-sliding  .ui-layout-toggler {
+.ui-layout-resizer-sliding .ui-layout-toggler {
     display: none;
 }
 
@@ -2007,7 +2007,9 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divButAction { margin-bottom: 1.4em; }
+div.divButAction {
+	margin-bottom: 1.4em;
+}
 
 span.butAction, span.butActionDelete {
 	cursor: pointer;
@@ -3321,6 +3323,7 @@ td.hidden {
 }
 .websitetools {
 	float: right;
+	height: 28px;
 }
 .websiteinputurl {
     display: inline-block;

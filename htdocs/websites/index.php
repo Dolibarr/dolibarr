@@ -222,35 +222,48 @@ if ($action == 'delete')
 // Update css
 if ($action == 'updatecss')
 {
-    $db->begin();
+    //$db->begin();
 
     $res = $object->fetch(0, $website);
+
     /*
     $res = $object->update($user);
     if ($res > 0)
     {
         $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         $action='';
     }
     else
     {
+        $error++;
        $db->rollback();
     }*/
     
-    $csscontent ='<?php'."\n";
+    $csscontent = '<!-- START DOLIBARR-WEBSITE-ADDED-HEADER -->'."\n";
+    $csscontent.= '<?php '."\n";
     $csscontent.= "header('Content-type: text/css');\n";
     $csscontent.= "?>"."\n";
+    $csscontent.= '<!-- END -->'."\n";
     $csscontent.= GETPOST('WEBSITE_CSS_INLINE');
+    
+    dol_syslog("Save file css into ".$filecss);
     
     dol_mkdir($pathofwebsite);
     $result = file_put_contents($filecss, $csscontent);
     if (! empty($conf->global->MAIN_UMASK))
         @chmod($filecss, octdec($conf->global->MAIN_UMASK));
-
-    if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
-    else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
         
+    if (! $result)
+    {
+        $error++;
+        setEventMessages('Failed to write file '.$filecss, null, 'errors');
+    }
+        
+    if (! $error)
+    {
+        setEventMessages($langs->trans("Saved"), null, 'mesgs');
+    }
+    
     $action='preview';
 }
 
@@ -432,7 +445,7 @@ if ($action == 'updatecontent')
         /* $objectpage->content = preg_replace('/<base\s+href=[\'"][^\'"]+[\'"]\s/?>/s', '', $objectpage->content); */
         
         $res = $objectpage->update($user);
-        if (! $res > 0)
+        if ($res < 0)
         {
             $error++;
             setEventMessages($objectpage->error, $objectpage->errors, 'errors');
@@ -487,7 +500,7 @@ if ($action == 'updatecontent')
     	    dol_delete_file($filetpl);
 
             $tplcontent ='';
-            $tplcontent.= '<?php require "./master.inc.php"; ?>'."\n";
+            $tplcontent.= "<?php if (! defined('USEDOLIBARRSERVER')) require './master.inc.php'; ?>"."\n";
     	    $tplcontent.= '<html>'."\n";
     	    $tplcontent.= '<header>'."\n";
     	    $tplcontent.= '<meta http-equiv="content-type" content="text/html; charset=utf-8" />'."\n";
@@ -840,7 +853,9 @@ if ($action == 'editcss')
     print '<br>';
 
     $csscontent = @file_get_contents($filecss);
-        
+    // Clean php css file to get only css part
+    $csscontent = preg_replace('/<!-- START DOLIBARR.*END -->/s', '', $csscontent); 
+    
     dol_fiche_head();
 
     print '<!-- Edit CSS -->'."\n";
@@ -967,7 +982,7 @@ if ($action == 'editcontent')
     $doleditor->Create(0, '', false);
 }
 
-print '</div></form>';
+print "</div>\n</form>\n";
 
 
 

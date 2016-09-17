@@ -32,7 +32,7 @@ if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK',1);
 if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL',1);
 if (! defined('NOLOGIN'))         define('NOLOGIN',1);          // File must be accessed by logon page so without login
-//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);
+//if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU',1);  // We need top menu content
 if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
@@ -580,7 +580,7 @@ div.myavailability {
 	margin-top: 25px !important;
 }
 
-/* for future usage (when left menu has been removed) */
+/* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 .table-responsive {
     width: calc(100% - 330px);
     margin-bottom: 15px;
@@ -615,7 +615,7 @@ div.myavailability {
 .maxwidth500 { max-width: 500px; }
 .minheight20 { min-height: 20px; }
 .minheight40 { min-height: 40px; }
-.titlefield { width: 30%; }
+.titlefield { width: 25%; }
 .titlefieldcreate { width: 20%; }
 
 /* Force values for small screen */
@@ -849,7 +849,7 @@ div.ficheaddleft {
 	<?php if ($conf->browser->layout != 'phone')   { print "padding-".$left.": 16px;\n"; }
 	else print "margin-top: 10px;\n"; ?>
 }
-/* Force values for small screen */
+/* Force values on one colum for small screen */
 @media only screen and (max-width: 900px)
 {
     div.fiche {
@@ -1167,7 +1167,7 @@ div.mainmenu {
 
 div.mainmenu.home{
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/home.png',1) ?>);
-	background-position-x: middle;
+	background-position-x: center;
 }
 
 div.mainmenu.accountancy {
@@ -1281,7 +1281,7 @@ foreach($mainmenuusedarray as $val)
 		$url=dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.$generic.".png",1);
 		$found=1;
 		if ($generic < 4) $generic++;
-		print "/* A mainmenu entry but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+		print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
 	}
 	if ($found)
 	{
@@ -1777,7 +1777,7 @@ img.toolbarbutton {
 }
 
 /* hide the toggler-button when the pane is 'slid open' */
-.ui-layout-resizer-sliding  ui-layout-toggler {
+.ui-layout-resizer-sliding .ui-layout-toggler {
     display: none;
 }
 
@@ -2016,8 +2016,8 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divButAction { 
-	margin-bottom: 1.4em; 
+div.divButAction {
+	margin-bottom: 1.4em;
 	vertical-align: top;
 }
 
@@ -3216,7 +3216,18 @@ td.hidden {
 }
 .websitetools {
 	float: right;
-	padding-top: 2px;
+	height: 28px;
+}
+.websiteinputurl {
+    display: inline-block;
+    vertical-align: top;
+}
+.websiteiframenoborder {
+	border: 0px;
+}
+a.websitebuttonsitepreview img {
+	width: 26px;
+	display: inline-block;
 }
 .websiteiframenoborder {
 	border: 0px;
