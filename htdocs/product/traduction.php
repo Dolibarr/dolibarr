@@ -246,6 +246,9 @@ else
     
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
     
+    print '<div class="underbanner clearboth"></div>';
+    
+    
     $cnt_trans = 0;
 	if (! empty($object->multilangs))
 	{
@@ -253,8 +256,8 @@ else
 		{
 			$cnt_trans++;
 			$s=picto_from_langcode($key);
-			print "<br>".($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '')."</a><br>";
 			print '<table class="border" width="100%">';
+			print '<tr class="liste_titre"><td colspan="2">'.($s?$s.' ':'')." <b>".$langs->trans('Language_'.$key).":</b> ".'<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&langtodelete='.$key.'">'.img_delete('', '').'</a></td></tr>';
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td>'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (! empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION))

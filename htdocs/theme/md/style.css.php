@@ -2635,6 +2635,9 @@ tr.liste_titre_topborder td {
 	text-shadow: none !important;
 	color: rgb(<?php echo $colortexttitle; ?>);
 }
+.liste_titre td a.notasortlink {
+	color: rgb(<?php echo $colortextlink; ?>);
+}
 div.liste_titre {
 	padding-left: 3px;
 }

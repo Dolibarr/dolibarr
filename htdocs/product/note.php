@@ -104,7 +104,9 @@ if ($id > 0 || ! empty($ref))
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
-	$cssclass='titlefield';
+    $cssclass='titlefield';
+    if ($action == 'editnote') $cssclass='titlefieldcreate';
+    if ($action == 'editnote_private') $cssclass='titlefieldcreate';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 

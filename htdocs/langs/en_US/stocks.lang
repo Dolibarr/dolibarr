@@ -135,3 +135,4 @@ OpenInternal=Open for internal actions
 OpenShipping=Open for shippings
 OpenDispatch=Open for dispatch
 UseDispatchStatus=Use dispatch status (aprouve/refuse)
+OptionMULTIPRICESIsOn=Option "several prices per segment" is on. It means a product has several selling price so value for sell can't be calculated

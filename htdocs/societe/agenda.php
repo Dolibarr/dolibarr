@@ -116,7 +116,9 @@ if ($socid)
 
 	print '<br>';
  
-	$object->info($socid);
+    print '<div class="underbanner clearboth"></div>';
+
+    $object->info($socid);
 	print dol_print_object_info($object, 1);
 	
 	print '</div>';
