@@ -49,6 +49,8 @@ $id=GETPOST("id","int");
 $ribid=GETPOST("ribid","int");
 $action=GETPOST("action");
 
+$account = new CompanyBankAccount($db);
+
 
 /*
  *	Actions
@@ -57,9 +59,6 @@ $action=GETPOST("action");
 if ($action == 'update' && ! $_POST["cancel"])
 {
 	// Modification
-	$account = new CompanyBankAccount($db);
-
-
 	if (! GETPOST('label'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
@@ -144,21 +143,6 @@ if ($action == 'add' && ! $_POST["cancel"])
 		$action='create';
 		$error++;
 	}
-	if ($account->needIBAN() == 1)
-	{
-		if (! GETPOST('iban'))
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
-			$action='create';
-			$error++;
-		}
-		if (! GETPOST('bic'))
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
-			$action='create';
-			$error++;
-		}
-	}
 
 	if (! $error)
 	{
@@ -182,18 +166,38 @@ if ($action == 'add' && ! $_POST["cancel"])
 		$account->owner_address   = GETPOST('owner_address','alpha');
 		$account->frstrecur       = GETPOST('frstrecur');
 
-	    $result = $account->update($user);	// TODO Use create and include update into create method
-	    if (! $result)
-	    {
-		    setEventMessages($account->error, $account->errors, 'errors');
-	        $_GET["action"]='create';     // Force chargement page création
-	    }
-	    else
-	    {
-	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
-	        header('Location: '.$url);
-	        exit;
-	    }
+		// This test can be done only once properties were set
+		if ($account->needIBAN() == 1)
+		{
+		    if (! GETPOST('iban'))
+		    {
+		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
+		        $action='create';
+		        $error++;
+		    }
+		    if (! GETPOST('bic'))
+		    {
+		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
+		        $action='create';
+		        $error++;
+		    }
+		}
+		
+		if (! $error)
+		{
+    	    $result = $account->update($user);	// TODO Use create and include update into create method
+    	    if (! $result)
+    	    {
+    		    setEventMessages($account->error, $account->errors, 'errors');
+    	        $_GET["action"]='create';     // Force chargement page création
+    	    }
+    	    else
+    	    {
+    	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
+    	        header('Location: '.$url);
+    	        exit;
+    	    }
+		}
 	}
 }
 
@@ -248,8 +252,6 @@ llxHeader();
 
 $head=societe_prepare_head2($object);
 
-
-$account = new CompanyBankAccount($db);
 if (! $id)
     $account->fetch(0,$object->id);
 else
@@ -382,6 +384,7 @@ if ($socid && $action != 'edit' && $action != "create")
         {
 			print '<td>RUM</td>';
 			print '<td>'.$langs->trans("WithdrawMode").'</td>';
+			print '<td></td>';
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
@@ -408,6 +411,12 @@ if ($socid && $action != 'edit' && $action != "create")
 
 				// FRSTRECUR
 				print '<td>'.$rib->frstrecur.'</td>';
+
+        	    include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
+        	    $modellist=ModeleBankAccountDoc::liste_modeles($db);
+        	    print '<td>';
+                //var_dump($modellist);
+        	    print '</td>';     // TODO Add link to generate doc
             }
 
             // Default
