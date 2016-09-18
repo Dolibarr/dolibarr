@@ -1452,7 +1452,7 @@ else
             {
                 $total = 0;
 
-                print '<tr class="liste_titre">';
+                print '<tr class="liste_titre'.($cursorline?' liste_titre_add':'').'">';
                 print '<td>'.$langs->trans("ServiceNb",$cursorline).'</td>';
                 print '<td width="50" align="center">'.$langs->trans("VAT").'</td>';
                 print '<td width="50" align="right">'.$langs->trans("PriceUHT").'</td>';
