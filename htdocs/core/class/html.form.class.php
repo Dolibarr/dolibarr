@@ -3540,30 +3540,33 @@ class Form
      *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
      *    @param	int		$maxlength			Max length
      *    @param	int		$forcefocus			Force focus on field (works with javascript only)
-     *    @return	void
+     *    @param    int     $nooutput           No print is done. String is returned.
+     *    @return	string                      Return html content
      */
-    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20, $forcefocus=0)
+    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20, $forcefocus=0, $nooutput=0)
     {
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+        $out='';
+        
         $formproject=new FormProjets($this->db);
 
         $langs->load("project");
         if ($htmlname != "none")
         {
-            print "\n";
-            print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="classin">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            $out.="\n";
+            $out.='<form method="post" action="'.$page.'">';
+            $out.='<input type="hidden" name="action" value="classin">';
+            $out.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $out.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            $out.='<tr><td>';
+            $out.=$formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
+            $out.='</td>';
+            $out.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            $out.='</tr></table></form>';
         }
         else
         {
@@ -3572,13 +3575,20 @@ class Form
                 $projet = new Project($this->db);
                 $projet->fetch($selected);
                 //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-                print $projet->getNomUrl(0,'',1);
+                $out.=$projet->getNomUrl(0,'',1);
             }
             else
             {
-                print "&nbsp;";
+                $out.="&nbsp;";
             }
         }
+        
+        if (empty($nooutput)) 
+        {
+            print $out;
+            return '';
+        }
+        return $out;
     }
 
     /**
@@ -5738,7 +5748,7 @@ class Form
             }
 
         }
-        else dol_print_error('','Call of showphoto with wrong parameters');
+        else dol_print_error('','Call of showphoto with wrong parameters modulepart='.$modulepart);
 
         return $ret;
     }

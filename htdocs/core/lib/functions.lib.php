@@ -920,8 +920,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	$modulepart='unknown';
 	if ($object->element == 'societe') $modulepart='societe';
 	if ($object->element == 'contact') $modulepart='contact';
-	if ($object->element == 'member') $modulepart='memberphoto';
-	if ($object->element == 'user') $modulepart='userphoto';
+	if ($object->element == 'member')  $modulepart='memberphoto';
+	if ($object->element == 'user')    $modulepart='userphoto';
 	if ($object->element == 'product') $modulepart='product';
 
 	print '<div class="arearef heightref valignmiddle" width="100%">';
@@ -947,7 +947,18 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else 
 	{
-        if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos).'</div>';
+        if ($showimage) 
+        {
+            $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
+            if ($modulepart != 'unknown') $morehtmlleft.=$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
+            else 
+            {
+                $width=14; $cssclass='photorefcenter';
+				$nophoto=img_picto('', 'object_'.$object->picto, '', false, 1);
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+            }
+            $morehtmlleft.='</div>';
+        }
 	}
 	if ($showbarcode) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$form->showbarcode($object).'</div>';
 	if ($object->element == 'societe' && ! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
@@ -970,7 +981,9 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         }
 	}
 	else {
-		$morehtmlright.=$object->getLibStatut(5);
+	    $tmptxt=$object->getLibStatut(6);
+	    if (empty($tmptxt)) $tmptxt=$object->getLibStatut(5); 
+		$morehtmlright.=$tmptxt;
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty
 	if (! empty($object->label))      $morehtmlref.='<div class="refidno">'.$object->label.'</div>';           // For product
@@ -1793,10 +1806,11 @@ function dol_user_country()
  *  @param  int		$mode       thirdparty|contact|member|other
  *  @param  int		$id         Id of object
  *  @param	int		$noprint	No output. Result is the function return
+ *  @param  string  $charfornl  Char to use instead of nl2br. '' means we use a standad nl2br.  
  *  @return string|void			Nothing if noprint is 0, formatted address if noprint is 1
  *  @see dol_format_address
  */
-function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
+function dol_print_address($address, $htmlid, $mode, $id, $noprint=0, $charfornl='')
 {
 	global $conf, $user, $langs, $hookmanager;
 
@@ -1811,7 +1825,9 @@ function dol_print_address($address, $htmlid, $mode, $id, $noprint=0)
         }
         if (empty($reshook))
         {
-            $out.=nl2br($address);
+            if (empty($charfornl)) $out.=nl2br($address);
+            else $out.=preg_replace('/[\r\n]+/', $charfornl, $address);
+            
             $showgmap=$showomap=0;
 
             // TODO Add a hook here

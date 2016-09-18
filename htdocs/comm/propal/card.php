@@ -1660,23 +1660,86 @@ if ($action == 'create')
 	// Print form confirm
 	print $formconfirm;
 
-	print '<table class="border" width="100%">';
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
-	// Ref
+	
+	$morehtmlref='<div class="refidno">';
+	
+	// Ref customer
+	$morehtmlref.=$langs->trans('RefCustomer').' ';
+	if ($action != 'refclient' && ! empty($object->brouillon))
+	    $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a> : ';
+    if ($user->rights->propal->creer && $action == 'refclient') {
+        $morehtmlref.='<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
+        $morehtmlref.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+        $morehtmlref.='<input type="hidden" name="action" value="set_ref_client">';
+        $morehtmlref.='<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
+        $morehtmlref.=' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+        $morehtmlref.='</form>';
+    } else {
+        $morehtmlref.=$object->ref_client;
+    }
+	
+    // Thirdparty
+    $morehtmlref.='<br>'.$langs->trans('Company') . ' : ' . $soc->getNomUrl(1);
+
+    // Project
+    if (! empty($conf->projet->enabled))
+    {
+        $langs->load("projects");
+        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        if ($user->rights->propal->creer)
+        {
+            if ($action != 'classify')
+                $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+            if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
+        } else {
+            if (! empty($object->fk_project)) {
+                $proj = new Project($db);
+                $proj->fetch($object->fk_project);
+                $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+                $morehtmlref.=$proj->ref;
+                $morehtmlref.='</a>';
+            } else {
+                $morehtmlref.='';
+            }
+        }
+    }
+    
+    $morehtmlref.='</div>';
+    
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	
+    print '<div class="underbanner clearboth"></div>';
+    
+	print '<table class="border" width="100%">';
+    
+    // Ref
+    /*
 	print '<tr><td>' . $langs->trans('Ref') . '</td><td colspan="5">';
 	print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref', '');
 	print '</td></tr>';
+	*/
 
 	// Ref customer
+	/*
 	print '<tr><td>';
 	print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	print $langs->trans('RefCustomer') . '</td>';
 	if ($action != 'refclient' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
-	print '</td>';
-	print '</tr></table>';
+	print '</td></tr></table>';
 	print '</td><td colspan="5">';
 	if ($user->rights->propal->creer && $action == 'refclient') {
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
@@ -1690,10 +1753,12 @@ if ($action == 'create')
 	}
 	print '</td>';
 	print '</tr>';
-
+    */
+	
 	// Company
+	/*
 	print '<tr><td>' . $langs->trans('Company') . '</td><td colspan="5">' . $soc->getNomUrl(1) . '</td>';
-	print '</tr>';
+	print '</tr>';*/
 
 	// Lin for thirdparty discounts
 	print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="5">';
@@ -1916,6 +1981,7 @@ if ($action == 'create')
 	}
 
 	// Project
+	/*
 	if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
@@ -1949,7 +2015,7 @@ if ($action == 'create')
 			}
 		}
 		print '</tr>';
-	}
+	}*/
 
 	if ($soc->outstanding_limit)
 	{
@@ -2069,7 +2135,7 @@ if ($action == 'create')
 	}
 
 	// Statut
-	print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
+	//print '<tr><td height="10">' . $langs->trans('Status') . '</td><td align="left" colspan="2">' . $object->getLibStatut(4) . '</td></tr>';
 
 	print '</table><br>';
 

@@ -49,7 +49,8 @@ class Propal extends CommonObject
     public $table_element_line='propaldet';
     public $fk_element='fk_propal';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto='propal';
+    
     /**
      * {@inheritdoc}
      */
@@ -2890,19 +2891,19 @@ class Propal extends CommonObject
     /**
      *    	Return label of status of proposal (draft, validated, ...)
      *
-     *    	@param      int			$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *    	@param      int			$mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *    	@return     string		Label
      */
     function getLibStatut($mode=0)
     {
-        return $this->LibStatut($this->statut,$mode);
+        return $this->LibStatut($this->statut, $mode);
     }
 
     /**
      *    	Return label of a status (draft, validated, ...)
      *
      *    	@param      int			$statut		id statut
-     *    	@param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
      *    	@return     string		Label
      */
      function LibStatut($statut,$mode=1)
@@ -2921,8 +2922,9 @@ class Propal extends CommonObject
 		if ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
 		if ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
 		if ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
-		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut_short[$statut],$statuttrans);
-    }
+		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		if ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+     }
 
 
     /**
@@ -3232,11 +3234,8 @@ class Propal extends CommonObject
         }
         $linkend='</a>';
 
-        $picto='propal';
-
-
         if ($withpicto)
-            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+            $result.=($link.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
         $result.=$link.$this->ref.$linkend;

@@ -913,7 +913,7 @@ div.statusref {
 	margin-bottom: 10px;
 	clear: both;
 }
-img.photoref {
+img.photoref, div.photoref {
 	border: 1px solid #CCC;
 	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -923,6 +923,12 @@ img.photoref {
 	width: 80px;
     object-fit: contain;
 }
+div.photoref {
+	display:table-cell;
+	vertical-align:middle;
+	text-align:center;
+}
+
 img.photorefnoborder {
     padding: 2px;
 	height: 48px;
@@ -2444,6 +2450,7 @@ div.refidno  {
 	font-weight: normal;
   	color: #444;
   	font-size: <?php print $fontsize ?>px;
+  	line-height: 21px;
 }
 
 div.pagination {

@@ -433,7 +433,7 @@ abstract class CommonObject
 
 
     /**
-     * 	Return full address of contact
+     * 	Return full address for banner
      *
      * 	@param		string		$htmlkey            HTML id to make banner content unique
      *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
@@ -476,7 +476,7 @@ abstract class CommonObject
 				$out.=img_picto($langs->trans("Address"), 'object_address.png');
 				$out.='</a> ';
 			}
-			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1); $outdone++;
+			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
 			$outdone++;
 		}
 

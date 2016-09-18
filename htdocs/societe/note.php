@@ -73,10 +73,6 @@ if ($id > 0)
 
     dol_fiche_head($head, 'note', $langs->trans("ThirdParty"),0,'company');
 
-
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 
     $cssclass='titlefield';
@@ -119,7 +115,6 @@ if ($id > 0)
 
     //print '<div class="underbanner clearboth"></div>';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
 
     dol_fiche_end();
 }

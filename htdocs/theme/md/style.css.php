@@ -2340,6 +2340,7 @@ div.refidno  {
 	font-weight: normal;
   	color: #444;
   	font-size: <?php print $fontsize ?>px;
+  	line-height: 21px;
 }
 
 div.pagination {
