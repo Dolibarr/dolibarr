@@ -383,16 +383,6 @@ if ($resql)
 
 	$moreforfilter='';
 	
-	// If the user can view thirdparties other than his'
-	if ($user->rights->societe->client->voir || $socid)
-	{
-		$langs->load("commercial");
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
-		$moreforfilter.='</div>';
-	}
-
 	// If the user can view user other than himself
 	$moreforfilter.='<div class="divsearchfield">';
 	$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
@@ -411,6 +401,16 @@ if ($resql)
         $moreforfilter.='</div>';
 	}
 	
+	// If the user can view thirdparties other than his'
+	if ($user->rights->societe->client->voir || $socid)
+	{
+		$langs->load("commercial");
+		$moreforfilter.='<div class="divsearchfield">';
+		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+		$moreforfilter.=$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, 1, 'maxwidth300');
+		$moreforfilter.='</div>';
+	}
+
 	if (! empty($moreforfilter))
 	{
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -586,7 +586,9 @@ if ($resql)
 
     print '</tr>'."\n";
 
-    $i = 0;
+    $i=0;
+	$var=true;
+	$totalarray=array();
     while ($i < min($num,$limit))
     {
     	$obj = $db->fetch_object($resql);
@@ -612,6 +614,7 @@ if ($resql)
         		print $projectstatic->getNomUrl(1);
         		if ($projectstatic->hasDelay()) print img_warning($langs->trans('Late'));
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Title
         	if (! empty($arrayfields['p.title']['checked']))
@@ -619,6 +622,7 @@ if ($resql)
             	print '<td>';
         		print dol_trunc($obj->title,80);
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Company
         	if (! empty($arrayfields['s.nom']['checked']))
@@ -635,6 +639,7 @@ if ($resql)
         			print '&nbsp;';
         		}
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Sales Representatives
         	if (! empty($arrayfields['commercial']['checked']))
@@ -676,6 +681,7 @@ if ($resql)
         			print '&nbsp';
         		}
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Date start
         	if (! empty($arrayfields['p.dateo']['checked']))
@@ -683,13 +689,15 @@ if ($resql)
 				print '<td class="center">';
 	    		print dol_print_date($db->jdate($obj->date_start),'day');
 	    		print '</td>';
-			}
+    		    if (! $i) $totalarray['nbfield']++;
+        	}
     		// Date end
         	if (! empty($arrayfields['p.datee']['checked']))
         	{
     			print '<td class="center">';
         		print dol_print_date($db->jdate($obj->date_end),'day');
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Visibility
         	if (! empty($arrayfields['p.public']['checked']))
@@ -698,31 +706,46 @@ if ($resql)
         		if ($obj->public) print $langs->trans('SharedProject');
         		else print $langs->trans('PrivateProject');
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Amount
         	if (! empty($arrayfields['p.opp_amount']['checked']))
         	{
     			print '<td align="right">';
-    			if ($obj->opp_status_code) print price($obj->opp_amount, 1, '', 1, -1, -1, '');
+    			if ($obj->opp_status_code) 
+    			{
+    			    print price($obj->opp_amount, 1, '', 1, -1, -1, '');
+    			    $totalarray['totalopp'] += $obj->opp_amount;
+    			}
     			print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
+    			if (! $i) $totalarray['totaloppfield']=$totalarray['nbfield'];
         	}
         	if (! empty($arrayfields['p.fk_opp_status']['checked']))
         	{
                 print '<td align="middle">';
     			if ($obj->opp_status_code) print $langs->trans("OppStatusShort".$obj->opp_status_code);
     			print '</td>';
-    		}
+    		    if (! $i) $totalarray['nbfield']++;
+        	}
     	    if (! empty($arrayfields['p.opp_percent']['checked']))
         	{
     			print '<td align="right">';
     			if ($obj->opp_percent) print price($obj->opp_percent, 1, '', 1, 0).'%';
     			print '</td>';
-    	    }
+    		    if (! $i) $totalarray['nbfield']++;
+        	}
     	    if (! empty($arrayfields['p.budget_amount']['checked']))
         	{
     			print '<td align="right">';
-    			if ($obj->budget_amount != '') print price($obj->budget_amount, 1, '', 1, -1, -1);
+    			if ($obj->budget_amount != '') 
+    			{
+    			    print price($obj->budget_amount, 1, '', 1, -1, -1);
+    			    $totalarray['totalbudget'] += $obj->budget_amount;
+    			}
     			print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
+    			if (! $i) $totalarray['totalbudgetfield']=$totalarray['nbfield'];
         	}
     		// Extra fields
     		if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -740,6 +763,7 @@ if ($resql)
     		            print '</td>';
     		        }
     		    }
+    		    if (! $i) $totalarray['nbfield']++;
     		}
     		// Fields from hook
     		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
@@ -751,6 +775,7 @@ if ($resql)
     		    print '<td align="center">';
     		    print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
     		    print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
     		}
     		// Date modification
     		if (! empty($arrayfields['p.tms']['checked']))
@@ -758,16 +783,26 @@ if ($resql)
     		    print '<td align="center">';
     		    print dol_print_date($db->jdate($obj->date_update), 'dayhour');
     		    print '</td>';
+    			if (! $i) $totalarray['nbfield']++;
     		}
     		// Status
     		if (! empty($arrayfields['p.fk_statut']['checked']))
     		{
         		$projectstatic->statut = $obj->fk_statut;
         		print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
+    			if (! $i) $totalarray['nbfield']++;
     		}
-    		// Action column
-    		print '<td></td>';
-
+            // Action column
+            print '<td class="nowrap" align="center">';
+            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+            {
+                $selected=0;
+        		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+        		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+            }
+            print '</td>';
+    		if (! $i) $totalarray['nbfield']++;
+    		
     		print "</tr>\n";
 
     	}
@@ -775,6 +810,27 @@ if ($resql)
     	$i++;
 
     }
+    
+    // Show total line
+    if (isset($totalarray['totaloppfield']) || isset($totalarray['totalbudgetfield']))
+    {
+        print '<tr class="liste_total">';
+        $i=0;
+        while ($i < $totalarray['nbfield'])
+        {
+            $i++;
+            if ($i == 1)
+            {
+                if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+                else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            }
+            elseif ($totalarray['totaloppfield'] == $i) print '<td align="right">'.price($totalarray['totalopp']).'</td>';
+            elseif ($totalarray['totalbudgetfield'] == $i) print '<td align="right">'.price($totalarray['totalbudget']).'</td>';
+            else print '<td></td>';
+        }
+        print '</tr>';
+    }
+    
     $db->free($resql);
 
 	$parameters=array('sql' => $sql);

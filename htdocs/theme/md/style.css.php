@@ -2638,6 +2638,9 @@ tr.liste_titre_topborder td {
 .liste_titre td a.notasortlink {
 	color: rgb(<?php echo $colortextlink; ?>);
 }
+.liste_titre td a.notasortlink:hover {
+	background: transparent;
+}
 div.liste_titre {
 	padding-left: 3px;
 }
