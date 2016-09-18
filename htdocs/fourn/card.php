@@ -132,7 +132,9 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	
+	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
         
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
