@@ -78,7 +78,11 @@ if ($id > 0)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+
+    $cssclass='titlefield';
+    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+    
     print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
@@ -86,12 +90,12 @@ if ($id > 0)
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
-        print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
+        print '<tr><td class="'.$cssclass.'">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
 
     if ($object->client)
     {
-        print '<tr><td class="titlefield">';
+        print '<tr><td class="'.$cssclass.'">';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $object->code_client;
         if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -100,7 +104,7 @@ if ($id > 0)
 
     if ($object->fournisseur)
     {
-        print '<tr><td class="titlefield">';
+        print '<tr><td class="'.$cssclass.'">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $object->code_fournisseur;
         if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -111,10 +115,9 @@ if ($id > 0)
 
     print '</div>';
     
-    print '<br>';
+    //print '<br>';
 
-    //$colwidth='25';
-    $cssclass='titlefield';
+    //print '<div class="underbanner clearboth"></div>';
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 

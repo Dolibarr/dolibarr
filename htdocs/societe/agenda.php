@@ -113,10 +113,9 @@ if ($socid)
 
 	print '</table>';
 
-
-	print '<br>';
+	//print '<br>';
  
-    print '<div class="underbanner clearboth"></div>';
+    //print '<div class="underbanner clearboth"></div>';
 
     $object->info($socid);
 	print dol_print_object_info($object, 1);
