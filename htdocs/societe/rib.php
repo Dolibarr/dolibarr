@@ -384,10 +384,13 @@ if ($socid && $action != 'edit' && $action != "create")
         {
 			print '<td>RUM</td>';
 			print '<td>'.$langs->trans("WithdrawMode").'</td>';
-			print '<td></td>';
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+        if (! empty($conf->prelevement->enabled))
+        {
+            print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+        }
 		print "</tr>\n";
 
         foreach ($rib_list as $rib)
@@ -411,12 +414,6 @@ if ($socid && $action != 'edit' && $action != "create")
 
 				// FRSTRECUR
 				print '<td>'.$rib->frstrecur.'</td>';
-
-        	    include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
-        	    $modellist=ModeleBankAccountDoc::liste_modeles($db);
-        	    print '<td>';
-                //var_dump($modellist);
-        	    print '</td>';     // TODO Add link to generate doc
             }
 
             // Default
@@ -445,6 +442,28 @@ if ($socid && $action != 'edit' && $action != "create")
            		print '</a>';
             }
         	print '</td>';
+        	
+        	if (! empty($conf->prelevement->enabled))
+        	{    	
+            	include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
+            	$modellist=ModeleBankAccountDoc::liste_modeles($db);
+            	print '<td>';
+            	if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
+            	{
+            	    $arraykeys=array_keys($modellist);
+            	    $modelselected=$arraykeys[0];
+            	}
+            	$out.= $form->selectarray('model', $modellist, $modelselected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+            	$out.= ajax_combobox('model');
+            	//print $out;
+            	$buttonlabel=$langs->trans("Generate");
+            	$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+            	$genbutton.= ' type="submit" value="'.$buttonlabel.'"';
+                $genbutton.= '>';
+                //print $genbutton;
+            	print '</td>';     // TODO Add link to generate doc
+        	}
+        	
 	        print '</tr>';
         }
 
