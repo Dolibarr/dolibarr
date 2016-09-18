@@ -383,14 +383,6 @@ if ($resql)
 
 	$moreforfilter='';
 	
-	// If the user can view user other than himself
-	$moreforfilter.='<div class="divsearchfield">';
-	$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
-	$includeonly='';
-	if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
-	$moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	$moreforfilter.='</div>';
-
 	// Filter on categories
     if (! empty($conf->categorie->enabled))
     {
@@ -401,6 +393,14 @@ if ($resql)
         $moreforfilter.='</div>';
 	}
 	
+	// If the user can view user other than himself
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('ProjectsWithThisUserAsContact'). ': ';
+	$includeonly='';
+	if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
+	$moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$moreforfilter.='</div>';
+
 	// If the user can view thirdparties other than his'
 	if ($user->rights->societe->client->voir || $socid)
 	{

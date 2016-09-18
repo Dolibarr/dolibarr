@@ -185,6 +185,7 @@ if ($resql)
     }
     $db->free($resql);
 }
+else dol_print_error($db);
 
 
 
@@ -267,10 +268,10 @@ print '<tr class="liste_titre">';
 if (! empty($arrayfields['b.ref']['checked']))            print_liste_field_titre($arrayfields['b.ref']['label'],$_SERVER["PHP_SELF"],'b.ref','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['accountype']['checked']))       print_liste_field_titre($arrayfields['accountype']['label'],$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['b.label']['checked']))          print_liste_field_titre($arrayfields['b.label']['label'],$_SERVER["PHP_SELF"],'b.label','',$param,'',$sortfield,$sortorder);
-if (! empty($arrayfields['b.number']['checked']))          print_liste_field_titre($arrayfields['b.number']['label'],$_SERVER["PHP_SELF"],'b.number','',$param,'',$sortfield,$sortorder);
-print '<td align="center">'.$langs->trans("TransactionsToConciliate").'</td>';
-print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
-print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
+if (! empty($arrayfields['b.number']['checked']))         print_liste_field_titre($arrayfields['b.number']['label'],$_SERVER["PHP_SELF"],'b.number','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titre($arrayfields['toreconcile']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['b.clos']['checked']))           print_liste_field_titre($arrayfields['b.clos']['label'],$_SERVER["PHP_SELF"],'b.clos','',$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['balance']['checked']))          print_liste_field_titre($arrayfields['balance']['label'],$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -367,7 +368,7 @@ if (! empty($arrayfields['b.tms']['checked']))
 // Statut
 if (! empty($arrayfields['b.clos']['checked']))
 {
-    print '<td class="liste_titre">';
+    print '<td class="liste_titre center">';
     $array=array(
         'opened'=>$langs->trans("Opened"),
         'closed'=>$langs->trans("Closed")
