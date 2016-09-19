@@ -245,9 +245,13 @@ if (empty($reshook))
 	}
 
 	// Positionne ref client
-	else if ($action == 'set_ref_client' && $user->rights->propal->creer)
+	else if ($action == 'setref_client' && $user->rights->propal->creer)
 	{
-		$object->set_ref_client($user, $_POST['ref_client']);
+		$result = $object->set_ref_client($user, GETPOST('ref_client'));
+		if ($result < 0)
+		{
+		    setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Set incoterm
@@ -1667,28 +1671,11 @@ if ($action == 'create')
 
 	
 	$morehtmlref='<div class="refidno">';
-	
 	// Ref customer
-	$morehtmlref.=$langs->trans('RefCustomer').' ';
-	if ($action != 'refclient' && ! empty($object->brouillon))
-	{
-	    $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a> ';
-	}
-	$morehtmlref.=' : ';
-    if ($user->rights->propal->creer && $action == 'refclient') {
-        $morehtmlref.='<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
-        $morehtmlref.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-        $morehtmlref.='<input type="hidden" name="action" value="set_ref_client">';
-        $morehtmlref.='<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-        $morehtmlref.=' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-        $morehtmlref.='</form>';
-    } else {
-        $morehtmlref.=$object->ref_client;
-    }
-	
+	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', null, null, '', 1);
     // Thirdparty
-    $morehtmlref.='<br>'.$langs->trans('Company') . ' : ' . $soc->getNomUrl(1);
-
+    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
     // Project
     if (! empty($conf->projet->enabled))
     {
@@ -1721,7 +1708,6 @@ if ($action == 'create')
             }
         }
     }
-    
     $morehtmlref.='</div>';
     
     
@@ -1770,7 +1756,7 @@ if ($action == 'create')
 	print '</tr>';*/
 
 	// Lin for thirdparty discounts
-	print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="5">';
+	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
 	if ($soc->remise_percent)
 		print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
 	else
@@ -1806,7 +1792,7 @@ if ($action == 'create')
 	if ($action != 'editdate' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="5">';
+	print '</td><td>';
 	if (! empty($object->brouillon) && $action == 'editdate') {
 		print '<form name="editdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1832,7 +1818,7 @@ if ($action == 'create')
 	if ($action != 'editecheance' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="5">';
+	print '</td><td>';
 	if (! empty($object->brouillon) && $action == 'editecheance') {
 		print '<form name="editecheance" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1860,7 +1846,7 @@ if ($action == 'create')
 	if ($action != 'editconditions' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="5">';
+	print '</td><td>';
 	if ($action == 'editconditions') {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	} else {
@@ -1873,7 +1859,7 @@ if ($action == 'create')
 	$langs->load('deliveries');
 	print '<tr><td>';
 	print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer, 'datepicker');
-	print '</td><td colspan="5">';
+	print '</td><td>';
 	print $form->editfieldval($langs->trans('DeliveryDate'), 'date_livraison', $object->date_livraison, $object, $user->rights->propal->creer, 'datepicker');
 	print '</td>';
 	print '</tr>';
@@ -1888,7 +1874,7 @@ if ($action == 'create')
 	if ($action != 'editavailability' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="5">';
+	print '</td><td>';
 	if ($action == 'editavailability') {
 		$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'availability_id', 1);
 	} else {
@@ -1907,7 +1893,7 @@ if ($action == 'create')
         if ($action != 'editshippingmethod' && $user->rights->propal->creer)
             print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
         print '</tr></table>';
-        print '</td><td colspan="5">';
+        print '</td><td>';
         if ($action == 'editshippingmethod') {
             $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
         } else {
@@ -1925,7 +1911,7 @@ if ($action == 'create')
 	if ($action != 'editdemandreason' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="5">';
+	print '</td><td>';
 	if ($action == 'editdemandreason') {
 		$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 	} else {
@@ -1943,7 +1929,7 @@ if ($action == 'create')
 	if ($action != 'editmode' && ! empty($object->brouillon))
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
-	print '</td><td colspan="5">';
+	print '</td><td>';
 	if ($action == 'editmode') {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
 	} else {
@@ -1963,7 +1949,7 @@ if ($action == 'create')
 		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="5">';
+		print '</td><td>';
 		if ($action == 'editmulticurrencycode') {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
 		} else {
@@ -1980,7 +1966,7 @@ if ($action == 'create')
 		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="5">';
+		print '</td><td>';
 		if ($action == 'editmulticurrencyrate') {
 			$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 		} else {
@@ -2031,7 +2017,7 @@ if ($action == 'create')
 		// Outstanding Bill
 		print '<tr><td>';
 		print $langs->trans('OutstandingBill');
-		print '</td><td align="right" colspan="5">';
+		print '</td><td align="right">';
 		print price($soc->get_OutstandingBill()) . ' / ';
 		print price($soc->outstanding_limit, 0, $langs, 1, - 1, - 1, $conf->currency);
 		print '</td>';
@@ -2048,7 +2034,7 @@ if ($action == 'create')
 	    if ($action != 'editbankaccount' && $user->rights->propal->creer)
 	        print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'),1).'</a></td>';
 	    print '</tr></table>';
-	    print '</td><td colspan="5">';
+	    print '</td><td>';
 	    if ($action == 'editbankaccount') {
 	        $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
 	    } else {
@@ -2069,7 +2055,7 @@ if ($action == 'create')
         else print '&nbsp;';
         print '</td></tr></table>';
         print '</td>';
-        print '<td colspan="5">';
+        print '<td>';
 		if ($action != 'editincoterm')
 		{
 			print $form->textwithpicto($object->display_incoterms(), $object->libelle_incoterms, 1);
@@ -2095,48 +2081,48 @@ if ($action == 'create')
     print '<table class="border centpercent">';
     
 	// Amount HT
-	print '<tr><td height="10">' . $langs->trans('AmountHT') . '</td>';
+	print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ht, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 	
 	// Amount VAT
-	print '<tr><td height="10">' . $langs->trans('AmountVAT') . '</td>';
+	print '<tr><td>' . $langs->trans('AmountVAT') . '</td>';
 	print '<td class="nowrap">' . price($object->total_tva, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 	
 	// Amount Local Taxes
 	if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0) 	// Localtax1
 	{
-	    print '<tr><td height="10">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+	    print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
 	    print '<td class="nowrap">' . price($object->total_localtax1, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	    print '</tr>';
 	}
 	if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0) 	// Localtax2
 	{
-	    print '<tr><td height="10">' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+	    print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
 	    print '<td class="nowrap">' . price($object->total_localtax2, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	    print '</tr>';
 	}
 	
 	// Amount TTC
-	print '<tr><td height="10">' . $langs->trans('AmountTTC') . '</td>';
+	print '<tr><td>' . $langs->trans('AmountTTC') . '</td>';
 	print '<td class="nowrap">' . price($object->total_ttc, '', $langs, 0, - 1, - 1, $conf->currency) . '</td>';
 	print '</tr>';
 	
 	if (!empty($conf->multicurrency->enabled))
 	{
 	    // Multicurrency Amount HT
-	    print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+	    print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
 	
 	    // Multicurrency Amount VAT
-	    print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+	    print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
 	
 	    // Multicurrency Amount TTC
-	    print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+	    print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 	    print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 	    print '</tr>';
 	}

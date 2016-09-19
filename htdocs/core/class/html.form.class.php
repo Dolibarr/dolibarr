@@ -79,10 +79,11 @@ class Form
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL*
-     * @param   int     $fieldrequired  1 if we want to show field as mandatory using the fieldrequired CSS.
+     * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
+     * @param   int     $notabletag     Do no output table tags
      * @return	string					HTML edit field
      */
-    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0)
+    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0)
     {
         global $conf,$langs;
 
@@ -109,13 +110,17 @@ class Form
         }
         else
 		{
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	        if ($fieldrequired) $ret.='<span class="fieldrequired">';
             $ret.=$langs->trans($text);
 	        if ($fieldrequired) $ret.='</span>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
+	        if (! empty($notabletag)) $ret.=' ';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
+            if ($htmlname && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+	        if (! empty($notabletag)) $ret.=' : ';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
         }
 
         return $ret;
@@ -134,9 +139,10 @@ class Form
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
      * @param	string	$moreparam		More param to add on a href URL
+     * @param   int     $notabletag     Do no output table tags
      * @return  string					HTML edit field
      */
-    function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='')
+    function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0)
     {
         global $conf,$langs,$db;
 
@@ -159,8 +165,8 @@ class Form
                 $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
                 $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
-                $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-                $ret.='<tr><td>';
+                if (empty($notabletag)) $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+                if (empty($notabletag)) $ret.='<tr><td>';
                 if (preg_match('/^(string|email)/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
@@ -202,15 +208,15 @@ class Form
                     $doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), true, true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
                     $ret.=$doleditor->Create(1);
                 }
-                $ret.='</td>';
+                if (empty($notabletag)) $ret.='</td>';
 
-                $ret.='<td align="left">';
+                if (empty($notabletag)) $ret.='<td align="left">';
                	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
                	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
                	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-               	$ret.='</td>';
+               	if (empty($notabletag)) $ret.='</td>';
 
-               	$ret.='</tr></table>'."\n";
+               	if (empty($notabletag)) $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
             else

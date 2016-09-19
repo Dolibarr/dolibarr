@@ -2558,7 +2558,6 @@ class Commande extends CommonOrder
             	if ($result < 0) $error++;
             	// End call triggers
             }
-
             if (! $error)
             {
             	$this->db->commit();

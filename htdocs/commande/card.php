@@ -474,19 +474,26 @@ if (empty($reshook))
 	else if ($action == 'classifyunbilled' && $user->rights->commande->creer)
 	{
 	    $ret=$object->classifyUnBilled();
-
 	    if ($ret < 0) {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
 	// Positionne ref commande client
-	else if ($action == 'set_ref_client' && $user->rights->commande->creer) {
-		$object->set_ref_client($user, GETPOST('ref_client'));
+	else if ($action == 'setref_client' && $user->rights->commande->creer) {
+		$result = $object->set_ref_client($user, GETPOST('ref_client'));
+		if ($result < 0)
+		{
+		    setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	else if ($action == 'setremise' && $user->rights->commande->creer) {
-		$object->set_remise($user, GETPOST('remise'));
+		$result = $object->set_remise($user, GETPOST('remise'));
+		if ($result < 0)
+		{
+		    setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	else if ($action == 'setabsolutediscount' && $user->rights->commande->creer) {
@@ -1917,28 +1924,11 @@ if ($action == 'create' && $user->rights->commande->creer)
 		
 
 		$morehtmlref='<div class="refidno">';
-		
 		// Ref customer
-		$morehtmlref.=$langs->trans('RefCustomer').' ';
-		if ($action != 'refclient' && ! empty($object->brouillon))
-		{
-		    $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a> ';
-		}
-	    $morehtmlref.=' : ';
-	    if ($user->rights->commande->creer && $action == 'refclient') {
-	        $morehtmlref.='<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
-	        $morehtmlref.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-	        $morehtmlref.='<input type="hidden" name="action" value="set_ref_client">';
-	        $morehtmlref.='<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-	        $morehtmlref.=' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-	        $morehtmlref.='</form>';
-	    } else {
-	        $morehtmlref.=$object->ref_client;
-	    }
-	
+		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', 0, 1);
+		$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->commande->creer, 'string', '', null, null, '', 1);
 	    // Thirdparty
-	    $morehtmlref.='<br>'.$langs->trans('Company') . ' : ' . $soc->getNomUrl(1);
-	
+	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	    // Project
 	    if (! empty($conf->projet->enabled))
 	    {
@@ -1971,7 +1961,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	            }
 	        }
 	    }
-	
 	    $morehtmlref.='</div>';
 	
 	
@@ -2286,10 +2275,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$totalVolume=$tmparray['volume'];
 		if ($totalWeight || $totalVolume)
 		{
-    		print '<tr><td>'.$langs->trans("CalculatedWeight").' / '.$langs->trans("CalculatedVolume").'</td>';
+    		print '<tr><td>'.$langs->trans("CalculatedWeight").'</td>';
     		print '<td>';
     		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
-        	print ' / ';
+    		print '</td></tr>';
+    		print '<tr><td>'.$langs->trans("CalculatedVolume").'</td>';
+    		print '<td>';
     		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
     		print '</td></tr>';
 		}
@@ -2376,7 +2367,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '<table class="border centpercent">';
 		
 		// Total HT
-		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
+		print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
 		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
 
 		// Total VAT
@@ -2400,17 +2391,17 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if (!empty($conf->multicurrency->enabled))
 		{
 			// Multicurrency Amount HT
-			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
+			print '<tr><td>' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
 			print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 
 			// Multicurrency Amount VAT
-			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
+			print '<tr><td>' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
 			print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 
 			// Multicurrency Amount TTC
-			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
+			print '<tr><td>' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
 			print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 		}
