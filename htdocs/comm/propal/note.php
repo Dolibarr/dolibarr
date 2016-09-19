@@ -75,15 +75,19 @@ if ($id > 0 || ! empty($ref))
 		$societe = new Societe($db);
 		if ( $societe->fetch($object->socid) )
 		{
-			$head = propal_prepare_head($object);
+		    $head = propal_prepare_head($object);
 			dol_fiche_head($head, 'note', $langs->trans('Proposal'), 0, 'propal');
 
+			$cssclass='titlefield';
+			//if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+			//if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+					
 			print '<table class="border" width="100%">';
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/propal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans('BackToList').'</a>';
 
 			// Ref
-			print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">';
+			print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td><td colspan="3">';
 			print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','');
 			print '</td></tr>';
 
@@ -138,7 +142,7 @@ if ($id > 0 || ! empty($ref))
 
 			print "</table>";
 
-			print '<br>';
+			//print '<br>';
 
 			include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

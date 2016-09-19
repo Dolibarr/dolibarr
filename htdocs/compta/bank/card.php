@@ -646,8 +646,8 @@ else
 		{
 			print '<table class="border" width="100%">';
 
-			print '<tr><td valign="top" class="titlefield">'.$langs->trans("BankName").'</td>';
-			print '<td>'.$account->bank.'</td></tr>';
+			print '<tr class="liste_titre_add"><td valign="top" class="titlefield">'.$langs->trans("BankName").'</td>';
+			print '<td colspan="3">'.$account->bank.'</td></tr>';
 
 			// Show fields of bank account
 			foreach ($account->getFieldsToShow() as $val) {
@@ -710,8 +710,8 @@ else
 
 		print '<table class="border" width="100%">';
 		// Accountancy code
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
-		print '<td>';
+		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3">';
 		if (! empty($conf->accounting->enabled)) {
 			print length_accountg($account->account_number).'</td></tr>';
 		} else {
@@ -908,8 +908,8 @@ else
 			print '<table class="border" width="100%">';
 
 			// If bank account
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
-			print '<td><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
+			print '<tr class="liste_titre_add"><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
+			print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
 			print '</tr>';
 
 			// Show fields of bank account
@@ -975,8 +975,8 @@ else
 			$tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
 
-		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
-		print '<td>';
+		print '<tr class="liste_titre_add"><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
+		print '<td colspan="3">';
 		if (!empty($conf->accounting->enabled)) {
 			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);
 		} else {

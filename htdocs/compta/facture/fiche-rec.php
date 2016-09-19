@@ -837,7 +837,7 @@ if ($action == 'create')
 	{
 		$result = $object->getLinesArray();
 				
-	    print '<form action="fiche-rec.php" method="post">';
+	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="facid" value="'.$object->id.'">';
@@ -1394,6 +1394,9 @@ else
 		if ($search_montant_ht != '') $sql.= natural_search('f.total', $search_montant_ht, 1);
 		if ($search_montant_vat != '') $sql.= natural_search('f.tva', $search_montant_vat, 1);
 		if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
+		if ($search_frequency == '1') $sql.= ' AND f.frequency > 0';
+		if ($search_frequency == '0') $sql.= ' AND (f.frequency IS NULL or f.frequency = 0)';
+		
 		if ($month > 0)
 		{
 		    if ($year > 0 && empty($day))
@@ -1528,8 +1531,8 @@ else
 			if (! empty($arrayfields['f.frequency']['checked']))
 			{
 			    // Amount
-			    print '<td class="liste_titre" align="right">';
-			    //print '<input class="flat" type="text" size="5" name="search_frequency" value="'.$search_frequency.'">';
+			    print '<td class="liste_titre" align="center">';
+			    print $form->selectyesno('search_frequency', $search_frequency, 1, false, 1);
 			    print '</td>';
 			}
 			// Date invoice

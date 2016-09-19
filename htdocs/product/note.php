@@ -93,20 +93,19 @@ if ($id > 0 || ! empty($ref))
     
     dol_fiche_head($head, 'note', $titre, 0, $picto);
 
-
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
-        
-    print '<div class="fichecenter">';
+
+    $cssclass='titlefield';
+    //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
+    //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
+    
+    //print '<div class="fichecenter">';
     
     print '<div class="underbanner clearboth"></div>';
-	$cssclass='titlefield';
+    
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
-
 
     dol_fiche_end();
 }

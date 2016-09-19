@@ -47,7 +47,8 @@ class Commande extends CommonOrder
     public $class_element_line = 'OrderLine';
     public $fk_element = 'fk_commande';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto = 'order';
+    
     /**
      * {@inheritdoc}
      */
@@ -2557,7 +2558,6 @@ class Commande extends CommonOrder
             	if ($result < 0) $error++;
             	// End call triggers
             }
-
             if (! $error)
             {
             	$this->db->commit();

@@ -101,6 +101,7 @@ $usegradienttop=(isset($conf->global->THEME_ELDY_TOPMENU_BACK1)?0:1);
 $usegradienttitle=(isset($conf->global->THEME_ELDY_BACKTITLE1)?0:1);
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
 $borderwith=2;
+$noborderline=0;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -912,7 +913,7 @@ div.statusref {
 	margin-bottom: 10px;
 	clear: both;
 }
-img.photoref {
+img.photoref, div.photoref {
 	border: 1px solid #CCC;
 	-moz-box-shadow: 3px 3px 4px #DDD;
     -webkit-box-shadow: 3px 3px 4px #DDD;
@@ -922,6 +923,12 @@ img.photoref {
 	width: 80px;
     object-fit: contain;
 }
+div.photoref {
+	display:table-cell;
+	vertical-align:middle;
+	text-align:center;
+}
+
 img.photorefnoborder {
     padding: 2px;
 	height: 48px;
@@ -1780,7 +1787,7 @@ img.toolbarbutton {
 }
 
 /* hide the toggler-button when the pane is 'slid open' */
-.ui-layout-resizer-sliding  .ui-layout-toggler {
+.ui-layout-resizer-sliding .ui-layout-toggler {
     display: none;
 }
 
@@ -2007,7 +2014,9 @@ span.tabspan {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-div.divButAction { margin-bottom: 1.4em; }
+div.divButAction {
+	margin-bottom: 1.4em;
+}
 
 span.butAction, span.butActionDelete {
 	cursor: pointer;
@@ -2287,7 +2296,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 
 
 table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+<?php if (empty($noborderline)) { ?>
 	border: 1px solid #E0E0E0;
+<?php } ?>
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
 }
@@ -2310,8 +2321,16 @@ div .tdtop {
 }
 
 table.border td, div.border div div.tagtd {
+<?php if (empty($noborderline)) { ?>
 	padding: 2px 2px 2px 2px;
 	border: 1px solid #E0E0E0;
+<?php } elseif ($noborderline == 1) { ?>
+	padding: 3px 2px 3px 2px;
+	border-bottom: 1px solid #E0E0E0;
+<?php } elseif ($noborderline == 2) { ?>
+	padding: 3px 2px 3px 2px;
+	/* border: 1px solid #E0E0E0; */
+<?php } ?>
 	border-collapse: collapse;
 }
 
@@ -2431,6 +2450,10 @@ div.refidno  {
 	font-weight: normal;
   	color: #444;
   	font-size: <?php print $fontsize ?>px;
+  	line-height: 21px;
+}
+div.refidno form {
+    display: inline-block;
 }
 
 div.pagination {
@@ -2757,6 +2780,13 @@ tr.liste_titre_topborder td {
 	text-shadow: none !important;
 	color: rgb(<?php echo $colortexttitle; ?>);
 }
+.liste_titre td a.notasortlink {
+	color: rgb(<?php echo $colortextlink; ?>);
+}
+.liste_titre td a.notasortlink:hover {
+	background: transparent;
+}
+
 tr.liste_titre_sel th, th.liste_titre_sel, tr.liste_titre_sel td, td.liste_titre_sel, form.liste_titre_sel div
 {
     font-family: <?php print $fontlist ?>;
@@ -3321,6 +3351,7 @@ td.hidden {
 }
 .websitetools {
 	float: right;
+	height: 28px;
 }
 .websiteinputurl {
     display: inline-block;

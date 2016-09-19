@@ -48,7 +48,8 @@ class Expedition extends CommonObject
 	public $table_element="expedition";
 	public $table_element_line="expeditiondet";
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto = 'sending';
+    
 	var $socid;
 	var $ref_customer;
 	var $ref_int;

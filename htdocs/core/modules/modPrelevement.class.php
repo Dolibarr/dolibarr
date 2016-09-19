@@ -73,7 +73,16 @@ class modPrelevement extends DolibarrModules
 
 		// Constants
 		$this->const = array();
-
+		$r=0;
+		
+		$this->const[$r][0] = "BANK_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "sepamandate";
+		$this->const[$r][3] = 'Name of manager to generate SEPA mandate';
+		$this->const[$r][4] = 0;
+		$r++;
+		
+		
 		// Boxes
 		$this->boxes = array();
 
@@ -138,7 +147,10 @@ class modPrelevement extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		$sql = array();
+		$sql = array(
+		    "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+		    "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','bankaccount',".$conf->entity.")",
+		);		
 
 		return $this->_init($sql,$options);
 	}
