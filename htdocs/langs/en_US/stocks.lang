@@ -136,3 +136,6 @@ OpenInternal=Open for internal actions
 OpenShipping=Open for shippings
 OpenDispatch=Open for dispatch
 UseDispatchStatus=Use dispatch status (aprouve/refuse)
+ProductStockWarehouseCreated=Stock limit for alert and desired optimal stock correctly created
+ProductStockWarehouseUpdated=Stock limit for alert and desired optimal stock correctly updated
+AddNewProductStockWarehouse=Set new limit for alert and desired optimal stock

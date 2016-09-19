@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 $langs->load("products");
@@ -71,8 +72,44 @@ if ($cancel) $action='';
 
 if($action == 'addlimitstockwarehouse') {
 	
-	//var_dump($_REQUEST);exit;
-    $action='';
+	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+	$desiredstock = GETPOST('desiredstock');
+	
+	$maj_ok = true;
+	if($seuil_stock_alerte == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("StockLimit")), null, 'errors');
+		$maj_ok = false;
+	}
+	if($desiredstock == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DesiredStock")), null, 'errors');
+		$maj_ok = false;
+	}
+	
+	if($maj_ok) {
+		
+		$pse = new ProductStockEntrepot($db);
+		if($pse->fetch('', GETPOST('id'), GETPOST('fk_entrepot')) > 0) {
+			
+			// Update
+			$pse->seuil_stock_alerte = $seuil_stock_alerte;
+			$pse->desiredstock  	 = $desiredstock;
+			if($pse->update($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseUpdated'));
+			
+		} else {
+			
+			// Create
+			$pse->fk_entrepot 		 = GETPOST('fk_entrepot');
+			$pse->fk_product  	 	 = GETPOST('id');
+			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+			$pse->desiredstock  	 = GETPOST('desiredstock');
+			if($pse->create($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseCreated'));
+			
+		}
+		
+	}
+
+	header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id'));
+	exit;
 	
 }
 
@@ -834,7 +871,7 @@ print "</table>";
 if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	
 	print '<br /><br />';
-	print_titre('Indiquer une limite pour alerte et un stock optimal');
+	print_titre($langs->trans('AddNewProductStockWarehouse'));
 	//print '<br />';
 	
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -842,11 +879,32 @@ if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
 	print '<table class="noborder" width="100%">';
 	
-	print '<tr class="liste_titre"><td width="40%" colspan="4">'.$formproduct->selectWarehouses().'</td>';
-	print '<td align="right"><input name="stocklimit" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
+	print '<tr class="liste_titre"><td width="40%" colspan="4">'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
+	print '<td align="right"><input name="seuil_stock_alerte" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
 	print '<td align="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
-	print '<td align="right"><input type="submit" class="button" /></td>';
+	print '<td align="right"><input type="submit" value="'.$langs->trans('Save').'" class="button" /></td>';
 	print '</tr>';
+	
+	$pse = new ProductStockEntrepot($db);
+	$pse->fetchAll(GETPOST('id'));
+	
+	if(!empty($pse->lines)) {
+		
+		$var=false;
+		foreach($pse->lines as $line) {
+			
+			$ent = new Entrepot($db);
+			$ent->fetch($line['fk_entrepot']);
+			print '<tr '.$bc[$var].'><td width="40%" colspan="4">'.$ent->getNomUrl(3).'</td>';
+			print '<td align="right">'.$line['seuil_stock_alerte'].'</td>';
+			print '<td align="right">'.$line['desiredstock'].'</td>';
+			print '<td align="right">&nbsp;</td>';
+			print '</tr>';
+			$var=!$var;
+			
+		}
+
+	}
 	
 	print "</table>";
 	

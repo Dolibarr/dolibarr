@@ -89,23 +89,11 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 		
-		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
-		}
-		if (isset($this->fk_entrepot)) {
-			 $this->fk_entrepot = trim($this->fk_entrepot);
-		}
-		if (isset($this->seuil_stock_alerte)) {
-			 $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
-		}
-		if (isset($this->desiredstock)) {
-			 $this->desiredstock = trim($this->desiredstock);
-		}
-		if (isset($this->import_key)) {
-			 $this->import_key = trim($this->import_key);
-		}
-
-		
+		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
+		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
+		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -115,8 +103,8 @@ class ProductStockEntrepot extends CommonObject
 		
 		$sql.= 'fk_product,';
 		$sql.= 'fk_entrepot,';
-		$sql.= 'seuil_stock_alerte';
-		$sql.= 'desiredstock';
+		$sql.= 'seuil_stock_alerte,';
+		$sql.= 'desiredstock,';
 		$sql.= 'import_key';
 
 		
@@ -170,12 +158,15 @@ class ProductStockEntrepot extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  Id object
-	 * @param string $ref Ref
+	 * @param int    $fk_product Id product
+	 * @param int    $fk_entrepot  Id warehouse
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $fk_product, $fk_entrepot)
 	{
+		if(empty($id) && (empty($fk_product) || empty($fk_entrepot))) return -1;
+		
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
@@ -190,12 +181,9 @@ class ProductStockEntrepot extends CommonObject
 
 		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
-		} else {
-			$sql .= ' WHERE t.rowid = ' . $id;
-		}
-
+		if(!empty($id)) $sql .= ' WHERE t.rowid = ' . $id;
+		else $sql.= ' WHERE t.fk_product = '.$fk_product.' AND t.fk_entrepot = '.$fk_entrepot;
+		
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numrows = $this->db->num_rows($resql);
@@ -250,7 +238,7 @@ class ProductStockEntrepot extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($fk_product='', $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -266,7 +254,9 @@ class ProductStockEntrepot extends CommonObject
 
 		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-
+		
+		$sql .= ' WHERE 1=1';
+		
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -274,16 +264,13 @@ class ProductStockEntrepot extends CommonObject
 				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
 			}
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
-		}
-
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield,$sortorder);
-		}
-		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
-		}
+		if (count($sqlwhere) > 0) $sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
+		
+		if(!empty($fk_product)) $sql .= ' AND fk_product = '.$fk_product;
+		
+		if (!empty($sortfield)) $sql .= $this->db->order($sortfield,$sortorder);
+		if (!empty($limit)) $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+		
 		$this->lines = array();
 
 		$resql = $this->db->query($sql);
@@ -291,20 +278,21 @@ class ProductStockEntrepot extends CommonObject
 			$num = $this->db->num_rows($resql);
 
 			while ($obj = $this->db->fetch_object($resql)) {
-				$line = new ProductStockEntrepotLine();
-
-				$line->id = $obj->rowid;
 				
-				$line->tms = $this->db->jdate($obj->tms);
-				$line->fk_product = $obj->fk_product;
-				$line->fk_entrepot = $obj->fk_entrepot;
+				//$line->tms = $this->db->jdate($obj->tms);
 				$line->seuil_stock_alerte = $obj->seuil_stock_alerte;
 				$line->desiredstock = $obj->desiredstock;
-				$line->import_key = $obj->import_key;
+				//$line->import_key = $obj->import_key;
 
 				
 
-				$this->lines[$line->id] = $line;
+				$this->lines[$obj->rowid] = array(
+												'id'=>$obj->rowid
+												,'fk_product'=>$obj->fk_product
+												,'fk_entrepot'=>$obj->fk_entrepot
+												,'seuil_stock_alerte'=>$obj->seuil_stock_alerte
+												,'desiredstock'=>$obj->desiredstock
+											);
 			}
 			$this->db->free($resql);
 
@@ -333,22 +321,11 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 		
-		if (isset($this->fk_product)) {
-			 $this->fk_product = trim($this->fk_product);
-		}
-		if (isset($this->fk_entrepot)) {
-			 $this->fk_entrepot = trim($this->fk_entrepot);
-		}
-		if (isset($this->seuil_stock_alerte)) {
-			 $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
-		}
-		if (isset($this->desiredstock)) {
-			 $this->desiredstock = trim($this->desiredstock);
-		}
-		if (isset($this->import_key)) {
-			 $this->import_key = trim($this->import_key);
-		}
-
+		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
+		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
+		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
 		
 
 		// Check parameters
