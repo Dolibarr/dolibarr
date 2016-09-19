@@ -49,6 +49,79 @@ class Users extends DolibarrApi
 		$this->useraccount = new User($this->db);
 	}
 
+	
+	/**
+	 * List Users
+	 *
+	 * Get a list of Users
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int		$limit		Limit for list
+	 * @param int		$page		Page number
+	 * @param string   	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 *
+	 * @return  array   Array of User objects
+	 */
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0) {
+	    global $db, $conf;
+	
+	    $obj_ret = array();
+	
+		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
+	       throw new RestException(401, "You are not allowed to read list of users");
+	    }
+	     
+	    // case of external user, $societe param is ignored and replaced by user's socid
+	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+	
+	    $sql = "SELECT t.rowid";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
+	    $sql.= ' WHERE t.entity IN ('.getEntity('user', 1).')';
+	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
+	     
+	    $nbtotalofrecords = 0;
+	    if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	    {
+	        $result = $db->query($sql);
+	        $nbtotalofrecords = $db->num_rows($result);
+	    }
+	
+	    $sql.= $db->order($sortfield, $sortorder);
+	    if ($limit)	{
+	        if ($page < 0)
+	        {
+	            $page = 0;
+	        }
+	        $offset = $limit * $page;
+	
+	        $sql.= $db->plimit($limit + 1, $offset);
+	    }
+	
+	    $result = $db->query($sql);
+	
+	    if ($result)
+	    {
+	        $num = $db->num_rows($result);
+	        while ($i < $num)
+	        {
+	            $obj = $db->fetch_object($result);
+	            $user_static = new User($db);
+	            if($user_static->fetch($obj->rowid)) {
+	                $obj_ret[] = parent::_cleanObjectDatas($user_static);
+	            }
+	            $i++;
+	        }
+	    }
+	    else {
+	        throw new RestException(503, 'Error when retrieve User list');
+	    }
+	    if( ! count($obj_ret)) {
+	        throw new RestException(404, 'No User found');
+	    }
+	    return $obj_ret;
+	}
+	
 	/**
 	 * Get properties of an user object
 	 *
