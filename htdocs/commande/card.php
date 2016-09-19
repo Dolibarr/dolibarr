@@ -90,6 +90,9 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
+//if $cancel before include, when cancel no load object and not show anything
+$cancel = GETPOST('cancel', 'alpha');
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ordercard','globalcard'));
 
@@ -109,6 +112,23 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($cancel){
+        if ($action == 'updateline' && $user->rights->commande->creer) {
+            unset($_POST['qty']);
+            unset($_POST['type']);
+            unset($_POST['productid']);
+            unset($_POST['remise_percent']);
+            unset($_POST['price_ht']);
+            unset($_POST['price_ttc']);
+            unset($_POST['tva_tx']);
+            unset($_POST['product_ref']);
+            unset($_POST['product_label']);
+            unset($_POST['product_desc']);
+            unset($_POST['fournprice']);
+            unset($_POST['buying_price']);
+        }
+        $action='';
+    }
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; 	// Must be include, not include_once
 
@@ -915,11 +935,6 @@ if (empty($reshook))
 				setEventMessage($object->error, 'errors');
 			}
 		}
-	}
-
-	else if ($action == 'updateline' && $user->rights->commande->creer && GETPOST('cancel') == $langs->trans('Cancel')) {
-		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
-		exit();
 	}
 
 	else if ($action == 'confirm_validate' && $confirm == 'yes' &&

@@ -65,6 +65,7 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
@@ -116,6 +117,25 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
+	if ($cancel){
+        if ($action == 'updateligne' && $user->rights->propal->creer)
+        {
+            unset($_POST['qty']);
+            unset($_POST['type']);
+            unset($_POST['productid']);
+            unset($_POST['remise_percent']);
+            unset($_POST['price_ht']);
+            unset($_POST['price_ttc']);
+            unset($_POST['tva_tx']);
+            unset($_POST['product_ref']);
+            unset($_POST['product_label']);
+            unset($_POST['product_desc']);
+            unset($_POST['fournprice']);
+            unset($_POST['buying_price']);
+        }
+
+        $action = '';
+    }
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php'; // Must be include, not includ_once
 
@@ -1007,13 +1027,6 @@ if (empty($reshook))
 			}
 		}
 	}
-
-	else if ($action == 'updateligne' && $user->rights->propal->creer && GETPOST('cancel'))
-	{
-		header('Location: ' . $_SERVER['PHP_SELF'] . '?id=' . $object->id); // Pour reaffichage de la fiche en cours d'edition
-		exit();
-	}
-
 	// Generation doc (depuis lien ou depuis cartouche doc)
 	else if ($action == 'builddoc' && $user->rights->propal->creer) {
 		if (GETPOST('model')) {
