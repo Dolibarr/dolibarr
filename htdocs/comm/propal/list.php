@@ -607,11 +607,11 @@ if ($resql)
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 	    print '<td class="liste_titre" align="left">';
-    	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
+    	print '<input class="flat" type="text" size="10" name="search_societe" value="'.$search_societe.'">';
 	   print '</td>';
 	}
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
 	// State
     if (! empty($arrayfields['state.nom']['checked']))
     {
