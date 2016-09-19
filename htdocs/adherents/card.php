@@ -304,7 +304,7 @@ if (empty($reshook))
 			$object->phone_mobile	= trim($_POST["phone_mobile"]);
 			$object->email			= trim($_POST["email"]);
 			$object->skype			= trim($_POST["skype"]);
-			$object->birth			 $birthdate;
+			$object->birth			= $birthdate;
 
 			$object->typeid			= $_POST["typeid"];
 			//$object->note			= trim($_POST["comment"]);
