@@ -1434,7 +1434,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	}
 	$absolute_discount=$soc->getAvailableDiscounts();
 
-	$nbrow = 10;
 
 	print '<form name="crea_commande" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1911,24 +1910,82 @@ if ($action == 'create' && $user->rights->commande->creer)
 		// Print form confirm
 		print $formconfirm;
 
-		/*
-		 *   Commande
-		 */
-		$nbrow = 9;
-		if (! empty($conf->projet->enabled))
-			$nbrow ++;
 
-			// Local taxes
-		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
-			$nbrow++;
-		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0 )
-			$nbrow++;
-
-		print '<table class="border" width="100%">';
-
+		// Order card
+		
 		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+		
 
+		$morehtmlref='<div class="refidno">';
+		
+		// Ref customer
+		$morehtmlref.=$langs->trans('RefCustomer').' ';
+		if ($action != 'refclient' && ! empty($object->brouillon))
+		{
+		    $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a> ';
+		}
+	    $morehtmlref.=' : ';
+	    if ($user->rights->commande->creer && $action == 'refclient') {
+	        $morehtmlref.='<form action="'.$_SERVER["PHP_SELF"].'?id=' . $object->id . '" method="post">';
+	        $morehtmlref.='<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+	        $morehtmlref.='<input type="hidden" name="action" value="set_ref_client">';
+	        $morehtmlref.='<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
+	        $morehtmlref.=' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+	        $morehtmlref.='</form>';
+	    } else {
+	        $morehtmlref.=$object->ref_client;
+	    }
+	
+	    // Thirdparty
+	    $morehtmlref.='<br>'.$langs->trans('Company') . ' : ' . $soc->getNomUrl(1);
+	
+	    // Project
+	    if (! empty($conf->projet->enabled))
+	    {
+	        $langs->load("projects");
+	        $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+	        if ($user->rights->commande->creer)
+	        {
+	            if ($action != 'classify')
+	                $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+	                if ($action == 'classify') {
+	                    //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+	                    $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
+	                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                    $morehtmlref.='<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	                    $morehtmlref.='</form>';
+	                } else {
+	                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	                }
+	        } else {
+	            if (! empty($object->fk_project)) {
+	                $proj = new Project($db);
+	                $proj->fetch($object->fk_project);
+	                $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+	                $morehtmlref.=$proj->ref;
+	                $morehtmlref.='</a>';
+	            } else {
+	                $morehtmlref.='';
+	            }
+	        }
+	    }
+	
+	    $morehtmlref.='</div>';
+	
+	
+	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+		    
+		
+	    print '<div class="fichecenter">';
+	    print '<div class="fichehalfleft">';
+	    print '<div class="underbanner clearboth"></div>';
+	    
+	    print '<table class="border" width="100%">';
+	     
 		// Ref
+		/*
 		print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
 		print '<td colspan="3">';
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'ref', 'ref');
@@ -1971,14 +2028,14 @@ if ($action == 'create' && $user->rights->commande->creer)
         } else {
             print $soc->getNomUrl(1, 'compta');
         }
-		print '</tr>';
+		print '</tr>';*/
 
 		if ($soc->outstanding_limit)
 		{
 		    // Outstanding Bill
 		    print '<tr><td>';
 		    print $langs->trans('OutstandingBill');
-		    print '</td><td colspan="3">';
+		    print '</td><td>';
 		    print price($soc->get_OutstandingBill()) . ' / ';
 		    print price($soc->outstanding_limit, 0, '', 1, - 1, - 1, $conf->currency);
 		    print '</td>';
@@ -1999,7 +2056,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
 		$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 
-		print '<tr><td>' . $langs->trans('Discounts') . '</td><td colspan="3">';
+		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
 		if ($soc->remise_percent)
 			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
 		else
@@ -2034,7 +2091,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if ($action != 'editdate' && $object->brouillon)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		if ($action == 'editdate') {
 			print '<form name="setdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -2052,14 +2109,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</tr>';
 
 		// Delivery date planed
-		print '<tr><td height="10">';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DateDeliveryPlanned');
 		print '</td>';
 		if ($action != 'editdate_livraison')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate_livraison&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDeliveryDate'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		if ($action == 'editdate_livraison') {
 			print '<form name="setdate_livraison" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -2085,7 +2142,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             if ($action != 'editshippingmethod' && $user->rights->commande->creer)
                 print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
             print '</tr></table>';
-            print '</td><td colspan="3">';
+            print '</td><td>';
             if ($action == 'editshippingmethod') {
                 $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
             } else {
@@ -2106,7 +2163,7 @@ if ($action == 'create' && $user->rights->commande->creer)
             if ($action != 'editwarehouse' && $user->rights->commande->creer)
                 print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editwarehouse&amp;id='.$object->id.'">'.img_edit($langs->trans('SetWarehouse'),1).'</a></td>';
             print '</tr></table>';
-            print '</td><td colspan="3">';
+            print '</td><td>';
             if ($action == 'editwarehouse') {
                 $formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->warehouse_id, 'warehouse_id', 1);
             } else {
@@ -2117,14 +2174,14 @@ if ($action == 'create' && $user->rights->commande->creer)
         }
 
 		// Terms of payment
-		print '<tr><td height="10">';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 		if ($action != 'editconditions')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		if ($action == 'editconditions') {
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id', 1);
 		} else {
@@ -2135,14 +2192,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 		print '</tr>';
 
 		// Mode of payment
-		print '<tr><td height="10">';
+		print '<tr><td>';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
 		if ($action != 'editmode')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetMode'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		if ($action == 'editmode') {
 			$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
 		} else {
@@ -2155,14 +2212,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 		{
 			// Multicurrency code
 			print '<tr>';
-			print '<td width="25%">';
+			print '<td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print fieldLabel('Currency','multicurrency_code');
 			print '</td>';
 			if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="5">';
+			print '</td><td>';
 			if ($action == 'editmulticurrencycode') {
 				$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
 			} else {
@@ -2172,14 +2229,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 			// Multicurrency rate
 			print '<tr>';
-			print '<td width="25%">';
+			print '<td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print fieldLabel('CurrencyRate','multicurrency_tx');
 			print '</td>';
 			if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon))
 				print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 			print '</tr></table>';
-			print '</td><td colspan="5">';
+			print '</td><td>';
 			if ($action == 'editmulticurrencyrate') {
 				$form->form_multicurrency_rate($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_tx, 'multicurrency_tx', $object->multicurrency_code);
 			} else {
@@ -2196,7 +2253,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if ($action != 'editavailability')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetAvailability'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		if ($action == 'editavailability') {
 			$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'availability_id', 1);
 		} else {
@@ -2212,7 +2269,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if ($action != 'editdemandreason')
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDemandReason'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="3">';
+		print '</td><td>';
 		if ($action == 'editdemandreason') {
 			$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 		} else {
@@ -2230,7 +2287,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if ($totalWeight || $totalVolume)
 		{
     		print '<tr><td>'.$langs->trans("CalculatedWeight").' / '.$langs->trans("CalculatedVolume").'</td>';
-    		print '<td colspan="3">';
+    		print '<td>';
     		print showDimensionInBestUnit($totalWeight, 0, "weight", $langs, isset($conf->global->MAIN_WEIGHT_DEFAULT_ROUND)?$conf->global->MAIN_WEIGHT_DEFAULT_ROUND:-1, isset($conf->global->MAIN_WEIGHT_DEFAULT_UNIT)?$conf->global->MAIN_WEIGHT_DEFAULT_UNIT:'no');
         	print ' / ';
     		print showDimensionInBestUnit($totalVolume, 0, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND)?$conf->global->MAIN_VOLUME_DEFAULT_ROUND:-1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT)?$conf->global->MAIN_VOLUME_DEFAULT_UNIT:'no');
@@ -2240,6 +2297,7 @@ if ($action == 'create' && $user->rights->commande->creer)
     	// TODO How record was recorded OrderMode (llx_c_input_method)
 
 		// Project
+		/*
 		if (! empty($conf->projet->enabled))
 		{
 			$langs->load('projects');
@@ -2259,7 +2317,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			}
 			print '</td></tr>';
 		}
-
+        */
+			
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
 		{
@@ -2283,16 +2342,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	        print '</td></tr>';
 		}
 
-		// Other attributes
-		$cols = 3;
-		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
-
-		$rowspan = 4;
-		if ($mysoc->localtax1_assuj == "1" || $object->total_localtax1 != 0)
-			$rowspan ++;
-		if ($mysoc->localtax2_assuj == "1" || $object->total_localtax2 != 0)
-			$rowspan ++;
-
         // Bank Account
 		if (! empty($conf->global->BANK_ASK_PAYMENT_BANK_DURING_ORDER) && ! empty($conf->banque->enabled))
 		{
@@ -2313,19 +2362,22 @@ if ($action == 'create' && $user->rights->commande->creer)
         	print '</tr>';
 		}
 
+		// Other attributes
+		$cols = 2;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+
+		print '</table>';
+		
+		print '</div>';
+		print '<div class="fichehalfright">';
+		print '<div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+		
+		print '<table class="border centpercent">';
+		
 		// Total HT
 		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
 		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
-
-		// Margin Infos
-		if (! empty($conf->margin->enabled)) {
-			print '<td valign="top" width="50%" colspan="2" rowspan="' . $rowspan . '">';
-			$formmargin->displayMarginInfos($object);
-			print '</td>';
-		} else
-			print '<td width="50%" colspan="2" rowspan="' . $rowspan . '"></td>';
-
-		print '</tr>';
 
 		// Total VAT
 		print '<tr><td>' . $langs->trans('AmountVAT') . '</td><td>' . price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency) . '</td></tr>';
@@ -2349,25 +2401,36 @@ if ($action == 'create' && $user->rights->commande->creer)
 		{
 			// Multicurrency Amount HT
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountHT','multicurrency_total_ht') . '</td>';
-			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '<td class="nowrap">' . price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 
 			// Multicurrency Amount VAT
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountVAT','multicurrency_total_tva') . '</td>';
-			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '<td class="nowrap">' . price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 
 			// Multicurrency Amount TTC
 			print '<tr><td height="10">' . fieldLabel('MulticurrencyAmountTTC','multicurrency_total_ttc') . '</td>';
-			print '<td class="nowrap" colspan="2">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
+			print '<td class="nowrap">' . price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)) . '</td>';
 			print '</tr>';
 		}
 
 		// Statut
-		print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';
+		//print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';
+		
+		print '</table>';
+		
+		// Margin Infos
+		if (! empty($conf->margin->enabled)) {
+		    $formmargin->displayMarginInfos($object);
+		}
+		
 
-		print '</table><br>';
-		print "\n";
+		print '</div>';
+		print '</div>';
+		print '</div>';
+		
+		print '<div class="clearboth"></div><br>';
 
 		if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
 			$blocname = 'contacts';

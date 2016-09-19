@@ -951,7 +951,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
         {
             $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">';
             if ($modulepart != 'unknown') $morehtmlleft.=$form->showphoto($modulepart,$object,0,0,0,'photoref','small',1,0,$maxvisiblephotos);
-            else 
+            else if ($object->element == 'action') 
+            {
+                $cssclass='photorefcenter';
+                $nophoto=img_picto('', 'title_agenda', '', false, 1);
+                $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').($height?' height="'.$height.'"':'').' src="'.$nophoto.'"></div></div>';
+            }
+            else
             {
                 $width=14; $cssclass='photorefcenter';
 				$nophoto=img_picto('', 'object_'.$object->picto, '', false, 1);
@@ -982,7 +988,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	}
 	else {
 	    $tmptxt=$object->getLibStatut(6);
-	    if (empty($tmptxt)) $tmptxt=$object->getLibStatut(5); 
+	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5); 
 		$morehtmlright.=$tmptxt;
 	}
 	if (! empty($object->name_alias)) $morehtmlref.='<div class="refidno">'.$object->name_alias.'</div>';      // For thirdparty

@@ -2342,6 +2342,9 @@ div.refidno  {
   	font-size: <?php print $fontsize ?>px;
   	line-height: 21px;
 }
+div.refidno form {
+    display: inline-block;
+}
 
 div.pagination {
 	float: right;

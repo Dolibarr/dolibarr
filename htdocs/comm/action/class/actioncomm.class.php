@@ -37,7 +37,8 @@ class ActionComm extends CommonObject
     public $table_element = 'actioncomm';
     public $table_rowid = 'id';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto='action';
+    
     /**
      * Id of the event
      * @var int
@@ -1024,7 +1025,7 @@ class ActionComm extends CommonObject
      *		Return label of action status
      *
      *    	@param	int		$percent        Percent
-     *    	@param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Very short label+Picto
+     *    	@param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
      *      @param  int		$hidenastatus   1=Show nothing if status is "Not applicable"
      *    	@return string		    		Label
      */
@@ -1076,11 +1077,19 @@ class ActionComm extends CommonObject
         }
         else if ($mode == 6)
         {
-        	if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
-        	else if ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
-        	else if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
-        	else if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
+        	if ($percent==-1 && ! $hidenastatus) return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
+        	else if ($percent==0) return $langs->trans('StatusActionToDo').'0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+        	else if ($percent > 0 && $percent < 100) return $langs->trans('StatusActionInProcess').' ('.$percent.'%) '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
+        	else if ($percent >= 100) return $langs->trans('StatusActionDone').' (100%) '.img_picto($langs->trans('StatusActionDone'),'statut6');
         }
+        else if ($mode == 7)
+        {
+            if ($percent==-1 && ! $hidenastatus) return img_picto($langs->trans('StatusNotApplicable'),'statut9');
+            else if ($percent==0) return '0% '.img_picto($langs->trans('StatusActionToDo'),'statut1');
+            else if ($percent > 0 && $percent < 100) return $percent.'% '.img_picto($langs->trans('StatusActionInProcess').' - '.$percent.'%','statut3');
+            else if ($percent >= 100) return img_picto($langs->trans('StatusActionDone'),'statut6');
+        }
+        
         return '';
     }
 
