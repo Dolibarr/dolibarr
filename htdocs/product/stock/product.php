@@ -113,6 +113,17 @@ if($action == 'addlimitstockwarehouse') {
 	
 }
 
+if($action == 'delete_productstockwarehouse')
+{
+	
+	$pse = new ProductStockEntrepot($db);
+	$pse->fetch(GETPOST('fk_productstockwarehouse'));
+	$pse->delete($user);
+	
+	$action = '';
+	
+}
+
 // Set stock limit
 if ($action == 'setseuil_stock_alerte')
 {
@@ -898,7 +909,7 @@ if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 			print '<tr '.$bc[$var].'><td width="40%" colspan="4">'.$ent->getNomUrl(3).'</td>';
 			print '<td align="right">'.$line['seuil_stock_alerte'].'</td>';
 			print '<td align="right">'.$line['desiredstock'].'</td>';
-			print '<td align="right">&nbsp;</td>';
+			print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
 			print '</tr>';
 			$var=!$var;
 			
