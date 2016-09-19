@@ -84,6 +84,9 @@ foreach ($modulesdir as $dir)
             {
                 $module = $part = strtolower($reg[1]);
 
+                if ($module == 'agenda') {
+                    $part = 'comm/action';
+				}
                 if ($module == 'categorie') {
                     $part = 'categories';
 				}
@@ -120,7 +123,7 @@ foreach ($modulesdir as $dir)
                                 if (class_exists($classname))
                                 {
                                     dol_syslog("Found deprecated API classname=".$classname." into ".$dir);
-                                    $api->r->addAPIClass($classname, '');
+                                    $api->r->addAPIClass($classname, '/');
                                 }
                             }
                             elseif (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i",$file_searched,$reg))
