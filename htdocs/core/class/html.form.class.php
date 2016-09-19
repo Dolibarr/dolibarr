@@ -1133,7 +1133,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat maxwidthonsmartphone" name="'.$htmlname.'">';
             $num = $this->db->num_rows($resql);
 
             $qualifiedlines=$num;
