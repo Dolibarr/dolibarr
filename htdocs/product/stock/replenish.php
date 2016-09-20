@@ -418,6 +418,9 @@ print '<br>'."\n";
 
 print '<form name="formFilterWarehouse" method="GET" action="">';
 print '<input type="hidden" name="action" value="filter_warehouse">';
+print '<input type="hidden" name="sref" value="'.$sref.'">';
+print '<input type="hidden" name="snom" value="'.$snom.'">';
+print '<input type="hidden" name="salert" value="'.$salert.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print $formproduct->selectWarehouses($fk_entrepot, 'fk_entrepot', '', 1);
 print ' <input class="button" type="submit" name="valid" value="'.$langs->trans('ToFilter').'">';
@@ -428,6 +431,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters .= '&sall=' . $sall;
 	$filters .= '&salert=' . $salert;
 	$filters .= '&mode=' . $mode;
+	$filters .= '&fk_entrepot=' . $fk_entrepot;
 	print_barre_liste(
 		$texte,
 		$page,
@@ -444,6 +448,7 @@ if ($sref || $snom || $sall || $salert || GETPOST('search', 'alpha')) {
 	$filters .= (isset($type)?'&type=' . $type:'');
 	$filters .=  '&=' . $salert;
 	$filters .= '&mode=' . $mode;
+	$filters .= '&fk_entrepot=' . $fk_entrepot;
 	print_barre_liste(
 		$texte,
 		$page,
@@ -462,6 +467,7 @@ $param = (isset($type)? '&type=' . $type : '');
 $param .= '&fourn_id=' . $fourn_id . '&snom='. $snom . '&salert=' . $salert;
 $param .= '&sref=' . $sref;
 $param .= '&mode=' . $mode;
+$param .= '&fk_entrepot=' . $fk_entrepot;
 
 $stocklabel = $langs->trans('Stock');
 if ($usevirtualstock == 1) $stocklabel = $langs->trans('VirtualStock');
@@ -643,6 +649,7 @@ if ($num > $conf->liste_limit)
 		$filters .= '&sall=' . $sall;
 		$filters .= '&salert=' . $salert;
 		$filters .= '&mode=' . $mode;
+		$filters .= '&fk_entrepot=' . $fk_entrepot;
 		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
 	}
 	else
@@ -652,6 +659,7 @@ if ($num > $conf->liste_limit)
 		$filters .= (isset($type)? '&type=' . $type : '');
 		$filters .= '&salert=' . $salert;
 		$filters .= '&mode=' . $mode;
+		$filters .= '&fk_entrepot=' . $fk_entrepot;
 		print_barre_liste('', $page, 'replenish.php', $filters, $sortfield, $sortorder, '', $num, 0, '');
 	}
 }
