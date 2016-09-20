@@ -3356,7 +3356,7 @@ else if ($id > 0 || ! empty($ref))
 		}
 
 		// Billed
-		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right" style="border: 1px solid;">' . price($object->total_ttc) . '</td><td>&nbsp;</td></tr>';
+		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right">' . price($object->total_ttc) . '</td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -3365,7 +3365,7 @@ else if ($id > 0 || ! empty($ref))
 		else
 			print $langs->trans('ExcessReceived');
 		print ' :</td>';
-		print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>' . price($resteapayeraffiche) . '</b></td>';
+		print '<td align="right" bgcolor="#f0f0f0"><b>' . price($resteapayeraffiche) . '</b></td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 	}
 	else 	// Credit note
@@ -3376,7 +3376,7 @@ else if ($id > 0 || ! empty($ref))
 		print ' :</td><td align="right">' . price($sign * $totalpaye) . '</td><td>&nbsp;</td></tr>';
 
 		// Billed
-		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right" style="border: 1px solid;">' . price($sign * $object->total_ttc) . '</td><td>&nbsp;</td></tr>';
+		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right">' . price($sign * $object->total_ttc) . '</td><td>&nbsp;</td></tr>';
 
 		// Remainder to pay back
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -3385,7 +3385,7 @@ else if ($id > 0 || ! empty($ref))
 		else
 			print $langs->trans('ExcessPaydBack');
 		print ' :</td>';
-		print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
+		print '<td align="right" bgcolor="#f0f0f0"><b>' . price($sign * $resteapayeraffiche) . '</b></td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
 
 		// Sold credit note
