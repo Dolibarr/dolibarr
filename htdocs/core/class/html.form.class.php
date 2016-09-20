@@ -79,10 +79,11 @@ class Form
      * @param	boolean	$perm			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL*
-     * @param   int     $fieldrequired  1 if we want to show field as mandatory using the fieldrequired CSS.
+     * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
+     * @param   int     $notabletag     Do no output table tags
      * @return	string					HTML edit field
      */
-    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0)
+    function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0)
     {
         global $conf,$langs;
 
@@ -109,13 +110,17 @@ class Form
         }
         else
 		{
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
 	        if ($fieldrequired) $ret.='<span class="fieldrequired">';
             $ret.=$langs->trans($text);
 	        if ($fieldrequired) $ret.='</span>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'),1).'</a></td>';
-            if (GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
+	        if (! empty($notabletag)) $ret.=' ';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
+            if ($htmlname && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
+	        if (! empty($notabletag)) $ret.=' : ';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
+            if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
         }
 
         return $ret;
@@ -134,9 +139,10 @@ class Form
      * @param	object	$extObject		External object
      * @param	mixed	$custommsg		String or Array of custom messages : eg array('success' => 'MyMessage', 'error' => 'MyMessage')
      * @param	string	$moreparam		More param to add on a href URL
+     * @param   int     $notabletag     Do no output table tags
      * @return  string					HTML edit field
      */
-    function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='')
+    function editfieldval($text, $htmlname, $value, $object, $perm, $typeofdata='string', $editvalue='', $extObject=null, $custommsg=null, $moreparam='', $notabletag=0)
     {
         global $conf,$langs,$db;
 
@@ -159,8 +165,8 @@ class Form
                 $ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
                 $ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
                 $ret.='<input type="hidden" name="id" value="'.$object->id.'">';
-                $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-                $ret.='<tr><td>';
+                if (empty($notabletag)) $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+                if (empty($notabletag)) $ret.='<tr><td>';
                 if (preg_match('/^(string|email)/',$typeofdata))
                 {
                     $tmp=explode(':',$typeofdata);
@@ -202,15 +208,15 @@ class Form
                     $doleditor=new DolEditor($htmlname, ($editvalue?$editvalue:$value), ($tmp[2]?$tmp[2]:''), ($tmp[3]?$tmp[3]:'100'), ($tmp[1]?$tmp[1]:'dolibarr_notes'), 'In', ($tmp[5]?$tmp[5]:0), true, true, ($tmp[6]?$tmp[6]:'20'), ($tmp[7]?$tmp[7]:'100'));
                     $ret.=$doleditor->Create(1);
                 }
-                $ret.='</td>';
+                if (empty($notabletag)) $ret.='</td>';
 
-                $ret.='<td align="left">';
+                if (empty($notabletag)) $ret.='<td align="left">';
                	$ret.='<input type="submit" class="button" name="modify" value="'.$langs->trans("Modify").'">';
                	if (preg_match('/ckeditor|textarea/',$typeofdata)) $ret.='<br>'."\n";
                	$ret.='<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-               	$ret.='</td>';
+               	if (empty($notabletag)) $ret.='</td>';
 
-               	$ret.='</tr></table>'."\n";
+               	if (empty($notabletag)) $ret.='</tr></table>'."\n";
                 $ret.='</form>'."\n";
             }
             else
@@ -1127,7 +1133,7 @@ class Form
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
+            print '<select class="flat maxwidthonsmartphone" name="'.$htmlname.'">';
             $num = $this->db->num_rows($resql);
 
             $qualifiedlines=$num;
@@ -3540,30 +3546,33 @@ class Form
      *    @param	int		$discard_closed		Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
      *    @param	int		$maxlength			Max length
      *    @param	int		$forcefocus			Force focus on field (works with javascript only)
-     *    @return	void
+     *    @param    int     $nooutput           No print is done. String is returned.
+     *    @return	string                      Return html content
      */
-    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20, $forcefocus=0)
+    function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20, $forcefocus=0, $nooutput=0)
     {
         global $langs;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
         require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+        $out='';
+        
         $formproject=new FormProjets($this->db);
 
         $langs->load("project");
         if ($htmlname != "none")
         {
-            print "\n";
-            print '<form method="post" action="'.$page.'">';
-            print '<input type="hidden" name="action" value="classin">';
-            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
-            $formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            $out.="\n";
+            $out.='<form method="post" action="'.$page.'">';
+            $out.='<input type="hidden" name="action" value="classin">';
+            $out.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            $out.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+            $out.='<tr><td>';
+            $out.=$formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
+            $out.='</td>';
+            $out.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+            $out.='</tr></table></form>';
         }
         else
         {
@@ -3572,13 +3581,20 @@ class Form
                 $projet = new Project($this->db);
                 $projet->fetch($selected);
                 //print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-                print $projet->getNomUrl(0,'',1);
+                $out.=$projet->getNomUrl(0,'',1);
             }
             else
             {
-                print "&nbsp;";
+                $out.="&nbsp;";
             }
         }
+        
+        if (empty($nooutput)) 
+        {
+            print $out;
+            return '';
+        }
+        return $out;
     }
 
     /**
@@ -5738,7 +5754,7 @@ class Form
             }
 
         }
-        else dol_print_error('','Call of showphoto with wrong parameters');
+        else dol_print_error('','Call of showphoto with wrong parameters modulepart='.$modulepart);
 
         return $ret;
     }

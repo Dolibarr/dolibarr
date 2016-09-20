@@ -545,7 +545,15 @@ if ($resql)
     print '</tr>';
     
     
-    $i = 0;
+    $plannedworkloadoutputformat='allhourmin';
+    $timespentoutputformat='allhourmin';
+    if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
+    if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
+     
+    $now = dol_now();
+    $i=0;
+    $var=true;
+    $totalarray=array();
     while ($i < min($num,$limit))
     {
     	$obj = $db->fetch_object($resql);
@@ -578,6 +586,7 @@ if ($resql)
         		print $projectstatic->getNomUrl(1, 'task');
         		if ($projectstatic->hasDelay()) print img_warning("Late");
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Title
         	if (! empty($arrayfields['p.title']['checked']))
@@ -585,6 +594,7 @@ if ($resql)
             	print '<td>';
         		print dol_trunc($obj->projecttitle,80);
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
     		// Company
         	if (! empty($arrayfields['s.nom']['checked']))
@@ -601,6 +611,7 @@ if ($resql)
         			print '&nbsp;';
         		}
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Status
         	if (! empty($arrayfields['p.fk_statut']['checked']))
@@ -608,6 +619,7 @@ if ($resql)
         	    print '<td>';
         	    print $projectstatic->getLibStatut(1);
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Ref
         	if (! empty($arrayfields['t.ref']['checked']))
@@ -616,6 +628,7 @@ if ($resql)
         	    print $taskstatic->getNomUrl(1,'withproject');
         		if ($taskstatic->hasDelay()) print img_warning("Late");
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}        	 
     	    // Label
         	if (! empty($arrayfields['t.label']['checked']))
@@ -623,6 +636,7 @@ if ($resql)
         	    print '<td>';
         	    print $taskstatic->label;
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Date start
         	if (! empty($arrayfields['t.dateo']['checked']))
@@ -630,19 +644,16 @@ if ($resql)
 				print '<td class="center">';
 	    		print dol_print_date($db->jdate($obj->date_start),'day');
 	    		print '</td>';
-			}
+    		    if (! $i) $totalarray['nbfield']++;
+        	}
     		// Date end
         	if (! empty($arrayfields['t.datee']['checked']))
         	{
     			print '<td class="center">';
         		print dol_print_date($db->jdate($obj->date_end),'day');
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
-        	
-        	$plannedworkloadoutputformat='allhourmin';
-        	$timespentoutputformat='allhourmin';
-        	if (! empty($conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT)) $plannedworkloadoutputformat=$conf->global->PROJECT_PLANNED_WORKLOAD_FORMAT;
-        	if (! empty($conf->global->PROJECT_TIMES_SPENT_FORMAT)) $timespentoutputformat=$conf->global->PROJECT_TIME_SPENT_FORMAT;
         	
         	// Planned workload
         	if (! empty($arrayfields['t.planned_workload']['checked']))
@@ -658,6 +669,9 @@ if ($resql)
         	    }
         	    //else print '--:--';
         	    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totalplannedworkloadfield']=$totalarray['nbfield'];
+    		    $totalarray['totalplannedworkload'] += $obj->planned_workload;
         	}
         	// Time spent
         	if (! empty($arrayfields['t.duration_effective']['checked']))
@@ -671,6 +685,9 @@ if ($resql)
 				if ($showlineingray) print '</i>';
 				else print '</a>';
         	    print '</td>';
+                if (! $i) $totalarray['nbfield']++;
+    		    if (! $i) $totalarray['totaldurationeffectivefield']=$totalarray['nbfield'];
+    		    $totalarray['totaldurationeffective'] += $obj->duration_effective;
         	}    		
     	    // Calculated progress
         	if (! empty($arrayfields['t.progress_calculated']['checked']))
@@ -682,6 +699,7 @@ if ($resql)
 					else print $langs->trans('WorkloadNotDefined');
 				}
         		print '</td>';
+                if (! $i) $totalarray['nbfield']++;
         	}    		
     	    // Declared progress
         	if (! empty($arrayfields['t.progress']['checked']))
@@ -692,6 +710,7 @@ if ($resql)
 					print $obj->progress.' %';
 				}
         		print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
         	}
         	// Extra fields
         	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -707,6 +726,7 @@ if ($resql)
     		            $tmpkey='options_'.$key;
     		            print $extrafields->showOutputField($key, $obj->$tmpkey, '', 1);
     		            print '</td>';
+    		            if (! $i) $totalarray['nbfield']++;
     		        }
     		    }
     		}
@@ -720,6 +740,7 @@ if ($resql)
     		    print '<td align="center">';
     		    print dol_print_date($db->jdate($obj->date_creation), 'dayhour');
     		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
     		}
     		// Date modification
     		if (! empty($arrayfields['t.tms']['checked']))
@@ -727,6 +748,7 @@ if ($resql)
     		    print '<td align="center">';
     		    print dol_print_date($db->jdate($obj->date_update), 'dayhour');
     		    print '</td>';
+    		    if (! $i) $totalarray['nbfield']++;
     		}
     		// Status
     		/*if (! empty($arrayfields['p.fk_statut']['checked']))
@@ -734,9 +756,17 @@ if ($resql)
         		$projectstatic->statut = $obj->fk_statut;
         		print '<td align="right">'.$projectstatic->getLibStatut(5).'</td>';
     		}*/
-    		// Action column
-    		print '<td></td>';
-
+            // Action column
+            print '<td class="nowrap" align="center">';
+            if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+            {
+                $selected=0;
+        		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+        		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+            }
+            print '</td>';
+            if (! $i) $totalarray['nbfield']++;
+    		
     		print "</tr>\n";
         
     		//print projectLinesa();
@@ -744,6 +774,27 @@ if ($resql)
 
     	$i++;    
     }
+
+    // Show total line
+    if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['totalplannedworkloadfield']))
+    {
+        print '<tr class="liste_total">';
+        $i=0;
+        while ($i < $totalarray['nbfield'])
+        {
+            $i++;
+            if ($i == 1)
+            {
+                if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+                else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+            }
+            elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td align="center">'.convertSecondToTime($totalarray['totalplannedworkload'],$plannedworkloadoutputformat).'</td>';
+            elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td align="center">'.convertSecondToTime($totalarray['totaldurationeffective'],$timespentoutputformat).'</td>';
+            else print '<td></td>';
+        }
+        print '</tr>';
+    }
+    
     $db->free($resql);
     
     $parameters=array('sql' => $sql);

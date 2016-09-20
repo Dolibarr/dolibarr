@@ -49,6 +49,8 @@ $id=GETPOST("id","int");
 $ribid=GETPOST("ribid","int");
 $action=GETPOST("action");
 
+$account = new CompanyBankAccount($db);
+
 
 /*
  *	Actions
@@ -57,9 +59,6 @@ $action=GETPOST("action");
 if ($action == 'update' && ! $_POST["cancel"])
 {
 	// Modification
-	$account = new CompanyBankAccount($db);
-
-
 	if (! GETPOST('label'))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
@@ -144,21 +143,6 @@ if ($action == 'add' && ! $_POST["cancel"])
 		$action='create';
 		$error++;
 	}
-	if ($account->needIBAN() == 1)
-	{
-		if (! GETPOST('iban'))
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
-			$action='create';
-			$error++;
-		}
-		if (! GETPOST('bic'))
-		{
-			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
-			$action='create';
-			$error++;
-		}
-	}
 
 	if (! $error)
 	{
@@ -182,18 +166,38 @@ if ($action == 'add' && ! $_POST["cancel"])
 		$account->owner_address   = GETPOST('owner_address','alpha');
 		$account->frstrecur       = GETPOST('frstrecur');
 
-	    $result = $account->update($user);	// TODO Use create and include update into create method
-	    if (! $result)
-	    {
-		    setEventMessages($account->error, $account->errors, 'errors');
-	        $_GET["action"]='create';     // Force chargement page création
-	    }
-	    else
-	    {
-	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
-	        header('Location: '.$url);
-	        exit;
-	    }
+		// This test can be done only once properties were set
+		if ($account->needIBAN() == 1)
+		{
+		    if (! GETPOST('iban'))
+		    {
+		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("IBAN")), null, 'errors');
+		        $action='create';
+		        $error++;
+		    }
+		    if (! GETPOST('bic'))
+		    {
+		        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BIC")), null, 'errors');
+		        $action='create';
+		        $error++;
+		    }
+		}
+		
+		if (! $error)
+		{
+    	    $result = $account->update($user);	// TODO Use create and include update into create method
+    	    if (! $result)
+    	    {
+    		    setEventMessages($account->error, $account->errors, 'errors');
+    	        $_GET["action"]='create';     // Force chargement page création
+    	    }
+    	    else
+    	    {
+    	        $url=DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id;
+    	        header('Location: '.$url);
+    	        exit;
+    	    }
+		}
 	}
 }
 
@@ -248,8 +252,6 @@ llxHeader();
 
 $head=societe_prepare_head2($object);
 
-
-$account = new CompanyBankAccount($db);
 if (! $id)
     $account->fetch(0,$object->id);
 else
@@ -283,7 +285,9 @@ if ($socid && $action != 'edit' && $action != "create")
         print $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id."&ribid=".($ribid?$ribid:$id), $langs->trans("DeleteARib"), $langs->trans("ConfirmDeleteRib", $account->getRibLabel()), "confirm_delete", '', 0, 1);
     }
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -385,6 +389,10 @@ if ($socid && $action != 'edit' && $action != "create")
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
         print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+        if (! empty($conf->prelevement->enabled))
+        {
+            print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+        }
 		print "</tr>\n";
 
         foreach ($rib_list as $rib)
@@ -436,6 +444,28 @@ if ($socid && $action != 'edit' && $action != "create")
            		print '</a>';
             }
         	print '</td>';
+        	
+        	if (! empty($conf->prelevement->enabled))
+        	{    	
+            	include_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
+            	$modellist=ModeleBankAccountDoc::liste_modeles($db);
+            	print '<td>';
+            	if (is_array($modellist) && count($modellist) == 1)    // If there is only one element
+            	{
+            	    $arraykeys=array_keys($modellist);
+            	    $modelselected=$arraykeys[0];
+            	}
+            	$out.= $form->selectarray('model', $modellist, $modelselected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
+            	$out.= ajax_combobox('model');
+            	//print $out;
+            	$buttonlabel=$langs->trans("Generate");
+            	$genbutton = '<input class="button buttongen" id="'.$forname.'_generatebutton" name="'.$forname.'_generatebutton"';
+            	$genbutton.= ' type="submit" value="'.$buttonlabel.'"';
+                $genbutton.= '>';
+                //print $genbutton;
+            	print '</td>';     // TODO Add link to generate doc
+        	}
+        	
 	        print '</tr>';
         }
 
@@ -458,7 +488,9 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
@@ -560,7 +592,9 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 {
 	dol_fiche_head($head, 'rib', $langs->trans("ThirdParty"),0,'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 

@@ -51,7 +51,7 @@ $hookmanager->initHooks(array('element_resource'));
 $object->available_resources = array('dolresource');
 
 // Get parameters
-$id                         = GETPOST('id','int');
+$id                     = GETPOST('id','int');
 $action                 = GETPOST('action','alpha');
 $mode                   = GETPOST('mode','alpha');
 $lineid                 = GETPOST('lineid','int');
@@ -196,24 +196,105 @@ else
 
                         dol_fiche_head($head, 'resources', $langs->trans("Action"),0,'action');
 
+		                $linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
+                        $linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
+
+                        // Link to other agenda views
+                        $out='';
+                        $out.=img_picto($langs->trans("ViewPerUser"),'object_calendarperuser','class="hideonsmartphone pictoactionview"');
+                        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewPerUser").'</a>';
+                        $out.='<br>';
+                        $out.=img_picto($langs->trans("ViewCal"),'object_calendar','class="hideonsmartphone pictoactionview"');
+                        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewCal").'</a>';
+                        $out.=img_picto($langs->trans("ViewWeek"),'object_calendarweek','class="hideonsmartphone pictoactionview"');
+                        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewWeek").'</a>';
+                        $out.=img_picto($langs->trans("ViewDay"),'object_calendarday','class="hideonsmartphone pictoactionview"');
+                        $out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($act->datep,'%Y').'&month='.dol_print_date($act->datep,'%m').'&day='.dol_print_date($act->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
+                        
+                        $linkback.=$out;
+                        
+                        dol_banner_tab($act, 'element_id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '', "&element=".$element);
+                        
+                        print '<div class="underbanner clearboth"></div>';
+                        
+                        // Ref
+                        /*print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
+                        print $form->showrefnav($act, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
+                        print '</td></tr>';*/
+
                         // Affichage fiche action en mode visu
                         print '<table class="border" width="100%">';
-
-                        $linkback = '<a href="'.DOL_URL_ROOT.'/comm/action/listactions.php">'.$langs->trans("BackToList").'</a>';
-
-                        // Ref
-                        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-                        print $form->showrefnav($act, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
-                        print '</td></tr>';
 
                         // Type
                         if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
                         {
-                                print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+                                print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
                         }
 
-                        // Title
-                        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+                        // Full day event
+                        print '<tr><td class="titlefield">'.$langs->trans("EventOnFullDay").'</td><td colspan="3">'.yn($act->fulldayevent, 3).'</td></tr>';
+                        
+                        // Date start
+                        print '<tr><td>'.$langs->trans("DateActionStart").'</td><td colspan="3">';
+                        if (! $act->fulldayevent) print dol_print_date($act->datep,'dayhour');
+                        else print dol_print_date($act->datep,'day');
+                        if ($act->percentage == 0 && $act->datep && $act->datep < ($now - $delay_warning)) print img_warning($langs->trans("Late"));
+                        print '</td>';
+                        print '</tr>';
+                        
+                        // Date end
+                        print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td colspan="3">';
+                        if (! $act->fulldayevent) print dol_print_date($act->datef,'dayhour');
+                        else print dol_print_date($act->datef,'day');
+                        if ($act->percentage > 0 && $act->percentage < 100 && $act->datef && $act->datef < ($now- $delay_warning)) print img_warning($langs->trans("Late"));
+                        print '</td></tr>';
+                        
+                        // Status
+                        /*print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="2">';
+                         print $act->getLibStatut(4);
+                         print '</td></tr>';*/
+                        
+                        // Location
+                        if (empty($conf->global->AGENDA_DISABLE_LOCATION))
+                        {
+                            print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3">'.$act->location.'</td></tr>';
+                        }
+                        
+                        // Assigned to
+                        print '<tr><td class="nowrap">'.$langs->trans("ActionAffectedTo").'</td><td colspan="3">';
+                        $listofuserid=array();
+                        if (empty($donotclearsession))
+                        {
+                            if ($act->userownerid > 0) $listofuserid[$act->userownerid]=array('id'=>$act->userownerid,'transparency'=>$act->transparency);	// Owner first
+                            if (! empty($act->userassigned))	// Now concat assigned users
+                            {
+                                // Restore array with key with same value than param 'id'
+                                $tmplist1=$act->userassigned; $tmplist2=array();
+                                foreach($tmplist1 as $key => $val)
+                                {
+                                    if ($val['id'] && $val['id'] != $act->userownerid) $listofuserid[$val['id']]=$val;
+                                }
+                            }
+                            $_SESSION['assignedtouser']=json_encode($listofuserid);
+                        }
+                        else
+                        {
+                            if (!empty($_SESSION['assignedtouser']))
+                            {
+                                $listofuserid=json_decode($_SESSION['assignedtouser'], true);
+                            }
+                        }
+                        print '<div class="assignedtouser">';
+                        print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+                        print '</div>';
+                        if (in_array($user->id,array_keys($listofuserid)))
+                        {
+                            print '<div class="myavailability">';
+                            print $langs->trans("MyAvailability").': '.(($act->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
+                            print '</div>';
+                        }
+                        print '	</td></tr>';
+                        
                         print '</table>';
 
                         dol_fiche_end();
@@ -225,38 +306,37 @@ else
          */
         if ($element_id && $element == 'societe')
         {
-                $socstatic = fetchObjectByElement($element_id,$element);
-                if (is_object($socstatic))
-                {
-                    $savobject = $object;
-
-                    $object = $socstatic;
-
-                        require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-                        $head = societe_prepare_head($socstatic);
-
-                        dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"),0,'company');
-
-            dol_banner_tab($socstatic, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-
+            $socstatic = fetchObjectByElement($element_id, $element);
+            if (is_object($socstatic)) {
+                $savobject = $object;
+                
+                $object = $socstatic;
+                
+                require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+                $head = societe_prepare_head($socstatic);
+                
+                dol_fiche_head($head, 'resources', $langs->trans("ThirdParty"), 0, 'company');
+                
+                dol_banner_tab($socstatic, 'socid', '', ($user->societe_id ? 0 : 1), 'rowid', 'nom');
+                
                 print '<div class="fichecenter">';
-
-            print '<div class="underbanner clearboth"></div>';
+                
+                print '<div class="underbanner clearboth"></div>';
                 print '<table class="border" width="100%">';
-
+                
                 // Alias name (commercial, trademark or alias name)
-                print '<tr><td class="titelfield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
+                print '<tr><td class="titlefield">' . $langs->trans('AliasNames') . '</td><td colspan="3">';
                 print $socstatic->name_alias;
                 print "</td></tr>";
-
-                        print '</table>';
-
-                        print '</div>';
-
-                        dol_fiche_end();
-
-                        $object = $savobject;
-                }
+                
+                print '</table>';
+                
+                print '</div>';
+                
+                dol_fiche_end();
+                
+                $object = $savobject;
+            }
         }
 
 	/*
@@ -303,13 +383,13 @@ else
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
-        //print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
-
-
+    //print load_fiche_titre($langs->trans('ResourcesLinkedToElement'),'','');
+    print '<br>';
+    
 	// Show list of resource links
 
-        foreach ($object->available_resources as $modresources => $resources)
-        {
+    foreach ($object->available_resources as $modresources => $resources)
+    {
                 $resources=(array) $resources;  // To be sure $resources is an array
                 foreach($resources as $resource_obj)
                 {
@@ -327,13 +407,12 @@ else
                         // If we have a specific template we use it
                         if(file_exists(dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php')))
                         {
-                                $res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
+                                  $res=include dol_buildpath($path.'/core/tpl/resource_'.$element_prop['element'].'_add.tpl.php');
                         }
                         else
                         {
-                                $res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
+                                  $res=include DOL_DOCUMENT_ROOT . '/core/tpl/resource_add.tpl.php';
                         }
-            //var_dump($element_id);
 
                         if ($mode != 'add' || $resource_obj != $resource_type)
                         {

@@ -35,6 +35,7 @@ class Entrepot extends CommonObject
 {
 	public $element='stock';
 	public $table_element='entrepot';
+	public $picto='stock';
 	
 	/**
 	 * Warehouse closed, inactive

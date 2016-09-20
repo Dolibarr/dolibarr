@@ -69,17 +69,17 @@ else $typeofdata='textarea:12:100';
 ?>
 
 <!-- BEGIN PHP TEMPLATE NOTES -->
-<div class="border table-border centpercent">
+<div class="tagtable border table-border centpercent">
 <?php if ($module != 'product') {   // No public note yet on products ?>
-	<div class="table-border-row">
-		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+	<div class="tagtr table-border-row">
+		<div class="tagtd table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php } ?>
 <?php if (empty($user->societe_id)) { ?>
-	<div class="table-border-row">
-		<div class="table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
-		<div class="table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
+	<div class="tagtr table-border-row">
+		<div class="tagtd table-key-border-col<?php echo (empty($cssclass)?'':' '.$cssclass); ?>"<?php echo ($colwidth ? ' style="width: '.$colwidth.'%"' : ''); ?>><?php echo $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam); ?></div>
+		<div class="tagtd table-val-border-col"><?php echo $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam); ?></div>
 	</div>
 <?php } ?>
 </div>

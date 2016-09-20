@@ -1259,8 +1259,6 @@ class Account extends CommonObject
         // For backward compatibility, we try to guess country from other information
         if (! empty($this->iban))
         {
-            if ($mysoc->country_code === 'IN') return $mysoc->country_code;	// Test to know if we can trust IBAN
-
             // If IBAN defined, we can know country of account from it
             if (preg_match("/^([a-zA-Z][a-zA-Z])/i",$this->iban,$reg)) return $reg[1];
         }

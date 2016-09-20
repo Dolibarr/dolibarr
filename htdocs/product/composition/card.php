@@ -207,7 +207,7 @@ if ($id > 0 || ! empty($ref))
 	    
         dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 		
-		print '<table class="border tableforfield" width="100%">';
+		print '<table class="noborder tableforfield" width="100%">';
 
 		// Nature
 		if($object->type!=Product::TYPE_SERVICE)
@@ -248,7 +248,8 @@ if ($id > 0 || ! empty($ref))
 
 		dol_fiche_end();
 
-
+        print '<br>';
+        
 		$prodsfather = $object->getFather(); 		// Parent Products
 		$object->get_sousproduits_arbo();			// Load $object->sousprods
 		$prods_arbo=$object->get_arbo_each_prod();		

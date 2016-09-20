@@ -580,7 +580,7 @@ if ($id == 10)
 // Actions add or modify an entry into a dictionary
 if (GETPOST('actionadd') || GETPOST('actionmodify'))
 {
-    $listfield=explode(',',$tabfield[$id]);
+    $listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
     $listfieldinsert=explode(',',$tabfieldinsert[$id]);
     $listfieldmodify=explode(',',$tabfieldinsert[$id]);
     $listfieldvalue=explode(',',$tabfieldvalue[$id]);

@@ -537,6 +537,17 @@ if ($type == 'c' || $type == 'p')
 	 	$moreforfilter.='</div>';
 	}
 }
+if ($type == 'f')
+{
+    if (! empty($conf->categorie->enabled))
+    {
+        require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $moreforfilter.='<div class="divsearchfield">';
+        $moreforfilter.=$langs->trans('Categories'). ': ';
+        $moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
+        $moreforfilter.='</div>';
+    }
+}
 
 // If the user can view prospects other than his'
 if ($user->rights->societe->client->voir || $socid)
@@ -545,17 +556,6 @@ if ($user->rights->societe->client->voir || $socid)
  	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
 	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 	$moreforfilter.='</div>';
-}
-if ($type == 'f')
-{
-	if (! empty($conf->categorie->enabled))
-	{
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
-		$moreforfilter.='</div>';
-	}
 }
 if (! empty($moreforfilter))
 {
