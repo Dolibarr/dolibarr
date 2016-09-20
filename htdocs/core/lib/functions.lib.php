@@ -986,6 +986,12 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             $morehtmlright.=$object->getLibStatut(5,1);
         }
 	}
+	elseif ($object->element == 'facture')
+	{
+	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
+	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
+		$morehtmlright.=$tmptxt;
+	}
 	else {
 	    $tmptxt=$object->getLibStatut(6);
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5); 

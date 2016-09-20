@@ -580,6 +580,14 @@ div.myavailability {
 .tablelistofcalendars {
 	margin-top: 25px !important;
 }
+.amountalreadypaid {
+	color: #008800;
+	font-weight: bold;
+}
+.amountremaintopay {
+	color: #880000;
+	font-weight: bold;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 .table-responsive {
@@ -2833,6 +2841,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 	border-top-width: <?php echo $borderwith ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
+	margin: 0px 0px 0px 0px !important;
 }
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
