@@ -117,6 +117,8 @@ class FormProduct
 			{
 				$obj = $this->db->fetch_object($resql);
 				if ($sumStock) $obj->stock = price2num($obj->stock,5);
+				$o = new Entrepot($this->db);
+				$o->fetch($obj->rowid);
 				$this->cache_warehouses[$obj->rowid]['id'] =$obj->rowid;
 				$this->cache_warehouses[$obj->rowid]['label']=$o->get_full_arbo();
 				$this->cache_warehouses[$obj->rowid]['description'] = $obj->description;
