@@ -4,9 +4,9 @@
  * Copyright (C) 2011		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin		<regis@dolibarr.fr>
  * Copyright (C) 2013		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2016  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2013-2014	Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014	Olivier Geffroy		<jeff@jeffinfo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -424,7 +424,7 @@ if ($action == 'export_csv') {
 			}
 			if ($reflabel == '(CustomerInvoicePayment)') {
 				$reflabel = $langs->trans('Customer');
-			}		
+			}
 			if ($reflabel == '(SocialContributionPayment)') {
 				$reflabel = $langs->trans('SocialContribution');
 			}
@@ -577,9 +577,13 @@ else {
 			'action' => ''
 	), '', $varlink);
 
-	print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
+		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans('Export') . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
+	} else {
+		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+	}
 
-	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 
 	print '
 	<script type="text/javascript">
