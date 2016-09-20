@@ -275,9 +275,6 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $stringcurrentdate, $num, $nbtotalofrecords, 'title_setup', 0, '', '', $limit);
-
-
 // Line with explanation and button new job
 if (! $user->rights->cron->create)
 {
@@ -287,7 +284,13 @@ else
 {
     $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
 }
-print '<table class="centpercent"><tr><td>'.$langs->trans('CronInfo').'</td><td class="right">'.$buttontoshow.'</td></tr></table>';
+
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttontoshow, $num, $nbtotalofrecords, 'title_setup', 0, '', '', $limit);
+
+
+print $langs->trans('CronInfo').'<br>';
+print $stringcurrentdate.'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
 print '<br>';
 
 

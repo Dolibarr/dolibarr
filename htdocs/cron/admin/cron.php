@@ -109,6 +109,7 @@ print '</form>';
 print '<br><br>';
 
 print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
 
 print '<br><br>';
 
