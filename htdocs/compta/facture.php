@@ -3651,7 +3651,7 @@ else if ($id > 0 || ! empty($ref))
             print $langs->trans('AlreadyPaidNoCreditNotesNoDeposits');
         else
             print $langs->trans('AlreadyPaid');
-        print ' :</td><td align="right" class="amountalreadypaid">' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
+        print ' :</td><td align="right"'.(($totalpaye > 0)?' class="amountalreadypaid"':'').'>' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
         
         $resteapayeraffiche = $resteapayer;
         
