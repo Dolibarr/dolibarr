@@ -229,11 +229,12 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param string $sortorder Sort Order
-	 * @param string $sortfield Sort field
-	 * @param int    $limit     offset limit
-	 * @param int    $offset    offset limit
-	 * @param array  $filter    filter array
+	 * @param int	 $fk_product Product from which we want to get limit and desired stock by warehouse 
+	 * @param string $sortorder  Sort Order
+	 * @param string $sortfield  Sort field
+	 * @param int    $limit      offset limit
+	 * @param int    $offset     offset limit
+	 * @param array  $filter     filter array
 	 * @param string $filtermode filter mode (AND or OR)
 	 *
 	 * @return int <0 if KO, >0 if OK
