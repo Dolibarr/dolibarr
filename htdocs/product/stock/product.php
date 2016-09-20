@@ -149,7 +149,7 @@ if($action == 'delete_productstockwarehouse')
 	
 	$pse = new ProductStockEntrepot($db);
 	$pse->fetch(GETPOST('fk_productstockwarehouse'));
-	$pse->delete($user);
+	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
 	
 	$action = '';
 	

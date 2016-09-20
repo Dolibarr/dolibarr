@@ -97,6 +97,13 @@ ALTER TABLE llx_product_lot_extrafields ADD INDEX idx_product_lot_extrafields (f
 
 ALTER TABLE llx_website_page MODIFY content MEDIUMTEXT;
 
-
-
-
+create table llx_product_stock_entrepot
+(
+  rowid           		integer AUTO_INCREMENT PRIMARY KEY,
+  tms             		timestamp,
+  fk_product      		integer NOT NULL,
+  fk_entrepot     		integer NOT NULL,
+  seuil_stock_alerte    int(11) DEFAULT '0',
+  desiredstock    		int(11) DEFAULT '0',
+  import_key      		varchar(14)               -- Import key
+)ENGINE=innodb;
