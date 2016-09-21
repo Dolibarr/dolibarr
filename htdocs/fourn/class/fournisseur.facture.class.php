@@ -2481,7 +2481,7 @@ class SupplierInvoiceLine extends CommonObjectLine
             $this->db->rollback();
             return -2;
         }
-        
+    } 
             /**
      *  Mise a jour de l'objet ligne de commande en base
      *
