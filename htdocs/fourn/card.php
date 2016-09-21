@@ -470,7 +470,6 @@ if ($object->id > 0)
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 		$sql.= " WHERE p.fk_soc =".$object->id;
 		$sql.= " AND p.entity =".$conf->entity;
-		$sql.= " ORDER BY p.date_commande DESC";
 		$resql=$db->query($sql);
 		if ($resql)
 		{
