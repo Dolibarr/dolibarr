@@ -209,7 +209,7 @@ function showPaypalPaymentUrl($type,$ref)
     $out='<br><br>';
     $out.=img_picto('','object_globe.png').' '.$langs->trans("ToOfferALinkForOnlinePayment",$servicename).'<br>';
     $url=getPaypalPaymentUrl(0,$type,$ref);
-    $out.='<input type="text" id="paypalurl" value="'.$url.'" size="60"><br>';
+    $out.='<input type="text" id="paypalurl" class="quatrevingtpercent" value="'.$url.'"><br>';
     return $out;
 }
 

@@ -209,7 +209,7 @@ class FormMargin
     	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
-		print '<table class="border margintable" width="100%">';
+		print '<table class="noborder margintable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
 		print '<td class="liste_titre" align="right">'.$langs->trans('SellingPrice').'</td>';

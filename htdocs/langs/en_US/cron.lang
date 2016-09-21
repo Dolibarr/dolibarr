@@ -76,3 +76,4 @@ UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled job
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
 MakeLocalDatabaseDump=Create a local database dump
+WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of active jobs, your jobs may be delayed to a maximum of %s hours before being run.

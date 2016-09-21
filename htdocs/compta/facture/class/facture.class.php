@@ -1516,6 +1516,8 @@ class Facture extends CommonInvoice
 	 */
 	function set_ref_client($ref_client, $notrigger=0)
 	{
+	    global $user;
+	    
 		$error=0;
 
 		$this->db->begin();
