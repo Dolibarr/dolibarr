@@ -546,7 +546,7 @@ class pdf_crabe extends ModelePDFFactures
 					$prev_progress = $object->lines[$i]->get_prev_progress();
 					if ($prev_progress > 0) // Compute progress from previous situation
 					{
-						$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+                        $tvaligne = $sign * ($object->lines[$i]->total_tva * (($object->lines[$i]->situation_percent - $prev_progress) / 100));
 					} else {
 						$tvaligne = $sign * $object->lines[$i]->total_tva;
 					}
