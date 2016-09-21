@@ -229,7 +229,8 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int	 $fk_product Product from which we want to get limit and desired stock by warehouse 
+	 * @param int	 $fk_product Product from which we want to get limit and desired stock by warehouse
+	 * @param int	 $fk_entrepot Warehouse in which we want to get products limit and desired stock
 	 * @param string $sortorder  Sort Order
 	 * @param string $sortfield  Sort field
 	 * @param int    $limit      offset limit
@@ -239,7 +240,7 @@ class ProductStockEntrepot extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($fk_product='', $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($fk_product='', $fk_entrepot='', $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -268,36 +269,29 @@ class ProductStockEntrepot extends CommonObject
 		if (count($sqlwhere) > 0) $sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
 		
 		if(!empty($fk_product)) $sql .= ' AND fk_product = '.$fk_product;
+		elseif(!empty($fk_entrepot)) $sql .= ' AND fk_entrepot = '.$fk_entrepot;
+		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 		
 		if (!empty($sortfield)) $sql .= $this->db->order($sortfield,$sortorder);
 		if (!empty($limit)) $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
 		
-		$this->lines = array();
+		$lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $this->db->num_rows($resql);
-
+			
 			while ($obj = $this->db->fetch_object($resql)) {
-				
-				//$line->tms = $this->db->jdate($obj->tms);
-				$line->seuil_stock_alerte = $obj->seuil_stock_alerte;
-				$line->desiredstock = $obj->desiredstock;
-				//$line->import_key = $obj->import_key;
-
-				
-
-				$this->lines[$obj->rowid] = array(
-												'id'=>$obj->rowid
-												,'fk_product'=>$obj->fk_product
-												,'fk_entrepot'=>$obj->fk_entrepot
-												,'seuil_stock_alerte'=>$obj->seuil_stock_alerte
-												,'desiredstock'=>$obj->desiredstock
-											);
+				$lines[$obj->rowid] = array(
+										'id'=>$obj->rowid
+										,'fk_product'=>$obj->fk_product
+										,'fk_entrepot'=>$obj->fk_entrepot
+										,'seuil_stock_alerte'=>$obj->seuil_stock_alerte
+										,'desiredstock'=>$obj->desiredstock
+									);
 			}
 			$this->db->free($resql);
 
-			return $num;
+			return $lines;
 		} else {
 			$this->errors[] = 'Error ' . $this->db->lasterror();
 			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);

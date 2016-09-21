@@ -221,17 +221,24 @@ class Entrepot extends CommonObject
 	{
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."stock_mouvement";
-		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql1=$this->db->query($sql);
+		$elements = array('stock_mouvement','product_stock','product_stock_entrepot');
+		foreach($elements as $table)
+		{
+			if (! $error)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+				$sql.= " WHERE fk_entrepot = " . $this->id;
+				dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+				$result=$this->db->query($sql);
+				if (! $result)
+				{
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+				}
+			}
+		}
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " WHERE fk_entrepot = " . $this->id;
-		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
-		$resql2=$this->db->query($sql);
-
-		if ($resql1 && $resql2)
+		if (! $error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."entrepot";
 			$sql.= " WHERE rowid = " . $this->id;

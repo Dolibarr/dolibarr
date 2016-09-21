@@ -937,12 +937,12 @@ if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
 	print '</tr>';
 	
 	$pse = new ProductStockEntrepot($db);
-	$pse->fetchAll(GETPOST('id'));
+	$lines = $pse->fetchAll(GETPOST('id'));
 	
-	if(!empty($pse->lines)) {
+	if(!empty($lines)) {
 		
 		$var=false;
-		foreach($pse->lines as $line) {
+		foreach($lines as $line) {
 			
 			$ent = new Entrepot($db);
 			$ent->fetch($line['fk_entrepot']);
