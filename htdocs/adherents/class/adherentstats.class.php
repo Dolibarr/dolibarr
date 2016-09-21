@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2003		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /**
- *	\file       htdocs/adherents/class/adherentstats.class.php
- *	\ingroup    member
- *	\brief      Fichier de la classe de gestion des stats des adhérents
+ *	\file		htdocs/adherents/class/adherentstats.class.php
+ *	\ingroup	member
+ *	\brief		Fichier de la classe de gestion des stats des adhérents
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/adherents/class/cotisation.class.php';
+include_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
 
 
 /**
@@ -32,37 +32,37 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/cotisation.class.php';
  */
 class AdherentStats extends Stats
 {
-    public $table_element;
+	public $table_element;
 
-    var $socid;
-    var $userid;
+	var $socid;
+	var $userid;
 
-    var $from;
-    var $field;
-    var $where;
+	var $from;
+	var $field;
+	var $where;
 
 
 	/**
 	 *	Constructor
 	 *
 	 *	@param 		DoliDB		$db			Database handler
-	 * 	@param 		int			$socid	   	Id third party
-     * 	@param   	int			$userid    	Id user for filter
+	 * 	@param 		int			$socid		Id third party
+	 * 	@param   	int			$userid		Id user for filter
 	 */
 	function __construct($db, $socid=0, $userid=0)
 	{
 		global $user, $conf;
 
 		$this->db = $db;
-        $this->socid = $socid;
-        $this->userid = $userid;
+		$this->socid = $socid;
+		$this->userid = $userid;
 
-		$object=new Cotisation($this->db);
+		$object=new Subscription($this->db);
 
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
 		$this->from.= ", ".MAIN_DB_PREFIX."adherent as m";
 
-		$this->field='cotisation';
+		$this->field='subscription';
 
 		$this->where.= " m.statut != 0";
 		$this->where.= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent', 1).")";
@@ -71,15 +71,15 @@ class AdherentStats extends Stats
 		{
 			$this->where .= " AND m.rowid = ".$this->memberid;
 		}
-        //if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
+		//if ($this->userid > 0) $this->where.=' AND fk_user_author = '.$this->userid;
 	}
 
 
 	/**
 	 * Renvoie le nombre de proposition par mois pour une annee donnee
 	 *
-     * @param   int		$year       Year
-     * @return	array				Array of nb each month
+	 * @param   int		$year	   Year
+	 * @return	array				Array of nb each month
 	 */
 	function getNbByMonth($year)
 	{
@@ -91,7 +91,7 @@ class AdherentStats extends Stats
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+		$sql.= $this->db->order('dm','DESC');
 
 		return $this->_getNbByMonth($year, $sql);
 	}
@@ -99,7 +99,7 @@ class AdherentStats extends Stats
 	/**
 	 * Renvoie le nombre de cotisation par annee
 	 *
-     * @return	array				Array of nb each year
+	 * @return	array				Array of nb each year
 	 */
 	function getNbByYear()
 	{
@@ -110,7 +110,7 @@ class AdherentStats extends Stats
 		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+		$sql.= $this->db->order('dm','DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -118,8 +118,8 @@ class AdherentStats extends Stats
 	/**
 	 * Renvoie le nombre de cotisation par mois pour une annee donnee
 	 *
-     * @param   int		$year       Year
-     * @return	array				Array of amount each month
+	 * @param   int		$year	   Year
+	 * @return	array				Array of amount each month
 	 */
 	function getAmountByMonth($year)
 	{
@@ -131,7 +131,7 @@ class AdherentStats extends Stats
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+		$sql.= $this->db->order('dm','DESC');
 
 		return $this->_getAmountByMonth($year, $sql);
 	}
@@ -139,8 +139,8 @@ class AdherentStats extends Stats
 	/**
 	 * Return average amount each month
 	 *
-     * @param   int		$year       Year
-     * @return	array				Array of average each month
+	 * @param   int		$year	   Year
+	 * @return	array				Array of average each month
 	 */
 	function getAverageByMonth($year)
 	{
@@ -152,7 +152,7 @@ class AdherentStats extends Stats
 		$sql.= " WHERE date_format(p.dateadh,'%Y') = '".$year."'";
 		$sql.= " AND ".$this->where;
 		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm','DESC');
+		$sql.= $this->db->order('dm','DESC');
 
 		return $this->_getAverageByMonth($year, $sql);
 	}
@@ -172,7 +172,7 @@ class AdherentStats extends Stats
 		//if (!$user->rights->societe->client->voir && !$this->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " GROUP BY year";
-        $sql.= $this->db->order('year','DESC');
+		$sql.= $this->db->order('year','DESC');
 
 		return $this->_getAllByYear($sql);
 	}

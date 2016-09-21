@@ -289,21 +289,21 @@ if ($action == 'create')
 
 	// Ref
 	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-	print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.(GETPOST("ref")?GETPOST("ref",'alpha'):$account->ref).'" maxlength="12"></td></tr>';
+	print '<td><input size="8" type="text" class="flat" name="ref" value="'.(GETPOST("ref")?GETPOST("ref",'alpha'):$account->ref).'" maxlength="12"></td></tr>';
 
 	// Label
 	print '<tr><td class="fieldrequired">'.$langs->trans("LabelBankCashAccount").'</td>';
-	print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.GETPOST("label", 'alpha').'"></td></tr>';
+	print '<td><input size="30" type="text" class="flat" name="label" value="'.GETPOST("label", 'alpha').'"></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	$formbank->selectTypeOfBankAccount(isset($_POST["type"])?$_POST["type"]: Account::TYPE_CURRENT,"type");
 	print '</td></tr>';
 
 	// Currency
 	print '<tr><td class="fieldrequired">'.$langs->trans("Currency").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	$selectedcode=$account->currency_code;
 	if (! $selectedcode) $selectedcode=$conf->currency;
 	print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
@@ -313,7 +313,7 @@ if ($action == 'create')
 
 	// Status
     print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
-    print '<td colspan="3">';
+    print '<td>';
     print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
     print '</td></tr>';
 
@@ -327,13 +327,13 @@ if ($action == 'create')
 	$account->country_code = getCountry($selectedcode, 2);	// Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	print $form->select_country($selectedcode,'account_country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 
 	// State
-	print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($selectedcode)
 	{
 		$formcompany->select_departement(isset($_POST["account_state_id"])?$_POST["account_state_id"]:'',$selectedcode,'account_state_id');
@@ -346,12 +346,12 @@ if ($action == 'create')
 
 	// Web
 	print '<tr><td>'.$langs->trans("Web").'</td>';
-	print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
+	print '<td><input size="50" type="text" class="flat" name="url" value="'.$_POST["url"].'"></td></tr>';
 
     // Tags-Categories
     if ($conf->categorie->enabled) 
     {
-        print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+        print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
         $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
         $c = new Categorie($db);
         $cats = $c->containing($account->id,Categorie::TYPE_ACCOUNT);
@@ -364,7 +364,7 @@ if ($action == 'create')
 
 	// Comment
 	print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
     // Editor wysiwyg
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$account->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,70);
@@ -372,7 +372,7 @@ if ($action == 'create')
 	print '</td></tr>';
 
  	// Other attributes
-	$parameters=array('colspan' => 3);
+	//$parameters=array('colspan' => 3);
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
@@ -387,18 +387,18 @@ if ($action == 'create')
 
 	// Sold
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("InitialBankBalance").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="solde" value="'.(GETPOST("solde")?GETPOST("solde"):price2num($account->solde)).'"></td></tr>';
+	print '<td><input size="12" type="text" class="flat" name="solde" value="'.(GETPOST("solde")?GETPOST("solde"):price2num($account->solde)).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Date").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	$form->select_date('', 're', 0, 0, 0, 'formsoc');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(GETPOST("account_min_allowed")?GETPOST("account_min_allowed"):$account->min_allowed).'"></td></tr>';
+	print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(GETPOST("account_min_allowed")?GETPOST("account_min_allowed"):$account->min_allowed).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-	print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.(GETPOST("account_min_desired")?GETPOST("account_min_desired"):$account->min_desired).'"></td></tr>';
+	print '<td><input size="12" type="text" class="flat" name="account_min_desired" value="'.(GETPOST("account_min_desired")?GETPOST("account_min_desired"):$account->min_desired).'"></td></tr>';
 
 	print '</table>';
 	print '<br>';
@@ -409,7 +409,7 @@ if ($action == 'create')
 
 		// If bank account
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
-		print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.(GETPOST('bank')?GETPOST('bank','alpha'):$account->bank).'"></td>';
+		print '<td><input size="30" type="text" class="flat" name="bank" value="'.(GETPOST('bank')?GETPOST('bank','alpha'):$account->bank).'"></td>';
 		print '</tr>';
 
 		// Show fields of bank account
@@ -442,21 +442,21 @@ if ($action == 'create')
 
 		// IBAN
 		print '<tr><td>'.$langs->trans($ibankey).'</td>';
-		print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOST('iban')?GETPOST('iban','alpha'):$account->iban).'"></td></tr>';
+		print '<td><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.(GETPOST('iban')?GETPOST('iban','alpha'):$account->iban).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans($bickey).'</td>';
-		print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOST('bic')?GETPOST('bic','alpha'):$account->bic).'"></td></tr>';
+		print '<td><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.(GETPOST('bic')?GETPOST('bic','alpha'):$account->bic).'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 		print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
 		print (GETPOST('domiciliation')?GETPOST('domiciliation'):$account->domiciliation);
 		print "</textarea></td></tr>";
 
 		print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-		print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.(GETPOST('proprio')?GETPOST('proprio','alpha'):$account->proprio).'">';
+		print '<td><input size="30" type="text" class="flat" name="proprio" value="'.(GETPOST('proprio')?GETPOST('proprio','alpha'):$account->proprio).'">';
 		print '</td></tr>';
 
-		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 		print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
 		print (GETPOST('owner_address')?GETPOST('owner_address','alpha'):$account->owner_address);
 		print "</textarea></td></tr>";
@@ -479,7 +479,7 @@ if ($action == 'create')
 		else
 		{
 			print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
+			print '<td><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
 		}
 	}
     else
@@ -494,7 +494,7 @@ if ($action == 'create')
 		else
 		{
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
-			print '<td colspan="3"><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
+			print '<td><input type="text" name="account_number" value="'.(GETPOST("account_number")?GETPOST('account_number', 'alpha'):$account->account_number).'"></td></tr>';
 		}
 	}
 
@@ -502,7 +502,7 @@ if ($action == 'create')
 	if (! empty($conf->accounting->enabled))
 	{
 		print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-	    print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal', 'alpha'):$account->accountancy_journal).'"></td></tr>';
+	    print '<td><input type="text" name="accountancy_journal" value="'.(GETPOST("accountancy_journal")?GETPOST('accountancy_journal', 'alpha'):$account->accountancy_journal).'"></td></tr>';
 	}
 
 	print '</table>';
@@ -560,21 +560,21 @@ else
 
 		// Ref
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $form->showrefnav($account, 'ref', $linkback, 1, 'ref');
 		print '</td></tr>';
 
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td>';
-		print '<td colspan="3">'.$account->label.'</td></tr>';
+		print '<td>'.$account->label.'</td></tr>';
 
 		// Type
 		print '<tr><td>'.$langs->trans("AccountType").'</td>';
-		print '<td colspan="3">'.$account->type_lib[$account->type].'</td></tr>';
+		print '<td>'.$account->type_lib[$account->type].'</td></tr>';
 
 		// Currency
 		print '<tr><td>'.$langs->trans("Currency").'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		$selectedcode=$account->currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
 		print $langs->trans("Currency".$selectedcode);
@@ -582,7 +582,7 @@ else
 
 		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td>';
-		print '<td colspan="3">'.$account->getLibStatut(4).'</td></tr>';
+		print '<td>'.$account->getLibStatut(4).'</td></tr>';
 
 		// Country
 		print '<tr><td>'.$langs->trans("BankAccountCountry").'</td><td>';
@@ -601,7 +601,7 @@ else
 
 		// Conciliate
 		print '<tr><td>'.$langs->trans("Conciliable").'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		$conciliate=$account->canBeConciliated();
 		if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
@@ -609,12 +609,12 @@ else
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-		print '<td colspan="3">'.$account->min_allowed.'</td></tr>';
+		print '<td>'.$account->min_allowed.'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-		print '<td colspan="3">'.$account->min_desired.'</td></tr>';
+		print '<td>'.$account->min_desired.'</td></tr>';
 
-		print '<tr><td>'.$langs->trans("Web").'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans("Web").'</td><td>';
 		if ($account->url) print '<a href="'.$account->url.'" target="_gobank">';
 		print $account->url;
 		if ($account->url) print '</a>';
@@ -622,16 +622,16 @@ else
 
         // Categories
         if($conf->categorie->enabled) {
-            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+            print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
             print $form->showCategories($account->id,'account',1);
             print "</td></tr>";
         }
 
 		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
-		print '<td colspan="3">'.dol_htmlentitiesbr($account->comment).'</td></tr>';
+		print '<td>'.dol_htmlentitiesbr($account->comment).'</td></tr>';
 
 		// Other attributes
-		$parameters=array('colspan' => 3);
+		// $parameters=array('colspan' => 3);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
@@ -662,7 +662,7 @@ else
 				}
 
 				print '<tr><td>'.$langs->trans($val).'</td>';
-				print '<td colspan="3">'.$content.'</td>';
+				print '<td>'.$content.'</td>';
 				print '</tr>';
 			}
 
@@ -671,7 +671,7 @@ else
 			if ($account->getCountryCode() == 'IN') $bickey="SWIFT";
 
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td colspan="3">'.$account->iban.'&nbsp;';
+			print '<td>'.$account->iban.'&nbsp;';
 			if (! empty($account->iban)) {
 				if (! checkIbanForAccount($account)) {
 					print img_picto($langs->trans("IbanNotValid"),'warning');
@@ -682,7 +682,7 @@ else
 			print '</td></tr>';
 
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td colspan="3">'.$account->bic.'&nbsp;';
+			print '<td>'.$account->bic.'&nbsp;';
 			if (! empty($account->bic)) {
 				if (! checkSwiftForAccount($account)) {
 					print img_picto($langs->trans("SwiftNotValid"),'warning');
@@ -692,15 +692,15 @@ else
 			}
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 			print nl2br($account->domiciliation);
 			print "</td></tr>\n";
 
-			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td><td>';
 			print $account->proprio;
 			print "</td></tr>\n";
 
-			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 			print nl2br($account->owner_address);
 			print "</td></tr>\n";
 
@@ -723,7 +723,7 @@ else
 		if (! empty($conf->accounting->enabled))
 		{
 			print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-			print '<td colspan="3">'.$account->accountancy_journal.'</td></tr>';
+			print '<td>'.$account->accountancy_journal.'</td></tr>';
 		}
 
 		print '</table>';
@@ -794,15 +794,15 @@ else
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3"><input size="8" type="text" class="flat" name="ref" value="'.(isset($_POST["ref"])?$_POST["ref"]:$account->ref).'"></td></tr>';
+		print '<td><input size="8" type="text" class="flat" name="ref" value="'.(isset($_POST["ref"])?$_POST["ref"]:$account->ref).'"></td></tr>';
 
 		// Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.(isset($_POST["label"])?$_POST["label"]:$account->label).'"></td></tr>';
+        print '<td><input size="30" type="text" class="flat" name="label" value="'.(isset($_POST["label"])?$_POST["label"]:$account->label).'"></td></tr>';
 
         // Type
         print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
-        print '<td colspan="3">';
+        print '<td>';
 		$formbank->selectTypeOfBankAccount((isset($_POST["type"])?$_POST["type"]:$account->type),"type");
         print '</td></tr>';
 
@@ -810,7 +810,7 @@ else
 		print '<tr><td class="fieldrequired">'.$langs->trans("Currency");
 		print '<input type="hidden" value="'.$account->currency_code.'">';
 		print '</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		$selectedcode=$account->currency_code;
 		if (! $selectedcode) $selectedcode=$conf->currency;
 		print $form->selectCurrency((isset($_POST["account_currency_code"])?$_POST["account_currency_code"]:$selectedcode), 'account_currency_code');
@@ -820,7 +820,7 @@ else
 
 		// Status
         print '<tr><td class="fieldrequired">'.$langs->trans("Status").'</td>';
-        print '<td colspan="3">';
+        print '<td>';
         print $form->selectarray("clos", $account->status,(isset($_POST["clos"])?$_POST["clos"]:$account->clos));
         print '</td></tr>';
 
@@ -832,13 +832,13 @@ else
 		$account->country_code = getCountry($selectedcode, 2);	// Force country code on account to have following field on bank fields matching country rules
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Country").'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 		print $form->select_country($selectedcode,'account_country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 		print '</td></tr>';
 
 		// State
-		print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+		print '<tr><td>'.$langs->trans('State').'</td><td>';
 		if ($selectedcode)
 		{
 			print $formcompany->select_state(isset($_POST["account_state_id"])?$_POST["account_state_id"]:$account->state_id,$selectedcode,'account_state_id');
@@ -851,7 +851,7 @@ else
 
 		// Conciliable
         print '<tr><td>'.$langs->trans("Conciliable").'</td>';
-        print '<td colspan="3">';
+        print '<td>';
         $conciliate=$account->canBeConciliated();
         if ($conciliate == -2) print $langs->trans("No").' ('.$langs->trans("CashAccount").')';
         else if ($conciliate == -3) print $langs->trans("No").' ('.$langs->trans("Closed").')';
@@ -860,20 +860,20 @@ else
 
         // Balance
 		print '<tr><td>'.$langs->trans("BalanceMinimalAllowed").'</td>';
-		print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(isset($_POST["account_min_allowed"])?$_POST["account_min_allowed"]:$account->min_allowed).'"></td></tr>';
+		print '<td><input size="12" type="text" class="flat" name="account_min_allowed" value="'.(isset($_POST["account_min_allowed"])?$_POST["account_min_allowed"]:$account->min_allowed).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("BalanceMinimalDesired").'</td>';
-		print '<td colspan="3"><input size="12" type="text" class="flat" name="account_min_desired" value="'.(isset($_POST["account_min_desired"])?$_POST["account_min_desired"]:$account->min_desired).'"></td></tr>';
+		print '<td><input size="12" type="text" class="flat" name="account_min_desired" value="'.(isset($_POST["account_min_desired"])?$_POST["account_min_desired"]:$account->min_desired).'"></td></tr>';
 
 		// Web
         print '<tr><td>'.$langs->trans("Web").'</td>';
-        print '<td colspan="3"><input size="50" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?$_POST["url"]:$account->url).'">';
+        print '<td><input size="50" type="text" class="flat" name="url" value="'.(isset($_POST["url"])?$_POST["url"]:$account->url).'">';
         print '</td></tr>';
 
         // Tags-Categories
         if ($conf->categorie->enabled) 
         {
-            print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
+            print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
             $cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 1);
             $c = new Categorie($db);
             $cats = $c->containing($object->id,Categorie::TYPE_ACCOUNT);
@@ -886,7 +886,7 @@ else
 
 		// Comment
 		print '<tr><td class="tdtop">'.$langs->trans("Comment").'</td>';
-		print '<td colspan="3">';
+		print '<td>';
 	    // Editor wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor=new DolEditor('account_comment',(GETPOST("account_comment")?GETPOST("account_comment"):$account->comment),'',90,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_SOCIETE,4,70);
@@ -894,7 +894,7 @@ else
 		print '</td></tr>';
 
 		// Other attributes
-		$parameters=array('colspan' => 3);
+		// $parameters=array('colspan' => 3);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$account,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
@@ -943,21 +943,21 @@ else
 
 			// IBAN
 			print '<tr><td>'.$langs->trans($ibankey).'</td>';
-			print '<td colspan="3"><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$account->iban.'"></td></tr>';
+			print '<td><input size="34" maxlength="34" type="text" class="flat" name="iban" value="'.$account->iban.'"></td></tr>';
 
 			print '<tr><td>'.$langs->trans($bickey).'</td>';
-			print '<td colspan="3"><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
+			print '<td><input size="11" maxlength="11" type="text" class="flat" name="bic" value="'.$account->bic.'"></td></tr>';
 
-			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td>';
 			print "<textarea class=\"flat\" name=\"domiciliation\" rows=\"2\" cols=\"40\">";
 			print $account->domiciliation;
 			print "</textarea></td></tr>";
 
 			print '<tr><td>'.$langs->trans("BankAccountOwner").'</td>';
-			print '<td colspan="3"><input size="30" type="text" class="flat" name="proprio" value="'.$account->proprio.'">';
+			print '<td><input size="30" type="text" class="flat" name="proprio" value="'.$account->proprio.'">';
 			print '</td></tr>';
 
-			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
 			print "<textarea class=\"flat\" name=\"owner_address\" rows=\"2\" cols=\"40\">";
 			print $account->owner_address;
 			print "</textarea></td></tr>";
@@ -988,7 +988,7 @@ else
 		if (! empty($conf->accounting->enabled))
 		{
 	        print '<tr><td>'.$langs->trans("AccountancyJournal").'</td>';
-	        print '<td colspan="3"><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
+	        print '<td><input type="text" name="accountancy_journal" value="'.(isset($_POST["accountancy_journal"])?$_POST["accountancy_journal"]:$account->accountancy_journal).'"></td></tr>';
 		}
 
 		print '</table>';

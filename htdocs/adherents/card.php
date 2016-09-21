@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2016 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012		Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2012-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,9 @@
  */
 
 /**
- *       \file       htdocs/adherents/card.php
- *       \ingroup    member
- *       \brief      Page of member
+ *	\file		htdocs/adherents/card.php
+ *	\ingroup	member
+ *	\brief		Page of member
  */
 
 require '../main.inc.php';
@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -47,7 +47,7 @@ $langs->load("users");
 $langs->load('other');
 
 $action=GETPOST('action','alpha');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 $backtopage=GETPOST('backtopage','alpha');
 $confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST('rowid','int');
@@ -115,12 +115,12 @@ $hookmanager->initHooks(array('membercard','globalcard'));
 
 
 /*
- * 	Actions
+ *	Actions
  */
 if ($cancel) $action='';
 
 $parameters=array('rowid'=>$rowid, 'objcanvas'=>$objcanvas);
-$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);	// Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -284,38 +284,38 @@ if (empty($reshook))
 			$object->oldcopy = clone $object;
 
 			// Change values
-			$object->civility_id = trim($_POST["civility_id"]);
-			$object->firstname   = trim($_POST["firstname"]);
-			$object->lastname    = trim($_POST["lastname"]);
-			$object->login       = trim($_POST["login"]);
-			$object->pass        = trim($_POST["pass"]);
+			$object->civility_id	= trim($_POST["civility_id"]);
+			$object->firstname		= trim($_POST["firstname"]);
+			$object->lastname		= trim($_POST["lastname"]);
+			$object->login			= trim($_POST["login"]);
+			$object->pass			= trim($_POST["pass"]);
 
-			$object->societe     = trim($_POST["societe"]);
-			$object->company     = trim($_POST["societe"]);
+			$object->societe		= trim($_POST["societe"]);
+			$object->company		= trim($_POST["societe"]);
 
-			$object->address     = trim($_POST["address"]);
-			$object->zip         = trim($_POST["zipcode"]);
-			$object->town        = trim($_POST["town"]);
-			$object->state_id    = $_POST["state_id"];
-			$object->country_id  = $_POST["country_id"];
+			$object->address		= trim($_POST["address"]);
+			$object->zip			= trim($_POST["zipcode"]);
+			$object->town			= trim($_POST["town"]);
+			$object->state_id		= $_POST["state_id"];
+			$object->country_id		= $_POST["country_id"];
 
-			$object->phone       = trim($_POST["phone"]);
-			$object->phone_perso = trim($_POST["phone_perso"]);
-			$object->phone_mobile= trim($_POST["phone_mobile"]);
-			$object->email       = trim($_POST["email"]);
-			$object->skype       = trim($_POST["skype"]);
-			$object->birth       = $birthdate;
+			$object->phone			= trim($_POST["phone"]);
+			$object->phone_perso	= trim($_POST["phone_perso"]);
+			$object->phone_mobile	= trim($_POST["phone_mobile"]);
+			$object->email			= trim($_POST["email"]);
+			$object->skype			= trim($_POST["skype"]);
+			$object->birth			= $birthdate;
 
-			$object->typeid      = $_POST["typeid"];
-			//$object->note        = trim($_POST["comment"]);
-			$object->morphy      = $_POST["morphy"];
+			$object->typeid			= $_POST["typeid"];
+			//$object->note			= trim($_POST["comment"]);
+			$object->morphy			= $_POST["morphy"];
 
 			if (GETPOST('deletephoto')) $object->photo='';
 			elseif (! empty($_FILES['photo']['name'])) $object->photo  = dol_sanitizeFileName($_FILES['photo']['name']);
 
 			// Get status and public property
-			$object->statut      = $_POST["statut"];
-			$object->public      = $_POST["public"];
+			$object->statut			= $_POST["statut"];
+			$object->public			= $_POST["public"];
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -369,8 +369,8 @@ if (empty($reshook))
 							}
 							else
 							{
-							    // Create thumbs
-							    $object->addThumbs($newfile);
+								// Create thumbs
+								$object->addThumbs($newfile);
 							}
 						}
 					}
@@ -393,7 +393,7 @@ if (empty($reshook))
 					}
 				}
 
-	            $rowid=$object->id;
+				$rowid=$object->id;
 				$action='';
 
 				if (! empty($backtopage))
@@ -424,10 +424,10 @@ if (empty($reshook))
 		{
 			$birthdate=dol_mktime(12, 0, 0, $_POST["birthmonth"], $_POST["birthday"], $_POST["birthyear"]);
 		}
-		$datecotisation='';
+		$datesubscription='';
 		if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
 		{
-			$datecotisation=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+			$datesubscription=dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 		}
 
 		$typeid=$_POST["typeid"];
@@ -451,36 +451,36 @@ if (empty($reshook))
 		$photo=$_POST["photo"];
 		//$comment=$_POST["comment"];
 		$morphy=$_POST["morphy"];
-		$cotisation=$_POST["cotisation"];
+		$subscription=$_POST["subscription"];
 		$public=$_POST["public"];
 
 		$userid=$_POST["userid"];
 		$socid=$_POST["socid"];
 
-		$object->civility_id = $civility_id;
-		$object->firstname   = $firstname;
-		$object->lastname    = $lastname;
-		$object->societe     = $societe;
-		$object->address     = $address;
-		$object->zip         = $zip;
-		$object->town        = $town;
-		$object->state_id    = $state_id;
-		$object->country_id  = $country_id;
-		$object->phone       = $phone;
-		$object->phone_perso = $phone_perso;
-		$object->phone_mobile= $phone_mobile;
-		$object->skype       = $skype;
-		$object->email       = $email;
-		$object->login       = $login;
-		$object->pass        = $pass;
-		$object->birth       = $birthdate;
-		$object->photo       = $photo;
-		$object->typeid      = $typeid;
-		//$object->note        = $comment;
-		$object->morphy      = $morphy;
-		$object->user_id     = $userid;
-		$object->fk_soc      = $socid;
-		$object->public      = $public;
+		$object->civility_id	= $civility_id;
+		$object->firstname		= $firstname;
+		$object->lastname		= $lastname;
+		$object->societe		= $societe;
+		$object->address		= $address;
+		$object->zip			= $zip;
+		$object->town			= $town;
+		$object->state_id		= $state_id;
+		$object->country_id		= $country_id;
+		$object->phone			= $phone;
+		$object->phone_perso	= $phone_perso;
+		$object->phone_mobile	= $phone_mobile;
+		$object->skype			= $skype;
+		$object->email			= $email;
+		$object->login			= $login;
+		$object->pass			= $pass;
+		$object->birth			= $birthdate;
+		$object->photo			= $photo;
+		$object->typeid			= $typeid;
+		//$object->note			= $comment;
+		$object->morphy			= $morphy;
+		$object->user_id		= $userid;
+		$object->fk_soc			= $socid;
+		$object->public			= $public;
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -735,7 +735,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 		if ($result <= 0) dol_print_error('',$object->error);
 	}
    	$objcanvas->assign_values($action, $object->id, $object->ref);	// Set value for templates
-    $objcanvas->display_canvas($action);							// Show template
+	$objcanvas->display_canvas($action);							// Show template
 }
 else
 {
@@ -745,11 +745,11 @@ else
 
 	if ($action == 'create')
 	{
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* Creation mode                                                              */
-		/*                                                                            */
-		/* ************************************************************************** */
+		/********************************************
+		 *
+		 * Create mode
+		 *
+		 ********************************************/
 		$object->canvas=$canvas;
 		$object->state_id = GETPOST('state_id', 'int');
 
@@ -801,7 +801,7 @@ else
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="action" value="add">';
 
-        dol_fiche_head('');
+		dol_fiche_head('');
 
 		print '<table class="border" width="100%">';
 		print '<tbody>';
@@ -902,11 +902,11 @@ else
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(GETPOST('phone_mobile','alpha')?GETPOST('phone_mobile','alpha'):$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->skype->enabled))
-	    {
+		// Skype
+		if (! empty($conf->skype->enabled))
+		{
 			print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="member_skype" size="40" value="'.(GETPOST('member_skype','alpha')?GETPOST('member_skype','alpha'):$object->skype).'"></td></tr>';
-	    }
+		}
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -929,7 +929,7 @@ else
 
 		// Other attributes
 		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);	// Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit');
@@ -949,16 +949,16 @@ else
 		print $form->select_dolusers($object->user_id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 		print '</td></tr>';
 		*/
-        print '<tbody>';
+		print '<tbody>';
 		print "</table>\n";
 
-        dol_fiche_end();
+		dol_fiche_end();
 
-	    print '<div class="center">';
-	    print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
-	    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	    print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
-	    print '</div>';
+		print '<div class="center">';
+		print '<input type="submit" name="button" class="button" value="'.$langs->trans("AddMember").'">';
+		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'" onclick="history.go(-1)" />';
+		print '</div>';
 
 		print "</form>\n";
 	}
@@ -1133,7 +1133,7 @@ else
 		print '</td></tr>';
 
 		// Country
-		//$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;    // In edit mode we don't force to company country if not defined
+		//$object->country_id=$object->country_id?$object->country_id:$mysoc->country_id;	// In edit mode we don't force to company country if not defined
 		print '<tr><td width="25%">'.$langs->trans('Country').'</td><td>';
 		print $form->select_country(isset($_POST["country_id"])?$_POST["country_id"]:$object->country_id,'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
@@ -1156,11 +1156,11 @@ else
 		// Mobile phone
 		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.(isset($_POST["phone_mobile"])?$_POST["phone_mobile"]:$object->phone_mobile).'"></td></tr>';
 
-	    // Skype
-	    if (! empty($conf->skype->enabled))
-	    {
-			    print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" size="40" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
-	    }
+		// Skype
+		if (! empty($conf->skype->enabled))
+		{
+				print '<tr><td>'.$langs->trans("Skype").'</td><td><input type="text" name="skype" size="40" value="'.(isset($_POST["skype"])?$_POST["skype"]:$object->skype).'"></td></tr>';
+		}
 
 		// Birthday
 		print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -1189,7 +1189,7 @@ else
 
 		// Other attributes
 		$parameters=array("colspan"=>2);
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);	// Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit',$parameters);
@@ -1237,11 +1237,11 @@ else
 
 	if ($rowid && $action != 'edit')
 	{
-		/* ************************************************************************** */
-		/*                                                                            */
-		/* View mode                                                                  */
-		/*                                                                            */
-		/* ************************************************************************** */
+		/********************************************
+		 *
+		 * View mode
+		 *
+		 ********************************************/
 
 		$res=$object->fetch($rowid);
 		if ($res < 0) {
@@ -1340,7 +1340,7 @@ else
 			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_MAILMAN)) {
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroMailManEnabled"),'value'=>'');
 			}
-			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))    {
+			if (! empty($conf->mailman->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))	{
 				$formquestion[]=array('type'=>'other','label'=>$langs->transnoentitiesnoconv("SynchroSpipEnabled"),'value'=>'');
 			}
 			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion,1,1);
@@ -1379,7 +1379,7 @@ else
 			// Create an array
 			$formquestion=array();
 			if ($object->email) $formquestion[]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $label, 'value' => (! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?'true':'false'));
-			if ($backtopage)    $formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
+			if ($backtopage)	$formquestion[]=array('type' => 'hidden', 'name' => 'backtopage', 'value' => ($backtopage != '1' ? $backtopage : $_SERVER["HTTP_REFERER"]));
 			print $form->formconfirm("card.php?rowid=".$rowid,$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion,'no',1);
 		}
 
@@ -1407,13 +1407,13 @@ else
 		if (! empty($conf->societe->enabled)) $rowspan++;
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
-		
+
 		dol_banner_tab($object, 'rowid', $linkback);
-        
-        print '<div class="fichecenter">';
-        print '<div class="fichehalfleft">';
-        
-        print '<div class="underbanner clearboth"></div>';
+
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
+
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
 
 		// Login
@@ -1443,26 +1443,26 @@ else
 			if ($object->pass) print preg_replace('/./i','*',$object->pass);
 			else
 			{
-			    if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-			    else print $langs->trans("Hidden");
+				if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+				else print $langs->trans("Hidden");
 			}
 			if ((! empty($object->pass) || ! empty($object->pass_crypted)) && empty($object->user_id))
 			{
-			    $langs->load("errors");
-			    $htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
-			    print ' '.$form->textwithpicto('', $htmltext,1,'warning');
+				$langs->load("errors");
+				$htmltext=$langs->trans("WarningPasswordSetWithNoAccount");
+				print ' '.$form->textwithpicto('', $htmltext,1,'warning');
 			}
 			print '</td></tr>';
 		}
-		
-        print '</table>';
-        
-        print '</div>';
-        print '<div class="fichehalfright"><div class="ficheaddleft">';
-       
-        print '<div class="underbanner clearboth"></div>';
-        print '<table class="border tableforfield" width="100%">';
-		
+
+		print '</table>';
+
+		print '</div>';
+		print '<div class="fichehalfright"><div class="ficheaddleft">';
+
+		print '<div class="underbanner clearboth"></div>';
+		print '<table class="border tableforfield" width="100%">';
+
 		// Birthday
 		print '<tr><td class="titlefield">'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
@@ -1480,36 +1480,36 @@ else
 
 		// Other attributes
 		$parameters=array('colspan'=>2);
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);	// Note that $action and $object may have been modified by hook
 		if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields, 'view', $parameters);
 		}
 
-        // Date end subscription
-        print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
-        if ($object->datefin)
-        {
-            print dol_print_date($object->datefin,'day');
-            if ($object->hasDelay()) {
-                print " ".img_warning($langs->trans("Late"));
-            }
-        }
-        else
-        {
-	        if (! $adht->cotisation)
-	        {
-	        	print $langs->trans("SubscriptionNotRecorded");
-		        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-	        }
-	        else
-	        {
-	            print $langs->trans("SubscriptionNotReceived");
-	            if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-	        }
-        }
-        print '</td></tr>';
-		
+		// Date end subscription
+		print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
+		if ($object->datefin)
+		{
+			print dol_print_date($object->datefin,'day');
+			if ($object->hasDelay()) {
+				print " ".img_warning($langs->trans("Late"));
+			}
+		}
+		else
+		{
+			if (! $adht->subscription)
+			{
+				print $langs->trans("SubscriptionNotRecorded");
+				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+			}
+			else
+			{
+				print $langs->trans("SubscriptionNotReceived");
+				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+			}
+		}
+		print '</td></tr>';
+
 		// Third party Dolibarr
 		if (! empty($conf->societe->enabled))
 		{
@@ -1583,15 +1583,14 @@ else
 		print "</table>\n";
 
 		print "</div></div></div>\n";
-        print '<div style="clear:both"></div>';
+		print '<div style="clear:both"></div>';
 
-        dol_fiche_end();
-        
-        
+		dol_fiche_end();
+
 		/*
 		 * Hotbar
 		 */
-        
+
 		print '<div class="tabsAction">';
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been
@@ -1607,7 +1606,7 @@ else
 				{
 					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Modify").'</font></div>';
 				}
-	
+
 				// Validate
 				if ($object->statut == -1)
 				{
@@ -1620,7 +1619,7 @@ else
 						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Validate").'</font></div>';
 					}
 				}
-	
+
 				// Reactivate
 				if ($object->statut == 0)
 				{
@@ -1633,7 +1632,7 @@ else
 						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Reenable")."</font></div>";
 					}
 				}
-	
+
 				// Send card by email
 				if ($user->rights->adherent->creer)
 				{
@@ -1651,7 +1650,7 @@ else
 				{
 					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("SendCardByMail")."</font></div>";
 				}
-	
+
 				// Terminate
 				if ($object->statut >= 1)
 				{
@@ -1664,7 +1663,7 @@ else
 						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Resiliate")."</font></div>";
 					}
 				}
-	
+
 				// Create third party
 				if (! empty($conf->societe->enabled) && ! $object->fk_soc)
 				{
@@ -1678,7 +1677,7 @@ else
 						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrThirdParty")."</font></div>";
 					}
 				}
-	
+
 				// Create user
 				if (! $user->societe_id && ! $object->user_id)
 				{
@@ -1692,7 +1691,7 @@ else
 						print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("CreateDolibarrLogin")."</font></div>";
 					}
 				}
-	
+
 				// Delete
 				if ($user->rights->adherent->supprimer)
 				{
@@ -1702,12 +1701,12 @@ else
 				{
 					print '<div class="inline-block divButAction"><font class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("Delete")."</font></div>";
 				}
-	
+
 				// Action SPIP
 				if (! empty($conf->mailmanspip->enabled) && ! empty($conf->global->ADHERENT_USE_SPIP))
 				{
 					$isinspip = $mailmanspip->is_in_spip($object);
-	
+
 					if ($isinspip == 1)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=del_spip">'.$langs->trans("DeleteIntoSpip")."</a></div>\n";
@@ -1717,7 +1716,7 @@ else
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?rowid='.$object->id.'&action=add_spip">'.$langs->trans("AddIntoSpip")."</a></div>\n";
 					}
 				}
-	
+
 			}
 		}
 		print '</div>';
