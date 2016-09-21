@@ -103,7 +103,7 @@ create table llx_product_stock_entrepot
   tms             		timestamp,
   fk_product      		integer NOT NULL,
   fk_entrepot     		integer NOT NULL,
-  seuil_stock_alerte    int(11) DEFAULT '0',
-  desiredstock    		int(11) DEFAULT '0',
+  seuil_stock_alerte    integer DEFAULT '0',
+  desiredstock    		integer DEFAULT '0',
   import_key      		varchar(14)               -- Import key
 )ENGINE=innodb;
