@@ -1,10 +1,11 @@
 <?php
 /*
- * Copyright (C) 2007-2012 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2015 Florian Henry <florian.henry@open-concept.pro>
- * Copyright (C) 2015 Raphaël Doursenaud <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016 Pierre-Henry Favre <phf@atm-consulting.fr>
+ * Copyright (C) 2007-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015		Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Pierre-Henry Favre	<phf@atm-consulting.fr>
+ * Copyright (C) 2016		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,9 @@
  */
 
 /**
- * \file htdocs/accountancy/class/accountancyexport.class.php
+ * \file		htdocs/accountancy/class/accountancyexport.class.php
+ * \ingroup		Advanced accountancy
+ * \brief 		Class accountancy export
  */
 
 /**
@@ -157,7 +160,7 @@ class AccountancyExport
 	 */
 	public function exportNormal($objectLines) {
 		global $conf;
-		
+
 		foreach ( $objectLines as $line ) {
 			// Std export
 			$date = dol_print_date($line->doc_date, $conf->global->ACCOUNTING_EXPORT_DATE);
@@ -182,15 +185,16 @@ class AccountancyExport
 	public function exportCegid($objectLines) {
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
+			$separator = ";";
 
-			print $date . $this->separator;
-			print $line->code_journal . $this->separator;
-			print length_accountg($line->numero_compte) . $this->separator;
-			print ' ' . $this->separator;
-			print $line->sens . $this->separator;
-			print price($line->montant) . $this->separator;
-			print dol_trunc($line->label_compte, 32) . $this->separator;
-			print $line->doc_ref . $this->separator;
+			print $date . $separator;
+			print $line->code_journal . $separator;
+			print length_accountg($line->numero_compte) . $separator;
+			print length_accounta($line->code_tiers) . $separator;
+			print $line->sens . $separator;
+			print price($line->montant) . $separator;
+			print $line->label_compte . $separator;
+			print $line->doc_ref;
 			print $this->end_line;
 		}
 	}

@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2013-2016	Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
- * Copyright (C) 2014       Rapha�l Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
  */
 
 /**
- * \file htdocs/accountancy/journal/sellsjournal.php
- * \ingroup Advanced accountancy
- * \brief Page with sells journal
+ * \file		htdocs/accountancy/journal/sellsjournal.php
+ * \ingroup		Advanced accountancy
+ * \brief		Page with sells journal
  */
 require '../../main.inc.php';
 
@@ -444,12 +444,12 @@ if ($action == 'export_csv') {
 	));
 
 	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
-		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabeld="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
+		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
 	} else {
 		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 	}
 
-	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 
 	print '
 	<script type="text/javascript">
