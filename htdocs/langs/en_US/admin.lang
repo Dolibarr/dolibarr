@@ -751,6 +751,7 @@ Permission1236=Export supplier invoices, attributes and payments
 Permission1237=Export supplier orders and their details
 Permission1251=Run mass imports of external data into database (data load)
 Permission1321=Export customer invoices, attributes and payments
+Permission1322=Reopen a paid bill
 Permission1421=Export customer orders and attributes
 Permission20001=Read leave requests (yours and your subordinates)
 Permission20002=Create/modify your leave requests
