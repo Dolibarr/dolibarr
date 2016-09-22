@@ -755,14 +755,18 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Date
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') $date=$element->date_commande;
+				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') 
+				{
+				    $date=$element->date_valid?$element->date_valid:$element->date;
+				}
+				elseif ($tablename == 'supplier_proposal') $date=$element->date_validation;
 				elseif ($tablename == 'projet_task') $date='';	// We show no date. Showing date of beginning of task make user think it is date of time consumed
 				else
 				{
 					$date=$element->date;
 					if (empty($date)) $date=$element->datep;
 					if (empty($date)) $date=$element->date_contrat;
-					if (empty($date)) $date=$element->datev; //Fiche inter
+					if (empty($date)) $date=$element->datev; // Intervention
 				}
 				print '<td align="center">'.dol_print_date($date,'day').'</td>';
 
