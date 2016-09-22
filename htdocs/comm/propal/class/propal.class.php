@@ -1504,8 +1504,8 @@ class Propal extends CommonObject
      *  Set status to validated
      *
      *  @param	User	$user       Object user that validate
-     *  @param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
-     *  @return int         		<0 if KO, >=0 if OK
+     *  @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+     *  @return int         		<0 if KO, 0=Nothing done, >=0 if OK
      */
     function valid($user, $notrigger=0)
     {
@@ -1514,98 +1514,110 @@ class Propal extends CommonObject
     	global $conf;
 
         $error=0;
-        $now=dol_now();
 
-        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+        // Protection
+        if ($this->statut == self::STATUS_VALIDATED)
         {
-            $this->db->begin();
+            dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+            return 0;
+        }
+        
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate))))
+        {
+            $this->error='ErrorPermissionDenied';
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+            return -1;
+        }
 
-            // Numbering module definition
-            $soc = new Societe($this->db);
-            $soc->fetch($this->socid);
+        $now=dol_now();
+            
+        $this->db->begin();
 
-            // Define new ref
-            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
-            {
-            	$num = $this->getNextNumRef($soc);
-            }
-            else
-            {
-            	$num = $this->ref;
-            }
-            $this->newref = $num;
+        // Numbering module definition
+        $soc = new Societe($this->db);
+        $soc->fetch($this->socid);
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-            $sql.= " SET ref = '".$num."',";
-            $sql.= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
+        // Define new ref
+        if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+        {
+        	$num = $this->getNextNumRef($soc);
+        }
+        else
+        {
+        	$num = $this->ref;
+        }
+        $this->newref = $num;
 
-            dol_syslog(get_class($this)."::valid", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if (! $resql)
-			{
-				dol_print_error($this->db);
-				$error++;
-			}
+        $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+        $sql.= " SET ref = '".$num."',";
+        $sql.= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
+        $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
-   			// Trigger calls
-			if (! $error && ! $notrigger)
-			{
-                // Call trigger
-                $result=$this->call_trigger('PROPAL_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-            }
+        dol_syslog(get_class($this)."::valid", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (! $resql)
+		{
+			dol_print_error($this->db);
+			$error++;
+		}
 
-            if (! $error)
-            {
-            	$this->oldref = $this->ref;
+		// Trigger calls
+		if (! $error && ! $notrigger)
+		{
+            // Call trigger
+            $result=$this->call_trigger('PROPAL_VALIDATE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+        }
 
-            	// Rename directory if dir was a temporary ref
-            	if (preg_match('/^[\(]?PROV/i', $this->ref))
-            	{
-            		// Rename of propal directory ($this->ref = old ref, $num = new ref)
-            		// to  not lose the linked files
-            		$oldref = dol_sanitizeFileName($this->ref);
-            		$newref = dol_sanitizeFileName($num);
-            		$dirsource = $conf->propal->dir_output.'/'.$oldref;
-            		$dirdest = $conf->propal->dir_output.'/'.$newref;
+        if (! $error)
+        {
+        	$this->oldref = $this->ref;
 
-            		if (file_exists($dirsource))
-            		{
-            			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
-            			if (@rename($dirsource, $dirdest))
-            			{
-            				dol_syslog("Rename ok");
-            				// Rename docs starting with $oldref with $newref
-            				$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
-            				foreach($listoffiles as $fileentry)
-            				{
-            					$dirsource=$fileentry['name'];
-            					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
-            					$dirsource=$fileentry['path'].'/'.$dirsource;
-            					$dirdest=$fileentry['path'].'/'.$dirdest;
-            					@rename($dirsource, $dirdest);
-            				}
-            			}
-            		}
-            	}
+        	// Rename directory if dir was a temporary ref
+        	if (preg_match('/^[\(]?PROV/i', $this->ref))
+        	{
+        		// Rename of propal directory ($this->ref = old ref, $num = new ref)
+        		// to  not lose the linked files
+        		$oldref = dol_sanitizeFileName($this->ref);
+        		$newref = dol_sanitizeFileName($num);
+        		$dirsource = $conf->propal->dir_output.'/'.$oldref;
+        		$dirdest = $conf->propal->dir_output.'/'.$newref;
 
-            	$this->ref=$num;
-            	$this->brouillon=0;
-            	$this->statut = self::STATUS_VALIDATED;
-            	$this->user_valid_id=$user->id;
-            	$this->datev=$now;
+        		if (file_exists($dirsource))
+        		{
+        			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+        			if (@rename($dirsource, $dirdest))
+        			{
+        				dol_syslog("Rename ok");
+        				// Rename docs starting with $oldref with $newref
+        				$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+        				foreach($listoffiles as $fileentry)
+        				{
+        					$dirsource=$fileentry['name'];
+        					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+        					$dirsource=$fileentry['path'].'/'.$dirsource;
+        					$dirdest=$fileentry['path'].'/'.$dirdest;
+        					@rename($dirsource, $dirdest);
+        				}
+        			}
+        		}
+        	}
 
-            	$this->db->commit();
-            	return 1;
-            }
-            else
-			{
-            	$this->db->rollback();
-            	return -1;
-            }
+        	$this->ref=$num;
+        	$this->brouillon=0;
+        	$this->statut = self::STATUS_VALIDATED;
+        	$this->user_valid_id=$user->id;
+        	$this->datev=$now;
+
+        	$this->db->commit();
+        	return 1;
+        }
+        else
+		{
+        	$this->db->rollback();
+        	return -1;
         }
     }
 

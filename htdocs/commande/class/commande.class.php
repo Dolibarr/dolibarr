@@ -260,7 +260,7 @@ class Commande extends CommonOrder
      *	@param		User	$user     		User making status change
      *	@param		int		$idwarehouse	Id of warehouse to use for stock decrease
      *  @param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
-     *	@return  	int						<=0 if OK, >0 if KO
+     *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
      */
     function valid($user, $idwarehouse=0, $notrigger=0)
     {
@@ -272,7 +272,7 @@ class Commande extends CommonOrder
         // Protection
         if ($this->statut == self::STATUS_VALIDATED)
         {
-            dol_syslog(get_class($this)."::valid action abandonned: no draft status", LOG_WARNING);
+            dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
             return 0;
         }
 

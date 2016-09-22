@@ -82,21 +82,27 @@ foreach ($modulesdir as $dir)
         {
             if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i",$file,$reg))
             {
-                $module = $part = strtolower($reg[1]);
-
-                if ($module == 'agenda') {
-                    $part = 'comm/action';
+                $module = strtolower($reg[1]);
+                $moduledirforclass = $module;
+                $moduleforperm = $module;
+                
+                if ($module == 'propale') {
+                    $moduledirforclass = 'comm/propal';
+                    $moduleforperm='propal';
 				}
-                if ($module == 'categorie') {
-                    $part = 'categories';
+                elseif ($module == 'agenda') {
+                    $moduledirforclass = 'comm/action';
 				}
-                if ($module == 'facture') {
-                    $part = 'compta/facture';
+                elseif ($module == 'categorie') {
+                    $moduledirforclass = 'categories';
+				}
+                elseif ($module == 'facture') {
+                    $moduledirforclass = 'compta/facture';
 				}
 
                 // Defined if module is enabled
                 $enabled=true;
-                if (empty($conf->$module->enabled)) $enabled=false;
+                if (empty($conf->$moduleforperm->enabled)) $enabled=false;
 
                 if ($enabled)
                 {
@@ -108,7 +114,7 @@ foreach ($modulesdir as $dir)
                      * @todo : take care of externals module!
                      * @todo : use getElementProperties() function ?
                      */
-                    $dir_part = DOL_DOCUMENT_ROOT.'/'.$part.'/class/';
+                    $dir_part = DOL_DOCUMENT_ROOT.'/'.$moduledirforclass.'/class/';
 
                     $handle_part=@opendir(dol_osencode($dir_part));
                     if (is_resource($handle_part))

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 
  use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 /**
  * API class for orders
@@ -25,7 +26,7 @@
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Orders extends DolibarrApi
+class Proposals extends DolibarrApi
 {
 
     /**
@@ -36,9 +37,9 @@ class Orders extends DolibarrApi
     );
 
     /**
-     * @var Commande $commande {@type Commande}
+     * @var propal $propal {@type propal}
      */
-    public $commande;
+    public $propal;
 
     /**
      * Constructor
@@ -47,48 +48,48 @@ class Orders extends DolibarrApi
     {
 		global $db, $conf;
 		$this->db = $db;
-        $this->commande = new Commande($this->db);
+        $this->propal = new Propal($this->db);
     }
 
     /**
-     * Get properties of a commande object
+     * Get properties of a commercial proposal object
      *
-     * Return an array with commande informations
+     * Return an array with commercial proposal informations
      * 
-     * @param       int         $id         ID of order
+     * @param       int         $id         ID of commercial proposal
      * @return 	array|mixed data without useless information
 	 *
      * @throws 	RestException
      */
     function get($id)
     {		
-		if(! DolibarrApiAccess::$user->rights->commande->lire) {
+		if(! DolibarrApiAccess::$user->rights->propal->lire) {
 			throw new RestException(401);
 		}
 			
-        $result = $this->commande->fetch($id);
+        $result = $this->propal->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Commercial Proposal not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        $this->commande->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->commande);
+        $this->propal->fetchObjectLinked();
+		return $this->_cleanObjectDatas($this->propal);
     }
 
     /**
-     * List orders
+     * List commercial proposals
      * 
-     * Get a list of orders
+     * Get a list of commercial proposals
      * 
      * @param string	$sortfield	        Sort field
      * @param string	$sortorder	        Sort order
      * @param int		$limit		        Limit for list
      * @param int		$page		        Page number
-     * @param string   	$thirdparty_ids	    Thirdparty ids to filter orders of. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+     * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposal of. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
      *
      * @return  array   Array of order objects
      */
@@ -104,11 +105,11 @@ class Orders extends DolibarrApi
 
         $sql = "SELECT s.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande as s";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal as s";
         
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE s.entity IN ('.getEntity('commande', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('propal', 1).')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
         if ($socids) $sql.= " AND s.fk_soc IN (".$socids.")";
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -145,15 +146,15 @@ class Orders extends DolibarrApi
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
-                $commande_static = new Commande($db);
-                if($commande_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($commande_static);
+                $propal_static = new Propal($db);
+                if($propal_static->fetch($obj->rowid)) {
+                    $obj_ret[] = parent::_cleanObjectDatas($propal_static);
                 }
                 $i++;
             }
         }
         else {
-            throw new RestException(503, 'Error when retrieve commande list');
+            throw new RestException(503, 'Error when retrieve propal list');
         }
         if( ! count($obj_ret)) {
             throw new RestException(404, 'No order found');
@@ -162,92 +163,92 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Create order object
+     * Create commercial proposal object
      *
      * @param   array   $request_data   Request data
-     * @return  int     ID of commande
+     * @return  int     ID of propal
      */
     function post($request_data = NULL)
     {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			  throw new RestException(401, "Insuffisant rights");
 		  }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
         foreach($request_data as $field => $value) {
-            $this->commande->$field = $value;
+            $this->propal->$field = $value;
         }
         /*if (isset($request_data["lines"])) {
           $lines = array();
           foreach ($request_data["lines"] as $line) {
             array_push($lines, (object) $line);
           }
-          $this->commande->lines = $lines;
+          $this->propal->lines = $lines;
         }*/
-        if ($this->commande->create(DolibarrApiAccess::$user) <= 0) {
-            $errormsg = $this->commande->error;
+        if ($this->propal->create(DolibarrApiAccess::$user) <= 0) {
+            $errormsg = $this->propal->error;
             throw new RestException(500, $errormsg ? $errormsg : "Error while creating order");
         }
         
-        return $this->commande->id;
+        return $this->propal->id;
     }
 
     /**
-     * Get lines of an order
+     * Get lines of a commercial proposal
      *
-     * @param int   $id             Id of order
+     * @param int   $id             Id of commercial proposal
      * 
      * @url	GET {id}/lines
      * 
      * @return int 
      */
     function getLines($id) {
-      if(! DolibarrApiAccess::$user->rights->commande->lire) {
+      if(! DolibarrApiAccess::$user->rights->propal->lire) {
 		  	throw new RestException(401);
 		  }
         
-      $result = $this->commande->fetch($id);
+      $result = $this->propal->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Order not found');
+         throw new RestException(404, 'Commercial Proposal not found');
       }
 		
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
-      $this->commande->getLinesArray();
+      $this->propal->getLinesArray();
       $result = array();
-      foreach ($this->commande->lines as $line) {
+      foreach ($this->propal->lines as $line) {
         array_push($result,$this->_cleanObjectDatas($line));
       }
       return $result;
     }
 
     /**
-     * Add a line to given order
+     * Add a line to given commercial proposal
      *
-     * @param int   $id             Id of commande to update
-     * @param array $request_data   Orderline data   
+     * @param int   $id             Id of commercial proposal to update
+     * @param array $request_data   Commercial proposal line data   
      * 
      * @url	POST {id}/lines
      * 
      * @return int 
      */
     function postLine($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }
         
-      $result = $this->commande->fetch($id);
+      $result = $this->propal->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Order not found');
+         throw new RestException(404, 'Commercial Proposal not found');
       }
 		
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->addline(
+      $updateRes = $this->propal->addline(
                         $request_data->desc,
                         $request_data->subprice,
                         $request_data->qty,
@@ -283,31 +284,31 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Update a line to given order
+     * Update a line of given commercial proposal
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of commercial proposal to update
      * @param int   $lineid         Id of line to update
-     * @param array $request_data   Orderline data   
+     * @param array $request_data   Commercial proposal line data   
      * 
      * @url	PUT {id}/lines/{lineid}
      * 
      * @return object 
      */
     function putLine($id, $lineid, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }
         
-      $result = $this->commande->fetch($id);
+      $result = $this->propal->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+         throw new RestException(404, 'Proposal not found');
       }
 		
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->updateline(
+      $updateRes = $this->propal->updateline(
                         $lineid,
                         $request_data->desc,
                         $request_data->subprice,
@@ -340,10 +341,10 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Delete a line to given order
+     * Delete a line of given commercial proposal
      *
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of commercial proposal to update
      * @param int   $lineid         Id of line to delete
      * 
      * @url	DELETE {id}/lines/{lineid}
@@ -351,20 +352,20 @@ class Orders extends DolibarrApi
      * @return int 
      */
     function delLine($id, $lineid) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }
         
-      $result = $this->commande->fetch($id);
+      $result = $this->propal->fetch($id);
       if( ! $result ) {
-         throw new RestException(404, 'Commande not found');
+         throw new RestException(404, 'Proposal not found');
       }
 		
-		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		  if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->deleteline($lineid);
+      $updateRes = $this->propal->deleteline($lineid);
       if ($updateRes == 1) {
         return $this->get($id);
       }
@@ -372,75 +373,75 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Update order general fields (won't touch lines of order)
+     * Update commercial proposal general fields (won't touch lines of commercial proposal)
      *
-     * @param int   $id             Id of commande to update
+     * @param int   $id             Id of commercial proposal to update
      * @param array $request_data   Datas   
      * 
      * @return int 
      */
     function put($id, $request_data = NULL) {
-      if(! DolibarrApiAccess::$user->rights->commande->creer) {
+      if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }
         
-        $result = $this->commande->fetch($id);
+        $result = $this->propal->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Commande not found');
+            throw new RestException(404, 'Proposal not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
-            $this->commande->$field = $value;
+            $this->propal->$field = $value;
         }
         
-        if($this->commande->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->propal->update($id, DolibarrApiAccess::$user,1,'','','update'))
             return $this->get($id);
         
         return false;
     }
     
     /**
-     * Delete order
+     * Delete commercial proposal
      *
-     * @param   int     $id         Order ID
+     * @param   int     $id         Commercial proposal ID
      * 
      * @return  array
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->commande->supprimer) {
+        if(! DolibarrApiAccess::$user->rights->propal->supprimer) {
 			throw new RestException(401);
 		}
-        $result = $this->commande->fetch($id);
+        $result = $this->propal->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Commercial Proposal not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-        if( ! $this->commande->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(500, 'Error when delete order : '.$this->commande->error);
+        if( ! $this->propal->delete(DolibarrApiAccess::$user)) {
+            throw new RestException(500, 'Error when delete Commercial Proposal : '.$this->propal->error);
         }
         
         return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Order deleted'
+                'message' => 'Commercial Proposal deleted'
             )
         );
         
     }
     
     /**
-     * Validate an order
+     * Validate a commercial proposal
      * 
-     * @param   int $id             Order ID
-     * @param   int $idwarehouse    Warehouse ID
+     * @param   int     $id             Commercial proposal ID
+     * @param   int     $notrigger      Use {}
      * 
      * @url POST    {id}/validate
      *  
@@ -449,36 +450,35 @@ class Orders extends DolibarrApi
      * Error message: "Forbidden: Content type `text/plain` is not supported."
      * Workaround: send this in the body
      * {
-     *   "idwarehouse": 0,
-     *   "notrigger": 0
+     * "notrigger": 0
      * }
      */
-    function validate($id, $idwarehouse=0, $notrigger=0)
+    function validate($id, $notrigger=0)
     {
-        if(! DolibarrApiAccess::$user->rights->commande->creer) {
+        if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
 		}
-        $result = $this->commande->fetch($id);
+        $result = $this->propal->fetch($id);
         if( ! $result ) {
-            throw new RestException(404, 'Order not found');
+            throw new RestException(404, 'Commercial Proposal not found');
         }
 		
-		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
+		if( ! DolibarrApi::_checkAccessToResource('propal',$this->propal->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         
-		$result = $this->commande->valid(DolibarrApiAccess::$user, $idwarehouse, $notrigger);
-		if ($result == 0) {
-		    throw new RestException(500, 'Error nothing done. May be object is already validated');
-		}
-		if ($result < 0) {
-		    throw new RestException(500, 'Error when validating Order: '.$this->commande->error);
-		}
-		
+        $result = $this->propal->valid(DolibarrApiAccess::$user, $notrigger);
+        if ($result == 0) {
+            throw new RestException(500, 'Error nothing done. May be object is already validated');
+        }
+        if ($result < 0) {
+            throw new RestException(500, 'Error when validating Commercial Proposal: '.$this->propal->error);
+        }
+        
         return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Order validated'
+                'message' => 'Commercial Proposal validated'
             )
         );
     }
@@ -492,13 +492,13 @@ class Orders extends DolibarrApi
      */
     function _validate($data)
     {
-        $commande = array();
+        $propal = array();
         foreach (Orders::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
-            $commande[$field] = $data[$field];
+            $propal[$field] = $data[$field];
             
         }
-        return $commande;
+        return $propal;
     }
 }
