@@ -97,7 +97,7 @@ ALTER TABLE llx_product_lot_extrafields ADD INDEX idx_product_lot_extrafields (f
 
 ALTER TABLE llx_website_page MODIFY content MEDIUMTEXT;
 
-create table llx_product_stock_entrepot
+create table llx_product_warehouse_properties
 (
   rowid           		integer AUTO_INCREMENT PRIMARY KEY,
   tms             		timestamp,

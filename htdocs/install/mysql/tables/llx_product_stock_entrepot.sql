@@ -18,7 +18,7 @@
 --
 -- ============================================================================
 
-create table llx_product_stock_entrepot
+create table llx_product_warehouse_properties
 (
   rowid           		integer AUTO_INCREMENT PRIMARY KEY,
   tms             		timestamp,

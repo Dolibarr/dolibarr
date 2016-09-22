@@ -47,7 +47,7 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'product_stock_entrepot';
+	public $table_element = 'product_warehouse_properties';
 
 	/**
 	 */

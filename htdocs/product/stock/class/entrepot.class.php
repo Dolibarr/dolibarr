@@ -221,7 +221,7 @@ class Entrepot extends CommonObject
 	{
 		$this->db->begin();
 
-		$elements = array('stock_mouvement','product_stock','product_stock_entrepot');
+		$elements = array('stock_mouvement','product_stock','product_warehouse_properties');
 		foreach($elements as $table)
 		{
 			if (! $error)
