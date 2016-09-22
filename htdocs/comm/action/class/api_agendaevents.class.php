@@ -26,7 +26,7 @@
  * @access protected 
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class Events extends DolibarrApi
+class AgendaEvents extends DolibarrApi
 {
 
     /**
@@ -167,10 +167,10 @@ class Events extends DolibarrApi
     function post($request_data = NULL)
     {
       if(! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
-			  throw new RestException(401, "Insuffisant rights to create your event");
+			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }
       if(! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
-		      throw new RestException(401, "Insuffisant rights to create an event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+		      throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		  }
 		  
         // Check mandatory fields
@@ -206,10 +206,10 @@ class Events extends DolibarrApi
     /*
     function put($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
-			  throw new RestException(401, "Insuffisant rights to create your event");
+			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }
       if(! DolibarrApiAccess::$user->rights->agenda->allactions->create && DolibarrApiAccess::$user->id != $request_data['userownerid']) {
-		      throw new RestException(401, "Insuffisant rights to create an event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+		      throw new RestException(401, "Insuffisant rights to create an Agenda Event for owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		  }
         
         $result = $this->expensereport->fetch($id);
@@ -241,13 +241,13 @@ class Events extends DolibarrApi
     function delete($id)
     {
         if(! DolibarrApiAccess::$user->rights->agenda->myactions->delete) {
-			  throw new RestException(401, "Insuffisant rights to delete your event");
+			  throw new RestException(401, "Insuffisant rights to delete your Agenda Event");
 		}
         
 		$result = $this->actioncomm->fetch($id);
 		  
         if(! DolibarrApiAccess::$user->rights->agenda->allactions->delete && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
-		      throw new RestException(401, "Insuffisant rights to delete an event of owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
+		      throw new RestException(401, "Insuffisant rights to delete an Agenda Event of owner id ".$request_data['userownerid'].' Your id is '.DolibarrApiAccess::$user->id);
 		}
 		
 		if( ! $result ) {
@@ -265,7 +265,7 @@ class Events extends DolibarrApi
         return array(
             'success' => array(
                 'code' => 200,
-                'message' => 'Agenda event deleted'
+                'message' => 'Agenda Event deleted'
             )
         );
         
