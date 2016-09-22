@@ -757,7 +757,7 @@ foreach ($listofreferent as $key => $value)
 				// Date
 				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') 
 				{
-				    $date=$element->date_valid?$element->date_valid:$element->date;
+				    $date=$element->date_valid;
 				}
 				elseif ($tablename == 'supplier_proposal') $date=$element->date_validation;
 				elseif ($tablename == 'projet_task') $date='';	// We show no date. Showing date of beginning of task make user think it is date of time consumed
