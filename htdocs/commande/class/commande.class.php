@@ -3804,10 +3804,10 @@ class OrderLine extends CommonOrderLine
 
     /**
      * 	Delete line in database
-     *
+     *	@param   int	$notrigger		1 = disable triggers
      *	@return	 int  <0 si ko, >0 si ok
      */
-    function delete()
+    function delete($notrigger=0)
     {
         global $conf, $user, $langs;
 
@@ -3832,12 +3832,15 @@ class OrderLine extends CommonOrderLine
 					dol_syslog(get_class($this)."::delete error -4 ".$this->error, LOG_ERR);
 				}
 			}
-
-            // Call trigger
-            $result=$this->call_trigger('LINEORDER_DELETE',$user);
-            if ($result < 0) $error++;
-            // End call triggers
-
+			
+			if (! $error && ! $notrigger)
+			{
+	            // Call trigger
+	            $result=$this->call_trigger('LINEORDER_DELETE',$user);
+	            if ($result < 0) $error++;
+	            // End call triggers
+			}
+			
 	        if (!$error) {
 		        $this->db->commit();
 		        return 1;
