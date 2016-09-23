@@ -1113,7 +1113,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
- *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc"
+ *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst)
