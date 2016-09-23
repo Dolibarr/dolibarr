@@ -49,7 +49,8 @@ $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel');
 $amount=GETPOST('amount');
 $donation_date=dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
-
+$projectid=GETPOST('projectid')?GETPOST('projectid','int'):GETPOST("fk_projet",'int');
+    
 $object = new Don($db);
 $extrafields = new ExtraFields($db);
 
@@ -169,9 +170,10 @@ if ($action == 'add')
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
 		if ($ret < 0) $error++;
 
-		if ($object->create($user) > 0)
+		$res = $object->create($user);
+		if ($res > 0)
 		{
-			header("Location: index.php");
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
 			exit;
 		}
 		else
@@ -365,7 +367,7 @@ if ($action == 'create')
     	$formproject=new FormProjets($db);
 
         print "<tr><td>".$langs->trans("Project")."</td><td>";
-        $formproject->select_projects(-1, GETPOST("fk_projet"),'fk_projet', 0, 0, 1, 1);
+        $formproject->select_projects(-1, $projectid,'fk_projet', 0, 0, 1, 1);
 		print "</td></tr>\n";
     }
 
