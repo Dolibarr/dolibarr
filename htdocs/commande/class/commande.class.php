@@ -3804,7 +3804,8 @@ class OrderLine extends CommonOrderLine
 
     /**
      * 	Delete line in database
-     *	@param   int	$notrigger		1 = disable triggers
+     * 
+     *	@param   int  $notrigger	1 = disable triggers
      *	@return	 int  <0 si ko, >0 si ok
      */
     function delete($notrigger=0)
