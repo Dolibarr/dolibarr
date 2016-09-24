@@ -74,6 +74,23 @@ ALTER TABLE llx_categorie_project ADD CONSTRAINT fk_categorie_project_fk_project
 ALTER TABLE llx_societe_remise_except ADD COLUMN entity	integer DEFAULT 1 NOT NULL after rowid;
 ALTER TABLE llx_societe_remise ADD COLUMN entity	integer DEFAULT 1 NOT NULL after rowid;
 
+create table llx_note
+(
+	rowid			integer AUTO_INCREMENT PRIMARY KEY,
+	entity			integer   DEFAULT 1 NOT NULL,			-- Multi company id
+	datec			datetime,
+	tms				timestamp,
+	objecttype		varchar(24) NOT NULL,					-- Example : Salary / Product / Contact
+	objectid		integer,								-- Id of the element
+	typenote		tinyint DEFAULT 0,						-- 0 : private note | 1 : public note
+	title			varchar(255),
+	text			text DEFAULT NULL,
+	fk_user_author	integer DEFAULT NULL,
+	fk_user_modif	integer DEFAULT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_note ADD INDEX idx_note_object_id (objectid);
+
 
 create table llx_expensereport_extrafields
 (
