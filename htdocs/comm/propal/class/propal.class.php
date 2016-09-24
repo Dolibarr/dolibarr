@@ -779,7 +779,7 @@ class Propal extends CommonObject
      * 	this->ref can be set or empty. If empty, we will use "(PROVid)"
      *
      * 	@param		User	$user		User that create
-     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return     int     			<0 if KO, >=0 if OK
      */
     function create($user, $notrigger=0)
@@ -1627,7 +1627,7 @@ class Propal extends CommonObject
      *
      *  @param  User		$user      	Object user that modify
      *  @param  int			$date		Date
-     *  @param  int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return	int         			<0 if KO, >0 if OK
      */
     function set_date($user, $date, $notrigger=0)
@@ -1694,7 +1694,7 @@ class Propal extends CommonObject
      *
      *	@param		User	$user        		Object user that modify
      *	@param      int		$date_fin_validite	End of validity date
-     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         				<0 if KO, >0 if OK
      */
     function set_echeance($user, $date_fin_validite, $notrigger=0)
@@ -1754,7 +1754,7 @@ class Propal extends CommonObject
      *
      *	@param      User 	$user        		Object user that modify
      *	@param      int		$date_livraison     Delivery date
-     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         				<0 if ko, >0 if ok
      */
     function set_date_livraison($user, $date_livraison, $notrigger=0)
@@ -1814,7 +1814,7 @@ class Propal extends CommonObject
      *
      *  @param		User	$user		  	Object user that modify
      *  @param      int		$id				Availability id
-     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *  @return     int           			<0 if KO, >0 if OK
      */
     function set_availability($user, $id, $notrigger=0)
@@ -1874,7 +1874,7 @@ class Propal extends CommonObject
      *
      *  @param		User	$user		Object user that modify
      *  @param      int		$id			Input reason id
-     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return     int           		<0 if KO, >0 if OK
      */
     function set_demand_reason($user, $id, $notrigger=0)
@@ -1936,7 +1936,7 @@ class Propal extends CommonObject
      *
      *  @param      User	$user			Object user that modify
      *  @param      string	$ref_client		Customer reference
-     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *  @return     int						<0 if ko, >0 if ok
      */
     function set_ref_client($user, $ref_client, $notrigger=0)
@@ -1999,7 +1999,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user       Object user that modify
      *	@param      double	$remise     Amount discount
-     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if ko, >0 if ok
      */
     function set_remise_percent($user, $remise, $notrigger=0)
@@ -2064,7 +2064,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user       Object user that modify
      *	@param      double	$remise     Amount discount
-     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if ko, >0 if ok
      */
     function set_remise_absolue($user, $remise, $notrigger=0)
@@ -2132,7 +2132,7 @@ class Propal extends CommonObject
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      string	$note		Comment
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function reopen($user, $statut, $note='', $notrigger=0)
@@ -2193,7 +2193,7 @@ class Propal extends CommonObject
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      string	$note		Comment
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function cloture($user, $statut, $note, $notrigger=0)
@@ -2290,7 +2290,7 @@ class Propal extends CommonObject
      *	Class invoiced the Propal
      *
      *	@param  	User	$user    	Object user
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int     			<0 si ko, >0 si ok
      */
     function classifyBilled(User $user, $notrigger=0)
@@ -2360,7 +2360,7 @@ class Propal extends CommonObject
      *	Set draft status
      *
      *	@param		User	$user		Object user that modify
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return		int					<0 if KO, >0 if OK
      */
     function set_draft($user, $notrigger=0)
@@ -2588,7 +2588,7 @@ class Propal extends CommonObject
      *	Delete proposal
      *
      *	@param	User	$user        	Object user that delete
-     *	@param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						1 if ok, otherwise if error
      */
     function delete($user, $notrigger=0)
@@ -2711,7 +2711,7 @@ class Propal extends CommonObject
      *  Change the delivery time
      *
      *  @param	int	$availability_id	Id of new delivery time
-     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execuete triggers
+     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execute triggers
      *  @return int                  	>0 if OK, <0 if KO
      */
     function availability($availability_id, $notrigger=0)
@@ -2778,7 +2778,7 @@ class Propal extends CommonObject
      *	Change source demand
      *
      *	@param	int $demand_reason_id 	Id of new source demand
-     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execuete triggers
+     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return int						>0 si ok, <0 si ko
      */
     function demand_reason($demand_reason_id, $notrigger=0)
@@ -3605,7 +3605,7 @@ class PropaleLigne  extends CommonObjectLine
     /**
      *  Insert object line propal in database
      *
-     *	@param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
     function insert($notrigger=0)

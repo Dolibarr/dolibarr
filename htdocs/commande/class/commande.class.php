@@ -259,7 +259,7 @@ class Commande extends CommonOrder
      *
      *	@param		User	$user     		User making status change
      *	@param		int		$idwarehouse	Id of warehouse to use for stock decrease
-     *  @param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return  	int						<=0 if OK, 0=Nothing done, >0 if KO
      */
     function valid($user, $idwarehouse=0, $notrigger=0)
@@ -2049,7 +2049,7 @@ class Commande extends CommonOrder
      *
      * 	@param     	User		$user		User qui positionne la remise
      * 	@param     	float		$remise		Discount (percent)
-     * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+     * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return		int 					<0 if KO, >0 if OK
      */
     function set_remise($user, $remise, $notrigger=0)
@@ -2115,7 +2115,7 @@ class Commande extends CommonOrder
      *
      * 		@param     	User		$user 		User qui positionne la remise
      * 		@param     	float		$remise		Discount
-     * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+     * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *		@return		int 					<0 if KO, >0 if OK
      */
     function set_remise_absolue($user, $remise, $notrigger=0)
@@ -2181,7 +2181,7 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user       Object user making change
      *	@param      int		$date		Date
-     * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function set_date($user, $date, $notrigger=0)
@@ -2245,7 +2245,7 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user        		Objet utilisateur qui modifie
      *	@param      int		$date_livraison     Date de livraison
-     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         				<0 si ko, >0 si ok
      */
     function set_date_livraison($user, $date_livraison, $notrigger=0)
@@ -2381,7 +2381,7 @@ class Commande extends CommonOrder
      *	Update delivery delay
      *
      *	@param      int		$availability_id	Id du nouveau mode
-     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         				>0 if OK, <0 if KO
      */
     function availability($availability_id, $notrigger=0)
@@ -2451,7 +2451,7 @@ class Commande extends CommonOrder
      *	Update order demand_reason
      *
      *  @param      int		$demand_reason_id	Id of new demand
-     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *  @return     int        			 		>0 if ok, <0 if ko
      */
     function demand_reason($demand_reason_id, $notrigger=0)
@@ -2522,7 +2522,7 @@ class Commande extends CommonOrder
      *
      *	@param      User	$user           User that make change
      *	@param      string	$ref_client     Customer ref
-     *  @param     	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return     int             		<0 if KO, >0 if OK
      */
     function set_ref_client($user, $ref_client, $notrigger=0)
@@ -2584,7 +2584,7 @@ class Commande extends CommonOrder
 	 * Classify the order as invoiced
 	 *
 	 * @param	User    $user       Object user making the change
-	 * @param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 * @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return	int                 <0 if KO, >0 if OK
 	 */
 	function classifyBilled(User $user, $notrigger=0)
@@ -3045,7 +3045,7 @@ class Commande extends CommonOrder
      *	Delete the customer order
      *
      *	@param	User	$user		User object
-     *	@param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      * 	@return	int					<=0 if KO, >0 if OK
      */
     function delete($user, $notrigger=0)

@@ -1511,7 +1511,7 @@ class Facture extends CommonInvoice
 	 *	Set customer ref
 	 *
 	 *	@param     	string	$ref_client		Customer ref
-	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function set_ref_client($ref_client, $notrigger=0)
@@ -1910,7 +1910,7 @@ class Facture extends CommonInvoice
 	 * @param	User	$user           Object user that validate
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
-	 * @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      * @return	int						<0 if KO, >0 if OK
 	 */
 	function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
@@ -2822,7 +2822,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
-	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 		<0 if ko, >0 if ok
 	 */
 	function set_remise($user, $remise, $notrigger=0)
@@ -2886,7 +2886,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param     	User	$user 		User that set discount
 	 *	@param     	double	$remise		Discount
-	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
 	function set_remise_absolue($user, $remise, $notrigger=0)
@@ -3941,7 +3941,7 @@ class Facture extends CommonInvoice
 	 * Sets the invoice as a final situation
 	 *
 	 *  @param  	User	$user    	Object user
-	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
 	function setFinal(User $user, $notrigger=0)
