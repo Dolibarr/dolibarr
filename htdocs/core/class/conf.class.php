@@ -508,8 +508,8 @@ class Conf
 		// Delay before warnings
 		// Avoid strict errors. TODO: Replace xxx->warning_delay with a property ->warning_delay_xxx
 		if (isset($this->agenda)) {
-		    $this->adherent->cotisation			= new stdClass();
-            $this->adherent->cotisation->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
+		    $this->adherent->subscription = new stdClass();
+            $this->adherent->subscription->warning_delay=(isset($this->global->MAIN_DELAY_MEMBERS)?$this->global->MAIN_DELAY_MEMBERS:0)*24*60*60;
 		}
 		if (isset($this->agenda)) $this->agenda->warning_delay=(isset($this->global->MAIN_DELAY_ACTIONS_TODO)?$this->global->MAIN_DELAY_ACTIONS_TODO:7)*24*60*60;
 		if (isset($this->projet))

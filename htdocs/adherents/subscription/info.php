@@ -17,16 +17,16 @@
  */
 
 /**
- *      \file       htdocs/adherents/info_subscription.php
+ *      \file       htdocs/adherents/subscription/info.php
  *      \ingroup    member
- *		\brief      Page with information of subscriptions of a member
+ *      \brief      Page with information of subscriptions of a member
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -41,37 +41,24 @@ $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
 
 /*
- * Visualisation de la fiche
- *
+ * View
  */
 
 llxHeader();
 
 $form = new Form($db);
 
-$subscription = new Cotisation($db);
-$result=$subscription->fetch($rowid);
+$object = new Subscription($db);
+$result = $object->fetch($rowid);
 
-$h = 0;
-$head = array();
-
-$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
-$head[$h][1] = $langs->trans("SubscriptionCard");
-$head[$h][2] = 'general';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$subscription->id;
-$head[$h][1] = $langs->trans("Info");
-$head[$h][2] = 'info';
-$h++;
-
+$head = subscription_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Subscription"), '', 'payment');
 
-$subscription->info($rowid);
+$object->info($rowid);
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($subscription);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
