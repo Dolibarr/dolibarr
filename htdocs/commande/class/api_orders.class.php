@@ -441,7 +441,8 @@ class Orders extends DolibarrApi
      * 
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
-     * 
+     * @param	int $notrigger      No trigger
+     *
      * @url POST    {id}/validate
      *  
      * @return  array
