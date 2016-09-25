@@ -142,8 +142,9 @@ class Countries extends DolibarrApi
     /**
      * Translate the name of the country to the given language.
      * 
-     * @param Ccountry $country
-     * @param string   $lang
+     * @param Ccountry $country   Country
+     * @param string   $lang      Code of the language the name of the
+     *                            country must be translated to
      */
     private function translateLabel($country, $lang)
     {
