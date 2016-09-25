@@ -354,7 +354,7 @@ class Contrat extends CommonObject
 	 *
 	 * @param	User	$user      		Objet User
 	 * @param   string	$force_number	Reference to force on contract (not implemented yet)
-     * @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 * @return	int						<0 if KO, >0 if OK
 	 */
 	function validate($user, $force_number='', $notrigger=0)

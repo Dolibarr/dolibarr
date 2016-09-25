@@ -955,7 +955,7 @@ class FactureFournisseur extends CommonInvoice
      *	@param	User	$user           Object user that validate
      *	@param  string	$force_number   Reference to force on invoice
      *	@param	int		$idwarehouse	Id of warehouse for stock change
-     *  @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return int 			        <0 if KO, =0 if nothing to do, >0 if OK
      */
     public function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
