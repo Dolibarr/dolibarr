@@ -198,8 +198,7 @@ class Accounts extends DolibarrApi
     /**
      * Validate fields before creating an object
      *
-     * @param array $data
-     *            Data to validate
+     * @param array $data    Data to validate
      * @return array
      *
      * @throws RestException
@@ -292,7 +291,7 @@ class Accounts extends DolibarrApi
      *
      * @url POST {id}/lines
      */
-    function addLine($id, $date, $type, $label='', $amount, $category=0, $cheque_number='', $cheque_writer='', $cheque_bank='')
+    function addLine($id, $date, $type, $label, $amount, $category=0, $cheque_number='', $cheque_writer='', $cheque_bank='')
     {
         if (! DolibarrApiAccess::$user->rights->banque->modifier) {
             throw new RestException(401);
