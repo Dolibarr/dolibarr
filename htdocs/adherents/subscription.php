@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /**
- *       \file       htdocs/adherents/card_subscriptions.php
+ *       \file       htdocs/adherents/subscription.php
  *       \ingroup    member
  *       \brief      Onglet d'ajout, edition, suppression des adhesions d'un adherent
  */
@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -186,7 +186,7 @@ if ($action == 'setsocid')
     }
 }
 
-if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $_POST["cancel"])
+if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && ! $_POST["cancel"])
 {
     $error=0;
 
@@ -196,12 +196,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     $result=$adht->fetch($object->typeid);
 
     // Subscription informations
-    $datecotisation=0;
+    $datesubscription=0;
     $datesubend=0;
     $paymentdate=0;
     if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
     {
-        $datecotisation=dol_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+        $datesubscription=dol_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
     }
     if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"])
     {
@@ -211,7 +211,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     {
         $paymentdate=dol_mktime(0, 0, 0, $_POST["paymentmonth"], $_POST["paymentday"], $_POST["paymentyear"]);
     }
-    $cotisation=$_POST["cotisation"];	// Amount of subscription
+    $subscription=$_POST["subscription"];	// Amount of subscription
     $label=$_POST["label"];
 
     // Payment informations
@@ -224,7 +224,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     if (empty($option)) $option='none';
 
     // Check parameters
-    if (! $datecotisation)
+    if (! $datesubscription)
     {
         $error++;
         $langs->load("errors");
@@ -240,7 +240,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     }
     if (! $datesubend)
     {
-        $datesubend=dol_time_plus_duree(dol_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
+        $datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription,$defaultdelay,$defaultdelayunit),-1,'d');
     }
     if (($option == 'bankviainvoice' || $option == 'bankdirect') && ! $paymentdate)
     {
@@ -250,9 +250,9 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
     }
 
     // Check if a payment is mandatory or not
-    if (! $error && $adht->cotisation)	// Type adherent soumis a cotisation
+    if (! $error && $adht->subscription)	// Type adherent soumis a cotisation
     {
-        if (! is_numeric($_POST["cotisation"]))
+        if (! is_numeric($_POST["subscription"]))
         {
             // If field is '' or not a numeric value
             $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
@@ -263,7 +263,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         {
             if (! empty($conf->banque->enabled) && $_POST["paymentsave"] != 'none')
             {
-                if ($_POST["cotisation"])
+                if ($_POST["subscription"])
                 {
                     if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
                     if ($_POST["paymentsave"] != 'invoiceonly' && ! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
@@ -278,12 +278,12 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
         }
     }
 
-    if (! $error && $action=='cotisation')
+    if (! $error && $action=='subscription')
     {
         $db->begin();
 
         // Create subscription
-        $crowid=$object->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+        $crowid=$object->subscription($datesubscription, $subscription, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
         if ($crowid <= 0)
         {
             $error++;
@@ -293,7 +293,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
         if (! $error)
         {
-            // Insert into bank account directlty (if option choosed for) + link to llx_cotisation if option is 'bankdirect'
+            // Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
             if ($option == 'bankdirect' && $accountid)
             {
                 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -303,17 +303,17 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 
                 $dateop=$paymentdate;
 
-                $insertid=$acct->addline($dateop, $operation, $label, $cotisation, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
+                $insertid=$acct->addline($dateop, $operation, $label, $subscription, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
                 if ($insertid > 0)
                 {
                     $inserturlid=$acct->add_url_line($insertid, $object->id, DOL_URL_ROOT.'/adherents/card.php?rowid=', $object->getFullname($langs), 'member');
                     if ($inserturlid > 0)
                     {
-                        // Met a jour la table cotisation
-                        $sql ="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid;
+                        // Update table subscription
+                        $sql ="UPDATE ".MAIN_DB_PREFIX."subscription SET fk_bank=".$insertid;
                         $sql.=" WHERE rowid=".$crowid;
 
-                        dol_syslog("card_subscriptions::cotisation", LOG_DEBUG);
+                        dol_syslog("subscription::subscription", LOG_DEBUG);
                         $resql = $db->query($sql);
                         if (! $resql)
                         {
@@ -381,7 +381,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                    }
 	                }
 	                $invoice->socid=$object->fk_soc;
-	                $invoice->date=$datecotisation;
+	                $invoice->date=$datesubscription;
 
 	                // Possibility to add external linked objects with hooks
 	                $invoice->linked_objects['subscription'] = $crowid;
@@ -411,7 +411,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
 	                	$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
 	                }
 	                //print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-	                $result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datecotisation,$datesubend,0,0,'','TTC',$cotisation,1);
+	                $result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,$datesubend,0,0,'','TTC',$subscription,1);
 	                if ($result <= 0)
 	                {
 	                    $errmsg=$invoice->error;
@@ -438,7 +438,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
-                    $amounts[$invoice->id] = price2num($cotisation);
+                    $amounts[$invoice->id] = price2num($subscription);
                     $paiement = new Paiement($db);
                     $paiement->datepaye     = $paymentdate;
                     $paiement->amounts      = $amounts;
@@ -474,7 +474,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                     if (! $error)
                     {
                         // Update fk_bank into subscription table
-                        $sql = 'UPDATE '.MAIN_DB_PREFIX.'cotisation SET fk_bank='.$bank_line_id;
+                        $sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
                         $sql.= ' WHERE rowid='.$crowid;
 
 	                    $result = $db->query($sql);
@@ -538,7 +538,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'cotisation' && ! $
                 }
             }
 
-            $_POST["cotisation"]='';
+            $_POST["subscription"]='';
             $_POST["accountid"]='';
             $_POST["operation"]='';
             $_POST["label"]='';
@@ -665,7 +665,7 @@ if ($rowid > 0)
 	}
 	else
 	{
-	    if (! $adht->cotisation)
+	    if (! $adht->subscription)
 	    {
 	        print $langs->trans("SubscriptionNotRecorded");
 	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Affiche picto retard uniquement si non brouillon et non resilie
@@ -786,14 +786,14 @@ if ($rowid > 0)
     if ($action != 'addsubscription' && $action != 'create_thirdparty')
     {
         $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe,";
-        $sql.= " c.rowid as crowid, c.cotisation,";
+        $sql.= " c.rowid as crowid, c.subscription,";
         $sql.= " c.datec,";
         $sql.= " c.dateadh as dateh,";
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
         $sql.= " ba.rowid as baid, ba.label, ba.bank";
-        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+        $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
         $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
@@ -801,7 +801,7 @@ if ($rowid > 0)
         $result = $db->query($sql);
         if ($result)
         {
-            $cotisationstatic=new Cotisation($db);
+            $subscriptionstatic=new Subscription($db);
             $accountstatic=new Account($db);
 
             $num = $db->num_rows($result);
@@ -827,13 +827,13 @@ if ($rowid > 0)
                 $objp = $db->fetch_object($result);
                 $var=!$var;
                 print "<tr ".$bc[$var].">";
-                $cotisationstatic->ref=$objp->crowid;
-                $cotisationstatic->id=$objp->crowid;
-                print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
+                $subscriptionstatic->ref=$objp->crowid;
+                $subscriptionstatic->id=$objp->crowid;
+                print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datec),'dayhour')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
-                print '<td align="right">'.price($objp->cotisation).'</td>';
+                print '<td align="right">'.price($objp->subscription).'</td>';
                 if (! empty($conf->banque->enabled))
                 {
                     print '<td align="right">';
@@ -954,9 +954,9 @@ if ($rowid > 0)
 		}
 
 
-        print '<form name="cotisation" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+        print '<form name="subscription" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<input type="hidden" name="action" value="cotisation">';
+        print '<input type="hidden" name="action" value="subscription">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '<input type="hidden" name="memberlabel" id="memberlabel" value="'.dol_escape_htmltag($object->getFullName($langs)).'">';
         print '<input type="hidden" name="thirdpartylabel" id="thirdpartylabel" value="'.dol_escape_htmltag($object->societe).'">';
@@ -995,7 +995,7 @@ if ($rowid > 0)
 				$datefrom=$object->datevalid;
             }
         }
-        print $form->select_date($datefrom,'','','','',"cotisation",1,1,1);
+        print $form->select_date($datefrom,'','','','',"subscription",1,1,1);
         print "</td></tr>";
 
         // Date end subscription
@@ -1008,13 +1008,13 @@ if ($rowid > 0)
             $dateto=-1;		// By default, no date is suggested
         }
         print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-        print $form->select_date($dateto,'end','','','',"cotisation",1,0,1);
+        print $form->select_date($dateto,'end','','','',"subscription",1,0,1);
         print "</td></tr>";
 
-        if ($adht->cotisation)
+        if ($adht->subscription)
         {
             // Amount
-            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.GETPOST('cotisation').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+            print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="subscription" size="6" value="'.GETPOST('subscription').'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
             // Label
             print '<tr><td>'.$langs->trans("Label").'</td>';
@@ -1109,7 +1109,7 @@ if ($rowid > 0)
 
                 // Date of payment
                 print '<tr class="bankswitchclass"><td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-                print $form->select_date(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'cotisation',1,1,1);
+                print $form->select_date(isset($paymentdate)?$paymentdate:-1,'payment',0,0,1,'subscription',1,1,1);
                 print "</td></tr>\n";
 
                 print '<tr class="bankswitchclass2"><td>'.$langs->trans('Numero');

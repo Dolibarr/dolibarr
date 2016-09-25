@@ -20,14 +20,14 @@
 
 /**
  *	    \file       htdocs/core/lib/member.lib.php
- *		\brief      Ensemble de fonctions de base pour les adherents
+ *		\brief      Functions for module members
  */
 
 /**
  *  Return array head with list of tabs to view object informations
  *
- *  @param	Adherent	$object         Member
- *  @return array           		head
+ *  @param	Adherent	$object		Member
+ *  @return array					head
  */
 function member_prepare_head(Adherent $object)
 {
@@ -51,9 +51,9 @@ function member_prepare_head(Adherent $object)
 		$h++;
 	}
 
-    if (! empty($user->rights->adherent->cotisation->lire))
+	if (! empty($user->rights->adherent->cotisation->lire))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$object->id;
 		$head[$h][1] = $langs->trans("Subscriptions");
 		$head[$h][2] = 'subscription';
 		$h++;
@@ -62,10 +62,10 @@ function member_prepare_head(Adherent $object)
 	// Show agenda tab
 	if (! empty($conf->agenda->enabled))
 	{
-	    $head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
-	    $head[$h][1] = $langs->trans('Agenda');
-	    $head[$h][2] = 'agenda';
-	    $h++;
+		$head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
+		$head[$h][1] = $langs->trans('Agenda');
+		$head[$h][2] = 'agenda';
+		$h++;
 	}
 
     // Show more tabs from modules
@@ -232,4 +232,38 @@ function member_stats_prepare_head($object)
     complete_head_from_modules($conf,$langs,$object,$head,$h,'member_stats','remove');
 
     return $head;
+}
+
+/**
+ *  Return array head with list of tabs to view object informations
+ *
+ *  @param	Subscription	$object		Subscription
+ *  @return array						head
+ */
+function subscription_prepare_head(Subscription $object)
+{
+	global $db, $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'general';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription/info.php?rowid='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'subscription');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'subscription','remove');
+
+	return $head;
 }

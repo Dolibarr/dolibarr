@@ -17,9 +17,9 @@
  */
 
 /**
- *		\file 		htdocs/adherents/class/cotisation.class.php
- *      \ingroup    member
- *		\brief      File of class to manage subscriptions of foundation members
+ *		\file 		htdocs/adherents/class/subscription.class.php
+ *		\ingroup	member
+ *		\brief		File of class to manage subscriptions of foundation members
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -28,10 +28,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  *	Class to manage subscriptions of foundation members
  */
-class Cotisation extends CommonObject
+class Subscription extends CommonObject
 {
 	public $element='subscription';
-	public $table_element='cotisation';
+	public $table_element='subscription';
 
 	var $datec;				// Date creation
 	var $datem;				// Date modification
@@ -54,7 +54,7 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *	Fonction qui permet de creer la cotisation
+	 *	Function who permitted cretaion of the subscription
 	 *
 	 *	@param	int		$userid		userid de celui qui insere
 	 *	@return	int					<0 if KO, Id subscription created if OK
@@ -72,17 +72,18 @@ class Cotisation extends CommonObject
 			return -1;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, datef, cotisation, note)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, datec, dateadh, datef, subscription, note)";
         $sql.= " VALUES (".$this->fk_adherent.", '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->dateh)."',";
 		$sql.= " '".$this->db->idate($this->datef)."',";
-		$sql.= " ".$this->amount.",'".$this->db->escape($this->note)."')";
+		$sql.= " ".$this->amount.",";
+		$sql.= " '".$this->db->escape($this->note)."')";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			return $this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
+			return $this->db->last_insert_id(MAIN_DB_PREFIX."subscription");
 		}
 		else
 		{
@@ -104,8 +105,8 @@ class Cotisation extends CommonObject
 		$sql.=" tms,";
 		$sql.=" dateadh as dateh,";
 		$sql.=" datef,";
-		$sql.=" cotisation, note, fk_bank";
-		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
+		$sql.=" subscription, note, fk_bank";
+		$sql.=" FROM ".MAIN_DB_PREFIX."subscription";
 		$sql.="	WHERE rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -124,7 +125,7 @@ class Cotisation extends CommonObject
 				$this->datem          = $this->db->jdate($obj->tms);
 				$this->dateh          = $this->db->jdate($obj->dateh);
 				$this->datef          = $this->db->jdate($obj->datef);
-				$this->amount         = $obj->cotisation;
+				$this->amount         = $obj->subscription;
 				$this->note           = $obj->note;
 				$this->fk_bank        = $obj->fk_bank;
 				return 1;
@@ -143,20 +144,20 @@ class Cotisation extends CommonObject
 
 
 	/**
-	 *	Met a jour en base la cotisation
+	 *	Update subscription
 	 *
-	 *	@param	User	$user			Objet user qui met a jour
-	 *	@param 	int		$notrigger		0=Desactive les triggers
+	 *	@param	User	$user			User who updated
+	 *	@param 	int		$notrigger		0=Disable triggers
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function update($user,$notrigger=0)
 	{
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."cotisation SET ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
 		$sql .= " fk_adherent = ".$this->fk_adherent.",";
 		$sql .= " note=".($this->note ? "'".$this->db->escape($this->note)."'" : 'null').",";
-		$sql .= " cotisation = '".price2num($this->amount)."',";
+		$sql .= " subscription = '".price2num($this->amount)."',";
 		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
 		$sql .= " datef='".$this->db->idate($this->datef)."',";
 		$sql .= " datec='".$this->db->idate($this->datec)."',";
@@ -201,7 +202,7 @@ class Cotisation extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$this->id;
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."subscription WHERE rowid = ".$this->id;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -263,7 +264,7 @@ class Cotisation extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSubscription").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='payment';
@@ -276,7 +277,7 @@ class Cotisation extends CommonObject
 
 
     /**
-     *  Charge les informations d'ordre info dans l'objet cotisation
+     *  Load information of the subscription object
 	 *
      *  @param	int		$id       Id subscription
      *  @return	void
@@ -285,7 +286,7 @@ class Cotisation extends CommonObject
 	{
 		$sql = 'SELECT c.rowid, c.datec,';
 		$sql.= ' c.tms as datem';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'cotisation as c';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
 		$sql.= ' WHERE c.rowid = '.$id;
 
 		$result=$this->db->query($sql);

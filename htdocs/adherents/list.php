@@ -187,7 +187,7 @@ $sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, 
 $sql.= " d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql.= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
-$sql.= " t.libelle as type, t.cotisation,";
+$sql.= " t.libelle as type, t.subscription,";
 $sql.= " state.code_departement as state_code, state.nom as state_name";
 // Add fields for extrafields
 foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
@@ -736,7 +736,7 @@ if ($resql)
     		else
     		{
     			print '<td align="left" class="nowrap">';
-    			if ($obj->cotisation == 'yes')
+    			if ($obj->subscription == 'yes')
     			{
     				print $langs->trans("SubscriptionNotReceived");
     				if ($obj->statut > 0) print " ".img_warning();
@@ -790,7 +790,7 @@ if ($resql)
 		if (! empty($arrayfields['d.statut']['checked']))
 		{
 		    print '<td align="right" class="nowrap">';
-		    print $memberstatic->LibStatut($obj->statut,$obj->cotisation,$datefin,2);
+		    print $memberstatic->LibStatut($obj->statut,$obj->subscription,$datefin,2);
 		    print '</td>';
 		    if (! $i) $totalarray['nbfield']++;
 		}
