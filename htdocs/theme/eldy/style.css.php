@@ -3973,6 +3973,9 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container .select2-choice .select2-arrow {
+	border-radius: 0;
+}
 .select2-container-multi .select2-choices {
 	background-image: none;
 }

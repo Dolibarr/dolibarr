@@ -737,7 +737,7 @@ class Form
 
 			if (!empty($page))
 			{
-	            $out .= '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></form>';
+	            $out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'"></form>';
 			}
         }
         else
@@ -1570,7 +1570,7 @@ class Form
 			$out.='<input type="hidden" class="removedassignedhidden" name="removedassigned" value="">';
 			$out.='<script type="text/javascript" language="javascript">jQuery(document).ready(function () {    jQuery(".removedassigned").click(function() {        jQuery(".removedassignedhidden").val(jQuery(this).val());    });})</script>';
 			$out.=$this->select_dolusers('', $htmlname, $show_empty, $exclude, $disabled, $include, $enableonly, $force_entity, $maxlength, $showstatus, $morefilter);
-			$out.=' <input type="submit" class="button" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
+			$out.=' <input type="submit" class="button valignmiddle" name="'.$action.'assignedtouser" value="'.dol_escape_htmltag($langs->trans("Add")).'">';
 		}
 		$assignedtouser=array();
 		if (!empty($_SESSION['assignedtouser']))
@@ -1580,6 +1580,7 @@ class Form
 		$nbassignetouser=count($assignedtouser);
 
 		if ($nbassignetouser && $action != 'view') $out.='<br>';
+		if ($nbassignetouser) $out.='<div class="myavailability">';
 		$i=0; $ownerid=0;
 		foreach($assignedtouser as $key => $value)
 		{
@@ -1593,7 +1594,8 @@ class Form
 			$out.='<br>';
 			$i++;
 		}
-
+		if ($nbassignetouser) $out.='</div>';
+		
 		//$out.='</form>';
         return $out;
     }
@@ -2967,12 +2969,9 @@ class Form
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setshippingmethod">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $this->selectShippingMethod($selected, $htmlname, '', $addempty);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         } else {
             if ($selected) {
                 $code=$langs->getLabelFromKey($db, $selected, 'c_shipment_mode', 'rowid', 'code');
@@ -3159,12 +3158,9 @@ class Form
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setbankaccount">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $this->select_comptes($selected, $htmlname, 0, '', $addempty);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         } else {
             if ($selected) {
                 require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
@@ -3521,7 +3517,7 @@ class Form
             $formconfirm.= '<td class="valid">';
             $formconfirm.= $this->selectyesno("confirm",$newselectedchoice);
             $formconfirm.= '</td>';
-            $formconfirm.= '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
+            $formconfirm.= '<td class="valid" align="center"><input class="button valignmiddle" type="submit" value="'.$langs->trans("Validate").'"></td>';
             $formconfirm.= '</tr>'."\n";
 
             $formconfirm.= '</table>'."\n";
@@ -3567,12 +3563,9 @@ class Form
             $out.='<form method="post" action="'.$page.'">';
             $out.='<input type="hidden" name="action" value="classin">';
             $out.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            $out.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            $out.='<tr><td>';
             $out.=$formproject->select_projects($socid, $selected, $htmlname, $maxlength, 0, 1, $discard_closed, $forcefocus, 0, 0, '', 1);
-            $out.='</td>';
-            $out.='<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            $out.='</tr></table></form>';
+            $out.='<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+            $out.='</form>';
         }
         else
         {
@@ -3614,12 +3607,9 @@ class Form
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setconditions">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $this->select_conditions_paiements($selected,$htmlname,-1,$addempty);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
         {
@@ -3650,12 +3640,9 @@ class Form
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setavailability">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $this->selectAvailabilityDelay($selected,$htmlname,-1,$addempty);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
         {
@@ -3687,12 +3674,9 @@ class Form
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setdemandreason">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $this->selectInputReason($selected,$htmlname,-1,$addempty);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
         {
@@ -3773,12 +3757,9 @@ class Form
             print '<form method="POST" action="'.$page.'" name="form'.$htmlname.'">';
             print '<input type="hidden" name="action" value="set'.$htmlname.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             print $this->select_dolusers($selected,$htmlname,1,$exclude,0,$include);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
 		{
@@ -3813,12 +3794,9 @@ class Form
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setmode">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $this->select_types_paiements($selected,$htmlname,$filtertype,0,0,0,0,$active);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
         {
@@ -3848,12 +3826,9 @@ class Form
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setmulticurrencycode">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             print $this->selectMultiCurrency($selected, $htmlname, 0);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
         {
@@ -3880,12 +3855,9 @@ class Form
             print '<form method="POST" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setmulticurrencyrate">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             print '<input type="text" name="'.$htmlname.'" value="'.(!empty($rate) ? price($rate) : 1).'" size="10" />';
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
         {
@@ -3988,7 +3960,6 @@ class Form
             if ($num==0)
             {
             	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-                print '<font class="error">Cette societe n\'a pas de contact, veuillez en cr�er un avant de faire votre proposition commerciale</font><br>';
                 print '<a href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$addcontact.'</a>';
             }
             print '</td>';
@@ -4031,12 +4002,9 @@ class Form
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="set_thirdparty">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             print $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-            print '</tr></table></form>';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
         }
         else
         {
@@ -5362,7 +5330,7 @@ class Form
 						$i++;
 					}
 					print '</table>';
-					print '<div class="center"><input type="submit" class="button" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
+					print '<div class="center"><input type="submit" class="button valignmiddle" value="' . $langs->trans('ToLink') . '">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" class="button" name="cancel" value="' . $langs->trans('Cancel') . '"></div>';
 
 					print '</form>';
 					$this->db->free($resqllist);

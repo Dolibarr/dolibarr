@@ -948,14 +948,11 @@ class FormOther
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setaddress">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td>';
             $form->select_address($selected, $socid, $htmlname, 1);
-            print '</td>';
-            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
             $langs->load("companies");
             print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/address.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
-            print '</td></tr></table></form>';
+            print '</form>';
         }
         else
         {

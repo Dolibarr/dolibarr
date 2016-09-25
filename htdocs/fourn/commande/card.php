@@ -274,6 +274,8 @@ if (empty($reshook))
 	// Add a product line
 	if ($action == 'addline' && $user->rights->fournisseur->commande->creer)
 	{
+	    $db->begin();
+	    
 	    $langs->load('errors');
 	    $error = 0;
 
@@ -408,7 +410,7 @@ if (empty($reshook))
 	    		setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 	    	}
 	    }
-	    else if((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))
+	    else if ((GETPOST('price_ht')!=='' || GETPOST('price_ttc')!=='') && empty($error))
 		{
 			$pu_ht = price2num($price_ht, 'MU');
 			$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -445,6 +447,8 @@ if (empty($reshook))
 	    //print "xx".$tva_tx; exit;
 	    if (! $error && $result > 0)
 	    {
+	        $db->commit();
+	        
 	    	$ret=$object->fetch($object->id);    // Reload to get new records
 
 	        // Define output language
@@ -498,8 +502,11 @@ if (empty($reshook))
 	    }
 	    else
 		{
+		    $db->rollback();
             setEventMessages($object->error, $object->errors, 'errors');
 	    }
+	    
+	    $action = '';
 	}
 
 	/*
@@ -1304,8 +1311,6 @@ if (empty($reshook))
 /*
  * View
  */
-$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
-llxHeader('',$langs->trans("Order"),$help_url);
 
 $form =	new	Form($db);
 $formfile = new FormFile($db);
@@ -1313,6 +1318,8 @@ $formorder = new FormOrder($db);
 $productstatic = new Product($db);
 if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
+$help_url='EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
+llxHeader('',$langs->trans("Order"),$help_url);
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -1766,7 +1773,7 @@ elseif (! empty($object->id))
 	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
 	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                $morehtmlref.='<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	                $morehtmlref.='</form>';
 	            } else {
 	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);

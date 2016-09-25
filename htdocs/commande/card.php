@@ -1944,7 +1944,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	                    $morehtmlref.='<input type="hidden" name="action" value="classin">';
 	                    $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	                    $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                    $morehtmlref.='<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	                    $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 	                    $morehtmlref.='</form>';
 	                } else {
 	                    $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
@@ -2022,7 +2022,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		if ($soc->outstanding_limit)
 		{
 		    // Outstanding Bill
-		    print '<tr><td>';
+		    print '<tr><td class="titlefield">';
 		    print $langs->trans('OutstandingBill');
 		    print '</td><td>';
 		    print price($soc->get_OutstandingBill()) . ' / ';
@@ -2045,7 +2045,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $soc->id . '&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("EditGlobalDiscounts") . '</a>';
 		$addcreditnote = '<a href="' . DOL_URL_ROOT . '/compta/facture.php?action=create&socid=' . $soc->id . '&type=2&backtopage=' . urlencode($_SERVER["PHP_SELF"]) . '?facid=' . $object->id . '">' . $langs->trans("AddCreditNote") . '</a>';
 
-		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
+		print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
 		if ($soc->remise_percent)
 			print $langs->trans("CompanyHasRelativeDiscount", $soc->remise_percent);
 		else

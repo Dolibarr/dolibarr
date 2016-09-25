@@ -923,7 +923,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'member')  $modulepart='memberphoto';
 	if ($object->element == 'user')    $modulepart='userphoto';
 	if ($object->element == 'product') $modulepart='product';
-
+	
 	print '<div class="arearef heightref valignmiddle" width="100%">';
 	if ($object->element == 'product')
 	{
@@ -986,7 +986,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
             $morehtmlright.=$object->getLibStatut(5,1);
         }
 	}
-	elseif ($object->element == 'facture')
+	elseif ($object->element == 'facture' || $object->element == 'invoice' || $object->element == 'invoice_supplier')
 	{
 	    $tmptxt=$object->getLibStatut(6, $object->totalpaye);
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5, $object->totalpaye); 

@@ -143,8 +143,6 @@ class FormCompany
 		print '<form method="post" action="'.$page.'">';
 		print '<input type="hidden" name="action" value="setprospectlevel">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-		print '<tr><td>';
 
 		dol_syslog(get_class($this).'::form_prospect_level',LOG_DEBUG);
 		$sql = "SELECT code, label";
@@ -174,9 +172,8 @@ class FormCompany
 		}
 		else dol_print_error($this->db);
 
-		print '</td>';
-		print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-		print '</tr></table></form>';
+		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '</form>';
 	}
 
 	/**

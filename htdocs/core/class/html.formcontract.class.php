@@ -157,12 +157,9 @@ class FormContract
         print '<form method="post" action="'.$page.'">';
         print '<input type="hidden" name="action" value="setcontract">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-        print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-        print '<tr><td>';
         $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty);
-        print '</td>';
-        print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-        print '</tr></table></form>';
+        print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+        print '</form>';
 	}	
 	
 }
