@@ -18,14 +18,14 @@
  */
 
 /**
- *      \file       htdocs/adherents/cotisations.php
+ *      \file       htdocs/adherents/subscription/list.php
  *      \ingroup    member
- *		\brief      Page de consultation et insertion d'une cotisation
+ *      \brief      list of subscription
  */
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("members");
@@ -85,12 +85,12 @@ llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Modu
 
 // List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe,";
-$sql.= " c.rowid as crowid, c.cotisation,";
+$sql.= " c.rowid as crowid, c.subscription,";
 $sql.= " c.dateadh,";
 $sql.= " c.datef,";
 $sql.= " c.fk_bank as bank, c.note,";
 $sql.= " b.fk_account";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
 if (isset($date_select) && $date_select != '')
@@ -103,10 +103,10 @@ if ($search_ref)
 	else $sql.=" AND 1 = 2";    // Always wrong
 }
 if ($search_lastname) $sql.= natural_search(array('d.firstname','d.lastname','d.societe'), $search_lastname);
-if ($search_login) $sql.= natural_search('c.cotisation', $search_login);
+if ($search_login) $sql.= natural_search('c.subscription', $search_login);
 if ($search_note)  $sql.= natural_search('c.note', $search_note);
 if ($search_account > 0) $sql.= " AND b.fk_account = ".$search_account;
-if ($search_amount) $sql.= natural_search('c.cotisation', $search_amount, 1);
+if ($search_amount) $sql.= natural_search('c.subscription', $search_amount, 1);
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = 0;
@@ -166,7 +166,7 @@ if ($result)
     }
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"c.cotisation",$param,"",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"c.subscription",$param,"",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 
@@ -211,7 +211,7 @@ if ($result)
 
 
     // Static objects
-    $cotisation=new Cotisation($db);
+    $subscription=new Subscription($db);
     $adherent=new Adherent($db);
     $accountstatic=new Account($db);
 
@@ -220,10 +220,10 @@ if ($result)
     while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($result);
-        $total+=$objp->cotisation;
+        $total+=$objp->subscription;
 
-        $cotisation->ref=$objp->crowid;
-        $cotisation->id=$objp->crowid;
+        $subscription->ref=$objp->crowid;
+        $subscription->id=$objp->crowid;
 
         $adherent->lastname=$objp->lastname;
         $adherent->firstname=$objp->firstname;
@@ -236,7 +236,7 @@ if ($result)
         print "<tr ".$bc[$var].">";
 
         // Ref
-        print '<td>'.$cotisation->getNomUrl(1).'</td>';
+        print '<td>'.$subscription->getNomUrl(1).'</td>';
 
         // Lastname
         print '<td>'.$adherent->getNomUrl(1).'</td>';
@@ -273,7 +273,7 @@ if ($result)
         print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
 
         // Price
-        print '<td align="right">'.price($objp->cotisation).'</td>';
+        print '<td align="right">'.price($objp->subscription).'</td>';
         
         print '<td></td>';
 

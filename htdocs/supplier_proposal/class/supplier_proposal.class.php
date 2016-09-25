@@ -728,7 +728,7 @@ class SupplierProposal extends CommonObject
      * 	this->ref can be set or empty. If empty, we will use "(PROVid)"
      *
      * 	@param		User	$user		User that create
-     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return     int     			<0 if KO, >=0 if OK
      */
     function create($user, $notrigger=0)
@@ -1335,7 +1335,7 @@ class SupplierProposal extends CommonObject
      *  Set status to validated
      *
      *  @param	User	$user       Object user that validate
-     *  @param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return int         		<0 if KO, >=0 if OK
      */
     function valid($user, $notrigger=0)
@@ -1543,7 +1543,7 @@ class SupplierProposal extends CommonObject
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      string	$note		Comment
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function reopen($user, $statut, $note='', $notrigger=0)
@@ -1891,7 +1891,7 @@ class SupplierProposal extends CommonObject
      *	Delete askprice
      *
      *	@param	User	$user        	Object user that delete
-     *	@param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						1 if ok, otherwise if error
      */
     function delete($user, $notrigger=0)
@@ -2725,7 +2725,7 @@ class SupplierProposalLine  extends CommonObject
     /**
      *  Insert object line propal in database
      *
-     *	@param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
     function insert($notrigger=0)
@@ -2907,7 +2907,7 @@ class SupplierProposalLine  extends CommonObject
     /**
      *	Update propal line object into DB
      *
-     *	@param 	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *	@param 	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return	int					<0 if ko, >0 if ok
      */
     function update($notrigger=0)

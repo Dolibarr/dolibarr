@@ -18,7 +18,7 @@
 use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 /**
  * API class for members
@@ -187,7 +187,7 @@ class Members extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function patch($id, $request_data = null)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->adherent->creer) {
             throw new RestException(401);
@@ -363,7 +363,7 @@ class Members extends DolibarrApi
             throw new RestException(404, 'member not found');
         }
 
-        return $member->cotisation($start_date, $amount, 0, '', $label, '', '', '', $end_date);
+        return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
     }
 
 }

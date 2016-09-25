@@ -60,7 +60,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
 {
     $arrayofmembers=array();
 
-    // requete en prenant que les adherents a jour de cotisation
+    // request taking into account member with up to date subscriptions
     $sql = "SELECT d.rowid, d.firstname, d.lastname, d.login, d.societe as company, d.datefin,";
     $sql.= " d.address, d.zip, d.town, d.country, d.birth, d.email, d.photo,";
     $sql.= " t.libelle as type,";

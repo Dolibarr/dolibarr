@@ -2606,7 +2606,7 @@ abstract class CommonObject
                         $classfile = 'facture-rec'; $classname = 'FactureRec';
                     }
                     else if ($objecttype == 'subscription')   {
-                        $classfile = 'cotisation'; $classname = 'Cotisation';
+                        $classfile = 'subscription'; $classname = 'Subscription';
                     }
 
                     // Here $module, $classfile and $classname are set

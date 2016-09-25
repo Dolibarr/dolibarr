@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       htdocs/adherents/fiche_subscription.php
+ *       \file       htdocs/adherents/subscription/card.php
  *       \ingroup    member
  *       \brief      Page to add/edit/remove a member subscription
  */
@@ -24,7 +24,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/cotisation.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("companies");
@@ -33,7 +33,7 @@ $langs->load("members");
 $langs->load("users");
 
 $adh = new Adherent($db);
-$object = new Cotisation($db);
+$object = new Subscription($db);
 $errmsg='';
 
 $action=GETPOST("action",'alpha');
@@ -109,7 +109,7 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 			{
 				$db->commit();
 
-				header("Location: fiche_subscription.php?rowid=".$object->id);
+				header("Location: card.php?rowid=".$object->id);
 				exit;
 			}
 			else
@@ -172,28 +172,14 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 {
 	/********************************************
 	 *
-	 * Fiche en mode edition
+	 * Subscription card in edit mode
 	 *
 	 ********************************************/
 
     $object->fetch($rowid);
 	$result=$adh->fetch($object->fk_adherent);
 
-	/*
-	 * Affichage onglets
-	 */
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("SubscriptionCard");
-	$head[$h][2] = 'general';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+	$head = subscription_prepare_head($object);
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -206,10 +192,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print "\n";
 	print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/cotisations.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
 
     // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+    print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';	
@@ -276,30 +262,16 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
 if ($rowid && $action != 'edit')
 {
-	/* ************************************************************************** */
-	/*                                                                            */
-	/* Mode affichage                                                             */
-	/*                                                                            */
-	/* ************************************************************************** */
+	/********************************************
+	 *
+	 * Subscription card in view mode
+	 *
+	 ********************************************/
 
     $result=$object->fetch($rowid);
 	$result=$adh->fetch($object->fk_adherent);
 
-	/*
-	 * Affichage onglets
-	 */
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("SubscriptionCard");
-	$head[$h][2] = 'general';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/info_subscription.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Info");
-	$head[$h][2] = 'info';
-	$h++;
+	$head = subscription_prepare_head($object);
 
 	dol_fiche_head($head, 'general', $langs->trans("Subscription"), '', 'payment');
 
@@ -317,10 +289,10 @@ if ($rowid && $action != 'edit')
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/cotisations.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
 
     // Ref
-    print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+    print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
 	print '</td></tr>';

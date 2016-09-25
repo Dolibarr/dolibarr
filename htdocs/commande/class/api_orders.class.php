@@ -396,7 +396,7 @@ class Orders extends DolibarrApi
             $this->commande->$field = $value;
         }
         
-        if($this->commande->update($id, DolibarrApiAccess::$user,1,'','','update'))
+        if($this->commande->update($id, DolibarrApiAccess::$user, 1, '', '', 'update'))
             return $this->get($id);
         
         return false;
@@ -441,8 +441,8 @@ class Orders extends DolibarrApi
      * 
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
-     * @param	int $notrigger      No trigger
-     *
+     * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
+     * 
      * @url POST    {id}/validate
      *  
      * @return  array

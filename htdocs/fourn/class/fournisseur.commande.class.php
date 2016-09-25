@@ -374,7 +374,7 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param	User	$user			Validator User
      *	@param	int		$idwarehouse	Id of warehouse to use for stock decrease
-     *  @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						<0 if KO, >0 if OK
      */
     public function valid($user,$idwarehouse=0,$notrigger=0)
@@ -1971,7 +1971,7 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param      User			$user        		Objet user making change
      *	@param      timestamp		$date_livraison     Planned delivery date
-     *  @param     	int				$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 if KO, >0 if OK
      */
     function set_date_livraison($user, $date_livraison, $notrigger=0)
@@ -2035,7 +2035,7 @@ class CommandeFournisseur extends CommonOrder
      *
      *	@param      User			$user        		Objet utilisateur qui modifie
      *	@param      int				$id_projet    	 	Date de livraison
-     *  @param     	int				$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param     	int				$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         						<0 si ko, >0 si ok
      */
     function set_id_projet($user, $id_projet, $notrigger=0)

@@ -2,7 +2,7 @@
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016      Charlie Benke	<charlie@patas-monkey.com>
+ * Copyright (C) 2016      Charlie Benke        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@ class AdherentType extends CommonObject
     var $id;
     var $ref;
     var $libelle;
-    var $cotisation;  	// Soumis a la cotisation
+    var $subscription;  	// Subscription required
     var $note;		
-    var $vote;		// droit de vote
-    var $mail_valid;  	//mail envoye lors de la validation
+    var $vote;		        // Can vote
+    var $mail_valid;  	    // mail sent during validation
     var $statut;
 
 
@@ -111,7 +111,7 @@ class AdherentType extends CommonObject
         $sql.= "SET ";
         $sql.= "statut = ".$this->statut.",";
         $sql.= "libelle = '".$this->db->escape($this->libelle) ."',";
-        $sql.= "cotisation = '".$this->cotisation."',";
+        $sql.= "subscription = '".$this->subscription."',";
         $sql.= "note = '".$this->db->escape($this->note)."',";
         $sql.= "vote = '".$this->vote."',";
         $sql.= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
@@ -188,7 +188,7 @@ class AdherentType extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
+        $sql = "SELECT d.rowid, d.libelle, d.statut, d.subscription, d.mail_valid, d.note, d.vote";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
         $sql .= " WHERE d.rowid = ".$rowid;
 
@@ -205,7 +205,7 @@ class AdherentType extends CommonObject
                 $this->ref            = $obj->rowid;
                 $this->libelle        = $obj->libelle;
                 $this->statut         = $obj->statut;
-                $this->cotisation     = $obj->cotisation;
+                $this->subscription   = $obj->subscription;
                 $this->mail_valid     = $obj->mail_valid;
                 $this->note           = $obj->note;
                 $this->vote           = $obj->vote;
