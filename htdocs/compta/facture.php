@@ -895,7 +895,6 @@ if (empty($reshook))
 				$object->fac_rec = GETPOST('fac_rec');
 
 				$id = $object->create($user);
-				var_dump('ggg');
 			}
 		}
 
