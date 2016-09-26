@@ -1140,7 +1140,7 @@ function dol_strftime($fmt, $ts=false, $is_gmt=false)
  *										"%d %b %Y",
  *										"%d/%m/%Y %H:%M",
  *										"%d/%m/%Y %H:%M:%S",
- *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc"
+ *										"day", "daytext", "dayhour", "dayhourldap", "dayhourtext", "dayrfc", "dayhourrfc", "...reduceformat"
  * 	@param	string		$tzoutput		true or 'gmt' => string is for Greenwich location
  * 										false or 'tzserver' => output string is for local PHP server TZ usage
  * 										'tzuser' => output string is for user TZ (current browser TZ with current dst)
@@ -5450,7 +5450,7 @@ function printCommonFooter($zone='private')
 		print 'window.console && console.log("';
 		if (! empty($conf->global->MEMCACHED_SERVER)) print 'MEMCACHED_SERVER='.$conf->global->MEMCACHED_SERVER.' - ';
 		print 'MAIN_OPTIMIZE_SPEED='.(isset($conf->global->MAIN_OPTIMIZE_SPEED)?$conf->global->MAIN_OPTIMIZE_SPEED:'off');
-		if ($micro_start_time)
+		if (! empty($micro_start_time))   // Works only if MAIN_SHOW_TUNING_INFO is defined at $_SERVER level. Not in global variable.
 		{
 			$micro_end_time = microtime(true);
 			print ' - Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';

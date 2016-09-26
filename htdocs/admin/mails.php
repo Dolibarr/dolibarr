@@ -83,147 +83,17 @@ if ($action == 'update' && empty($_POST["cancel"]))
 }
 
 
-/*
- * Add file in email form
- */
-if (GETPOST('addfile') || GETPOST('addfilehtml'))
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+// Actions to send emails
+$id=0;
+$actiontypecode='';
+$trigger_name='';
+$paramname='id';
+$mode='emailfortest';
+include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-	// Set tmp user directory
-	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp';
-	dol_add_file_process($upload_dir,0,0);
+if ($action == 'presend' && GETPOST('trackid') == 'test')       $action='test';
+if ($action == 'presend' && GETPOST('trackid') == 'testhtml')   $action='testhtml';
 
-	if ($_POST['addfile'])     $action='test';
-	if ($_POST['addfilehtml']) $action='testhtml';
-}
-
-/*
- * Remove file in email form
- */
-if (! empty($_POST['removedfile']) || ! empty($_POST['removedfilehtml']))
-{
-	// Set tmp user directory
-	$vardir=$conf->user->dir_output."/".$user->id;
-	$upload_dir = $vardir.'/temp';
-
-	$keytodelete=isset($_POST['removedfile'])?$_POST['removedfile']:$_POST['removedfilehtml'];
-	$keytodelete--;
-
-	$listofpaths=array();
-	$listofnames=array();
-	$listofmimes=array();
-	if (! empty($_SESSION["listofpaths"])) $listofpaths=explode(';',$_SESSION["listofpaths"]);
-	if (! empty($_SESSION["listofnames"])) $listofnames=explode(';',$_SESSION["listofnames"]);
-	if (! empty($_SESSION["listofmimes"])) $listofmimes=explode(';',$_SESSION["listofmimes"]);
-
-	if ($keytodelete >= 0)
-	{
-		$pathtodelete=$listofpaths[$keytodelete];
-		$filetodelete=$listofnames[$keytodelete];
-		$result = dol_delete_file($pathtodelete,1);
-		if ($result)
-		{
-			setEventMessages(array($langs->trans("FileWasRemoved"), $filetodelete), null, 'mesgs');
-
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$formmail = new FormMail($db);
-			$formmail->remove_attached_files($keytodelete);
-		}
-	}
-	if ($_POST['removedfile'] || $action='send')     $action='test';
-	if ($_POST['removedfilehtml'] || $action='sendhtml') $action='testhtml';
-}
-
-/*
- * Send mail
- */
-if (($action == 'send' || $action == 'sendhtml') && ! GETPOST('addfile') && ! GETPOST('addfilehtml') && ! GETPOST('removedfile') && ! GETPOST('cancel'))
-{
-	$error=0;
-
-	$email_from='';
-	if (! empty($_POST["fromname"])) $email_from=$_POST["fromname"].' ';
-	if (! empty($_POST["frommail"])) $email_from.='<'.$_POST["frommail"].'>';
-
-	$errors_to  = $_POST["errorstomail"];
-	$sendto     = $_POST["sendto"];
-	$sendtocc   = $_POST["sendtocc"];
-	$sendtoccc  = $_POST["sendtoccc"];
-	$subject    = $_POST['subject'];
-	$body       = $_POST['message'];
-	$deliveryreceipt= $_POST["deliveryreceipt"];
-	$trackid    = GETPOST('trackid');
-	
-	//Check if we have to decode HTML
-	if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401))) {
-		$body=dol_html_entity_decode($body, ENT_COMPAT | ENT_HTML401);
-	}
-
-	// Create form object
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-	$formmail = new FormMail($db);
-
-	$attachedfiles=$formmail->get_attached_files();
-	$filepath = $attachedfiles['paths'];
-	$filename = $attachedfiles['names'];
-	$mimetype = $attachedfiles['mimes'];
-
-	if (empty($_POST["frommail"]))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailFrom")), null, 'errors');
-		$action='test';
-		$error++;
-	}
-	if (empty($sendto))
-	{
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("MailTo")), null, 'errors');
-		$action='test';
-		$error++;
-	}
-	if (! $error)
-	{
-		// Is the message in HTML?
-		$msgishtml=0;	// Message is not HTML
-		if ($action == 'sendhtml') $msgishtml=1;	// Force message to HTML
-
-		// Pratique les substitutions sur le sujet et message
-		$subject=make_substitutions($subject,$substitutionarrayfortest);
-		$body=make_substitutions($body,$substitutionarrayfortest);
-
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-        $mailfile = new CMailFile(
-            $subject,
-            $sendto,
-            $email_from,
-            $body,
-            $filepath,
-            $mimetype,
-            $filename,
-            $sendtocc,
-            $sendtoccc,
-            $deliveryreceipt,
-            $msgishtml,
-            $errors_to,
-        	'',
-        	$trackid
-        );
-
-		$result=$mailfile->sendfile();
-
-		if ($result)
-		{
-			setEventMessages($langs->trans("MailSuccessfulySent",$mailfile->getValidAddress($email_from,2),$mailfile->getValidAddress($sendto,2)), null, 'mesgs');
-		}
-		else
-		{
-			setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
-		}
-
-		$action='';
-	}
-}
 
 
 
@@ -747,7 +617,7 @@ else
 		$formmail = new FormMail($db);
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->trackid='test';
+		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
 		$formmail->withfromreadonly=0;
 		$formmail->withsubstit=0;
 		$formmail->withfrom=1;
@@ -767,7 +637,7 @@ else
 		// Tableau des substitutions
 		$formmail->substit=$substitutionarrayfortest;
 		// Tableau des parametres complementaires du post
-		$formmail->param["action"]=($action == 'testhtml'?"sendhtml":"send");
+		$formmail->param["action"]="send";
 		$formmail->param["models"]="body";
 		$formmail->param["mailid"]=0;
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
@@ -778,7 +648,7 @@ else
 			$formmail->clear_attached_files();
 		}
 
-		print $formmail->get_form(($action == 'testhtml'?'addfilehtml':'addfile'),($action == 'testhtml'?'removefilehtml':'removefile'));
+		print $formmail->get_form('addfile','removefile');
 
 		print '<br>';
 	}
