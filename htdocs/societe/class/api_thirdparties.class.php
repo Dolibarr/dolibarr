@@ -87,17 +87,17 @@ class Thirdparties extends DolibarrApi
      * 
      * Get a list of thirdparties
      * 
-     * @param   int     $mode       Set to 1 to show only customers 
-     *                              Set to 2 to show only prospects
-     *                              Set to 3 to show only those are not customer neither prospect
-     * @param   string  $email      Search by email filter
      * @param   string  $sortfield  Sort field
      * @param   string  $sortorder  Sort order
      * @param   int     $limit      Limit for list
      * @param   int     $page       Page number
+     * @param   int     $mode       Set to 1 to show only customers 
+     *                              Set to 2 to show only prospects
+     *                              Set to 3 to show only those are not customer neither prospect
+     * @param   string  $email      Search by email filter
      * @return array Array of thirdparty objects
      */
-    function index($mode=0, $email=NULL, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $email=NULL) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -152,7 +152,7 @@ class Thirdparties extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $soc_static = new Societe($db);

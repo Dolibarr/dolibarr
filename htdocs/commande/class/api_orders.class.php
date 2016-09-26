@@ -92,7 +92,7 @@ class Orders extends DolibarrApi
      *
      * @return  array   Array of order objects
      */
-    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids = '') {
+    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -142,7 +142,7 @@ class Orders extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($limit, $num))
             {
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);

@@ -97,7 +97,7 @@ class AgendaEvents extends DolibarrApi
      *
      * @return  array   Array of Agenda Events objects
      */
-    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0) {
+    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 0, $page = 0, $user_ids = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -139,7 +139,7 @@ class AgendaEvents extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $actioncomm_static = new ActionComm($db);

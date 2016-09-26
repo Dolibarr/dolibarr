@@ -84,16 +84,16 @@ class Contacts extends DolibarrApi
 	 * 
 	 * Get a list of contacts
 	 * 
-	 * @param int		$socid		ID of thirdparty to filter list
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
+	 * @param int		$socid		ID of thirdparty to filter list
 	 * @return array Array of contact objects
      * 
 	 * @throws RestException
 	 */
-	function index($socid = 0, $sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+	function index($sortfield = "c.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $socid = 0) {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -154,7 +154,7 @@ class Contacts extends DolibarrApi
 		if ($result)
 		{
 			$num = $db->num_rows($result);
-			while ($i < $num)
+			while ($i < min($num, ($limit <= 0 ? $num : $limit)))
 			{
 				$obj = $db->fetch_object($result);
 				$contact_static = new Contact($db);

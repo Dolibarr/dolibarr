@@ -93,16 +93,16 @@ class Categories extends DolibarrApi
      * 
      * Get a list of categories
      *
-     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @return array Array of category objects
      *
 	 * @throws RestException
      */
-    function index($type = '', $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type = '') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -142,7 +142,7 @@ class Categories extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);
@@ -167,17 +167,17 @@ class Categories extends DolibarrApi
      * Note: This method is not directly exposed in the API, it is used
      * in the GET /xxx/{id}/categories requests.
      *
-     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
      * @param int		$item		Id of the item to get categories for
      * @return array Array of category objects
      *
      * @access private
      */
-    function getListForItem($type, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $item = 0) {
+    function getListForItem($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $type='customer', $item = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -228,7 +228,7 @@ class Categories extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $category_static = new Categorie($db);

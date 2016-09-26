@@ -136,7 +136,7 @@ class ExpenseReports extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $expensereport_static = new ExpenseReport($db);

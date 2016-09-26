@@ -97,17 +97,17 @@ class CommandeApi extends DolibarrApi
      * 
      * Get a list of orders
      * 
-     * @param int		$mode		Use this param to filter list
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
-     * @param string	$societe	Societe filter field
+     * @param int		$mode		Use this param to filter list
+     * @param string	$societe	Thirdparty filter field
      *
      * @url     GET     /order/list
      * @return  array   Array of order objects
      */
-    function getList($mode=0, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $societe = 0) {
+    function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $societe = 0) {
         global $db, $conf;
         
         $obj_ret = array();
@@ -162,7 +162,7 @@ class CommandeApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);

@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
-class Towns
+class DictionnaryTowns extends DolibarrApi
 {
     /**
      * Constructor
@@ -41,23 +41,44 @@ class Towns
     /**
      * Get the list of towns.
      *
-     * @param string    $zipcode    To filter the towns by zipcode
-     * @param string    $town       To filter the towns by name
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $zipcode    To filter on zipcode
+     * @param string    $town       To filter on city name
      * @return List of towns
      *            
      * @throws RestException
      */
-    function index($zipcode = '', $town = '')
+    function index($sortfield = "zip,town", $sortorder = 'ASC', $limit = 100, $page = 0, $zipcode = '', $town = '')
     {
         $list = array();
 
         $sql = "SELECT rowid AS id, zip, town, fk_county, fk_pays AS fk_country";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_ziptown";
         $sql.= " WHERE active = 1";
-        if ($zipcode) $sql.=" AND zip LIKE '" . $this->db->escape($zipcode) . "%'";
+        if ($zipcode) $sql.=" AND zip LIKE '%" . $this->db->escape($zipcode) . "%'";
         if ($town)    $sql.=" AND town LIKE '%" . $this->db->escape($town) . "%'";
-        $sql.= " ORDER BY zip, town";
+        
+        $nbtotalofrecords = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+            $result = $this->db->query($sql);
+            $nbtotalofrecords = $this->db->num_rows($result);
+        }
+        
+        $sql.= $this->db->order($sortfield, $sortorder);
 
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+        
+            $sql .= $this->db->plimit($limit, $offset);
+        }
+        
         $result = $this->db->query($sql);
 
         if ($result) {

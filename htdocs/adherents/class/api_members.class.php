@@ -79,18 +79,18 @@ class Members extends DolibarrApi
      *
      * Get a list of members
      *
-     * @param string    $typeid     ID of the type of member
-     * @param string    $login      To filter the members by login
-     * @param string    $name       To filter the members by name (firstname, lastname or company name matching the filter)
      * @param string    $sortfield  Sort field
      * @param string    $sortorder  Sort order
      * @param int       $limit      Limit for list
      * @param int       $page       Page number
+     * @param string    $typeid     ID of the type of member
+     * @param string    $login      To filter the members by login
+     * @param string    $name       To filter the members by name (firstname, lastname or company name matching the filter)
      * @return array Array of member objects
      *
      * @throws RestException
      */
-    function index($typeid = '', $login = '', $name = '', $sortfield = "a.rowid", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function index($sortfield = "a.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $typeid = '', $login = '', $name = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -136,7 +136,7 @@ class Members extends DolibarrApi
         {
             $i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($limit, $num))
             {
                 $obj = $db->fetch_object($result);
                 $member = new Adherent($this->db);

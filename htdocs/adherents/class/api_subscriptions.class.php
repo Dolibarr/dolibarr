@@ -119,7 +119,7 @@ class Subscriptions extends DolibarrApi
         {
             $i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($limit, $num))
             {
                 $obj = $db->fetch_object($result);
                 $subscription = new Subscription($this->db);

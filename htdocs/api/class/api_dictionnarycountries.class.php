@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
-class Countries extends DolibarrApi
+class DictionnaryCountries extends DolibarrApi
 {
     private $translations = null;
 
@@ -48,22 +48,33 @@ class Countries extends DolibarrApi
      * code supported by Dolibarr, for example 'en_US' or 'fr_FR'.
      * The returned list is sorted by country ID.
      *
-     * @param string    $filter    To filter the countries by name
-     * @param int       $limit     Number of items per page
-     * @param int       $page      Page number (starting from zero)
-     * @param string    $lang      Code of the language the names of the
-     *                             countries must be translated to
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $filter     To filter the countries by name
+     * @param string    $lang       Code of the language the label of the countries must be translated to
      * @return List of countries
      *            
      * @throws RestException
      */
-    function index($filter = '', $limit = 0, $page = 0, $lang = '')
+    function index($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $filter = '', $lang = '')
     {
         $list = array();
 
         // Note: The filter is not applied in the SQL request because it must
         // be applied to the translated names, not to the names in database.
-        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country ORDER BY rowid";
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."c_country";
+        
+        $nbtotalofrecords = 0;
+        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+        {
+            $result = $this->db->query($sql);
+            $nbtotalofrecords = $this->db->num_rows($result);
+        }
+        
+        $sql.= $this->db->order($sortfield, $sortorder);
+        
 
         if ($limit) {
             if ($page < 0) {
