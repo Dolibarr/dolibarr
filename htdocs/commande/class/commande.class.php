@@ -1220,7 +1220,7 @@ class Commande extends CommonOrder
      */
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0, $date_start='', $date_end='', $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=null, $pa_ht=0, $label='',$array_options=0, $fk_unit=null, $origin='', $origin_id=0)
     {
-    	global $mysoc, $conf, $langs;
+    	global $mysoc, $conf, $langs, $user;
 
         dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit", LOG_DEBUG);
 
@@ -1373,7 +1373,7 @@ class Commande extends CommonOrder
 				$this->line->array_options=$array_options;
 			}
 
-            $result=$this->line->insert();
+            $result=$this->line->insert($user);
             if ($result > 0)
             {
                 // Reorder if child line
