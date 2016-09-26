@@ -21,11 +21,13 @@
  *  \brief			Code for actions on sending mails from object page
  */
 
-
+// $mysoc must be defined
 // $id must be defined
 // $actiontypecode must be defined
 // $paramname must be defined
 // $mode must be defined
+// $object and $uobject may be defined.
+
 
 /*
  * Add file in email form
@@ -107,51 +109,55 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 	$subject='';$actionmsg='';$actionmsg2='';
 
-	$result=$object->fetch($id);
-
-	$sendtosocid=0;
-	if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
+	if (is_object($object))
 	{
-		$result=$object->fetch_thirdparty();
-		$thirdparty=$object->thirdparty;
-		$sendtosocid=$thirdparty->id;
+    	$result=$object->fetch($id);
+    
+    	$sendtosocid=0;
+    	if (method_exists($object,"fetch_thirdparty") && $object->element != 'societe')
+    	{
+    		$result=$object->fetch_thirdparty();
+    		$thirdparty=$object->thirdparty;
+    		$sendtosocid=$thirdparty->id;
+    	}
+    	else if ($object->element == 'societe')
+    	{
+    		$thirdparty=$object;
+    		if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
+    		elseif($conf->dolimail->enabled)
+    		{
+    			$dolimail = new Dolimail($db);
+    			$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
+    			$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
+    			if (!$possibleaccounts && !$possibleuser) 
+    			{
+    					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
+    			}
+    			elseif (count($possibleaccounts)>1) 
+    			{
+    					$sendtosocid=$possibleaccounts[1]['id'];
+    					$result=$object->fetch($sendtosocid);
+    					
+    					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
+    			}
+    			else 
+    			{
+    				if($possibleaccounts){ 
+    					$sendtosocid=$possibleaccounts[1]['id'];
+    					$result=$object->fetch($sendtosocid);
+    				}elseif($possibleuser){ 
+    					$sendtosocid=$possibleuser[0]['id'];
+    
+    					$result=$uobject->fetch($sendtosocid);
+    					$object=$uobject;
+    				}
+    				
+    			}
+    		}
+    	}
+    	else dol_print_error('','Use actions_sendmails.in.php for a type that is not supported');
 	}
-	else if ($object->element == 'societe')
-	{
-		$thirdparty=$object;
-		if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
-		elseif($conf->dolimail->enabled)
-		{
-			$dolimail = new Dolimail($db);
-			$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
-			$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
-			if (!$possibleaccounts && !$possibleuser) 
-			{
-					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
-			}
-			elseif (count($possibleaccounts)>1) 
-			{
-					$sendtosocid=$possibleaccounts[1]['id'];
-					$result=$object->fetch($sendtosocid);
-					
-					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
-			}
-			else 
-			{
-				if($possibleaccounts){ 
-					$sendtosocid=$possibleaccounts[1]['id'];
-					$result=$object->fetch($sendtosocid);
-				}elseif($possibleuser){ 
-					$sendtosocid=$possibleuser[0]['id'];
-
-					$result=$uobject->fetch($sendtosocid);
-					$object=$uobject;
-				}
-				
-			}
-		}
-	}
-	else dol_print_error('','Use actions_sendmails.in.php for a type that is not supported');
+	else $thirdparty = $mysoc;
 
 	if ($result > 0)
 	{
