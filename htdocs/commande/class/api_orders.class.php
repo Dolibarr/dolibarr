@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +143,7 @@ class Orders extends DolibarrApi
         if ($result)
         {
             $num = $db->num_rows($result);
-            while ($i < min($limit, $num))
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
@@ -442,7 +443,7 @@ class Orders extends DolibarrApi
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
-     * 
+     *
      * @url POST    {id}/validate
      *  
      * @return  array
