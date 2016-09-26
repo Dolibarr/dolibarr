@@ -221,6 +221,14 @@ class Entrepot extends CommonObject
 	{
 		$this->db->begin();
 
+			if (! $error && empty($notrigger))
+			{
+                // Call trigger
+                $result=$this->call_trigger('STOCK_DELETE',$user);
+                if ($result < 0) { $error++; }
+                // End call triggers
+			}
+		
 		$elements = array('stock_mouvement','product_stock','product_warehouse_properties');
 		foreach($elements as $table)
 		{
