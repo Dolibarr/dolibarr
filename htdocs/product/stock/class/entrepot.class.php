@@ -224,7 +224,7 @@ class Entrepot extends CommonObject
 			if (! $error && empty($notrigger))
 			{
                 // Call trigger
-                $result=$this->call_trigger('STOCK_DELETE',$user);
+                $result=$this->call_trigger('WAREHOUSE_DELETE',$user);
                 if ($result < 0) { $error++; }
                 // End call triggers
 			}
