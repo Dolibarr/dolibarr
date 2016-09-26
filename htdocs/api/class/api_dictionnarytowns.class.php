@@ -1,6 +1,6 @@
 <?php
-/*
- * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
+/* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ class DictionnaryTowns extends DolibarrApi
 
         if ($result) {
             $num = $this->db->num_rows($result);
-            for ($i = 0; $i < $num; $i++) {
+            for ($i = 0; $i < min($num, ($limit <= 0 ? $num : $limit)); $i++) {
                 $list[] = $this->db->fetch_object($result);
             }
         } else {
