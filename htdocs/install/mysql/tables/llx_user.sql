@@ -80,5 +80,6 @@ create table llx_user
   tjm				double(24,8),
   salary			double(24,8),
   salaryextra		double(24,8),
+  dateemployment	datetime,
   weeklyhours		double(16,8)
 )ENGINE=innodb;
