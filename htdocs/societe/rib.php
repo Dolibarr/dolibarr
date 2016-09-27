@@ -467,7 +467,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 
     print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-    print '<textarea name="domiciliation" rows="4" cols="40">';
+    print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
@@ -476,7 +476,7 @@ if ($socid && $action == 'edit' && $user->rights->societe->creer)
     print "</td></tr>\n";
 
     print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-    print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\">";
+    print "<textarea name=\"owner_address\" rows=\"4\" cols=\"40\" maxlength=\"255\">";
     print $account->owner_address;
     print "</textarea></td></tr>";
 
@@ -570,7 +570,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print '<td colspan="4"><input size="12" type="text" name="bic" value="'.GETPOST('bic').'"></td></tr>';
 
     print '<tr><td>'.$langs->trans("BankAccountDomiciliation").'</td><td colspan="4">';
-    print '<textarea name="domiciliation" rows="4" cols="40">';
+    print '<textarea name="domiciliation" rows="4" cols="40" maxlength="255">';
     print GETPOST('domiciliation');
     print "</textarea></td></tr>";
 
@@ -579,7 +579,7 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
     print "</td></tr>\n";
 
     print '<tr><td>'.$langs->trans("BankAccountOwnerAddress").'</td><td colspan="4">';
-    print '<textarea name="owner_address" rows="4" cols="40">';
+    print '<textarea name="owner_address" rows="4" cols="40" maxlength="255">';
     print GETPOST('owner_address');
     print "</textarea></td></tr>";
 
