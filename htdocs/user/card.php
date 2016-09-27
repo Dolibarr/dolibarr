@@ -215,7 +215,9 @@ if (empty($reshook)) {
 			$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
 			$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
+			$date = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 			$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+			$object->dateemployment = $date != '' ? $date : '';
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -357,6 +359,8 @@ if (empty($reshook)) {
 					$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
 					$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
+					$date = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+					$object->dateemployment = $date != '' ? $date : '';
 
 					if (! empty($conf->multicompany->enabled))
 					{
@@ -1057,6 +1061,13 @@ if (($action == 'create') || ($action == 'adduserldap'))
     print '<input size="8" type="text" name="weeklyhours" value="'.GETPOST('weeklyhours').'">';
     print '</td>';
     print "</tr>\n";
+	
+    // Date employment
+    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+    print '<td>';
+	echo $form->select_date(GETPOST('dateemployment'),'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+	print '</td>';
+    print "</tr>\n";
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -1411,6 +1422,13 @@ else
 				print '<tr><td>'.$langs->trans("AccountancyCode").'</td>';
 				print '<td>'.$object->accountancy_code.'</td>';
 			}
+
+		    // Date employment
+		    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+		    print '<td>';
+			print $object->dateemployment;
+		    print '</td>';
+		    print "</tr>\n";
 
 			print '</table>';
 
@@ -2184,6 +2202,13 @@ else
 		    print '<td>';
 		    print '<input size="8" type="text" name="weeklyhours" value="'.price2num(GETPOST('weeklyhours')?GETPOST('weeklyhours'):$object->weeklyhours).'">';
 		    print '</td>';
+		    print "</tr>\n";
+
+		    // Date employment
+		    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+		    print '<td>';
+			echo $form->select_date(GETPOST('dateemployment')?GETPOST('dateemployment'):$object->dateemployment,'dateemployment',0,0,1,'form'.'dateemployment',1,0,1);
+			print '</td>';
 		    print "</tr>\n";
 
 		    // Accountancy code
