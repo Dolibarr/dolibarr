@@ -43,7 +43,7 @@ $action = GETPOST('action','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
-$object = new DolResource($db);
+$object = new Dolresource($db);
 $result = $object->fetch($id,$ref);
 
 

@@ -17,8 +17,8 @@
 
 /**
  *      \file       resource/index.php
- *              \ingroup    resource
- *              \brief      Page to manage resource objects
+ *      \ingroup    resource
+ *      \brief      Page to manage resource objects
  */
 
 
@@ -34,10 +34,10 @@ $langs->load("other");
 $id                     = GETPOST('id','int');
 $action         = GETPOST('action','alpha');
 
-$lineid                         = GETPOST('lineid','int');
-$element                        = GETPOST('element','alpha');
-$element_id                     = GETPOST('element_id','int');
-$resource_id            = GETPOST('resource_id','int');
+$lineid		= GETPOST('lineid','int');
+$element 	= GETPOST('element','alpha');
+$element_id	= GETPOST('element_id','int');
+$resource_id= GETPOST('resource_id','int');
 
 $sortorder      = GETPOST('sortorder','alpha');
 $sortfield      = GETPOST('sortfield','alpha');
@@ -85,7 +85,7 @@ foreach ($search_array_options as $key => $val)
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 
 
-$hookmanager->initHooks(array('resource_list'));
+$hookmanager->initHooks(array('resource', 'resource_list'));
 
 if (empty($sortorder)) $sortorder="ASC";
 if (empty($sortfield)) $sortfield="t.rowid";
@@ -113,6 +113,14 @@ $arrayfields = array(
 		),
 		'ty.label' => array(
 				'label' => $langs->trans("ResourceType"),
+				'checked' => 1
+		),
+		't.available' => array(
+				'label' => $langs->trans("Available"),
+				'checked' => 1
+		),
+		't.management_type' => array(
+				'label' => $langs->trans("ManagementType"),
 				'checked' => 1
 		),
 );
@@ -164,15 +172,16 @@ if ($action == 'delete_resource')
 }
 
 // Load object list
-$ret = $object->fetch_all($sortorder, $sortfield, $limit, $offset, $filter);
+$ret = $object->fetchAll($sortorder, $sortfield, $limit, $offset, $filter);
 if($ret == -1) {
         dol_print_error($db,$object->error);
         exit;
 } else {
-    print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
+    print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $ret+1, $object->num_all,'title_generic.png');
 }
 
 $var=true;
+$management_types = Dolresource::management_types_trans();
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
@@ -192,8 +201,10 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 print '<tr class="liste_titre">';
-if (! empty($arrayfields['t.ref']['checked']))           print_liste_field_titre($arrayfields['t.ref']['label'],$_SERVER["PHP_SELF"],"t.ref","",$param,"",$sortfield,$sortorder);
-if (! empty($arrayfields['ty.label']['checked']))        print_liste_field_titre($arrayfields['ty.label']['label'],$_SERVER["PHP_SELF"],"t.code","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['t.ref']['checked']))              print_liste_field_titre($arrayfields['t.ref']['label'],$_SERVER["PHP_SELF"],"t.ref","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['ty.label']['checked']))           print_liste_field_titre($arrayfields['ty.label']['label'],$_SERVER["PHP_SELF"],"t.code","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['t.available']['checked']))        print_liste_field_titre($arrayfields['t.available']['label'],$_SERVER["PHP_SELF"],"t.available","",$param,"",$sortfield,$sortorder);
+if (! empty($arrayfields['t.management_type']['checked']))  print_liste_field_titre($arrayfields['t.management_type']['label'],$_SERVER["PHP_SELF"],"t.available","",$param,"",$sortfield,$sortorder);
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
 {
@@ -221,6 +232,18 @@ if (! empty($arrayfields['ty.label']['checked']))
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_type" value="'.$search_type.'" size="6">';
 	print '</td>';
+}
+if (! empty($arrayfields['t.available']['checked']))
+{
+    print '<td class="liste_titre">';
+    print '&nbsp;';
+    print '</td>';
+}
+if (! empty($arrayfields['t.management_type']['checked']))
+{
+    print '<td class="liste_titre">';
+    print '&nbsp;';
+    print '</td>';
 }
 // Extra fields
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
@@ -276,6 +299,21 @@ if ($ret)
             	print $resource->type_label;
             	print '</td>';
             }
+
+            if (! empty($arrayfields['t.available']['checked']))
+            {
+                print '<td align="center">';
+                print yn($resource->available);
+                print '</td>';
+            }
+
+            if (! empty($arrayfields['t.available']['checked']))
+            {
+                print '<td>';
+                print $management_types[$resource->management_type];
+                print '</td>';
+            }
+
             // Extra fields
             if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
             {

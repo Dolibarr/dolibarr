@@ -88,7 +88,7 @@ function fichinter_prepare_head($object)
 			}
 		}
 				
-   		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=fichinter&element_id='.$object->id;
+   		$head[$h][0] = DOL_URL_ROOT.'/resource/linked.php?element_type=fichinter&element_id='.$object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		if ($nbResource > 0) $head[$h][1].= ' <span class="badge">'.$nbResource.'</span>';
 		$head[$h][2] = 'resource';

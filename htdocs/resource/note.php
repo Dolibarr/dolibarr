@@ -40,7 +40,7 @@ $action=GETPOST('action','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
-$object = new DolResource($db);
+$object = new Dolresource($db);
 $object->fetch($id,$ref);
 
 $permissionnote=$user->rights->resource->write;	// Used by the include of actions_setnotes.inc.php

@@ -61,15 +61,13 @@ class FormResource
      *	@param  string	$htmlname       Name of field in form
      *  @param  string	$filter         Optionnal filters criteras (example: 's.rowid <> x')
      *	@param	int		$showempty		Add an empty field
-     * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
      * 	@param	int		$forcecombo		Force to use combo box
      *  @param	array	$event			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
-     *  @param	string	$filterkey		Filter on key value
      *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
      *  @param	int		$limit			Limit number of answers
-     * 	@return	string					HTML string with
+     * 	@return	string					HTML string
      */
-    function select_resource_list($selected='',$htmlname='fk_resource',$filter='',$showempty=0, $showtype=0, $forcecombo=0, $event=array(), $filterkey='', $outputmode=0, $limit=20)
+    function select_resource_list($selected='',$htmlname='fk_resource', $filter='',$showempty=0, $forcecombo=0, $event=array(), $outputmode=0, $limit=20, $offset = 0)
     {
     	global $conf,$user,$langs;
 
@@ -77,8 +75,7 @@ class FormResource
     	$outarray=array();
 
     	$resourcestat = new Dolresource($this->db);
-
-    	$resources_used = $resourcestat->fetch_all('ASC', 't.rowid', $limit, $offset, $filter='');
+    	$resourcestat->fetchAll('ASC', 't.rowid', $limit, $offset, $filter);
 
     	if ($outputmode != 2)
     	{
@@ -148,6 +145,72 @@ class FormResource
     }
 
     /**
+     *    Return list of resources having choosed type
+     *
+     *    @param    array   $tree           Resource tree
+     *    @param    array   $root_excluded  Exclude root from selectable
+     *    @param    string  $selected       Id of resource preselected or 'auto' (autoselect resource if there is only one element)
+     *    @param    string  $htmlname       HTML field name
+     *    @param    int     $maxlength      Maximum length for labels
+     *    @param    int     $outputmode     0=HTML select string, 1=Array, 2=Hidden mode
+     *    @return   string
+     */
+    function select_tree_resources($tree, $root_excluded, $selected='', $htmlname="parent", $maxlength=64, $outputmode=0)
+    {
+        global $langs;
+        $langs->load("resource");
+	    $output = "";
+
+        if ($outputmode != 2) $output.= '<select class="flat" name="'.$htmlname.'">';
+
+        $outarray=array();
+        if (is_array($tree))
+        {
+            if (!$root_excluded)
+            {
+                if ($outputmode == 2)
+                {
+                    $output.= '<input type="hidden" name="'.$htmlname.'" value="-1">';
+                }
+                else
+                {
+                    $output.= '<option value="-1">'.$langs->trans("Root").'</option>';
+                }
+            }
+            elseif (count($tree) == 0)
+            {
+                //There is no apparent resource linked because all are excluded
+                if ($outputmode == 2)
+                {
+                    $output.= '<input type="hidden" name="'.$htmlname.'" value="0">';
+                }
+                else
+                {
+                    $output.= '<option value="0" disabled>'.$langs->trans("AllResourcesExcluded").'</option>';
+                }
+            }
+            if ($outputmode != 2)
+            {
+                foreach($tree as $id => $data)
+                {
+                    $add = '';
+                    if ($id == $selected || ($selected == 'auto' && count($tree) == 1))
+                    {
+                        $add = 'selected ';
+                    }
+                    $output.= '<option '.$add.'value="'.$id.'">'.dol_trunc($tree[$id]['path'],$maxlength,'middle').'</option>';
+
+                    $outarray[$id] = $tree[$id]['path'];
+                }
+            }
+        }
+
+        if ($outputmode != 2) $output.= '</select>';
+        if ($outputmode == 1) return $outarray;
+        return $output;
+    }
+
+    /**
      *      Return html list of tickets type
      *
      *      @param	string	$selected       Id du type pre-selectionne
@@ -157,7 +220,7 @@ class FormResource
      *      @param  int		$empty			1=peut etre vide, 0 sinon
      * 		@param	int		$noadmininfo	0=Add admin info, 1=Disable admin info
      *      @param  int		$maxlength      Max length of label
-     * 		@return	void
+     * 		@return	string					HTML string
      */
     function select_types_resource($selected='',$htmlname='type_resource',$filtertype='',$format=0, $empty=0, $noadmininfo=0,$maxlength=0)
     {
@@ -166,10 +229,6 @@ class FormResource
     	$resourcestat = new Dolresource($this->db);
 
     	dol_syslog(get_class($this)."::select_types_resource ".$selected.", ".$htmlname.", ".$filtertype.", ".$format,LOG_DEBUG);
-
-    	$filterarray=array();
-
-    	if ($filtertype != '' && $filtertype != '-1') $filterarray=explode(',',$filtertype);
 
     	$resourcestat->load_cache_code_type_resource();
     	print '<select id="select'.$htmlname.'" class="flat select_'.$htmlname.'" name="'.$htmlname.'">';

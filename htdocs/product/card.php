@@ -372,8 +372,6 @@ if (empty($reshook))
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
                 */
-                $object->duration_value         = GETPOST('duration_value');
-                $object->duration_unit          = GETPOST('duration_unit');
 
                 $object->canvas                 = GETPOST('canvas');
                 $object->weight                 = GETPOST('weight');
@@ -416,6 +414,29 @@ if (empty($reshook))
 				
 				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 				if ($accountancy_code_buy <= 0) { $object->accountancy_code_buy = ''; } else { $object->accountancy_code_buy = $accountancy_code_buy; }
+
+                //Check if duration is changed with resources linked
+                if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION) && $object->isService())
+                {
+                    require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+                    $link = new ResourceLink($db);
+                    $resources = $link->getResourcesLinked($object->id, 'service');
+                    if (is_int($resources) && $resources < 0)
+                    {
+                        setEventMessages($link->error, $link->errors, 'errors');
+                        $error++;
+                    }
+                    else if (count($resources) > 0)
+                    {
+                        if ($object->duration_value != $duration_value || $object->duration_unit != $duration_unit)
+                        {
+                            $error++;
+                            setEventMessage('ErrorHasResourcesLinked', 'errors');
+                        }
+                    }
+                }
+                $object->duration_value         = $duration_value;
+                $object->duration_unit          = $duration_unit;
 
                 // Fill array 'array_options' with data from add form
         		$ret = $extrafields->setOptionalsFromPost($extralabels,$object);

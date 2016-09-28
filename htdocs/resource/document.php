@@ -61,7 +61,7 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 
-$object = new DolResource($db);
+$object = new Dolresource($db);
 $object->fetch($id, $ref);
 
 $upload_dir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($object->ref);
