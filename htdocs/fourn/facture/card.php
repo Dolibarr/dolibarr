@@ -254,6 +254,24 @@ if (empty($reshook))
 		if ($object->update($user) < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+		else
+		{
+		    // Define output language
+		    $outputlangs = $langs;
+		    $newlang = '';
+		    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id'))
+		        $newlang = GETPOST('lang_id');
+		        if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+		            $newlang = $object->thirdparty->default_lang;
+		            if (! empty($newlang)) {
+		                $outputlangs = new Translate("", $conf);
+		                $outputlangs->setDefaultLang($newlang);
+		            }
+		            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		                $ret = $object->fetch($object->id); // Reload to get new records
+		                $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		            }
+		}
 	}
 
 	// payments conditions
@@ -559,7 +577,7 @@ if (empty($reshook))
 	            if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 		            $outputlangs = $langs;
 		            $result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	            	if ($result	<= 0)
+	            	if ($result	< 0)
 	            	{
 	            		dol_print_error($db,$object->error,$object->errors);
 	            		exit;
@@ -969,7 +987,7 @@ if (empty($reshook))
 	        $outputlangs->setDefaultLang($newlang);
 	    }
 		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    if ($result	<= 0)
+	    if ($result	< 0)
 	    {
 			setEventMessages($object->error, $object->errors, 'errors');
     	    $action='';
@@ -2325,7 +2343,7 @@ else
             if (! $file || ! is_readable($file))
             {
 	            $result = $object->generateDocument(GETPOST('model')?GETPOST('model'):$object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-                if ($result <= 0)
+                if ($result < 0)
                 {
                     dol_print_error($db,$object->error,$object->errors);
                     exit;

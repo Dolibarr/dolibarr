@@ -1908,7 +1908,7 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
@@ -1917,7 +1917,7 @@ class FactureFournisseur extends CommonInvoice
 		$langs->load("suppliers");
 
 		// Set the model on the model name to use
-		if (! dol_strlen($modele))
+		if (empty($modele))
 		{
 			if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF))
 			{
@@ -1925,13 +1925,20 @@ class FactureFournisseur extends CommonInvoice
 			}
 			else
 			{
-				$modele = 'canelle';
+				$modele = '';       // No default value. For supplier invoice, we allow to disable all PDF generation 
 			}
 		}
+		
+		if (empty($modele))
+		{
+		    return 0;
+		}
+		else
+		{
+            $modelpath = "core/modules/supplier_invoice/pdf/";
 
-		$modelpath = "core/modules/supplier_invoice/pdf/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
 	}
 
 	/**
