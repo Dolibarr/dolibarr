@@ -1168,6 +1168,14 @@ if (empty($reshook))
 										if ($result > 0 && $lines[$i]->product_type == 9) {
 											$fk_parent_line = $result;
 										}
+
+										//Ensure to switch any occupied resource by the origin
+										if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+										{
+											require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+											require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+											switchAllResources($lines[$i], ResourceStatus::OCCUPIED, $originid, $origin, $object->id, $object->element);
+										}
 									}
 								}
 							} else {

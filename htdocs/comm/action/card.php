@@ -43,6 +43,10 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
+if (!empty($conf->resource->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+}
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
@@ -391,6 +395,29 @@ if ($action == 'update')
 
 		$datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, $_POST["apmonth"], $_POST["apday"], $_POST["apyear"]);
 		$datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', $_POST["p2month"], $_POST["p2day"], $_POST["p2year"]);
+
+
+		//Check if duration is changed with resources linked
+		if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+		{
+			$link = new ResourceLink($db);
+			$resources = $link->getResourcesLinked($object->id, $object->element);
+			if (is_int($resources) && $resources < 0)
+			{
+				$error++; $donotclearsession=1;
+				$action = 'edit';
+				setEventMessages($link->error, $link->errors, 'errors');
+			}
+			else if (count($resources) > 0)
+			{
+				if ($object->datep != $datep || $object->datef != $datef)
+				{
+					$error++; $donotclearsession=1;
+					$action = 'edit';
+					setEventMessage('ErrorHasResourcesLinked', 'errors');
+				}
+			}
+		}
 
 		$object->fk_action   = dol_getIdFromCode($db, GETPOST("actioncode"), 'c_actioncomm');
 		$object->label       = GETPOST("label");

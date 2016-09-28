@@ -680,6 +680,14 @@ class ActionComm extends CommonObject
            	}
         }
 
+        // Free possibly taken resources
+        if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            freeAllResources($this, ResourceStatus::OCCUPIED);
+        }
+
         if (!$error)
         {
             if (! $notrigger)

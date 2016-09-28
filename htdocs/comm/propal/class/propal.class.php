@@ -1591,6 +1591,15 @@ class Propal extends CommonObject
 			$error++;
 		}
 
+        // Occupy resources
+        if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            $result = occupyAllResources($this, ResourceStatus::PLACED);
+            if ($result < 0) { $error++; }
+        }
+
 		// Trigger calls
 		if (! $error && ! $notrigger)
 		{
@@ -2184,7 +2193,8 @@ class Propal extends CommonObject
      */
     function reopen($user, $statut, $note='', $notrigger=0)
     {
-
+	    global $conf;
+        $oldstatus = $this->statut;
         $this->statut = $statut;
         $error=0;
 
@@ -2201,6 +2211,24 @@ class Propal extends CommonObject
 		if (! $resql) {
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
+
+        if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            // Free possibly taken resources
+            if ($oldstatus == Propal::STATUS_SIGNED || $oldstatus == Propal::STATUS_BILLED)
+            {
+                freeAllResources($this, ResourceStatus::OCCUPIED);
+
+                //Attempt to restore the placed state
+                if ($oldstatus != Propal::STATUS_BILLED)
+                {
+                    occupyAllResources($this, ResourceStatus::PLACED);
+                }
+            }
+        }
+
 		if (! $error)
 		{
 			if (! $notrigger)
@@ -2277,6 +2305,26 @@ class Propal extends CommonObject
                     $this->error=$this->db->lasterror();
                     $this->db->rollback();
                     return -2;
+                }
+
+                // Occupy resources
+                if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+                {
+                    require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+                    require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+                    $result = occupyAllResources($this, ResourceStatus::OCCUPIED);
+                    if ($result < 0) { $error++; }
+                }
+            }
+            if ($statut == self::STATUS_NOTSIGNED)
+            {
+                // Free resources
+                if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+                {
+                    require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+                    require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+                    $result = freeAllResources($this, ResourceStatus::PLACED);
+                    if ($result < 0) { $error++; }
                 }
             }
             if ($statut == self::STATUS_BILLED)
@@ -2412,6 +2460,7 @@ class Propal extends CommonObject
      */
     function set_draft($user, $notrigger=0)
     {
+	    global $conf;
     	$error=0;
 
     	$this->db->begin();
@@ -2434,6 +2483,14 @@ class Propal extends CommonObject
             $this->brouillon = 1;
         }
 
+        // Free possibly taken resources
+        if (! $error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            freeAllResources($this, ResourceStatus::PLACED);
+        }
+        
         if (! $notrigger && empty($error))
         {
         	// Call trigger
@@ -2653,6 +2710,18 @@ class Propal extends CommonObject
             $result=$this->call_trigger('PROPAL_DELETE',$user);
             if ($result < 0) { $error++; }
             // End call triggers
+        }
+
+        // Free possibly taken resources
+        if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            if ($this->statut == Propal::STATUS_VALIDATED)
+            {
+                freeAllResources($this, ResourceStatus::PLACED);
+            }
+            freeAllResources($this, ResourceStatus::OCCUPIED);
         }
 
         if (! $error)
@@ -3835,6 +3904,13 @@ class PropaleLigne  extends CommonObjectLine
         dol_syslog("PropaleLigne::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
         {
+            // Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+            if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+            {
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+                require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+                freeAllResources($this, ResourceStatus::OCCUPIED, $this->fk_propal, 'propal');
+            }
 
         	// Remove extrafields
         	if ((! $error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
@@ -3976,6 +4052,14 @@ class PropaleLigne  extends CommonObjectLine
         			$error++;
         		}
         	}
+
+            // Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+            if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+            {
+                require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+                require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+                freeAllResources($this, ResourceStatus::OCCUPIED, $this->fk_propal, 'propal');
+            }
 
             if (! $notrigger)
             {

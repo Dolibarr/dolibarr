@@ -1694,6 +1694,14 @@ class Facture extends CommonInvoice
             // End call triggers
 		}
 
+		// Free possibly taken resources
+		if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+		{
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+			freeAllResources($this, ResourceStatus::OCCUPIED);
+		}
+
 		// Removed extrafields
 		if (! $error) {
 			$result=$this->deleteExtraFields();
@@ -1898,6 +1906,7 @@ class Facture extends CommonInvoice
 	 */
 	function set_unpaid($user)
 	{
+		global $conf;
 		$error=0;
 
 		$this->db->begin();
@@ -1908,19 +1917,28 @@ class Facture extends CommonInvoice
 
 		dol_syslog(get_class($this)."::set_unpaid", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-            // Call trigger
-            $result=$this->call_trigger('BILL_UNPAYED',$user);
-            if ($result < 0) $error++;
-            // End call triggers
-		}
-		else
+		if (!$resql)
 		{
 			$error++;
 			$this->error=$this->db->error();
 			dol_print_error($this->db);
 		}
+
+        // Free possibly taken resources
+        if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+        {
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            freeAllResources($this, ResourceStatus::OCCUPIED);
+        }
+
+        if (! $error)
+        {
+            // Call trigger
+            $result=$this->call_trigger('BILL_UNPAYED',$user);
+            if ($result < 0) $error++;
+            // End call triggers
+        }
 
 		if (! $error)
 		{
@@ -2156,6 +2174,15 @@ class Facture extends CommonInvoice
 				}
 			}
 
+			// Check resources
+			if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+				require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+				$result = occupyAllResources($this, ResourceStatus::OCCUPIED);
+				if ($result < 0) $error ++;
+			}
+
 			// Trigger calls
 			if (! $error && ! $notrigger)
 			{
@@ -2342,6 +2369,15 @@ class Facture extends CommonInvoice
 				$old_statut=$this->statut;
 				$this->brouillon = 1;
 				$this->statut = self::STATUS_DRAFT;
+
+				// Free possibly taken resources
+				if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+				{
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+					require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+					freeAllResources($this, ResourceStatus::OCCUPIED);
+				}
+
 	            // Call trigger
 	            $result=$this->call_trigger('BILL_UNVALIDATE',$user);
 	            if ($result < 0)
@@ -4669,6 +4705,14 @@ class FactureLigne extends CommonInvoiceLine
         		}
         	}
 
+			// Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+			if (!$error && !empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+				require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+				freeAllResources($this, ResourceStatus::OCCUPIED, $this->fk_facture, 'facture');
+			}
+
 			if (! $notrigger)
 			{
                 // Call trigger
@@ -4699,7 +4743,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	function delete()
 	{
-		global $user;
+		global $user, $conf;
 
 		$this->db->begin();
 
@@ -4712,6 +4756,13 @@ class FactureLigne extends CommonInvoiceLine
 		}
 		// End call triggers
 
+		// Free resource for safety, in some circumstances the old date range is occupied even in draft mode
+		if (!empty($conf->resource->enabled) && !empty($conf->global->RESOURCE_OCCUPATION))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
+			require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+			freeAllResources($this, ResourceStatus::OCCUPIED, $this->fk_facture, 'facture');
+		}
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
