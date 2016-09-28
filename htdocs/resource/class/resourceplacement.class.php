@@ -20,40 +20,30 @@
  */
 
 /**
- * \file    resource/class/resourcelog.class.php
+ * \file    htdocs/resource/class/resourceplacement.class.php
  * \ingroup resource
- * \brief   Class for resource confirmation
+ * \brief   Class for resource placement
  */
 
 /**
- * Class ResourceLog
+ * Class ResourcePlacement
  *
- *	Class for resource log
+ *	Class for resource placement
  */
-class ResourceLog extends CommonObject
+class ResourcePlacement extends CommonObject
 {
-    public $element = 'resourcelog';
-    public $table_element = 'resource_log';
+    public $element = 'resourceplacement';
+    public $table_element = 'resource_placement';
 
+    public $ref_client;
+    public $fk_soc;
     public $fk_resource;
     public $fk_user;
-    public $status;
-    public $action;
-
-    //Booker of resource
-    public $booker_id = '';
-    public $booker_type = '';
-
-    //Dates
     public $date_creation = '';
     public $date_start = '';
     public $date_end = '';
 
-    //Log action
-    const STATUS_CHANGE = 0;
-    const RESOURCE_OCCUPY = 1;
-    const RESOURCE_FREE = 2;
-    const BOOKER_SWITCH = 3;
+    public $name_client;
 
     /**
      * Constructor
@@ -70,46 +60,39 @@ class ResourceLog extends CommonObject
      * Create object into database
      *
      * @param  User $user      User that creates
+     * @param  bool $notrigger false=launch triggers after, true=disable triggers
      *
      * @return int <0 if KO, Id of created object if OK
      */
-    public function create(User $user)
+    public function create(User $user, $notrigger = false)
     {
         dol_syslog(__METHOD__, LOG_DEBUG);
         $error = 0;
 
         // Clean parameters
+        if (isset($this->ref_client)) $this->ref_client = trim($this->ref_client);
+        if (isset($this->fk_soc)) $this->fk_soc = trim($this->fk_soc);
         if (isset($this->fk_resource)) $this->fk_resource = trim($this->fk_resource);
-        if (isset($this->booker_type)) $this->booker_type = trim($this->booker_type);
-        if (!is_numeric($this->action) || $this->action < 0) $this->action = ResourceLog::STATUS_CHANGE;
-        if (!is_numeric($this->status) || $this->status < 0) $this->status = ResourceStatus::DEFAULT_STATUS;
-        if (!in_array($this->status, ResourceStatus::$OCCUPATION))
-        {
-            $this->booker_id = null;
-            $this->booker_type = null;
-        }
 
         // Insert request
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX . $this->table_element . "(";
+        $sql.= "entity,";
+        $sql.= "ref_client,";
+        $sql.= "fk_soc,";
         $sql.= "fk_resource,";
         $sql.= "fk_user,";
-        $sql.= "booker_id,";
-        $sql.= "booker_type,";
         $sql.= "date_creation,";
         $sql.= "date_start,";
-        $sql.= "date_end,";
-        $sql.= "status,";
-        $sql.= "action";
+        $sql.= "date_end";
         $sql.= ") VALUES (";
+        $sql.= " ".getEntity($this->element, 0).",";
+        $sql.= " ".(! isset($this->ref_client)?"NULL":"'".$this->db->escape($this->ref_client)."'").",";
+        $sql.= " ".$this->fk_soc.",";
         $sql.= " ".$this->fk_resource.",";
         $sql.= " ".$user->id.",";
-        $sql.= " ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
-        $sql.= " ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
         $sql.= " '".$this->db->idate($this->date_creation)."',";
         $sql.= " '".$this->db->idate($this->date_start)."',";
-        $sql.= " '".$this->db->idate($this->date_end)."',";
-        $sql.= " ".$this->status.",";
-        $sql.= " ".$this->action."";
+        $sql.= " '".$this->db->idate($this->date_end)."'";
         $sql.= ")";
 
         $this->db->begin();
@@ -121,8 +104,36 @@ class ResourceLog extends CommonObject
             dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
         }
 
+        // Occupy sections
         if (!$error) {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+
+            require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            $resource = new Dolresource($this->db);
+            $result = $resource->fetch($this->fk_resource);
+            if ($result <= 0)
+            {
+                $error++;
+                $this->errors[] = $resource->error;
+            }
+            else
+            {
+                $result = $resource->setStatus($user, $this->date_start, $this->date_end, ResourceStatus::$AVAILABLE, ResourceStatus::OCCUPIED, $this->id, $this->element, false, ResourceLog::RESOURCE_OCCUPY, $notrigger);
+                if ($result < 0)
+                {
+                    $error++;
+                    $this->errors[] = $resource->error;
+                }
+            }
+        }
+
+        if (!$error) {
+            if (!$notrigger) {
+                // Call triggers
+                $result=$this->call_trigger('RESOURCE_PLACEMENT_CREATE',$user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
         }
 
         // Commit or rollback
@@ -143,47 +154,28 @@ class ResourceLog extends CommonObject
     /**
      * Load object in memory from the database
      *
-     * @param int    $id             Id object
-     * @param int    $resource_id    Id of resource
-     * @param int    $date_start     Start date
-     * @param int    $date_end       End date
+     * @param int    $id  Id object
      *
      * @return int <0 if KO, 0 if not found, >0 if OK
      */
-    public function fetch($id, $resource_id = 0, $date_start = 0, $date_end = 0)
+    public function fetch($id)
     {
-        // Check parameters
-        if (!$id && !($resource_id && $date_start && $date_end))
-        {
-            $this->error='ErrorWrongParameters';
-            dol_print_error($this->db, get_class($this)."::fetch ".$this->error);
-            return -1;
-        }
-
         dol_syslog(__METHOD__, LOG_DEBUG);
 
         $sql = "SELECT";
         $sql.= " p.rowid,";
+        $sql.= " p.ref_client,";
+        $sql.= " p.fk_soc,";
         $sql.= " p.fk_resource,";
         $sql.= " p.fk_user,";
-        $sql.= " p.booker_id,";
-        $sql.= " p.booker_type,";
         $sql.= " p.date_creation,";
         $sql.= " p.date_start,";
         $sql.= " p.date_end,";
-        $sql.= " p.status,";
-        $sql.= " p.action";
+        $sql.= " s.nom as name_client";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as p";
-        if ($id) $sql.= " WHERE p.rowid = ".$this->db->escape($id);
-        else
-        {
-            $sql.= ", ".MAIN_DB_PREFIX."resource as r";
-            $sql.= " WHERE p.fk_resource = ".$this->db->escape($resource_id);
-            $sql.= " AND p.date_start = '".$this->db->idate($date_start)."',";
-            $sql.= " AND p.date_end = '".$this->db->idate($date_end)."',";
-            $sql.= " AND p.fk_resource = r.rowid";
-            $sql.= " AND r.entity IN (".getEntity('resource', 1).")";
-        }
+        $sql.= ", ".MAIN_DB_PREFIX."societe as s";
+        $sql.= " WHERE p.rowid = ".$id;
+        $sql.= " AND p.fk_soc = s.rowid";
 
         $resql = $this->db->query($sql);
         if ($resql) {
@@ -192,15 +184,14 @@ class ResourceLog extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id               = $obj->rowid;
+                $this->ref_client       = $obj->ref_client;
+                $this->fk_soc           = $obj->fk_soc;
                 $this->fk_resource      = $obj->fk_resource;
                 $this->fk_user          = $obj->fk_user;
-                $this->booker_id        = $obj->booker_id;
-                $this->booker_type      = $obj->booker_type;
                 $this->date_creation    = $this->db->jdate($obj->date_creation);
                 $this->date_start       = $this->db->jdate($obj->date_start);
                 $this->date_end         = $this->db->jdate($obj->date_end);
-                $this->status           = $obj->status;
-                $this->action           = $obj->action;
+                $this->name_client      = $obj->name_client;
             }
             $this->db->free($resql);
 
@@ -216,38 +207,31 @@ class ResourceLog extends CommonObject
      * Update object into database
      *
      * @param  User $user      User that modifies
+     * @param  bool $notrigger false=launch triggers after, true=disable triggers
      *
      * @return int <0 if KO, >0 if OK
      */
-    public function update(User $user)
+    public function update(User $user, $notrigger = false)
     {
         $error = 0;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
         // Clean parameters
+        if (isset($this->ref_client)) $this->ref_client = trim($this->ref_client);
+        if (isset($this->fk_soc)) $this->fk_soc = trim($this->fk_soc);
         if (isset($this->fk_resource)) $this->fk_resource = trim($this->fk_resource);
-        if (isset($this->booker_type)) $this->booker_type = trim($this->booker_type);
-        if (!is_numeric($this->action) || $this->action < 0) $this->action = ResourceLog::STATUS_CHANGE;
-        if (!is_numeric($this->status) || $this->status < 0) $this->status = ResourceStatus::DEFAULT_STATUS;
-        if (!in_array($this->status, ResourceStatus::$OCCUPATION))
-        {
-            $this->booker_id = null;
-            $this->booker_type = null;
-        }
 
         // Update request
-        $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= " fk_resource = ".$this->fk_resource.",";
-        $sql.= " fk_user = ".$this->fk_user.",";
-        $sql.= " booker_id = ".(!empty($this->booker_id) ? $this->booker_id : "null").",";
-        $sql.= " booker_type = ".(!empty($this->booker_type) ? "'" . $this->db->escape($this->booker_type) . "'" : "null").",";
-        $sql.= " date_creation = '".$this->db->idate($this->date_creation)."',";
-        $sql.= " date_start = '".$this->db->idate($this->date_start)."',";
-        $sql.= " date_end = '".$this->db->idate($this->date_end)."',";
-        $sql.= " status = ".$this->status.",";
-        $sql.= " action = ".$this->action."";
-        $sql.= " WHERE rowid=".$this->id;
+        $sql = "UPDATE " . MAIN_DB_PREFIX . $this->table_element . " SET";
+        $sql .= " ref_client = ".(isset($this->ref_client)?"'".$this->db->escape($this->ref_client)."'":"null").",";
+        $sql .= " fk_soc = ".$this->fk_soc.",";
+        $sql .= " fk_resource = ".$this->fk_resource.",";
+        $sql .= " fk_user = ".$this->fk_user.",";
+        $sql .= " date_creation = '".$this->db->idate($this->date_creation)."',";
+        $sql .= " date_start = '".$this->db->idate($this->date_start)."',";
+        $sql .= " date_end = '".$this->db->idate($this->date_end)."'";
+        $sql .= " WHERE rowid=" . $this->id;
 
         $this->db->begin();
 
@@ -256,6 +240,13 @@ class ResourceLog extends CommonObject
             $error ++;
             $this->errors[] = 'Error ' . $this->db->lasterror();
             dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+        }
+
+        if (!$error && !$notrigger) {
+            // Call triggers
+            $result=$this->call_trigger('RESOURCE_PLACEMENT_MODIFY',$user);
+            if ($result < 0) $error++; //Do also what you must do to rollback action if trigger fail}
+            // End call triggers
         }
 
         // Commit or rollback
@@ -277,15 +268,25 @@ class ResourceLog extends CommonObject
      * Delete object in database
      *
      * @param User $user      User that deletes
+     * @param bool $notrigger false=launch triggers after, true=disable triggers
      *
      * @return int <0 if KO, >0 if OK
      */
-    public function delete(User $user)
+    public function delete(User $user, $notrigger = false)
     {
         dol_syslog(__METHOD__, LOG_DEBUG);
         $error = 0;
 
         $this->db->begin();
+
+        if (!$error) {
+            if (!$notrigger) {
+                // Call triggers
+                $result=$this->call_trigger('RESOURCE_PLACEMENT_DELETE', $user);
+                if ($result < 0) $error++;
+                // End call triggers
+            }
+        }
 
         if (!$error) {
             $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
@@ -314,6 +315,30 @@ class ResourceLog extends CommonObject
         }
     }
 
+	/**
+	 *	Return clicable link of object (with eventually picto)
+	 *
+	 *	@param		int		$withpicto		Add picto into link
+	 *	@param		string	$text			Text to show instead of id
+	 *	@return		string					String with URL
+	 */
+    function getNomUrl($withpicto=0, $text='')
+    {
+        global $langs;
+
+        $result='';
+        $text = empty($text)?$this->id:$text;
+        $label=$langs->trans("ShowResourcePlacement").': '.$text;
+        $link = '<a href="'.dol_buildpath('/resource/placement.php',1).'?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $picto='resource@resource';
+        $linkend='</a>';
+
+        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto && $withpicto != 2) $result.=' ';
+        $result.=$link.$text.$linkend;
+        return $result;
+    }
+
     /**
      * Initialise object with example values
      * Id must be 0 if object instance is a specimen
@@ -323,30 +348,11 @@ class ResourceLog extends CommonObject
     public function initAsSpecimen()
     {
         $this->id = 0;
+        $this->ref_client = '';
+        $this->fk_soc = 0;
         $this->fk_resource = 0;
-        $this->booker_id = 0;
-        $this->booker_type = '';
         $this->date_creation = '';
         $this->date_start = '';
         $this->date_end = '';
-        $this->status = 0;
-        $this->action = 0;
-    }
-
-    /**
-     * Returns a array of translated action
-     *
-     * @return    array                Translated array
-     */
-    public static function translated()
-    {
-        global $langs;
-
-        return array(
-            ResourceLog::RESOURCE_OCCUPY => $langs->trans("RecordResourceOccupy"),
-            ResourceLog::RESOURCE_FREE   => $langs->trans("RecordResourceFree"),
-            ResourceLog::BOOKER_SWITCH   => $langs->trans("RecordSwitchBooker"),
-            ResourceLog::STATUS_CHANGE   => $langs->trans("RecordStatusChange"),
-        );
     }
 }
