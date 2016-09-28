@@ -1,5 +1,5 @@
--- Module to manage resources into Dolibarr ERP/CRM
--- Copyright (C) 2013	Jean-François Ferry	<jfefe@aternatik.fr>
+--
+-- Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +14,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-ALTER TABLE llx_resource ADD INDEX fk_code_type_resource_idx (fk_code_type_resource);
-ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
-ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
+CREATE TABLE llx_resource_schedule_section
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_schedule     integer NOT NULL,
+  date_start      integer NOT NULL,
+  date_end        integer NOT NULL,
+  status          integer NOT NULL,
+  status_manual   integer NOT NULL,
+  booker_id       integer,           -- id of booker
+  booker_type     varchar(64),       -- booker type
+  booker_count    integer DEFAULT 0 NOT NULL   -- booker count
+)ENGINE=innodb;

@@ -33,5 +33,10 @@ CREATE TABLE llx_resource
   note_private    		  text,
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
+  fk_country          integer DEFAULT NULL,          -- Optional id of original country
+  duration        varchar(6) NOT NULL,
+  available        integer,
+  management_type			integer DEFAULT 0 NOT NULL,
+  starting_hour       integer NOT NULL,
   tms         			  timestamp
 )ENGINE=innodb;

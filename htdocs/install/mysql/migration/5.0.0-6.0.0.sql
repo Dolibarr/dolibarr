@@ -46,3 +46,63 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 ALTER TABLE llx_loan ADD COLUMN fk_projet integer DEFAULT NULL;
 
+ALTER TABLE llx_resource ADD available INTEGER;
+ALTER TABLE llx_resource ADD management_type integer DEFAULT 0 NOT NULL;
+ALTER TABLE llx_resource ADD duration varchar(6) NOT NULL;
+ALTER TABLE llx_resource ADD starting_hour INTEGER;
+ALTER TABLE llx_resource ADD fk_country integer DEFAULT NULL;
+ALTER TABLE llx_resource ADD INDEX idx_resource_fk_country (fk_country);
+ALTER TABLE llx_resource ADD CONSTRAINT fk_resource_fk_country FOREIGN KEY (fk_country) REFERENCES llx_c_country (rowid);
+ALTER TABLE llx_element_resources DROP COLUMN busy;
+ALTER TABLE llx_element_resources DROP INDEX idx_element_resources_idx1;
+ALTER TABLE llx_element_resources ADD fk_parent INTEGER DEFAULT 0 NOT NULL AFTER rowid;
+ALTER TABLE llx_element_resources ADD dependency INTEGER DEFAULT 0 NOT NULL;
+
+CREATE TABLE llx_resource_schedule
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  entity          integer DEFAULT 1 NOT NULL,	-- multi company id
+  fk_resource     integer NOT NULL,
+  schedule_year   integer NOT NULL
+)ENGINE=innodb;
+
+CREATE TABLE llx_resource_schedule_section
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_schedule     integer NOT NULL,
+  date_start      integer NOT NULL,
+  date_end        integer NOT NULL,
+  status          integer NOT NULL,
+  status_manual   integer NOT NULL,
+  booker_id       integer,           -- id of booker
+  booker_type     varchar(64),       -- booker type
+  booker_count    integer DEFAULT 0 NOT NULL   -- booker count
+)ENGINE=innodb;
+
+CREATE TABLE llx_resource_placement
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  entity            integer DEFAULT 1 NOT NULL, -- multi company id
+  ref_client        varchar(255),               -- reference for customer
+  fk_soc            integer NOT NULL,           -- thirdparty id
+  fk_resource       integer NOT NULL,
+  fk_user           integer NOT NULL,
+  date_creation     datetime NOT NULL,
+  date_start        datetime NOT NULL,
+  date_end          datetime NOT NULL
+)ENGINE=innodb;
+
+CREATE TABLE llx_resource_log
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_resource     integer NOT NULL,
+  fk_user         integer NOT NULL,
+  booker_id       integer,           -- id of booker
+  booker_type     varchar(64),       -- booker type
+  date_creation   datetime NOT NULL,
+  date_start      datetime NOT NULL,
+  date_end        datetime NOT NULL,
+  status          integer NOT NULL,
+  action          integer NOT NULL
+)ENGINE=innodb;
+
