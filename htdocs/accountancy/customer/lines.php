@@ -298,7 +298,7 @@ if ($result) {
 		// Ref Product
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
-		$product_static->type = $objp->type;
+		$product_static->type = $objp->product_type;
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
