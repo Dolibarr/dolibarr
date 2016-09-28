@@ -379,7 +379,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.tva,";
         $sql.= " t.localtax1,";
         $sql.= " t.localtax2,";
-        $sql.= " t.total,";
+        //$sql.= " t.total,";
         $sql.= " t.total_ht,";
         $sql.= " t.total_tva,";
         $sql.= " t.total_ttc,";
@@ -440,7 +440,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->tva					= $obj->tva;
                 $this->total_localtax1		= $obj->localtax1;
                 $this->total_localtax2		= $obj->localtax2;
-                $this->total				= $obj->total;
+                //$this->total				= $obj->total;
                 $this->total_ht				= $obj->total_ht;
                 $this->total_tva			= $obj->total_tva;
                 $this->total_ttc			= $obj->total_ttc;

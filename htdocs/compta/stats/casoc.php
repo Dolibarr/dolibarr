@@ -264,7 +264,7 @@ if(!empty($search_town))  $sql.= ' AND s.town LIKE "%'.$search_town.'%"';
 if($search_country > 0)  $sql.= ' AND s.fk_pays = '.$search_country.'';
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
-$sql.= " GROUP BY s.rowid, s.nom";
+$sql.= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";
 $sql.= " ORDER BY s.rowid";
 //echo $sql;
 

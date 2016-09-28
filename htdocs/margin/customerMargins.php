@@ -73,9 +73,12 @@ $text=$langs->trans("Margins");
 $head=marges_prepare_head($user);
 $titre=$langs->trans("Margins");
 $picto='margin';
-dol_fiche_head($head, 'customerMargins', $titre, 0, $picto);
+
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+
+dol_fiche_head($head, 'customerMargins', $titre, 0, $picto);
+
 print '<table class="border" width="100%">';
 
 $client = false;
@@ -161,6 +164,9 @@ if (! empty($conf->global->DISPLAY_MARK_RATES)) {
 }
 
 print "</table>";
+
+dol_fiche_end();
+
 print '</form>';
 
 $sql = "SELECT";
@@ -319,22 +325,19 @@ else
 }
 $db->free($result);
 
-
-llxFooter();
-$db->close();
-
-?>
-
-<script type="text/javascript">
+print '<script type="text/javascript">
 $(document).ready(function() {
 	/*
 	$("#socid").change(function() {
     	$("div.fiche form").submit();
 	});*/
 
-	$("#totalMargin").html("<?php echo price($totalMargin, null, null, null, null, $rounding); ?>");
-	$("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%"); ?>");
-	$("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%"); ?>");
-
+	$("#totalMargin").html("'.price($totalMargin, null, null, null, null, $rounding).'");
+	$("#marginRate").html("'.(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%").'");
+	$("#markRate").html("'.(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%").'");
 });
 </script>
+';
+
+llxFooter();
+$db->close();
