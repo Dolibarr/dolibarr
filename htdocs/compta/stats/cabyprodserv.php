@@ -59,12 +59,16 @@ if (GETPOST('subcat', 'alpha') === 'yes') {
 // Date range
 $year=GETPOST("year");
 $month=GETPOST("month");
+$fk_supplier=GETPOST('fk_supplier');
 $date_startyear = GETPOST("date_startyear");
 $date_startmonth = GETPOST("date_startmonth");
 $date_startday = GETPOST("date_startday");
 $date_endyear = GETPOST("date_endyear");
 $date_endmonth = GETPOST("date_endmonth");
 $date_endday = GETPOST("date_endday");
+
+$search_product = GETPOST('search_product');
+
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -124,6 +128,8 @@ $headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
+$tableparams['search_product'] = $search_product;
+$tableparams['fk_supplier'] = $fk_supplier;
 $tableparams['subcat'] = ($subcat === true)?'yes':'';
 
 // Adding common parameters
@@ -185,6 +191,16 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label,";
 	$sql.= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql.= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
+	if($fk_supplier > 0) {
+		$sql.= ' ,(
+					SELECT SUM(cfd.qty) FROM '.MAIN_DB_PREFIX.'commande_fournisseur cf
+					INNER JOIN '.MAIN_DB_PREFIX.'commande_fournisseurdet cfd ON (cf.rowid = cfd.fk_commande)
+					WHERE cf.fk_soc = '.$fk_supplier.'
+					AND cf.date_commande >= "'.date('Y-m-d',$date_start).'" AND cf.date_commande <= "'.date('Y-m-d',$date_end).'"
+					AND cf.fk_statut >= 3
+					AND cfd.fk_product = p.rowid
+				  ) as qty_fourn';
+	}
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l, ".MAIN_DB_PREFIX."product as p";
 	if ($selected_cat === -2)	// Without any category
 	{
@@ -215,6 +231,9 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.= ")";
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
+	
+	if(!empty($search_product)) $sql.= ' AND (p.ref LIKE "%'.$search_product.'%" OR p.label LIKE "%'.$search_product.'%")';
+	
 	$sql.= " AND f.entity = ".$conf->entity;
 	$sql.= " GROUP BY p.rowid, p.ref, p.label";
 	$sql.= $db->order($sortfield,$sortorder);
@@ -229,10 +248,12 @@ if ($modecompta == 'CREANCES-DETTES')
 			$amount_ht[$obj->rowid] = $obj->amount;
 			$amount[$obj->rowid] = $obj->amount_ttc;
 			$qty[$obj->rowid] = $obj->qty;
+			$qty_fourn[$obj->rowid] = $obj->qty_fourn;
 			$name[$obj->rowid] = $obj->ref . '&nbsp;-&nbsp;' . $obj->label;
 			$catotal_ht+=$obj->amount;
 			$catotal+=$obj->amount_ttc;
 			$qtytotal+=$obj->qty;
+			$qtyfourntotal+=$obj->qty_fourn;
 			$i++;
 		}
 	} else {
@@ -251,6 +272,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	print '<table class="noborder" width="100%">';
 	// Category filter
 	print '<tr class="liste_titre">';
+	
 	print '<td>';
 	print $langs->trans("Category") . ': ' . $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', true);
 	print ' ';
@@ -259,8 +281,15 @@ if ($modecompta == 'CREANCES-DETTES')
 	if ($subcat) {
 		print ' checked';
 	}
-	print '></td>';
-	print '<td colspan="5" align="right">';
+	print '>';
+	
+	print '<br />';
+	print $langs->trans("Supplier") . ' ('.$langs->trans('QtyOrdered').') : ' . $form->select_company($fk_supplier, 'fk_supplier', 'fournisseur=1', 1);
+	print '</td>';
+	
+	$colspan=5;
+	if($fk_supplier > 0) $colspan++;
+	print '<td colspan="'.$colspan.'" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
 	
@@ -286,6 +315,18 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sortfield,
 		$sortorder
 	);
+	if($fk_supplier > 0) {
+		print_liste_field_titre(
+			$langs->trans('QtyOrdered'),
+			$_SERVER["PHP_SELF"],
+			"qty_fourn",
+			"",
+			$paramslink,
+			'align="right"',
+			$sortfield,
+			$sortorder
+		);
+	}
 	print_liste_field_titre(
 		$langs->trans("Percentage"),
 		$_SERVER["PHP_SELF"],
@@ -328,6 +369,13 @@ if ($modecompta == 'CREANCES-DETTES')
 	);
 	print "</tr>\n";
 
+	print '<tr class="liste_titre">';
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat" size="6" type="text" name="search_product" value="'.$search_product.'">';
+	print '</td>';
+	print '<td colspan="6">&nbsp;</td>';
+	print '</tr>';
+
 	// Array Data
 	$var=true;
 
@@ -351,6 +399,12 @@ if ($modecompta == 'CREANCES-DETTES')
 			print $qty[$key];
 			print '</td>';
 			
+			if($fk_supplier > 0) {
+				// Quantity fourn
+				print '<td align="right">';
+				print empty($qty_fourn[$key]) ? 0 : $qty_fourn[$key];
+				print '</td>';
+			}
 			// Percent;
 			print '<td align="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
 	
@@ -389,6 +443,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
 		print '<td align="right">'.price($qtytotal).'</td>';
+		if($fk_supplier > 0) print '<td align="right">'.price($qtyfourntotal).'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td align="right">'.price($catotal_ht).'</td>';
 		print '<td align="right">'.price($catotal).'</td>';
