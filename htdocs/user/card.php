@@ -215,9 +215,9 @@ if (empty($reshook)) {
 			$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
 			$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
-			$date = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 			$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
-			$object->dateemployment = $date != '' ? $date : '';
+			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+			$object->dateemployment = $dateemployment;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -359,8 +359,8 @@ if (empty($reshook)) {
 					$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
 
 					$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
-					$date = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
-					$object->dateemployment = $date != '' ? $date : '';
+					$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+					$object->dateemployment = $dateemployment;
 
 					if (! empty($conf->multicompany->enabled))
 					{
@@ -1426,7 +1426,7 @@ else
 		    // Date employment
 		    print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 		    print '<td>';
-			print $object->dateemployment;
+			print dol_print_date($object->dateemployment);
 		    print '</td>';
 		    print "</tr>\n";
 
