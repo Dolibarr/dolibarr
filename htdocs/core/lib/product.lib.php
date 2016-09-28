@@ -105,6 +105,37 @@ function product_prepare_head($object)
         }
     }
 
+    // Tab to link resources
+    if ($conf->resource->enabled)
+    {
+        if ($object->isProduct())
+        {
+            include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            $resource=new ResourceLink($db);
+
+            $head[$h][0] = DOL_URL_ROOT . '/resource/linked.php?element_type=product&element_id=' . $object->id;
+            $listofresourcelinked = $resource->getResourcesLinked($object->id, $object->element);
+            $nbResources=count($listofresourcelinked);
+            $head[$h][1] = $langs->trans("Resources");
+            if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+        if ($object->isService())
+        {
+            include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+            $resource=new ResourceLink($db);
+
+            $head[$h][0] = DOL_URL_ROOT . '/resource/linked.php?element_type=service&element_id=' . $object->id;
+            $listofresourcelinked = $resource->getResourcesLinked($object->id, 'service');
+            $nbResources=count($listofresourcelinked);
+            $head[$h][1] = $langs->trans("Resources");
+            if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
+            $head[$h][2] = 'resources';
+            $h++;
+        }
+    }
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

@@ -65,7 +65,7 @@ class modResource extends DolibarrModules
 		// (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Manage resources (printers, cars, room, ...) you can then share into events";
 		// Possible values for version are: 'development', 'experimental' or version
-		$this->version = 'dolibarr';
+		$this->version = 'experimental';
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
@@ -195,6 +195,42 @@ class modResource extends DolibarrModules
 		$this->rights[$r][4] = 'link';
 		$r++;
 
+		$this->rights[$r][0] = 63005;
+		$this->rights[$r][1] = 'Read resource schedules';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'schedule_read';
+		$r++;
+
+		$this->rights[$r][0] = 63006;
+		$this->rights[$r][1] = 'Create/Modify resource schedules';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'schedule_write';
+		$r++;
+
+		$this->rights[$r][0] = 63007;
+		$this->rights[$r][1] = 'Delete resource schedules';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'schedule_delete';
+		$r++;
+
+		$this->rights[$r][0] = 63008;
+		$this->rights[$r][1] = 'Read resource placements';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'placement_read';
+		$r++;
+
+		$this->rights[$r][0] = 63009;
+		$this->rights[$r][1] = 'Create/Modify resource placements';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'placement_write';
+		$r++;
+
+		$this->rights[$r][0] = 63010;
+		$this->rights[$r][1] = 'Delete resource placements';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'placement_delete';
+		$r++;
+
 
 		// Menus
 		//-------
@@ -243,7 +279,7 @@ class modResource extends DolibarrModules
 			'titre'=> 'MenuResourceAdd',
 			'mainmenu'=> 'tools',
 			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
-			'url'=> '/resource/add.php',
+			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
 			'position'=> 101,
 			'enabled'=> '1',

@@ -1991,6 +1991,14 @@ function getElementProperties($element_type)
         $module='propal';
         $subelement='propaleligne';
     }
+    if ($element_type == 'resourceplacement') {
+        $classpath = 'resource/class';
+        $module='resource';
+    }
+    if ($element_type == "service") {
+        $classpath = 'product/class';
+        $subelement='product';
+    }
     $classfile = strtolower($subelement);
     $classname = ucfirst($subelement);
 

@@ -117,8 +117,14 @@ function societe_prepare_head(Societe $object)
     // Tab to link resources
 	if (! empty($conf->resource->enabled) && ! empty($conf->global->RESOURCE_ON_THIRDPARTIES))
 	{
-		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
+	    include_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+	    $resource=new ResourceLink($db);
+
+		$head[$h][0] = DOL_URL_ROOT.'/resource/linked.php?element_type=societe&element_id='.$object->id;
+        $listofresourcelinked = $resource->getResourcesLinked($object->id, $object->element);
+        $nbResources=count($listofresourcelinked);
 		$head[$h][1] = $langs->trans("Resources");
+		if ($nbResources > 0) $head[$h][1].= ' <span class="badge">'.($nbResources).'</span>';
 		$head[$h][2] = 'resources';
 		$h++;
 	}
