@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ if ($action == 'add_payment')
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("Donation"),'');
 
 $form=new Form($db);
 
@@ -202,33 +202,33 @@ if (GETPOST("action") == 'create')
 	print "<td colspan=\"3\">".$langs->trans("Payment").'</td>';
 	print '</tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
+	print '<tr><td>'.fieldLabel('Date','re',1).'</td><td colspan="2">';
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaid):0;
 	$form->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";
 	print '</tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
+	print '<tr><td>'.fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td colspan="2">';
 	$form->select_types_paiements(isset($_POST["paymenttype"])?$_POST["paymenttype"]:$don->paymenttype, "paymenttype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('AccountToCredit').'</td>';
+	print '<td>'.fieldLabel('AccountToCredit','selectaccountid',1).'</td>';
 	print '<td colspan="2">';
 	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$don->accountid, "accountid", 0, '',1);  // Show open bank account list
 	print '</td></tr>';
 
 	// Number
-	print '<tr><td>'.$langs->trans('Numero');
+	print '<tr><td>'.fieldLabel('Numero','num_payment',0);
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
+	print '<td colspan="2"><input name="num_payment" id="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top" colspan="2"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td valign="top">'.fieldLabel('Comments','note',0).'</td>';
+	print '<td valign="top" colspan="2"><textarea name="note" id="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
 	print '</table>';
