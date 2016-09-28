@@ -214,20 +214,21 @@ class Entrepot extends CommonObject
 	/**
 	 *	Delete a warehouse
 	 *
-	 *	@param		User	$user		Object user that made deletion
-	 *	@return		int					<0 if KO, >0 if OK
+	 *	@param		User	$user		   Object user that made deletion
+	 *  @param      int     $notrigger     1=No trigger
+	 *	@return		int					   <0 if KO, >0 if OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		$this->db->begin();
 
-			if (! $error && empty($notrigger))
-			{
-                // Call trigger
-                $result=$this->call_trigger('WAREHOUSE_DELETE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-			}
+		if (! $error && empty($notrigger))
+		{
+            // Call trigger
+            $result=$this->call_trigger('WAREHOUSE_DELETE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+		}
 		
 		$elements = array('stock_mouvement','product_stock','product_warehouse_properties');
 		foreach($elements as $table)
