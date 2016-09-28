@@ -291,7 +291,7 @@ if ($search_ref)
 	else $sql .= natural_search('f.ref', $search_ref);
 }
 if ($search_ref) $sql .= natural_search('f.ref', $search_ref);
-if ($search_ref_supplier) $sql .= natural_search('f.ref_supplier', $search_ref_supplier);
+if ($search_refsupplier) $sql .= natural_search('f.ref_supplier', $search_refsupplier);
 if ($search_project) $sql .= natural_search('p.ref', $search_project);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
 if ($search_town)  $sql.= natural_search('s.town', $search_town);
@@ -405,7 +405,7 @@ if ($resql)
 	if ($month_lim) 			$param.='&month_lim='.urlencode($month_lim);
 	if ($year_lim)  			$param.='&year_lim=' .urlencode($year_lim);
 	if ($search_ref)          	$param.='&search_ref='.urlencode($search_ref);
-	if ($search_refsupplier) 	$param.='&search_refsupplier'.urlencode($search_refsupplier);
+	if ($search_refsupplier) 	$param.='&search_refsupplier='.urlencode($search_refsupplier);
 	if ($search_label)      	$param.='&search_label='.urlencode($search_label);
 	if ($search_company)      	$param.='&search_company='.urlencode($search_company);
     if ($search_montant_ht != '')  $param.='&search_montant_ht='.urlencode($search_montant_ht);
