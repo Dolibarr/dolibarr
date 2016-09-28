@@ -27,8 +27,10 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
@@ -63,6 +65,10 @@ if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accountin
 // Date range
 $year=GETPOST("year");
 $month=GETPOST("month");
+$search_societe = GETPOST("search_societe");
+$search_zip = GETPOST("search_zip");
+$search_town = GETPOST("search_town");
+$search_country = GETPOST("search_country");
 $date_startyear = GETPOST("date_startyear");
 $date_startmonth = GETPOST("date_startmonth");
 $date_startday = GETPOST("date_startday");
@@ -130,6 +136,10 @@ $headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
+$tableparams['search_societe'] = $search_societe;
+$tableparams['search_zip'] = $search_zip;
+$tableparams['search_town'] = $search_town;
+$tableparams['search_country'] = $search_country;
 $tableparams['subcat'] = ($subcat === true)?'yes':'';
 
 // Adding common parameters
@@ -182,7 +192,7 @@ report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportl
 // Show Array
 $catotal=0;
 if ($modecompta == 'CREANCES-DETTES') {
-	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name,";
+	$sql = "SELECT DISTINCT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays,";
 	$sql.= " sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if ($selected_cat === -2)	// Without any category 
@@ -218,7 +228,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	 * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
 	 * vieilles versions, ils n'etaient pas lies via paiement_facture. On les ajoute plus loin)
 	 */
-	$sql = "SELECT s.rowid as socid, s.nom as name, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT s.rowid as socid, s.nom as name, s.zip, s.town, s.fk_pays, sum(pf.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql.= ", ".MAIN_DB_PREFIX."paiement as p";
@@ -248,6 +258,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 }
+if(!empty($search_societe))  $sql.= ' AND s.nom LIKE "%'.$search_societe.'%"';
+if(!empty($search_zip))  $sql.= ' AND s.zip LIKE "%'.$search_zip.'%"';
+if(!empty($search_town))  $sql.= ' AND s.town LIKE "%'.$search_town.'%"';
+if($search_country > 0)  $sql.= ' AND s.fk_pays = '.$search_country.'';
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom";
@@ -264,6 +278,9 @@ if ($result) {
 	        $amount_ht[$obj->socid] = $obj->amount;
 	        $amount[$obj->socid] = $obj->amount_ttc;
 	        $name[$obj->socid] = $obj->name.' '.$obj->firstname;
+			$address_zip[$obj->socid] = $obj->zip;
+			$address_town[$obj->socid] = $obj->town;
+			$address_pays[$obj->socid] = getCountry($obj->fk_pays);
 	        $catotal_ht+=$obj->amount;
 	        $catotal+=$obj->amount_ttc;
 	        $i++;
@@ -296,6 +313,9 @@ if ($modecompta != 'CREANCES-DETTES') {
 			$obj = $db->fetch_object($result);
 			$amount[$obj->rowid] += $obj->amount_ttc;
 			$name[$obj->rowid] = $obj->name;
+			$address_zip[$obj->rowid] = $obj->zip;
+			$address_town[$obj->rowid] = $obj->town;
+			$address_pays[$obj->rowid] = getCountry($obj->fk_pays);
 			$catotal+=$obj->amount_ttc;
 			$i++;
 		}
@@ -325,7 +345,7 @@ if ($subcat) {
     print ' checked';
 }
 print'></td>';
-print '<td colspan="4" align="right">';
+print '<td colspan="7" align="right">';
 print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
@@ -335,6 +355,33 @@ print_liste_field_titre(
 	$langs->trans("Company"),
 	$_SERVER["PHP_SELF"],
 	"nom",
+	"",
+	$paramslink,
+	"",
+	$sortfield,$sortorder
+	);
+print_liste_field_titre(
+	$langs->trans("Zip"),
+	$_SERVER["PHP_SELF"],
+	"zip",
+	"",
+	$paramslink,
+	"",
+	$sortfield,$sortorder
+	);
+print_liste_field_titre(
+	$langs->trans("Town"),
+	$_SERVER["PHP_SELF"],
+	"town",
+	"",
+	$paramslink,
+	"",
+	$sortfield,$sortorder
+	);
+print_liste_field_titre(
+	$langs->trans("Country"),
+	$_SERVER["PHP_SELF"],
+	"country",
 	"",
 	$paramslink,
 	"",
@@ -383,6 +430,27 @@ print_liste_field_titre(
 	'align="center" width="20%"'
 	);
 print "</tr>\n";
+
+print '<tr class="liste_titre">';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_societe" value="'.$search_societe.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_zip" value="'.$search_zip.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print '<input class="flat" size="6" type="text" name="search_town" value="'.$search_town.'">';
+print '</td>';
+print '<td class="liste_titre" align="left">';
+print $form->select_country($search_country, 'search_country');
+//print '<input class="flat" size="6" type="text" name="search_country" value="'.$search_country.'">';
+print '</td>';
+print '<td>&nbsp;</td>';
+print '<td>&nbsp;</td>';
+print '<td>&nbsp;</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
+
 $var=true;
 
 if (count($amount)) {
@@ -412,6 +480,30 @@ if (count($amount)) {
 		arsort($amount);
 		$arrayforsort=$amount;
 	}
+	if ($sortfield == 'zip' && $sortorder == 'asc') {
+		asort($address_zip);
+		$arrayforsort=$address_zip;
+	}
+	if ($sortfield == 'zip' && $sortorder == 'desc') {
+		arsort($address_zip);
+		$arrayforsort=$address_zip;
+	}
+	if ($sortfield == 'town' && $sortorder == 'asc') {
+		asort($address_town);
+		$arrayforsort=$address_town;
+	}
+	if ($sortfield == 'town' && $sortorder == 'desc') {
+		arsort($address_town);
+		$arrayforsort=$address_town;
+	}
+	if ($sortfield == 'country' && $sortorder == 'asc') {
+		asort($address_pays);
+		$arrayforsort=$address_town;
+	}
+	if ($sortfield == 'country' && $sortorder == 'desc') {
+		arsort($address_pays);
+		$arrayforsort=$address_town;
+	}
 
 	foreach($arrayforsort as $key=>$value) {
 		$var=!$var;
@@ -428,6 +520,18 @@ if (count($amount)) {
 			$linkname=$langs->trans("PaymentsNotLinkedToInvoice");
 		}
 		print "<td>".$linkname."</td>\n";
+
+		print '<td>';
+		print $address_zip[$key];
+		print '</td>';
+
+		print '<td>';
+		print $address_town[$key];
+		print '</td>';
+
+		print '<td>';
+		print $address_pays[$key];
+		print '</td>';
 
 		// Amount w/o VAT
 		print '<td align="right">';
@@ -488,6 +592,9 @@ if (count($amount)) {
 	// Total
 	print '<tr class="liste_total">';
 	print '<td>'.$langs->trans("Total").'</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
+	print '<td>&nbsp;</td>';
 	if ($modecompta != 'CREANCES-DETTES') {
 	    print '<td colspan="1"></td>';
 	} else {
