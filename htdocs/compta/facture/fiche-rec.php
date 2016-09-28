@@ -244,7 +244,7 @@ if ($action == 'add')
 // Delete
 if ($action == 'delete' && $user->rights->facture->supprimer)
 {
-	$object->delete($user);
+	$object->delete();
 	header("Location: " . $_SERVER['PHP_SELF'] );
 	exit;
 }
