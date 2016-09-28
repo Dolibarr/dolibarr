@@ -115,11 +115,13 @@ class User extends CommonObject
 	var $parentof;					// To store an array of all parents for all ids.
 
 	var $accountancy_code;			// Accountancy code in prevision of the complete accountancy module
-	var $thm;						// Average cost of employee
+	
+	var $thm;						// Average cost of employee - Used for valuation of time spent
 	var $tjm;						// Average cost of employee
-	var $salary;					// Monthly salary
-	var $salaryextra;				// Monthly salary extra
-	var $weeklyhours;				// Weekly hours
+	
+	var $salary;					// Monthly salary       - Denormalized value from llx_user_employment  
+	var $salaryextra;				// Monthly salary extra - Denormalized value from llx_user_employment
+	var $weeklyhours;				// Weekly hours         - Denormalized value from llx_user_employment
 
 	var $color;						// Define background color for user in agenda
 
