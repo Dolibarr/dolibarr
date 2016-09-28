@@ -209,33 +209,33 @@ if ($action == 'create')
 	print "<td colspan=\"2\">".$langs->trans("Payment").'</td>';
 	print '</tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td>'.fieldLabel('Date','re',1).'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment=empty($conf->global->MAIN_AUTOFILL_DATE)?(empty($_POST["remonth"])?-1:$datepaye):0;
 	$form->select_date($datepayment,'','','','',"add_payment",1,1);
 	print "</td>";
 	print '</tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
+	print '<tr><td>'.fieldLabel('PaymentMode','selectpaiementtype',1).'</td><td>';
 	$form->select_types_paiements(isset($_POST["paiementtype"])?$_POST["paiementtype"]:$charge->paiementtype, "paiementtype");
 	print "</td>\n";
 	print '</tr>';
 
 	print '<tr>';
-	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
+	print '<td>'.fieldLabel('AccountToDebit','selectaccountid',1).'</td>';
 	print '<td>';
 	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$charge->accountid, "accountid", 0, '',1);  // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
-	print '<tr><td>'.$langs->trans('Numero');
+	print '<tr><td>'.fieldLabel('Numero','num_paiement',0);
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>'."\n";
+	print '<td><input name="num_paiement" id="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>'."\n";
 
 	print '<tr>';
-	print '<td valign="top">'.$langs->trans("Comments").'</td>';
-	print '<td valign="top"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
+	print '<td valign="top">'.fieldLabel('Comments','note',0).'</td>';
+	print '<td valign="top"><textarea name="note" id="note" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
 	print '</tr>';
 
 	print '</table>';
