@@ -535,7 +535,9 @@ class MouvementStock extends CommonObject
 	 */
 	function livraison($user, $fk_product, $entrepot_id, $qty, $price=0, $label='', $datem='', $eatby='', $sellby='', $batch='', $id_product_batch=0)
 	{
-	    $skip_batch = empty($conf->productbatch->enabled);
+	    global $conf;
+		
+		$skip_batch = empty($conf->productbatch->enabled);
 
 	    return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2, $price, $label, '', $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch);
 	}
