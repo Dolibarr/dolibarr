@@ -5,6 +5,12 @@ DeleteResource=Delete resource
 ConfirmDeleteResourceElement=Confirm delete the resource for this element
 NoResourceInDatabase=No resource in database.
 NoResourceLinked=No resource linked
+Records=Records
+ResourceRecords=Resource records
+RecordResourceOccupy=Resource Occupy
+RecordResourceFree=Resource Free
+RecordSwitchBooker=Switch Booker
+RecordStatusChange=Status Change
 
 ResourcePageIndex=Resources list
 ResourceSingular=Resource
@@ -29,3 +35,52 @@ RessourceSuccessfullyDeleted=Resource successfully deleted
 DictionaryResourceType=Type of resources
 
 SelectResource=Select resource
+
+AllResourcesExcluded=All resources are excluded
+ResourceParentExcluded=Resource parent is excluded
+ErrorResourceServiceMissingDuration=Service has missing duration
+ErrorResourceServiceDurationShort=Service duration is too short for resource schedule
+ErrorResourceServiceDurationNotProportional=Service duration is not proportional with resource schedule
+ResourceStatus=Resource '%s' status is: %s
+ErrorResourceNotAvailable=This resource is not available for use
+ErrorResourceNotEnoughAvailable=Not enough resources in root: need %s
+ErrorServiceResource=Service '%s' - %s
+ErrorResourceUnknown=Resource id %s type %s is unknown
+ErrorElementUnknown=Element id %s type %s is unknown
+WarningResourcesNotAvailable=No single resource is available
+WarningDependentResourcesNotAvailable=Dependent resource is not available
+WarningDependentResourceStatus=Dependent resource has status '%s'
+ResourceConfiguration=Resource module configuration
+ResourceOccupationEnable=Enable occupation of root resources
+ResourceOccupationByQty=Use quantity for root occupation count instead of one root per request
+
+ManagementType=Management type
+Simple=Simple
+Schedule=Schedule
+
+Dependency=Dependency
+AllResources=All resources
+AllMandatory=All mandatory
+SingleMandatory=Single mandatory
+SingleResource=Single resource
+
+CurrentStatus=Current status
+Placed=Placed
+Occupied=Occupied
+NoSchedule=No Schedule
+ErrorStatusNotAssignable=Specified status is not manually assignable
+
+ResourceSchedule=Resource schedule
+ResourceScheduleNone=There is no schedule for this resource
+ErrorResourceSchedulePresent=Can't change resource duration or starting hour if a resource schedule is present.
+
+Placements=Placements
+ShowResourcePlacement=Show resource placement
+ResourcePlacementNone=There is no placement for this resource
+CreateResourcePlacement=Create placement
+SelectPlacementsToBill=Select placements for creating bill
+ResourcePlacement=Resource placement
+DeleteResourcePlacement=Delete placement
+ConfirmDeleteResourcePlacement=Confirm to delete this resource placement
+ResourcePlacementSuccessful=Resource placement created successfully
+ServiceForResource=Service for %s
