@@ -80,7 +80,7 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,31,32,0);
+$taborder=array(9,0,4,3,2,0,1,8,19,16,27,0,5,11,0,33,34,0,6,0,29,0,7,17,24,28,0,10,23,12,13,0,14,0,22,20,18,21,0,15,30,0,25,0,26,0,31,32,0);
 
 // Name of SQL tables of dictionaries
 $tabname=array();

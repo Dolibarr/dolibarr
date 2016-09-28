@@ -118,24 +118,29 @@ llxHeader('', $title);
 // Show tabs
 $head = marges_prepare_head($user);
 $picto = 'margin';
-dol_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
 
 print '<form method="post" name="sel" action="' . $_SERVER['PHP_SELF'] . '">';
+
+dol_fiche_head($head, $langs->trans('checkMargins'), $title, 0, $picto);
+
 print '<table class="border" width="100%">';
 
 // Start date
-print '<td>' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
-print '<td width="20%">';
+print '<td class="titlefield">' . $langs->trans('DateStart') . ' (' . $langs->trans("DateValidation") . ')</td>';
+print '<td>';
 $form->select_date($startdate, 'startdate', '', '', 1, "sel", 1, 1);
 print '</td>';
-print '<td width="20%">' . $langs->trans('DateEnd') . ' (' . $langs->trans("DateValidation") . ')</td>';
-print '<td width="20%">';
+print '<td>' . $langs->trans('DateEnd') . ' (' . $langs->trans("DateValidation") . ')</td>';
+print '<td>';
 $form->select_date($enddate, 'enddate', '', '', 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Refresh')) . '" name="button_search" />';
 print '</td></tr>';
 print "</table>";
+
+dol_fiche_end();
+
 
 $sql = "SELECT";
 $sql .= " f.facnumber, f.rowid as invoiceid, d.rowid as invoicedetid, d.buy_price_ht, d.total_ht, d.subprice, d.label, d.description , d.qty";
@@ -243,11 +248,11 @@ if ($result) {
 	dol_print_error($db);
 }
 
-dol_fiche_end();
 
 print '<div class="tabsAction">' . "\n";
 print '<div class="inline-block divButAction"><input type="submit"  name="button_updatemagins" id="button_updatemagins" class="butAction" value="' . $langs->trans("Update") . '" /></div>';
 print '</div>';
+
 print '</form>';
 
 $db->free($result);

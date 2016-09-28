@@ -95,26 +95,28 @@ $text=$langs->trans("Margins");
 $head=marges_prepare_head($user);
 $titre=$langs->trans("Margins");
 $picto='margin';
-dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+
+dol_fiche_head($head, 'productMargins', $titre, 0, $picto);
+
 print '<table class="border" width="100%">';
 
 if ($id > 0) {
 
-  print '<tr><td width="20%">'.$langs->trans('ChooseProduct/Service').'</td>';
+  print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
   print '<td colspan="4">';
   print $form->select_produits($id,'id','',20,0,1,2,'',1);
   print '</td></tr>';
 
-  print '<tr><td width="20%">'.$langs->trans('AllProducts').'</td>';
+  print '<tr><td>'.$langs->trans('AllProducts').'</td>';
   print '<td colspan="4"><input type="checkbox" id="all" /></td></tr>';
 
   if (! $sortorder) $sortorder="DESC";
   if (! $sortfield) $sortfield="f.datef";
 }
 else {
-	print '<tr><td width="20%">'.$langs->trans('ChooseProduct/Service').'</td>';
+	print '<tr><td class="titlefield">'.$langs->trans('ChooseProduct/Service').'</td>';
 	print '<td colspan="4">';
 	print $form->select_produits('','id','',20,0,1,2,'',1);
 	print '</td></tr>';
@@ -122,12 +124,13 @@ else {
 }
 
 // Start date
-print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
-print '<td width="20%">';
+print '<tr>';
+print '<td class="titlefield">'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
+print '<td>';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
 print '</td>';
-print '<td width="20%">'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
-print '<td width="20%">';
+print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
+print '<td>';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
@@ -141,25 +144,28 @@ print '<br>';
 print '<table class="border" width="100%">';
 
 // Total Margin
-print '<tr><td width="20%">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
+print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="4">';
 print '<span id="totalMargin"></span>'; // set by jquery (see below)
 print '</td></tr>';
 
 // Margin Rate
 if (! empty($conf->global->DISPLAY_MARGIN_RATES)) {
-	print '<tr><td width="20%">'.$langs->trans("MarginRate").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("MarginRate").'</td><td colspan="4">';
 	print '<span id="marginRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
 
 // Mark Rate
 if (! empty($conf->global->DISPLAY_MARK_RATES)) {
-	print '<tr><td width="20%">'.$langs->trans("MarkRate").'</td><td colspan="4">';
+	print '<tr><td>'.$langs->trans("MarkRate").'</td><td colspan="4">';
 	print '<span id="markRate"></span>'; // set by jquery (see below)
 	print '</td></tr>';
 }
 
 print "</table>";
+
+dol_fiche_end();
+
 print '</form>';
 
 $sql = "SELECT p.label, p.rowid, p.fk_product_type, p.ref, p.entity as pentity,";
@@ -329,25 +335,25 @@ else
 $db->free($result);
 
 
-llxFooter();
-$db->close();
-
-?>
-
+print '
 <script type="text/javascript">
 $(document).ready(function() {
 
   $("#all").change(function() {
-    $("#id").val('').change();
+    $("#id").val(\'\').change();
   });
 
   $("#id").change(function() {
      $("div.fiche form").submit();
   });
 
-  $("#totalMargin").html("<?php echo price($totalMargin, null, null, null, null, $rounding); ?>");
-  $("#marginRate").html("<?php echo (($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%"); ?>");
-  $("#markRate").html("<?php echo (($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%"); ?>");
+  $("#totalMargin").html("'.price($totalMargin, null, null, null, null, $rounding).'");
+  $("#marginRate").html("'.(($marginRate === '')?'n/a':price($marginRate, null, null, null, null, $rounding)."%").'");
+  $("#markRate").html("'.(($markRate === '')?'n/a':price($markRate, null, null, null, null, $rounding)."%").'");
 
 });
 </script>
+';
+
+llxFooter();
+$db->close();

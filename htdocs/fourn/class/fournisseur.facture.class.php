@@ -379,7 +379,7 @@ class FactureFournisseur extends CommonInvoice
         $sql.= " t.tva,";
         $sql.= " t.localtax1,";
         $sql.= " t.localtax2,";
-        $sql.= " t.total,";
+        //$sql.= " t.total,";
         $sql.= " t.total_ht,";
         $sql.= " t.total_tva,";
         $sql.= " t.total_ttc,";
@@ -440,7 +440,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->tva					= $obj->tva;
                 $this->total_localtax1		= $obj->localtax1;
                 $this->total_localtax2		= $obj->localtax2;
-                $this->total				= $obj->total;
+                //$this->total				= $obj->total;
                 $this->total_ht				= $obj->total_ht;
                 $this->total_tva			= $obj->total_tva;
                 $this->total_ttc			= $obj->total_ttc;
@@ -1908,7 +1908,7 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
@@ -1917,7 +1917,7 @@ class FactureFournisseur extends CommonInvoice
 		$langs->load("suppliers");
 
 		// Set the model on the model name to use
-		if (! dol_strlen($modele))
+		if (empty($modele))
 		{
 			if (! empty($conf->global->INVOICE_SUPPLIER_ADDON_PDF))
 			{
@@ -1925,13 +1925,20 @@ class FactureFournisseur extends CommonInvoice
 			}
 			else
 			{
-				$modele = 'canelle';
+				$modele = '';       // No default value. For supplier invoice, we allow to disable all PDF generation 
 			}
 		}
+		
+		if (empty($modele))
+		{
+		    return 0;
+		}
+		else
+		{
+            $modelpath = "core/modules/supplier_invoice/pdf/";
 
-		$modelpath = "core/modules/supplier_invoice/pdf/";
-
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+            return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
 	}
 
 	/**

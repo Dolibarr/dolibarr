@@ -142,7 +142,7 @@ ErrorCantCancelIfReplacementInvoiceNotValidated=Error, can't cancel an invoice t
 BillFrom=From
 BillTo=To
 ActionsOnBill=Actions on invoice
-RecurringInvoiceTemplate=Recurring invoice
+RecurringInvoiceTemplate=Template/Recurring invoice
 NoQualifiedRecurringInvoiceTemplateFound=No recurring template invoice qualified for generation.
 FoundXQualifiedRecurringInvoiceTemplate=Found %s recurring template invoice(s) qualified for generation.
 NotARecurringInvoiceTemplate=Not a recurring template invoice
@@ -479,4 +479,6 @@ updatePriceNextInvoiceErrorUpdateline=Error : update price on invoice line : %s
 ToCreateARecurringInvoice=To create a recurring invoice for this contract, first create this draft invoice, then convert it into an invoice template and define the frequency for generation of future invoices.
 ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
 ToCreateARecurringInvoiceGeneAuto=If you need to have such invoices generated automatically, ask you administrator to enable and setup module <strong>%s</strong>. Note that both method (manual and automatic) can be used together with no risk of duplication.
+DeleteRepeatableInvoice=Delete template invoice
+ConfirmDeleteRepeatableInvoice=Are your sure you want to delete the template invoice ?
 
