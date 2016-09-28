@@ -124,6 +124,8 @@ class User extends CommonObject
 	var $weeklyhours;				// Weekly hours         - Denormalized value from llx_user_employment
 
 	var $color;						// Define background color for user in agenda
+	
+	var $dateemployment;			// Define date of employment by company
 
 	/**
 	 *    Constructor de la classe
@@ -189,6 +191,7 @@ class User extends CommonObject
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
+		$sql.= " u.dateemployment,";
 		$sql.= " u.ref_int, u.ref_ext,";
         $sql.= " c.code as country_code, c.label as country,";
         $sql.= " d.code_departement as state_code, d.nom as state";
@@ -288,6 +291,7 @@ class User extends CommonObject
 				$this->salaryextra	= $obj->salaryextra;
 				$this->weeklyhours	= $obj->weeklyhours;
 				$this->color		= $obj->color;
+				$this->dateemployment	= $this->db->jdate($obj->dateemployment);
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -1262,6 +1266,7 @@ class User extends CommonObject
 		$this->town			= empty($this->town)?'':$this->town;
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
+		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1302,6 +1307,7 @@ class User extends CommonObject
 		$sql.= ", signature = '".$this->db->escape($this->signature)."'";
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
 		$sql.= ", color = '".$this->db->escape($this->color)."'";
+		$sql.= ", dateemployment=".(strval($this->dateemployment)!='' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
@@ -1313,7 +1319,7 @@ class User extends CommonObject
 		$sql.= ", weeklyhours= ".($this->weeklyhours != ''?"'".$this->db->escape($this->weeklyhours)."'":"null");
 		$sql.= ", entity = '".$this->db->escape($this->entity)."'";
 		$sql.= " WHERE rowid = ".$this->id;
-
+		
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
