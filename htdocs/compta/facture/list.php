@@ -143,7 +143,7 @@ $checkedtypetiers=0;
 $arrayfields=array(
     'f.facnumber'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'f.ref_client'=>array('label'=>$langs->trans("RefCustomer"), 'checked'=>1),
-    'f.type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
+    'f.type'=>array('label'=>$langs->trans("Type"), 'checked'=>0),
     'f.date'=>array('label'=>$langs->trans("DateInvoice"), 'checked'=>1),
     'f.date_lim_reglement'=>array('label'=>$langs->trans("DateDue"), 'checked'=>1),
     's.nom'=>array('label'=>$langs->trans("ThirdParty"), 'checked'=>1),
