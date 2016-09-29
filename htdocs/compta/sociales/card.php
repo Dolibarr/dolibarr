@@ -280,15 +280,15 @@ if ($action == 'create')
 	print '<table class="border" width="100%">';
     print "<tr>";
     // Label
-    print '<td class="fieldrequired">';
-    print $langs->trans("Label");
+    print '<td>';
+    print fieldLabel('Label','label',1);
     print '</td>';
-    print '<td align="left"><input type="text" size="34" name="label" class="flat" value="'.GETPOST('label').'"></td>';
+    print '<td align="left"><input type="text" size="34" name="label" id="label" class="flat" value="'.GETPOST('label').'"></td>';
     print '</tr>';
     print '<tr>';
     // Type
-    print '<td class="fieldrequired">';
-    print $langs->trans("Type");
+    print '<td>';
+    print fieldLabel('Type','actioncode',1);
     print '</td>';
     print '<td>';
     $formsocialcontrib->select_type_socialcontrib(GETPOST("actioncode")?GETPOST("actioncode"):'','actioncode',1);
@@ -296,8 +296,8 @@ if ($action == 'create')
     print '</tr>';
 	// Date end period
     print '<tr>';
-    print '<td class="fieldrequired">';
-    print $langs->trans("PeriodEndDate");
+    print '<td>';
+	print fieldLabel('PeriodEndDate','period',1);
     print '</td>';
    	print '<td>';
     print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
@@ -305,26 +305,26 @@ if ($action == 'create')
     print '</tr>';
     // Amount
     print '<tr>';
-    print '<td class="fieldrequired">';
-    print $langs->trans("Amount");
+    print '<td>';
+	print fieldLabel('Amount','amount',1);
     print '</td>';
-	print '<td><input type="text" size="6" name="amount" class="flat" value="'.GETPOST('amount').'"></td>';
+	print '<td><input type="text" size="6" name="amount" id="amount" class="flat" value="'.GETPOST('amount').'"></td>';
     print '</tr>';
     // Payment Mode
-    print '<tr><td>' . $langs->trans('PaymentMode') . '</td><td colspan="2">';
+    print '<tr><td>' . fieldLabel('PaymentMode','selectmode_reglement_id',0) . '</td><td colspan="2">';
     $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id');
     print '</td></tr>';
     // Bank Account
     if (! empty($conf->banque->enabled))
     {
-        print '<tr><td>' . $langs->trans('BankAccount') . '</td><td colspan="2">';
+        print '<tr><td>' . fieldLabel('BankAccount','selectfk_account',0) . '</td><td colspan="2">';
         $form->select_comptes($fk_account, 'fk_account', 0, '', 1);
         print '</td></tr>';
     }
     // Date due
     print '<tr>';
-    print '<td class="fieldrequired">';
-    print $langs->trans("DateDue");
+    print '<td>';
+    print fieldLabel('DateDue','ech',1);
     print '</td>';
     print '<td>';
     print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
@@ -344,7 +344,7 @@ if ($action == 'create')
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Card Mode                                                                   */
+/* View mode                                                                   */
 /*                                                                             */
 /* *************************************************************************** */
 if ($id > 0)
@@ -386,9 +386,8 @@ if ($id > 0)
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		}
 
-		
 		dol_fiche_head($head, 'card', $langs->trans("SocialContribution"),0,'bill');
-		
+
 		print '<table class="border" width="100%">';
 
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php">' . $langs->trans("BackToList") . '</a>';
@@ -401,8 +400,8 @@ if ($id > 0)
 		// Label
 		if ($action == 'edit')
 		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">';
-			print '<input type="text" name="label" size="40" value="'.$object->lib.'">';
+			print '<tr><td>'.fieldLabel('Label','label',0).'</td><td colspan="2">';
+			print '<input type="text" name="label" id="label" size="40" value="'.$object->lib.'">';
 			print '</td></tr>';
 		}
 		else
@@ -484,7 +483,7 @@ if ($id > 0)
 		print "</tr>";
 
     	// Period end date
-		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+		print "<tr><td>".fieldLabel('PeriodEndDate','period',0)."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{
@@ -499,7 +498,7 @@ if ($id > 0)
 		// Due date
 		if ($action == 'edit')
 		{
-			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
+			print '<tr><td>'.fieldLabel('DateDue','ech',0)."</td><td>";
 			print $form->select_date($object->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
@@ -510,8 +509,8 @@ if ($id > 0)
 		// Amount
         if ($action == 'edit')
         {
-            print '<tr><td>'.$langs->trans("AmountTTC")."</td><td>";
-            print '<input type="text" name="amount" size="12" class="flat" value="'.$object->amount.'">';
+            print '<tr><td>'.fieldLabel('AmountTTC','amount',0)."</td><td>";
+            print '<input type="text" name="amount" id="amount" size="12" class="flat" value="'.$object->amount.'">';
             print "</td></tr>";
         }
         else {

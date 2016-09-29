@@ -309,41 +309,41 @@ if ($action == 'create')
     if (! empty($conf->projet->enabled)) $nbrows++;
 
     // Date
-	print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td class="fieldrequired titlefieldcreate">'.fieldLabel('Date','re',1).'</td><td>';
 	$form->select_date($donation_date?$donation_date:-1,'','','','',"add",1,1);
 	print '</td>';
 
     // Amount
-    print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" value="'.GETPOST("amount").'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+    print '<tr><td>'.fieldLabel('Amount','amount',1).'</td><td><input type="text" name="amount" id="amount" value="'.GETPOST("amount").'" size="10"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
+	print '<tr><td>'.fieldLabel('PublicDonation','public',1).'</td><td>';
 	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
 
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.GETPOST("societe").'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.GETPOST("lastname").'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.GETPOST("firstname").'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.GETPOST("address").'</textarea></td></tr>';
+	print '<tr><td>'.fieldLabel('Company','societe',0).'</td><td><input type="text" name="societe" id="societe" value="'.GETPOST("societe").'" size="40"></td></tr>';
+	print '<tr><td>'.fieldLabel('Lastname','lastname',0).'</td><td><input type="text" name="lastname" id="lastname" value="'.GETPOST("lastname").'" size="40"></td></tr>';
+	print '<tr><td>'.fieldLabel('Firstname','firstname',0).'</td><td><input type="text" name="firstname" id="firstname" value="'.GETPOST("firstname").'" size="40"></td></tr>';
+	print '<tr><td>'.fieldLabel('Address','address',0).'</td><td>';
+	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="3">'.GETPOST("address").'</textarea></td></tr>';
 
     // Zip / Town
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+    print '<tr><td>'.fieldLabel('Zip','zipcode',0).' / '.fieldLabel('Town','town',0).'</td><td>';
 	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
     print ' ';
     print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
     print '</tr>';
 
 	// Country
-    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+    print '<tr><td>'.fieldLabel('Country','selectcountry_id',0).'</td><td colspan="3" class="maxwidthonsmartphone">';
     print $form->select_country(GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id);
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.GETPOST("email").'" size="40"></td></tr>';
+	print '<tr><td>'.fieldLabel('Email','email',0).'</td><td><input type="text" name="email" id="email" value="'.GETPOST("email").'" size="40"></td></tr>';
 
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
+	print '<td class="border" valign="top">'.fieldLabel('NotePublic','note_public',0).'</td>';
 	print '<td valign="top" colspan="2">';
 
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -353,7 +353,7 @@ if ($action == 'create')
 	// Private note
 	if (empty($user->societe_id)) {
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td class="border" valign="top">'.fieldLabel('NotePrivate','note_private',0).'</td>';
 		print '<td valign="top" colspan="2">';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, 70);
@@ -366,7 +366,7 @@ if ($action == 'create')
 
     	$formproject=new FormProjets($db);
 
-        print "<tr><td>".$langs->trans("Project")."</td><td>";
+        print "<tr><td>".fieldLabel('Project','fk_projet',0)."</td><td>";
         $formproject->select_projects(-1, $projectid,'fk_projet', 0, 0, 1, 1);
 		print "</td></tr>\n";
     }
@@ -426,7 +426,7 @@ if (! empty($id) && $action == 'edit')
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';
+	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2">';
 	print $object->getNomUrl();
 	print '</td>';
 	print '</tr>';
@@ -435,14 +435,14 @@ if (! empty($id) && $action == 'edit')
     if (! empty($conf->projet->enabled)) $nbrows++;
 
 	// Date
-	print "<tr>".'<td width="25%" class="fieldrequired">'.$langs->trans("Date").'</td><td>';
+	print '<tr><td>'.fieldLabel('Date','date',1).'</td><td>';
 	$form->select_date($object->date,'','','','',"update");
 	print '</td>';
 
 	// Amount
 	if ($object->statut == 0)
 	{
-		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$object->amount.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
+		print '<tr><td>'.fieldLabel('Amount','amount',1).'</td><td><input type="text" name="amount" id="amount" size="10" value="'.$object->amount.'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
 	}
 	else
 	{
@@ -451,34 +451,34 @@ if (! empty($id) && $action == 'edit')
 		print '</td></tr>';
 	}
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("PublicDonation")."</td><td>";
+	print '<tr><td>'.fieldLabel('PublicDonation','public',1)."</td><td>";
 	print $form->selectyesno("public",1,1);
 	print "</td>";
 	print "</tr>\n";
 
 	$langs->load("companies");
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$object->societe.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.$object->lastname.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.$object->firstname.'"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.$object->address.'</textarea></td></tr>';
+	print '<tr><td>'.fieldLabel('Company','societe',0).'</td><td><input type="text" name="societe" id="societe" size="40" value="'.$object->societe.'"></td></tr>';
+	print '<tr><td>'.fieldLabel('Lastname','lastname',0).'</td><td><input type="text" name="lastname" id="lastname" size="40" value="'.$object->lastname.'"></td></tr>';
+	print '<tr><td>'.fieldLabel('Firstname','firstname',0).'</td><td><input type="text" name="firstname" id="firstname" size="40" value="'.$object->firstname.'"></td></tr>';
+	print '<tr><td>'.fieldLabel('Address','address',0).'</td><td>';
+	print '<textarea name="address" id="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.$object->address.'</textarea></td></tr>';
 
     // Zip / Town
-    print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>';
+    print '<tr><td>'.fieldLabel('Zip','zipcode',0).' / '.fieldLabel('Town','town',0).'</td><td>';
 	print $formcompany->select_ziptown((isset($_POST["zipcode"])?$_POST["zipcode"]:$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6);
     print ' ';
 	print $formcompany->select_ziptown((isset($_POST["town"])?$_POST["town"]:$object->town),'town',array('zipcode','selectcountry_id','state_id'));
 	print '</tr>';
 
 	// Country
-	print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td>'.fieldLabel('Country','selectcountry_id',0).'</td><td colspan="3">';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$object->email.'"></td></tr>';
+	print '<tr><td>'.fieldLabel('Email','email',0).'</td><td><input type="text" name="email" id="email" size="40" value="'.$object->email.'"></td></tr>';
 
-    print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
+    print "<tr><td>".fieldLabel('PaymentMode','selectmodepayment',0)."</td><td>\n";
 
     if ($object->modepaymentid) $selected = $object->modepaymentid;
     else $selected = '';
@@ -486,7 +486,7 @@ if (! empty($id) && $action == 'edit')
     $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
     print "</td></tr>\n";
 
-	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
     // Project
     if (! empty($conf->projet->enabled))
@@ -494,7 +494,7 @@ if (! empty($id) && $action == 'edit')
     	$formproject=new FormProjets($db);
 
         $langs->load('projects');
-        print '<tr><td>'.$langs->trans('Project').'</td><td>';
+        print '<tr><td>'.fieldLabel('Project','fk_projet',0).'</td><td>';
 		$formproject->select_projects(-1, $object->fk_projet,'fk_projet', 0, 0, 1, 1);
         print '</td></tr>';
     }

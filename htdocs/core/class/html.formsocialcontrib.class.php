@@ -86,7 +86,7 @@ class FormSocialContrib
             $num = $db->num_rows($resql);
             if ($num)
             {
-                print '<select class="flat" name="'.$htmlname.'">';
+                print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
                 $i = 0;
 
                 if ($useempty) print '<option value="0">&nbsp;</option>';
