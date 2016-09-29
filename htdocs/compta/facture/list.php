@@ -690,9 +690,15 @@ if ($resql)
 	// Type
 	if (! empty($arrayfields['f.type']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-		$listtype=array('0'=>$langs->trans("InvoiceStandard"), '1'=>$langs->trans("InvoiceReplacement"), '2'=>$langs->trans("InvoiceAvoir"), '3'=>$langs->trans("InvoiceDeposit"), '4'=>$langs->trans("InvoiceProForma"), '5'=>$langs->trans("InvoiceDeposit"));
-		print $form->selectarray('search_type', $listtype, $search_type, 1);
+		print '<td class="liste_titre maxwidthonsmartphone">';
+		$listtype=array(
+		    Facture::TYPE_STANDARD=>$langs->trans("InvoiceStandard"),
+		    Facture::TYPE_REPLACEMENT=>$langs->trans("InvoiceReplacement"),
+		    Facture::TYPE_CREDIT_NOTE=>$langs->trans("InvoiceAvoir"),
+		    Facture::TYPE_DEPOSIT=>$langs->trans("InvoiceDeposit"),
+        );
+		//$listtype[Facture::TYPE_PROFORMA]=$langs->trans("InvoiceProForma");     // A proformat invoice is not an invoice but must be an order.
+		print $form->selectarray('search_type', $listtype, $search_type, 1, 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth100');
 		print '</td>';
 	}
 	// Date invoice
@@ -741,7 +747,7 @@ if ($resql)
 	if (! empty($arrayfields['typent.code']['checked']))
 	{
 	    print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-	    print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+	    print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT), 'maxwidth100');
 	    print '</td>';
 	}
 	// Payment mode
@@ -852,6 +858,7 @@ if ($resql)
             $facturestatic->type=$obj->type;
             $facturestatic->statut=$obj->fk_statut;
             $facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
+            $facturestatic->type=$obj->type;
             
             print '<tr '.$bc[$var].'>';
     		if (! empty($arrayfields['f.facnumber']['checked']))
@@ -901,7 +908,7 @@ if ($resql)
             if (! empty($arrayfields['f.type']['checked']))
             {
                 print '<td class="nowrap">';
-                print $object->getLibType($obj->type);
+                print $facturestatic->getLibType();
                 print "</td>";
                 if (! $i) $totalarray['nbfield']++;
             }

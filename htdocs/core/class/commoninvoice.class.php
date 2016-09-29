@@ -198,9 +198,9 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *	Retourne le libelle du type de facture
+	 *	Return label of type of invoice
 	 *
-	 *	@return     string        Libelle
+	 *	@return     string        Label of type of invoice
 	 */
 	function getLibType()
 	{
@@ -209,7 +209,7 @@ abstract class CommonInvoice extends CommonObject
         if ($this->type == CommonInvoice::TYPE_REPLACEMENT) return $langs->trans("InvoiceReplacement");
         if ($this->type == CommonInvoice::TYPE_CREDIT_NOTE) return $langs->trans("InvoiceAvoir");
         if ($this->type == CommonInvoice::TYPE_DEPOSIT) return $langs->trans("InvoiceDeposit");
-        if ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");
+        if ($this->type == CommonInvoice::TYPE_PROFORMA) return $langs->trans("InvoiceProForma");           // Not used.
         if ($this->type == CommonInvoice::TYPE_SITUATION) return $langs->trans("InvoiceSituation");
 		return $langs->trans("Unknown");
 	}
