@@ -116,15 +116,15 @@ Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
+DescVentilCustomer=Consult here the list of customer invoice lines binded or not yet binded to a product bookkeeping account
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product bookkeeping account
+DescVentilTodoCustomer=Bind your lines of customer invoice with a product bookkeeping account
 ChangeAccount=Change the accounting account for lines selected by the account:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consult here the list of supplier invoice lines binded or not yet binded to a product bookkeeping account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their bookkeeping account
 
 ValidateHistory=Validate Automatically
 
@@ -171,3 +171,8 @@ Formula=Formula
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
+
+
+Binded=Lines binded
+To bind=Lines to bind
+
