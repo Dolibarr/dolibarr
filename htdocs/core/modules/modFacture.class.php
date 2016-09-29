@@ -187,7 +187,7 @@ class modFacture extends DolibarrModules
 		$this->rights[$r][0] = 1322;
 		$this->rights[$r][1] = 'Rouvrir une facture totalement réglée';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'invoice_advance';
 		$this->rights[$r][5] = 'reopen';
 
