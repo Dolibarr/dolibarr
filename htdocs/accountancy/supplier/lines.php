@@ -85,6 +85,11 @@ if (! $user->rights->accounting->ventilation->dispatch)
 
 $formventilation = new FormVentilation($db);
 
+
+/*
+ * Actions
+ */
+
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -120,6 +125,7 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		setEventMessages($db->lasterror(), null, 'errors');
 	}
 }
+
 
 /*
  * View
@@ -198,7 +204,7 @@ if ($result) {
 	
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account(GETPOST('account_parent'), 'account_parent', 1);
-	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '" /></div>';
+	print '<input type="submit" class="button" value="' . $langs->trans("Validate") . '" /></div>';
 	
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
