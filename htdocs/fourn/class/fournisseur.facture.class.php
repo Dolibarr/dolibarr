@@ -1538,7 +1538,7 @@ class FactureFournisseur extends CommonInvoice
     {
         global $conf, $langs;
 
-        $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut';
+        $sql = 'SELECT ff.rowid, ff.date_lim_reglement as datefin, ff.fk_statut, ff.total_ht';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as ff';
         if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= ' WHERE ff.paye=0';
@@ -1564,7 +1564,7 @@ class FactureFournisseur extends CommonInvoice
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
-
+		$response->amount += $obj->total_ht;
                 $facturestatic->date_echeance = $this->db->jdate($obj->datefin);
                 $facturestatic->statut = $obj->fk_statut;
 
