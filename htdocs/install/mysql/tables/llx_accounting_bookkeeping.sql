@@ -20,6 +20,7 @@
 CREATE TABLE llx_accounting_bookkeeping 
 (
   rowid				integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,	  -- multi company id
   doc_date			date NOT NULL,
   doc_type			varchar(30) NOT NULL,	-- facture_client/reglement_client/facture_fournisseur/reglement_fournisseur
   doc_ref			varchar(300) NOT NULL,	-- facture_client/reglement_client/... reference number

@@ -115,3 +115,6 @@ create table llx_product_warehouse_properties
   desiredstock    		integer DEFAULT '0',
   import_key      		varchar(14)               -- Import key
 )ENGINE=innodb;
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+
