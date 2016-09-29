@@ -103,9 +103,12 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
 	$search_vat = '';
 }
 
+
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("Ventilation"));
 
 print '<script type="text/javascript">
