@@ -43,13 +43,13 @@ $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
 
 // Security check
-if (! $user->admin)
-	accessforbidden();
+
 
 $object = new AccountingAccount($db);
 
 // Action
-if ($action == 'add') {
+if ($action == 'add' && $user->rights->accounting->chartofaccount)
+{
 	if (! $cancel) {
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
 		
@@ -97,7 +97,7 @@ if ($action == 'add') {
 	}
 	header("Location: account.php");
 	exit;
-} else if ($action == 'edit') {
+} else if ($action == 'edit' && $user->rights->accounting->chartofaccount) {
 	if (! $cancel) {
 		$result = $object->fetch($id);
 		
@@ -145,7 +145,7 @@ if ($action == 'add') {
 		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 		exit();
 	}
-} else if ($action == 'delete') {
+} else if ($action == 'delete' && $user->rights->accounting->chartofaccount) {
 	$result = $object->fetch($id);
 	
 	if (! empty($object->id)) {
@@ -329,14 +329,14 @@ if ($action == 'create') {
 			print '<td colspan="2">' . $object->pcg_subtype . '</td></tr>';
 
 			// Active
-			print '<tr><td>' . $langs->trans("Activated") . '</td>';
+			print '<tr><td>' . $langs->trans("Status") . '</td>';
 			print '<td colspan="2">';
-			
-			if (empty($object->active)) {
+			print $object->getLibStatut(4);
+			/*if (empty($object->active)) {
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 			} else {
 				print img_picto($langs->trans("Activated"), 'switch_on');
-			}
+			}*/
 			
 			print '</td></tr>';
 			
@@ -350,13 +350,13 @@ if ($action == 'create') {
 			
 			print '<div class="tabsAction">';
 			
-			if ($user->admin) {
+			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
 			} else {
 				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Modify') . '</a>';
 			}
 			
-			if ($user->admin) {
+			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 			} else {
 				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Delete') . '</a>';
