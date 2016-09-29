@@ -77,6 +77,10 @@ if (! $error && $massaction == 'confirm_presend')
             $result=$objecttmp->fetch($toselectid);
             if ($result > 0)
             {
+                if($masscreatepdf && !dol_is_file($conf->facture->dir_output . '/' . $objecttmp->ref . '/' . $objecttmp->ref .'.pdf')){
+
+                    $objecttmp->generateDocument(null,$langs);
+                }
                 $listoinvoicesid[$toselectid]=$toselectid;
                 $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
                 $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;
@@ -348,6 +352,10 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
         $result=$objecttmp->fetch($toselectid);
         if ($result > 0)
         {
+            if($masscreatepdf && !dol_is_file($conf->facture->dir_output . '/' . $objecttmp->ref . '/' . $objecttmp->ref .'.pdf')){
+
+                $objecttmp->generateDocument(null,$langs);
+            }
             $listoinvoicesid[$toselectid]=$toselectid;
             $thirdpartyid=$objecttmp->fk_soc?$objecttmp->fk_soc:$objecttmp->socid;
             $listofobjectthirdparties[$thirdpartyid]=$thirdpartyid;

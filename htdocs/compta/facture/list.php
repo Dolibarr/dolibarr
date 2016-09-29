@@ -61,6 +61,7 @@ $socid=GETPOST('socid','int');
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
+$masscreatepdf=GETPOST('masscreatepdf','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
@@ -494,7 +495,8 @@ if ($resql)
 		}
 
 		print '<input type="hidden" name="massaction" value="confirm_presend">';
-		
+        if($masscreatepdf) print '<input type="hidden" name="masscreatepdf" value="1">';
+
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);		
 		

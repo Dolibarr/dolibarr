@@ -515,6 +515,7 @@ class Form
     	$ret.='</select>';
     	// Warning: if you set submit button to disabled, post using Enter will no more work
     	$ret.='<input type="submit" name="confirmmassaction" class="button hideobject massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+        $ret.='<br><div class="flat hideobject massaction"><input type="checkbox" name="masscreatepdf" > <span>'.$langs->trans('MergeCreatePDF').'</span></div>';
     	$ret.='</div>';
 
     	$ret.='<!-- JS CODE TO ENABLE mass action select -->
