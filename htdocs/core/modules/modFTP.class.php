@@ -110,10 +110,6 @@ class modFTP extends DolibarrModules
 		
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-
-		// Top menu
 		$this->menu[$r]=array('fk_menu'=>0,
 							  'type'=>'top',
 							  'titre'=>'FTP',
