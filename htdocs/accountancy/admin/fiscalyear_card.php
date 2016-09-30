@@ -16,8 +16,9 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/fiscalyear_card.php
- * \brief Page to show a fiscal year
+ * \file        htdocs/accountancy/admin/fiscalyear_card.php
+ * \ingroup     Advanced accountancy
+ * \brief       Page to show a fiscal year
  */
 require '../../main.inc.php';
 
@@ -30,7 +31,7 @@ $langs->load("compta");
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear)
+if (empty($user->rights->accounting->fiscalyear))
 	accessforbidden();
 
 $error = 0;
@@ -138,9 +139,12 @@ else if ($action == 'update') {
 	}
 }
 
+
+
 /*
  * View
  */
+
 $title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Card");
 $helpurl = "";
 llxHeader("",$title,$helpurl);
@@ -291,16 +295,19 @@ if ($action == 'create')
 
 			dol_fiche_end();
 
-			/*
-			 * Barre d'actions
-			 */
-			print '<div class="tabsAction">';
+			if (! empty($user->rights->accounting->fiscalyear))
+			{
+    			/*
+    			 * Barre d'actions
+    			 */
+    			print '<div class="tabsAction">';
 
-			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
-
-			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
-
-			print '</div>';
+    			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=edit&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
+    
+    			print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
+			
+    			print '</div>';
+			}
 		}
 	} else {
 		dol_print_error($db);
