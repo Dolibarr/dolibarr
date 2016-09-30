@@ -98,5 +98,10 @@ class modBookmark extends DolibarrModules
 		$this->rights[$r][3] = 1; // La permission est-elle une permission par d�faut
 		$this->rights[$r][4] = 'supprimer';
 
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 }

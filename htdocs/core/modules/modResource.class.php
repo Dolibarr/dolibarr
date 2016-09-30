@@ -196,6 +196,11 @@ class modResource extends DolibarrModules
 		$r++;
 
 
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Add here list of permission defined by
 		// an id, a label, a boolean and two constant strings.
 		// Example:

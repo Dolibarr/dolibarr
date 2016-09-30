@@ -130,6 +130,11 @@ class modContrat extends DolibarrModules
 		$this->rights[$r][4] = 'export';
 
 		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$langs->load("contracts");

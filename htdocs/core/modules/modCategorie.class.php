@@ -107,6 +107,12 @@ class modCategorie extends DolibarrModules
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;

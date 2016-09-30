@@ -125,9 +125,11 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][5] = 'export';
 		$r ++;
 
-		// Main menu entries
-		$this->menus = array (); // List of menus to add
-		$r = 0;
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 	
 	/**

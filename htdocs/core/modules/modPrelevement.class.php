@@ -129,6 +129,11 @@ class modPrelevement extends DolibarrModules
         $this->rights[2][4] = 'bons';
         $this->rights[2][5] = 'configurer';
 */
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 
 

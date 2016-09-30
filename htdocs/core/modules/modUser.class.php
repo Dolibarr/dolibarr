@@ -202,6 +202,13 @@ class modUser extends DolibarrModules
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'export';
 
+		
+        // Menus
+        //-------
+        
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;

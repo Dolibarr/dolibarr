@@ -107,10 +107,11 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 
+		
 		// Menus
-		//------
-		$this->menus = array();			// List of menus to add
-		$r=0;
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 
 		// Top menu
 		$this->menu[$r]=array('fk_menu'=>0,

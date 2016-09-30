@@ -147,6 +147,12 @@ class modFicheinter extends DolibarrModules
         $this->rights[$r][4] = 'ficheinter_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
         $this->rights[$r][5] = 'unvalidate';
 
+        
+        // Menus
+        //-------
+        $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+        
+        
         //Exports
         //--------
         $r=1;

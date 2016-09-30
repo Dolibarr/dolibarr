@@ -119,9 +119,9 @@ class modOpenSurvey extends DolibarrModules
 		$r++;
 
 
-		// Main menu entries
-		$this->menus = array();			// List of menus to add
-		$r=0;
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 		/*
 		$this->menu[$r]=array(	'fk_menu'=>0,		    						// Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 								'type'=>'top',
