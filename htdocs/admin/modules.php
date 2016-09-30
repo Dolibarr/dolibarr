@@ -504,8 +504,8 @@ if ($mode != 'marketplace')
         // Help
         print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
         $text='';
-        if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
-        else $text.=$objMod->getDesc().'<br>';
+        if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
+        else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
         
         $textexternal='';
         if ($objMod->isCoreOrExternalModule() == 'external')
