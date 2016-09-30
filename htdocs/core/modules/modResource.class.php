@@ -196,6 +196,11 @@ class modResource extends DolibarrModules
 		$r++;
 
 
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Add here list of permission defined by
 		// an id, a label, a boolean and two constant strings.
 		// Example:
@@ -204,7 +209,7 @@ class modResource extends DolibarrModules
 		//// Permission label
 		//$this->rights[$r][1] = 'Permision label';
 		//// Permission by default for new user (0/1)
-		//$this->rights[$r][3] = 1;
+		//$this->rights[$r][3] = 0;
 		//// In php code, permission will be checked by test
 		//// if ($user->rights->permkey->level1->level2)
 		//$this->rights[$r][4] = 'level1';

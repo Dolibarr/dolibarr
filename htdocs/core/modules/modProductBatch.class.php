@@ -95,10 +95,12 @@ class modProductBatch extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
 
-		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
-
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		$r=0;
 

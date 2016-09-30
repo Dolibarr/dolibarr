@@ -79,6 +79,11 @@ if ($action == 'set' && $user->admin)
 {
     $result=activateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
+	else
+	{
+		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+		setEventMessages($msg, null, 'warnings');
+	}
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
@@ -605,7 +610,7 @@ if ($mode != 'marketplace')
         else $text.=$langs->trans("No");
         
         $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-        if (isset($objMod->menu) && is_array($objMod->menu) && ! empty($objMod->menu))
+        if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
         {
             $text.=$langs->trans("Yes");
         }

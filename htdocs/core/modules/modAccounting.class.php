@@ -284,8 +284,10 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = '';
 		$r++;
 
-		// Main menu entries
-		$this->menus = array();
-		$r = 0;
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+
 	}
 }

@@ -135,7 +135,12 @@ class modDon  extends DolibarrModules
 		$this->rights[3][2] = 'd';
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
-
+		
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 	}
 
 

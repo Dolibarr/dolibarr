@@ -97,7 +97,7 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][0] = 2801;
 		$this->rights[$r][1] = 'Use FTP client in read mode (browse and download only)';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 
 		$r++;
@@ -107,10 +107,11 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 
+		
 		// Menus
-		//------
-		$this->menus = array();			// List of menus to add
-		$r=0;
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
 
 		// Top menu
 		$this->menu[$r]=array('fk_menu'=>0,
