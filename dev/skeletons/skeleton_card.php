@@ -59,7 +59,7 @@ $myparam	= GETPOST('myparam','alpha');
 $search_field1=GETPOST("search_field1");
 $search_field2=GETPOST("search_field2");
 
-if (empty($action) && empty($id) && empty($ref)) $action='list';
+if (empty($action) && empty($id) && empty($ref)) $action='view';
 
 // Protection if external user
 if ($user->societe_id > 0)
@@ -300,7 +300,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	
 	print '<table class="border centpercent">'."\n";
-	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="flat" type="text" size="36" name="label" value="'.$label.'"></td></tr>';
+	// print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 	// LIST_OF_TD_LABEL_FIELDS_VIEW
 	print '</table>';
 	
