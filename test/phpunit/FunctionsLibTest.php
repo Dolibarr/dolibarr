@@ -940,8 +940,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1000.12546, price2num('1 000.125456','MU'),"Test MU");
 
 		// Text can't be converted
-		$this->assertEquals('12.4$',price2num('12.4$'));
-		$this->assertEquals('12r.4$',price2num('12r.4$'));
+		$this->assertEquals('0',price2num('12.4$'));
+		$this->assertEquals('0',price2num('12r.4$'));
 
 		return true;
 	}
