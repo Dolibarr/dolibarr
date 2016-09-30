@@ -75,14 +75,27 @@ if ($search_version) $param.='&search_version='.urlencode($search_version);
  * Actions
  */
 
+
+if (GETPOST('buttonreset'))
+{
+    $search_keyword='';
+    $search_status='';
+    $search_nature='';
+    $search_version='';
+}
+
 if ($action == 'set' && $user->admin)
 {
-    $result=activateModule($value);
-    if ($result) setEventMessages($result, null, 'errors');
+    $resarray = activateModule($value);
+    if (! empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
 	else
 	{
-		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
-		setEventMessages($msg, null, 'warnings');
+	    //var_dump($resarray);exit;
+	    if ($resarray['nbperms'] > 0)
+	    {
+    		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+    		setEventMessages($msg, null, 'warnings');
+	    }
 	}
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
@@ -94,14 +107,6 @@ if ($action == 'reset' && $user->admin)
     if ($result) setEventMessages($result, null, 'errors');
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
-}
-
-if (GETPOST('buttonreset'))
-{
-    $search_keyword='';
-    $search_status='';
-    $search_nature='';
-    $search_version='';
 }
 
 

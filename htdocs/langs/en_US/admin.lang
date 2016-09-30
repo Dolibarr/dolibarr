@@ -1625,5 +1625,5 @@ activateModuleDependNotSatisfied=Module "%s" depends on module "%s" that is miss
 CommandIsNotInsideAllowedCommands=The command you try to run is not inside list of allowed commands defined into parameter <strong>$dolibarr_main_restrict_os_commands</strong> into <strong>conf.php</strong> file.
 LandingPage=Landing page
 SamePriceAlsoForSharedCompanies=If you use the multicompany module, with the choice "Single price", price will be also the same for all companies if products are shared between environments
-ModuleEnabledAdminMustCheckRights=Module has been activated. All permissions were given to admin users only.
+ModuleEnabledAdminMustCheckRights=Module has been activated. Permissions for activated module(s) were given to admin users only. You may need to grant permissions to other users manually if necessary.
 UserHasNoPermissions=This user has no permission defined

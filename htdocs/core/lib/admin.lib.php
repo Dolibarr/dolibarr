@@ -708,7 +708,7 @@ function purgeSessions($mysessionid)
  *
  *  @param      string		$value      Name of module to activate
  *  @param      int			$withdeps   Activate/Disable also all dependencies
- *  @return     string      			Error message or '';
+ *  @return     array      			    array('nbmodules'=>nb modules activated with success, 'errors=>array of error messages, 'nbperms'=>Nb permission added);
  */
 function activateModule($value,$withdeps=1)
 {
@@ -717,7 +717,7 @@ function activateModule($value,$withdeps=1)
     // Check parameters
     if (empty($value)) return 'ErrorBadParameter';
 
-    $ret='';
+    $ret=array('nbmodules'=>0, 'errors'=>array(), 'nbperms'=>0);
     $modName = $value;
     $modFile = $modName . ".class.php";
 
@@ -761,50 +761,67 @@ function activateModule($value,$withdeps=1)
     }
 
     $result=$objMod->init();
-    if ($result <= 0) $ret=$objMod->error;
-
-    if (! $ret && $withdeps)
+    if ($result <= 0) 
     {
-        if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
+        $ret['errors'][]=$objMod->error;
+    }
+    else
+    {
+        if ($withdeps)
         {
-            // Activation des modules dont le module depend
-            $TError=array();
-            $num = count($objMod->depends);
-            for ($i = 0; $i < $num; $i++)
+            if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
             {
-            	$activate = false;
-            	foreach ($modulesdir as $dir)
-            	{
-            		if (file_exists($dir.$objMod->depends[$i].".class.php"))
-            		{
-            			activateModule($objMod->depends[$i]);
-						$activate = true;
-            		}
-            	}
-				
-				if (!$activate) $TError[] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
+                // Activation des modules dont le module depend
+                $num = count($objMod->depends);
+                for ($i = 0; $i < $num; $i++)
+                {
+                	$activate = false;
+                	foreach ($modulesdir as $dir)
+                	{
+                		if (file_exists($dir.$objMod->depends[$i].".class.php"))
+                		{
+                			$resarray = activateModule($objMod->depends[$i]);
+    						if (empty($resarray['errors'])) $activate = true;
+    						break;
+                		}
+                	}
+    				
+    				if ($activate)
+    				{
+    				    $ret['nbmodules']+=$resarray['nbmodules'];
+    				    $ret['nbperms']+=$resarray['nbperms'];
+    				}
+    				else 
+    				{
+    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
+    				}
+                }
             }
-            
-            setEventMessages('', $TError, 'errors');
-        }
-
-        if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
-        {
-            // Desactivation des modules qui entrent en conflit
-            $num = count($objMod->conflictwith);
-            for ($i = 0; $i < $num; $i++)
+    
+            if (isset($objMod->conflictwith) && is_array($objMod->conflictwith) && ! empty($objMod->conflictwith))
             {
-            	foreach ($modulesdir as $dir)
-            	{
-            		if (file_exists($dir.$objMod->conflictwith[$i].".class.php"))
-            		{
-            			unActivateModule($objMod->conflictwith[$i],0);
-            		}
-            	}
+                // Desactivation des modules qui entrent en conflit
+                $num = count($objMod->conflictwith);
+                for ($i = 0; $i < $num; $i++)
+                {
+                	foreach ($modulesdir as $dir)
+                	{
+                		if (file_exists($dir.$objMod->conflictwith[$i].".class.php"))
+                		{
+                			unActivateModule($objMod->conflictwith[$i],0);
+                		}
+                	}
+                }
             }
         }
     }
 
+    if (! count($ret['errors'])) 
+    {
+        $ret['nbmodules']++;
+        $ret['nbperms']+=count($objMod->rights);
+    }
+    
     return $ret;
 }
 
