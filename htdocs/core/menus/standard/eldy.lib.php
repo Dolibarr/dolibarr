@@ -434,7 +434,8 @@ function print_end_menu_array()
 
 /**
  * Core function to output left menu eldy
- *
+ * Fill &$menu (example with $forcemainmenu='home' $forceleftmenu='all', return left menu tree of Home)
+ * 
  * @param	DoliDB		$db                 Database handler
  * @param 	array		$menu_array_before  Table of menu entries to show before entries of menu handler (menu->liste filled with menu->add)
  * @param   array		$menu_array_after   Table of menu entries to show after entries of menu handler (menu->liste filled with menu->add)
@@ -442,7 +443,7 @@ function print_end_menu_array()
  * @param	Menu		$menu				Object Menu to return back list of menu entries
  * @param	int			$noout				Disable output (Initialise &$menu only).
  * @param	string		$forcemainmenu		'x'=Force mainmenu to mainmenu='x'
- * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all)
+ * @param	string		$forceleftmenu		'all'=Force leftmenu to '' (= all). If value come being '', we change it to value in session and 'none' if not efined in session. 
  * @param	array		$moredata			An array with more data to output
  * @return	int								nb of menu entries
  */
@@ -586,7 +587,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			$newmenu->add("/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"), 0, $user->rights->user->user->lire, '', $mainmenu, 'users');
 			if ($user->rights->user->user->lire)
 			{
-				if (! empty($leftmenu) && $leftmenu=="users")
+				if (empty($leftmenu) || $leftmenu=="users")
 				{
 					$newmenu->add("", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
 					$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin, '', 'home');
@@ -597,6 +598,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/user/group/index.php?leftmenu=users", $langs->trans("ListOfGroups"), 2, ($conf->global->MAIN_USE_ADVANCED_PERMS?$user->rights->user->group_advance->read:$user->rights->user->user->lire) || $user->admin);
 				}
 			}
+			
 		}
 
 
