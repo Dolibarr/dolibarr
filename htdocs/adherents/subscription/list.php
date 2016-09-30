@@ -93,6 +93,7 @@ $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
+$sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
 if (isset($date_select) && $date_select != '')
 {
     $sql.= " AND c.dateadh LIKE '".$date_select."%'";

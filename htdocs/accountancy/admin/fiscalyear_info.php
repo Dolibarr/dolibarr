@@ -16,11 +16,12 @@
  */
 
 /**
- * \file	htdocs/accountancy/admin/fiscalyear_card.php
- * \brief	Page to show info of a fiscal year
+ * \file	    htdocs/accountancy/admin/fiscalyear_info.php
+ * \ingroup     Advanced accountancy
+ * \brief	    Page to show info of a fiscal year
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';

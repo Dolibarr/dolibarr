@@ -892,14 +892,12 @@ class pdf_rouget extends ModelePdfExpedition
 	    $Yoff=25;
 
 	    // Add list of linked orders
-	    // TODO possibility to use with other document (business module,...)
-	    //$object->load_object_linked();
 
 	    $origin 	= $object->origin;
 		$origin_id 	= $object->origin_id;
 
 	    // TODO move to external function
-		if (! empty($conf->$origin->enabled))
+		if (! empty($conf->$origin->enabled))     // commonly $origin='commande'
 		{
 			$outputlangs->load('orders');
 
@@ -908,6 +906,8 @@ class pdf_rouget extends ModelePdfExpedition
 			$result=$linkedobject->fetch($origin_id);
 			if ($result >= 0)
 			{
+			    //$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
+			    			 
 				$pdf->SetFont('','', $default_font_size - 2);
 				$text=$linkedobject->ref;
 				if ($linkedobject->ref_client) $text.=' ('.$linkedobject->ref_client.')';

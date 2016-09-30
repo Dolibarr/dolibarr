@@ -82,13 +82,13 @@ $enableremotecheck = False;
 
 print '<form name="check" action="'.$_SERVER["PHP_SELF"].'">';
 print $langs->trans("MakeIntegrityAnalysisFrom").':<br>';
-if (file_exists($xmlfile))
+if (dol_is_file($xmlfile))
 {
     print '<input type="checkbox" name="local" checked> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.'<br>';
 }
 else
 {
-    print '<input type="checkbox" name="local"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.' <span class="warning">('.$langs->trans("NotAvailable").')</span><br>';
+    print '<input type="checkbox" name="local"> '.$langs->trans("LocalSignature").' = '.$xmlshortfile.' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span><br>';
 }
 if ($enableremotecheck)
 {
@@ -98,13 +98,13 @@ else
 {
     print '<input type="checkbox" name="remote" disabled> '.$langs->trans("RemoteSignature").' = '.$xmlremote.'  <span class="warning">('.$langs->trans("FeatureNotYetAvailable").')</span><br>';
 }
-print '<input type="submit" name="check" class="button" value="'.$langs->trans("Check").'">';
+print '<br><div class="center"><input type="submit" name="check" class="button" value="'.$langs->trans("Check").'"></div>';
 print '</form>';
 print '<br>';
 
 if (GETPOST('local'))
 {
-    if (file_exists($xmlfile))
+    if (dol_is_file($xmlfile))
     {
         $xml = simplexml_load_file($xmlfile);
     }

@@ -154,7 +154,7 @@ class modProjet extends DolibarrModules
 		$this->rights[$r][0] = 41; // id de la permission
 		$this->rights[$r][1] = "Read projects and tasks (shared projects or projects I am contact for). Can also enter time consumed on assigned tasks (timesheet)"; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
@@ -203,6 +203,11 @@ class modProjet extends DolibarrModules
 		$this->rights[$r][5] = 'supprimer';
 
 
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		//Exports
 		//--------
 		$r=1;

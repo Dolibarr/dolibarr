@@ -54,10 +54,10 @@ ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the breakdown pages "
 
 ACCOUNTING_LENGTH_DESCRIPTION=Length for displaying product & services description in listings (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Length for displaying product & services account description form in listings (Best = 50)
-ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounts
-ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounts
+ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts
+ACCOUNTING_LENGTH_AACCOUNT=Length of the third party accounting accounts
 ACCOUNTING_MANAGE_ZERO=Manage the zero at the end of an accounting account. Needed by some countries. Disable by default. Be careful with the function "length of the accounts".
-BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions. Enable by default with this module.
+BANK_DISABLE_DIRECT_INPUT=Disable free input of bank transactions (Enabled by default with this module).
 
 ACCOUNTING_SELL_JOURNAL=Sell journal
 ACCOUNTING_PURCHASE_JOURNAL=Purchase journal

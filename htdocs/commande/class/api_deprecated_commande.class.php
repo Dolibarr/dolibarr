@@ -23,19 +23,19 @@
  * API class for commande object
  *
  * @smart-auto-routing false
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
- * 
+ *
  * @category Api
  * @package  Api
- * 
+ *
  * @deprecated Use Orders instead (defined in api_orders.class.php)
  */
 class CommandeApi extends DolibarrApi
 {
 
     /**
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+     * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
         'socid'
@@ -50,7 +50,7 @@ class CommandeApi extends DolibarrApi
      * Constructor <b>Warning: Deprecated</b>
      *
      * @url     GET order/
-     * 
+     *
      */
     function __construct()
     {
@@ -63,40 +63,40 @@ class CommandeApi extends DolibarrApi
      * Get properties of a commande object <b>Warning: Deprecated</b>
      *
      * Return an array with commande informations
-     * 
+     *
      * @param       int         $id         ID of order
      * @param		string		$ref		Ref of object
      * @param		string		$ref_ext		External reference of object
      * @param		string		$ref_int		Internal reference of other object
      * @return 	array|mixed data without useless information
 	 *
-     * @url	GET order/{id} 
+     * @url	GET order/{id}
      * @throws 	RestException
      */
     function get($id='',$ref='', $ref_ext='', $ref_int='')
-    {		
+    {
 		if(! DolibarrApiAccess::$user->rights->commande->lire) {
 			throw new RestException(401);
 		}
-			
+
         $result = $this->commande->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         $this->commande->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->commande);
     }
 
     /**
      * List orders <b>Warning: Deprecated</b>
-     * 
+     *
      * Get a list of orders
-     * 
+     *
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -109,20 +109,20 @@ class CommandeApi extends DolibarrApi
      */
     function getList($sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $societe = 0) {
         global $db, $conf;
-        
+
         $obj_ret = array();
         // case of external user, $societe param is ignored and replaced by user's socid
         $socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
-            
+
         // If the internal user must only see his customers, force searching by him
         if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT s.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as s";
-        
+
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-        
+
 		// Example of use $mode
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
@@ -131,13 +131,13 @@ class CommandeApi extends DolibarrApi
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
         if ($socid) $sql.= " AND s.fk_soc = ".$socid;
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
-        
+
         // Insert sale filter
         if ($search_sale > 0)
         {
             $sql .= " AND sc.fk_user = ".$search_sale;
         }
-        
+
         $nbtotalofrecords = 0;
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
         {
@@ -157,7 +157,7 @@ class CommandeApi extends DolibarrApi
         }
 
         $result = $db->query($sql);
-        
+
         if ($result)
         {
         	$i=0;
@@ -183,9 +183,9 @@ class CommandeApi extends DolibarrApi
 
     /**
      * List orders for specific thirdparty <b>Warning: Deprecated</b>
-     * 
+     *
      * Get a list of orders
-     * 
+     *
      * @param int	$socid Id of customer
      *
      * @url     GET     /customer/{socid}/order/list
@@ -196,14 +196,14 @@ class CommandeApi extends DolibarrApi
       return getList(0,"s.rowid","ASC",0,0,$socid);
     }
 
-    
+
     /**
      * Create order object <b>Warning: Deprecated</b>
      *
      * @param   array   $request_data   Request datas
-     * 
+     *
      * @url     POST    order/
-     * 
+     *
      * @return  int     ID of commande
      */
     function post($request_data = NULL)
@@ -227,7 +227,7 @@ class CommandeApi extends DolibarrApi
         if(! $this->commande->create(DolibarrApiAccess::$user) ) {
             throw new RestException(500, "Error while creating order");
         }
-        
+
         return $this->commande->id;
     }
     /**
@@ -235,21 +235,21 @@ class CommandeApi extends DolibarrApi
      *
      *
      * @param int   $id             Id of order
-     * 
+     *
      * @url	GET order/{id}/line/list
-     * 
-     * @return int 
+     *
+     * @return int
      */
     function getLines($id) {
       if(! DolibarrApiAccess::$user->rights->commande->lire) {
 		  	throw new RestException(401);
 		  }
-        
+
       $result = $this->commande->fetch($id);
       if( ! $result ) {
          throw new RestException(404, 'Commande not found');
       }
-		
+
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
@@ -265,22 +265,22 @@ class CommandeApi extends DolibarrApi
      *
      *
      * @param int   $id             Id of commande to update
-     * @param array $request_data   Orderline data   
-     * 
+     * @param array $request_data   Orderline data
+     *
      * @url	POST order/{id}/line
-     * 
-     * @return int 
+     *
+     * @return int
      */
     function postLine($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
-        
+
       $result = $this->commande->fetch($id);
       if( ! $result ) {
          throw new RestException(404, 'Commande not found');
       }
-		
+
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
@@ -325,22 +325,22 @@ class CommandeApi extends DolibarrApi
      *
      * @param int   $id             Id of commande to update
      * @param int   $lineid         Id of line to update
-     * @param array $request_data   Orderline data   
-     * 
+     * @param array $request_data   Orderline data
+     *
      * @url	PUT order/{id}/line/{lineid}
-     * 
-     * @return object 
+     *
+     * @return object
      */
     function putLine($id, $lineid, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
-        
+
       $result = $this->commande->fetch($id);
       if( ! $result ) {
          throw new RestException(404, 'Commande not found');
       }
-		
+
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
@@ -382,26 +382,26 @@ class CommandeApi extends DolibarrApi
      *
      * @param int   $id             Id of commande to update
      * @param int   $lineid         Id of line to delete
-     * 
+     *
      * @url	DELETE order/{id}/line/{lineid}
-     * 
-     * @return int 
+     *
+     * @return int
      */
     function delLine($id, $lineid) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
-        
+
       $result = $this->commande->fetch($id);
       if( ! $result ) {
          throw new RestException(404, 'Commande not found');
       }
-		
+
 		  if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			  throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
       }
 			$request_data = (object) $request_data;
-      $updateRes = $this->commande->deleteline($lineid);
+      $updateRes = $this->commande->deleteline(DolibarrApiAccess::$user,$lineid);
       if ($updateRes == 1) {
         return $this->get($id);
       }
@@ -412,42 +412,42 @@ class CommandeApi extends DolibarrApi
      * Update order general fields (won't touch lines of order) <b>Warning: Deprecated</b>
      *
      * @param int   $id             Id of commande to update
-     * @param array $request_data   Datas   
-     * 
+     * @param array $request_data   Datas
+     *
      * @url	PUT order/{id}
-     * 
-     * @return int 
+     *
+     * @return int
      */
     function put($id, $request_data = NULL) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
-        
+
         $result = $this->commande->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'Commande not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
         foreach($request_data as $field => $value) {
             $this->commande->$field = $value;
         }
-        
+
         if($this->commande->update($id, DolibarrApiAccess::$user,1,'','','update'))
             return $this->get($id);
-        
+
         return false;
     }
-    
+
     /**
      * Delete order <b>Warning: Deprecated</b>
      *
      * @param   int     $id         Order ID
-     * 
+     *
      * @url     DELETE  order/{id}
-     * 
+     *
      * @return  array
      */
     function delete($id)
@@ -459,35 +459,35 @@ class CommandeApi extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         if( ! $this->commande->delete(DolibarrApiAccess::$user)) {
             throw new RestException(500, 'Error when delete order : '.$this->commande->error);
         }
-        
+
         return array(
             'success' => array(
                 'code' => 200,
                 'message' => 'Order deleted'
             )
         );
-        
+
     }
-    
+
     /**
      * Validate an order <b>Warning: Deprecated</b>
-     * 
+     *
      * @param   int $id             Order ID
      * @param   int $idwarehouse    Warehouse ID
-     * 
+     *
      * @url GET     order/{id}/validate
      * @url POST    order/{id}/validate
-     *  
+     *
      * @return  array
-     * 
+     *
      */
     function validOrder($id, $idwarehouse=0)
     {
@@ -498,15 +498,15 @@ class CommandeApi extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'Order not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('commande',$this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         if( ! $this->commande->valid(DolibarrApiAccess::$user, $idwarehouse)) {
             throw new RestException(500, 'Error when validate order');
         }
-        
+
         return array(
             'success' => array(
                 'code' => 200,
@@ -514,12 +514,12 @@ class CommandeApi extends DolibarrApi
             )
         );
     }
-    
+
     /**
      * Validate fields before create or update object
-     * 
+     *
      * @param   array           $data   Array with data to verify
-     * @return  array           
+     * @return  array
      * @throws  RestException
      */
     function _validate($data)
@@ -529,7 +529,7 @@ class CommandeApi extends DolibarrApi
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $commande[$field] = $data[$field];
-            
+
         }
         return $commande;
     }

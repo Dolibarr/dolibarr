@@ -19,7 +19,7 @@
 
 /**
  * \file 		htdocs/accountancy/admin/account.php
- * \ingroup		Advanced accountancy
+ * \ingroup     Advanced accountancy
  * \brief		List accounting account
  */
 require '../../main.inc.php';

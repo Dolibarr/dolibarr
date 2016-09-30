@@ -1552,12 +1552,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
     /**
      * Adds menu entries
      *
-     * @return  int Error count (0 if OK)
+     * @return  int     Error count (0 if OK)
      */
     function insert_menus()
     {
         global $user;
 
+        if (! is_array($this->menu) || empty($this->menu)) return 0;
+        
         require_once DOL_DOCUMENT_ROOT . '/core/class/menubase.class.php';
 
         $err=0;

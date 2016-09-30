@@ -16,12 +16,12 @@
  */
 
 /**
- * \file htdocs/accountancy/admin/fiscalyear.php
- * \ingroup fiscal year
- * \brief Setup page to configure fiscal year
+ * \file        htdocs/accountancy/admin/fiscalyear.php
+ * \ingroup     Advanced accountancy
+ * \brief       Setup page to configure fiscal year
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
@@ -45,9 +45,9 @@ $langs->load("compta");
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear)
-	accessforbidden();
-
+if (! $user->rights->mouvements->lire)              // If we can read accounting records, we shoul be able to see fiscal year.
+    accessforbidden();
+	
 $error = 0;
 
 // List of status
@@ -64,6 +64,7 @@ foreach ( $tmpstatut2label as $key => $val )
 $errors = array ();
 
 $object = new Fiscalyear($db);
+
 
 /*
  * Actions
@@ -146,7 +147,14 @@ dol_fiche_end();
 
 // Buttons
 print '<div class="tabsAction">';
-print '<a class="butAction" href="fiscalyear_card.php?action=create">' . $langs->trans("NewFiscalYear") . '</a>';
+if (! empty($user->rights->accounting->fiscalyear))
+{
+    print '<a class="butAction" href="fiscalyear_card.php?action=create">' . $langs->trans("NewFiscalYear") . '</a>';
+}
+else
+{
+    print '<a class="butActionRefused" href="#">' . $langs->trans("NewFiscalYear") . '</a>';
+}
 print '</div>';
 
 llxFooter();

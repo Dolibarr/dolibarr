@@ -33,6 +33,7 @@ DELETE FROM llx_menu where module='expensereport';
 
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
+ALTER TABLE llx_user ADD COLUMN dateemployment datetime;
 
 ALTER TABLE llx_societe ADD COLUMN fk_account integer;
 
@@ -114,3 +115,6 @@ create table llx_product_warehouse_properties
   desiredstock    		integer DEFAULT '0',
   import_key      		varchar(14)               -- Import key
 )ENGINE=innodb;
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT NULL;
+

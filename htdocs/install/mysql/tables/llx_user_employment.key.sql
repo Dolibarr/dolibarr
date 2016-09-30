@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,11 +16,6 @@
 --
 -- ===========================================================================
 
+ALTER TABLE llx_user_employment ADD UNIQUE INDEX uk_user_employment (ref,entity);
 
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_login (login, entity);
-
-ALTER TABLE llx_user ADD INDEX idx_user_fk_societe  (fk_soc);
-
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_socpeople (fk_socpeople);
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_member    (fk_member);
-ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_api_key      (api_key);
+ALTER TABLE llx_user_employment ADD CONSTRAINT fk_user_employment_fk_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);

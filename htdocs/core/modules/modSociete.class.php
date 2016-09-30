@@ -143,7 +143,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][0] = 121; // id de la permission
 		$this->rights[$r][1] = 'Lire les societes'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
 
 /*		$r++;
@@ -206,7 +206,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][0] = 262;
 		$this->rights[$r][1] = 'Consulter tous les tiers par utilisateurs internes (sinon uniquement si contact commercial). Non effectif pour utilisateurs externes (tjs limités à eux-meme).';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'client';
 		$this->rights[$r][5] = 'voir';
 
@@ -214,7 +214,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][0] = 281; // id de la permission
 		$this->rights[$r][1] = 'Lire les contacts'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 1; // La permission est-elle une permission par defaut
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'lire';
 
@@ -242,7 +242,12 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][4] = 'contact';
 		$this->rights[$r][5] = 'export';
 
-
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		//--------
 		$r=0;

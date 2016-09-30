@@ -183,7 +183,7 @@ if (empty($reshook))
 	// Remove a product line
 	else if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->commande->creer)
 	{
-		$result = $object->deleteline($lineid);
+		$result = $object->deleteline($user, $lineid);
 		if ($result > 0)
 		{
 			// Define output language
@@ -1919,9 +1919,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 
 		// Order card
-		
+
 		$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-		
+
 
 		$morehtmlref='<div class="refidno">';
 		// Ref customer
@@ -1962,17 +1962,17 @@ if ($action == 'create' && $user->rights->commande->creer)
 	        }
 	    }
 	    $morehtmlref.='</div>';
-	
-	
+
+
 	    dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-		    
-		
+
+
 	    print '<div class="fichecenter">';
 	    print '<div class="fichehalfleft">';
 	    print '<div class="underbanner clearboth"></div>';
-	    
+
 	    print '<table class="border" width="100%">';
-	     
+
 		// Ref
 		/*
 		print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
@@ -2309,7 +2309,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			print '</td></tr>';
 		}
         */
-			
+
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))
 		{
@@ -2358,14 +2358,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
-		
+
 		print '</div>';
 		print '<div class="fichehalfright">';
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
-		
+
 		print '<table class="border centpercent">';
-		
+
 		// Total HT
 		print '<tr><td class="titlefield">' . $langs->trans('AmountHT') . '</td>';
 		print '<td>' . price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency) . '</td>';
@@ -2408,19 +2408,19 @@ if ($action == 'create' && $user->rights->commande->creer)
 
 		// Statut
 		//print '<tr><td>' . $langs->trans('Status') . '</td><td>' . $object->getLibStatut(4) . '</td></tr>';
-		
+
 		print '</table>';
-		
+
 		// Margin Infos
 		if (! empty($conf->margin->enabled)) {
 		    $formmargin->displayMarginInfos($object);
 		}
-		
+
 
 		print '</div>';
 		print '</div>';
 		print '</div>';
-		
+
 		print '<div class="clearboth"></div><br>';
 
 		if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB)) {
@@ -2634,7 +2634,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			// Show links to link elements
 			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
-			
+
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

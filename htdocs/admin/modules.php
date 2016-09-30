@@ -75,10 +75,28 @@ if ($search_version) $param.='&search_version='.urlencode($search_version);
  * Actions
  */
 
+
+if (GETPOST('buttonreset'))
+{
+    $search_keyword='';
+    $search_status='';
+    $search_nature='';
+    $search_version='';
+}
+
 if ($action == 'set' && $user->admin)
 {
-    $result=activateModule($value);
-    if ($result) setEventMessages($result, null, 'errors');
+    $resarray = activateModule($value);
+    if (! empty($resarray['errors'])) setEventMessages('', $resarray['errors'], 'errors');
+	else
+	{
+	    //var_dump($resarray);exit;
+	    if ($resarray['nbperms'] > 0)
+	    {
+    		$msg = $langs->trans('ModuleEnabledAdminMustCheckRights');
+    		setEventMessages($msg, null, 'warnings');
+	    }
+	}
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
@@ -89,14 +107,6 @@ if ($action == 'reset' && $user->admin)
     if ($result) setEventMessages($result, null, 'errors');
     header("Location: modules.php?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
-}
-
-if (GETPOST('buttonreset'))
-{
-    $search_keyword='';
-    $search_status='';
-    $search_nature='';
-    $search_version='';
 }
 
 
@@ -494,8 +504,8 @@ if ($mode != 'marketplace')
         // Help
         print '<td align="center" valign="top" class="nowrap" style="width: 82px;">';
         $text='';
-        if ($objMod->getDescLong()) $text.=$objMod->getDesc().'<br>'.$objMod->getDescLong().'<br>';
-        else $text.=$objMod->getDesc().'<br>';
+        if ($objMod->getDescLong()) $text.='<div class="titre">'.$objMod->getDesc().'</div><br>'.$objMod->getDescLong().'<br>';
+        else $text.='<div class="titre">'.$objMod->getDesc().'</div><br>';
         
         $textexternal='';
         if ($objMod->isCoreOrExternalModule() == 'external')
@@ -605,7 +615,7 @@ if ($mode != 'marketplace')
         else $text.=$langs->trans("No");
         
         $text.='<br><strong>'.$langs->trans("AddMenus").':</strong> ';
-        if (isset($objMod->menu) && is_array($objMod->menu) && ! empty($objMod->menu))
+        if (isset($objMod->menu) && ! empty($objMod->menu)) // objMod can be an array or just an int 1
         {
             $text.=$langs->trans("Yes");
         }

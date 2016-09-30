@@ -193,6 +193,12 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[5][3] = 0;
 		$this->rights[5][4] = 'export';
 
+		
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		
+		
 		// Exports
 		$r=0;
 

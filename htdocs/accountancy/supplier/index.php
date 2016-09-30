@@ -155,9 +155,9 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200" align="left">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
-	print '<td width="60" align="center">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT  ".$db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') ." AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
@@ -205,9 +205,9 @@ print "<br>\n";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("Total") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
-	print '<td width="60" align="center">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT '" . $langs->trans("CAHTF") . "' AS label,";
 for($i = 1; $i <= 12; $i ++) {

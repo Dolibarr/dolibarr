@@ -110,6 +110,9 @@ class CompanyBankAccount extends Account
         {
             $this->create();
         }
+		
+		if (dol_strlen($this->domiciliation) > 255) $this->domiciliation = dol_trunc($this->domiciliation, 254, 'right', 'UTF-8', 1);
+		if (dol_strlen($this->owner_address) > 255) $this->owner_address = dol_trunc($this->owner_address, 254, 'right', 'UTF-8', 1);
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET";
         $sql.= " bank = '" .$this->db->escape($this->bank)."'";
