@@ -317,8 +317,13 @@ print "\n";
 if ($CHOOSEDTARGET{'-CHKSUM'})
 {
    	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/build/generate_filecheck_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
-  	$ret=`php $SOURCE/build/generate_filecheck_xml.php release=$MAJOR.$MINOR.$BUILD`;
+  	$ret=`php $SOURCE/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
   	print $ret."\n";
+  	# Copy to final dir
+  	$NEWDESTI=$DESTI;
+	print "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
+    use File::Copy qw(copy);
+    copy "$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml";
 }
 
 
@@ -1132,6 +1137,7 @@ if ($nboftargetok) {
 	
 		print "\nList of files to publish (BUILD=$BUILD)\n";
 		%filestoscansf=(
+			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'signatures',
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'Dolibarr installer for Fedora-Redhat-Mandriva-Opensuse (DoliRpm)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'Dolibarr installer for Debian-Ubuntu (DoliDeb)',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'none',
@@ -1140,6 +1146,7 @@ if ($nboftargetok) {
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'Dolibarr ERP-CRM'
 		);
 		%filestoscanstableasso=(
+			"$DESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml"=>'signatures',
 			"$DESTI/package_rpm_generic/$FILENAMERPM"=>'package_rpm_generic',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
