@@ -767,7 +767,7 @@ class Project extends CommonObject
 
             if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
             {
-            	// TODO What to do if fk_opp_status is not code 'WIN' or 'LOST'
+            	// TODO What to do if fk_opp_status is not code 'WON' or 'LOST'
             }
 
             dol_syslog(get_class($this)."::setClose", LOG_DEBUG);
