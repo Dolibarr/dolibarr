@@ -5,6 +5,7 @@
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -208,6 +209,7 @@ if ($resql)
 	$i = 0;
 
 	$param="";
+	if ($sall)					$param.="&search_all=".$sall;
 	if ($search_ref)			$param.="&search_ref=".$search_ref;
 	if ($search_company)		$param.="&search_company=".$search_company;
 	if ($search_user)			$param.="&search_user=".$search_user;

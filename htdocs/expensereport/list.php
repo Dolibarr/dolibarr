@@ -193,6 +193,7 @@ if ($resql)
 	$i = 0;
 
 	$param="";
+	if ($sall)					$param.="&sall=".$sall;
 	if ($search_ref)			$param.="&search_ref=".$search_ref;
 	if ($search_user)			$param.="&search_user=".$search_user;
 	if ($search_amount_ht)		$param.="&search_amount_ht=".$search_amount_ht;
