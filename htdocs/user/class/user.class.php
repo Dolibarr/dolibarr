@@ -107,6 +107,7 @@ class User extends CommonObject
 	var $rights;                        // Array of permissions user->rights->permx
 	var $all_permissions_are_loaded;	/**< \private all_permissions_are_loaded */
 	private $_tab_loaded=array();		// Array of cache of already loaded permissions
+	var $nb_rights;						// Number of rights granted to the user
 
 	var $conf;           			// To store personal config
 	var $oldcopy;                	// To contains a clone of this when we need to save old properties of object
@@ -142,6 +143,7 @@ class User extends CommonObject
 
 		// For cache usage
 		$this->all_permissions_are_loaded = 0;
+		$this->nb_rights = 0;
 
 		// Force some default values
 		$this->admin = 0;
@@ -635,10 +637,12 @@ class User extends CommonObject
 					if ($subperms)
 					{
 						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
+						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
 						$this->rights->$module->$perms = 1;
 					}
 
@@ -685,10 +689,12 @@ class User extends CommonObject
 					if ($subperms)
 					{
 						if (! isset($this->rights->$module->$perms) || ! is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
+						if(empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
 						$this->rights->$module->$perms->$subperms = 1;
 					}
 					else
 					{
+						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
 						$this->rights->$module->$perms = 1;
 					}
 

@@ -209,7 +209,7 @@ class modResource extends DolibarrModules
 		//// Permission label
 		//$this->rights[$r][1] = 'Permision label';
 		//// Permission by default for new user (0/1)
-		//$this->rights[$r][3] = 1;
+		//$this->rights[$r][3] = 0;
 		//// In php code, permission will be checked by test
 		//// if ($user->rights->permkey->level1->level2)
 		//$this->rights[$r][4] = 'level1';

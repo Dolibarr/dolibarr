@@ -118,7 +118,7 @@ class modAgenda extends DolibarrModules
 		$this->rights[$r][0] = 2401;
 		$this->rights[$r][1] = 'Read actions/tasks linked to his account';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'myactions';
 		$this->rights[$r][5] = 'read';
 		$r++;
