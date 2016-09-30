@@ -732,11 +732,11 @@ class ExtraFields
 		{
 			$tmp=explode(',',$size);
 			$newsize=$tmp[0];
-			$out='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" " maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" " maxlength="'.$newsize.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'varchar')
 		{
-			$out='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" maxlength="'.$size.'" value="'.$value.'"'.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'text')
 		{
@@ -752,26 +752,26 @@ class ExtraFields
 			} else {
 				$checked=' value="1" ';
 			}
-			$out='<input type="checkbox" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
+			$out='<input type="checkbox" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" '.$checked.' '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'mail')
 		{
-			$out='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'phone')
 		{
-			$out='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		elseif ($type == 'price')
 		{
-			$out='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" value="'.price($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.price($value).'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
 		elseif ($type == 'double')
 		{
 			if (!empty($value)) {
 				$value=price($value);
 			}
-			$out='<input type="text" class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
+			$out='<input type="text" class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> ';
 		}
 		elseif ($type == 'select')
 		{
@@ -782,7 +782,7 @@ class ExtraFields
 				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
-			$out.='<select class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
 			$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
@@ -804,7 +804,7 @@ class ExtraFields
 				$out.= ajax_combobox($keysuffix.'options_'.$key.$keyprefix, array(), 0);
 			}
 
-			$out.='<select class="flat '.$showsize.'" name="'.$keysuffix.'options_'.$key.$keyprefix.' maxwidthonsmartphone" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<select class="flat '.$showsize.' maxwidthonsmartphone" name="'.$keysuffix.'options_'.$key.$keyprefix.'" id="options_'.$key.$keyprefix.'" '.($moreparam?$moreparam:'').'>';
 			if (is_array($param['options']))
 			{
 				$param_list=array_keys($param['options']);
