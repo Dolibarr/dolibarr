@@ -308,14 +308,16 @@ class FormVentilation extends Form
 	/**
 	 * Return HTML combo list of years existing into book keepping
 	 *
-	 * @param string $selected Preselected value
-	 * @param string $htmlname Name of HTML select object
-	 * @param int $useempty Affiche valeur vide dans liste
-	 * @param string $output_format (html/opton (for option html only)/array (to return options arrays
+	 * @param  string          $selected       Preselected value
+	 * @param  string          $htmlname       Name of HTML select object
+	 * @param  int             $useempty       Affiche valeur vide dans liste
+	 * @param  string          $output_format  Html/option (for option html only)/array (to return options arrays
 	 * @return string/array
 	 */
 	function selectjournal_accountancy_bookkepping($selected = '', $htmlname = 'journalid', $useempty = 0, $output_format = 'html')
 	{
+	    global $langs;
+	    
 		$out_array = array();
 
 		$sql = "SELECT DISTINCT code_journal";
@@ -330,7 +332,7 @@ class FormVentilation extends Form
 			return -1;
 		}
 		while ($obj = $this->db->fetch_object($resql)) {
-			$out_array[$obj->code_journal] = $obj->code_journal;
+			$out_array[$obj->code_journal] = $obj->code_journal?$obj->code_journal:$langs->trans("NotDefined");  // TODO Not defined is accepted ? We should avoid this, shouldn't we ?
 		}
 		$this->db->free($resql);
 
