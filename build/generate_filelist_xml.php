@@ -32,11 +32,33 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
+require_once($path."../htdocs/master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
 
-// Main
+
+/*
+ * Main
+ */
+
+if (empty($argv[1])) 
+{
+    print "Usage: ".$script_file." release=x.y.z\n";
+    exit -1;
+}
 parse_str($argv[1]);
+
+if ($release != DOL_VERSION)
+{
+    print 'Error: release is not version declared into filefunc.in.php.'."\n";
+    exit -1;
+}
+
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
-$outputfile=dirname(__FILE__).'/../htdocs/install/filelist.xml';
+$outputdir=dirname(__FILE__).'/../htdocs/install';
+print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
+dol_delete_file($outputdir.'/filelist*.xml',0,1,1);
+
+$outputfile=$outputdir.'/filelist-'.$release.'.xml';
 $fp = fopen($outputfile,'w');
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
 fputs($fp, '<checksum_list version="'.$release.'">'."\n");

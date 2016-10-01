@@ -263,7 +263,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("IntracommunityVATNumber"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
 	print "</tr>\n";
 
@@ -272,11 +272,11 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_country" value="' . $search_country . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_tavintra" value="' . $search_tavintra . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_country" value="' . $search_country . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_tavintra" value="' . $search_tavintra . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 	print "</td></tr>\n";

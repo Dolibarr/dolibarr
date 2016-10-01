@@ -5404,7 +5404,7 @@ function printCommonFooter($zone='private')
     	
     	print '<!-- If page_y set, we set scollbar with it -->'."\n";
     	print "page_y=getParameterByName('page_y', 0);";
-    	print "if (page_y > 0) $('html, body').scrollTop(page_y);";
+    	print "if (page_y > 0) $('html, body').scrollTop(page_y);\n";
     	
     	print '<!-- Set handler to add page_y param on some a href links -->'."\n";
     	print 'jQuery(".reposition").click(function() {

@@ -85,7 +85,7 @@ if ($action == 'validatehistory') {
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('Dispatched'), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
 } elseif ($action == 'fixaccountancycode') {
 	$error = 0;
@@ -133,9 +133,11 @@ if ($action == 'validatehistory') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("CustomersVentilation"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
@@ -143,11 +145,14 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
 
-print '<b>' . $langs->trans("DescVentilCustomer") . '</b>';
+print $langs->trans("DescVentilCustomer") . '<br>';
+print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToDispatch")) . '<br>';
+print '<br>';
 print '<div class="inline-block divButAction">';
 print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+// TODO Remove this. Should be done always.
+print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 print '</div>';
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
