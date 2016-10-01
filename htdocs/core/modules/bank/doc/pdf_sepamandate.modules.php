@@ -22,9 +22,8 @@
  *	\brief      File of class to generate document with template sepamandate
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -48,11 +47,11 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		global $conf,$langs,$mysoc;
 
 		$langs->load("main");
-		$langs->load("projects");
+		$langs->load("bank");
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "baleine";
+		$this->name = "sepamandate";
 		$this->description = $langs->trans("DocumentModelSepaMandate");
 
 		// Dimension page pour format A4
@@ -104,12 +103,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$outputlangs->load("companies");
 		$outputlangs->load("projects");
 
-		if ($conf->projet->dir_output)
+		if ($conf->bank->dir_output)
 		{
 			//$nblignes = count($object->lines);  // This is set later with array of tasks
 
 			$objectref = dol_sanitizeFileName($object->ref);
-			$dir = $conf->projet->dir_output;
+			$dir = $conf->bank->dir_output;
 			if (! preg_match('/specimen/i',$objectref)) $dir.= "/" . $objectref;
 			$file = $dir . "/" . $objectref . ".pdf";
 
@@ -489,7 +488,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf,$outputlangs,'BANK_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'PAYMENTORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

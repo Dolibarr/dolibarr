@@ -144,3 +144,5 @@ ConfirmRejectCheck=Are you sure you want to mark this check as rejected ?
 RejectCheckDate=Date the check was returned
 CheckRejected=Check returned
 CheckRejectedAndInvoicesReopened=Check returned and invoices reopened
+BankAccountModelModule=Document templates for bank accounts
+DocumentModelSepaMandate=Template of SEPA mandate. Usefull for european countries in EEC only.
