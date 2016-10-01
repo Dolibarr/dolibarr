@@ -92,7 +92,7 @@ class modPrelevement extends DolibarrModules
 		$r=0;
 		$r++;
 		$this->rights[$r][0] = 151;
-		$this->rights[$r][1] = 'Read withdrawals';
+		$this->rights[$r][1] = 'Read direct debit payment orders';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';
@@ -100,7 +100,7 @@ class modPrelevement extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 152;
-		$this->rights[$r][1] = 'Create/modify a withdrawals';
+		$this->rights[$r][1] = 'Create/modify a direct debit payment order';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';
@@ -108,7 +108,7 @@ class modPrelevement extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 153;
-		$this->rights[$r][1] = 'Send withdrawals to bank';
+		$this->rights[$r][1] = 'Send/Transmit direct debit payment orders';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';
@@ -116,7 +116,7 @@ class modPrelevement extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 154;
-		$this->rights[$r][1] = 'credit/refuse withdrawals';
+		$this->rights[$r][1] = 'Record Credits/Rejects of direct debit payment orders';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'bons';

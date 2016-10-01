@@ -110,6 +110,51 @@ if ($action == "deletenotif")
     exit;
 }
 
+if ($action == 'specimen')
+{
+    $modele=GETPOST('module','alpha');
+
+    $commande = new Commande($db);
+    $commande->initAsSpecimen();
+
+    // Search template files
+    $file=''; $classname=''; $filefound=0;
+    $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
+    foreach($dirmodels as $reldir)
+    {
+        $file=dol_buildpath($reldir."core/modules/commande/doc/pdf_".$modele.".modules.php",0);
+        if (file_exists($file))
+        {
+            $filefound=1;
+            $classname = "pdf_".$modele;
+            break;
+        }
+    }
+
+    if ($filefound)
+    {
+        require_once $file;
+
+        $module = new $classname($db);
+
+        if ($module->write_file($commande,$langs) > 0)
+        {
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
+            return;
+        }
+        else
+        {
+            setEventMessages($module->error, null, 'errors');
+            dol_syslog($module->error, LOG_ERR);
+        }
+    }
+    else
+    {
+        setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
+        dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
+    }
+}    
+    
 
 /*
  *	View
