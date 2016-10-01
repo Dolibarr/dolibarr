@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry      		<florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,7 +430,7 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	if ($sall != '') $param = "&amp;sall=".urlencode($sall);
+	if ($search_all != '') $param = "&amp;sall=".urlencode($search_all);
  	if ($search_categ != '') $param.='&amp;search_categ='.urlencode($search_categ);
  	if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
 	if ($search_nom != '') $param.= "&amp;search_nom=".urlencode($search_nom);

@@ -448,7 +448,7 @@ abstract class CommonObject
     	global $conf, $langs;
 
     	$countriesusingstate=array('AU','US','IN','GB','ES','UK','TR');    // See also option MAIN_FORCE_STATE_INTO_ADDRESS
-    	
+
     	$contactid=0;
     	$thirdpartyid=0;
     	if ($this->element == 'societe')
@@ -465,12 +465,12 @@ abstract class CommonObject
     		$contactid=$this->contact_id;
 			$thirdpartyid=$object->fk_soc;
     	}
-    	
+
 		$out='<!-- BEGIN part to show address block -->';
-		
+
 		$outdone=0;
 		$coords = $this->getFullAddress(1,', ');
-		if ($coords) 
+		if ($coords)
 		{
 			if (! empty($conf->use_javascript_ajax))
 			{
@@ -485,7 +485,7 @@ abstract class CommonObject
 		}
 
 		if (! in_array($this->country_code,$countriesusingstate) && empty($conf->global->MAIN_FORCE_STATE_INTO_ADDRESS)   // If MAIN_FORCE_STATE_INTO_ADDRESS is on, state is already returned previously with getFullAddress
-				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state) 
+				&& empty($conf->global->SOCIETE_DISABLE_STATE) && $this->state)
 		{
 			$out.=($outdone?' - ':'').$this->state;
 			$outdone++;
@@ -516,15 +516,15 @@ abstract class CommonObject
 		if (! empty($this->office_fax)) {
 			$out.=dol_print_phone($this->fax,$this->country_code,$contactid,$thirdpartyid,'AC_FAX','&nbsp;','fax',$langs->trans("Fax")); $outdone++;
 		}
-		
+
 		$out.='<div style="clear: both;"></div>';
 		$outdone=0;
-		if (! empty($this->email)) 
+		if (! empty($this->email))
 		{
 			$out.=dol_print_email($this->email,$this->id,$object->id,'AC_EMAIL',0,0,1);
 			$outdone++;
 		}
-    	if (! empty($this->url)) 
+    	if (! empty($this->url))
 		{
 			$out.=dol_print_url($this->url,'',0,1);
 			$outdone++;
@@ -535,12 +535,12 @@ abstract class CommonObject
 			if ($this->skype) $out.=dol_print_skype($this->skype,$this->id,$object->id,'AC_SKYPE');
 			$outdone++;
 		}
-		
+
 		$out.='<!-- END Part to show address block -->';
-		
+
 		return $out;
     }
-        
+
     /**
      *  Add a link between element $this->element and a contact
      *
@@ -595,50 +595,56 @@ abstract class CommonObject
             }
         }
 
-        $datecreate = dol_now();
-        
-        $this->db->begin();
 
-        // Insertion dans la base
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
-        $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
-        $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
-        $sql.= "'".$this->db->idate($datecreate)."'";
-        $sql.= ", 4, '". $id_type_contact . "' ";
-        $sql.= ")";
-        dol_syslog(get_class($this)."::add_contact", LOG_DEBUG);
 
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            if (! $notrigger)
-            {
-            	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
-	            if ($result < 0) 
-	            { 
-	                $this->db->rollback(); 
+        if(! empty($id_type_contact)) {
+
+        	$datecreate = dol_now();
+
+        	$this->db->begin();
+
+	        // Insertion dans la base
+	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
+	        $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
+	        $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
+	        $sql.= "'".$this->db->idate($datecreate)."'";
+	        $sql.= ", 4, ". $id_type_contact . " ";
+	        $sql.= ")";
+	        dol_syslog(get_class($this)."::add_contact", LOG_DEBUG);
+
+	        $resql=$this->db->query($sql);
+	        if ($resql)
+	        {
+	            if (! $notrigger)
+	            {
+	            	$result=$this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
+		            if ($result < 0)
+		            {
+		                $this->db->rollback();
+		                return -1;
+		            }
+	            }
+
+	            $this->db->commit();
+	            return 1;
+	        }
+	        else
+	        {
+	            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+	            {
+	                $this->error=$this->db->errno();
+	            	$this->db->rollback();
+	                return -2;
+	            }
+	            else
+	            {
+	                $this->error=$this->db->error();
+	                $this->db->rollback();
 	                return -1;
 	            }
-            }
-
-            $this->db->commit();
-            return 1;
+	        }
         }
-        else
-        {
-            if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
-                $this->error=$this->db->errno();
-            	$this->db->rollback();
-                return -2;
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                $this->db->rollback();
-                return -1;
-            }
-        }
+        return 1;
     }
 
     /**
@@ -1196,7 +1202,7 @@ abstract class CommonObject
 		if (!empty($id) && !empty($field) && !empty($table)) {
 	        $sql = "SELECT ".$field." FROM ".MAIN_DB_PREFIX.$table;
 	        $sql.= " WHERE rowid = ".$id;
-	
+
 	        dol_syslog(get_class($this).'::getValueFrom', LOG_DEBUG);
 	        $resql = $this->db->query($sql);
 	        if ($resql)
@@ -2275,8 +2281,8 @@ abstract class CommonObject
      *  - all parameters empty -> we look all link to current object (current object can be source or target)
      *  - one couple id+type is provided -> this will set $justsource or $justtarget
      *  - one couple id+type is provided and other type is provided -> this will set $justsource or $justtarget + criteria on other type
-     *  
-     *  
+     *
+     *
      *	@param	int		$sourceid		Object source id (if not defined, id of object)
      *	@param  string	$sourcetype		Object source type (if not defined, element name of object)
      *	@param  int		$targetid		Object target id (if not defined, id of object)
@@ -3223,7 +3229,7 @@ abstract class CommonObject
 				$text.= ' - '.(! empty($line->label)?$line->label:$label);
 				$description.=(! empty($conf->global->PRODUIT_DESC_IN_FORM)?'':dol_htmlentitiesbr($line->description));	// Description is what to show on popup. We shown nothing if already into desc.
 			}
-			
+
 			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx/100)), 'MU');
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -3662,7 +3668,7 @@ abstract class CommonObject
                     return -1;
                 }
             }
-    
+
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
@@ -3726,13 +3732,13 @@ abstract class CommonObject
     /* For default values */
 
     /**
-     * Return the default value to use for a field when showing the create form of object. 
+     * Return the default value to use for a field when showing the create form of object.
      * Return values in this order:
      * 1) If parameter is available into POST, we return it first.
      * 2) If not but an alternate value was provided as parameter of function, we return it.
-     * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table). 
+     * 3) If not but a constant $conf->global->OBJECTELEMENT_FIELDNAME is set, we return it (It is better to use the dedicated table).
      * 4) Return value found into database (TODO No yet implemented)
-     * 
+     *
      * @param   string      $fieldname          Name of field
      * @param   string      $alternatevalue     Alternate value to use
      * @return  string                          Default value
@@ -3743,27 +3749,27 @@ abstract class CommonObject
 
         // If param is has been posted with use this value first.
         if (isset($_POST[$fieldname])) return GETPOST($fieldname, 2);
-        
+
         if (isset($alternatevalue)) return $alternatevalue;
-        
+
         $newelement=$this->element;
         if ($newelement == 'facture') $newelement='invoice';
         if ($newelement == 'commande') $newelement='order';
-        if (empty($newelement)) 
+        if (empty($newelement))
         {
             dol_syslog("Ask a default value using common method getDefaultCreateValueForField on an object with no property ->element defined. Return empty string.", LOG_WARNING);
             return '';
         }
-        
+
         $keyforfieldname=strtoupper($newelement.'_DEFAULT_'.$fieldname);
         //var_dump($keyforfieldname);
         if (isset($conf->global->$keyforfieldname)) return $conf->global->$keyforfieldname;
-        
-        // TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname 
-        
+
+        // TODO Ad here a scan into table llx_overwrite_default with a filter on $this->element and $fieldname
+
     }
-	
-    
+
+
 	/* For triggers */
 
 
@@ -3963,7 +3969,7 @@ abstract class CommonObject
     						{
     							$res=$object->fetch(0,$value);
     							if ($res > 0) $this->array_options[$key]=$object->id;
-    							else 
+    							else
     							{
     							    $this->error="Ref '".$value."' for object '".$object->element."' not found";
                                     $this->db->rollback();
@@ -4196,25 +4202,25 @@ abstract class CommonObject
 
 		return true;
 	}
-	
+
 	 /**
 	 * define buy price if not defined
 	 *	set buy price = sell price if ForceBuyingPriceIfNull configured,
 	 *	 else if calculation MARGIN_TYPE = 'pmp' and pmp is calculated, set pmp as buyprice
 	 *	 else set min buy price as buy price
-	 *	 
+	 *
 	 * @param float		$unitPrice		 product unit price
 	 * @param float		$discountPercent line discount percent
 	 * @param int		$fk_product		 product id
 	 *
 	 * @return	float <0 if ko, buyprice if ok
 	 */
-	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0) 
+	public function defineBuyPrice($unitPrice = 0, $discountPercent = 0, $fk_product = 0)
 	{
 		global $conf;
-	
+
 		$buyPrice = 0;
-		
+
 		if (($unitPrice > 0) && (isset($conf->global->ForceBuyingPriceIfNull) && $conf->global->ForceBuyingPriceIfNull == 1))
 		{
 			$buyPrice = $unitPrice * (1 - $discountPercent / 100);
