@@ -1049,7 +1049,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		// Security:
 		// Disallow file with some extensions. We renamed them.
 		// Car si on a mis le rep documents dans un rep de la racine web (pas bien), cela permet d'executer du code a la demande.
-		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file))
+		if (preg_match('/\.htm|\.html|\.php|\.pl|\.cgi$/i',$dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name.= '.noexe';
 		}
