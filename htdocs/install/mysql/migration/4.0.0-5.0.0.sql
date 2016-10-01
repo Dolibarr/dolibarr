@@ -118,3 +118,5 @@ create table llx_product_warehouse_properties
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
+ALTER TABLE llx_accounting_account ADD INDEX uk_accounting_account (account_number, entity);
+

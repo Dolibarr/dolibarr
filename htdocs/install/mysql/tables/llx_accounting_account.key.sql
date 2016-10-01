@@ -19,7 +19,7 @@
 
 
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_fk_pcg_version (fk_pcg_version);
-ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_number (account_number);
+ALTER TABLE llx_accounting_account ADD INDEX uk_accounting_account (account_number, entity);
 
 
 -- This keys are created into foreign table after creation of foreign index
