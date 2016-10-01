@@ -596,7 +596,8 @@ if (empty($reshook))
 			    if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
 			    {
 			        $idprod=$reg[1];
-                    // Call to init properties of $productsupplier
+                    $res=$productsupplier->fetch($idprod);
+			        // Call to init properties of $productsupplier
                     // So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
 			        $productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
 			    }
@@ -604,37 +605,35 @@ if (empty($reshook))
 			    {
 			        //$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qty);    // Just to see if a price exists for the quantity. Not used to found vat.
 			        $idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), -1);        // We force qty to -1 to be sure to find if a supplier price exist
+                    $res=$productsupplier->fetch($idprod);
 			    }
-                
                 
 			    if ($idprod > 0)
 			    {
-			        $res=$productsupplier->fetch($idprod);
-			
+			        $pu_ht = $productsupplier->fourn_pu;
+			        $price_base_type = $productsupplier->fourn_price_base_type;
+			        $type = $productsupplier->type;
 			        $label = $productsupplier->label;
-			
 			        $desc = $productsupplier->description;
 			        if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
-			
-			        $type = $productsupplier->type;
 			
 			        $tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 			        $tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 			        if (empty($tva_tx)) $tva_npr=0;
 			        $localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 			        $localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
-			
+
 			        $result=$object->addline(
 			            $desc,
-			            $productsupplier->fourn_pu,
+			            $pu_ht,
 			            $qty,
 			            $tva_tx,
 			            $localtax1_tx,
 			            $localtax2_tx,
 			            $productsupplier->id,
 			            $remise_percent,
-			            $type,
-			            $productsupplier->price_ttc,
+			            $price_base_type,
+			            $pu_ttc,
 			            $tva_npr,
 			            $type,
 			            -1,
@@ -646,6 +645,7 @@ if (empty($reshook))
 			            $array_options,
 			            $ref_fourn
 			            );
+			        //var_dump($tva_tx);var_dump($productsupplier->fourn_pu);var_dump($price_base_type);exit;
 			    }
 			    if ($idprod == -99 || $idprod == 0)
 			    {
