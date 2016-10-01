@@ -374,7 +374,6 @@ ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
 
-DELETE FROM llx_menu where module='expensereport';
 
 ALTER TABLE llx_accounting_system DROP COLUMN fk_pays;
 ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
