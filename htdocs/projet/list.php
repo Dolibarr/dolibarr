@@ -210,7 +210,7 @@ $sql.= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, 
 $sql.= ", s.nom as name, s.rowid as socid";
 $sql.= ", cls.code as opp_status_code";
 // Add fields for extrafields
-foreach ($extrafields->attribute_list as $key => $val) $sql.=",ef.".$key.' as options_'.$key;
+foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
