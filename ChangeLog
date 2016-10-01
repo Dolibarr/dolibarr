@@ -29,7 +29,9 @@ check you make a fetch on object before calling the delete.
 - Method expensereport->delete(id, user) has been replaced with ->delete(user)
   Method warehouse->delete(id) has been replace with ->delete(user)
   This is to follow good practice to make a fetch on object before deleting it.
-
+- The form to add a product to a draft proposal/order/invoice from the product card is hidden by default.
+  It was not commonly used and usage generates some problems (cost price for margin calculation not entered, vat setting).  
+  Set constant PRODUCT_ADD_FORM_ADD_TO to retrieve it.
 
 ***** ChangeLog for 4.0.0 compared to 3.9.* *****
 For users:
