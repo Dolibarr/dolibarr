@@ -3716,6 +3716,7 @@ div.ecmjqft {
 	text-align: center;
 	min-width: <?php echo $dol_optimize_smallscreen?'200':'480'; ?>px;
 	width: auto;
+	max-width: 1024px;
 	padding-left: 10px !important;
 	padding-right: 10px !important;
 }
