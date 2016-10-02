@@ -4239,7 +4239,7 @@ function get_exdir($num,$level,$alpha,$withoutslash,$object,$modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and object->modulepart are required.
-        if (in_array($modulepart, array('thirdparty','contact')))
+        if (in_array($modulepart, array('thirdparty','contact','member')))
         {
             $path=$object->ref?$object->ref:$object->id;
         }

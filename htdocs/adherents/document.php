@@ -69,7 +69,7 @@ if ($result < 0)
 	dol_print_error($db);
 	exit;
 }
-$upload_dir = $conf->adherent->dir_output . "/" . get_exdir($object->id,2,0,1,$object,'member') . '/' . dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
 
 
 /*

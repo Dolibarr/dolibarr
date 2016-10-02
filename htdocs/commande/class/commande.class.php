@@ -3572,9 +3572,9 @@ class Commande extends CommonOrder
     }
 
 	/**
-	 *  Create a document onto disk accordign to template module.
+	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param	    string		$modele			Force le mnodele a utiliser ('' to not force)
+	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description

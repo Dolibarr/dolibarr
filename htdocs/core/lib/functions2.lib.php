@@ -1524,7 +1524,7 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
 
             // If this generation module needs to scan a directory, then description field is filled
             // with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
-            if (! empty($obj->description))	// List of directories to scan is defined
+            if (! empty($obj->description))	// A list of directories to scan is defined
             {
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -1562,7 +1562,19 @@ function getListOfModels($db,$type,$maxfilenamelength=0)
             }
             else
             {
-                $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                if ($type == 'member' && $obj->lib == 'standard')   // Special case, if member template, we add variant per format
+                {
+                    global $_Avery_Labels;
+                    include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+                    foreach($_Avery_Labels as $key => $val)
+                    {
+                        $liste[$obj->id.':'.$key]=($obj->label?$obj->label:$obj->lib).' '.$val['name'];
+                    }
+                }
+                else    // Common usage
+                {
+                    $liste[$obj->id]=$obj->label?$obj->label:$obj->lib;
+                }
             }
             $i++;
         }

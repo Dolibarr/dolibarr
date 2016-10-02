@@ -23,7 +23,7 @@
 /**
  *	\file		htdocs/core/modules/member/doc/pdf_standard.class.php
  *	\ingroup	member
- *	\brief		Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *	\brief		File of class to generate PDF document of labels
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
@@ -63,7 +63,7 @@ class pdf_standard extends CommonStickerGenerator
 	 */
 	function Add_PDF_card(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$idmember=0,$photo='')
 	{
-		global $mysoc,$conf,$langs;
+		global $db,$mysoc,$conf,$langs;
 		global $forceimgscalewidth,$forceimgscaleheight;
 
 		$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
@@ -92,11 +92,15 @@ class pdf_standard extends CommonStickerGenerator
 			}
 		}
 
+		$member=new Adherent($db);
+		$member->id = $idmember;
+		$member->ref = $idmember;
+		
 		// Define photo
 		$dir=$conf->adherent->dir_output;
 		if (! empty($photo))
 		{
-			$file=get_exdir($idmember,2,0,0,null,'member').'photos/'.$photo;
+			$file=get_exdir(0,0,0,0,$member,'member').'photos/'.$photo;
 			$photo=$dir.'/'.$file;
 			if (! is_readable($photo)) $photo='';
 		}
@@ -231,19 +235,79 @@ class pdf_standard extends CommonStickerGenerator
 	}
 
 	/**
-	 *	Function to build PDF on disk, then output on HTTP strem.
+	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
+	 *	@param	Adherent	$arrayofrecords		New: Member object, Old: Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
-	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
+	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
 	 *	@return	int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$mode='member')
+	function write_file($object, $outputlangs, $srctemplatepath, $mode='member', $noouput=0)
 	{
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
-
+	
 		$this->code=$srctemplatepath;
+		
+		if (is_object($object))
+		{
+		    if ($object->country == '-') $object->country='';
+
+    		// List of values to scan for a replacement
+    		$substitutionarray = array (
+    		    '%ID%'=>$object->rowid,
+    		    '%LOGIN%'=>$object->login,
+    		    '%FIRSTNAME%'=>$object->firstname,
+    		    '%LASTNAME%'=>$object->lastname,
+    		    '%FULLNAME%'=>$object->getFullName($langs),
+    		    '%COMPANY%'=>$object->company,
+    		    '%ADDRESS%'=>$object->address,
+    		    '%ZIP%'=>$object->zip,
+    		    '%TOWN%'=>$object->town,
+    		    '%COUNTRY%'=>$object->country,
+    		    '%COUNTRY_CODE%'=>$object->country_code,
+    		    '%EMAIL%'=>$object->email,
+    		    '%BIRTH%'=>dol_print_date($object->birth,'day'),
+    		    '%TYPE%'=>$object->type,
+    		    '%YEAR%'=>$year,
+    		    '%MONTH%'=>$month,
+    		    '%DAY%'=>$day,
+    		    '%DOL_MAIN_URL_ROOT%'=>DOL_MAIN_URL_ROOT,
+    		    '%SERVER%'=>"http://".$_SERVER["SERVER_NAME"]."/"
+    		);
+    		complete_substitutions_array($substitutionarray, $langs);
+
+    		// For business cards
+		    $textleft=make_substitutions($conf->global->ADHERENT_CARD_TEXT, $substitutionarray);
+		    $textheader=make_substitutions($conf->global->ADHERENT_CARD_HEADER_TEXT, $substitutionarray);
+		    $textfooter=make_substitutions($conf->global->ADHERENT_CARD_FOOTER_TEXT, $substitutionarray);
+		    $textright=make_substitutions($conf->global->ADHERENT_CARD_TEXT_RIGHT, $substitutionarray);
+		
+		    $nb = $_Avery_Labels[$this->code]['NX'] * $_Avery_Labels[$this->code]['NY'];
+		    if ($nb <= 0) $nb=1;  // Protection to avoid empty page
+		    
+		    for($j=0;$j<$nb;$j++)
+	        {
+	            $arrayofmembers[]=array(
+	                'textleft'=>$textleft,
+	                'textheader'=>$textheader,
+	                'textfooter'=>$textfooter,
+	                'textright'=>$textright,
+	                'id'=>$object->rowid,
+	                'photo'=>$object->photo
+	            );
+	        }
+    		
+    		$arrayofrecords = $arrayofmembers;
+		}
+		else
+		{
+		    $arrayofrecords = $object;
+		}
+
+		//var_dump($arrayofrecords);exit;
+
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
@@ -270,7 +334,6 @@ class pdf_standard extends CommonStickerGenerator
 		{
 			$title=$outputlangs->transnoentities('MembersCards');
 			$keywords=$outputlangs->transnoentities('MembersCards')." ".$outputlangs->transnoentities("Foundation")." ".$outputlangs->convToOutputCharset($mysoc->name);
-			$outputdir=$conf->adherent->dir_temp;
 		}
 		else
 		{
@@ -278,9 +341,21 @@ class pdf_standard extends CommonStickerGenerator
 			return -1;
 		}
 
-		$dir = $outputdir;
 		$filename = 'tmp_cards.pdf';
-		$file = $dir."/".$filename;
+		if (is_object($object))
+		{
+		    $outputdir = $conf->adherent->dir_output;
+		    $dir = $outputdir."/".get_exdir(0, 0, 0, 0, $object, 'member');
+		    $file = $dir.'/'.$filename;
+		}
+		else 
+		{
+		    $outputdir = $conf->adherent->dir_temp;
+		    $dir = $outputdir;
+		    $file = $dir.'/'.$filename;
+		}
+
+		//var_dump($file);exit;
 
 		if (! file_exists($dir))
 		{
@@ -344,23 +419,26 @@ class pdf_standard extends CommonStickerGenerator
 
 
 		// Output to http stream
-		clearstatcache();
-
-		$attachment=true;
-		if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
-		$type=dol_mimetype($filename);
-
-		//if ($encoding)   header('Content-Encoding: '.$encoding);
-		if ($type)		 header('Content-Type: '.$type);
-		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
-		else header('Content-Disposition: inline; filename="'.$filename.'"');
-
-		// Ajout directives pour resoudre bug IE
-		header('Cache-Control: Public, must-revalidate');
-		header('Pragma: public');
-
-		readfile($file);
-
+		if (empty($noouput))
+		{
+    		clearstatcache();
+    
+    		$attachment=true;
+    		if (! empty($conf->global->MAIN_DISABLE_FORCE_SAVEAS)) $attachment=false;
+    		$type=dol_mimetype($filename);
+    
+    		//if ($encoding)   header('Content-Encoding: '.$encoding);
+    		if ($type)		 header('Content-Type: '.$type);
+    		if ($attachment) header('Content-Disposition: attachment; filename="'.$filename.'"');
+    		else header('Content-Disposition: inline; filename="'.$filename.'"');
+    
+    		// Ajout directives pour resoudre bug IE
+    		header('Cache-Control: Public, must-revalidate');
+    		header('Pragma: public');
+    
+    		readfile($file);
+		}
+		
 		return 1;
 	}
 

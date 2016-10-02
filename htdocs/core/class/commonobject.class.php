@@ -3753,30 +3753,30 @@ abstract class CommonObject
 	{
 	    global $user;
 
-
 	    $this->db->begin();
 
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
 	    $sql.= " WHERE rowid=".$rowid;
 
 	    dol_syslog(get_class($this)."::delete_resource", LOG_DEBUG);
-            $resql=$this->db->query($sql);
-            if (! $resql)
+
+	    $resql=$this->db->query($sql);
+        if (! $resql)
+        {
+            $this->error=$this->db->lasterror();
+            $this->db->rollback();
+            return -1;
+        }
+        else
+        {
+            if (! $notrigger)
             {
-                $this->error=$this->db->lasterror();
-                $this->db->rollback();
-                return -1;
+                $result=$this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
+                if ($result < 0) { $this->db->rollback(); return -1; }
             }
-            else
-            {
-                if (! $notrigger)
-	        {
-	            $result=$this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
-	            if ($result < 0) { $this->db->rollback(); return -1; }
-	        }
-                $this->db->commit();
-                return 1;
-            }
+            $this->db->commit();
+            return 1;
+        }
 	}
 
 
@@ -3837,7 +3837,8 @@ abstract class CommonObject
 		{
 			foreach(array('doc','pdf') as $prefix)
 			{
-				$file = $prefix."_".$modele.".modules.php";
+			    if (in_array(get_class($this), array('Adherent'))) $file = $prefix."_".$modele.".class.php";     // Member module use prefix_module.class.php
+				else $file = $prefix."_".$modele.".modules.php";
 
 				// On verifie l'emplacement du modele
 				$file=dol_buildpath($reldir.$modelspath.$file,0);
@@ -3854,6 +3855,8 @@ abstract class CommonObject
 		// If generator was found
 		if ($filefound)
 		{
+			global $db;  // Required to solve a conception default in commonstickergenerator.class.php making an include of code using $db
+		    
 			require_once $file;
 
 			$obj = new $classname($this->db);
@@ -3911,7 +3914,15 @@ abstract class CommonObject
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output=$outputlangs->charset_output;
-			if ($obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
+			
+			if (in_array(get_class($this), array('Adherent'))) 
+			{
+			    $arrayofrecords = array();
+			    $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1);
+			}
+			else $resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref);
+			
+			if ($resultwritefile > 0)
 			{
 				$outputlangs->charset_output=$sav_charset_output;
 
