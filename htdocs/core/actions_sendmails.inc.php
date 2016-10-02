@@ -103,11 +103,10 @@ if (GETPOST('removAll'))
 if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_POST['removAll'] && ! $_POST['removedfile'] && ! $_POST['cancel'] && !$_POST['modelselected'])
 {
 	$trackid = GETPOST('trackid','aZ09');
-
+	$subject='';$actionmsg='';$actionmsg2='';
+	
     if (! empty($conf->dolimail->enabled)) $langs->load("dolimail@dolimail");
 	$langs->load('mails');
-
-	$subject='';$actionmsg='';$actionmsg2='';
 
 	if (is_object($object))
 	{
@@ -323,6 +322,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$object->actiontypecode	= $actiontypecode;
 					$object->actionmsg		= $actionmsg;  // Long text
 					$object->actionmsg2		= $actionmsg2; // Short text
+					$object->trackid        = $trackid;
 					$object->fk_element		= $object->id;
 					$object->elementtype	= $object->element;
 
