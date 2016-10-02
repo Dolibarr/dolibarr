@@ -363,7 +363,7 @@ if ($mode != 'marketplace')
         //print '</div>';
     }    
     
-    print '<br><br><br>';
+    print '<br><br><br><br>';
     
     
     // Show list of modules
