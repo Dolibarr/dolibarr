@@ -37,6 +37,8 @@ class CompanyBankAccount extends Account
 
     var $default_rib;
     var $frstrecur;
+    var $rum;
+    var $date_rum;
 
     var $datec;
     var $datem;
@@ -332,7 +334,10 @@ class CompanyBankAccount extends Account
         $this->country_id      = 1;
         
         $this->rum             = 'UMR-CU1212-0007-5-1475405262';
-        $this->frstrecur       = 'FRST';        
+        $this->date_rum        =dol_now() - 10000;
+        $this->frstrecur       = 'FRST';
+        
+        $this->socid = 0;
     }
     
 }

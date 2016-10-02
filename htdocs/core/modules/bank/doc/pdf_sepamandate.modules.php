@@ -94,7 +94,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	function write_file($object,$outputlangs)
 	{
-		global $conf, $hookmanager, $langs, $user;
+		global $conf, $hookmanager, $langs, $user, $mysoc;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -208,92 +208,139 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				//var_dump($object);exit;
-				$pdf->SetXY($this->marge_gauche, $curY);
-				$pdf->MultiCell(200, 3, $outputlangs->trans("RUMLong").' ('.$outputlangs->trans("RUM").')'.' : '.$object->rum, 0, 'L');
+				$posY = $curY;
 				
-				// Boucle sur les lignes
-				/*
-				for ($i = 0 ; $i < $nblignes ; $i++)
+				$pdf->SetFont('','', $default_font_size);
+				
+				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
+				$posY+=2;
+				
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("RUMLong").' ('.$outputlangs->trans("RUM").')'.' : '.$object->rum, 0, 'L');
+				
+				$posY=$pdf->GetY();
+				$posY+=2;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$ics='';
+				if (! empty($conf->global->PRELEVEMENT_ICS)) $ics=$conf->global->PRELEVEMENT_ICS;
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorIdentifier").' ('.$outputlangs->trans("ICS").')'.' : '.$ics, 0, 'L');
+				
+				$posY=$pdf->GetY();
+				$posY+=1;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("CreditorName").' : '.$mysoc->name, 0, 'L');
+				
+				$posY=$pdf->GetY();
+				$posY+=1;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("Address").' : ', 0, 'L');
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $mysoc->getFullAddress(), 0, 'L');
+				
+				$posY=$pdf->GetY();
+				$posY+=3;
+				
+				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
+				
+				$pdf->SetFont('','', $default_font_size - 1);
+				
+				$posY+=8;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 8, $outputlangs->trans("SEPALegalText", $mysoc->name, $mysoc->name), 0, 'L');
+				
+				// Your data form
+				$posY=$pdf->GetY();
+				$posY+=8;
+				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
+				$posY+=2;
+				
+				$pdf->SetFont('','', $default_font_size);
+				
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFillForm"), 0, 'C');
+				
+				$thirdparty=new Societe($this->db);
+				if ($object->socid > 0) $thirdparty->fetch($object->socid);
+
+				$sepaname = '______________________________________________';
+				if ($thirdparty->id > 0)
 				{
-					$curY = $nexY;
-
-					// Description of ligne
-					$ref=$object->lines[$i]->ref;
-					$libelleline=$object->lines[$i]->label;
-					$progress=$object->lines[$i]->progress.'%';
-					$datestart=dol_print_date($object->lines[$i]->date_start,'day');
-					$dateend=dol_print_date($object->lines[$i]->date_end,'day');
-					$planned_workload=convertSecondToTime($object->lines[$i]->planned_workload,'allhourmin');
-
-					$pdf->SetFont('','', $default_font_size - 1);   // Dans boucle pour gerer multi-page
-
-					$pdf->SetXY($this->posxref, $curY);
-					$pdf->MultiCell($this->posxlabel-$this->posxref, 3, $outputlangs->convToOutputCharset($ref), 0, 'L');
-					$pdf->SetXY($this->posxlabel, $curY);
-					$pdf->MultiCell($this->posxworkload-$this->posxlabel, 3, $outputlangs->convToOutputCharset($libelleline), 0, 'L');
-					$pdf->SetXY($this->posxworkload, $curY);
-					$pdf->MultiCell($this->posxprogress-$this->posxworkload, 3, $planned_workload, 0, 'R');
-					$pdf->SetXY($this->posxprogress, $curY);
-					$pdf->MultiCell($this->posxdatestart-$this->posxprogress, 3, $progress, 0, 'R');
-
-					$pdf->SetXY($this->posxdatestart, $curY);
-					$pdf->MultiCell($this->posxdateend-$this->posxdatestart, 3, $datestart, 0, 'C');
-					$pdf->SetXY($this->posxdateend, $curY);
-					$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxdateend, 3, $dateend, 0, 'C');
-
-					$pageposafter=$pdf->getPage();
-
-					$pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
-					$nexY = $pdf->GetY();
-
-					// Add line
-					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
-					{
-						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
-						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
-						$pdf->SetLineStyle(array('dash'=>0));
-					}
-
-					$nexY+=2;    // Passe espace entre les lignes
-
-					// Detect if some page were added automatically and output _tableau for past pages
-					while ($pagenb < $pageposafter)
-					{
-						$pdf->setPage($pagenb);
-						if ($pagenb == 1)
-						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
-						}
-						else
-						{
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
-						}
-						$this->_pagefoot($pdf,$object,$outputlangs,1);
-						$pagenb++;
-						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
-					}
-					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
-					{
-						if ($pagenb == 1)
-						{
-							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
-						}
-						else
-						{
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
-						}
-						$this->_pagefoot($pdf,$object,$outputlangs,1);
-						// New page
-						$pdf->AddPage();
-						if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-						$pagenb++;
-					}
+				    $sepaname = $thirdparty->name.' ('.$object->account_owner.')';
 				}
-                */
+				$posY=$pdf->GetY();
+				$posY+=3;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFormYourName").' * : ', 0, 'L');
+				$pdf->SetXY(80, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepaname, 0, 'L');
+				
+			    $address = '______________________________________________';
+				if ($thirdparty->id > 0)
+				{
+				    $address = $thirdparty->getFullAddress();
+				}
+				$posY=$pdf->GetY();
+				$posY+=1;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("Address").' : ', 0, 'L');
+				$pdf->SetXY(80, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $address, 0, 'L');
+				if (preg_match('/_____/', $address))
+				{
+    				$posY+=6;
+    				$pdf->SetXY(80, $posY);
+    				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $address, 0, 'L');
+				}
+				
+				$ban = '__________________________________________________';
+				if (! empty($object->iban)) $ban = $object->iban;
+				$posY=$pdf->GetY();
+				$posY+=1;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFormYourBAN").' * : ', 0, 'L');
+				$pdf->SetXY(80, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $ban, 0, 'L');
+				
+				$bic = '__________________________________________________';
+				if (! empty($object->bic)) $bic = $object->bic;
+				$posY=$pdf->GetY();
+				$posY+=1;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $outputlangs->transnoentitiesnoconv("SEPAFormYourBIC").' * : ', 0, 'L');
+				$pdf->SetXY(80, $posY);
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $bic, 0, 'L');
+				
+				
+				$posY=$pdf->GetY();
+				$posY+=1;
+				$pdf->SetXY($this->marge_gauche, $posY);
+				$txt = $outputlangs->transnoentitiesnoconv("SEPAFrstOrRecur").' * : ';
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
+				$pdf->Rect(80, $posY, 5, 5);
+				$pdf->SetXY(80, $posY);
+				if ($object->frstrecur == 'FRST') $pdf->MultiCell(5, 3, 'X', 0, 'L');
+				$pdf->SetXY(86, $posY);
+				$txt = $langs->trans("ModeRECUR").'  '.$langs->trans("or");
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
+				$posY+=6;
+				$pdf->Rect(80, $posY, 5, 5);
+				$pdf->SetXY(80, $posY);
+				if ($object->frstrecur == 'RECUR') $pdf->MultiCell(5, 3, 'X', 0, 'L');
+				$pdf->SetXY(86, $posY);
+				$txt = $langs->trans("ModeFRST");
+				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
+				if (empty($object->frstrecur))
+				{
+    				$posY+=6;
+    				$pdf->SetXY(80, $posY);
+				    $txt = '('.$langs->trans("PleaseCheckOne").')';
+    				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $txt, 0, 'L');
+				}
+				
+				$posY=$pdf->GetY();
+				$posY+=3;
+				$pdf->line($this->marge_gauche, $posY, $this->page_largeur - $this->marge_droite, $posY);
+				$posY+=3;
+				
 				
 				// Show square
 				if ($pagenb == 1)
@@ -307,6 +354,15 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 					$bottomlasttab=$this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
 
+				var_dump($tab_top);
+				var_dump($heightforinfotot);
+				var_dump($heightforfreetext);
+				var_dump($heightforfooter);
+				var_dump($bottomlasttab);
+				
+				// Affiche zone infos
+				$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				
 				/*
 				 * Pied de page
 				 */
@@ -365,6 +421,82 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
 	}
 
+	
+	/**
+	 *   Show miscellaneous information (payment mode, payment term, ...)
+	 *
+	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		Object		$object			Object to show
+	 *   @param		int			$posy			Y
+	 *   @param		Translate	$outputlangs	Langs object
+	 *   @return	void
+	 */
+	function _tableau_info(&$pdf, $object, $posy, $outputlangs)
+	{
+	    global $conf, $mysoc;
+	
+	    $default_font_size = pdf_getPDFFontSize($outputlangs);
+	
+	    $diffsizetitle=(empty($conf->global->PDF_DIFFSIZE_TITLE)?1:$conf->global->PDF_DIFFSIZE_TITLE);
+
+	    $posy+=$this->_signature_area($pdf, $object, $posy, $outputlangs);
+   
+	    $pdf->SetXY($this->marge_gauche, $posy);
+	    $pdf->SetFont('','', $default_font_size);
+	    $pdf->MultiCell(100, 3, $outputlangs->trans("PleaseReturnMandate").':', 0, 'L', 0);
+	    $posy=$pdf->GetY()+2;
+	     
+	    $pdf->SetXY($this->marge_gauche, $posy);
+	    $pdf->SetFont('','', $default_font_size - $diffsizetitle);
+	    $pdf->MultiCell(100, 6, $mysoc->name, 0, 'L', 0);
+		$pdf->MultiCell(100, 6, $outputlangs->convToOutputCharset($mysoc->getFullAddress()), 0, 'L', 0);
+		$posy=$pdf->GetY()+2;
+		
+	    return $posy;
+	}
+	
+	
+	
+	/**
+	 *	Show area for the customer to sign
+	 *
+	 *	@param	PDF			$pdf            Object PDF
+	 *	@param  Facture		$object         Object invoice
+	 *	@param	int			$posy			Position depart
+	 *	@param	Translate	$outputlangs	Objet langs
+	 *	@return int							Position pour suite
+	 */
+	function _signature_area(&$pdf, $object, $posy, $outputlangs)
+	{
+	    $default_font_size = pdf_getPDFFontSize($outputlangs);
+	    $tab_top = $posy + 4;
+	    $tab_hl = 4;
+	
+	    $posx = $this->marge_gauche;
+	    $pdf->SetXY($posx, $tab_top + 0);
+	    
+	    $pdf->SetFont('','', $default_font_size - 2);
+	    
+	    $pdf->MultiCell(100, 3, $outputlangs->trans("DateOfSignature"), 0, 'L', 0);
+	    $pdf->MultiCell(100, 3, ' ');
+	    $pdf->MultiCell(100, 3, '______________________', 0, 'L', 0);
+	    
+	    $posx = 120;
+	    $largcol = ($this->page_largeur - $this->marge_droite - $posx);
+	    $useborder=0;
+	    $index = 0;
+	    // Total HT
+	    $pdf->SetFillColor(255,255,255);
+	    $pdf->SetXY($posx, $tab_top + 0);
+	    $pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentities("Signature"), 0, 'L', 1);
+	
+	    $pdf->SetXY($posx, $tab_top + $tab_hl);
+	    $pdf->MultiCell($largcol, $tab_hl*3, '', 1, 'R');
+	
+	    return ($tab_hl*7);
+	}
+	
+	
 	/**
 	 *  Show top header of page.
 	 *
@@ -418,7 +550,12 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$posy+=6;
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . dol_print_date(dol_now(),'day',false,$outputlangs,true), '', 'R');
+		$daterum = '__________________';
+		if (! empty($object->date_rum))
+		{
+            $daterum = dol_print_date($object->date_rum,'day',false,$outputlangs,true);
+		}
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : " . $daterum, '', 'R');
 		/*$posy+=6;
 		$pdf->SetXY($posx,$posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');
@@ -465,7 +602,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf,$outputlangs,'PAYMENTORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		return pdf_pagefoot($pdf,$outputlangs,'PAYMENTORDER_FREE_TEXT',null,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }
