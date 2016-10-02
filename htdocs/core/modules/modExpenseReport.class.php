@@ -218,7 +218,6 @@ class modExpenseReport extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON ed.fk_projet = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE ed.fk_expensereport = d.rowid AND d.fk_user_author = u.rowid';
 		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('expensereport',1).')';
-
 	}
 
 	/**
@@ -237,7 +236,7 @@ class modExpenseReport extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND entity = ".$conf->entity,
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='expensereport' AND entity = ".$conf->entity,
 				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','expensereport',".$conf->entity.")"
 		);
 

@@ -318,9 +318,9 @@ class modExpedition extends DolibarrModules
 		$sql = array();
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'shipping' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','shipping',".$conf->entity.")",
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[3][2]."' AND entity = ".$conf->entity,
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[3][2]."' AND type = 'delivery' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[3][2]."','delivery',".$conf->entity.")",
 		);
 

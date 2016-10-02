@@ -194,7 +194,7 @@ class modFicheinter extends DolibarrModules
         $this->remove($options);
 
         $sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'ficheinter' AND entity = ".$conf->entity,
 			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','ficheinter',".$conf->entity.")",
         );
 
