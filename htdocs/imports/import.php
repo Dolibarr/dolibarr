@@ -1818,7 +1818,9 @@ if ($step == 6 && $datatoimport)
 	// Show result
 	print '<br>';
 	print '<div class="center">';
-	print $langs->trans("NbOfLinesImported",$nbok).'</b><br><br>';
+	print $langs->trans("NbOfLinesImported",$nbok).'</b><br>';
+	print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
+	print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
 	print $langs->trans("FileWasImported",$importid).'<br>';
 	print $langs->trans("YouCanUseImportIdToFindRecord",$importid).'<br>';
 	print '</div>';
