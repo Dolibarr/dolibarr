@@ -237,14 +237,14 @@ class pdf_standard extends CommonStickerGenerator
 	/**
 	 *	Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	Adherent	$arrayofrecords		New: Member object, Old: Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
+	 *	@param	Adherent	$object		        Member object. Old usage: Array of record informations (array('textleft'=>,'textheader'=>, ...'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file. Example: '5161', 'AVERYC32010', 'CARD', ...
 	 *	@param	string		$mode				Tell if doc module is called for 'member', ...
 	 *  @param  int         $nooutput           1=Generate only file on disk and do not return it on response
 	 *	@return	int								1=OK, 0=KO
 	 */
-	function write_file($object, $outputlangs, $srctemplatepath, $mode='member', $noouput=0)
+	function write_file($object, $outputlangs, $srctemplatepath, $mode='member', $nooutput=0)
 	{
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 	
@@ -419,7 +419,7 @@ class pdf_standard extends CommonStickerGenerator
 
 
 		// Output to http stream
-		if (empty($noouput))
+		if (empty($nooutput))
 		{
     		clearstatcache();
     
