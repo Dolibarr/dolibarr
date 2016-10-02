@@ -1461,7 +1461,11 @@ if ($step == 5 && $datatoimport)
         $db->rollback();    // We force rollback because this was just a simulation.
 
         // Show OK
-        if (! count($arrayoferrors) && ! count($arrayofwarnings)) print img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b><br><br>';
+        if (! count($arrayoferrors) && ! count($arrayofwarnings)) {
+        	print img_picto($langs->trans("OK"),'tick').' <b>'.$langs->trans("NoError").'</b><br>';
+			print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
+			print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
+		}
         else print $langs->trans("NbOfLinesOK",$nbok).'</b><br><br>';
 
         // Show Errors
@@ -1768,7 +1772,7 @@ if ($step == 6 && $datatoimport)
 			if ($endatlinenb && ($sourcelinenb > $endatlinenb)) continue;
 
 			// Run import
-			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid);
+			$result=$obj->import_insert($arrayrecord,$array_match_file_to_database,$objimport,count($fieldssource),$importid,$updatekeys);
 			
 			if (count($obj->errors))   $arrayoferrors[$sourcelinenb]=$obj->errors;
 			if (count($obj->warnings))	$arrayofwarnings[$sourcelinenb]=$obj->warnings;

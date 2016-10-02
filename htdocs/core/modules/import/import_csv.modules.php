@@ -54,6 +54,9 @@ class ImportCsv extends ModeleImports
 
 	var $cacheconvert=array();      // Array to cache list of value found after a convertion
 	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
+	
+	var $nbinsert = 0; // # of insert done during the import
+	var $nbupdate = 0; // # of update done during the import
 
 
 	/**
@@ -578,16 +581,17 @@ class ImportCsv extends ModeleImports
 							// Run update request
 							$resql=$this->db->query($sql);
 							if($resql) {
-								echo $sql;
-								echo '<pre>';
-								//print_r($this->db);
-								//print_r($this->db->db);
-								echo '</pre>';
-								echo '<b>'.var_dump($this->db->db->affected_rows).'</b>';
 								if($this->db->db->affected_rows > 0) {
 									$this->nbupdate++;
 									$updatedone = true;
 								}
+							}
+							else
+							{
+								//print 'E';
+								$this->errors[$error]['lib']=$this->db->lasterror();
+								$this->errors[$error]['type']='SQL';
+								$error++;
 							}
 						}
 
@@ -605,7 +609,6 @@ class ImportCsv extends ModeleImports
 								$sqlend.=', '.$user->id;
 							}
 							$sql = $sqlstart.$sqlend.')';
-							echo $sql;
 							dol_syslog("import_csv.modules", LOG_DEBUG);
 	
 							// Run insert request
