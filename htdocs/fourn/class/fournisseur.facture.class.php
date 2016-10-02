@@ -177,6 +177,11 @@ class FactureFournisseur extends CommonInvoice
      */
     const STATUS_ABANDONED = 3;
 
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat';
+	const CLOSECODE_BADCREDIT = 'badsupplier';
+	const CLOSECODE_ABANDONED = 'abandon';
+	const CLOSECODE_REPLACED = 'replaced';
+
     /**
 	 *	Constructor
 	 *
