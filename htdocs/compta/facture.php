@@ -1781,6 +1781,7 @@ if (empty($reshook))
 	$trigger_name='BILL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfrominvoice';
+	$trackid='inv'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 

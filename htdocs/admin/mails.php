@@ -89,6 +89,7 @@ $actiontypecode='';
 $trigger_name='';
 $paramname='id';
 $mode='emailfortest';
+$trackid=(($action == 'testhtml')?"testhtml":"test");
 include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 if ($action == 'presend' && GETPOST('trackid') == 'test')       $action='test';

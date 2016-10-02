@@ -475,6 +475,7 @@ if (empty($reshook))
 	$trigger_name='SUPPLIER_PROPOSAL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromsupplierproposal';
+	$trackid='spr'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 

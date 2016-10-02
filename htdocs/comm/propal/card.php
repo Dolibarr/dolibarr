@@ -26,11 +26,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 /**
  * \file 		htdocs/comm/propal/card.php
  * \ingroup 	propale
  * \brief 		Page of commercial proposals card and list
  */
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
@@ -609,6 +611,7 @@ if (empty($reshook))
 	$trigger_name='PROPAL_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromproposal';
+	$trackid='pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 
