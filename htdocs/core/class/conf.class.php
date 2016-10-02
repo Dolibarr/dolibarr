@@ -386,6 +386,8 @@ class Conf
 		if (empty($this->global->SOCIETE_CODECLIENT_ADDON))       $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
 		if (empty($this->global->SOCIETE_CODECOMPTA_ADDON))       $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 
+		if (empty($this->global->CHEQUERECEIPTS_ADDON))           $this->global->CHEQUERECEIPTS_ADDON='mod_chequereceipt_mint';
+		
         // Security
 		if (empty($this->global->USER_PASSWORD_GENERATED)) $this->global->USER_PASSWORD_GENERATED='standard'; // Default password generator
         if (empty($this->global->MAIN_UMASK)) $this->global->MAIN_UMASK='0664';         // Default mask

@@ -123,7 +123,45 @@ function societe_prepare_head(Societe $object)
 		$h++;
 	}
 
-    // Show more tabs from modules
+	// Related items
+    if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("Referers");
+        $head[$h][2] = 'consumption';
+        $h++;
+    }
+
+    // Bank accounrs
+    if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
+    {
+        $nbBankAccount=0;
+        $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
+        $head[$h][1] = $langs->trans("BankAccounts");
+        $sql = "SELECT COUNT(n.rowid) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
+        $sql.= " WHERE fk_soc = ".$object->id;
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $num = $db->num_rows($resql);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                $nbBankAccount=$obj->nb;
+                $i++;
+            }
+        }
+        else {
+            dol_print_error($db);
+        }
+		if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
+        $head[$h][2] = 'rib';
+        $h++;
+    }
+        
+	// Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
@@ -131,14 +169,6 @@ function societe_prepare_head(Societe $object)
 
     if ($user->societe_id == 0)
     {
-        if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
-        {
-	        $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
-	        $head[$h][1] = $langs->trans("Referers");
-	        $head[$h][2] = 'consumption';
-	        $h++;
-        }
-
         // Notifications
         if (! empty($conf->notification->enabled))
         {
@@ -231,14 +261,6 @@ function societe_prepare_head2($object)
     $head[$h][1] = $langs->trans("Card");
     $head[$h][2] = 'company';
     $h++;
-
-    if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
-    {
-	    $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans("BankAccount");
-	    $head[$h][2] = 'rib';
-	    $h++;
-    }
 
     $head[$h][0] = 'commerciaux.php?socid='.$object->id;
     $head[$h][1] = $langs->trans("SalesRepresentative");
