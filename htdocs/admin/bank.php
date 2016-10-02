@@ -28,7 +28,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 $langs->load("admin");
 $langs->load("companies");
@@ -40,6 +41,9 @@ if (!$user->admin)
   accessforbidden();
 
 $action = GETPOST('action','alpha');
+$value = GETPOST('value','alpha');
+$label = GETPOST('label','alpha');
+$scandir = GETPOST('scandir','alpha');
 $type = 'bankaccount';
 
 
@@ -66,15 +70,22 @@ if ($action == 'specimen')
 {
     $modele=GETPOST('module','alpha');
     
-    $commande = new Commande($db);
-    $commande->initAsSpecimen();
+    if ($modele == 'sepamandate')
+    {
+        $object = new CompanyBankAccount($db);
+    }
+    else
+    {
+        $object = new Account($db);
+    }
+    $object->initAsSpecimen();
     
     // Search template files
     $file=''; $classname=''; $filefound=0;
     $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
     foreach($dirmodels as $reldir)
     {
-        $file=dol_buildpath($reldir."core/modules/paymentorders/doc/pdf_".$modele.".modules.php",0);
+        $file=dol_buildpath($reldir."core/modules/bank/doc/pdf_".$modele.".modules.php",0);
         if (file_exists($file))
         {
             $filefound=1;
@@ -89,9 +100,9 @@ if ($action == 'specimen')
         
         $module = new $classname($db);
         
-        if ($module->write_file($commande,$langs) > 0)
+        if ($module->write_file($object,$langs) > 0)
         {
-            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=paymentorders&file=SPECIMEN.pdf");
+            header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bank&file=SPECIMEN.pdf");
             return;
         }
         else
@@ -107,14 +118,28 @@ if ($action == 'specimen')
     }
 }
 
+// Activate a model
+if ($action == 'set')
+{
+	$ret = addDocumentModel($value, $type, $label, $scandir);
+}
+
+else if ($action == 'del')
+{
+	$ret = delDocumentModel($value, $type);
+	if ($ret > 0)
+	{
+        if ($conf->global->BANKADDON_PDF == "$value") dolibarr_del_const($db, 'BANKADDON_PDF',$conf->entity);
+	}
+}
 // Set default model
 else if ($action == 'setdoc')
 {
-    if (dolibarr_set_const($db, "PAYMENTORDER_ADDON_PDF",$value,'chaine',0,'',$conf->entity))
+    if (dolibarr_set_const($db, "BANKADDON_PDF",$value,'chaine',0,'',$conf->entity))
     {
         // The constant that was read before the new set
         // We therefore requires a variable to have a coherent view
-        $conf->global->PAYMENTORDER_ADDON_PDF = $value;
+        $conf->global->BANKADDON_PDF = $value;
     }
     
     // On active le modele
@@ -213,6 +238,8 @@ print '<br><br>';
 /*
  * Document templates generators
  */
+//if (! empty($conf->global->MAIN_FEATURES_LEVEL))
+//{
 print load_fiche_titre($langs->trans("BankAccountModelModule"), '', '');
 
 // Load array def with activated templates
@@ -303,7 +330,7 @@ foreach ($dirmodels as $reldir)
                                 
                                 // Default
                                 print '<td align="center">';
-                                if ($conf->global->PAYMENTORDER_ADDON_PDF == $name) {
+                                if ($conf->global->BANKADDON_PDF == $name) {
                                     print img_picto($langs->trans("Default"), 'on');
                                 } else {
                                     print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setdoc&value=' . $name . '&amp;scandir=' . $module->scandir . '&amp;label=' . urlencode($module->name) . '" alt="' . $langs->trans("Default") . '">' . img_picto($langs->trans("Disabled"), 'off') . '</a>';
@@ -318,12 +345,12 @@ foreach ($dirmodels as $reldir)
                                 }
                                 $htmltooltip .= '<br><br><u>' . $langs->trans("FeaturesSupported") . ':</u>';
                                 $htmltooltip .= '<br>' . $langs->trans("Logo") . ': ' . yn($module->option_logo, 1, 1);
-                                $htmltooltip .= '<br>' . $langs->trans("PaymentMode") . ': ' . yn($module->option_modereg, 1, 1);
-                                $htmltooltip .= '<br>' . $langs->trans("PaymentConditions") . ': ' . yn($module->option_condreg, 1, 1);
+                                //$htmltooltip .= '<br>' . $langs->trans("PaymentMode") . ': ' . yn($module->option_modereg, 1, 1);
+                                //$htmltooltip .= '<br>' . $langs->trans("PaymentConditions") . ': ' . yn($module->option_condreg, 1, 1);
                                 $htmltooltip .= '<br>' . $langs->trans("MultiLanguage") . ': ' . yn($module->option_multilang, 1, 1);
                                 // $htmltooltip.='<br>'.$langs->trans("Discounts").': '.yn($module->option_escompte,1,1);
                                 // $htmltooltip.='<br>'.$langs->trans("CreditNote").': '.yn($module->option_credit_note,1,1);
-                                $htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
+                                //$htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
                                 
                                 print '<td align="center">';
                                 print $form->textwithpicto('', $htmltooltip, 1, 0);
@@ -347,8 +374,7 @@ foreach ($dirmodels as $reldir)
         }
     }
 }
-
-
+//}
 
 
 dol_fiche_end();

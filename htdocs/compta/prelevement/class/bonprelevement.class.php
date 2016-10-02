@@ -1525,7 +1525,8 @@ class BonPrelevement extends CommonObject
      */
     static function buildRumNumber($row_code_client, $row_datec, $row_drum)
     {
-		$pre = ($row_datec > 1359673200) ? 'RUM-' : '++R';
+        global $langs;
+		$pre = ($row_datec > 1359673200) ? $langs->trans('RUM').'-' : '++R';
 		return $pre.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
     }
 

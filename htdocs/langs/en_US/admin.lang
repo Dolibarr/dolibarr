@@ -1355,7 +1355,7 @@ GenbarcodeLocation=Bar code generation command line tool (used by internal engin
 BarcodeInternalEngine=Internal engine
 BarCodeNumberManager=Manager to auto define barcode numbers
 ##### Prelevements #####
-WithdrawalsSetup=Withdrawal module setup
+WithdrawalsSetup=Setup of module Direct debit payment orders
 ##### ExternalRSS #####
 ExternalRSSSetup=External RSS imports setup
 NewRSS=New RSS Feed

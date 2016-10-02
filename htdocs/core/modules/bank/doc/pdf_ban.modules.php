@@ -17,26 +17,26 @@
  */
 
 /**
- *	\file       htdocs/core/modules/bank/doc/pdf_sepamandate.modules.php
- *	\ingroup    project
- *	\brief      File of class to generate document with template sepamandate
+ *	\file       htdocs/core/modules/bank/doc/pdf_ban.modules.php
+ *	\ingroup    bank
+ *	\brief      File of class to generate document with template ban
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/bank/modules_bank.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Classe permettant de generer les projets au modele Baleine
+ *	Classe permettant de generer les projets au modele Ban
  */
 
-class pdf_sepamandate extends ModeleBankAccountDoc
+class pdf_ban extends ModeleBankAccountDoc
 {
 	var $emetteur;	// Objet societe qui emet
-	var $version = 'dolibarr';
+	var $version = 'development';
 	
 	/**
 	 *	Constructor
@@ -53,9 +53,9 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$langs->load("companies");
 
 		$this->db = $db;
-		$this->name = "sepamandate";
-		$this->description = $langs->trans("DocumentModelSepaMandate");
-
+		$this->name = "ban";
+		$this->description = $langs->trans("DocumentModelBan").' (Volunteer wanted to finish)';
+		
 		// Dimension page pour format A4
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
@@ -163,10 +163,10 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->SetDrawColor(128,128,128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("SepaMandate"));
+				$pdf->SetSubject($outputlangs->transnoentities("BAN"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("SepaMandate"));
+				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("BAN"));
 				if (! empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
@@ -208,9 +208,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
-				//var_dump($object);exit;
 				$pdf->SetXY($this->marge_gauche, $curY);
-				$pdf->MultiCell(200, 3, $outputlangs->trans("RUMLong").' ('.$outputlangs->trans("RUM").')'.' : '.$object->rum, 0, 'L');
+				$pdf->MultiCell(200, 3, $outputlangs->trans("BAN").' : '.$object->account_number, 0, 'L');
 				
 				// Boucle sur les lignes
 				/*
@@ -363,6 +362,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 
         $default_font_size = pdf_getPDFFontSize($outputlangs);
 
+
 	}
 
 	/**
@@ -412,7 +412,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$pdf->SetFont('','B', $default_font_size + 3);
 		$pdf->SetXY($posx,$posy);
 		$pdf->SetTextColor(0,0,60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("SepaMandate"), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("BAN")." ".$outputlangs->convToOutputCharset($object->ref), '', 'R');
 		$pdf->SetFont('','', $default_font_size + 2);
 
 		$posy+=6;
@@ -465,7 +465,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	{
 		global $conf;
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf,$outputlangs,'PAYMENTORDER_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
+		//return pdf_pagefoot($pdf,$outputlangs,'BANK_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 
 }

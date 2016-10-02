@@ -50,6 +50,7 @@ $ribid=GETPOST("ribid","int");
 $action=GETPOST("action");
 
 $account = new CompanyBankAccount($db);
+$prelevement = new BonPrelevement($db);
 
 
 /*
@@ -106,7 +107,12 @@ if ($action == 'update' && ! $_POST["cancel"])
 		$account->proprio         = GETPOST('proprio','alpha');
 		$account->owner_address   = GETPOST('owner_address','alpha');
 		$account->frstrecur       = GETPOST('frstrecur','alpha');
-
+		if (empty($account->rum)) 
+		{
+		    $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
+		    $account->date_rum = dol_now();
+		}
+		
 		$result = $account->update($user);
 		if (! $result)
 		{
@@ -185,7 +191,14 @@ if ($action == 'add' && ! $_POST["cancel"])
 		
 		if (! $error)
 		{
-    	    $result = $account->update($user);	// TODO Use create and include update into create method
+		    if (empty($account->rum))
+		    {
+		        $account->rum = $prelevement->buildRumNumber($object->code_client, $account->datec, $account->id);
+		        $account->date_rum = dol_now();
+		    }
+		    
+		    $result = $account->update($user);	// This will set the UMR number.
+    	    // TODO Use create and include update into create method
     	    if (! $result)
     	    {
     		    setEventMessages($account->error, $account->errors, 'errors');
@@ -246,7 +259,6 @@ if ($action == 'confirm_delete' && $_GET['confirm'] == 'yes')
  */
 
 $form = new Form($db);
-$prelevement = new BonPrelevement($db);
 
 llxHeader();
 
@@ -384,7 +396,7 @@ if ($socid && $action != 'edit' && $action != "create")
         print_liste_field_titre($langs->trans("BIC"));
         if (! empty($conf->prelevement->enabled))
         {
-			print '<td>RUM</td>';
+			print '<td>'.$langs->trans("RUM").'</td>';
 			print '<td>'.$langs->trans("WithdrawMode").'</td>';
         }
         print_liste_field_titre($langs->trans("DefaultRIB"), '', '', '', '', 'align="center"');
@@ -412,7 +424,8 @@ if ($socid && $action != 'edit' && $action != "create")
             if (! empty($conf->prelevement->enabled))
             {
             	// RUM
-				print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
+				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
+                print '<td>'.$rib->rum.'</td>';
 
 				// FRSTRECUR
 				print '<td>'.$rib->frstrecur.'</td>';
