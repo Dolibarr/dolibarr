@@ -520,6 +520,11 @@ if ($mode != 'marketplace')
         {
             $text.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("Core").'<br>';
         }
+        $text.='<br><strong>'.$langs->trans("LastActivationDate").':</strong> ';
+        if (! empty($conf->global->$const_name)) $text.=dol_print_date($objMod->getLastActivationDate(), 'dayhour');
+        else $text.=$langs->trans("Disabled");
+        $text.='<br>';
+        
         $text.='<br><strong>'.$langs->trans("AddRemoveTabs").':</strong> ';
         if (isset($objMod->tabs) && is_array($objMod->tabs) && count($objMod->tabs))
         {
@@ -650,22 +655,23 @@ if ($mode != 'marketplace')
         
         print $form->textwithpicto('', $text, 1, 'help', 'minheight20');
 
-        // Picto warning 
-        $version=$objMod->getVersion(0);
-        $versiontrans=$objMod->getVersion(1);
-        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: right"');
-        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: right"');
-        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: right"');
-        
-        // Picto external
-        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: right"');
-        
-        
         print '</td>';
         
         // Version
         print '<td align="center" valign="top" class="nowrap">';
+        
+        // Picto warning
+        $version=$objMod->getVersion(0);
+        $versiontrans=$objMod->getVersion(1);
+        if (preg_match('/development/i', $version))  print img_warning($langs->trans("Development"), 'style="float: left"');
+        if (preg_match('/experimental/i', $version)) print img_warning($langs->trans("Experimental"), 'style="float: left"');
+        if (preg_match('/deprecated/i', $version))   print img_warning($langs->trans("Deprecated"), 'style="float: left"');
+        
+        // Picto external
+        if ($textexternal) print img_picto($langs->trans("ExternalModule",$dirofmodule), 'external', 'style="float: left"');
+        
         print $versiontrans;
+        
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)

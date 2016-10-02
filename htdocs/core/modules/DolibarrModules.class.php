@@ -709,7 +709,33 @@ class DolibarrModules           // Can not be abstract, because we need to insta
         }
     }
 
-
+    
+    /**
+     * Gives the last date of activation
+     *
+     * @return  timestamp       Date of last activation
+     */
+    function getLastActivationDate()
+    {
+        global $conf;
+        
+        $sql = "SELECT tms FROM ".MAIN_DB_PREFIX."const";
+        $sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->const_name."'";
+        $sql.= " AND entity IN (0, ".$conf->entity.")";
+        
+        dol_syslog(get_class($this)."::getLastActiveDate", LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if (! $resql) $err++;
+        else
+        {
+            $obj=$this->db->fetch_object($resql);
+            if ($obj) return $this->db->jdate($obj->tms);
+        }
+        
+        return '';
+    }
+    
+    
     /**
      * Insert constants for module activation
      *
