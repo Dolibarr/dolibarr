@@ -19,7 +19,7 @@
 
 /**
  * \file 		htdocs/accountancy/admin/card.php
- * \ingroup 	Advanced accountancy
+ * \ingroup     Advanced accountancy
  * \brief 		Card of accounting account
  */
 require '../../main.inc.php';
@@ -43,13 +43,13 @@ $rowid = GETPOST('rowid', 'int');
 $cancel = GETPOST('cancel');
 
 // Security check
-if (! $user->admin)
-	accessforbidden();
+
 
 $object = new AccountingAccount($db);
 
 // Action
-if ($action == 'add') {
+if ($action == 'add' && $user->rights->accounting->chartofaccount)
+{
 	if (! $cancel) {
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
 		
@@ -69,10 +69,10 @@ if ($action == 'add') {
 			$account_number = clean_account(GETPOST('account_number'));
 		}
 
-		if (GETPOST('account_category') <= 0) {
-			$account_parent = '';
+		if (GETPOST('account_parent') <= 0) {
+			$account_parent = 0;
 		} else {
-			$account_parent = GETPOST('account_category','int');
+			$account_parent = GETPOST('account_parent','int');
 		}
 		
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -97,8 +97,8 @@ if ($action == 'add') {
 	}
 	header("Location: account.php");
 	exit;
-} else if ($action == 'edit') {
-	if (! GETPOST('cancel', 'alpha')) {
+} else if ($action == 'edit' && $user->rights->accounting->chartofaccount) {
+	if (! $cancel) {
 		$result = $object->fetch($id);
 		
 		$sql = 'SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS;
@@ -119,10 +119,10 @@ if ($action == 'add') {
 			$account_number = clean_account(GETPOST('account_number'));
 		}
 
-		if (GETPOST('account_category') <= 0) {
-			$account_parent = '';
+		if (GETPOST('account_parent') <= 0) {
+			$account_parent = 0;
 		} else {
-			$account_parent = GETPOST('account_category','int');
+			$account_parent = GETPOST('account_parent','int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
@@ -145,7 +145,7 @@ if ($action == 'add') {
 		header("Location: " . $_SERVER["PHP_SELF"] . "?id=" . $id);
 		exit();
 	}
-} else if ($action == 'delete') {
+} else if ($action == 'delete' && $user->rights->accounting->chartofaccount) {
 	$result = $object->fetch($id);
 	
 	if (! empty($object->id)) {
@@ -165,7 +165,9 @@ if ($action == 'add') {
 /*
  * View
  */
-llxheader('', $langs->trans('AccountAccounting'));
+$title = $langs->trans('AccountAccounting') ." - ". $langs->trans('Card');
+$helpurl = '';
+llxheader('', $title, $helpurl);
 
 $form = new Form($db);
 $htmlacc = new FormVentilation($db);
@@ -184,7 +186,7 @@ if ($action == 'create') {
 	print '<table class="border" width="100%">';
 
 	// Account number
-	print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
+	print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 	print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 
 	// Label
@@ -247,7 +249,7 @@ if ($action == 'create') {
 			print '<table class="border" width="100%">';
 			
 			// Account number
-			print '<tr><td width="25%"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
+			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">' . $langs->trans("AccountNumber") . '</span></td>';
 			print '<td><input name="account_number" size="30" value="' . $object->account_number . '"</td></tr>';
 			
 			// Label
@@ -299,7 +301,7 @@ if ($action == 'create') {
 			print '<table class="border" width="100%">';
 			
 			// Account number
-			print '<tr><td width="25%">' . $langs->trans("AccountNumber") . '</td>';
+			print '<tr><td class="titlefield">' . $langs->trans("AccountNumber") . '</td>';
 			print '<td>' . $object->account_number . '</td>';
 			print '<td align="right" width="25%">' . $linkback . '</td></tr>';
 
@@ -327,14 +329,14 @@ if ($action == 'create') {
 			print '<td colspan="2">' . $object->pcg_subtype . '</td></tr>';
 
 			// Active
-			print '<tr><td>' . $langs->trans("Activated") . '</td>';
+			print '<tr><td>' . $langs->trans("Status") . '</td>';
 			print '<td colspan="2">';
-			
-			if (empty($object->active)) {
+			print $object->getLibStatut(4);
+			/*if (empty($object->active)) {
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 			} else {
 				print img_picto($langs->trans("Activated"), 'switch_on');
-			}
+			}*/
 			
 			print '</td></tr>';
 			
@@ -348,13 +350,13 @@ if ($action == 'create') {
 			
 			print '<div class="tabsAction">';
 			
-			if ($user->admin) {
+			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?action=update&id=' . $id . '">' . $langs->trans('Modify') . '</a>';
 			} else {
 				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Modify') . '</a>';
 			}
 			
-			if ($user->admin) {
+			if (! empty($user->rights->accounting->chartofaccount)) {
 				print '<a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?action=delete&id=' . $id . '">' . $langs->trans('Delete') . '</a>';
 			} else {
 				print '<a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('Delete') . '</a>';

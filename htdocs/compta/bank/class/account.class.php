@@ -1259,8 +1259,6 @@ class Account extends CommonObject
         // For backward compatibility, we try to guess country from other information
         if (! empty($this->iban))
         {
-            if ($mysoc->country_code === 'IN') return $mysoc->country_code;	// Test to know if we can trust IBAN
-
             // If IBAN defined, we can know country of account from it
             if (preg_match("/^([a-zA-Z][a-zA-Z])/i",$this->iban,$reg)) return $reg[1];
         }
@@ -1452,8 +1450,9 @@ class Account extends CommonObject
      */
     function initAsSpecimen()
     {
+        $this->specimen        = 1;
         $this->ref             = 'MBA';
-        $this->label           = 'My Bank account';
+        $this->label           = 'My Big Company Bank account';
         $this->bank            = 'MyBank';
         $this->courant         = Account::TYPE_CURRENT;
         $this->clos            = Account::STATUS_OPEN;
@@ -1463,7 +1462,7 @@ class Account extends CommonObject
         $this->cle_rib         = 50;
         $this->bic             = 'AA12';
         $this->iban            = 'FR999999999';
-        $this->domiciliation   = 'The bank addresse';
+        $this->domiciliation   = 'My bank address';
         $this->proprio         = 'Owner';
         $this->owner_address   = 'Owner address';
         $this->country_id      = 1;

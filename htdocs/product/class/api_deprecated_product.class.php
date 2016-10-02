@@ -94,19 +94,19 @@ class ProductApi extends DolibarrApi
      * 
      * Get a list of products
      * 
-     * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
-     * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+     * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
+     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      *
      * @return array Array of product objects
      *
      * @url	GET /product/list
      */
-    function getList($mode=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getList($sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $to_sell='', $to_buy='') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -149,7 +149,7 @@ class ProductApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);
@@ -174,20 +174,20 @@ class ProductApi extends DolibarrApi
      * 
      * Get a list of products
      * 
-     * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
-     * @param int		$category		Use this param to filter list by category
-     * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
-     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+     * @param int		$mode		Use this param to filter list (0 for all, 1 for only product, 2 for only service)
+     * @param int		$category	Use this param to filter list by category
+     * @param mixed     $to_sell    Filter products to sell (1) or not to sell (0)  
+     * @param mixed     $to_buy     Filter products to buy (1) or not to buy (0)  
      *
      * @return array Array of product objects
      *
      * @url	GET /product/list/category/{category}
      */
-    function getByCategory($mode=0, $category=0, $to_sell='', $to_buy='', $sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0) {
+    function getByCategory($sortfield = "p.ref", $sortorder = 'ASC', $limit = 0, $page = 0, $mode=0, $category=0, $to_sell='', $to_buy='') {
         global $db, $conf;
         
         $obj_ret = array();
@@ -235,7 +235,7 @@ class ProductApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < $num)
+            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
             {
                 $obj = $db->fetch_object($result);
                 $product_static = new Product($db);

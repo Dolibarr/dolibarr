@@ -1311,8 +1311,6 @@ SyslogFilename=Tiedoston nimi ja polku
 YouCanUseDOL_DATA_ROOT=Voit käyttää DOL_DATA_ROOT / dolibarr.log varten lokitiedoston Dolibarr "asiakirjoihin" hakemistoon. Voit valita eri reitin tallentaa tiedoston.
 ErrorUnknownSyslogConstant=Constant %s ei ole tunnettu syslog vakio
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Lahjoitus-moduulin asetukset
 DonationsReceiptModel=Malline lahjoituksen vastaanottamisesta

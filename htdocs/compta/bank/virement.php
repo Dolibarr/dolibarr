@@ -179,8 +179,8 @@ print "</td>\n";
 print "<td>";
 $form->select_date((! empty($dateo)?$dateo:''),'','','','','add');
 print "</td>\n";
-print '<td><input name="label" class="flat" type="text" size="40" value="'.$label.'"></td>';
-print '<td><input name="amount" class="flat" type="text" size="8" value="'.$amount.'"></td>';
+print '<td><input name="label" class="flat quatrevingtpercent" type="text" value="'.$label.'"></td>';
+print '<td><input name="amount" class="flat" type="text" size="6" value="'.$amount.'"></td>';
 
 print "</table>";
 

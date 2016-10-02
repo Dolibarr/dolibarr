@@ -55,7 +55,9 @@ $page=isset($_GET["page"])?$_GET["page"]:0;
  * View
  */
 
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("PlannedTransactions");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $societestatic = new Societe($db);
 $facturestatic=new Facture($db);

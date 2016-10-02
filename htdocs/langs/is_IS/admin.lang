@@ -1311,8 +1311,6 @@ SyslogFilename=Skráarnafn og slóði
 YouCanUseDOL_DATA_ROOT=Þú getur notað DOL_DATA_ROOT / dolibarr.log fyrir annálinn í Dolibarr "skjöl" skrá. Þú getur stillt mismunandi leið til að geyma þessa skrá.
 ErrorUnknownSyslogConstant=Constant %s  er ekki þekktur skrifað fasti
 OnlyWindowsLOG_USER=Windows only supports LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Safnast mát skipulag
 DonationsReceiptModel=Snið af málefnið berst

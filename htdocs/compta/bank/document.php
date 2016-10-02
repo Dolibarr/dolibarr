@@ -139,8 +139,9 @@ else if ($action == 'confirm_deletefile' && $confirm == 'yes') {
 /*
  * View
  */
-
-llxHeader();
+$title = $langs->trans("FinancialAccount").' - '.$langs->trans("Documents");
+$helpurl = "";
+llxHeader('',$title,$helpurl);
 
 $form = new Form($db);
 

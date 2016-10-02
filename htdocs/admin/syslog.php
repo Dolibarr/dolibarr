@@ -27,6 +27,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+global $conf;
+
 if (!$user->admin) accessforbidden();
 
 $langs->load("admin");
@@ -40,34 +42,37 @@ $activeModules = array();
 
 if (defined('SYSLOG_HANDLERS')) $activeModules = json_decode(constant('SYSLOG_HANDLERS'));
 
-$dir = dol_buildpath('/core/modules/syslog/');
+$dirsyslogs = array_merge(array('/core/modules/syslog/'), $conf->modules_parts['syslog']);
+foreach ($dirsyslogs as $reldir) {
+	$dir = dol_buildpath($reldir, 0);
+	$newdir = dol_osencode($dir);
+	if (is_dir($newdir)) {
+		$handle = opendir($newdir);
 
-if (is_dir($dir))
-{
-	$handle = opendir($dir);
+		if (is_resource($handle)) {
+			$var = true;
 
-	if (is_resource($handle))
-	{
-		$var=true;
+			while (($file = readdir($handle)) !== false) {
+				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = substr($file, 0, dol_strlen($file) - 4);
 
-		while (($file = readdir($handle))!==false)
-		{
-			if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file)-3, 3) == 'php')
-			{
-				$file = substr($file, 0, dol_strlen($file)-4);
+					require_once $newdir . $file . '.php';
 
-				require_once $dir.$file.'.php';
+					$module = new $file;
 
-				$module = new $file;
+					// Show modules according to features level
+					if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+						continue;
+					}
+					if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+						continue;
+					}
 
-				// Show modules according to features level
-				if ($module->getVersion() == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-				if ($module->getVersion() == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
-				$syslogModules[] = $file;
+					$syslogModules[] = $file;
+				}
 			}
+			closedir($handle);
 		}
-		closedir($handle);
 	}
 }
 

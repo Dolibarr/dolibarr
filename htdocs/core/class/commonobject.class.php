@@ -433,7 +433,7 @@ abstract class CommonObject
 
 
     /**
-     * 	Return full address of contact
+     * 	Return full address for banner
      *
      * 	@param		string		$htmlkey            HTML id to make banner content unique
      *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
@@ -476,7 +476,7 @@ abstract class CommonObject
 				$out.=img_picto($langs->trans("Address"), 'object_address.png');
 				$out.='</a> ';
 			}
-			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1); $outdone++;
+			$out.=dol_print_address($coords, 'address_'.$htmlkey.'_'.$this->id, $this->element, $this->id, 1, ', '); $outdone++;
 			$outdone++;
 		}
 
@@ -601,13 +601,13 @@ abstract class CommonObject
         $datecreate = dol_now();
 
         $this->db->begin();
-
+        
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
         $sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
         $sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
         $sql.= "'".$this->db->idate($datecreate)."'";
-        $sql.= ", 4, '". $id_type_contact . "' ";
+        $sql.= ", 4, ". $id_type_contact;
         $sql.= ")";
 
         $resql=$this->db->query($sql);
@@ -1215,24 +1215,30 @@ abstract class CommonObject
     }
 
     /**
-     *	Setter generic. Update a specific field into database
+     *	Setter generic. Update a specific field into database.
+     *  Warning: Trigger is run only if param trigkey is provided.
      *
      *	@param	string		$field		Field to update
      *	@param	mixed		$value		New value
      *	@param	string		$table		To force other table element or element line (should not be used)
      *	@param	int			$id			To force other object id (should not be used)
      *	@param	string		$format		Data format ('text', 'date'). 'text' is used if not defined
-     *	@param	string		$id_field	To force rowid field name. 'rowid' is used it not defined
+     *	@param	string		$id_field	To force rowid field name. 'rowid' is used if not defined
      *	@param	User|string	$user		Update last update fields also if user object provided
+     *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
      *	@return	int						<0 if KO, >0 if OK
      */
-    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $user='')
+    function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $user='', $trigkey='')
     {
-        if (empty($table)) 	$table=$this->table_element;
-        if (empty($id))    	$id=$this->id;
-		if (empty($format)) 	$format='text';
-		if (empty($id_field)) 	$id_field='rowid';
+        global $user,$langs,$conf;
+        
+        if (empty($table)) 	  $table=$this->table_element;
+        if (empty($id))    	  $id=$this->id;
+		if (empty($format))   $format='text';
+		if (empty($id_field)) $id_field='rowid';
 
+		$error=0;
+		
         $this->db->begin();
 
         // Special case
@@ -1240,7 +1246,8 @@ abstract class CommonObject
         
         $sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
         if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
-        else if ($format == 'date') $sql.= $field." = '".$this->db->idate($value)."'";
+        else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
+        else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
         if (is_object($user)) $sql.=", fk_user_modif = ".$user->id;
         $sql.= " WHERE ".$id_field." = ".$id;
 
@@ -1248,8 +1255,23 @@ abstract class CommonObject
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            $this->db->commit();
-            return 1;
+            if ($trigkey)
+            {
+                $result=$this->call_trigger($trigkey, $user);   // This may set this->errors
+                if ($result < 0) $error++;
+            }
+
+            if (! $error)
+            {
+                if (property_exists($this, $field)) $this->$field = $value;
+                $this->db->commit();
+                return 1;
+            }
+            else
+            {
+                $this->db->rollback();
+                return -2;
+            }
         }
         else
         {
@@ -1267,7 +1289,7 @@ abstract class CommonObject
      *		@param	int		$nodbprefix	Do not include DB prefix to forge table name
      *      @return int         		<0 if KO, >0 if OK
      */
-    function load_previous_next_ref($filter,$fieldid,$nodbprefix=0)
+    function load_previous_next_ref($filter, $fieldid, $nodbprefix=0)
     {
         global $user;
 
@@ -2584,7 +2606,7 @@ abstract class CommonObject
                         $classfile = 'facture-rec'; $classname = 'FactureRec';
                     }
                     else if ($objecttype == 'subscription')   {
-                        $classfile = 'cotisation'; $classname = 'Cotisation';
+                        $classfile = 'subscription'; $classname = 'Subscription';
                     }
 
                     // Here $module, $classfile and $classname are set
@@ -2758,6 +2780,7 @@ abstract class CommonObject
 
             $trigkey='';
             if ($this->element == 'supplier_proposal' && $status == 2) $trigkey='SUPPLIER_PROPOSAL_CLOSE';
+            if ($this->element == 'fichinter' && $status == 3) $trigkey='FICHINTER_CLASSIFY_DONE';
             if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
             if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
 
@@ -3057,6 +3080,7 @@ abstract class CommonObject
 
 	/**
      *    Return incoterms informations
+     *    TODO Use a cache for label get
      *
      *    @return	string	incoterms info
      */
@@ -3075,7 +3099,7 @@ abstract class CommonObject
 			}
 		}
 
-		$out .= ' - '.$this->location_incoterms;
+		$out .= (($res->code && $this->location_incoterms)?' - ':'').$this->location_incoterms;
 
 		return $out;
     }
@@ -4188,7 +4212,9 @@ abstract class CommonObject
     						$object = new $InfoFieldList[0]($this->db);
     						if ($value)
     						{
-    							$res=$object->fetch(0,$value);
+    							if (is_numeric($value)) $res=$object->fetch($value);
+								else $res=$object->fetch('',$value);
+								
     							if ($res > 0) $this->array_options[$key]=$object->id;
     							else
     							{
@@ -4508,7 +4534,7 @@ abstract class CommonObject
 
 			if (! $db->query($sql))
 			{
-			    if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B. 
+			    if ($ignoreerrors) return true;		// TODO Not enough. If there is A-B on kept thirdarty and B-C on old one, we must get A-B-C after merge. Not A-B.
 				//$this->errors = $db->lasterror();
 			    return false;
 			}

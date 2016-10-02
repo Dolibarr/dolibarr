@@ -181,6 +181,16 @@ class Skeleton_Class extends CommonObject
 				$this->prop2 = $obj->field2;
 				//...
 			}
+			
+			// Retrieve all extrafields for invoice
+			// fetch optionals attributes and labels
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+			$this->fetch_optionals($this->id,$extralabels);
+
+			// $this->fetch_lines();
+			
 			$this->db->free($resql);
 
 			if ($numrows) {
@@ -355,6 +365,8 @@ class Skeleton_Class extends CommonObject
 			}
 		}
 
+		// If you need to delete child tables to, you can insert them here
+		
 		if (!$error) {
 			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' WHERE rowid=' . $this->id;
@@ -427,8 +439,7 @@ class Skeleton_Class extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
-	 * 	Use this->id,this->lastname, this->firstname
+	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 *	@param	string	$option				On what the link point to
@@ -451,7 +462,7 @@ class Skeleton_Class extends CommonObject
         $label.= '<div width="100%">';
         $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/mymodule/card.php?id='.$this->id.'"';
+        $link = '<a href="'.DOL_URL_ROOT.'/mymodule/'.$this->table_name.'_card.php?id='.$this->id.'"';
         $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
         $link.= '>';
 		$linkend='</a>';
@@ -477,13 +488,13 @@ class Skeleton_Class extends CommonObject
 	}
 
 	/**
-	 *  Renvoi le libelle d'un status donne
+	 *  Return the status
 	 *
 	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	static function LibStatut($status,$mode=0)
 	{
 		global $langs;
 

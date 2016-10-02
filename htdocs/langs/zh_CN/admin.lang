@@ -1311,8 +1311,6 @@ SyslogFilename=文件名称和路径
 YouCanUseDOL_DATA_ROOT=您可以使用 DOL_DATA_ROOT/dolibarr.log 来表示“documents”目录下的日志文件。您可以设置不同的路径来保存此文件。
 ErrorUnknownSyslogConstant=常量 %s 不是已知的 Syslog 常数
 OnlyWindowsLOG_USER=Windows 仅支持 LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=捐赠模块设置
 DonationsReceiptModel=捐赠收据模板

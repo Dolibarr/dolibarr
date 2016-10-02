@@ -53,7 +53,8 @@ class Facture extends CommonInvoice
 	public $table_element_line = 'facturedet';
 	public $fk_element = 'fk_facture';
 	protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+	public $picto='bill';
+	
 	/**
 	 * {@inheritdoc}
 	 */
@@ -241,7 +242,8 @@ class Facture extends CommonInvoice
 		if (! $this->cond_reglement_id) $this->cond_reglement_id = 0;
 		if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 		$this->brouillon = 1;
-
+        if (empty($this->entity)) $this->entity = $conf->entity;
+        
 		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
@@ -281,8 +283,9 @@ class Facture extends CommonInvoice
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
 
-			$this->socid 		     = $_facrec->socid;
-
+			$this->socid 		     = $_facrec->socid;  // Invoice created on same thirdparty than template
+			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
+			
 			// Fields coming from GUI (priority on template). TODO Value of template should be used as default value on GUI so we can use here always value from GUI
 			$this->fk_project        = GETPOST('projectid','int') > 0 ? GETPOST('projectid','int') : $_facrec->fk_project;
 			$this->note_public       = GETPOST('note_public') ? GETPOST('note_public') : $_facrec->note_public;
@@ -311,13 +314,15 @@ class Facture extends CommonInvoice
 
 			$forceduedate = $this->calculate_date_lim_reglement();
 
-			// For recurrn invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
+			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0)
 			{
+			    dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
+			    if (empty($_facrec->date_when)) $_facrec->date_when = $now;
                 $next_date = $_facrec->getNextDate();   // Calculate next date
-                $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date');
+                $result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
                 //$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
-                $_facrec->setNextDate($next_date,1);
+                $result = $_facrec->setNextDate($next_date,1);
 			}
 		}
 
@@ -352,7 +357,7 @@ class Facture extends CommonInvoice
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
-		$sql.= ", ".$conf->entity;
+		$sql.= ", ".$this->entity;
 		$sql.= ", ".($this->ref_ext?"'".$this->db->escape($this->ref_ext)."'":"null");
 		$sql.= ", '".$this->db->escape($this->type)."'";
 		$sql.= ", '".$socid."'";
@@ -415,7 +420,7 @@ class Facture extends CommonInvoice
     					if ($originforcontact == 'shipping')     // shipment and order share the same contacts. If creating from shipment we take data of order
     					{
     					    require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-    					    $exp = new Expedition($db);
+    					    $exp = new Expedition($this->db);
     					    $exp->fetch($origin_id);
     					    $exp->fetchObjectLinked();
     					    if (count($exp->linkedObjectsIds['commande']) > 0) 
@@ -1506,11 +1511,13 @@ class Facture extends CommonInvoice
 	 *	Set customer ref
 	 *
 	 *	@param     	string	$ref_client		Customer ref
-	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
 	function set_ref_client($ref_client, $notrigger=0)
 	{
+	    global $user;
+	    
 		$error=0;
 
 		$this->db->begin();
@@ -1738,7 +1745,7 @@ class Facture extends CommonInvoice
 	 *	@param  string	$close_note	Commentaire renseigne si on classe a payee alors que paiement incomplet (cas escompte par exemple)
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
-	function set_paid($user,$close_code='',$close_note='')
+	function set_paid($user, $close_code='', $close_note='')
 	{
 		$error=0;
 
@@ -1903,7 +1910,7 @@ class Facture extends CommonInvoice
 	 * @param	User	$user           Object user that validate
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
-	 * @param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      * @return	int						<0 if KO, >0 if OK
 	 */
 	function validate($user, $force_number='', $idwarehouse=0, $notrigger=0)
@@ -2815,7 +2822,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param     	User	$user		User that set discount
 	 *	@param     	double	$remise		Discount
-	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 		<0 if ko, >0 if ok
 	 */
 	function set_remise($user, $remise, $notrigger=0)
@@ -2879,7 +2886,7 @@ class Facture extends CommonInvoice
 	 *
 	 *	@param     	User	$user 		User that set discount
 	 *	@param     	double	$remise		Discount
-	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
 	function set_remise_absolue($user, $remise, $notrigger=0)
@@ -3934,7 +3941,7 @@ class Facture extends CommonInvoice
 	 * Sets the invoice as a final situation
 	 *
 	 *  @param  	User	$user    	Object user
-	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+	 *  @param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int 				<0 if KO, >0 if OK
 	 */
 	function setFinal(User $user, $notrigger=0)

@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016       Josep Lluis Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,7 +160,8 @@ $arrayfields=array(
     's.idprof4'=>array('label'=>$langs->trans("ProfId4Short"), 'checked'=>$checkedprofid4),
     's.idprof5'=>array('label'=>$langs->trans("ProfId5Short"), 'checked'=>$checkedprofid5),
     's.idprof6'=>array('label'=>$langs->trans("ProfId6Short"), 'checked'=>$checkedprofid6),
-	's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
+    'customerorsupplier'=>array('label'=>'Nature', 'checked'=>1),
+    's.fk_prospectlevel'=>array('label'=>$langs->trans("ProspectLevelShort"), 'checked'=>$checkprospectlevel),
 	's.fk_stcomm'=>array('label'=>$langs->trans("StatusProsp"), 'checked'=>$checkstcomm),
     's.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
     's.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
@@ -452,6 +454,7 @@ llxHeader('',$langs->trans("ThirdParty"),$help_url);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($search_all != '') $param = "&amp;sall=".urlencode($search_all);
 if ($sall != '') $param .= "&amp;sall=".urlencode($sall);
 if ($search_categ > 0) $param.='&amp;search_categ='.urlencode($search_categ);
 if ($search_sale > 0)	$param.='&amp;search_sale='.urlencode($search_sale);
@@ -534,6 +537,17 @@ if ($type == 'c' || $type == 'p')
 	 	$moreforfilter.='</div>';
 	}
 }
+if ($type == 'f')
+{
+    if (! empty($conf->categorie->enabled))
+    {
+        require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+        $moreforfilter.='<div class="divsearchfield">';
+        $moreforfilter.=$langs->trans('Categories'). ': ';
+        $moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
+        $moreforfilter.='</div>';
+    }
+}
 
 // If the user can view prospects other than his'
 if ($user->rights->societe->client->voir || $socid)
@@ -542,17 +556,6 @@ if ($user->rights->societe->client->voir || $socid)
  	$moreforfilter.=$langs->trans('SalesRepresentatives'). ': ';
 	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user, 0, 1, 'maxwidth300');
 	$moreforfilter.='</div>';
-}
-if ($type == 'f')
-{
-	if (! empty($conf->categorie->enabled))
-	{
-		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('Categories'). ': ';
-		$moreforfilter.=$formother->select_categories('supplier',$search_categ,'search_categ',1);
-		$moreforfilter.='</div>';
-	}
 }
 if (! empty($moreforfilter))
 {
@@ -566,6 +569,8 @@ if (! empty($moreforfilter))
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+
+if (empty($arrayfields['customerorsupplier']['checked'])) print '<input type="hidden" name="type" value="'.$type.'">';
 
 print '<table class="liste'.($moreforfilter?" listwithfilterbefore":"").'">';
 
@@ -587,7 +592,7 @@ if (! empty($arrayfields['s.ape']['checked']))            print_liste_field_titr
 if (! empty($arrayfields['s.idprof4']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId4Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof4","",$param,'class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.idprof5']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId5Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof5","",$param,'class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.idprof6']['checked']))        print_liste_field_titre($form->textwithpicto($langs->trans("ProfId6Short"),$textprofid[4],1,0),$_SERVER["PHP_SELF"],"s.idprof6","",$param,'class="nowrap"',$sortfield,$sortorder);
-print_liste_field_titre('');   // type of customer
+if (! empty($arrayfields['customerorsupplier']['checked'])) print_liste_field_titre('');   // type of customer
 if (! empty($arrayfields['s.fk_prospectlevel']['checked'])) print_liste_field_titre($arrayfields['s.fk_prospectlevel']['label'],$_SERVER["PHP_SELF"],"s.fk_prospectlevel","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.fk_stcomm']['checked']))      print_liste_field_titre($arrayfields['s.fk_stcomm']['label'],$_SERVER["PHP_SELF"],"s.fk_stcomm","",$param,'align="center"',$sortfield,$sortorder);
 // Extra fields
@@ -735,17 +740,19 @@ if (! empty($arrayfields['s.idprof6']['checked']))
 }
 
 // Type (customer/prospect/supplier)
-print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
-if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
-print '<select class="flat" name="search_type">';
-print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
-if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
-if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-//if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($search_type=='3'?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
-print '<option value="4"'.($search_type=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
-print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
-print '</select></td>';
-
+if (! empty($arrayfields['customerorsupplier']['checked']))
+{
+    print '<td class="liste_titre maxwidthonsmartphone" align="middle">';
+    if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
+    print '<select class="flat" name="search_type">';
+    print '<option value="-1"'.($search_type==''?' selected':'').'>&nbsp;</option>';
+    if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print '<option value="1,3"'.($search_type=='1,3'?' selected':'').'>'.$langs->trans('Customer').'</option>';
+    if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="2,3"'.($search_type=='2,3'?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+    //if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) print '<option value="3"'.($search_type=='3'?' selected':'').'>'.$langs->trans('ProspectCustomer').'</option>';
+    print '<option value="4"'.($search_type=='4'?' selected':'').'>'.$langs->trans('Supplier').'</option>';
+    print '<option value="0"'.($search_type=='0'?' selected':'').'>'.$langs->trans('Others').'</option>';
+    print '</select></td>';
+}
 if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
 {
     // Prospect level
@@ -946,30 +953,33 @@ while ($i < min($num, $limit))
         print "<td>".$obj->idprof6."</td>\n";
     }
     // Type
-    print '<td align="center">';
-	$s='';
-	if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
-	{
-  		$companystatic->name=$langs->trans("Customer");
-  		$companystatic->name_alias='';
-	    $s.=$companystatic->getNomUrl(0,'customer');
-	}
-	if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
-	{
-        if ($s) $s.=" / ";
-	    $companystatic->name=$langs->trans("Prospect");
-  		$companystatic->name_alias='';
-	    $s.=$companystatic->getNomUrl(0,'prospect');
-	}
-	if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
-	{
-		if ($s) $s.=" / ";
-        $companystatic->name=$langs->trans("Supplier");
-  		$companystatic->name_alias='';
-        $s.=$companystatic->getNomUrl(0,'supplier');
-	}
-	print $s;
-	print '</td>';
+    if (! empty($arrayfields['customerorsupplier']['checked']))
+    {
+        print '<td align="center">';
+    	$s='';
+    	if (($obj->client==1 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
+    	{
+      		$companystatic->name=$langs->trans("Customer");
+      		$companystatic->name_alias='';
+    	    $s.=$companystatic->getNomUrl(0,'customer');
+    	}
+    	if (($obj->client==2 || $obj->client==3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+    	{
+            if ($s) $s.=" / ";
+    	    $companystatic->name=$langs->trans("Prospect");
+      		$companystatic->name_alias='';
+    	    $s.=$companystatic->getNomUrl(0,'prospect');
+    	}
+    	if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
+    	{
+    		if ($s) $s.=" / ";
+            $companystatic->name=$langs->trans("Supplier");
+      		$companystatic->name_alias='';
+            $s.=$companystatic->getNomUrl(0,'supplier');
+    	}
+    	print $s;
+    	print '</td>';
+    }
     if (! empty($arrayfields['s.fk_prospectlevel']['checked']))
     {
 		// Prospect level

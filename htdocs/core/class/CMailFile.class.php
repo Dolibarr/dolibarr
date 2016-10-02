@@ -1105,12 +1105,12 @@ class CMailFile
 		$_retVal = true;	// Indicates if Object was created or not
 		$server_response = '';
 
-		while ( substr($server_response,3,1) != ' ' )
+		while (substr($server_response,3,1) != ' ')
 		{
-			if( !( $server_response = fgets($socket, 256) ) )
+			if (! ($server_response = fgets($socket, 256)) )
 			{
 				$this->error="Couldn't get mail server response codes";
-				$_retVal = false;
+				return false;
 			}
 		}
 

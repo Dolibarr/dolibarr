@@ -155,14 +155,15 @@ class Translate
 	 *  @param	integer	$alt         		0 (try xx_ZZ then 1), 1 (try xx_XX then 2), 2 (try en_US)
 	 * 	@param	int		$stopafterdirection	Stop when the DIRECTION tag is found (optimize speed)
 	 * 	@param	int		$forcelangdir		To force a different lang directory
+	 *  @param  int     $loadfromfileonly   1=Do not load overwritten translation from file or old conf.
 	 *	@return	int							<0 if KO, 0 if already loaded or loading not required, >0 if OK
 	 */
-	function load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='')
+	function load($domain,$alt=0,$stopafterdirection=0,$forcelangdir='',$loadfromfileonly=0)
 	{
 		global $conf,$db;
 
 		// Load $this->tab_translate[] from database
-		if (count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
+		if (empty($loadfromfileonly) && count($this->tab_translate) == 0) $this->loadFromDatabase($db);      // Nothing was loaded yet, so we load database.
 
 		// Check parameters
 		if (empty($domain))
@@ -336,19 +337,20 @@ class Translate
 
 		// This part is deprecated and replaced with table llx_overwrite_trans
 		// Kept for backward compatibility.
-		$overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
-        if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
-        {
-    		// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
-            $tmparray=explode(',', $conf->global->$overwritekey);
-            foreach($tmparray as $tmp)
+		if (empty($loadfromfileonly))
+		{
+    		$overwritekey='MAIN_OVERWRITE_TRANS_'.$this->defaultlang;
+            if (! empty($conf->global->$overwritekey))    // Overwrite translation with key1:newstring1,key2:newstring2
             {
-                $tmparray2=explode(':',$tmp);
-                if (! empty($tmparray2[1])) $this->tab_translate[$tmparray2[0]]=$tmparray2[1];
+        		// Overwrite translation with param MAIN_OVERWRITE_TRANS_xx_XX
+                $tmparray=explode(',', $conf->global->$overwritekey);
+                foreach($tmparray as $tmp)
+                {
+                    $tmparray2=explode(':',$tmp);
+                    if (! empty($tmparray2[1])) $this->tab_translate[$tmparray2[0]]=$tmparray2[1];
+                }
             }
-        }
-		
-        
+		}		
         
         // Check to be sure that SeparatorDecimal differs from SeparatorThousand
 		if (! empty($this->tab_translate["SeparatorDecimal"]) && ! empty($this->tab_translate["SeparatorThousand"])

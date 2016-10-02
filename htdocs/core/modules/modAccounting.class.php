@@ -207,6 +207,11 @@ class modAccounting extends DolibarrModules
 				"chaine",
 				"csv"
 		);
+		$this->const[24] = array(
+				"BANK_DISABLE_DIRECT_INPUT",
+				"yesno",
+				"1"
+		);
 
 		// Tabs
 		$this->tabs = array();
@@ -279,8 +284,10 @@ class modAccounting extends DolibarrModules
 		$this->rights[$r][5] = '';
 		$r++;
 
-		// Main menu entries
-		$this->menus = array();
-		$r = 0;
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+
 	}
 }

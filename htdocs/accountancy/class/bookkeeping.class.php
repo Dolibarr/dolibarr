@@ -55,11 +55,16 @@ class BookKeeping extends CommonObject
 	 */
 	public $table_element = 'accounting_bookkeeping';  
 	
+	
+	public $entity = 1;
+	
+	
 	/**
 	 *
 	 * @var BookKeepingLine[] Lines
 	 */
 	public $lines = array ();
+	
 	
 	/**
 	 *
@@ -95,7 +100,6 @@ class BookKeeping extends CommonObject
 	 */
 	public function __construct(DoliDB $db) {
 		$this->db = $db;
-		return 1;
 	}
 	
 	/**
@@ -213,7 +217,6 @@ class BookKeeping extends CommonObject
 				}
 				
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
-				
 				$sql .= "doc_date";
 				$sql .= ", doc_type";
 				$sql .= ", doc_ref";
@@ -230,9 +233,8 @@ class BookKeeping extends CommonObject
 				$sql .= ", import_key";
 				$sql .= ", code_journal";
 				$sql .= ", piece_num";
-				
+				$sql .= ', entity';				
 				$sql .= ") VALUES (";
-				
 				$sql .= "'" . $this->doc_date . "'";
 				$sql .= ",'" . $this->doc_type . "'";
 				$sql .= ",'" . $this->doc_ref . "'";
@@ -249,7 +251,7 @@ class BookKeeping extends CommonObject
 				$sql .= ",'" . $this->date_create . "'";
 				$sql .= ",'" . $this->code_journal . "'";
 				$sql .= "," . $this->piece_num;
-				
+				$sql .= ", " . (! isset($this->entity) ? '1' : $this->entity);
 				$sql .= ")";
 				
 				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
@@ -392,10 +394,9 @@ class BookKeeping extends CommonObject
 		$sql .= 'fk_user_author,';
 		$sql .= 'import_key,';
 		$sql .= 'code_journal,';
-		$sql .= 'piece_num';
-		
+		$sql .= 'piece_num,';
+		$sql .= 'entity';
 		$sql .= ') VALUES (';
-		
 		$sql .= ' ' . (! isset($this->doc_date) || dol_strlen($this->doc_date) == 0 ? 'NULL' : "'" . $this->db->idate($this->doc_date) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_type) ? 'NULL' : "'" . $this->db->escape($this->doc_type) . "'") . ',';
 		$sql .= ' ' . (! isset($this->doc_ref) ? 'NULL' : "'" . $this->db->escape($this->doc_ref) . "'") . ',';
@@ -411,8 +412,8 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . $user->id . ',';
 		$sql .= ' ' . (! isset($this->import_key) ? 'NULL' : "'" . $this->db->escape($this->import_key) . "'") . ',';
 		$sql .= ' ' . (! isset($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
-		$sql .= ' ' . (! isset($this->piece_num) ? 'NULL' : $this->piece_num);
-		
+		$sql .= ' ' . (! isset($this->piece_num) ? 'NULL' : $this->piece_num).',';
+		$sql .= ' ' . (! isset($this->entity) ? '1' : $this->entity);
 		$sql .= ')';
 		
 		$this->db->begin();
@@ -482,10 +483,14 @@ class BookKeeping extends CommonObject
 		$sql .= " t.piece_num";
 		
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		$sql .= ' WHERE 1 = 1';
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		}
 		if (null !== $ref) {
-			$sql .= ' WHERE t.ref = ' . '\'' . $ref . '\'';
+			$sql .= ' AND t.ref = ' . '\'' . $ref . '\'';
 		} else {
-			$sql .= ' WHERE t.rowid = ' . $id;
+			$sql .= ' AND t.rowid = ' . $id;
 		}
 		
 		$resql = $this->db->query($sql);
@@ -587,13 +592,17 @@ class BookKeeping extends CommonObject
 			}
 		}
 		
-		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+		$sql.= ' WHERE 1 = 1';
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
 		}
-    // Affichage par compte comptable
-    $sql .= ' ORDER BY t.numero_compte ASC';
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+		}
+        // Affichage par compte comptable
+        $sql .= ' ORDER BY t.numero_compte ASC';
 		if (! empty($sortfield)) {
-      $sql .= ', ' . $sortfield . ' ' .$sortorder;
+            $sql .= ', ' . $sortfield . ' ' .$sortorder;
 		}
 		if (! empty($limit)) {
 			$sql .= ' ' . $this->db->plimit($limit + 1, $offset);
@@ -697,8 +706,12 @@ class BookKeeping extends CommonObject
 			}
 		}
 		
+		$sql.= ' WHERE 1 = 1';
+		if (! empty($conf->multicompany->enabled)) {
+		    $sql .= " AND entity IN (" . getEntity("accountancy", 1) . ")";
+		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' ' . $filtermode . ' ', $sqlwhere);
+			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
 		
 		if (! empty($sortfield)) {

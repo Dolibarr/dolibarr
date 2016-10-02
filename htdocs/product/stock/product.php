@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productstockentrepot.class.php';
 if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 
 $langs->load("products");
@@ -63,11 +64,96 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit&stock',$id,'product&product','','',$fieldid);
 
 
+$object = new Product($db);
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+
+if ($id > 0 || ! empty($ref))
+{
+    $result = $object->fetch($id, $ref);
+
+}
+$modulepart='product';
+
+// Get object canvas (By default, this is not defined, so standard usage of dolibarr)
+$canvas = !empty($object->canvas)?$object->canvas:GETPOST("canvas");
+$objcanvas=null;
+if (! empty($canvas))
+{
+    require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
+    $objcanvas = new Canvas($db,$action);
+    $objcanvas->getCanvas('stockproduct','card',$canvas);
+}
+
+// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('stockproductcard','globalcard'));
+
+
 /*
  *	Actions
  */
 
 if ($cancel) $action='';
+
+$parameters=array('id'=>$id, 'ref'=>$ref, 'objcanvas'=>$objcanvas);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if($action == 'addlimitstockwarehouse') {
+	
+	$seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+	$desiredstock = GETPOST('desiredstock');
+	
+	$maj_ok = true;
+	if($seuil_stock_alerte == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("StockLimit")), null, 'errors');
+		$maj_ok = false;
+	}
+	if($desiredstock == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DesiredStock")), null, 'errors');
+		$maj_ok = false;
+	}
+	
+	if($maj_ok) {
+		
+		$pse = new ProductStockEntrepot($db);
+		if($pse->fetch('', GETPOST('id'), GETPOST('fk_entrepot')) > 0) {
+			
+			// Update
+			$pse->seuil_stock_alerte = $seuil_stock_alerte;
+			$pse->desiredstock  	 = $desiredstock;
+			if($pse->update($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseUpdated'));
+			
+		} else {
+			
+			// Create
+			$pse->fk_entrepot 		 = GETPOST('fk_entrepot');
+			$pse->fk_product  	 	 = GETPOST('id');
+			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+			$pse->desiredstock  	 = GETPOST('desiredstock');
+			if($pse->create($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseCreated'));
+			
+		}
+		
+	}
+
+	header("Location: ".$_SERVER["PHP_SELF"]."?id=".GETPOST('id'));
+	exit;
+	
+}
+
+if($action == 'delete_productstockwarehouse')
+{
+	
+	$pse = new ProductStockEntrepot($db);
+	$pse->fetch(GETPOST('fk_productstockwarehouse'));
+	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
+	
+	$action = '';
+	
+}
 
 // Set stock limit
 if ($action == 'setseuil_stock_alerte')
@@ -409,8 +495,21 @@ if ($id > 0 || $ref)
 	
 	$object->load_stock();
 
-	$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-	llxHeader("",$langs->trans("CardProduct".$object->type),$help_url);
+	$title = $langs->trans('ProductServiceCard');
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->label,16);
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+	{
+		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+	{
+		$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Stock');
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
+
+	llxHeader('', $title, $helpurl);
 
 	if ($result > 0)
 	{
@@ -492,7 +591,11 @@ if ($id > 0 || $ref)
         print '<tr><td>'.$form->editfieldkey("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer).'</td><td colspan="2">';
         print $form->editfieldval("StockLimit",'seuil_stock_alerte',$object->seuil_stock_alerte,$object,$user->rights->produit->creer,'string');
         print '</td></tr>';
-
+		
+		// Hook formObject
+		$parameters=array('colspan' => 3);
+		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+     
         // Desired stock
         print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1),'desiredstock',$object->desiredstock,$object,$user->rights->produit->creer);
         print '</td><td colspan="2">';
@@ -651,26 +754,31 @@ else
 /*                                                                            */
 /* ************************************************************************** */
 
+$parameters=array();
 
-if (empty($action) && $object->id)
+$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+if (empty($reshook))
 {
-    print "<div class=\"tabsAction\">\n";
 
-    if ($user->rights->stock->mouvement->creer)
-    {
-        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
-    }
-
-    //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
-    if ($user->rights->stock->mouvement->creer)
+	if (empty($action) && $object->id)
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
+	    print "<div class=\"tabsAction\">\n";
+	
+	    if ($user->rights->stock->mouvement->creer)
+	    {
+	        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+	    }
+	
+	    //if (($user->rights->stock->mouvement->creer) && ! $object->hasbatch())
+	    if ($user->rights->stock->mouvement->creer)
+		{
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("StockTransfer").'</a>';
+		}
+	
+		print '</div>';
 	}
 
-	print '</div>';
 }
-
-
 
 
 /*
@@ -811,6 +919,49 @@ print '</td>';
 print "</tr>";
 print "</table>";
 
+if(!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+	
+	print '<br /><br />';
+	print_titre($langs->trans('AddNewProductStockWarehouse'));
+	//print '<br />';
+	
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
+	print '<input type="hidden" name="id" value="'.GETPOST('id').'">';
+	print '<table class="noborder" width="100%">';
+	
+	print '<tr class="liste_titre"><td width="40%" colspan="4">'.$formproduct->selectWarehouses('', 'fk_entrepot').'</td>';
+	print '<td align="right"><input name="seuil_stock_alerte" type="text" placeholder="'.$langs->trans("StockLimit").'" /></td>';
+	print '<td align="right"><input name="desiredstock" type="text" placeholder="'.$langs->trans("DesiredStock").'" /></td>';
+	print '<td align="right"><input type="submit" value="'.$langs->trans('Save').'" class="button" /></td>';
+	print '</tr>';
+	
+	$pse = new ProductStockEntrepot($db);
+	$lines = $pse->fetchAll(GETPOST('id'));
+	
+	if(!empty($lines)) {
+		
+		$var=false;
+		foreach($lines as $line) {
+			
+			$ent = new Entrepot($db);
+			$ent->fetch($line['fk_entrepot']);
+			print '<tr '.$bc[$var].'><td width="40%" colspan="4">'.$ent->getNomUrl(3).'</td>';
+			print '<td align="right">'.$line['seuil_stock_alerte'].'</td>';
+			print '<td align="right">'.$line['desiredstock'].'</td>';
+			print '<td align="right"><a href="?id='.GETPOST('id').'&fk_productstockwarehouse='.$line['id'].'&action=delete_productstockwarehouse">'.img_delete().'</a></td>';
+			print '</tr>';
+			$var=!$var;
+			
+		}
+
+	}
+	
+	print "</table>";
+	
+	print '</form>';
+	
+}
 
 llxFooter();
 

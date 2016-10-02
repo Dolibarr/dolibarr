@@ -93,11 +93,12 @@ function expensereport_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin');
 
-	/*$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinter_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT.'/admin/expensereport_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
     $head[$h][2] = 'attributes';
     $h++;
 
+    /*
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/admin/fichinterdet_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
     $head[$h][2] = 'attributesdet';

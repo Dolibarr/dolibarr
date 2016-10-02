@@ -1311,8 +1311,6 @@ SyslogFilename=Nazwa pliku i ścieżka
 YouCanUseDOL_DATA_ROOT=Możesz użyć DOL_DATA_ROOT / dolibarr.log do pliku w Dolibarr "dokumenty" katalogu. Można ustawić inną ścieżkę do przechowywania tego pliku.
 ErrorUnknownSyslogConstant=Stała %s nie jest znany syslog stałej
 OnlyWindowsLOG_USER=System Windows obsługuje tylko LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=Darowizna konfiguracji modułu
 DonationsReceiptModel=Szablon otrzymania wpłaty

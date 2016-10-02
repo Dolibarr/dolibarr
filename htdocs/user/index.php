@@ -57,8 +57,11 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
+// Initialize context for list
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';
+
 // Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('userlist'));
+$hookmanager->initHooks(array($contextpage));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -168,8 +171,6 @@ llxHeader('',$langs->trans("ListOfUsers"));
 
 $buttonviewhierarchy='<form action="'.DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : '').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("HierarchicView")).'"></form>';
 
-print load_fiche_titre($langs->trans("ListOfUsers"), $buttonviewhierarchy);
-
 $sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.fk_soc, u.login, u.email, u.accountancy_code, u.gender, u.employee, u.photo,";
 $sql.= " u.datelastlogin, u.datepreviouslogin,";
 $sql.= " u.ldap_sid, u.statut, u.entity,";
@@ -227,17 +228,16 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.=$db->order($sortfield,$sortorder);
-//$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
-/*$totalnboflines=0;
+$nbtotalofrecords=0;
 $result=$db->query($sql);
 if ($result)
 {
-    $totalnboflines = $db->num_rows($result);
+    $nbtotalofrecords = $db->num_rows($result);
 }
 
 $sql.= $db->plimit($limit+1, $offset);
-*/
+
 $result = $db->query($sql);
 if ($result)
 {
@@ -259,6 +259,7 @@ if ($result)
     if ($search_supervisor > 0) $param.="&search_supervisor=".$search_supervisor;
     if ($search_statut != '') $param.="&search_statut=".$search_statut;
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
+    if ($mode != '')      $param.='&mode='.$mode;
     // Add $param from extra fields
     foreach ($search_array_options as $key => $val)
     {
@@ -267,6 +268,7 @@ if ($result)
         if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
     } 	
     
+    $text = $langs->trans("ListOfUsers");
     
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -274,8 +276,12 @@ if ($result)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    
-    if ($sall)
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
+	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+	
+	print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+
+	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
@@ -434,8 +440,8 @@ if ($result)
     $user2=new User($db);
 
     $var=True;
-	//while ($i < min($num,$conf->liste_limit))
-    while ($i < $num)
+	$i = 0;
+	while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
         $var=!$var;

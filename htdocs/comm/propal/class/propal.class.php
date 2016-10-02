@@ -49,7 +49,8 @@ class Propal extends CommonObject
     public $table_element_line='propaldet';
     public $fk_element='fk_propal';
     protected $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-
+    public $picto='propal';
+    
     /**
      * {@inheritdoc}
      */
@@ -778,7 +779,7 @@ class Propal extends CommonObject
      * 	this->ref can be set or empty. If empty, we will use "(PROVid)"
      *
      * 	@param		User	$user		User that create
-     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     * 	@param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return     int     			<0 if KO, >=0 if OK
      */
     function create($user, $notrigger=0)
@@ -928,7 +929,7 @@ class Propal extends CommonObject
 
                     for ($i=0;$i<$num;$i++)
                     {
-                        // Reset fk_parent_line for no child products and special product
+                        // Reset fk_parent_line for line that are not child lines or special product
                         if (($this->lines[$i]->product_type != 9 && empty($this->lines[$i]->fk_parent_line)) || $this->lines[$i]->product_type == 9) {
                             $fk_parent_line = 0;
                         }
@@ -944,7 +945,7 @@ class Propal extends CommonObject
 							$this->lines[$i]->remise_percent,
 							'HT',
 							0,
-							0,
+							$this->lines[$i]->info_bits,
 							$this->lines[$i]->product_type,
 							$this->lines[$i]->rang,
 							$this->lines[$i]->special_code,
@@ -1160,6 +1161,7 @@ class Propal extends CommonObject
         $clonedObj->ref = $modPropale->getNextValue($objsoc,$clonedObj);
 
         // Create clone
+        
         $result=$clonedObj->create($user);
         if ($result < 0) $error++;
         else
@@ -1503,8 +1505,8 @@ class Propal extends CommonObject
      *  Set status to validated
      *
      *  @param	User	$user       Object user that validate
-     *  @param	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
-     *  @return int         		<0 if KO, >=0 if OK
+     *  @param	int		$notrigger	1=Does not execute triggers, 0=execute triggers
+     *  @return int         		<0 if KO, 0=Nothing done, >=0 if OK
      */
     function valid($user, $notrigger=0)
     {
@@ -1513,98 +1515,110 @@ class Propal extends CommonObject
     	global $conf;
 
         $error=0;
-        $now=dol_now();
 
-        if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
-       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate)))
+        // Protection
+        if ($this->statut == self::STATUS_VALIDATED)
         {
-            $this->db->begin();
+            dol_syslog(get_class($this)."::valid action abandonned: already validated", LOG_WARNING);
+            return 0;
+        }
+        
+        if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->creer))
+       	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->propal->propal_advance->validate))))
+        {
+            $this->error='ErrorPermissionDenied';
+            dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
+            return -1;
+        }
 
-            // Numbering module definition
-            $soc = new Societe($this->db);
-            $soc->fetch($this->socid);
+        $now=dol_now();
+            
+        $this->db->begin();
 
-            // Define new ref
-            if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
-            {
-            	$num = $this->getNextNumRef($soc);
-            }
-            else
-            {
-            	$num = $this->ref;
-            }
-            $this->newref = $num;
+        // Numbering module definition
+        $soc = new Societe($this->db);
+        $soc->fetch($this->socid);
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-            $sql.= " SET ref = '".$num."',";
-            $sql.= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
-            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
+        // Define new ref
+        if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+        {
+        	$num = $this->getNextNumRef($soc);
+        }
+        else
+        {
+        	$num = $this->ref;
+        }
+        $this->newref = $num;
 
-            dol_syslog(get_class($this)."::valid", LOG_DEBUG);
-			$resql=$this->db->query($sql);
-			if (! $resql)
-			{
-				dol_print_error($this->db);
-				$error++;
-			}
+        $sql = "UPDATE ".MAIN_DB_PREFIX."propal";
+        $sql.= " SET ref = '".$num."',";
+        $sql.= " fk_statut = ".self::STATUS_VALIDATED.", date_valid='".$this->db->idate($now)."', fk_user_valid=".$user->id;
+        $sql.= " WHERE rowid = ".$this->id." AND fk_statut = ".self::STATUS_DRAFT;
 
-   			// Trigger calls
-			if (! $error && ! $notrigger)
-			{
-                // Call trigger
-                $result=$this->call_trigger('PROPAL_VALIDATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
-            }
+        dol_syslog(get_class($this)."::valid", LOG_DEBUG);
+		$resql=$this->db->query($sql);
+		if (! $resql)
+		{
+			dol_print_error($this->db);
+			$error++;
+		}
 
-            if (! $error)
-            {
-            	$this->oldref = $this->ref;
+		// Trigger calls
+		if (! $error && ! $notrigger)
+		{
+            // Call trigger
+            $result=$this->call_trigger('PROPAL_VALIDATE',$user);
+            if ($result < 0) { $error++; }
+            // End call triggers
+        }
 
-            	// Rename directory if dir was a temporary ref
-            	if (preg_match('/^[\(]?PROV/i', $this->ref))
-            	{
-            		// Rename of propal directory ($this->ref = old ref, $num = new ref)
-            		// to  not lose the linked files
-            		$oldref = dol_sanitizeFileName($this->ref);
-            		$newref = dol_sanitizeFileName($num);
-            		$dirsource = $conf->propal->dir_output.'/'.$oldref;
-            		$dirdest = $conf->propal->dir_output.'/'.$newref;
+        if (! $error)
+        {
+        	$this->oldref = $this->ref;
 
-            		if (file_exists($dirsource))
-            		{
-            			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
-            			if (@rename($dirsource, $dirdest))
-            			{
-            				dol_syslog("Rename ok");
-            				// Rename docs starting with $oldref with $newref
-            				$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
-            				foreach($listoffiles as $fileentry)
-            				{
-            					$dirsource=$fileentry['name'];
-            					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
-            					$dirsource=$fileentry['path'].'/'.$dirsource;
-            					$dirdest=$fileentry['path'].'/'.$dirdest;
-            					@rename($dirsource, $dirdest);
-            				}
-            			}
-            		}
-            	}
+        	// Rename directory if dir was a temporary ref
+        	if (preg_match('/^[\(]?PROV/i', $this->ref))
+        	{
+        		// Rename of propal directory ($this->ref = old ref, $num = new ref)
+        		// to  not lose the linked files
+        		$oldref = dol_sanitizeFileName($this->ref);
+        		$newref = dol_sanitizeFileName($num);
+        		$dirsource = $conf->propal->dir_output.'/'.$oldref;
+        		$dirdest = $conf->propal->dir_output.'/'.$newref;
 
-            	$this->ref=$num;
-            	$this->brouillon=0;
-            	$this->statut = self::STATUS_VALIDATED;
-            	$this->user_valid_id=$user->id;
-            	$this->datev=$now;
+        		if (file_exists($dirsource))
+        		{
+        			dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+        			if (@rename($dirsource, $dirdest))
+        			{
+        				dol_syslog("Rename ok");
+        				// Rename docs starting with $oldref with $newref
+        				$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+        				foreach($listoffiles as $fileentry)
+        				{
+        					$dirsource=$fileentry['name'];
+        					$dirdest=preg_replace('/^'.preg_quote($oldref,'/').'/',$newref, $dirsource);
+        					$dirsource=$fileentry['path'].'/'.$dirsource;
+        					$dirdest=$fileentry['path'].'/'.$dirdest;
+        					@rename($dirsource, $dirdest);
+        				}
+        			}
+        		}
+        	}
 
-            	$this->db->commit();
-            	return 1;
-            }
-            else
-			{
-            	$this->db->rollback();
-            	return -1;
-            }
+        	$this->ref=$num;
+        	$this->brouillon=0;
+        	$this->statut = self::STATUS_VALIDATED;
+        	$this->user_valid_id=$user->id;
+        	$this->datev=$now;
+
+        	$this->db->commit();
+        	return 1;
+        }
+        else
+		{
+        	$this->db->rollback();
+        	return -1;
         }
     }
 
@@ -1614,7 +1628,7 @@ class Propal extends CommonObject
      *
      *  @param  User		$user      	Object user that modify
      *  @param  int			$date		Date
-     *  @param  int			$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return	int         			<0 if KO, >0 if OK
      */
     function set_date($user, $date, $notrigger=0)
@@ -1681,7 +1695,7 @@ class Propal extends CommonObject
      *
      *	@param		User	$user        		Object user that modify
      *	@param      int		$date_fin_validite	End of validity date
-     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         				<0 if KO, >0 if OK
      */
     function set_echeance($user, $date_fin_validite, $notrigger=0)
@@ -1741,7 +1755,7 @@ class Propal extends CommonObject
      *
      *	@param      User 	$user        		Object user that modify
      *	@param      int		$date_livraison     Delivery date
-     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return     int         				<0 if ko, >0 if ok
      */
     function set_date_livraison($user, $date_livraison, $notrigger=0)
@@ -1801,7 +1815,7 @@ class Propal extends CommonObject
      *
      *  @param		User	$user		  	Object user that modify
      *  @param      int		$id				Availability id
-     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *  @return     int           			<0 if KO, >0 if OK
      */
     function set_availability($user, $id, $notrigger=0)
@@ -1861,7 +1875,7 @@ class Propal extends CommonObject
      *
      *  @param		User	$user		Object user that modify
      *  @param      int		$id			Input reason id
-     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *  @return     int           		<0 if KO, >0 if OK
      */
     function set_demand_reason($user, $id, $notrigger=0)
@@ -1923,7 +1937,7 @@ class Propal extends CommonObject
      *
      *  @param      User	$user			Object user that modify
      *  @param      string	$ref_client		Customer reference
-     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *  @return     int						<0 if ko, >0 if ok
      */
     function set_ref_client($user, $ref_client, $notrigger=0)
@@ -1986,7 +2000,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user       Object user that modify
      *	@param      double	$remise     Amount discount
-     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if ko, >0 if ok
      */
     function set_remise_percent($user, $remise, $notrigger=0)
@@ -2051,7 +2065,7 @@ class Propal extends CommonObject
      *
      *	@param      User	$user       Object user that modify
      *	@param      double	$remise     Amount discount
-     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if ko, >0 if ok
      */
     function set_remise_absolue($user, $remise, $notrigger=0)
@@ -2119,7 +2133,7 @@ class Propal extends CommonObject
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      string	$note		Comment
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function reopen($user, $statut, $note='', $notrigger=0)
@@ -2180,7 +2194,7 @@ class Propal extends CommonObject
      *	@param      User	$user		Object user that close
      *	@param      int		$statut		Statut
      *	@param      string	$note		Comment
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
     function cloture($user, $statut, $note, $notrigger=0)
@@ -2277,7 +2291,7 @@ class Propal extends CommonObject
      *	Class invoiced the Propal
      *
      *	@param  	User	$user    	Object user
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int     			<0 si ko, >0 si ok
      */
     function classifyBilled(User $user, $notrigger=0)
@@ -2347,7 +2361,7 @@ class Propal extends CommonObject
      *	Set draft status
      *
      *	@param		User	$user		Object user that modify
-     *  @param		int		$notrigger	1=Does not execute triggers, 0= execuete triggers
+     *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return		int					<0 if KO, >0 if OK
      */
     function set_draft($user, $notrigger=0)
@@ -2575,7 +2589,7 @@ class Propal extends CommonObject
      *	Delete proposal
      *
      *	@param	User	$user        	Object user that delete
-     *	@param	int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return	int						1 if ok, otherwise if error
      */
     function delete($user, $notrigger=0)
@@ -2698,7 +2712,7 @@ class Propal extends CommonObject
      *  Change the delivery time
      *
      *  @param	int	$availability_id	Id of new delivery time
-     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execuete triggers
+     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execute triggers
      *  @return int                  	>0 if OK, <0 if KO
      */
     function availability($availability_id, $notrigger=0)
@@ -2765,7 +2779,7 @@ class Propal extends CommonObject
      *	Change source demand
      *
      *	@param	int $demand_reason_id 	Id of new source demand
-     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execuete triggers
+     * 	@param	int	$notrigger			1=Does not execute triggers, 0= execute triggers
      *	@return int						>0 si ok, <0 si ko
      */
     function demand_reason($demand_reason_id, $notrigger=0)
@@ -2890,19 +2904,19 @@ class Propal extends CommonObject
     /**
      *    	Return label of status of proposal (draft, validated, ...)
      *
-     *    	@param      int			$mode        0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *    	@param      int			$mode        0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
      *    	@return     string		Label
      */
     function getLibStatut($mode=0)
     {
-        return $this->LibStatut($this->statut,$mode);
+        return $this->LibStatut($this->statut, $mode);
     }
 
     /**
      *    	Return label of a status (draft, validated, ...)
      *
      *    	@param      int			$statut		id statut
-     *    	@param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+     *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
      *    	@return     string		Label
      */
      function LibStatut($statut,$mode=1)
@@ -2921,8 +2935,9 @@ class Propal extends CommonObject
 		if ($mode == 2)	return img_picto($this->labelstatut_short[$statut], $statuttrans).' '.$this->labelstatut_short[$statut];
 		if ($mode == 3)	return img_picto($this->labelstatut[$statut], $statuttrans);
 		if ($mode == 4)	return img_picto($this->labelstatut[$statut],$statuttrans).' '.$this->labelstatut[$statut];
-		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut_short[$statut],$statuttrans);
-    }
+		if ($mode == 5)	return '<span class="hideonsmartphone">'.$this->labelstatut_short[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+		if ($mode == 6)	return '<span class="hideonsmartphone">'.$this->labelstatut[$statut].' </span>'.img_picto($this->labelstatut[$statut],$statuttrans);
+     }
 
 
     /**
@@ -3232,11 +3247,8 @@ class Propal extends CommonObject
         }
         $linkend='</a>';
 
-        $picto='propal';
-
-
         if ($withpicto)
-            $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+            $result.=($link.img_object($label, $this->picto, 'class="classfortooltip"').$linkend);
         if ($withpicto && $withpicto != 2)
             $result.=' ';
         $result.=$link.$this->ref.$linkend;
@@ -3594,7 +3606,7 @@ class PropaleLigne  extends CommonObjectLine
     /**
      *  Insert object line propal in database
      *
-     *	@param		int		$notrigger		1=Does not execute triggers, 0= execuete triggers
+     *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return		int						<0 if KO, >0 if OK
      */
     function insert($notrigger=0)
@@ -3624,7 +3636,11 @@ class PropaleLigne  extends CommonObjectLine
         if (empty($this->fk_fournprice)) $this->fk_fournprice=0;
 		if (! is_numeric($this->qty)) $this->qty = 0;
         if (empty($this->pa_ht)) $this->pa_ht=0;
-
+        if (empty($this->multicurrency_subprice))  $this->multicurrency_subprice=0;
+        if (empty($this->multicurrency_total_ht))  $this->multicurrency_total_ht=0;
+        if (empty($this->multicurrency_total_vat)) $this->multicurrency_total_vat=0;
+        if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc=0;
+        
        // if buy price not defined, define buyprice as configured in margin admin
 		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
 		{

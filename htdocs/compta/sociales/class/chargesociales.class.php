@@ -449,7 +449,7 @@ class ChargeSociales extends CommonObject
         if (empty($this->ref)) $this->ref=$this->lib;
         $label = $langs->trans("ShowSocialContribution").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $link = '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend='</a>';
 
         if ($withpicto) $result.=($link.img_object($label, 'bill', 'class="classfortooltip"').$linkend.' ');

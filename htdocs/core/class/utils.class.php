@@ -168,7 +168,7 @@ class Utils
 
 		// Check type parameter
 		if ($type == 'auto') $type = $db->type;
-		if (! in_array($type, array('pgsql', 'mysql', 'mysqli')))
+		if (! in_array($type, array('pgsql', 'mysql', 'mysqli','mysqlnobin')))
 		{
 		    $langs->load("errors");
 		    $this->error=$langs->transnoentitiesnoconv("ErrorBadValueForParameter", $type, "Basetype");

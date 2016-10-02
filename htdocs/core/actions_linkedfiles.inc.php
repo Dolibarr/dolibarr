@@ -140,4 +140,33 @@ elseif ($action == 'confirm_updateline' && GETPOST('save') && GETPOST('link', 'a
         //error fetching
     }
 }
-
+elseif ($action == 'renamefile' && GETPOST('renamefilesave'))
+{
+    if ($object->id)
+    {
+        // For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+        //var_dump($upload_dir);exit;
+        if (! empty($upload_dir))
+        {
+            $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom'));
+            $filenameto=dol_sanitizeFileName(GETPOST('renamefileto'));
+            if ($filenamefrom && $filenameto)
+            {
+                $srcpath = $upload_dir.'/'.$filenamefrom;
+                $destpath = $upload_dir.'/'.$filenameto;
+    
+                $result = dol_move($srcpath, $destpath);
+                if ($result) 
+                {
+                    $object->addThumbs($destpath);
+                    
+                    // TODO Add revert function of addThumbs
+                    //$object->delThumbs($srcpath);
+                    
+                    setEventMessages($langs->trans("FileRenamed"), null);
+                }
+                else setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+            }
+        }
+    }
+}

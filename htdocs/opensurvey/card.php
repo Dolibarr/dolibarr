@@ -48,8 +48,8 @@ $object=new Opensurveysondage($db);
 $result=$object->fetch(0, $numsondage);
 if ($result <= 0)
 {
-	dol_print_error($db,$object->error);
-	exit;
+    dol_print_error($db,$object->error);
+    exit;
 }
 
 $expiredate=dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
@@ -188,10 +188,11 @@ if ($object->fk_user_creat)
 	$userstatic->fetch($object->fk_user_creat);
 }
 
-
+$title = $object->titre." - ".$langs->trans('Card');
+$helpurl = '';
 $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
-llxHeader('',$object->titre, 0, 0, 0, 0, $arrayofjs, $arrayofcss);
+llxHeader('',$title, $helpurl, 0, 0, 0, $arrayofjs, $arrayofcss);
 
 
 // Define format of choices
@@ -204,7 +205,6 @@ foreach ($toutsujet as $value)
 }
 $toutsujet=str_replace("@","<br>",$toutsujet);
 $toutsujet=str_replace("°","'",$toutsujet);
-
 
 print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'" method="POST">'."\n";
 print '<input type="hidden" name="action" value="update">';
@@ -219,7 +219,7 @@ print '<table class="border" width="100%">';
 $linkback = '<a href="'.dol_buildpath('/opensurvey/list.php',1).'">'.$langs->trans("BackToList").'</a>';
 
 // Ref
-print '<tr><td class="titlefieldcreate">'.$langs->trans('Ref').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
 print $form->showrefnav($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage');
 print '</td>';
@@ -312,7 +312,11 @@ print '</td></tr>';
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
 if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object->date_fin,'expire',0,0,0,'',1,0,1);
-else print dol_print_date($object->date_fin,'day');
+else 
+{
+    print dol_print_date($object->date_fin,'day');
+    if ($object->date_fin && $object->date_fin < dol_now()) print img_warning($langs->trans("Expired"));
+}
 print '</td></tr>';
 
 // Author
@@ -439,8 +443,6 @@ if ($object->allow_comments) {
 
 print '</form>';
 
-print '<br>';
-
-llxFooterSurvey();
+llxFooter();
 
 $db->close();

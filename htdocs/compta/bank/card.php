@@ -249,7 +249,9 @@ if (! empty($conf->accounting->enabled)) $formaccountancy = New FormVentilation(
 
 $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
-llxHeader();
+$title = $langs->trans("FinancialAccount") . " - " . $langs->trans("Card");
+$helpurl = "";
+llxHeader("",$title,$helpurl);
 
 
 // Creation
@@ -507,7 +509,11 @@ if ($action == 'create')
 
 	dol_fiche_end();
 
-	print '<div class="center"><input value="'.$langs->trans("CreateAccount").'" type="submit" class="button"></div>';
+	print '<div class="center">';
+	print '<input type="submit" class="button" value="' . $langs->trans("CreateAccount") . '">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input type="button" class="button" value="' . $langs->trans("Cancel") . '" onClick="javascript:history.go(-1)">';
+	print '</div>';
 
 	print '</form>';
 }
@@ -640,7 +646,7 @@ else
 		{
 			print '<table class="border" width="100%">';
 
-			print '<tr><td valign="top" class="titlefield">'.$langs->trans("BankName").'</td>';
+			print '<tr class="liste_titre_add"><td valign="top" class="titlefield">'.$langs->trans("BankName").'</td>';
 			print '<td colspan="3">'.$account->bank.'</td></tr>';
 
 			// Show fields of bank account
@@ -704,7 +710,7 @@ else
 
 		print '<table class="border" width="100%">';
 		// Accountancy code
-		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr class="liste_titre_add"><td class="titlefield">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td colspan="3">';
 		if (! empty($conf->accounting->enabled)) {
 			print length_accountg($account->account_number).'</td></tr>';
@@ -902,7 +908,7 @@ else
 			print '<table class="border" width="100%">';
 
 			// If bank account
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
+			print '<tr class="liste_titre_add"><td class="titlefieldcreate">'.$langs->trans("BankName").'</td>';
 			print '<td colspan="3"><input size="30" type="text" class="flat" name="bank" value="'.$account->bank.'"></td>';
 			print '</tr>';
 
@@ -969,7 +975,7 @@ else
 			$tdextra = ' class="fieldrequired titlefieldcreate"';
 		}
 
-		print '<tr><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
+		print '<tr class="liste_titre_add"><td'.$tdextra.'>'.$langs->trans("AccountancyCode").'</td>';
 		print '<td colspan="3">';
 		if (!empty($conf->accounting->enabled)) {
 			print $formaccountancy->select_account($account->account_number, 'account_number', 1, '', 1, 1);

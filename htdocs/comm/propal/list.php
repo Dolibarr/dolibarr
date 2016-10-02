@@ -10,6 +10,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016      Ferran Marcet	     <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,6 +363,7 @@ if ($resql)
 	$param='&socid='.$socid.'&viewstatut='.$viewstatut;
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($sall)				 $param.='&sall='.$sall;
 	if ($month)              $param.='&month='.$month;
 	if ($year)               $param.='&year='.$year;
     if ($search_ref)         $param.='&search_ref=' .$search_ref;
@@ -605,11 +607,11 @@ if ($resql)
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 	    print '<td class="liste_titre" align="left">';
-    	print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
+    	print '<input class="flat" type="text" size="10" name="search_societe" value="'.$search_societe.'">';
 	   print '</td>';
 	}
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="4" name="search_zip" value="'.$search_zip.'"></td>';
 	// State
     if (! empty($arrayfields['state.nom']['checked']))
     {
@@ -738,14 +740,15 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 		$var=!$var;
+		
+    	$objectstatic->id=$obj->rowid;
+    	$objectstatic->ref=$obj->ref;
+    		
 		print '<tr '.$bc[$var].'>';
 		
 		if (! empty($arrayfields['p.ref']['checked']))
 		{
     		print '<td class="nowrap">';
-    
-    		$objectstatic->id=$obj->rowid;
-    		$objectstatic->ref=$obj->ref;
     
     		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
             // Picto + Ref
@@ -753,15 +756,21 @@ if ($resql)
     		print $objectstatic->getNomUrl(1);
     		print '</td>';
             // Warning
-    		print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
-    		if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            $warnornote='';
+    		if ($obj->fk_statut == 1 && $db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) $warnornote.=img_warning($langs->trans("Late"));
     		if (! empty($obj->note_private))
     		{
-    			print ' <span class="note">';
-    			print '<a href="'.DOL_URL_ROOT.'/comm/propal/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-    			print '</span>';
+    			$warnornote.=($warnornote?' ':'');
+    			$warnornote.= '<span class="note">';
+    			$warnornote.= '<a href="note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+    			$warnornote.= '</span>';
     		}
-    		print '</td>';
+    		if ($warnornote)
+    		{
+    			print '<td style="min-width: 20px" class="nobordernopadding nowrap">';
+    			print $warnornote;
+    			print '</td>';
+    		}
     		// Other picto tool
     		print '<td width="16" align="right" class="nobordernopadding hideonsmartphone">';
     		$filename=dol_sanitizeFileName($obj->ref);

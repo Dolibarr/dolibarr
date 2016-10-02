@@ -112,7 +112,9 @@ else if ($action == 'deletecontact' && $user->rights->fournisseur->facture->cree
  * View
  */
 
-llxHeader('',$langs->trans('SupplierInvoice'));
+$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('ContactsAddresses');
+$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
+llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

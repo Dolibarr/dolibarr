@@ -61,6 +61,10 @@ CREATE TABLE llx_product_lot (
 
 ALTER TABLE llx_product_lot ADD UNIQUE INDEX uk_product_lot(fk_product, batch);
 
+-- VPGSQL8.2 ALTER TABLE llx_product_lot ALTER COLUMN entity SET DEFAULT 1;
+ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
+UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
+
 DROP TABLE llx_stock_serial; 
 
 ALTER TABLE llx_product ADD COLUMN note_public text;
@@ -329,6 +333,9 @@ ALTER TABLE llx_paiement_facture ADD COLUMN multicurrency_amount double(24,8) DE
 ALTER TABLE llx_paiementfourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 ALTER TABLE llx_paiementfourn_facturefourn ADD COLUMN multicurrency_amount double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_societe_remise ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
+
+ALTER TABLE llx_societe_remise_except ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ht double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_tva double(24,8) DEFAULT 0 NOT NULL;
 ALTER TABLE llx_societe_remise_except ADD COLUMN multicurrency_amount_ttc double(24,8) DEFAULT 0 NOT NULL;
@@ -367,7 +374,6 @@ ALTER TABLE llx_product_lang ADD COLUMN import_key varchar(14) DEFAULT NULL;
 
 ALTER TABLE llx_actioncomm MODIFY COLUMN elementtype varchar(255) DEFAULT NULL;
 
-DELETE FROM llx_menu where module='expensereport';
 
 ALTER TABLE llx_accounting_system DROP COLUMN fk_pays;
 ALTER TABLE llx_accounting_account ADD COLUMN fk_accounting_category integer DEFAULT 0 after label;
@@ -392,8 +398,8 @@ INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE',"Marge commerciale", '', 0, 1, '1 + 2', '30', 1, 1);
 
 UPDATE llx_accounting_account SET account_parent = '0' WHERE account_parent = '';
--- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
--- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent TYPE integer USING account_parent::integer;
+-- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT '0';
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent SET DEFAULT '0';
 
 CREATE TABLE llx_accounting_journal
 (
@@ -537,3 +543,8 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17804', 'Sociedad Civil', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17805', 'Sociedad Anónima', 1);
 
+
+-- VMYSQL4.1 ALTER TABLE llx_establishment CHANGE COLUMN fk_user_mod fk_user_mod integer NULL;
+-- VPGSQL8.2 ALTER TABLE llx_establishment ALTER COLUMN fk_user_mod DROP NOT NULL;
+
+ALTER TABLE llx_multicurrency_rate ADD COLUMN entity integer DEFAULT 1;

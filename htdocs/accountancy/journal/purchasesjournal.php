@@ -166,7 +166,7 @@ if ($action == 'writebookkeeping') {
 	$now = dol_now();
 	$error = 0;
 
-	foreach ($tabfac as $key => $val) 
+	foreach ($tabfac as $key => $val)
 	{
 		$companystatic = new Societe($db);
 		$invoicestatic = new FactureFournisseur($db);
@@ -425,13 +425,13 @@ if ($action == 'export_csv') {
 			'action' => ''
 	));
 
-	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 || $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
-		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabeld="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
+	if ($conf->global->ACCOUNTING_EXPORT_MODELCSV != 1 && $conf->global->ACCOUNTING_EXPORT_MODELCSV != 2) {
+		print '<input type="button" class="butActionRefused" style="float: right;" value="' . $langs->trans("Export") . '" disabled="disabled" title="' . $langs->trans('ExportNotSupported') . '"/>';
 	} else {
-		print '<input type="button" class="button" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
+		print '<input type="button" class="butAction" style="float: right;" value="' . $langs->trans("Export") . '" onclick="launch_export();" />';
 	}
 
-	print '<input type="button" class="button" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
+	print '<input type="button" class="butAction" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 
 	print '
 	<script type="text/javascript">

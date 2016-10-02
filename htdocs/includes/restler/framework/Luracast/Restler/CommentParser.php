@@ -482,7 +482,7 @@ class CommentParser
                 $r['name'] = substr($data, 1);
             }
         }
-        if (isset($r['type']) && Text::endsWith($r['type'], '[]')) {
+        if (isset($r['type']) && is_string($r['type']) && Text::endsWith($r['type'], '[]')) {
             $r[static::$embeddedDataName]['type'] = substr($r['type'], 0, -2);
             $r['type'] = 'array';
         }

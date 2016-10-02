@@ -24,69 +24,96 @@ Dolibarr better:
 - Function delete of class Facture (invoice) need the object $user as first parameter. Also you must
 check you make a fetch on object before calling the delete.
 - The old driver of "mysql" has been removed. Dolibarr use the new one (mysqli) by default.
+- Remove not used function calculate_byte(). Use dol_print_size() instead.
+- Function pdf_getTotalQty is now deprecated. Not used by Dolibarr core.
+- Method expensereport->delete(id, user) has been replaced with ->delete(user)
+  Method warehouse->delete(id) has been replace with ->delete(user)
+  This is to follow good practice to make a fetch on object before deleting it.
+- The form to add a product to a draft proposal/order/invoice from the product card is hidden by default.
+  It was not commonly used and usage generates some problems (cost price for margin calculation not entered, vat setting).  
+  Set constant PRODUCT_ADD_FORM_ADD_TO to retrieve it.
 
 
+
+***** ChangeLog for 4.0.1 compared to 4.0.0 *****
+FIX #2853
+FIX #2991
+FIX #3128
+FIX: #5699
+FIX #5734
+FIX : #5776
+FIX alignement of intervention status
+FIX Clean of search fields
+FIX Creation of donation should go back on card after creation
+FIX Date visible on project overview
+FIX Execute a dedicated job from its id may results of launching other jobs too.
+FIX: Failed to export contact categories with contact extra fields
+FIX inversion customer/supplier price
+FIX link "back to list" was not visible.
+FIX Lost filter on opportunities
+FIX Mandatory field payment term was not css highlighted.
+FIX Menu users not visible on dolidroid.
+FIX SEC for HTB23302
+FIX The email test sender in email setup was broken
+FIX Translation of "Name" is not a good choice for floow-up.
+FIX Update of maxnbrun on job list failed.
+FIX Value of payment term and project are not set on correct default value when invoice generated from template.
+FIX: vat dictionary should allow enter and edit multiple values for localtaxes, separated by: (ex -19:-15)
 
 ***** ChangeLog for 4.0.0 compared to 3.9.* *****
 For users:
-NEW: Add reccuring invoice feature and automatic generation of invoices.
+NEW: Add recurring invoice feature and automatic generation of invoices.
 NEW: Add module "Loan" as stable.
-NEW: Add module "Supplier commercial proposal" (price request) is set to stable status.
-NEW: Experimental module Accountancy Expert
-NEW: Experimental module Multicurency
-NEW: Show into badge on tab head the number of dedicated contacts for all objects.
+NEW: Add module "Supplier commercial proposal" (price request) with stable status.
+NEW: Can select dynamicaly number of lines to show on page on product, shipment, contact, orders, thirdparties. 
+NEW: Can select fields to show on list also for list of customer orders, supplier orders, shipments, proposals and invoices.
+NEW: Show into badge on tab head, the number of dedicated contacts for all objects.
 NEW: Add a checkbox to select/unselect all lines on page that support mass actions (like invoice list page)
-NEW: Add a new method for margin calculation. Added margin on "cost price" to margin on WAP price and margin on "best supplier price".
+NEW: Add a new method for margin calculation. Added margin on "cost price" in addition to margin on WAP price and margin on "best supplier price".
 NEW: Add an explanation message on shipment page to explain you can't make shipment if order is not validated
 NEW: Add date_rum into table of thirdparty bank account.
 NEW: The probability of lead/opportunity can be defined per lead.
 NEW: Added Malta VAT into migration script
-NEW: #4972 Translated Charges sociales (type 0) and Charges sociales (type 1) in reports page
 NEW: Add Expense report into accountancy report
 NEW: Add Expense report to approve into workboard 
-NEW: Selection of boxes is move on top of home page
-NEW: Add filter on a keyword, status and nature into list of modules
+NEW: Selection of boxes is moved on top of home page
+NEW: Add filter on a keyword, status and nature into list of modules.
 NEW: Add hidden option BANK_DISABLE_CHECK_DEPOSIT to disable check deposit feature.
-NEW: Add option MAIN_PUBLIC_NOTE_IN_ADDRESS
-NEW: add html id/class to locate value in the DOM html
+NEW: Add hidden option MAIN_PUBLIC_NOTE_IN_ADDRESS
 NEW: Add index on invoice status 
-NEW: Add constant MAIN_LOGTOHTML to 0 into other setup by default to save time when we need to make debug on hosted instance.
+NEW: Add constant MAIN_LOGTOHTML to 0 into setup by default to save time when we need to make debug on hosted instance.
 NEW: Add list of billed
 NEW: Add minimum stock and desired stock into import/export profiles. 
-NEW: Add state into thirdparty export fields
+NEW: Add state into thirdparty export fields.
 NEW: Add more trackable events (create, submit and receive supplier order).
-NEW: Add option MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN
+NEW: Add hidden option MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN
 NEW: Add picto on module list to show warning and if module is an external module.
-NEW: add product type filter on turnover report
+NEW: Add product type filter on turnover report
 NEW: Add state into list of fields available for personalized fields of thirdparties
 NEW: Add statistics for interventions module
 NEW: Add statistics on number of projets on home page
-NEW: Add stats and late records into dashboard for supplier proposals.
+NEW: Add statistics and late records into dashboard for supplier proposals.
 NEW: Add the admin info on combo of type of contact
-NEW: Add the event BILL_PAYED to list of supported events for module notification.
-NEW: Add total weight and volume on PDF 
+NEW: Add the event BILL_PAYED to the list of supported events for module notification.
+NEW: Add total weight and volume on PDF. 
 NEW: Add hidden option to hide column qty ordered on shipments.
-NEW: Add view of virtual stock into product list (when appropriate)
-NEW: Add warning on tasks when they are late (add also the warning tolerance parameter)
-NEW: Add weight/volume for one product into shipment export
+NEW: Add view of virtual stock into product list (when appropriate).
+NEW: Add warning on tasks when they are late (add also the warning tolerance parameter).
+NEW: Add weight/volume for one product into shipment export.
 NEW: Add width and height on product card
-NEW: allow a document to be linked to project from another customer on config
-NEW: allow project to be shared across entities (for multicompany module)
+NEW: allow a document to be linked to project of another customer by config setup.
+NEW: allow project to be shared across entities (for multicompany module).
 NEW: All variant of ckeditor config can be tested into the setup page of module.
 NEW: Can change dynamically number of records visible into lists.
-NEW: Can change type of extrafields for some combinations.
-NEW: Can define number of first and last line into import wizard.
+NEW: Can change type of extrafields (for some combinations only).
+NEW: Can define number of first and last line to import into import wizard.
 NEW: Can edit next execution date of a cron job.
 NEW: Can edit value date of a vat payment after recording it.
-NEW: Can filter modules on publisher
-NEW: Can filter on employee status when building emailing from users
-NEW: Can reopen an closed shipment
-NEW: Can search on shipments into the quick search box
-NEW: Can select dynamicaly number of lines to show on page on product, shipment, contact, orders, thirdparties 
-NEW: Can select fields to show on supplier orders list.
-NEW: Can select fields to show on list also for list of customer orders, shipments and invoices.
-NEW: Can select fields to show on proposal lists.
-NEW: Can select language from combo list on page to overwrite a translation
+NEW: Can filter modules on publisher.
+NEW: Can filter on employee status when building emailing from users.
+NEW: Can reopen an closed shipment.
+NEW: Can search on shipments into the quick search box.
+NEW: Can select language from a combo list on page to overwrite a translation.
 NEW: Can select number of lines on page list for projects and tasks.
 NEW: Can use ^ and $ (to say start with or end with like regex syntax) into search fields when search field is text. Bonus: ^$ can filter all lines with field not defined.
 NEW: Clean and enhance code for cron engine
@@ -108,32 +135,35 @@ NEW: Into GED module, filename is truncated only if there is not enough space in
 NEW: Introduce a predefined job to run database backup
 NEW: Introduce option MAIN_WEIGHT_DEFAULT_UNIT and MAIN_VOLUME_DEFAULT_UNIT to force output unit for weight and volume.
 NEW: Introduce position of records into dictionnary of type of contacts
-NEW: Link on user in leave context reach to leave tab.
-NEW: List of user in agenda view per user show photo thumb
+NEW: Link on a user in leave page reach to leave tab of user.
+NEW: List of user in agenda view per user show photo thumb.
 NEW: Margins module - Check/update buying price on invoice lines
 NEW: Merge all admin tools (system and module admin tools) into same entry "Admin tools", so now things are clear: All features restricted to an admin user is inside "setup" (for setup) or "admin tools" (for action tools) instead of 3 different entries.
 NEW: Merge all boxes "related objects" into one. This save a lot of room on most card and avoid often horizontal scoll.
 NEW: Moved code that deals with bank categories to BankCateg. Created BankCateg::fetchAll function
-NEW: Move Expense report menu from module to menu files
-NEW: Move HRM dictionary from module to core dictionaries
+NEW: Move HRM dictionary from module to core dictionaries.
 NEW: Mutualize code to manage email substitution variables. Show available variables into page to edit email templates.
 NEW: Mutualize code: Use one call of function "addThumbs", when possible, to generate thumbs files instead of several call of "vignette" function.
 NEW: On translation admin page, admin can overwrite a translation value.
-NEW: Option MAIN_LIST_FILTER_ON_DAY is supported on proposal list
-NEW: Add reputation field for price supplier
-NEW: Rest API token is no more reset at each call. We can reset it with param reset=1 on login call.
+NEW: Option MAIN_LIST_FILTER_ON_DAY is supported on proposal list.
+NEW: Add reputation field for price supplier.
 NEW: Selection of fields is available on member list.
 NEW: Show a badge with number of withdraw requests done on the withdraw tab of invoice.
-NEW: Add option to show detail per warehouse into reassort
-NEW: Show total number of modules into the module list
+NEW: Add option to show detail per warehouse into reassort.
+NEW: Show total number of modules into the module list.
 NEW: Survey system has now a status like other objects. You can close or reopen a survey.
-NEW: The note on time spent can be entered when using the view per day.
-NEW: Use ellipsis truncation on too large left menu text
+NEW: The note on time spent can be entered when using the "view per day".
+NEW: Use ellipsis truncation on too large left menu text.
 NEW: When a new field to show into lists is selected, the form is automatically submited and field added.
 NEW: When creating a template invoice from a draft invoice, if there is link to contract on draft invoice, link is kept on template invoice.
 NEW: When emailing is not sent completely, show progression.
+NEW: Experimental module Accountancy Expert.
+NEW: Experimental module Multicurency
 
 For developers:
+NEW: Add entity field in llx_societe_remise_except and llx_societe_remise.
+NEW: Rest API token is no more reset at each call. We can reset it with param reset=1 on login call.
+NEW: Add html id/class to locate value in the DOM html
 NEW: Add a css class style called 'reposition', so when clicking on a link with this class will move scrollbarr to be placed at same page location.
 NEW: TimeZone can be supplied to mktime
 NEW: hook in shipment card
@@ -153,8 +183,9 @@ NEW: Removed deprecated CommonObject::client property. Please use CommonObject::
 NEW: Removed unused FormOrder::selectSourcesCommande function
 NEW: Renamed ActionComm::add function to ActionComm::create
 NEW: Rename Form::select_date to Form::selectDate and Form::form_date to Form::formDate
-NEW: Rename path for generiN
+NEW: Rename path for generic media files
 NEW: More phpunit tests. Include some REST API into automatic tests.
+NEW: Move Expense report menu from module to menu files.
 
 
 WARNING: 

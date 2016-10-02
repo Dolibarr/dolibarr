@@ -25,7 +25,7 @@ OpenSuse, Mandriva ou Mageia).
 Vous pouvez les télécharger depuis la rubrique *download* du portail officiel: 
 https://www.dolibarr.org/
 
-Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (Mysql),
+Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (MariaDb/MySql/PostgreSql),
 vous pouvez installer Dolibarr avec cette version de la manière suivante:
 
 - Copier le répertoire "dolibarr" et son contenu dans la racine de votre serveur
@@ -117,8 +117,8 @@ Voir fichier ChangeLog.
 - Application simple à utiliser.
 - Plusieurs thèmes visuels.
 - Code simple et facilement personnalisable.
-- Requiert PHP et Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
-- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP ou Postgresql.
+- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
+- Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
 - Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
 
 

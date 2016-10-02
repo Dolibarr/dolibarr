@@ -1311,8 +1311,6 @@ SyslogFilename=ชื่อแฟ้มและเส้นทาง
 YouCanUseDOL_DATA_ROOT=คุณสามารถใช้ DOL_DATA_ROOT / dolibarr.log สำหรับล็อกไฟล์ใน Dolibarr "เอกสาร" ไดเรกทอรี คุณสามารถตั้งค่าเส้นทางที่แตกต่างกันในการจัดเก็บไฟล์นี้
 ErrorUnknownSyslogConstant=% s คงไม่ได้เป็นที่รู้จักกันอย่างต่อเนื่อง Syslog
 OnlyWindowsLOG_USER=Windows เท่านั้นสนับสนุน LOG_USER
-SyslogSentryDSN=Sentry DSN
-SyslogSentryFromProject=DSN from your Sentry project
 ##### Donations #####
 DonationsSetup=บริจาคการติดตั้งโมดูล
 DonationsReceiptModel=แม่แบบที่ได้รับการบริจาค

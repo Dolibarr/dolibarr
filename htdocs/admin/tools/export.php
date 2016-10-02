@@ -121,7 +121,9 @@ $utils = new Utils($db);
 if ($what == 'mysql')
 {
     
-    $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
+    $cmddump=GETPOST("mysqldump");	// Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+    $cmddump=dol_sanitizePathName($cmddump);
+    
     if (! empty($dolibarr_main_restrict_os_commands))
     {
         $arrayofallowedcommand=explode(',', $dolibarr_main_restrict_os_commands);
@@ -168,7 +170,8 @@ if ($what == 'mysqlnobin')
 // POSTGRESQL
 if ($what == 'postgresql')
 {
-    $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by escapeshellarg
+    $cmddump=GETPOST("postgresqldump");	// Do not sanitize here with 'alpha', will be sanitize later by dol_sanitizePathName and escapeshellarg
+    $cmddump=dol_sanitizePathName($cmddump);
     
     if (! $errormsg && $cmddump)
     {

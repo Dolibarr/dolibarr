@@ -99,7 +99,7 @@ $coldisplay=-1; // We remove first td
 		$doleditor=new DolEditor('product_desc',$line->description,'',164,$toolbarname,'',false,true,$enable,$nbrows,'98%');
 		$doleditor->Create();
 	} else {
-		print '<textarea id="desc" class="flat" name="desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
+		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
 	}
 	?>
 	</td>
@@ -257,8 +257,14 @@ $coldisplay=-1; // We remove first td
 
 jQuery(document).ready(function()
 {
-	jQuery("#price_ht").keyup(function() { jQuery("#price_ttc").val(''); });
-	jQuery("#price_ttc").keyup(function() { jQuery("#price_ht").val(''); });
+	jQuery("#price_ht").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') jQuery("#price_ttc").val(''); 
+		});
+	jQuery("#price_ttc").keyup(function(event) {
+		// console.log(event.which);		// discard event tag and arrows
+		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') jQuery("#price_ht").val(''); 
+		});
 
     <?php
     if (! empty($conf->margin->enabled))

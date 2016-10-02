@@ -86,29 +86,34 @@ $text=$langs->trans("Margins");
 $head=marges_prepare_head($user);
 $titre=$langs->trans("Margins");
 $picto='margin';
-dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
 
 print '<form method="post" name="sel" action="'.$_SERVER['PHP_SELF'].'">';
+
+dol_fiche_head($head, 'agentMargins', $titre, 0, $picto);
+
 print '<table class="border" width="100%">';
 
-print '<tr><td width="20%">'.$langs->trans('SalesRepresentative').'</td>';
+print '<tr><td class="titlefield">'.$langs->trans('SalesRepresentative').'</td>';
 print '<td colspan="4">';
 print $form->select_dolusers($agentid, 'agentid', 1, '', $user->rights->margins->read->all ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
-print '<td width="20%">';
+print '<td>';
 $form->select_date($startdate,'startdate','','',1,"sel",1,1);
 print '</td>';
-print '<td width="20%">'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
-print '<td width="20%">';
+print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
+print '<td>';
 $form->select_date($enddate,'enddate','','',1,"sel",1,1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
 print '</td></tr>';
 print "</table>";
+
+dol_fiche_end();
+
 print '</form>';
 
 $sql = "SELECT";
@@ -242,17 +247,14 @@ else
 }
 $db->free($result);
 
-
-llxFooter();
-$db->close();
-
-?>
-
-<script type="text/javascript">
+print "\n".'<script type="text/javascript">
 $(document).ready(function() {
-
   $("#agentid").change(function() {
      $("div.fiche form").submit();
   });
 });
-</script>
+</script>'."\n";
+
+llxFooter();
+$db->close();
+

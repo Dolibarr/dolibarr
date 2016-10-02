@@ -386,7 +386,7 @@ if ($usertoprocess->id == $user->id) print '<td align="right">'.$langs->trans("T
 else print '<td align="right">'.$langs->trans("TimeSpentByUser").'</td>';
 print '<td align="center">'.$langs->trans("HourStart").'</td>';
 print '<td align="center" colspan="2">'.$langs->trans("Duration").'</td>';
-print '<td>'.$langs->trans("Note").'</td>';
+print '<td align="right">'.$langs->trans("Note").'</td>';
 print "</tr>\n";
 
 // By default, we can edit only tasks we are assigned to
