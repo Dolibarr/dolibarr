@@ -2267,22 +2267,6 @@ else
         	print $object->showOptionals($extrafields);
         }
 
-        // Ban
-        if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
-        {
-            print '<tr><td>';
-            print '<table width="100%" class="nobordernopadding"><tr><td>';
-            print $langs->trans('RIB');
-            print '<td><td align="right">';
-            if ($user->rights->societe->creer) print '<a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$object->id.'">'.img_edit().'</a>';
-            else print '&nbsp;';
-            print '</td></tr></table>';
-            print '</td>';
-            print '<td colspan="3">';
-            print $object->display_rib();
-            print '</td></tr>';
-        }
-
         // Parent company
         if (empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
         {

@@ -1450,8 +1450,9 @@ class Account extends CommonObject
      */
     function initAsSpecimen()
     {
+        $this->specimen        = 1;
         $this->ref             = 'MBA';
-        $this->label           = 'My Bank account';
+        $this->label           = 'My Big Company Bank account';
         $this->bank            = 'MyBank';
         $this->courant         = Account::TYPE_CURRENT;
         $this->clos            = Account::STATUS_OPEN;
@@ -1461,7 +1462,7 @@ class Account extends CommonObject
         $this->cle_rib         = 50;
         $this->bic             = 'AA12';
         $this->iban            = 'FR999999999';
-        $this->domiciliation   = 'The bank addresse';
+        $this->domiciliation   = 'My bank address';
         $this->proprio         = 'Owner';
         $this->owner_address   = 'Owner address';
         $this->country_id      = 1;

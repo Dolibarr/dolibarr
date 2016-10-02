@@ -37,6 +37,8 @@ class CompanyBankAccount extends Account
 
     var $default_rib;
     var $frstrecur;
+    var $rum;
+    var $date_rum;
 
     var $datec;
     var $datem;
@@ -129,6 +131,8 @@ class CompanyBankAccount extends Account
 	    if ($conf->prelevement->enabled)
 	    {
     	    $sql.= ",frstrecur = '".$this->db->escape($this->frstrecur)."'";
+    	    $sql.= ",rum = '".$this->db->escape($this->rum)."'";
+            $sql.= ",date_rum = ".($this->date_rum ? "'".$this->db->idate($this->date_rum)."'" : "null");
 	    }
 	    if (trim($this->label) != '')
             $sql.= ",label = '".$this->db->escape($this->label)."'";
@@ -302,5 +306,39 @@ class CompanyBankAccount extends Account
     		return -1;
     	}
     }
+    
+    /**
+     *  Initialise an instance with random values.
+     *  Used to build previews or test instances.
+     *	id must be 0 if object instance is a specimen.
+     *
+     *  @return	void
+     */
+    function initAsSpecimen()
+    {
+        $this->specimen        = 1;
+        $this->ref             = 'CBA';
+        $this->label           = 'CustomerCorp Bank account';
+        $this->bank            = 'CustomerCorp Bank';
+        $this->courant         = Account::TYPE_CURRENT;
+        $this->clos            = Account::STATUS_OPEN;
+        $this->code_banque     = '123';
+        $this->code_guichet    = '456';
+        $this->number          = 'CUST12345';
+        $this->cle_rib         = 50;
+        $this->bic             = 'CC12';
+        $this->iban            = 'FR999999999';
+        $this->domiciliation   = 'Bank address of customer corp';
+        $this->proprio         = 'Owner';
+        $this->owner_address   = 'Owner address';
+        $this->country_id      = 1;
+        
+        $this->rum             = 'UMR-CU1212-0007-5-1475405262';
+        $this->date_rum        =dol_now() - 10000;
+        $this->frstrecur       = 'FRST';
+        
+        $this->socid = 0;
+    }
+    
 }
 
