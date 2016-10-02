@@ -3080,6 +3080,7 @@ abstract class CommonObject
 
 	/**
      *    Return incoterms informations
+     *    TODO Use a cache for label get
      *
      *    @return	string	incoterms info
      */
@@ -3098,7 +3099,7 @@ abstract class CommonObject
 			}
 		}
 
-		$out .= ' - '.$this->location_incoterms;
+		$out .= (($res->code && $this->location_incoterms)?' - ':'').$this->location_incoterms;
 
 		return $out;
     }
