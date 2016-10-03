@@ -1022,7 +1022,7 @@ class FormOther
         	//var_dump($boxidactivatedforuser);
 
         	// Class Form must have been already loaded
-			$selectboxlist.='<form name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+			$selectboxlist.='<form id="addbox" name="addbox" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 			$selectboxlist.='<input type="hidden" name="addbox" value="addbox">';
 			$selectboxlist.='<input type="hidden" name="userid" value="'.$user->id.'">';
 			$selectboxlist.='<input type="hidden" name="areacode" value="'.$areacode.'">';
@@ -1030,6 +1030,7 @@ class FormOther
 			$selectboxlist.=Form::selectarray('boxcombo', $arrayboxtoactivatelabel, '', $langs->trans("ChooseBoxToAdd").'...', 0, 0, '', 0, 0, 0, 'ASC', 'maxwidth150onsmartphone', 0, ' disabled hidden selected');
             if (empty($conf->use_javascript_ajax)) $selectboxlist.=' <input type="submit" class="button" value="'.$langs->trans("AddBox").'">';
             $selectboxlist.='</form>';
+            //$selectboxlist.=ajax_combobox("boxcombo");
         }
 
         // Javascript code for dynamic actions
