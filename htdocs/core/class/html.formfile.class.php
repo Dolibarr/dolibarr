@@ -461,6 +461,15 @@ class FormFile
                     $modellist=ModeleDon::liste_modeles($this->db);
                 }
             }
+            elseif ($modulepart == 'member')
+            {
+                if (is_array($genallowed)) $modellist=$genallowed;
+                else
+                {
+                    include_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
+                    $modellist=ModelePDFCards::liste_modeles($this->db);
+                }
+            }
             elseif ($modulepart == 'agenda')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
@@ -913,7 +922,6 @@ class FormFile
 					{
 						$relativepath=(! empty($object->ref)?dol_sanitizeFileName($object->ref):'').'/';
 						if ($object->element == 'invoice_supplier') $relativepath=get_exdir($object->id,2,0,0,$object,'invoice_supplier').$relativepath;	// TODO Call using a defined value for $relativepath
-						if ($object->element == 'member') $relativepath=get_exdir($object->id,2,0,0,$object,'member').$relativepath;				// TODO Call using a defined value for $relativepath
 						if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 					}
 					// For backward compatiblity, we detect file is stored into an old path

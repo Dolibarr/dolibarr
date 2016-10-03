@@ -766,6 +766,7 @@ if (empty($reshook))
 	$trigger_name='FICHINTER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromintervention';
+	$trackid='int'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 

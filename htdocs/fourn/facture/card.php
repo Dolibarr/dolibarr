@@ -1151,6 +1151,7 @@ if (empty($reshook))
 	$trigger_name='BILL_SUPPLIER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromsupplierinvoice';
+	$trackid='sin'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 

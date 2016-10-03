@@ -712,6 +712,7 @@ if (empty($reshook))
     $trigger_name='COMPANY_SENTBYMAIL';
     $paramname='socid';
     $mode='emailfromthirdparty';
+    $trackid='thi'.$object->id;
     include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
     // Actions to build doc

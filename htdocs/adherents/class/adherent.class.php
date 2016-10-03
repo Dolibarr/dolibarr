@@ -1070,6 +1070,7 @@ class Adherent extends CommonObject
         $sql.= " d.datevalid as datev,";
         $sql.= " d.country,";
         $sql.= " d.state_id,";
+        $sql.= " d.model_pdf,";
         $sql.= " c.rowid as country_id, c.code as country_code, c.label as country,";
         $sql.= " dep.nom as state, dep.code_departement as state_code,";
         $sql.= " t.libelle as type, t.subscription as subscription,";
@@ -1154,6 +1155,8 @@ class Adherent extends CommonObject
 
                 $this->user_id			= $obj->user_id;
                 $this->user_login		= $obj->user_login;
+                
+                $this->model_pdf        = $obj->model_pdf;
 
                 // Retreive all extrafield for thirdparty
                 // fetch optionals attributes and labels
@@ -1783,6 +1786,41 @@ class Adherent extends CommonObject
     }
 
 
+    /**
+     *  Create a document onto disk according to template module.
+     *
+     *  @param	    string		$modele			Force template to use ('' to not force)
+     *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
+     *  @param      int			$hidedetails    Hide details of lines
+     *  @param      int			$hidedesc       Hide description
+     *  @param      int			$hideref        Hide ref
+     *  @return     int         				0 if KO, 1 if OK
+     */
+    public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+    {
+        global $conf,$langs;
+    
+        $langs->load("orders");
+    
+        // Positionne le modele sur le nom du modele a utiliser
+        if (! dol_strlen($modele))
+        {
+            if (! empty($conf->global->ADHERENT_ADDON_PDF))
+            {
+                $modele = $conf->global->ADHERENT_ADDON_PDF;
+            }
+            else
+            {
+                $modele = 'standard';
+            }
+        }
+    
+        $modelpath = "core/modules/member/doc/";
+    
+        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+    }
+    
+    
     /**
      *  Initialise an instance with random values.
      *  Used to build previews or test instances.

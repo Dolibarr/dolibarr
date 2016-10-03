@@ -1256,6 +1256,7 @@ if (empty($reshook))
 	$trigger_name='ORDER_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromorder';
+	$trackid='ord'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 

@@ -551,6 +551,7 @@ if (empty($reshook))
 	$trigger_name='SHIPPING_SENTBYMAIL';
 	$paramname='id';
 	$mode='emailfromshipment';
+	$trackid='shi'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
 }
