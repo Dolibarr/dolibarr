@@ -2396,7 +2396,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	-webkit-border-radius: 0.2em;
 	border-radius: 0.2em;*/
 }
-.liste_titre_add td, .liste_titre_add .tagtd
+.liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
     border-top-width: 2px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);

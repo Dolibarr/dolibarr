@@ -2274,7 +2274,7 @@ table.noborder tr, div.noborder form {
 	min-height: 26px;
 }
 
-.liste_titre_add td, .liste_titre_add .tagtd
+.liste_titre_add td, .liste_titre_add th, .liste_titre_add .tagtd
 {
     border-top-width: 2px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
