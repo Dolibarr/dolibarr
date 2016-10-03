@@ -269,6 +269,7 @@ class ImportCsv extends ModeleImports
 	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
+	 * @param	array	$updatekeys						Array of keys to use to try to do update
 	 * @return	int										<0 if KO, >0 if OK
 	 */
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updatekeys)
