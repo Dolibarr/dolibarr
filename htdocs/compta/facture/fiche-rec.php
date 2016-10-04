@@ -31,10 +31,12 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+if (! empty($conf->projet->enabled)) {
+    require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+    require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+}
 
 $langs->load('bills');
 $langs->load('compta');
@@ -297,12 +299,14 @@ if (empty($reshook))
     // Set bank account
     elseif ($action == 'setref' && $user->rights->facture->creer)
     {
+        //var_dump(GETPOST('ref', 'alpha'));exit;
         $result=$object->setValueFrom('titre', GETPOST('ref', 'alpha'), '', null, 'text', '', $user, 'BILLREC_MODIFY');
         if ($result > 0)
         {
         	$object->titre = GETPOST('ref', 'alpha');
         	$object->ref = $object->titre;
         }
+        else dol_print_error($db, $object->error, $object->errors);
     }
     // Set bank account
     elseif ($action == 'setbankaccount' && $user->rights->facture->creer)
@@ -863,6 +867,7 @@ llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-
 
 $form = new Form($db);
 $formother = new FormOther($db);
+if (! empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 $companystatic = new Societe($db);
 
 $now = dol_now();
@@ -1069,11 +1074,64 @@ else
 
 		dol_fiche_head($head, 'card', $langs->trans("RepeatableInvoice"),0,'bill');	// Add a div
 
-		print '<table class="border" width="100%">';
-
+		// Recurring invoice content
+		
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/fiche-rec.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+		
+		$morehtmlref='';
+		if ($action != 'editref') $morehtmlref.=$form->editfieldkey($object->ref, 'ref', $object->ref, $object, $user->rights->facture->creer, '', '', 0, 2);
+		else $morehtmlref.= $form->editfieldval('', 'ref', $object->ref, $object, $user->rights->facture->creer, 'string');
+		
+    	$morehtmlref.='<div class="refidno">';
+    	// Ref customer
+    	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', 0, 1);
+    	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
+    	// Thirdparty
+    	$morehtmlref.=$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+    	// Project
+    	if (! empty($conf->projet->enabled))
+    	{
+    	    $langs->load("projects");
+    	    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+    	    if ($user->rights->facture->creer)
+    	    {
+    	        if ($action != 'classify')
+    	            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+    	            if ($action == 'classify') {
+    	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+    	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+    	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+    	                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+    	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+    	                $morehtmlref.='</form>';
+    	            } else {
+    	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+    	            }
+    	    } else {
+    	        if (! empty($object->fk_project)) {
+    	            $proj = new Project($db);
+    	            $proj->fetch($object->fk_project);
+    	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+    	            $morehtmlref.=$proj->ref;
+    	            $morehtmlref.='</a>';
+    	        } else {
+    	            $morehtmlref.='';
+    	        }
+    	    }
+    	}
+    	$morehtmlref.='</div>';
+    	
+	    dol_banner_tab($object, 'ref', $linkback, 1, 'titre', 'none', $morehtmlref, '', 0, '', $morehtmlright);
+	    
+    	print '<div class="fichecenter">';
+    	print '<div class="fichehalfleft">';
+    	print '<div class="underbanner clearboth"></div>';
+	
+	    print '<table class="border" width="100%">';
 
 		// Ref
+		/*
 		print '<tr><td class="titlefield">';
 		//print $langs->trans('Ref');
 		print $form->editfieldkey($langs->trans("Ref"), 'ref', $object->ref, $object, $user->rights->facture->creer);
@@ -1083,11 +1141,11 @@ else
 		print $form->showrefnav($object, 'ref', $linkback, 1, 'titre', 'none', $morehtmlref);
 		print '</td></tr>';
 		
-		
 		print '<tr><td>'.$langs->trans("Customer").'</td>';
 		print '<td colspan="3">'.$object->thirdparty->getNomUrl(1,'customer').'</td></tr>';
-
-		print "<tr><td>".$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
+        */
+		
+		print '<tr><td class="titlefield">'.$langs->trans("Author").'</td><td colspan="3">'.$author->getFullName($langs)."</td></tr>";
 
 		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 		print '<td colspan="3">'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
@@ -1158,6 +1216,7 @@ else
 		print '</tr>';
 		
 		// Project
+		/*
 		if (! empty($conf->projet->enabled))
 		{
 			$langs->load('projects');
@@ -1182,7 +1241,7 @@ else
 			}
 			print '</td>';
 			print '</tr>';
-		}
+		}*/
 
 		// Bank Account
 		print '<tr><td class="nowrap">';
@@ -1204,10 +1263,15 @@ else
 		print "</td>";
 		print '</tr>';
 
-		print "</table>";
-
-		print '<br>';
-
+    	print '</table>';
+    	
+    	print '</div>';
+    	print '<div class="fichehalfright">';
+    	print '<div class="ficheaddleft">';
+    	print '<div class="underbanner clearboth"></div>';
+    	
+    	print '<table class="border centpercent">';
+		
 		/*
 		 * Recurrence
 		 */
@@ -1217,14 +1281,14 @@ else
 		print '<table class="border" width="100%">';
 
 		// if "frequency" is empty or = 0, the reccurence is disabled
-		print '<tr><td class="titlefield">';
+		print '<tr><td style="width: 50%">';
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('Frequency');
 		print '</td>';
 		if ($action != 'editfrequency' && ! empty($object->brouillon) && $user->rights->facture->creer)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editfrequency&amp;facid=' . $object->id . '">' . img_edit($langs->trans('Edit'), 1) . '</a></td>';
 		print '</tr></table>';
-		print '</td><td colspan="5">';
+		print '</td><td>';
 		if ($action == 'editfrequency')
 		{
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"] . '?facid=' . $object->id.'">';
@@ -1260,7 +1324,7 @@ else
 		{
 		    print $langs->trans("NextDateToExecution");
 		}
-		print '</td><td colspan="5">';
+		print '</td><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
 		    print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day');
@@ -1278,7 +1342,7 @@ else
 		{
 		    print $langs->trans("MaxPeriodNumber");
 		}
-		print '</td><td colspan="5">';
+		print '</td><td>';
 		if ($action == 'nb_gen_max' || $object->frequency > 0)
 		{
 		      print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max?$object->nb_gen_max:'', $object, $user->rights->facture->creer);
@@ -1296,7 +1360,7 @@ else
 		    print $form->editfieldkey($langs->trans("StatusOfGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->rights->facture->creer);
 		else
 		    print $langs->trans("StatusOfGeneratedInvoices");
-		print '</td><td colspan="5">';
+		print '</td><td>';
     		$select = 'select;0:'.$langs->trans('BillStatusDraft').',1:'.$langs->trans('BillStatusValidated');
 		if ($action == 'auto_validate' || $object->frequency > 0)
 		{
@@ -1307,20 +1371,21 @@ else
 		
 		print '</table>';
 		
-    	print '<br>';
-		
     	// Frequencry/Recurring section
-	if ($object->frequency > 0)
-	{
-		if (empty($conf->cron->enabled))
-		{
-			print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));	
-		}
+    	if ($object->frequency > 0)
+    	{
+    	    print '<br>';
+		
+    	    if (empty($conf->cron->enabled))
+    		{
+    			print info_admin($langs->trans("EnableAndSetupModuleCron", $langs->transnoentitiesnoconv("Module2300Name")));	
+    		}
     		
-    		print '<table class="border" width="100%">';
+            print '<div class="underbanner clearboth"></div>';
+            print '<table class="border centpercent">';
     		
     		// Nb of generation already done
-    		print '<tr><td class="titlefield">'.$langs->trans("NbOfGenerationDone").'</td>';
+    		print '<tr><td style="width: 50%">'.$langs->trans("NbOfGenerationDone").'</td>';
     		print '<td>';
     		print $object->nb_gen_done?$object->nb_gen_done:'0';
     		print '</td>';
@@ -1329,7 +1394,7 @@ else
     		// Date last
     		print '<tr><td>';
     		print $langs->trans("DateLastGeneration");
-    		print '</td><td colspan="5">';
+    		print '</td><td>';
     		print dol_print_date($object->date_last_gen, 'dayhour');
     		print '</td>';
     		print '</tr>';
@@ -1338,6 +1403,13 @@ else
     		
     		print '<br>';
 		}		
+		
+		print '</div>';
+		print '</div>';
+		print '</div>';
+		
+		print '<div class="clearboth"></div><br>';
+		
 		
 		// Lines
 		print '	<form name="addproduct" id="addproduct" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . (($action != 'editline') ? '#add' : '#line_' . GETPOST('lineid')) . '" method="POST">

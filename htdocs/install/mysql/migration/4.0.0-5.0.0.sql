@@ -27,6 +27,8 @@ ALTER TABLE llx_product_lot MODIFY COLUMN entity integer DEFAULT 1;
 UPDATE llx_product_lot SET entity = 1 WHERE entity IS NULL;
 
 
+ALTER TABLE llx_facture_rec ADD COLUMN fk_user_modif integer;
+
 ALTER TABLE llx_adherent ADD COLUMN model_pdf varchar(255);
 
 ALTER TABLE llx_don ADD COLUMN date_valid datetime;

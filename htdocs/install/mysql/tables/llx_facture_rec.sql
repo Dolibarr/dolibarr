@@ -39,7 +39,8 @@ create table llx_facture_rec
   total              double(24,8)     DEFAULT 0,
   total_ttc          double(24,8)     DEFAULT 0,
 
-  fk_user_author     integer,             -- createur
+  fk_user_author     integer,             -- user creating
+  fk_user_modif      integer,             -- user making last change
   
   fk_projet          integer,             -- projet auquel est associe la facture
   

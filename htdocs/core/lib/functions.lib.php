@@ -992,6 +992,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5, $object->totalpaye); 
 		$morehtmlright.=$tmptxt;
 	}
+	elseif ($object->element == 'facturerec') 
+	{
+	    $morehtmlright.='<!-- No status for recurring invoice -->';
+	}
 	else {
 	    $tmptxt=$object->getLibStatut(6);
 	    if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) $tmptxt=$object->getLibStatut(5); 

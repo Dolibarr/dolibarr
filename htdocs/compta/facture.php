@@ -2898,7 +2898,7 @@ else if ($id > 0 || ! empty($ref))
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->facture->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -2943,73 +2943,6 @@ else if ($id > 0 || ! empty($ref))
 	
 	print '<table class="border" width="100%">';
 	
-	// Ref
-	/*
-	print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td>';
-	print '<td colspan="5">';
-	$morehtmlright = '';
-	$discount = new DiscountAbsolute($db);
-	$result = $discount->fetch(0, $object->id);
-	if ($result > 0) {
-		$morehtmlright = '&nbsp; (' . $langs->trans("CreditNoteConvertedIntoDiscount", $discount->getNomUrl(1, 'discount')) . ')';
-	}
-	if ($result < 0) {
-		dol_print_error('', $discount->error);
-	}
-	print $form->showrefnav($object, 'ref', $linkback, 1, 'facnumber', 'ref', '', '', 0, '', '', $morehtmlright);
-	print '</td></tr>';
-
-	// Ref customer
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td>';
-	print $langs->trans('RefCustomer');
-	print '</td>';
-	if ($action != 'refclient' && ! empty($object->brouillon))
-		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=refclient&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify')) . '</a></td>';
-	print '</tr></table>';
-	print '</td>';
-	print '<td colspan="5">';
-	if ($user->rights->facture->creer && $action == 'refclient') {
-		print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
-		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-		print '<input type="hidden" name="action" value="set_ref_client">';
-		print '<input type="text" class="flat" size="20" name="ref_client" value="' . $object->ref_client . '">';
-		print ' <input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
-		print '</form>';
-	} else {
-		print $object->ref_client;
-	}
-	print '</td></tr>';
-
-	// Third party
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%">';
-	print '<tr><td>' . $langs->trans('Company') . '</td>';
-	print '</td><td colspan="5">';
-	if (! empty($conf->global->FACTURE_CHANGE_THIRDPARTY) && $action != 'editthirdparty' && $object->brouillon && $user->rights->facture->creer)
-		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editthirdparty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('SetLinkToAnotherThirdParty'), 1) . '</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="5">';
-	if ($action == 'editthirdparty') {
-		$form->form_thirdparty($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, 'socid','client>0');
-	} else {
-		print ' &nbsp;' . $soc->getNomUrl(1, 'compta');
-		print ' &nbsp; ';
-		print '(<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?socid=' . $object->socid . '">' . $langs->trans('OtherBills') . '</a>';
-		// Outstanding Bill
-		$outstandingBills = $soc->get_OutstandingBill();
-		print ' - ' . $langs->trans('CurrentOutstandingBill') . ': ';
-		print price($outstandingBills, '', $langs, 0, 0, - 1, $conf->currency);
-		if ($soc->outstanding_limit != '')
-		{
-			if ($outstandingBills > $soc->outstanding_limit)
-				print img_warning($langs->trans("OutstandingBillReached"));
-			print ' / ' . price($soc->outstanding_limit);
-		}
-		print ')';
-	}
-	print '</tr>';*/
-
 	// Type
 	print '<tr><td class="titlefield">' . $langs->trans('Type') . '</td><td>';
 	print $object->getLibType();
@@ -3337,37 +3270,6 @@ else if ($id > 0 || ! empty($ref))
 			}
 		}
 	}
-
-	// Statut
-	/*
-	print '<tr><td>' . $langs->trans('Status') . '</td>';
-	print '<td colspan="3">' . ($object->getLibStatut(4, $totalpaye)) . '</td></tr>';
-
-	// Project
-	if (! empty($conf->projet->enabled)) {
-		$langs->load('projects');
-		print '<tr>';
-		print '<td>';
-
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('Project');
-		print '</td>';
-		if ($action != 'classify') {
-			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=classify&amp;facid=' . $object->id . '">';
-			print img_edit($langs->trans('SetProject'), 1);
-			print '</a></td>';
-		}
-		print '</tr></table>';
-
-		print '</td><td colspan="3">';
-		if ($action == 'classify') {
-			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
-		} else {
-			$form->form_project($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0);
-		}
-		print '</td>';
-		print '</tr>';
-	}*/
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))

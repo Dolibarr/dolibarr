@@ -42,7 +42,8 @@ class FactureRec extends CommonInvoice
 	public $table_element='facture_rec';
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
-
+	public $picto='bill';
+	
 	var $entity;
 	var $number;
 	var $date;

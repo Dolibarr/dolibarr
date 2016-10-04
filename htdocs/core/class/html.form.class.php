@@ -80,7 +80,7 @@ class Form
      * @param	string	$typeofdata		Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
      * @param	string	$moreparam		More param to add on a href URL*
      * @param   int     $fieldrequired  1 if we want to show field as mandatory using the "fieldrequired" CSS.
-     * @param   int     $notabletag     Do no output table tags
+     * @param   int     $notabletag     1=Do not output table tags but output a ':', 2=Do not output table tags and no ':'
      * @return	string					HTML edit field
      */
     function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata='string', $moreparam='', $fieldrequired=0, $notabletag=0)
@@ -118,7 +118,7 @@ class Form
             if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
             if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<td align="right">';
             if ($htmlname && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='<a href="'.$_SERVER["PHP_SELF"].'?action=edit'.$htmlname.'&amp;id='.$object->id.$moreparam.'">'.img_edit($langs->trans('Edit'), ($notabletag ? 0 : 1)).'</a>';
-	        if (! empty($notabletag)) $ret.=' : ';
+	        if (! empty($notabletag) && $notabletag == 1) $ret.=' : ';
             if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</td>';
             if (empty($notabletag) && GETPOST('action') != 'edit'.$htmlname && $perm) $ret.='</tr></table>';
         }
