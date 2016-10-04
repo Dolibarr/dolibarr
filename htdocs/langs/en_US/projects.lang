@@ -123,6 +123,7 @@ ProjectReportDate=Change task date according project start date
 ErrorShiftTaskDate=Impossible to shift task date according to new project start date
 ProjectsAndTasksLines=Projects and tasks
 ProjectCreatedInDolibarr=Project %s created
+ProjectModifiedInDolibarr=Project %s modified
 TaskCreatedInDolibarr=Task %s created
 TaskModifiedInDolibarr=Task %s modified
 TaskDeletedInDolibarr=Task %s deleted
