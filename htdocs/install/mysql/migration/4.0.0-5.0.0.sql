@@ -124,3 +124,4 @@ ALTER TABLE llx_accounting_bookkeeping ADD COLUMN entity integer DEFAULT 1 NOT N
 
 ALTER TABLE llx_accounting_account ADD INDEX uk_accounting_account (account_number, entity);
 
+ALTER TABLE llx_c_payment_term change fdm type_cdr tinyint
