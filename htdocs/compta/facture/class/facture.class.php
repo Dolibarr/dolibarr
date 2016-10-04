@@ -219,9 +219,9 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 *	Create invoice in database
-	 *  Note: this->ref can be set or empty. If empty, we will use "(PROV)"
-	 *  Note: this->fac_rec must be set to create from recurring invoice
+	 *	Create invoice in database.
+	 *  Note: this->ref can be set or empty. If empty, we will use "(PROV999)"
+	 *  Note: this->fac_rec must be set to create invoice from a recurring invoice
 	 *
 	 *	@param	User	$user      		Object user that create
 	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
@@ -282,6 +282,7 @@ class Facture extends CommonInvoice
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result=$_facrec->fetch($this->fac_rec);
+			$result=$_facrec->fetchObjectLinked();       // This load $_facrec->linkedObjectsIds
 
 			$this->socid 		     = $_facrec->socid;  // Invoice created on same thirdparty than template
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
@@ -312,6 +313,9 @@ class Facture extends CommonInvoice
 			if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
 			$this->brouillon = 1;
 
+			$this->linked_objects = $_facrec->linkedObjectsIds;
+			var_dump($this->linked_objects);
+				
 			$forceduedate = $this->calculate_date_lim_reglement();
 
 			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
@@ -404,15 +408,31 @@ class Facture extends CommonInvoice
 			// Add object linked
 			if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
 			{
-				foreach($this->linked_objects as $origin => $origin_id)
+				foreach($this->linked_objects as $origin => $tmp_origin_id)
 				{
-					$ret = $this->add_object_linked($origin, $origin_id);
-					if (! $ret)
-					{
-						dol_print_error($this->db);
-						$error++;
-					}
-
+				    if (is_array($tmp_origin_id))       // New baheviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+				    {
+				        foreach($tmp_origin_id as $origin_id)
+				        {
+				            $ret = $this->add_object_linked($origin, $origin_id);
+				            if (! $ret)
+				            {
+				                dol_print_error($this->db);
+				                $error++;
+				            }
+				        }
+				    }
+				    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+				    {
+				        $origin_id = $tmp_origin_id;
+    					$ret = $this->add_object_linked($origin, $origin_id);
+    					if (! $ret)
+    					{
+    						dol_print_error($this->db);
+    						$error++;
+    					}
+				    }
+				    
 					if (! empty($conf->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN))
 					{
     					$originforcontact = $origin;

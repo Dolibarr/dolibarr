@@ -894,7 +894,7 @@ if (empty($reshook))
 				// Source facture
 				$object->fac_rec = GETPOST('fac_rec');
 
-				$id = $object->create($user);
+				$id = $object->create($user);       // This include recopy of links from recurring invoice
 			}
 		}
 
@@ -2319,7 +2319,7 @@ if ($action == 'create')
     			</script>';
     			$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk") . ' ';
     			// $text.='<input type="text" value="">';
-    			$text .= '<select class="flat" name="fac_avoir" id="fac_avoir"';
+    			$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
     			if (! $optionsav)
     				$text .= ' disabled';
     			$text .= '>';
@@ -2352,7 +2352,7 @@ if ($action == 'create')
 			print '</div></div>' . "\n";
 		}
 	}
-
+	
 	// Template invoice
 	print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 	$tmp='<input type="radio" name="type" id="radio_template" value="0" disabled> ';

@@ -1322,6 +1322,7 @@ if ($action == 'create')
 	print $desc;
 	print '</div></div>';
 
+	/* Not yet supported
 	if ((empty($origin)) || ((($origin == 'propal') || ($origin == 'commande')) && (! empty($originid))))
 	{
 		// Deposit
@@ -1354,7 +1355,9 @@ if ($action == 'create')
 			print '</div></div>';
 		}
 	}
-
+    */
+	
+	/* Not yet supporter for supplier
 	if ($societe->id > 0)
 	{
 		// Replacement
@@ -1399,67 +1402,71 @@ if ($action == 'create')
 		print $desc;
 		print '</div></div>';
 	}
+	*/
 
 	if (empty($origin))
 	{
-		if ($societe->id > 0)
-		{
-			// Credit note
-			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE)) 
-			{
-				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-				$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
-				if (! $optionsav) $tmp.=' disabled';
-				$tmp.= '> ';
-				// Show credit note options only if we checked credit note
-				print '<script type="text/javascript" language="javascript">
-				jQuery(document).ready(function() {
-					if (! jQuery("#radio_creditnote").is(":checked"))
-					{
-						jQuery("#credit_note_options").hide();
-					}
-					jQuery("#radio_creditnote").click(function() {
-						jQuery("#credit_note_options").show();
-					});
-					jQuery("#radio_standard, #radio_replacement, #radio_deposit").click(function() {
-						jQuery("#credit_note_options").hide();
-					});
-				});
-				</script>';
-				$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk") . ' ';
-				// $text.='<input type="text" value="">';
-				$text .= '<select class="flat" name="fac_avoir" id="fac_avoir"';
-				if (! $optionsav)
-					$text .= ' disabled';
-				$text .= '>';
-				if ($optionsav) {
-					$text .= '<option value="-1"></option>';
-					$text .= $optionsav;
-				} else {
-					$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
-				}
-				$text .= '</select>';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
-				print $desc;
-
-				print '<div id="credit_note_options" class="clearboth">';
-				print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-				print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
-				print '</div>';
-
-				print '</div></div>';
-			}
-		}
-		else
-		{
-			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
-			$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
-			$text.= '('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").') ';
-			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
-			print $desc;
-			print '</div></div>' . "\n";
-		}
+        if ($conf->global->MAIN_FEATURES_LEVEL > 0)        // Need to fix reports of standard accounting module to manage supplier credit note
+        {
+    	    if ($societe->id > 0)
+    		{
+    		    // Credit note
+    			if (empty($conf->global->INVOICE_DISABLE_CREDIT_NOTE)) 
+    			{
+    				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+    				$tmp='<input type="radio" id="radio_creditnote" name="type" value="2"' . (GETPOST('type') == 2 ? ' checked' : '');
+    				if (! $optionsav) $tmp.=' disabled';
+    				$tmp.= '> ';
+    				// Show credit note options only if we checked credit note
+    				print '<script type="text/javascript" language="javascript">
+    				jQuery(document).ready(function() {
+    					if (! jQuery("#radio_creditnote").is(":checked"))
+    					{
+    						jQuery("#credit_note_options").hide();
+    					}
+    					jQuery("#radio_creditnote").click(function() {
+    						jQuery("#credit_note_options").show();
+    					});
+    					jQuery("#radio_standard, #radio_replacement, #radio_deposit").click(function() {
+    						jQuery("#credit_note_options").hide();
+    					});
+    				});
+    				</script>';
+    				$text = $tmp.$langs->transnoentities("InvoiceAvoirAsk") . ' ';
+    				// $text.='<input type="text" value="">';
+    				$text .= '<select class="flat valignmiddle" name="fac_avoir" id="fac_avoir"';
+    				if (! $optionsav)
+    					$text .= ' disabled';
+    				$text .= '>';
+    				if ($optionsav) {
+    					$text .= '<option value="-1"></option>';
+    					$text .= $optionsav;
+    				} else {
+    					$text .= '<option value="-1">' . $langs->trans("NoInvoiceToCorrect") . '</option>';
+    				}
+    				$text .= '</select>';
+    				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
+    				print $desc;
+    
+    				print '<div id="credit_note_options" class="clearboth">';
+    				print '&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+    				print '<br>&nbsp;&nbsp;&nbsp; <input data-role="none" type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+    				print '</div>';
+    
+    				print '</div></div>';
+    			}
+    		}
+    		else
+    		{
+    			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
+    			$tmp='<input type="radio" name="type" id="radio_creditnote" value="0" disabled> ';
+    			$text = $tmp.$langs->trans("InvoiceAvoir") . ' ';
+    			$text.= '('.$langs->trans("YouMustCreateInvoiceFromSupplierThird").') ';
+    			$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceAvoirDesc"), 1, 'help', '', 0, 3);
+    			print $desc;
+    			print '</div></div>' . "\n";
+    		}
+        }
 	}
 
 	print '</div>';
