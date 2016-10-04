@@ -45,7 +45,7 @@ $langs->load("compta");
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-if (! $user->rights->mouvements->lire)              // If we can read accounting records, we shoul be able to see fiscal year.
+if (! $user->rights->accounting->fiscalyear)              // If we can read accounting records, we shoul be able to see fiscal year.
     accessforbidden();
 	
 $error = 0;
