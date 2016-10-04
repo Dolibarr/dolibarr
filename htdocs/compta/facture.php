@@ -3076,7 +3076,7 @@ else if ($id > 0 || ! empty($ref))
 				}
 			}
 		} else {
-			// Remise dispo de type remise fixe (not credit note)
+			// Discount available of type fixed amount (not credit note)
 			print '<br>';
 			$form->form_remise_dispo($_SERVER["PHP_SELF"] . '?facid=' . $object->id, GETPOST('discountid'), 'remise_id', $soc->id, $absolute_discount, $filterabsolutediscount, $resteapayer, ' (' . $addabsolutediscount . ')');
 		}
@@ -3289,7 +3289,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</tr>';
 
 	// Situations
-	if (! empty($conf->global->INVOICE_US_SITUATION))
+	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
 		if ($object->type == 5 && ($object->situation_counter > 1))
 		{
@@ -3704,28 +3704,28 @@ else if ($id > 0 || ! empty($ref))
         }
         
         // Paye partiellement 'escompte'
-        if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'discount_vat') {
+        if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'discount_vat') {
             print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
             print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
             print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
             $resteapayeraffiche = 0;
         }
         // Paye partiellement ou Abandon 'badcustomer'
-        if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'badcustomer') {
+        if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
             print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
             print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
             print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
             // $resteapayeraffiche=0;
         }
         // Paye partiellement ou Abandon 'product_returned'
-        if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'product_returned') {
+        if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
             print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
             print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
             print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
             $resteapayeraffiche = 0;
         }
         // Paye partiellement ou Abandon 'abandon'
-        if (($object->statut == 2 || $object->statut == 3) && $object->close_code == 'abandon') {
+        if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
             print '<tr><td colspan="' . $nbcols . '" align="right" class="nowrap">';
             $text = $langs->trans("HelpAbandonOther");
             if ($object->close_note)
@@ -3817,7 +3817,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show global modifiers
-	if (! empty($conf->global->INVOICE_US_SITUATION))
+	if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
 		if ($object->situation_cycle_ref && $object->statut == 0) {
 			print '<tr class="liste_titre nodrag nodrop">';
