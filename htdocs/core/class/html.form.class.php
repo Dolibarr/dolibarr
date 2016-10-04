@@ -3895,8 +3895,7 @@ class Form
             print '<form method="post" action="'.$page.'">';
             print '<input type="hidden" name="action" value="setabsolutediscount">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-            print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
-            print '<tr><td class="nowrap">';
+            print '<div class="inline-block">';
             if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS))
             {
                 if (! $filter || $filter=="fk_facture_source IS NULL") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';    // If we want deposit to be substracted to payments only and not to total of final invoice
@@ -3907,20 +3906,24 @@ class Form
                 if (! $filter || $filter=="fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print $langs->trans("CompanyHasAbsoluteDiscount",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
                 else print $langs->trans("CompanyHasCreditNote",price($amount,0,$langs,0,0,-1,$conf->currency)).': ';
             }
+            print '</div><div class="inline-block" style="padding-right: 10px">';
             $newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
             if ($filter) $newfilter.=' AND ('.$filter.')';
             $nbqualifiedlines=$this->select_remises($selected,$htmlname,$newfilter,$socid,$maxvalue);
-            print '</td>';
-            print '<td class="nowrap">';
             if ($nbqualifiedlines > 0)
             {
                 print ' &nbsp; <input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("UseLine")).'"';
                 if ($filter && $filter != "fk_facture_source IS NULL OR (fk_facture_source IS NOT NULL AND description LIKE '(DEPOSIT)%')") print ' title="'.$langs->trans("UseCreditNoteInInvoicePayment").'"';
                 print '>';
             }
-            if ($more) print $more;
-            print '</td>';
-            print '</tr></table></form>';
+            print '</div>';
+            if ($more) 
+            {
+                print '<div class="inline-block">';
+                print $more;
+                print '</div>';
+            }
+            print '</form>';
         }
         else
         {
