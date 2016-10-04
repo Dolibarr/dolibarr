@@ -5294,6 +5294,8 @@ class Form
 		{
 			$num = 0;
 
+			if (empty($possiblelink['enabled'])) continue;
+			    
 			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
 			{
 				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
