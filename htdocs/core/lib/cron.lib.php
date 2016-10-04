@@ -100,10 +100,12 @@ function dol_print_cron_urls()
 	print img_picto('','object_globe.png').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
 	print '<br>';
 
-
+	$logintouse = 'firstadmin';
+	if ($user->admin) $logintouse = $user->login;
+	
 	print '<u>'.$langs->trans("FileToLaunchCronJobs").':</u><br>';
 
-	$file='/scripts/cron/cron_run_jobs.php'.' '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$user->login.' [cronjobid]';
+	$file='/scripts/cron/cron_run_jobs.php'.' '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$logintouse.' [cronjobid]';
 	print '<textarea rows="'.ROWS_2.'" cols="120">..'.$file."</textarea><br>\n";
 	print '<br>';
 
@@ -116,7 +118,7 @@ function dol_print_cron_urls()
 	{
 		print $langs->trans("CronExplainHowToRunUnix");
 		print '<br>';
-		print '<textarea rows="'.ROWS_1.'" style="width:80%">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$user->login.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
+		print '<textarea rows="'.ROWS_1.'" style="width:80%">*/5 * * * * pathtoscript/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY)?'securitykey':''.$conf->global->CRON_KEY.'').' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
 	}
 	else
 	{

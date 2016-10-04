@@ -23,5 +23,5 @@ CREATE TABLE llx_multicurrency_rate
 	date_sync datetime DEFAULT NULL,  
 	rate double NOT NULL DEFAULT 0, 
 	fk_multicurrency integer NOT NULL,
-	entity integer DEFAULT 1,
+	entity integer DEFAULT 1
 ) ENGINE=innodb;

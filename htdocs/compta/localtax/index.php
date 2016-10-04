@@ -277,7 +277,8 @@ $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
 $sql.= " AND f.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
 $sql.= " AND localtaxtype=".$localTaxType;
-$sql.= " GROUP BY dm ASC ORDER BY dm ASC";
+$sql.= " GROUP BY dm";
+$sql.= " ORDER BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 

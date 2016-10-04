@@ -12,6 +12,42 @@ Upgrading to any other version or any other database system is abolutely require
 make a Dolibarr upgrade.
 
 
+***** ChangeLog for 4.0.1 compared to 4.0.0 *****
+FIX: #2853
+FIX: #2991
+FIX: #3128
+FIX: #5699
+FIX: #5734
+FIX: #5742 error on project list if an extra field separator is added.
+FIX: #5746 chrome php Try a fix. Not sure it solved all problems reported
+FIX: #5748 Bug: Error updating to 4.0.1 with Postgresql. Field must be varchar.
+FIX: #5750 Bug: CmailFile::server_parse enters an infinite loop if $server_response is false
+FIX: #5752 Bug VAT NPR not propagated during proposal cloning
+FIX: #5763 Bug: Cannot Create Supplier Price Request
+FIX: #5770 Dolibarr doesn't modify correctly the hour of a task
+FIX: #5776
+FIX: #5802 Incoterms not set
+FIX: #5813 Bug: Incoterms not being read correctly
+FIX: #5818
+FIX: alignement of intervention status
+FIX: Clean of search fields
+FIX: Creation of donation should go back on card after creation
+FIX: Date visible on project overview
+FIX: Execute a dedicated job from its id may results of launching other jobs too.
+FIX: Failed to export contact categories with contact extra fields
+FIX: inversion customer/supplier price
+FIX: link "back to list" was not visible.
+FIX: Lost filter on opportunities
+FIX: Mandatory field payment term was not css highlighted.
+FIX: Menu users not visible on dolidroid.
+FIX: SEC for HTB23302
+FIX: The email test sender in email setup was broken
+FIX: Translation of "Name" is not a good choice for floow-up.
+FIX: Update of maxnbrun on job list failed.
+FIX: Value of payment term and project are not set on correct default value when invoice generated from template.
+FIX: vat dictionary should allow enter and edit multiple values for localtaxes, separated by: (ex -19:-15)
+FIX: Vat not visible in dictionnary
+
 ***** ChangeLog for 4.0.0 compared to 3.9.* *****
 For users:
 

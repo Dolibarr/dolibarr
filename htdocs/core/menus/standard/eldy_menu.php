@@ -105,6 +105,8 @@ class MenuManager
         $menuArbo = new Menubase($this->db,'eldy');
         $menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'eldy', $tabMenu);
         $this->tabMenu=$tabMenu;
+        
+        //if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
     }
 
 
@@ -150,8 +152,9 @@ class MenuManager
 		    
         if ($mode == 'jmobile')
         {
-            print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);
 
+            print_eldy_menu($this->db,$this->atarget,$this->type_user,$this->tabMenu,$this->menu,1,$mode);      // Fill this->menu that is empty with top menu
+            
         	print '<!-- Generate menu list from menu handler '.$this->name.' -->'."\n";
         	foreach($this->menu->liste as $key => $val)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu'
         	{
@@ -169,8 +172,9 @@ class MenuManager
         			$tmpmainmenu=$val['mainmenu'];
         			$tmpleftmenu='all';
         			$submenu=new Menu();
-	        		print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);
-        			$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
+	        		print_left_eldy_menu($this->db,$this->menu_array,$this->menu_array_after,$this->tabMenu,$submenu,1,$tmpmainmenu,$tmpleftmenu);       // Fill $submenu (example with tmpmainmenu='home' tmpleftmenu='all', return left menu tree of Home)
+        		    //if ($tmpmainmenu.'-'.$tmpleftmenu == 'home-all') { var_dump($submenu);exit; }
+	        		$nexturl=dol_buildpath($submenu->liste[0]['url'],1);
 
         			$canonrelurl=preg_replace('/\?.*$/','',$relurl);
         			$canonnexturl=preg_replace('/\?.*$/','',$nexturl);
@@ -194,6 +198,7 @@ class MenuManager
         				print '</a>';
         				print '</li>'."\n";
         			}
+        			
        				foreach($submenu->liste as $key2 => $val2)		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu']
        				{
 						$showmenu=true;

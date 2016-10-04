@@ -338,11 +338,6 @@ class pdf_crabe extends ModelePDFFactures
 				$height_incoterms = 0;
 				if ($conf->incoterm->enabled)
 				{
-					if (is_object($object->thirdparty))
-					{
-						$object->fk_incoterms=$object->thirdparty->fk_incoterms;
-						$object->location_incoterms=$object->thirdparty->location_incoterms;
-					}
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms)
 					{

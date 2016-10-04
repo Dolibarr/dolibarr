@@ -85,7 +85,7 @@ if ($action == 'validatehistory') {
 		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
 		$db->commit();
-		setEventMessages($langs->trans('Dispatched'), null, 'mesgs');
+		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
 } elseif ($action == 'fixaccountancycode') {
 	$error = 0;
@@ -133,9 +133,11 @@ if ($action == 'validatehistory') {
 	}
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("CustomersVentilation"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
@@ -143,11 +145,14 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear);
 
-print '<b>' . $langs->trans("DescVentilCustomer") . '</b>';
+print $langs->trans("DescVentilCustomer") . '<br>';
+print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToDispatch")) . '<br>';
+print '<br>';
 print '<div class="inline-block divButAction">';
 print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
-print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
+// TODO Remove this. Should be done always.
+print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 print '</div>';
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
@@ -171,9 +176,9 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
-	print '<td width="60" align="center">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.account_number') . " AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'".$langs->trans('NotMatch')."'", 'aa.label') . " AS intitule,";
@@ -220,9 +225,9 @@ print "<br>\n";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
-	print '<td width="60" align="center">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
-print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
+print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT '" . $langs->trans("TotalVente") . "' AS total,";
 for($i = 1; $i <= 12; $i ++) {
@@ -264,9 +269,9 @@ if (! empty($conf->margin->enabled)) {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="400">' . $langs->trans("TotalMarge") . '</td>';
 	for($i = 1; $i <= 12; $i ++) {
-		print '<td width="60" align="center">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+		print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
-	print '<td width="60" align="center"><b>' . $langs->trans("Total") . '</b></td></tr>';
+	print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 	$sql = "SELECT '" . $langs->trans("Vide") . "' AS marge,";
 	for($i = 1; $i <= 12; $i ++) {
@@ -291,9 +296,9 @@ if (! empty($conf->margin->enabled)) {
 
 			print '<tr><td>' . $row[0] . '</td>';
 			for($i = 1; $i <= 12; $i ++) {
-				print '<td align="right">' . price($row[$i]) . '</td>';
+				print '<td align="right">' . price(price2num($row[$i])) . '</td>';
 			}
-			print '<td align="right"><b>' . price($row[13]) . '</b></td>';
+			print '<td align="right"><b>' . price(price2num($row[13])) . '</b></td>';
 			print '</tr>';
 		}
 		$db->free($resql);

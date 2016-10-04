@@ -3,7 +3,7 @@
  * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
  * Copyright (C) 2014-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>   
+ * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,6 +87,11 @@ if (! $user->rights->accounting->ventilation->dispatch)
 
 $formventilation = new FormVentilation($db);
 
+
+/*
+ * Actions
+ */
+
 // Purge search criteria
 if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
@@ -103,13 +108,13 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both 
 
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
-	
+
 	$db->begin();
-	
+
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
 	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
 	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
-	
+
 	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
 	$resql1 = $db->query($sql1);
 	if (! $resql1) {
@@ -147,10 +152,6 @@ print '<script type="text/javascript">
 			    });
 			});
 			 </script>';
-
-/*
- * Action
- */
 
 /*
  * Customer Invoice lines
@@ -223,7 +224,7 @@ $result = $db->query($sql);
 if ($result) {
 	$num_lines = $db->num_rows($result);
 	$i = 0;
-	
+
 	$param = "";
 	if ($search_invoice)
 		$param .= "&search_invoice=" . $search_invoice;
@@ -242,17 +243,17 @@ if ($result) {
 	if ($search_tvaintra)
 		$param .= "&search_tvaintra=" . $search_tvaintra;
 
-	
+
 	print_barre_liste($langs->trans("InvoiceLinesDone"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num_lines, $nbtotalofrecords);
 	print '<td align="left"><b>' . $langs->trans("DescVentilDoneCustomer") . '</b></td>';
-	
+
 	print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	print '<table class="noborder" width="100%">';
-	
+
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
 	print $formventilation->select_account($account_parent, 'account_parent', 1);
-	print '<input type="submit" class="butAction" value="' . $langs->trans("Validate") . '"/></div>';
-	
+	print '<input type="submit" class="button" value="' . $langs->trans("Validate") . '"/></div>';
+
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Invoice"), $_SERVER["PHP_SELF"], "f.facnumber", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
@@ -262,50 +263,50 @@ if ($result) {
 	print_liste_field_titre($langs->trans("VATRate"), $_SERVER["PHP_SELF"], "fd.tva_tx", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Account"), $_SERVER["PHP_SELF"], "aa.account_number", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Country"), $_SERVER["PHP_SELF"], "co.label", "", $param, 'align="center"', $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("IntracommunityVATNumber"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre($langs->trans("VATIntra"), $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Ventilate") . '<br><label id="select-all">' . $langs->trans('All') . '</label>/<label id="unselect-all">' . $langs->trans('None') . '</label>', '', '', '', '', 'align="center"');
 	print "</tr>\n";
-	
+
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre"><input type="text" class="flat" name="search_invoice" size="10" value="' . $search_invoice . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_ref" value="' . $search_ref . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . $search_label . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="15" name="search_desc" value="' . $search_desc . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="8" name="search_amount" value="' . $search_amount . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="5" name="search_vat" value="' . $search_vat . '">%</td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="6" name="search_amount" value="' . $search_amount . '"></td>';
+	print '<td class="liste_titre" align="right"><input type="text" class="flat" size="3" name="search_vat" value="' . $search_vat . '">%</td>';
 	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_account" value="' . $search_account . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_country" value="' . $search_country . '"></td>';
-	print '<td class="liste_titre" align="center"><input type="text" class="flat" size="10" name="search_tavintra" value="' . $search_tavintra . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_country" value="' . $search_country . '"></td>';
+	print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_tavintra" value="' . $search_tavintra . '"></td>';
 	print '<td class="liste_titre" align="center"><input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
 	print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 	print "</td></tr>\n";
-	
+
 	$facture_static = new Facture($db);
 	$product_static = new Product($db);
-	
+
 	$var = True;
 	while ( $objp = $db->fetch_object($result) ) {
 		$var = ! $var;
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
-		
+
 		print '<tr'. $bc[$var].'>';
-		
+
 		// Ref Invoice
 		$facture_static->ref = $objp->facnumber;
-		$facture_static->id = $objp->facid;
+		$facture_static->id = $objp->rowid;
 		print '<td>' . $facture_static->getNomUrl(1) . '</td>';
-		
+
 		// Ref Product
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
-		$product_static->type = $objp->type;
+		$product_static->type = $objp->product_type;
 		print '<td>';
 		if ($product_static->id)
 			print $product_static->getNomUrl(1);
 		else
 			print '&nbsp;';
 		print '</td>';
-		
+
 		print '<td>' . dol_trunc($objp->product_label, 24) . '</td>';
 		print '<td>' . nl2br(dol_trunc($objp->description, 32)) . '</td>';
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
@@ -316,7 +317,7 @@ if ($result) {
 		print '<td align="right">' . $objp->country .'</td>';
 		print '<td align="center">' . $objp->tva_intra . '</td>';
 		print '<td align="center"><input type="checkbox" name="changeaccount[]" value="' . $objp->fdid . '"/></td>';
-		
+
 		print "</tr>";
 		$i ++;
 	}

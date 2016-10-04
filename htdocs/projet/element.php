@@ -618,15 +618,16 @@ foreach ($listofreferent as $key => $value)
 
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
+		print "\n".'<!-- Table for tablename = '.$tablename.' -->'."\n";
 		print '<table class="noborder" width="100%">';
 
 		print '<tr class="liste_titre">';
 		// Remove link
 		print '<td style="width: 24px"></td>';
 		// Ref
-		print '<td style="width: 200px">'.$langs->trans("Ref").'</td>';
+		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').'>'.$langs->trans("Ref").'</td>';
 		// Date
-		print '<td width="100" align="center">';
+		print '<td'.(($tablename != 'actioncomm' && $tablename != 'projet_task') ? ' style="width: 200px"':'').' align="center">';
 		if (! in_array($tablename, array('projet_task'))) print $langs->trans("Date");
 		print '</td>';
 		// Thirdparty or user
@@ -755,16 +756,33 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Date
-				if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') $date=$element->date_commande;
-				elseif ($tablename == 'projet_task') $date='';	// We show no date. Showing date of beginning of task make user think it is date of time consumed
-				else
+				$date='';
+				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
+				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
 				{
-					$date=$element->date;
-					if (empty($date)) $date=$element->datep;
-					if (empty($date)) $date=$element->date_contrat;
-					if (empty($date)) $date=$element->datev; //Fiche inter
+				    if ($tablename=='don') $date = $element->datedon;
+				    if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order') 
+    				{
+    				    $date=($element->date_commande?$element->date_commande:$element->date_valid);
+    				}
+    				elseif ($tablename == 'supplier_proposal') $date=$element->date_validation; // There is no other date for this
+    				elseif ($tablename == 'fichinter') $date=$element->datev; // There is no other date for this
+    				elseif ($tablename == 'projet_task') $date='';	// We show no date. Showing date of beginning of task make user think it is date of time consumed
+    				else
+    				{
+    					$date=$element->date;                              // invoice, ...
+    					if (empty($date)) $date=$element->date_contrat;
+    					if (empty($date)) $date=$element->datev;
+    				}
 				}
-				print '<td align="center">'.dol_print_date($date,'day').'</td>';
+				print '<td align="center">';
+				if ($tablename == 'actioncomm')
+				{
+				    print dol_print_date($element->datep,'dayhour');
+				    if ($element->datef && $element->datef > $element->datep) print " - ".dol_print_date($element->datef,'dayhour');
+				}
+				else print dol_print_date($date,'day');
+				print '</td>';
 
 				// Third party or user
                 print '<td align="left">';

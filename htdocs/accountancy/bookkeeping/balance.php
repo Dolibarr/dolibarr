@@ -64,7 +64,7 @@ $formventilation = new FormVentilation($db);
 $formother = new FormOther($db);
 $form = new Form($db);
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
 {
 	$search_accountancy_code_start = '';
 	$search_accountancy_code_end = '';

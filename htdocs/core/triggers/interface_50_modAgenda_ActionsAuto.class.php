@@ -756,9 +756,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
         // Add entry in event table
 		$now=dol_now();
 
-		if (isset($_SESSION['listofnames']))
+		if (isset($_SESSION['listofnames-'.$object->trackid]))
 		{
-			$attachs=$_SESSION['listofnames'];
+			$attachs=$_SESSION['listofnames-'.$object->trackid];
 			if ($attachs && strpos($action,'SENTBYMAIL'))
 			{
                 $object->actionmsg=dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);

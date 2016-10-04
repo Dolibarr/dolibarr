@@ -904,6 +904,7 @@ class Contrat extends CommonObject
 		}
 		if (! $paramsok) return -1;
 
+		
 		$this->db->begin();
 
 		$now=dol_now();
@@ -1179,7 +1180,6 @@ class Contrat extends CommonObject
 		$error=0;
 
 		// Clean parameters
-
 		if (isset($this->ref)) $this->ref=trim($this->ref);
 		if (isset($this->ref_customer)) $this->ref_customer=trim($this->ref_customer);
 		if (isset($this->ref_supplier)) $this->ref_supplier=trim($this->ref_supplier);
@@ -1197,14 +1197,11 @@ class Contrat extends CommonObject
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
 		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
 
-
-
 		// Check parameters
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
-
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
 		$sql.= " ref=".(isset($this->ref)?"'".$this->db->escape($this->ref)."'":"null").",";
 		$sql.= " ref_customer=".(isset($this->ref_customer)?"'".$this->db->escape($this->ref_customer)."'":"null").",";
 		$sql.= " ref_supplier=".(isset($this->ref_supplier)?"'".$this->db->escape($this->ref_supplier)."'":"null").",";
@@ -1225,8 +1222,6 @@ class Contrat extends CommonObject
 		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
 		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
 		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null")."";
-
-
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
@@ -1300,19 +1295,18 @@ class Contrat extends CommonObject
 			$this->db->begin();
 
 			// Clean parameters
-			$remise_percent=price2num($remise_percent);
-			$qty=price2num($qty);
-			if (! $qty) $qty=1;
-			if (! $info_bits) $info_bits=0;
-			if (! $pu_ht)  $pu_ht=0;
-			if (! $pu_ttc) $pu_ttc=0;
-
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$pa_ht=price2num($pa_ht);
 			$txtva=price2num($txtva);
 			$txlocaltax1=price2num($txlocaltax1);
 			$txlocaltax2=price2num($txlocaltax2);
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (empty($qty)) $qty=1;
+			if (empty($info_bits)) $info_bits=0;
+			if (empty($pu_ht) || ! is_numeric($pu_ht))  $pu_ht=0;
+			if (empty($pu_ttc)) $pu_ttc=0;
 
 			if ($price_base_type=='HT')
 			{
@@ -1380,15 +1374,17 @@ class Contrat extends CommonObject
 			if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
 			if ($date_end > 0)   { $sql.= ",date_fin_validite"; }
 			$sql.= ", fk_unit";
-			$sql.= ") VALUES ($this->id, '', '" . $this->db->escape($desc) . "',";
+			$sql.= ") VALUES (";
+			$sql.= $this->id.", '', '" . $this->db->escape($desc) . "',";
 			$sql.= ($fk_product>0 ? $fk_product : "null").",";
-			$sql.= " '".$qty."',";
-			$sql.= " '".$txtva."',";
-			$sql.= " '".$txlocaltax1."',";
-			$sql.= " '".$txlocaltax2."',";
+			$sql.= " ".$qty.",";
+			$sql.= " ".$txtva.",";
+			$sql.= " ".$txlocaltax1.",";
+			$sql.= " ".$txlocaltax2.",";
 			$sql.= " '".$localtax1_type."',";
 			$sql.= " '".$localtax2_type."',";
-			$sql.= " ".price2num($remise_percent).",".price2num($pu_ht).",";
+			$sql.= " ".price2num($remise_percent).",";
+			$sql.= " ".price2num($pu_ht).",";
 			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql.= " '".$info_bits."',";
 			$sql.= " ".price2num($price).",".price2num($remise).",";

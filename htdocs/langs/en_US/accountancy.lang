@@ -29,7 +29,7 @@ NewAccount=New accounting account
 Create=Create
 CreateMvts=Create movement
 UpdateMvts=Modification of a movement
-WriteBookKeeping=Record accounts in general ledger
+WriteBookKeeping=Write records in general ledger
 Bookkeeping=General ledger
 AccountBalance=Account balance
 
@@ -89,7 +89,8 @@ NotMatch=Not Set
 DeleteMvt=Delete general ledger lines
 DelYear=Year to delete
 DelJournal=Journal to delete
-ConfirmDeleteMvt=This will delete all line of of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvt=This will delete all lines of the general ledger for year and/or from a specifics journal
+ConfirmDeleteMvtPartial=This will delete the selected line(s) of the general ledger
 
 DelBookKeeping=Delete the records of the general ledger
 
@@ -116,17 +117,20 @@ Pcgtype=Class of account
 Pcgsubtype=Under class of account
 Accountparent=Root of the account
 
-DescVentilCustomer=Consult here the annual breakdown accounting of your invoices customers
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their accounting account
-DescVentilTodoCustomer=Ventilate your lines of customer invoice with an accounting account
+
+DescVentilCustomer=Consult here the list of customer invoice lines binded (or not) to a product bookkeeping account
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the bookkeeping account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not binded to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".  
+DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product bookkeeping account
+DescVentilTodoCustomer=Bind your lines of customer invoice with a product bookkeeping account
 ChangeAccount=Change the accounting account for lines selected by the account:
 Vide=-
-DescVentilSupplier=Consult here the annual breakdown accounting of your invoices suppliers
-DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their accounting account
+DescVentilSupplier=Consult here the list of supplier invoice lines binded or not yet binded to a product bookkeeping account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices supplier and their bookkeeping account
 
-ValidateHistory=Validate Automatically
+ValidateHistory=Bind Automatically
+AutomaticBindingDone=Automatic binding done
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Mouvement not correctly balanced. Credit = %s. Debit = %s
@@ -160,7 +164,7 @@ OptionModeProductBuy=Mode purchases
 OptionModeProductSellDesc=Show all products with no accounting account defined for sales.
 OptionModeProductBuyDesc=Show all products with no accounting account defined for purchases.
 CleanFixHistory=Remove accountancy code from lines that not exists into charts of account
-CleanHistory=Reset all accountancy for selected year
+CleanHistory=Reset all bindings for selected year
 
 ## Dictionary
 Range=Range of accounting account
@@ -171,3 +175,8 @@ Formula=Formula
 ErrorNoAccountingCategoryForThisCountry=No accounting category are available for this country
 ExportNotSupported=The export format setuped is not supported into this page
 BookeppingLineAlreayExists=Lines already existing into bookeeping
+
+
+Binded=Lines binded
+To bind=Lines to bind
+

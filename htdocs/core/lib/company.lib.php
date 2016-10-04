@@ -205,12 +205,12 @@ function societe_prepare_head(Societe $object)
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/agenda.php?socid='.$object->id;
+    $head[$h][1].= $langs->trans("Events");
     if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
     {
-        $head[$h][1] = $langs->trans("Events");
         $head[$h][1].= '/';
+        $head[$h][1].= $langs->trans("Agenda");
     }
-    $head[$h][1].= $langs->trans("Agenda");
     $head[$h][2] = 'agenda';
     $h++;
     
