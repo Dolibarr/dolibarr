@@ -132,9 +132,10 @@ print '<script type="text/javascript">
  * Action
  */
 if ($action == 'ventil' && ! empty($btn_ventil)) {
-	print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
+    $msg='';
+	//print '<div><font color="red">' . $langs->trans("Processing") . '...</font></div>';
 	if (! empty($codeventil) && ! empty($mesCasesCochees)) {
-		print '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
+		$msg = '<div><font color="red">' . count($mesCasesCochees) . ' ' . $langs->trans("SelectedLines") . '</font></div>';
 		$mesCodesVentilChoisis = $codeventil;
 		$cpt = 0;
 
@@ -153,17 +154,17 @@ if ($action == 'ventil' && ! empty($btn_ventil)) {
 
 			dol_syslog("/accountancy/customer/list.php sql=" . $sql, LOG_DEBUG);
 			if ($db->query($sql)) {
-				print '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
+				$msg.= '<div><font color="green">' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '</font></div>';
 			} else {
-				print '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+				$msg.= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Lineofinvoice") . ' ' . $monId . ' - ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accountventilated->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
 			}
 
 			$cpt ++;
 		}
 	} else {
-		print '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
+		$msg. '<div><font color="red">' . $langs->trans("AnyLineVentilate") . '</font></div>';
 	}
-	print '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
+	$msg.= '<div><font color="red">' . $langs->trans("EndProcessing") . '</font></div>';
 }
 
 /*
@@ -230,8 +231,11 @@ if ($result) {
 	$i = 0;
 
 	print_barre_liste($langs->trans("InvoiceLines"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num_lines);
+
 	print '<br><b>' . $langs->trans("DescVentilTodoCustomer") . '</b></br>';
 
+	if ($msg) print $msg.'<br>';
+	
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
 

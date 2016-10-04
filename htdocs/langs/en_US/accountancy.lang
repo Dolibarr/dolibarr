@@ -100,6 +100,7 @@ DescSellsJournal=Sales journal
 DescPurchasesJournal=Purchases journal
 FinanceJournal=Finance journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
+DescJournalOnlyBindedVisible=This is a view of records that are binded to accountancy account and can be breakdowned into the General Ledger.
 
 CustomerInvoicePayment=Payment of invoice customer
 

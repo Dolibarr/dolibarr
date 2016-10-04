@@ -440,7 +440,8 @@ if ($action == 'export_csv') {
 	$periodlink = '';
 	$exportlink = '';
 	$builddate = time();
-	$description = $langs->trans("DescPurchasesJournal") . '<br>';
+	//$description = $langs->trans("DescPurchasesJournal") . '<br>';
+	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$description .= $langs->trans("DepositsAreNotIncluded");
 	} else {
