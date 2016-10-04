@@ -5275,11 +5275,12 @@ class Form
         global $bc;
 
 		$linktoelem='';
-
+		$linktoelemlist='';
+		
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
 		$possiblelinks=array(
-			'propal'=>array('enabled'=>$conf->propale->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
+			'propal'=>array('enabled'=>$conf->propal->enabled, 'perms'=>1, 'label'=>'LinkToProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
 			'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
 			'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.facnumber as ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
 			'contrat'=>array('enabled'=>$conf->contrat->enabled , 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc = ".$object->thirdparty->id),
@@ -5295,7 +5296,7 @@ class Form
 			$num = 0;
 
 			if (empty($possiblelink['enabled'])) continue;
-			    
+			
 			if (! empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || ! in_array($key, $excludelinksto)))
 			{
 				print '<div id="'.$key.'list"'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?' style="display:none"':'').'>';
@@ -5348,22 +5349,29 @@ class Form
 				}
 
 				//$linktoelem.=($linktoelem?' &nbsp; ':'');
-				if ($num > 0) $linktoelem.='<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a></li>';
+				if ($num > 0) $linktoelemlist.='<li><a href="#linkto'.$key.'" class="linkto dropdowncloseonclick" rel="'.$key.'">' . $langs->trans($possiblelink['label']) .' ('.$num.')</a></li>';
 				//else $linktoelem.=$langs->trans($possiblelink['label']);
-				else $linktoelem.='<li><span class="linktodisabled">' . $langs->trans($possiblelink['label']) . ' (0)</span></li>';
+				else $linktoelemlist.='<li><span class="linktodisabled">' . $langs->trans($possiblelink['label']) . ' (0)</span></li>';
 			}
 		}
 
-		$linktoelem='
-		<dl class="dropdown" id="linktoobjectname">
-		<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>
-		<dd>
-		<div class="multiselectlinkto">
-		<ul class="ulselectedfields">'.$linktoelem.'
-		</ul>
-		</div>
-		</dd>
-		</dl>';
+		if ($linktoelemlist)
+		{
+    		$linktoelem='
+    		<dl class="dropdown" id="linktoobjectname">
+    		<dt><a href="#linktoobjectname">'.$langs->trans("LinkTo").'...</a></dt>
+    		<dd>
+    		<div class="multiselectlinkto">
+    		<ul class="ulselectedfields">'.$linktoelemlist.'
+    		</ul>
+    		</div>
+    		</dd>
+    		</dl>';
+		}
+		else
+		{
+		    $linktoelem='';
+		}
 
 		print '<!-- Add js to show linkto box -->
 				<script type="text/javascript" language="javascript">
