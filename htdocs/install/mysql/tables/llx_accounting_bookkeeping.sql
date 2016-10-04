@@ -33,7 +33,10 @@ CREATE TABLE llx_accounting_bookkeeping
   credit			double NOT NULL,
   montant			double NOT NULL,
   sens				varchar(1) DEFAULT NULL,
-  fk_user_author	integer NOT NULL,
+  fk_user_author	integer NOT NULL,						-- user creating
+  fk_user_modif     integer,                                -- user making last change
+  date_creation		datetime,								-- date de creation
+  tms               timestamp,								-- date last modification 
   import_key		varchar(14),
   code_journal		varchar(10) DEFAULT NULL,
   piece_num			integer NOT NULL,

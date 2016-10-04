@@ -1183,14 +1183,18 @@ class Account extends CommonObject
      */
     function getNomUrl($withpicto=0, $mode='')
     {
-        global $langs;
+        global $conf, $langs;
 
         $result='';
         $label = '<u>' . $langs->trans("ShowAccount") . '</u>';
-        if (! empty($this->label))
-            $label .= '<br><b>' . $langs->trans('Account') . ':</b> ' . $this->label;
-        if (! empty($this->number))
-            $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
+        $label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
+        $label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
+        if (! empty($conf->accounting->enabled))
+        {
+            $langs->load("accountancy");
+            $label .= '<br><b>' . $langs->trans('AccountAccounting') . ':</b> ' . $this->account_number;
+            $label .= '<br><b>' . $langs->trans('AccountancyJournal') . ':</b> ' . $this->accountancy_journal;
+        }
         $linkclose = '" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 
         if (empty($mode))

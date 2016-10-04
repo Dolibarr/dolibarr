@@ -168,6 +168,10 @@ if ($action == 'writebookkeeping') {
 
 	foreach ($tabfac as $key => $val)
 	{
+	    $errorforline = 0;
+	     
+	    $db->begin();
+	     
 		$companystatic = new Societe($db);
 		$invoicestatic = new FactureFournisseur($db);
 
@@ -203,8 +207,9 @@ if ($action == 'writebookkeeping') {
 
 			$result = $bookkeeping->create($user);
 			if ($result < 0) {
-				$error ++;
-				setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+			    $error++;
+			    $errorforline++;
+			    setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 			}
 		}
 
@@ -235,7 +240,8 @@ if ($action == 'writebookkeeping') {
 
 					$result = $bookkeeping->create($user);
 					if ($result < 0) {
-						$error ++;
+						$error++;
+						$errorforline++;
 						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 					}
 				}
@@ -266,15 +272,36 @@ if ($action == 'writebookkeeping') {
 
 				$result = $bookkeeping->create($user);
 				if ($result < 0) {
-					$error ++;
+					$error++;
+					$errorforline++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
 		}
+		
+
+
+		if (! $errorforline)
+		{
+		    $db->commit();
+		}
+		else
+		{
+		    $db->rollback();
+		}
+		
 	}
 
 	if (empty($error)) {
-		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
+	    setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
+	}
+	elseif (count($tabpay) == $error)
+	{
+	    setEventMessages($langs->trans("NoRecordSaved"), null, 'warnings');
+	}
+	else
+	{
+	    setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 }
 
@@ -458,7 +485,7 @@ if ($action == 'export_csv') {
 	// /print "<td>".$langs->trans("JournalNum")."</td>";
 	print "<td>" . $langs->trans("Date") . "</td>";
 	print "<td>" . $langs->trans("Piece") . ' (' . $langs->trans("InvoiceRef") . ")</td>";
-	print "<td>" . $langs->trans("Account") . "</td>";
+	print "<td>" . $langs->trans("AccountAccounting") . "</td>";
 	print "<t><td>" . $langs->trans("Type") . "</td><td align='right'>" . $langs->trans("Debit") . "</td><td align='right'>" . $langs->trans("Credit") . "</td>";
 	print "</tr>\n";
 

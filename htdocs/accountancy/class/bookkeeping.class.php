@@ -116,7 +116,6 @@ class BookKeeping extends CommonObject
 		$error = 0;
 		
 		// Clean parameters
-		
 		if (isset($this->doc_type)) {
 			$this->doc_type = trim($this->doc_type);
 		}
@@ -163,6 +162,14 @@ class BookKeeping extends CommonObject
 			$this->piece_num = trim($this->piece_num);
 		}
 		
+		// Check parameters
+		if (empty($this->numero_compte))
+		{
+            $this->errors[]='ErrorFieldAccountNotDefined';		    
+		    return -1;
+		}
+		
+		
 		$this->db->begin();
 		
 		$this->piece_num = 0;
@@ -174,7 +181,6 @@ class BookKeeping extends CommonObject
 		$sql .= " AND fk_docdet = " . $this->fk_docdet;
 		$sql .= " AND numero_compte = '" . $this->numero_compte . "'";
 		
-		dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		
 		if ($resql) {
@@ -274,11 +280,11 @@ class BookKeeping extends CommonObject
 					$this->errors[] = 'Error ' . $this->db->lasterror();
 					dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
 				}
-			} else {
-				$result = - 3;
-				$error ++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+			} else {     // Already exists
+				$result = -3;
+				$error++;
+				$this->errors[] = 'Error Transaction for ('.$this->doc_type.', '.$this->doc_ref.', '.$this->fk_docdet.') were already recorded';
+				dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_WARNING);
 			}
 		} else {
 			$result = - 5;
@@ -1012,7 +1018,7 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by importkey
 	 *
-	 * @param string $importkey Import key
+	 * @param  string       $importkey      Import key
 	 * @return int Result
 	 */
 	function deleteByImportkey($importkey) {
@@ -1027,10 +1033,7 @@ class BookKeeping extends CommonObject
 		
 		if (! $resql) {
 			$this->errors[] = "Error " . $this->db->lasterror();
-			foreach ( $this->errors as $errmsg ) {
-				dol_syslog(get_class($this) . "::delete " . $errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
-			}
+			dol_syslog(get_class($this)."::delete Error " . $this->db->lasterror(), LOG_ERR);
 			$this->db->rollback();
 			return - 1;
 		}
@@ -1042,17 +1045,24 @@ class BookKeeping extends CommonObject
 	/**
 	 * Delete bookkepping by year
 	 *
-	 * @param string $delyear year to delete
-	 * @return int Result
+	 * @param string $delyear      Year to delete
+	 * @param string $journal      Journal to delete
+	 * @return int                 Result
 	 */
-	function deleteByYear($delyear) {
+	function deleteByYearAndJournal($delyear='', $journal='') {
+	    if (empty($delyear) && empty($journal)) 
+	    {
+	        return -1;
+	    }
+	    
 		$this->db->begin();
 		
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
-		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE YEAR(doc_date) = " . $delyear;
-		
+		$sql.= " FROM " . MAIN_DB_PREFIX . $this->table_element;
+		$sql.= " WHERE 1 = 1";
+		if ($delyear) $sql.= " AND YEAR(doc_date) = " . $delyear;         // FIXME Must use between
+		if ($journal) $sql.= " AND code_journal = ".$journal;
 		$resql = $this->db->query($sql);
 		
 		if (! $resql) {
@@ -1062,7 +1072,7 @@ class BookKeeping extends CommonObject
 				$this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return - 1;
+			return -1;
 		}
 		
 		$this->db->commit();

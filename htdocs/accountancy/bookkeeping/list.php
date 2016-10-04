@@ -210,10 +210,15 @@ if ($action == 'delbookkeepingyearconfirm') {
 		$deljournal=0;
 	}
 
-	if (! empty($delyear) || ! empty($deljournal)) {
+	if (! empty($delyear) || ! empty($deljournal)) 
+	{
 		$result = $object->deleteByYearAndJournal($delyear,$deljournal);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+		    setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 		Header("Location: list.php");
 		exit;
