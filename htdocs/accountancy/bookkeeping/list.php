@@ -210,7 +210,6 @@ if ($action == 'delbookkeepingyearconfirm') {
 		$deljournal=0;
 	}
 
-
 	if (! empty($delyear) || ! empty($deljournal)) {
 		$result = $object->deleteByYearAndJournal($delyear,$deljournal);
 		if ($result < 0) {
@@ -218,6 +217,12 @@ if ($action == 'delbookkeepingyearconfirm') {
 		}
 		Header("Location: list.php");
 		exit;
+	}
+	else
+	{
+	    setEventMessages("NothingDeleted", null, 'warnings');
+	    Header("Location: list.php");
+	    exit;
 	}
 }
 if ($action == 'delmouvconfirm') {
@@ -227,7 +232,11 @@ if ($action == 'delmouvconfirm') {
 	if (! empty($mvt_num)) {
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
-			setEventMessages($object->error, $object->errors, 'errors');
+		    setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 		Header("Location: list.php");
 		exit;
@@ -257,7 +266,8 @@ if ($action == 'export_csv') {
  * View
  */
 
-$title_page = $langs->trans("Bookkeeping") . ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
+$title_page = $langs->trans("Bookkeeping");
+if ($search_date_start || $search_date_end) $title_page .= ' ' . dol_print_date($search_date_start) . '-' . dol_print_date($search_date_end);
 llxHeader('', $title_page);
 
 // List
@@ -315,9 +325,9 @@ print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield
 print '<form method="GET" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 print '<div class="tabsAction">' . "\n";
 print '<div class="inline-block divButAction"><a class="butAction" href="./listbyaccount.php">' . $langs->trans("Bookkeeping") . ' ' . strtolower($langs->trans("By")) . ' ' . strtolower($langs->trans("AccountAccounting")) . '</a></div>';
-print '<div class="inline-block divButAction"><input type="submit" name="button_delmvt" class="butAction" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 print '<div class="inline-block divButAction"><a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a></div>';
 print '<div class="inline-block divButAction"><input type="submit" name="button_export_csv" class="butAction" value="' . $langs->trans("Export") . '" /></div>';
+print '<div class="inline-block divButAction"><input type="submit" name="button_delmvt" class="butActionDelete" value="' . $langs->trans("DelBookKeeping") . '" /></div>';
 
 print '</div>';
 
@@ -328,11 +338,11 @@ print_liste_field_titre($langs->trans("Docdate"), $_SERVER['PHP_SELF'], "t.doc_d
 print_liste_field_titre($langs->trans("Docref"), $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("AccountAccountingShort"), $_SERVER['PHP_SELF'], "t.numero_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Code_tiers"), $_SERVER['PHP_SELF'], "t.code_tiers", "", $options, "", $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "bk_label_compte", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Labelcompte"), $_SERVER['PHP_SELF'], "t.label_compte", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Debit"), $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre($langs->trans("Credit"), $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
+print_liste_field_titre($langs->trans("Codejournal"), $_SERVER['PHP_SELF'], "t.code_journal", "", $options, 'align="right"', $sortfield, $sortorder);
+print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $options, "", 'width="60" align="center"', $sortfield, $sortorder);
 print "</tr>\n";
 
 print '<tr class="liste_titre">';

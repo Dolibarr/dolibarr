@@ -44,7 +44,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->ventilation->read)
 	accessforbidden();
 
-	// Filter
+// Filter
 $year = $_GET["year"];
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
@@ -56,11 +56,29 @@ if ($year == 0) {
 
 // Validate History
 $action = GETPOST('action');
+
+
+
+/*
+ * Actions
+ */
+
 if ($action == 'validatehistory') {
 
 	$error = 0;
 	$db->begin();
 
+	// First clean corrupted data
+	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sqlclean .= " SET fd.fk_code_ventilation = 0";
+	$sqlclean .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sqlclean .= '	(SELECT accnt.rowid ';
+	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+	$sqlclean .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sqlclean .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+	$resql = $db->query($sqlclean);
+
+	// Now make the binding
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
@@ -113,12 +131,13 @@ if ($action == 'validatehistory') {
 } elseif ($action == 'cleanaccountancycode') {
 	$error = 0;
 	$db->begin();
-
+	
+	// Now clean
 	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
 	$sql1 .= " SET fd.fk_code_ventilation = 0";
 	$sql1 .= " WHERE fd.fk_facture IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture as f";
 	$sql1 .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
-	$sql1 .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "')";
+	$sql1 .= " AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "')";
 
 	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
 
@@ -151,8 +170,8 @@ print '<br>';
 print '<div class="inline-block divButAction">';
 print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
 print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
-// TODO Remove this. Should be done always.
-print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
+// TODO Remove this. Should be done into the repair.php script
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 print '</div>';
 
 $sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";

@@ -474,9 +474,11 @@ $parameters["mode"] = $modecompta;
 $hookmanager->initHooks(array('externalbalance'));
 $reshook=$hookmanager->executeHooks('addReportInfo',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
+
 /*
  * Salaries
  */
+
 if (! empty($conf->salaries->enabled))
 {
     if ($modecompta == 'CREANCES-DETTES') {
@@ -580,15 +582,23 @@ if (! empty($conf->don->enabled))
 {
     $subtotal_ht = 0;
     $subtotal_ttc = 0;
-    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
-    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
-    $sql.= " WHERE p.entity = ".$conf->entity;
-	if ($modecompta == 'CREANCES-DETTES')
-	   $sql.= " AND fk_statut in (1,2)";
-	else
-	   $sql.= " AND fk_statut=2";
-    $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
     
+    if ($modecompta == 'CREANCES-DETTES') {
+        $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+        $sql.= " WHERE p.entity = ".$conf->entity;
+        $sql.= " AND fk_statut in (1,2)";
+    }
+    else {
+        $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
+		$sql.= " WHERE p.entity = ".getEntity('donation',1);
+   	    $sql.= " AND fk_statut >= 2";
+    }
+    $sql.= " GROUP BY p.societe, p.firstname, p.lastname, dm";
+
     dol_syslog("get donation payments");
     $result=$db->query($sql);
     if ($result)

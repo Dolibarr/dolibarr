@@ -54,11 +54,28 @@ if ($year == 0) {
 
 // Validate History
 $action = GETPOST('action');
+
+
+/*
+ * Actions
+ */
+
 if ($action == 'validatehistory') {
 
 	$error = 0;
 	$db->begin();
 
+	// First clean corrupted data
+	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+	$sqlclean .= " SET fd.fk_code_ventilation = 0";
+	$sqlclean .= ' WHERE fd.fk_code_ventilation NOT IN ';
+	$sqlclean .= '	(SELECT accnt.rowid ';
+	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+	$sqlclean .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sqlclean .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+	$resql = $db->query($sqlclean);
+	
+	// Now make the binding
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
@@ -148,7 +165,7 @@ print '<div class="inline-block divButAction">';
 print '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
 print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
 // TODO Remove this. Should be done always.
-print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
 print '</div>';
 
 $y = $year_current;

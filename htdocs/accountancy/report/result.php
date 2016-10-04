@@ -103,14 +103,17 @@ foreach($months as $k => $v){
 print	'</tr>';
 
 $cats = $AccCat->getCatsCpts();
+if ($cats < 0) dol_print_error($db, $AccCat->error, $AccCat->errors);
+
 $catsCalcule = $AccCat->getCatsCal();
+if ($catsCalcule < 0) dol_print_error($db, $AccCat->error, $AccCat->errors);
 
 $j=1;
 $sommes = array();
 
-if(!empty($cats))
+if (!empty($cats))
 {
-	foreach ( $cats as $name_cat => $cpts )
+	foreach ($cats as $name_cat => $cpts)
 	{
 		print "<tr class='liste_titre'>";
 		print '<td colspan="17">' . $name_cat . '</td>';

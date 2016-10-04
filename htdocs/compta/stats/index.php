@@ -135,7 +135,7 @@ else {
 	dol_print_error($db);
 }
 
-// On ajoute les paiements anciennes version, non lies par paiement_facture
+// On ajoute les paiements anciennes version, non lies par paiement_facture (very old versions)
 if ($modecompta != 'CREANCES-DETTES')
 {
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ttc";
