@@ -45,8 +45,10 @@ EndProcessing=The end of processing
 AnyLineVentilate=Any lines to ventilate
 SelectedLines=Selected lines
 Lineofinvoice=Line of invoice
-VentilatedinAccount=Ventilated successfully in the accounting account
-NotVentilatedinAccount=Not ventilated in the accounting account
+VentilatedinAccount=Binded successfully to the accounting account
+NotVentilatedinAccount=Not binded to the accounting account
+XLineSuccessfullyBinded=%s products/services successfuly binded to an accounting account
+XLineFailedToBeBinded=%s products/services were not binded to any accounting account
 
 ACCOUNTING_LIMIT_LIST_VENTILATION=Number of elements to be breakdown shown by page (maximum recommended : 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the breakdown pages "Has to breakdown" by the most recent elements

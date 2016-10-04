@@ -194,7 +194,7 @@ if ($result) {
 	print_liste_field_titre($langs->trans("Pcgtype"), $_SERVER["PHP_SELF"], "aa.pcg_type", "", $params, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Pcgsubtype"), $_SERVER["PHP_SELF"], "aa.pcg_subtype", "", $params, "", $sortfield, $sortorder);
 	print_liste_field_titre($langs->trans("Activated"), $_SERVER["PHP_SELF"], "aa.active", "", $params, "", $sortfield, $sortorder);
-	print_liste_field_titre($langs->trans("Action"), $_SERVER["PHP_SELF"], "", $params, "", 'width="60" align="center"', $sortfield, $sortorder);
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", $params, "", 'width="60" align="center"', $sortfield, $sortorder);
 	print '</tr>';
 	
 	print '<tr class="liste_titre">';
