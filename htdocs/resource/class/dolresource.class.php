@@ -1855,11 +1855,10 @@ class ResourceLink extends CommonObject
         {
             foreach ($roots[$status] as $id => $data)
             {
-                if (in_array($status, $availables))
+                if (in_array($status, $availables) && $need > 0)
                 {
                     $available[$id] = $data;
                     $need--;
-                    if ($need == 0) break 2;
                 }
                 else
                 {

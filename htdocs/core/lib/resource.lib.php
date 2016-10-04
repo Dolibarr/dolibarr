@@ -187,12 +187,12 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
             }
             else
             {
-                $roots = $link->getAvailableRoots($tree, $qty);
+                $roots = null;
 
                 //Call hook
                 $parameters=array(
+                    'qty'=>$qty,
                     'tree'=>$tree,
-                    'roots'=>$roots,
                     'status'=>$status,
                     'booker_id'=>$booker_id,
                     'booker_type'=>$booker_type,
@@ -202,9 +202,17 @@ function occupyAllResources($object, $status, $booker_id=null, $booker_type=null
                 if ($reshook == 0 && !empty($hookmanager->resArray))
                 {
                     $result = $hookmanager->resArray;
+                    if (isset($result['qty'])) $qty = $result['qty'];
+                    if (isset($result['tree'])) $tree = $result['tree'];
                     if (isset($result['roots'])) $roots = $result['roots'];
                     if (isset($result['error'])) $error = $result['error'];
                     if (isset($result['return'])) $return = $result['return'];
+                }
+
+                //If hook didn't provide the roots calculate from tree
+                if ($roots === null)
+                {
+                    $roots = $link->getAvailableRoots($tree, $qty);
                 }
 
                 //There are root resources? Also check if we need to return hook value
@@ -348,7 +356,7 @@ function switchAllResources($object, $status, $booker_id, $booker_type, $new_boo
                     'booker_type'=>$booker_type,
                 );
                 $action='';
-                $reshook=$hookmanager->executeHooks('occupyLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('switchLineResources', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
                 if ($reshook == 0 && !empty($hookmanager->resArray))
                 {
                     $result = $hookmanager->resArray;
